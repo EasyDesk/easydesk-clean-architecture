@@ -1,0 +1,135 @@
+﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
+using EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
+using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
+using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
+using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+
+namespace EasyDesk.CleanArchitecture.Dal.EfCore
+{
+    public static class DependencyInjection
+    {
+        public static IServiceCollection AddEfCoreDataAccess(
+            this IServiceCollection services,
+            string connectionString,
+            Action<EfCoreDataAccessBuilder> config)
+        {
+            services.AddScoped(_ => new SqlConnection(connectionString));
+            services.AddScoped<EfCoreUnitOfWork>();
+            services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<EfCoreUnitOfWork>());
+            services.AddScoped<IDomainEventNotifier, TransactionalDomainEventQueue>();
+
+            var builder = new EfCoreDataAccessBuilder(services);
+            config(builder);
+
+            return services;
+        }
+
+        #region Legacy
+        // TODO: this is the legacy way of configuring data access.
+        public static IServiceCollection AddEfCoreDataAccess<TService, TImplementation>(this IServiceCollection services, string connectionString)
+            where TService : class
+            where TImplementation : DbContext, TService
+        {
+            services.AddDbContext<TImplementation>(options =>
+            {
+                options.UseSqlServer(connectionString, sqlServerOptions =>
+                {
+                    var infrastructure = sqlServerOptions as IRelationalDbContextOptionsBuilderInfrastructure;
+                    var builder = infrastructure.OptionsBuilder as IDbContextOptionsBuilderInfrastructure;
+                    var mappingsByType = new Dictionary<Type, Func<RelationalTypeMapping>>
+                    {
+                        { typeof(Date), () => new DateMapping() },
+                        { typeof(Timestamp), () => new TimestampMapping() },
+                        { typeof(TimeOfDay), () => new TimeOfDayMapping() }
+                    };
+                    builder.AddOrUpdateExtension(new MappingPluginOptionsExtension(mappingsByType));
+                });
+            });
+
+            services.AddScoped<TService>(provider => provider.GetRequiredService<TImplementation>());
+
+            return services;
+        }
+        #endregion
+    }
+
+    public class EfCoreDataAccessBuilder
+    {
+        private readonly IServiceCollection _services;
+        private bool _firstDbContextRegistered = false;
+
+        public EfCoreDataAccessBuilder(IServiceCollection services)
+        {
+            _services = services;
+        }
+
+        public EfCoreDataAccessBuilder AddEntities<T>() where T : EntitiesContext
+        {
+            return AddDbContext<T>(EntitiesContext.SchemaName);
+        }
+
+        public EfCoreDataAccessBuilder AddOutbox()
+        {
+            _services.AddScoped<IOutbox, EfCoreOutbox>();
+            return AddDbContext<OutboxContext>(OutboxContext.SchemaName);
+        }
+
+        public EfCoreDataAccessBuilder AddIdemptenceManager()
+        {
+            _services.AddScoped<IIdempotenceManager, EfCoreIdempotenceManager>();
+            return AddDbContext<IdempotenceContext>(IdempotenceContext.SchemaName);
+        }
+
+        private EfCoreDataAccessBuilder AddDbContext<T>(string schema) where T : DbContext
+        {
+            _services.AddDbContext<T>((provider, options) => ConfigureDbContextOptions(provider, options, schema));
+            if (!_firstDbContextRegistered)
+            {
+                _services.AddScoped<DbContext>(provider => provider.GetRequiredService<T>());
+                _firstDbContextRegistered = true;
+            }
+            return this;
+        }
+
+        private void ConfigureDbContextOptions(IServiceProvider provider, DbContextOptionsBuilder options, string schema)
+        {
+            var connection = provider.GetRequiredService<SqlConnection>();
+            options.UseSqlServer(connection, sqlServerOptions =>
+            {
+                ConfigureTypeMappings(sqlServerOptions);
+                ConfigureMigrationsHistoryTable(sqlServerOptions, schema);
+            });
+        }
+
+        private void ConfigureTypeMappings(SqlServerDbContextOptionsBuilder sqlServerOptions)
+        {
+            var infrastructure = sqlServerOptions as IRelationalDbContextOptionsBuilderInfrastructure;
+            var builder = infrastructure.OptionsBuilder as IDbContextOptionsBuilderInfrastructure;
+            var mappingsByType = new Dictionary<Type, Func<RelationalTypeMapping>>
+            {
+                { typeof(Date), () => new DateMapping() },
+                { typeof(Timestamp), () => new TimestampMapping() },
+                { typeof(TimeOfDay), () => new TimeOfDayMapping() }
+            };
+            builder.AddOrUpdateExtension(new MappingPluginOptionsExtension(mappingsByType));
+        }
+
+        private void ConfigureMigrationsHistoryTable(SqlServerDbContextOptionsBuilder sqlServerOptions, string schema)
+        {
+            sqlServerOptions.MigrationsHistoryTable(tableName: "__EFMigrationsHistory", schema);
+        }
+    }
+}

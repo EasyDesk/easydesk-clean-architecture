@@ -1,0 +1,53 @@
+﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Tools;
+using MediatR;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
+
+namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents
+{
+    public class TransactionalDomainEventQueue : IDomainEventNotifier
+    {
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
+        private readonly Queue<IDomainEvent> _eventQueue = new();
+
+        public TransactionalDomainEventQueue(IUnitOfWork unitOfWork, IMediator mediator)
+        {
+            _unitOfWork = unitOfWork;
+            _mediator = mediator;
+        }
+
+        public void Notify(IDomainEvent domainEvent)
+        {
+            if (_eventQueue.Count == 0)
+            {
+                _unitOfWork.BeforeCommit.Subscribe(Flush);
+            }
+            _eventQueue.Enqueue(domainEvent);
+        }
+
+        private async Task Flush(BeforeCommitContext context)
+        {
+            await HandleEnqueuedEvents()
+                .ThenIfFailure(error => context.CancelCommit(error));
+        }
+
+        private async Task<Response<Nothing>> HandleEnqueuedEvents()
+        {
+            while (_eventQueue.TryDequeue(out var nextEvent))
+            {
+                var result = await _mediator.PublishDomainEvent(nextEvent);
+                if (result.IsFailure)
+                {
+                    return result;
+                }
+            }
+            return Ok;
+        }
+    }
+}
