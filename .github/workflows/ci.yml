@@ -1,0 +1,118 @@
+name: Continuous Integration
+
+env:
+  BUILD_CONFIGURATION: Release
+  PROJECT_DIRS: |
+    EasyDesk.CleanArchitecture.Domain
+    EasyDesk.CleanArchitecture.Application
+    EasyDesk.CleanArchitecture.Infrastructure
+    EasyDesk.CleanArchitecture.Dal.EfCore
+    EasyDesk.CleanArchitecture.Web
+    EasyDesk.CleanArchitecture.Testing
+  OUTPUT_DIR: publish
+  RELEASE_PREFIX: EasyDesk Clean Architecture
+  DOTNET_VERSION: 5.x
+  NUGET_URL: https://api.nuget.org/v3/index.json
+
+on:
+  push:
+    branches:
+      - "**"
+    tags: 
+      - "*"
+
+jobs:
+  release-checks:
+    name: Pre-release Checks
+    runs-on: ubuntu-20.04
+    outputs:
+      should-release: ${{ steps.release-info.outputs.should-release }}
+      is-prerelease: ${{ steps.release-info.outputs.is-prerelease }}
+      version: ${{ steps.release-info.outputs.version }}
+    steps:
+      - id: get-version
+        name: Get semantic version
+        uses: battila7/get-version-action@v2
+      - id: release-info
+        name: Get release info
+        run: |
+          SHOULD_RELEASE=${{ startsWith(github.ref, 'refs/tags/v') && steps.get-version.outputs.is-semver }}
+          PRERELEASE=${{ steps.get-version.outputs.prerelease != '' || startsWith(steps.get-version.outputs.version-without-v, '0.') }}
+          if [ ${SHOULD_RELEASE} == true ]; then
+            ADAPTED_VERSION=${{ steps.get-version.outputs.version-without-v }}
+          else
+            ADAPTED_VERSION=0.0.0
+          fi
+          echo "::set-output name=should-release::${SHOULD_RELEASE}"
+          echo "::set-output name=is-prerelease::${PRERELEASE}"
+          echo "::set-output name=version::${ADAPTED_VERSION}"
+          
+  build_and_test:
+    name: Build and Test
+    runs-on: ubuntu-20.04
+    needs: [release-checks]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup .NET Core SDK v${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Cache nuget packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c ${{ env.BUILD_CONFIGURATION }}
+      - name: Run unit tests
+        run: dotnet test --no-build -c ${{ env.BUILD_CONFIGURATION }}
+      - name: Create Nuget packages for release
+        run: |
+          for PROJECT_DIR in ${{ env.PROJECT_DIRS }}
+          do
+            dotnet pack ${PROJECT_DIR} --no-build -o ${{ env.OUTPUT_DIR }} -c ${{ env.BUILD_CONFIGURATION }} -p:Version=${{ needs.release-checks.outputs.version }}
+          done
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: nuget-package
+          path: ${{ env.OUTPUT_DIR }}
+  release:
+    if: ${{ needs.release-checks.outputs.should-release }}
+    name: Release
+    environment: release
+    concurrency: release
+    needs: [release-checks, build_and_test]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # All history
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: nuget-package
+          path: ${{ env.OUTPUT_DIR }}
+      - name: GitHub Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: ${{ needs.release-checks.outputs.is-prerelease }}
+          files: |
+            LICENSE
+            ${{ env.OUTPUT_DIR }}/*.nupkg
+          title: ${{ env.RELEASE_PREFIX }} ${{ needs.release-checks.outputs.version }}
+          draft: false
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: NuGet Release
+        run: dotnet nuget push ${{ env.OUTPUT_DIR }}/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_URL }}
+
