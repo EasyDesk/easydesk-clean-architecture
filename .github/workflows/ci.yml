@@ -38,7 +38,7 @@ jobs:
         run: |
           SHOULD_RELEASE=${{ startsWith(github.ref, 'refs/tags/v') && steps.get-version.outputs.is-semver }}
           PRERELEASE=${{ steps.get-version.outputs.prerelease != '' || startsWith(steps.get-version.outputs.version-without-v, '0.') }}
-          if [ ${SHOULD_RELEASE} == true ]; then
+          if [ "${SHOULD_RELEASE}" == "true" ]; then
             ADAPTED_VERSION=${{ steps.get-version.outputs.version-without-v }}
           else
             ADAPTED_VERSION=0.0.0
@@ -83,7 +83,7 @@ jobs:
           name: nuget-package
           path: ${{ env.OUTPUT_DIR }}
   release:
-    if: ${{ needs.release-checks.outputs.should-release }}
+    if: ${{ needs.release-checks.outputs.should-release == 'true' }}
     name: Release
     environment: release
     concurrency: release
