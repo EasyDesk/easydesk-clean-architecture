@@ -3,11 +3,11 @@ name: Continuous Integration
 env:
   BUILD_CONFIGURATION: Release
   PROJECT_DIRS: |
-    EasyDesk.CleanArchitecture.Domain
-    EasyDesk.CleanArchitecture.Application
-    EasyDesk.CleanArchitecture.Infrastructure
-    EasyDesk.CleanArchitecture.Dal.EfCore
-    EasyDesk.CleanArchitecture.Web
+    EasyDesk.CleanArchitecture.Domain \
+    EasyDesk.CleanArchitecture.Application \
+    EasyDesk.CleanArchitecture.Infrastructure \
+    EasyDesk.CleanArchitecture.Dal.EfCore \
+    EasyDesk.CleanArchitecture.Web \
     EasyDesk.CleanArchitecture.Testing
   OUTPUT_DIR: publish
   RELEASE_PREFIX: EasyDesk Clean Architecture
