@@ -80,7 +80,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: nuget-package
+          name: nuget-packages
           path: ${{ env.OUTPUT_DIR }}
   release:
     if: ${{ needs.release-checks.outputs.should-release == 'true' }}
@@ -97,7 +97,7 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: nuget-package
+          name: nuget-packages
           path: ${{ env.OUTPUT_DIR }}
       - name: GitHub Release
         uses: marvinpinto/action-automatic-releases@latest
