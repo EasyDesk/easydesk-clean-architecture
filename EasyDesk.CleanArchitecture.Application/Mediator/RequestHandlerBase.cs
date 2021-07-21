@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Application.UserInfo;
 using MediatR;
@@ -20,7 +21,10 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator
             return await Handle(context.Request);
         }
 
-        protected virtual bool IsAuthorized(TRequest request, IUserInfo userInfo) => true;
+        private bool IsAuthorized(TRequest request, IUserInfo userInfo) =>
+            AuthorizationPolicies.Create(policy => AuthorizationPolicy(policy, request))(userInfo);
+
+        protected virtual void AuthorizationPolicy(AuthorizationPolicyBuilder policy, TRequest request) { }
 
         protected abstract Task<Response<TResponse>> Handle(TRequest request);
     }

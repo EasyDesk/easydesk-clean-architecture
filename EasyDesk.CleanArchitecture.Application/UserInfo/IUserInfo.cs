@@ -11,7 +11,5 @@ namespace EasyDesk.CleanArchitecture.Application.UserInfo
         Guid UserId { get; }
 
         IEnumerable<Role> Roles { get; }
-
-        bool HasRole(Role role);
     }
 }

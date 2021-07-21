@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Application.UserInfo;
@@ -22,39 +23,41 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
 
         private class Handler : RequestHandlerBase<Request, int>
         {
-            private readonly Func<Request, Response<int>> _result;
+            private readonly Func<Request, Response<int>> _resultProvider;
+            private readonly Action<AuthorizationPolicyBuilder> _policyConfig;
 
-            public Handler(Func<Request, Response<int>> result)
+            public Handler(Func<Request, Response<int>> resultProvider, Action<AuthorizationPolicyBuilder> policyConfig)
             {
-                _result = result;
+                _resultProvider = resultProvider;
+                _policyConfig = policyConfig;
             }
 
-            protected override Task<Response<int>> Handle(Request request) => Task.FromResult(_result(request));
+            protected override Task<Response<int>> Handle(Request request) => Task.FromResult(_resultProvider(request));
 
-            protected override bool IsAuthorized(Request request, IUserInfo userInfo) => userInfo.HasRole(_role);
+            protected override void AuthorizationPolicy(AuthorizationPolicyBuilder policy, Request request) => _policyConfig(policy);
         }
 
         private readonly Handler _sut;
         private readonly Request _request = new();
-        private readonly IUserInfo _userInfo;
         private readonly Func<Request, Response<int>> _resultProvider;
+        private readonly Action<AuthorizationPolicyBuilder> _policyConfig;
 
         public RequestHandlerBaseTests()
         {
-            _userInfo = Substitute.For<IUserInfo>();
-
             _resultProvider = Substitute.For<Func<Request, Response<int>>>();
             _resultProvider(_request).Returns(10);
 
-            _sut = new(_resultProvider);
+            _policyConfig = Substitute.For<Action<AuthorizationPolicyBuilder>>();
+
+            _sut = new(_resultProvider, _policyConfig);
         }
 
         [Fact]
         public async Task Handle_ShouldReturnForbidden_IfRequestingUserIsNotAuthorized()
         {
-            _userInfo.HasRole(_role).Returns(false);
-
-            var result = await _sut.Handle(new(_request, _userInfo), default);
+            _policyConfig(Arg.Do<AuthorizationPolicyBuilder>(policy => policy.Fail()));
+            
+            var result = await _sut.Handle(new(_request, Substitute.For<IUserInfo>()), default);
 
             result.ShouldBe(Errors.Forbidden());
             _resultProvider.DidNotReceiveWithAnyArgs()(default);
@@ -66,9 +69,8 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
             Response<int> expected)
         {
             _resultProvider(_request).Returns(expected);
-            _userInfo.HasRole(_role).Returns(true);
 
-            var result = await _sut.Handle(new(_request, _userInfo), default);
+            var result = await _sut.Handle(new(_request, Substitute.For<IUserInfo>()), default);
 
             result.ShouldBe(expected);
             _resultProvider.Received(1)(_request);

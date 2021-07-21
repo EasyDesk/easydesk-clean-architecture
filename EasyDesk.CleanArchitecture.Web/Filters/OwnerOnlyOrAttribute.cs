@@ -38,7 +38,7 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
         {
             var userInfo = context.HttpContext.RequestServices.GetRequiredService<IUserInfo>();
 
-            if (_authorizedRoles.Any(userInfo.HasRole))
+            if (_authorizedRoles.Intersect(userInfo.Roles).Any())
             {
                 return true;
             }
