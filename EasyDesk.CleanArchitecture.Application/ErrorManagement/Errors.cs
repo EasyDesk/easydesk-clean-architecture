@@ -1,5 +1,5 @@
-using EasyDesk.Tools.Collections;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement
 
         public static Error Internal(Exception ex) => new InternalError(ex);
 
-        public static Error Forbidden(string message) => new ForbiddenError(message);
+        public static Error Forbidden(string message = null) => new ForbiddenError(message ?? "Not authorized");
 
         public static Error NotFound(Type entityType) => new NotFoundError(entityType);
 

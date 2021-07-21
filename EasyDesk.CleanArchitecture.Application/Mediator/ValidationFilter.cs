@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
-using EasyDesk.Tools.Results;
 using FluentValidation;
 using MediatR;
 using System;
@@ -57,7 +56,7 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator
             var responseType = typeof(TResponse);
             var openResponseType = responseType.GetGenericTypeDefinition();
 
-            if (!typeof(ResultBase<,>).Equals(openResponseType))
+            if (!typeof(Response<>).Equals(openResponseType))
             {
                 return await next();
             }
