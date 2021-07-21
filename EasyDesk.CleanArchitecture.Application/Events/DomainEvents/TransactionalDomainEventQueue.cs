@@ -41,7 +41,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents
         {
             while (_eventQueue.TryDequeue(out var nextEvent))
             {
-                var result = await _mediator.PublishDomainEvent(nextEvent);
+                var result = await _mediator.PublishEvent(nextEvent);
                 if (result.IsFailure)
                 {
                     return result;

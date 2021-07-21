@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.UserInfo
     {
         public static IServiceCollection AddTokenInfoRetriever(this IServiceCollection services)
         {
-            return services.AddScoped<IUserInfoRetriever, TokenInfoRetriever>();
+            return services.AddScoped<IUserInfo, TokenInfoRetriever>();
         }
     }
 }

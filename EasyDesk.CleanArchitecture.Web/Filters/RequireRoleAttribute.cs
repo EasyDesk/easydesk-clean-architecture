@@ -20,7 +20,7 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var userInfoRetriever = context.HttpContext.RequestServices.GetRequiredService<IUserInfoRetriever>();
+            var userInfoRetriever = context.HttpContext.RequestServices.GetRequiredService<IUserInfo>();
 
             var authorized = userInfoRetriever.Roles.Intersect(_roles).Any();
 

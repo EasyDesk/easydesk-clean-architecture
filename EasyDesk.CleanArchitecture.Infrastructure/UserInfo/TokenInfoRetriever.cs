@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.UserInfo
 {
-    public class TokenInfoRetriever : IUserInfoRetriever
+    public class TokenInfoRetriever : IUserInfo
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 

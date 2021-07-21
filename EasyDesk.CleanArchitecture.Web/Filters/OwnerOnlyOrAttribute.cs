@@ -36,7 +36,7 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
 
         private bool IsAuthorized(ActionExecutingContext context)
         {
-            var userInfo = context.HttpContext.RequestServices.GetRequiredService<IUserInfoRetriever>();
+            var userInfo = context.HttpContext.RequestServices.GetRequiredService<IUserInfo>();
 
             if (_authorizedRoles.Any(userInfo.HasRole))
             {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace EasyDesk.CleanArchitecture.Application.UserInfo
 {
-    public interface IUserInfoRetriever
+    public interface IUserInfo
     {
         bool IsLoggedIn { get; }
 
