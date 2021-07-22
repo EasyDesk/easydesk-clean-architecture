@@ -25,8 +25,8 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.UserInfo
 
         public Guid UserId => Guid.Parse(User.FindFirstValue(JwtClaimNames.Subject));
 
-        public IEnumerable<Role> Roles => User.FindAll(JwtClaimNames.Role).Select(c => Role.From(c.Value));
+        public IEnumerable<RoleId> Roles => User.FindAll(JwtClaimNames.Role).Select(c => RoleId.From(c.Value));
 
-        public bool HasRole(Role role) => Roles.Contains(role);
+        public bool HasRole(RoleId role) => Roles.Contains(role);
     }
 }

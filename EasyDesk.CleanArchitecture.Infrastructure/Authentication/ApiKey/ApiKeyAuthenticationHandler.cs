@@ -21,7 +21,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Authentication.ApiKey
 
         private void AddClaim(string claimName, string value) => _claims.Add(new Claim(claimName, value));
 
-        public void AddRole(Role role) => AddClaim(JwtClaimNames.Role, role.ToString());
+        public void AddRole(RoleId role) => AddClaim(JwtClaimNames.Role, role.ToString());
 
         public void AddApiKeyName(string subject) => AddClaim(ApiKeyAuthenticationOptions.ApiKeyClaimName, subject);
     }

@@ -15,9 +15,9 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
     {
         private const string _defaultParamName = "userId";
 
-        private readonly IEnumerable<Role> _authorizedRoles;
+        private readonly IEnumerable<RoleId> _authorizedRoles;
 
-        public OwnerOnlyOrAttribute(params Role[] authorizedRoles)
+        public OwnerOnlyOrAttribute(params RoleId[] authorizedRoles)
         {
             _authorizedRoles = authorizedRoles;
         }

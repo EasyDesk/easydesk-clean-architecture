@@ -17,7 +17,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
 {
     public class RequestHandlerBaseTests
     {
-        private static readonly Role _role = Role.From("Role");
+        private static readonly RoleId _role = RoleId.From("Role");
 
         private record Request : RequestBase<int>;
 

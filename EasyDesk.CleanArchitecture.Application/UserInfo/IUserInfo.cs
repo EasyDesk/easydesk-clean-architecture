@@ -10,6 +10,6 @@ namespace EasyDesk.CleanArchitecture.Application.UserInfo
 
         Guid UserId { get; }
 
-        IEnumerable<Role> Roles { get; }
+        IEnumerable<RoleId> Roles { get; }
     }
 }

@@ -26,7 +26,7 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization
 
         public AuthorizationPolicyBuilder RequireLogin() => Require(user => user.IsLoggedIn);
 
-        public AuthorizationPolicyBuilder RequireRole(params Role[] roles) => Require(user => user.IsLoggedIn && user.Roles.Intersect(roles).Any());
+        public AuthorizationPolicyBuilder RequireRole(params RoleId[] roles) => Require(user => user.IsLoggedIn && user.Roles.Intersect(roles).Any());
 
         public AuthorizationPolicyBuilder RequireUserId(params Guid[] userIds) => Require(user => user.IsLoggedIn && userIds.Contains(user.UserId));
 

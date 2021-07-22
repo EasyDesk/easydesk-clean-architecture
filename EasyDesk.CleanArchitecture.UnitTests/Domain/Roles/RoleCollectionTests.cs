@@ -7,15 +7,15 @@ namespace EasyDesk.Common.UnitTests.Domain.Roles
 {
     public class RoleCollectionTests
     {
-        private readonly Role _adminRole = Role.From("Admin");
-        private readonly Role _supervisorRole = Role.From("Supervisor");
-        private readonly Role _userRole = Role.From("User");
+        private readonly BasicRole _adminRole = BasicRole.From("Admin");
+        private readonly BasicRole _supervisorRole = BasicRole.From("Supervisor");
+        private readonly BasicRole _userRole = BasicRole.From("User");
 
-        private readonly RoleCollection _sut;
+        private readonly RoleCollection<BasicRole> _sut;
 
         public RoleCollectionTests()
         {
-            _sut = RoleCollection.Create(
+            _sut = RoleCollection<BasicRole>.Create(
             _userRole,
             _supervisorRole);
         }
@@ -25,7 +25,7 @@ namespace EasyDesk.Common.UnitTests.Domain.Roles
         {
             var result = _sut.Add(_adminRole);
 
-            result.ShouldBe(RoleCollection.Create(
+            result.ShouldBe(RoleCollection<BasicRole>.Create(
                 _userRole,
                 _supervisorRole,
                 _adminRole));
@@ -44,7 +44,7 @@ namespace EasyDesk.Common.UnitTests.Domain.Roles
         {
             var result = _sut.Remove(_supervisorRole);
 
-            result.ShouldBe(RoleCollection.Create(_userRole));
+            result.ShouldBe(RoleCollection<BasicRole>.Create(_userRole));
         }
 
         [Fact]

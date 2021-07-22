@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using EasyDesk.Tools;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -6,28 +7,31 @@ using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Domain.Roles
 {
-    public record RoleCollection : IEnumerable<Role>
+    public record RoleCollection<T> : IEnumerable<T>
+        where T : IRole
     {
-        private readonly IImmutableSet<Role> _roles;
+        private static readonly IEqualityComparer<T> _roleComparer = EqualityComparers.FromProperties<T>(r => r.Id);
 
-        public RoleCollection(IImmutableSet<Role> roles)
+        private readonly IImmutableSet<T> _roles;
+
+        private RoleCollection(IImmutableSet<T> roles)
         {
             _roles = roles;
         }
 
-        public static RoleCollection Empty { get; } = Create(Enumerable.Empty<Role>());
+        public static RoleCollection<T> Empty { get; } = Create(Enumerable.Empty<T>());
 
-        public static RoleCollection Create(IEnumerable<Role> roles) => new(Set(roles));
+        public static RoleCollection<T> Create(IEnumerable<T> roles) => new(Set(roles, _roleComparer));
 
-        public static RoleCollection Create(params Role[] roles) => Create(roles.AsEnumerable());
+        public static RoleCollection<T> Create(params T[] roles) => Create(roles.AsEnumerable());
 
-        public RoleCollection Add(Role role) => new(_roles.Add(role));
+        public RoleCollection<T> Add(T role) => new(_roles.Add(role));
 
-        public RoleCollection Remove(Role role) => new(_roles.Remove(role));
+        public RoleCollection<T> Remove(T role) => new(_roles.Remove(role));
 
-        public bool Contains(Role role) => _roles.Contains(role);
+        public bool Contains(T role) => _roles.Contains(role);
 
-        public IEnumerator<Role> GetEnumerator() => _roles.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => _roles.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

@@ -4,11 +4,11 @@ using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Domain.Roles
 {
-    public record Role : ValueWrapper<string>
+    public record RoleId : ValueWrapper<string>
     {
         public const string Pattern = @"^[A-Za-z0-9_]+$";
 
-        private Role(string value) : base(value)
+        private RoleId(string value) : base(value)
         {
         }
 
@@ -22,6 +22,6 @@ namespace EasyDesk.CleanArchitecture.Domain.Roles
 
         public override string ToString() => Value;
 
-        public static Role From(string name) => new(name);
+        public static RoleId From(string id) => new(id);
     }
 }

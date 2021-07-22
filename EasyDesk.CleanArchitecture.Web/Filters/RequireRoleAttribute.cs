@@ -11,9 +11,9 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class RequireRoleAttribute : Attribute, IAuthorizationFilter
     {
-        private readonly Role[] _roles;
+        private readonly RoleId[] _roles;
 
-        public RequireRoleAttribute(params Role[] roles)
+        public RequireRoleAttribute(params RoleId[] roles)
         {
             _roles = roles;
         }
