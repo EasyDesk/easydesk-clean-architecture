@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.UserInfo;
-using EasyDesk.CleanArchitecture.Domain.Model.Roles;
+using EasyDesk.CleanArchitecture.Domain.Roles;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;

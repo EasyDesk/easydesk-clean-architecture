@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Model.Roles;
+﻿using EasyDesk.CleanArchitecture.Domain.Roles;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;

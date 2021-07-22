@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.UserInfo;
-using EasyDesk.CleanArchitecture.Domain.Model.Roles;
+using EasyDesk.CleanArchitecture.Domain.Roles;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Http;
