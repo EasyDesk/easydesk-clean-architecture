@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.Testing.Utils;
+using EasyDesk.CleanArchitecture.Testing;
 using NSubstitute;
 using Shouldly;
 using System;

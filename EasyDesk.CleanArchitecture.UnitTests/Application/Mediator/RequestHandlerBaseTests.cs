@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Application.UserInfo;
 using EasyDesk.CleanArchitecture.Domain.Roles;
-using EasyDesk.Testing.Utils;
+using EasyDesk.CleanArchitecture.Testing;
 using NSubstitute;
 using Shouldly;
 using System;

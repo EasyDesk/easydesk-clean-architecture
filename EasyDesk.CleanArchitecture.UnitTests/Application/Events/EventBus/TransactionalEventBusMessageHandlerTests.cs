@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus;
-using EasyDesk.Testing.Utils;
+using EasyDesk.CleanArchitecture.Testing;
 using NSubstitute;
 using Shouldly;
 using System.Threading.Tasks;

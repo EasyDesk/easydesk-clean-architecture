@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.Tools
+﻿namespace EasyDesk.CleanArchitecture.Application.Data
 {
     public static class DataConstraints
     {

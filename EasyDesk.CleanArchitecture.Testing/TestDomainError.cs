@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 
-namespace EasyDesk.Testing.Utils
+namespace EasyDesk.CleanArchitecture.Testing
 {
     public record TestDomainError(string Value) : DomainError
     {

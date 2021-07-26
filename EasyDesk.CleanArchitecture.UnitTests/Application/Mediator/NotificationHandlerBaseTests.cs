@@ -1,13 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Tools;
-using EasyDesk.Testing.Utils;
 using NSubstitute;
 using Shouldly;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
+using EasyDesk.CleanArchitecture.Testing;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
 {

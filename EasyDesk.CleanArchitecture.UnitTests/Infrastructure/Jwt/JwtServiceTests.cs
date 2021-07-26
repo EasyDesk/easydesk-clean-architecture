@@ -2,7 +2,6 @@
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
-using EasyDesk.Testing.Utils;
 using Shouldly;
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Xunit;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
+using EasyDesk.CleanArchitecture.Testing;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Jwt
 {

@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Application.UserInfo;
 using NSubstitute;
 using System.Threading.Tasks;
 
-namespace EasyDesk.Testing.Utils.Requests
+namespace EasyDesk.CleanArchitecture.Testing.Requests
 {
     public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse>
         where THandler : RequestHandlerBase<TRequest, TResponse>

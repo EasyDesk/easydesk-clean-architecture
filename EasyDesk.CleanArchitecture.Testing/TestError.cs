@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
-namespace EasyDesk.Testing.Utils
+namespace EasyDesk.CleanArchitecture.Testing
 {
     public record TestError(string Code) : Error(ErrorCode: Code, Message: "MESSAGE")
     {

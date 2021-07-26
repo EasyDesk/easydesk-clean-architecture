@@ -2,7 +2,7 @@
 using EasyDesk.Tools;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 
-namespace EasyDesk.Testing.Utils
+namespace EasyDesk.CleanArchitecture.Testing
 {
     public class SettableTimestampProvider : ITimestampProvider
     {

@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.Testing.Utils;
+using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools.Observables;
 using MediatR;
 using NSubstitute;

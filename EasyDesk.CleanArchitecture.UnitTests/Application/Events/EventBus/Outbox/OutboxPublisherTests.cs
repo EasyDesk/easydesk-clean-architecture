@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
+using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Testing;
-using EasyDesk.Testing.Utils;
 using EasyDesk.Tools.Observables;
 using NSubstitute;
 using System.Linq;

@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.Testing.Utils;
+using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Observables;
 using NSubstitute;

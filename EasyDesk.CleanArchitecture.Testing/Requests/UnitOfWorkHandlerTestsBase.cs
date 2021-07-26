@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Infrastructure.UnitOfWork;
 
-namespace EasyDesk.Testing.Utils.Requests
+namespace EasyDesk.CleanArchitecture.Testing.Requests
 {
     public abstract class UnitOfWorkHandlerTestsBase<THandler, TRequest, TResponse> : RequestHandlerTestsBase<THandler, TRequest, TResponse>
         where THandler : UnitOfWorkHandler<TRequest, TResponse>

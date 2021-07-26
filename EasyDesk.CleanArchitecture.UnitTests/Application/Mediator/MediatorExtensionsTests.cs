@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Application.UserInfo;
-using EasyDesk.Testing.Utils;
+using EasyDesk.CleanArchitecture.Testing;
 using MediatR;
 using NSubstitute;
 using Shouldly;

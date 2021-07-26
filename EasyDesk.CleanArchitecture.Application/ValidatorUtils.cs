@@ -1,4 +1,4 @@
-﻿using EasyDesk.Tools;
+﻿using EasyDesk.CleanArchitecture.Application.Data;
 using FluentValidation;
 using System;
 using System.Linq;
