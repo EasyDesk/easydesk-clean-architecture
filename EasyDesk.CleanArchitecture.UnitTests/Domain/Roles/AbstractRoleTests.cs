@@ -10,10 +10,11 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Roles
     {
         private const string _primaryRole = "PrimaryRole";
         private const string _secondaryRole = "SecondaryRole";
+        private const string _incorrectRole = "IncorrectRole";
 
         private class TestRole : AbstractRole<TestRole>
         {
-            public TestRole(RoleId roleId) : base(roleId)
+            private TestRole(RoleId roleId) : base(roleId)
             {
 
             }
@@ -44,7 +45,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Roles
         [Fact]
         public void From_ShouldFail_IfTheRoleIdDoesNotExist()
         {
-            Should.Throw<ArgumentException>(() => TestRole.From("IncorrectRole"));
+            Should.Throw<ArgumentException>(() => TestRole.From(_incorrectRole));
         }
 
         [Fact]
@@ -56,7 +57,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Roles
         [Fact]
         public void FromRoleId_ShouldFail_IfTheRoleIdDoesNotExist()
         {
-            Should.Throw<ArgumentException>(() => TestRole.From(RoleId.From("IncorrectRole")));
+            Should.Throw<ArgumentException>(() => TestRole.From(RoleId.From(_incorrectRole)));
         }
     }
 }
