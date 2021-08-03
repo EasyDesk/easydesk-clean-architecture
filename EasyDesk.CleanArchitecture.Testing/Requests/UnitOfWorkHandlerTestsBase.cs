@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Infrastructure.UnitOfWork;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Testing.Requests
 {
@@ -8,10 +9,11 @@ namespace EasyDesk.CleanArchitecture.Testing.Requests
         where THandler : UnitOfWorkHandler<TRequest, TResponse>
         where TRequest : CommandBase<TResponse>
     {
-        private readonly IUnitOfWork _unitOfWork = new NoUnitOfWork();
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            base.ConfigureServices(services);
 
-        protected override THandler CreateHandler() => CreateHandler(_unitOfWork);
-
-        protected abstract THandler CreateHandler(IUnitOfWork unitOfWork);
+            services.AddSingleton<IUnitOfWork, NoUnitOfWork>();
+        }
     }
 }

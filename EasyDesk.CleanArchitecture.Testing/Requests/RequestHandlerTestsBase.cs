@@ -1,12 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Application.UserInfo;
+using EasyDesk.Testing.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Testing.Requests
 {
-    public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse>
+    public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse> : DependencyInjectionTestBase
         where THandler : RequestHandlerBase<TRequest, TResponse>
         where TRequest : RequestBase<TResponse>
     {
@@ -22,7 +24,12 @@ namespace EasyDesk.CleanArchitecture.Testing.Requests
 
         protected IUserInfo UserInfo { get; }
 
-        protected abstract THandler CreateHandler();
+        protected override void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<THandler>();
+        }
+
+        protected THandler CreateHandler() => Service<THandler>();
 
         protected Task<Response<TResponse>> Send(TRequest request) => CreateHandler().Handle(new RequestContext<TRequest, TResponse>(request, UserInfo), default);
     }
