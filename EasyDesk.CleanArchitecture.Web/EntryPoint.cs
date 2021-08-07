@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.Web
 {
     public static class EntryPoint
     {
-        public static IHostBuilder CreateHostBuilder<T>(string[] args)
+        public static IHostBuilder CreateHostBuilder<T>(string[] args, string envPrefix)
             where T : class
         {
             return Host.CreateDefaultBuilder(args)
@@ -27,7 +27,7 @@ namespace EasyDesk.CleanArchitecture.Web
 
                     config.AddEnvironmentVariables();
 
-                    config.AddEnvironmentVariables("EASYDESK_");
+                    config.AddEnvironmentVariables(envPrefix);
 
                     if (env.IsDevelopment())
                     {
