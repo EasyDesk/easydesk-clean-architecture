@@ -31,7 +31,10 @@ namespace EasyDesk.CleanArchitecture.Web.Versioning
             }
         }
 
-        public static IEnumerable<ApiVersion> GetSupportedVersions(params Type[] controllersAssemblyTypes)
+        public static IEnumerable<ApiVersion> GetSupportedVersions(params Type[] controllersAssemblyTypes) =>
+            GetSupportedVersions(controllersAssemblyTypes.AsEnumerable());
+
+        public static IEnumerable<ApiVersion> GetSupportedVersions(IEnumerable<Type> controllersAssemblyTypes)
         {
             return ReflectionUtils.InstantiableSubtypesOf<AbstractController>(controllersAssemblyTypes)
                 .SelectMany(t => t.GetControllerVersion())

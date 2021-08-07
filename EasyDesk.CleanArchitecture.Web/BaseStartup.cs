@@ -8,22 +8,45 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.Web
 {
-    public static class BaseStartup
+    public abstract class BaseStartup
     {
-        public static void ConfigureServices(IServiceCollection services, IConfiguration config, IWebHostEnvironment env, params Type[] assemblyTypes)
+        public BaseStartup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            var types = assemblyTypes.Append(typeof(IServiceInstaller));
-            ReflectionUtils.InstancesOfSubtypesOf<IServiceInstaller>(types.ToArray())
-                .ForEach(installer => installer.InstallServices(services, config, env));
+            Configuration = configuration;
+            Environment = environment;
         }
 
-        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, string serviceName, params Type[] controllersAssemblyTypes)
+        protected IConfiguration Configuration { get; }
+
+        protected IWebHostEnvironment Environment { get; }
+
+        protected abstract string ServiceName { get; }
+
+        protected virtual IEnumerable<Type> ServiceInstallersAssemblyMarkers => Items(GetType(), typeof(IServiceInstaller));
+
+        protected virtual IEnumerable<Type> ControllersAssemblyMarkers => Items(GetType());
+
+        protected virtual bool UseAuthentication => true;
+
+        protected virtual bool UseAuthorization => true;
+
+        protected virtual bool UseSwagger => true;
+
+        public virtual void ConfigureServices(IServiceCollection services)
         {
-            if (env.IsDevelopment())
+            ReflectionUtils.InstancesOfSubtypesOf<IServiceInstaller>(ServiceInstallersAssemblyMarkers)
+                .ForEach(installer => installer.InstallServices(services, Configuration, Environment));
+        }
+
+        public virtual void Configure(IApplicationBuilder app)
+        {
+            if (Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -34,23 +57,32 @@ namespace EasyDesk.CleanArchitecture.Web
 
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
+            if (UseSwagger)
             {
-                VersioningUtils.GetSupportedVersions(controllersAssemblyTypes)
-                    .Select(version => version.ToDisplayString())
-                    .ForEach(version =>
-                    {
-                        c.SwaggerEndpoint($"/swagger/{version}/swagger.json", $"{serviceName} {version}");
-                    });
-            });
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    VersioningUtils.GetSupportedVersions(ControllersAssemblyMarkers)
+                        .Select(version => version.ToDisplayString())
+                        .ForEach(version =>
+                        {
+                            c.SwaggerEndpoint($"/swagger/{version}/swagger.json", version);
+                        });
+                });
+            }
 
             app.UseRouting();
 
-            app.UseAuthentication();
+            if (UseAuthentication)
+            {
+                app.UseAuthentication();
+            }
 
-            app.UseAuthorization();
-
+            if (UseAuthorization)
+            {
+                app.UseAuthorization();
+            }
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
