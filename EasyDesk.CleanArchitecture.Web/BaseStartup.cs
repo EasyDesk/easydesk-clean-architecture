@@ -26,8 +26,6 @@ namespace EasyDesk.CleanArchitecture.Web
 
         protected IWebHostEnvironment Environment { get; }
 
-        protected abstract string ServiceName { get; }
-
         protected virtual IEnumerable<Type> ServiceInstallersAssemblyMarkers => Items(GetType(), typeof(IServiceInstaller));
 
         protected virtual IEnumerable<Type> ControllersAssemblyMarkers => Items(GetType());
