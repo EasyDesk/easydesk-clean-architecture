@@ -30,11 +30,11 @@ namespace EasyDesk.CleanArchitecture.Web
 
         protected virtual IEnumerable<Type> ControllersAssemblyMarkers => Items(GetType());
 
-        protected virtual bool UseAuthentication => true;
+        protected abstract bool UseAuthentication { get; }
 
-        protected virtual bool UseAuthorization => true;
+        protected abstract bool UseAuthorization{ get; }
 
-        protected virtual bool UseSwagger => true;
+        protected abstract bool UseSwagger { get; }
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
