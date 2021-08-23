@@ -59,7 +59,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
             _services.AddHostedService<PrimaryOutboxBackgroundService>();
             _services.AddHostedService<FallbackOutboxBackgroundService>();
             return AddPublisher(provider => new OutboxPublisher(
-                provider.GetRequiredService<IUnitOfWork>(),
+                provider.GetRequiredService<ITransactionManager>(),
                 provider.GetRequiredService<IOutbox>(),
                 provider.GetRequiredService<IOutboxChannel>()));
         }
@@ -125,7 +125,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
 
             var transactional = new TransactionalEventBusMessageHandler(
                 decorated,
-                provider.GetRequiredService<IUnitOfWork>());
+                provider.GetRequiredService<ITransactionManager>());
 
             var errorSafe = new ErrorSafeEventBusMessageHandler(
                 transactional,

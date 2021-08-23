@@ -11,13 +11,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Mediator
+namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors
 {
-    public class ValidationFilter<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
+    public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
+        where TRequest : RequestBase<TResponse>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public ValidationFilter(IEnumerable<IValidator<TRequest>> validators)
+        public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
         {
             _validators = validators;
         }
@@ -40,33 +41,19 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator
         }
     }
 
-    // This is required since ASP.NET core DI container doesn't fully support open generics,
-    // therefore the service above would not be correctly detected by MediatR.
-    public class ValidationFilterWrapper<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class ValidationBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public ValidationFilterWrapper(IEnumerable<IValidator<TRequest>> validators)
+        public ValidationBehaviorWrapper(IEnumerable<IValidator<TRequest>> validators)
         {
             _validators = validators;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        protected override IPipelineBehavior<TRequest, TResponse> CreateBehavior(Type requestType, Type responseType)
         {
-            var responseType = typeof(TResponse);
-            var openResponseType = responseType.GetGenericTypeDefinition();
-
-            if (!typeof(Response<>).Equals(openResponseType))
-            {
-                return await next();
-            }
-
-            var wrappedType = responseType.GetGenericArguments().First();
-            var behaviorType = typeof(ValidationFilter<,>).MakeGenericType(typeof(TRequest), wrappedType);
-            var behaviorRaw = Activator.CreateInstance(behaviorType, _validators);
-            var behavior = behaviorRaw as IPipelineBehavior<TRequest, TResponse>;
-
-            return await behavior.Handle(request, cancellationToken, next);
+            var behaviorType = typeof(ValidationBehavior<,>).MakeGenericType(requestType, responseType);
+            return Activator.CreateInstance(behaviorType, _validators) as IPipelineBehavior<TRequest, TResponse>;
         }
     }
 }

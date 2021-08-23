@@ -16,21 +16,21 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus.Outbo
     public class OutboxPublisherTests
     {
         private readonly OutboxPublisher _sut;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITransactionManager _transactionManager;
         private readonly IOutbox _outbox;
         private readonly IOutboxChannel _outboxChannel;
         private readonly SimpleAsyncEvent<AfterCommitContext> _afterCommit = new();
 
         public OutboxPublisherTests()
         {
-            _unitOfWork = Substitute.For<IUnitOfWork>();
-            _unitOfWork.AfterCommit.Returns(_afterCommit);
+            _transactionManager = Substitute.For<ITransactionManager>();
+            _transactionManager.AfterCommit.Returns(_afterCommit);
 
             _outbox = Substitute.For<IOutbox>();
 
             _outboxChannel = Substitute.For<IOutboxChannel>();
 
-            _sut = new(_unitOfWork, _outbox, _outboxChannel);
+            _sut = new(_transactionManager, _outbox, _outboxChannel);
         }
 
         [Fact]

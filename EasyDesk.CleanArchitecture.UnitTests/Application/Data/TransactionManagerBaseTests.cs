@@ -14,18 +14,16 @@ using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data
 {
-    public class UnitOfWorkBaseTests
+    public class TransactionManagerBaseTests
     {
         public interface ITestTransaction : IDisposable
         {
             void Begin();
 
-            Response<Nothing> Save();
-
             Response<Nothing> Commit();
         }
 
-        public class TestUnitOfWork : UnitOfWorkBase<ITestTransaction>
+        public class TestUnitOfWork : TransactionManagerBase<ITestTransaction>
         {
             private readonly ITestTransaction _testTransaction;
 
@@ -42,18 +40,14 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data
 
             protected override Task<Response<Nothing>> CommitTransaction(ITestTransaction transaction) =>
                 Task.FromResult(transaction.Commit());
-
-            protected override Task<Response<Nothing>> SaveWithinTransaction(ITestTransaction transaction) =>
-                Task.FromResult(transaction.Save());
         }
 
         private readonly TestUnitOfWork _sut;
         private readonly ITestTransaction _transaction;
 
-        public UnitOfWorkBaseTests()
+        public TransactionManagerBaseTests()
         {
             _transaction = Substitute.For<ITestTransaction>();
-            _transaction.Save().Returns(Ok);
             _transaction.Commit().Returns(Ok);
             _sut = new(_transaction);
         }
@@ -72,21 +66,6 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data
             await _sut.Begin();
 
             await Should.ThrowAsync<InvalidOperationException>(() => _sut.Begin());
-        }
-
-        [Fact]
-        public async Task Save_ShouldSaveOnThePhysicalTransaction()
-        {
-            await _sut.Begin();
-            await _sut.Save();
-
-            _transaction.Received(1).Save();
-        }
-
-        [Fact]
-        public async Task Save_ShouldFail_IfUnitOfWorkWasNotStarted()
-        {
-            await Should.ThrowAsync<InvalidOperationException>(() => _sut.Save());
         }
 
         [Fact]
@@ -150,7 +129,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data
         }
 
         [Fact]
-        public async Task Commit_ShouldFail_IfUnitOfWorkWasNotStarted()
+        public async Task Commit_ShouldFail_IfTransactionWasNotStarted()
         {
             await Should.ThrowAsync<InvalidOperationException>(() => _sut.Commit());
         }

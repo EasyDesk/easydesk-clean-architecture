@@ -6,7 +6,6 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
-using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Data.SqlClient;
@@ -27,8 +26,8 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore
             Action<EfCoreDataAccessBuilder> config)
         {
             services.AddScoped(_ => new SqlConnection(connectionString));
-            services.AddScoped<EfCoreUnitOfWork>();
-            services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<EfCoreUnitOfWork>());
+            services.AddScoped<EfCoreTransactionManager>();
+            services.AddScoped<ITransactionManager>(provider => provider.GetRequiredService<EfCoreTransactionManager>());
             services.AddScoped<IDomainEventNotifier, TransactionalDomainEventQueue>();
 
             var builder = new EfCoreDataAccessBuilder(services);
@@ -78,6 +77,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore
 
         public EfCoreDataAccessBuilder AddEntities<T>() where T : EntitiesContext
         {
+            _services.AddScoped<IUnitOfWork>(provider => new EfCoreUnitOfWork(provider.GetRequiredService<T>()));
             return AddDbContext<T>(EntitiesContext.SchemaName);
         }
 

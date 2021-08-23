@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 using EasyDesk.CleanArchitecture.Web.Converters;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Filters;
@@ -75,7 +75,8 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
         {
             return services
                 .AddMediatR(assemblyTypes)
-                .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationFilterWrapper<,>));
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviorWrapper<,>))
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviorWrapper<,>));
         }
         
         public static IServiceCollection AddRequestValidators(this IServiceCollection services, params Type[] assemblyTypes)

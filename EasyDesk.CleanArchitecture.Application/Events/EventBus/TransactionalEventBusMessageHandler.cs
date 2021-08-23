@@ -6,19 +6,19 @@ namespace EasyDesk.CleanArchitecture.Application.Events.EventBus
     public class TransactionalEventBusMessageHandler : IEventBusMessageHandler
     {
         private readonly IEventBusMessageHandler _handler;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITransactionManager _transactionManager;
 
-        public TransactionalEventBusMessageHandler(IEventBusMessageHandler handler, IUnitOfWork unitOfWork)
+        public TransactionalEventBusMessageHandler(IEventBusMessageHandler handler, ITransactionManager transactionManager)
         {
             _handler = handler;
-            _unitOfWork = unitOfWork;
+            _transactionManager = transactionManager;
         }
 
         public async Task<EventBusMessageHandlerResult> Handle(EventBusMessage message)
         {
-            await _unitOfWork.Begin();
+            await _transactionManager.Begin();
             var handlerResult = await _handler.Handle(message);
-            var commitResult = await _unitOfWork.Commit();
+            var commitResult = await _transactionManager.Commit();
             return commitResult.Match(
                 success: _ => handlerResult,
                 failure: _ => EventBusMessageHandlerResult.TransientFailure);

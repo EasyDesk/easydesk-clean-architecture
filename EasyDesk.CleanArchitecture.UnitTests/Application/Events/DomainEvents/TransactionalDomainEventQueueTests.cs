@@ -22,19 +22,19 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.DomainEvents
 
         private readonly TransactionalDomainEventQueue _sut;
         private readonly SimpleAsyncEvent<BeforeCommitContext> _beforeCommit;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITransactionManager _transactionManager;
         private readonly IMediator _mediator;
 
         public TransactionalDomainEventQueueTests()
         {
             _beforeCommit = new();
 
-            _unitOfWork = Substitute.For<IUnitOfWork>();
-            _unitOfWork.BeforeCommit.Returns(_beforeCommit);
+            _transactionManager = Substitute.For<ITransactionManager>();
+            _transactionManager.BeforeCommit.Returns(_beforeCommit);
 
             _mediator = Substitute.For<IMediator>();
 
-            _sut = new(_unitOfWork, _mediator);
+            _sut = new(_transactionManager, _mediator);
         }
 
         [Fact]

@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.Tools;
 using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator
@@ -17,13 +16,10 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator
 
         protected sealed override async Task<Response<TResponse>> Handle(TRequest request)
         {
-            await _unitOfWork.Begin();
             return await HandleRequest(request)
-                .ThenRequireAsync(_ => _unitOfWork.Commit());
+                .ThenRequireAsync(_ => _unitOfWork.Save());
         }
 
         protected abstract Task<Response<TResponse>> HandleRequest(TRequest request);
-
-        protected Task<Response<Nothing>> SaveChanges() => _unitOfWork.Save();
     }
 }

@@ -9,14 +9,14 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork
+namespace EasyDesk.CleanArchitecture.Dal.EfCore
 {
-    public class EfCoreUnitOfWork : UnitOfWorkBase<IDbContextTransaction>
+    public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransaction>
     {
         private readonly DbContext _context;
         private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
 
-        public EfCoreUnitOfWork(DbContext context)
+        public EfCoreTransactionManager(DbContext context)
         {
             _context = context;
             _registeredDbContexts.Add(context);
@@ -25,29 +25,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork
         protected override async Task<IDbContextTransaction> BeginTransaction()
         {
             return await _context.Database.BeginTransactionAsync();
-        }
-
-        protected override async Task<Response<Nothing>> SaveWithinTransaction(IDbContextTransaction transaction)
-        {
-            try
-            {
-                await _context.SaveChangesAsync();
-                return Ok;
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return Errors.Generic(
-                    Errors.Codes.Internal,
-                    "A concurrency error occurred while saving changes to the database: {message}",
-                    ex.Message);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Errors.Generic(
-                    Errors.Codes.Internal,
-                    "An error occurred while saving changes to the database: {message}",
-                    ex.Message);
-            }
         }
 
         protected override async Task<Response<Nothing>> CommitTransaction(IDbContextTransaction transaction)

@@ -42,21 +42,20 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
             _resultProvider().Returns(Ok);
 
             _unitOfWork = Substitute.For<IUnitOfWork>();
-            _unitOfWork.Commit().Returns(Ok);
+            _unitOfWork.Save().Returns(Ok);
 
             _sut = new(_resultProvider, _unitOfWork);
         }
 
         [Fact]
-        public async Task Handle_ShouldWrapTheHandlerCodeInsideAUnitOfWork()
+        public async Task Handle_ShouldSaveTheUnitOfWorkAfterTheHandlerExecution()
         {
             await SendCommand();
 
             Received.InOrder(() =>
             {
-                _unitOfWork.Begin();
                 _resultProvider();
-                _unitOfWork.Commit();
+                _unitOfWork.Save();
             });
         }
 
@@ -72,20 +71,20 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
         }
 
         [Fact]
-        public async Task Handle_ShouldNotCommitTheTransaction_IfTheHandlerCodeReturnsAnError()
+        public async Task Handle_ShouldNotSaveTheUnitOfWork_IfTheHandlerCodeReturnsAnError()
         {
             _resultProvider().Returns(HandlerFailedResponse());
 
             await SendCommand();
 
-            await _unitOfWork.DidNotReceive().Commit();
+            await _unitOfWork.DidNotReceive().Save();
         }
 
         [Fact]
-        public async Task Handle_ShouldReturnAnError_IfCommitReturnsAnError()
+        public async Task Handle_ShouldReturnAnError_IfSavingReturnsAnError()
         {
-            var response = CommitFailedResponse();
-            _unitOfWork.Commit().Returns(response);
+            var response = SaveFailedResponse();
+            _unitOfWork.Save().Returns(response);
 
             var result = await SendCommand();
 
@@ -96,6 +95,6 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
 
         private static Response<Nothing> HandlerFailedResponse() => TestError.Create("HANDLER_FAILED");
 
-        private static Response<Nothing> CommitFailedResponse() => TestError.Create("COMMIT_FAILED");
+        private static Response<Nothing> SaveFailedResponse() => TestError.Create("SAVE_FAILED");
     }
 }

@@ -10,13 +10,13 @@ namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox
 {
     public class OutboxPublisher : IEventBusPublisher
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITransactionManager _transactionManager;
         private readonly IOutbox _outbox;
         private readonly IOutboxChannel _outboxChannel;
 
-        public OutboxPublisher(IUnitOfWork unitOfWork, IOutbox outbox, IOutboxChannel outboxChannel)
+        public OutboxPublisher(ITransactionManager transactionManager, IOutbox outbox, IOutboxChannel outboxChannel)
         {
-            _unitOfWork = unitOfWork;
+            _transactionManager = transactionManager;
             _outbox = outbox;
             _outboxChannel = outboxChannel;
         }
@@ -24,7 +24,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox
         public async Task Publish(IEnumerable<EventBusMessage> messages)
         {
             await _outbox.StoreMessages(messages);
-            _unitOfWork.AfterCommit.Subscribe(context => TryPublishingMessages(context, messages));
+            _transactionManager.AfterCommit.Subscribe(context => TryPublishingMessages(context, messages));
         }
 
         private void TryPublishingMessages(AfterCommitContext context, IEnumerable<EventBusMessage> messages)

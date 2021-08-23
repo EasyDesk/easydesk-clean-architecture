@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
 using EasyDesk.CleanArchitecture.Application.Utils;
-using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +16,13 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox
         public static readonly Duration MessageAgingTime = Duration.FromSeconds(30);
 
         private readonly OutboxContext _outboxContext;
-        private readonly EfCoreUnitOfWork _unitOfWork;
+        private readonly EfCoreTransactionManager _unitOfWork;
         private readonly IEventBusPublisher _eventBus;
         private readonly ITimestampProvider _timestampProvider;
 
         public EfCoreOutbox(
             OutboxContext outboxContext,
-            EfCoreUnitOfWork unitOfWork,
+            EfCoreTransactionManager unitOfWork,
             IEventBusPublisher eventBus,
             ITimestampProvider timestampProvider)
         {

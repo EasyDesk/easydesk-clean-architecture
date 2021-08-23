@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
-using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -9,9 +8,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence
     public class EfCoreIdempotenceManager : IIdempotenceManager
     {
         private readonly IdempotenceContext _idempotenceContext;
-        private readonly EfCoreUnitOfWork _unitOfWork;
+        private readonly EfCoreTransactionManager _unitOfWork;
 
-        public EfCoreIdempotenceManager(IdempotenceContext idempotenceContext, EfCoreUnitOfWork unitOfWork)
+        public EfCoreIdempotenceManager(IdempotenceContext idempotenceContext, EfCoreTransactionManager unitOfWork)
         {
             _idempotenceContext = idempotenceContext;
             _unitOfWork = unitOfWork;

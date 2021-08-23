@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Infrastructure.UnitOfWork;
+using EasyDesk.Testing.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
+using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.CleanArchitecture.Testing.Requests
 {
@@ -9,11 +11,16 @@ namespace EasyDesk.CleanArchitecture.Testing.Requests
         where THandler : UnitOfWorkHandler<TRequest, TResponse>
         where TRequest : CommandBase<TResponse>
     {
+        public UnitOfWorkHandlerTestsBase()
+        {
+            Service<IUnitOfWork>().Save().Returns(Ok);
+        }
+
         protected override void ConfigureServices(IServiceCollection services)
         {
             base.ConfigureServices(services);
 
-            services.AddSingleton<IUnitOfWork, NoUnitOfWork>();
+            services.AddSubstituteFor<IUnitOfWork>();
         }
     }
 }

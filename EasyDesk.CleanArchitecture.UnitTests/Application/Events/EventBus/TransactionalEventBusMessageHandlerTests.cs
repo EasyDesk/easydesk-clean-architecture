@@ -13,7 +13,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
     {
         private readonly TransactionalEventBusMessageHandler _sut;
         private readonly IEventBusMessageHandler _handler;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITransactionManager _transactionManager;
         private readonly EventBusMessage _message = EventBusTestingUtils.NewDefaultMessage();
 
         public TransactionalEventBusMessageHandlerTests()
@@ -21,10 +21,10 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
             _handler = Substitute.For<IEventBusMessageHandler>();
             _handler.Handle(_message).Returns(EventBusMessageHandlerResult.Handled);
 
-            _unitOfWork = Substitute.For<IUnitOfWork>();
-            _unitOfWork.Commit().Returns(Ok);
+            _transactionManager = Substitute.For<ITransactionManager>();
+            _transactionManager.Commit().Returns(Ok);
 
-            _sut = new(_handler, _unitOfWork);
+            _sut = new(_handler, _transactionManager);
         }
 
         [Theory]
@@ -49,16 +49,16 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
 
             Received.InOrder(() =>
             {
-                _unitOfWork.Begin();
+                _transactionManager.Begin();
                 _handler.Handle(_message);
-                _unitOfWork.Commit();
+                _transactionManager.Commit();
             });
         }
 
         [Fact]
         public async Task Handle_ShouldReturnTransientFailure_IfTheCommitFails()
         {
-            _unitOfWork.Commit().Returns(TestError.Create());
+            _transactionManager.Commit().Returns(TestError.Create());
 
             var result = await _sut.Handle(_message);
 

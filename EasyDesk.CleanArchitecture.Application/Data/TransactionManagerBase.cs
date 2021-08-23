@@ -9,7 +9,7 @@ using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Data
 {
-    public abstract class UnitOfWorkBase<TTransaction> : IUnitOfWork
+    public abstract class TransactionManagerBase<TTransaction> : ITransactionManager
         where TTransaction : IDisposable
     {
         private readonly SimpleAsyncEvent<BeforeCommitContext> _beforeCommit = new();
@@ -73,13 +73,6 @@ namespace EasyDesk.CleanArchitecture.Application.Data
         }
 
         protected abstract Task<Response<Nothing>> CommitTransaction(TTransaction transaction);
-
-        public async Task<Response<Nothing>> Save()
-        {
-            return await SaveWithinTransaction(RequireTransaction());
-        }
-
-        protected abstract Task<Response<Nothing>> SaveWithinTransaction(TTransaction transaction);
 
         public void Dispose()
         {

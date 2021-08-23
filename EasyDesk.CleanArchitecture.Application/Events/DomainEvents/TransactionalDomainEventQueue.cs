@@ -12,13 +12,13 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents
 {
     public class TransactionalDomainEventQueue : IDomainEventNotifier
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ITransactionManager _transactionManager;
         private readonly IMediator _mediator;
         private readonly Queue<IDomainEvent> _eventQueue = new();
 
-        public TransactionalDomainEventQueue(IUnitOfWork unitOfWork, IMediator mediator)
+        public TransactionalDomainEventQueue(ITransactionManager transactionManager, IMediator mediator)
         {
-            _unitOfWork = unitOfWork;
+            _transactionManager = transactionManager;
             _mediator = mediator;
         }
 
@@ -26,7 +26,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents
         {
             if (_eventQueue.Count == 0)
             {
-                _unitOfWork.BeforeCommit.Subscribe(Flush);
+                _transactionManager.BeforeCommit.Subscribe(Flush);
             }
             _eventQueue.Enqueue(domainEvent);
         }
