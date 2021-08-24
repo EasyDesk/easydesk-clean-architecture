@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -17,8 +18,16 @@ namespace EasyDesk.CleanArchitecture.Web.Versioning
 
         public static Option<ApiVersion> GetControllerVersion(this Type controllerType)
         {
-            var ns = controllerType.Namespace.Split('.').Last();
-            var match = Regex.Match(ns, @"^V_(\d+)_(\d+)$");
+            return controllerType.Namespace
+                .Split('.')
+                .Reverse()
+                .SelectMany(v => ParseVersionFromNamespace(v))
+                .FirstOption();
+        }
+
+        public static Option<ApiVersion> ParseVersionFromNamespace(string version)
+        {
+            var match = Regex.Match(version, @"^V_(\d+)_(\d+)$");
             if (!match.Success)
             {
                 return None;
