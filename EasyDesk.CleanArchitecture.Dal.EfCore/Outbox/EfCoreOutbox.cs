@@ -59,7 +59,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox
         public async Task Flush()
         {
             var from = _timestampProvider.Now - MessageAgingTime.AsTimeOffset;
-            await Publish(q => q.Where(m => m.OccurredAt > from));
+            await Publish(q => q.Where(m => m.OccurredAt < from));
         }
 
         private async Task Publish(QueryWrapper<OutboxMessage> filter)
