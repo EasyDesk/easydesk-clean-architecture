@@ -9,9 +9,14 @@
     <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="EasyDesk.Tools" Version="1.1.0" />
+    <PackageReference Include="EasyDesk.Tools" Version="1.2.0" />
     <PackageReference Include="FluentValidation" Version="10.3.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.8" />

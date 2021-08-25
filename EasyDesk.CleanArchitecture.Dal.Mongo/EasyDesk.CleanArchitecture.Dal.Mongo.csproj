@@ -9,8 +9,13 @@
     <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="1.1.0" />
+    <PackageReference Include="EasyDesk.Tools" Version="1.2.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.13.0" />
   </ItemGroup>
 

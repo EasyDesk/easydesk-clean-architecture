@@ -9,9 +9,14 @@
     <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="1.1.0" />
-    <PackageReference Include="EasyDesk.Testing" Version="0.2.5" />
+    <PackageReference Include="EasyDesk.Tools" Version="1.2.0" />
+    <PackageReference Include="EasyDesk.Testing" Version="0.3.0" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
   </ItemGroup>
 
