@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\EasyDesk.CleanArchitecture.Dal.EfCore\EasyDesk.CleanArchitecture.Dal.EfCore.csproj" />
+    <ProjectReference Include="..\..\EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj" />
+    <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
+  </ItemGroup>
+
+</Project>

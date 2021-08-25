@@ -3,7 +3,7 @@ using Shouldly;
 using Xunit;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
-namespace EasyDesk.Common.UnitTests.Domain.Roles
+namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Roles
 {
     public class RoleCollectionTests
     {

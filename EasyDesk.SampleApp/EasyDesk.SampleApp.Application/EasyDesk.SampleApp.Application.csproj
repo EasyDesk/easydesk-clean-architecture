@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\" />
+    <Folder Include="DomainEventHandlers\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\EasyDesk.CleanArchitecture.Application\EasyDesk.CleanArchitecture.Application.csproj" />
+    <ProjectReference Include="..\EasyDesk.SampleApp.Domain\EasyDesk.SampleApp.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

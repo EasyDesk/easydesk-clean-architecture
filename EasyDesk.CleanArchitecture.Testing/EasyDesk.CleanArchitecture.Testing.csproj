@@ -12,11 +12,19 @@
   <PropertyGroup>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="1.2.0" />
-    <PackageReference Include="EasyDesk.Testing" Version="0.3.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EasyDesk.Tools" Version="1.2.2" />
+    <PackageReference Include="EasyDesk.Testing" Version="0.3.1" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
   </ItemGroup>
 
