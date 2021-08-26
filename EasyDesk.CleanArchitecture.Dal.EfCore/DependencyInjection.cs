@@ -75,27 +75,32 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore
             _services = services;
         }
 
-        public EfCoreDataAccessBuilder AddEntities<T>() where T : EntitiesContext
+        public EfCoreDataAccessBuilder AddEntities<T>(Action<DbContextOptionsBuilder> options = null) where T : EntitiesContext
         {
             _services.AddScoped<IUnitOfWork>(provider => new EfCoreUnitOfWork(provider.GetRequiredService<T>()));
-            return AddDbContext<T>(EntitiesContext.SchemaName);
+            return AddDbContext<T>(EntitiesContext.SchemaName, options);
         }
 
-        public EfCoreDataAccessBuilder AddOutbox()
+        public EfCoreDataAccessBuilder AddOutbox(Action<DbContextOptionsBuilder> options = null)
         {
             _services.AddScoped<IOutbox, EfCoreOutbox>();
-            return AddDbContext<OutboxContext>(OutboxContext.SchemaName);
+            return AddDbContext<OutboxContext>(OutboxContext.SchemaName, options);
         }
 
-        public EfCoreDataAccessBuilder AddIdemptenceManager()
+        public EfCoreDataAccessBuilder AddIdemptenceManager(Action<DbContextOptionsBuilder> options = null)
         {
             _services.AddScoped<IIdempotenceManager, EfCoreIdempotenceManager>();
-            return AddDbContext<IdempotenceContext>(IdempotenceContext.SchemaName);
+            return AddDbContext<IdempotenceContext>(IdempotenceContext.SchemaName, options);
         }
 
-        private EfCoreDataAccessBuilder AddDbContext<T>(string schema) where T : DbContext
+        private EfCoreDataAccessBuilder AddDbContext<T>(string schema, Action<DbContextOptionsBuilder> addtionalOptions) where T : DbContext
         {
-            _services.AddDbContext<T>((provider, options) => ConfigureDbContextOptions(provider, options, schema));
+            _services.AddDbContext<T>((provider, options) =>
+            {
+                ConfigureDbContextOptions(provider, options, schema);
+                addtionalOptions?.Invoke(options);
+            });
+
             if (!_firstDbContextRegistered)
             {
                 _services.AddScoped<DbContext>(provider => provider.GetRequiredService<T>());
