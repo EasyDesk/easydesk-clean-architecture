@@ -62,5 +62,8 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers
 
         public ResponseMapper<T> ReturnCreatedAtAction(string actionName, Func<T, object> routeValues) =>
             OnSuccess((body, result) => _controller.CreatedAtAction(actionName, routeValues(result), body));
+
+        public ResponseMapper<T> ReturnCreatedAtAction(string actionName, string controllerName, Func<T, object> routeValues) =>
+            OnSuccess((body, result) => _controller.CreatedAtAction(actionName, controllerName, routeValues(result), body));
     }
 }
