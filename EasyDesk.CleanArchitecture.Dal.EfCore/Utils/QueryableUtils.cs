@@ -29,6 +29,11 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils
             return condition ? op(query) : query;
         }
 
+        public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op)
+        {
+            return query.Conditionally(filter.IsPresent, op(filter.Value));
+        }
+
         public static Task<T> MaxByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
         {
             return query.OrderByDescending(keySelector).FirstOrDefaultAsync();
