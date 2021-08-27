@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Utils;
-using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.CleanArchitecture;
@@ -10,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories
 {

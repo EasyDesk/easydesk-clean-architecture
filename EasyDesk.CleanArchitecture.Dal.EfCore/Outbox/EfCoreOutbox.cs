@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
-using EasyDesk.CleanArchitecture.Application.Utils;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.EntityFrameworkCore;

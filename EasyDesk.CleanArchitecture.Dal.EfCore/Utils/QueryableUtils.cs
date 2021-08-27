@@ -1,13 +1,15 @@
-﻿using EasyDesk.CleanArchitecture.Application.Utils;
+﻿using EasyDesk.CleanArchitecture.Application.Pages;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Utils
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils
 {
     public static class QueryableUtils
     {
@@ -53,6 +55,18 @@ namespace EasyDesk.CleanArchitecture.Application.Utils
                 OrderingDirection.Descending => query.ThenByDescending(keySelector),
                 _ => query.ThenBy(keySelector)
             };
+        }
+
+        public static async Task<Page<T>> GetPage<T>(this IQueryable<T> query, Pagination pagination)
+        {
+            var rowCount = await query.CountAsync();
+
+            IEnumerable<T> values = await query
+                .Skip(pagination.PageIndex * pagination.PageSize)
+                .Take(pagination.PageSize)
+                .ToArrayAsync();
+
+            return new Page<T>(values, pagination, rowCount);
         }
     }
 }
