@@ -31,7 +31,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils
 
         public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op)
         {
-            return query.Conditionally(filter.IsPresent, op(filter.Value));
+            return filter.Match(
+                some: f => query.Wrap(op(f)),
+                none: () => query);
         }
 
         public static Task<T> MaxByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
