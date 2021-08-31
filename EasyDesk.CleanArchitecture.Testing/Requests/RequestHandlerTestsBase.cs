@@ -31,6 +31,6 @@ namespace EasyDesk.CleanArchitecture.Testing.Requests
 
         protected THandler CreateHandler() => Service<THandler>();
 
-        protected Task<Response<TResponse>> Send(TRequest request) => CreateHandler().Handle(new RequestContext<TRequest, TResponse>(request, UserInfo), default);
+        protected Task<Response<TResponse>> Send(TRequest request) => CreateHandler().Handle(request, default);
     }
 }

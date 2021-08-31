@@ -1,30 +1,17 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Application.UserInfo;
+﻿using EasyDesk.CleanArchitecture.Application.Responses;
 using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator
 {
-    public abstract class RequestHandlerBase<TRequest, TResponse> : IRequestHandler<RequestContext<TRequest, TResponse>, Response<TResponse>>
+    public abstract class RequestHandlerBase<TRequest, TResponse> : IRequestHandler<TRequest, Response<TResponse>>
         where TRequest : RequestBase<TResponse>
     {
-        public async Task<Response<TResponse>> Handle(RequestContext<TRequest, TResponse> context, CancellationToken cancellationToken)
+        public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken)
         {
-            if (!IsAuthorized(context.Request, context.UserInfo))
-            {
-                return Errors.Forbidden();
-            }
-
-            return await Handle(context.Request);
+            return await Handle(request);
         }
-
-        private bool IsAuthorized(TRequest request, IUserInfo userInfo) =>
-            AuthorizationPolicies.Create(policy => AuthorizationPolicy(policy, request))(userInfo);
-
-        protected virtual void AuthorizationPolicy(AuthorizationPolicyBuilder policy, TRequest request) { }
 
         protected abstract Task<Response<TResponse>> Handle(TRequest request);
     }

@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Application.UserInfo;
 using EasyDesk.Tools;
 using MediatR;
 using System;
@@ -18,13 +17,6 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator
             return (eventContext as IEventContext).Error.Match(
                 some: e => Failure<Nothing>(e),
                 none: () => Ok);
-        }
-
-        public static async Task<Response<TResponse>> SendRequestWithContext<TResponse>(this IMediator mediator, RequestBase<TResponse> request, IUserInfo userInfo)
-        {
-            var contextType = typeof(RequestContext<,>).MakeGenericType(request.GetType(), typeof(TResponse));
-            var context = Activator.CreateInstance(contextType, request, userInfo);
-            return (Response<TResponse>) await mediator.Send(context);
         }
     }
 }

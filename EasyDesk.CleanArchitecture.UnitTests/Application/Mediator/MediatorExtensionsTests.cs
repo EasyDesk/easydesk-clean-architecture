@@ -1,11 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Application.UserInfo;
 using EasyDesk.CleanArchitecture.Testing;
 using MediatR;
 using NSubstitute;
 using Shouldly;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
@@ -51,32 +48,6 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
             var result = await _mediator.PublishEvent(_event);
 
             result.ShouldBe(error);
-        }
-
-        [Fact]
-        public async Task SendRequestWithContext_ShouldSendTheGivenRequestWrappedInARequestContext()
-        {
-            await _mediator.SendRequestWithContext(_request, Substitute.For<IUserInfo>());
-
-            await _mediator.Received(1).Send(Arg.Is<object>(ctx => (ctx as RequestContext<Request, int>).Request == _request));
-        }
-
-        [Theory]
-        [MemberData(nameof(Responses))]
-        public async Task SendRequestWithContext_ShouldReturnTheResponseGivenByTheMediator(
-            Response<int> expectedResponse)
-        {
-            _mediator.Send(default).ReturnsForAnyArgs(expectedResponse);
-
-            var result = await _mediator.SendRequestWithContext(_request, Substitute.For<IUserInfo>());
-
-            result.ShouldBe(expectedResponse);
-        }
-
-        public static IEnumerable<object[]> Responses()
-        {
-            yield return new object[] { Success(10) };
-            yield return new object[] { Failure<int>(TestError.Create()) };
         }
     }
 }

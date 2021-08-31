@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Application.UserInfo;
 using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools;
 using NSubstitute;
@@ -91,7 +90,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
             result.ShouldBe(response);
         }
 
-        private async Task<Response<Nothing>> SendCommand() => await _sut.Handle(new(new(), Substitute.For<IUserInfo>()), default);
+        private async Task<Response<Nothing>> SendCommand() => await _sut.Handle(new(), default);
 
         private static Response<Nothing> HandlerFailedResponse() => TestError.Create("HANDLER_FAILED");
 

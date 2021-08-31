@@ -11,9 +11,11 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate
 
     public record NotMarriedYet : DomainError;
 
-    public record PersonGotMarried(Person Person) : IDomainEvent;
+    public record PersonCreatedEvent(Person Person) : IDomainEvent;
 
-    public record PersonDivorced(Person Person) : IDomainEvent;
+    public record PersonGotMarriedEvent(Person Person) : IDomainEvent;
+
+    public record PersonDivorcedEvent(Person Person) : IDomainEvent;
 
     public class Person : AggregateRoot<Person>
     {
@@ -21,6 +23,13 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate
         {
             Name = name;
             Married = married;
+        }
+
+        public static Person Create(Name name)
+        {
+            var person = new Person(Guid.NewGuid(), name, married: false);
+            person.EmitEvent(new PersonCreatedEvent(person));
+            return person;
         }
 
         public Name Name { get; }
@@ -34,7 +43,7 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate
                 return new AlreadyMarried();
             }
             Married = true;
-            EmitEvent(new PersonGotMarried(this));
+            EmitEvent(new PersonGotMarriedEvent(this));
             return Ok;
         }
 
@@ -45,7 +54,7 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate
                 return new NotMarriedYet();
             }
             Married = false;
-            EmitEvent(new PersonDivorced(this));
+            EmitEvent(new PersonDivorcedEvent(this));
             return Ok;
         }
     }
