@@ -26,7 +26,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents
 
         public async Task Publish(IEnumerable<IExternalEvent> events)
         {
-            var eventBusMessages = events.Select(ToEventBusMessage);
+            var eventBusMessages = events.Select(ToEventBusMessage).ToList();
             await _eventBusPublisher.Publish(eventBusMessages);
         }
 
