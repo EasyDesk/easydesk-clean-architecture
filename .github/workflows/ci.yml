@@ -113,5 +113,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: NuGet Release
-        run: dotnet nuget push ${{ env.OUTPUT_DIR }}/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s ${{ env.NUGET_URL }}
-
+        uses: EasyDesk/action-nuget-push@v0.1.0
+        with:
+          nuget-api-key: ${{ secrets.NUGET_API_KEY }}
+          publish-dir: ${{ env.OUTPUT_DIR }}
