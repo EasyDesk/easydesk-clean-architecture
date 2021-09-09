@@ -65,7 +65,7 @@ jobs:
       - name: Run unit tests
         run: dotnet test --no-build -c ${{ env.BUILD_CONFIGURATION }}
       - name: Create Nuget packages for release
-        uses: EasyDesk/action-dotnet-pack@v0.1.1
+        uses: EasyDesk/action-dotnet-pack@v0.1.2
         with:
           output-dir: ${{ env.OUTPUT_DIR }}
           package-version: ${{ needs.release-checks.outputs.version }}
