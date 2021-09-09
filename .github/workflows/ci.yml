@@ -2,13 +2,6 @@ name: Continuous Integration
 
 env:
   BUILD_CONFIGURATION: Release
-  PROJECT_DIRS: |
-    EasyDesk.CleanArchitecture.Domain \
-    EasyDesk.CleanArchitecture.Application \
-    EasyDesk.CleanArchitecture.Infrastructure \
-    EasyDesk.CleanArchitecture.Dal.EfCore \
-    EasyDesk.CleanArchitecture.Web \
-    EasyDesk.CleanArchitecture.Testing
   OUTPUT_DIR: publish
   RELEASE_PREFIX: EasyDesk Clean Architecture
   DOTNET_VERSION: 5.x
@@ -72,11 +65,17 @@ jobs:
       - name: Run unit tests
         run: dotnet test --no-build -c ${{ env.BUILD_CONFIGURATION }}
       - name: Create Nuget packages for release
-        run: |
-          for PROJECT_DIR in ${{ env.PROJECT_DIRS }}
-          do
-            dotnet pack ${PROJECT_DIR} --no-build -o ${{ env.OUTPUT_DIR }} -c ${{ env.BUILD_CONFIGURATION }} -p:Version=${{ needs.release-checks.outputs.version }}
-          done
+        uses: EasyDesk/action-dotnet-pack@v0.1.1
+        with:
+          output-dir: ${{ env.OUTPUT_DIR }}
+          package-version: ${{ needs.release-checks.outputs.version }}
+          project-names: |
+            EasyDesk.CleanArchitecture.Domain
+            EasyDesk.CleanArchitecture.Application
+            EasyDesk.CleanArchitecture.Infrastructure
+            EasyDesk.CleanArchitecture.Dal.EfCore
+            EasyDesk.CleanArchitecture.Web
+            EasyDesk.CleanArchitecture.Testing
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
