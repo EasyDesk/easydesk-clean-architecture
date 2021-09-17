@@ -7,9 +7,9 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.DependencyInjection
     public static class ServicesExtensions
     {
         public static T AddConfigAsSingleton<T>(this IServiceCollection services, IConfiguration config)
-            where T : class, new()
+            where T : class
         {
-            return AddConfigAsSingleton(services, config, () => new T());
+            return AddConfigAsSingleton<T>(services, config, () => throw new InvalidOperationException($"Unable to load configuration of type {typeof(T).Name}"));
         }
 
         public static T AddConfigAsSingleton<T>(this IServiceCollection services, IConfiguration config, Func<T> defaultValue)
