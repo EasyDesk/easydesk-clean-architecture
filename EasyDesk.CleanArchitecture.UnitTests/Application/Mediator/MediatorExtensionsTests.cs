@@ -15,7 +15,6 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
         private record Request : RequestBase<int>;
 
         private readonly Event _event = new();
-        private readonly Request _request = new();
         private readonly IMediator _mediator;
 
         public MediatorExtensionsTests()
