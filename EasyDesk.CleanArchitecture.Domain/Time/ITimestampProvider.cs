@@ -15,7 +15,7 @@ namespace EasyDesk.CleanArchitecture.Domain.Time
             var now = timestampProvider.Now;
             if (timestamp > now)
             {
-                throw new ArgumentException("The provided timestamp is in the future. Use DurationUntil(timestamp) instead.", nameof(timestamp));
+                throw new ArgumentException($"The provided timestamp is in the future. Use {nameof(DurationUntil)} instead.", nameof(timestamp));
             }
             return Duration.FromTimeOffset(now - timestamp);
         }
@@ -25,7 +25,7 @@ namespace EasyDesk.CleanArchitecture.Domain.Time
             var now = timestampProvider.Now;
             if (timestamp < now)
             {
-                throw new ArgumentException("The provided timestamp is in the past. Use DurationSince(timestamp) instead.", nameof(timestamp));
+                throw new ArgumentException($"The provided timestamp is in the past. Use {nameof(DurationSince)} instead.", nameof(timestamp));
             }
             return Duration.FromTimeOffset(timestamp - now);
         }
