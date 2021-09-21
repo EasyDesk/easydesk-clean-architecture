@@ -54,7 +54,7 @@ jobs:
           path: ${{ env.OUTPUT_DIR }}
   release:
     name: GitHub Release
-    if: needs.needs.outputs.should-release == 'true'
+    if: needs.build.outputs.should-release == 'true'
     concurrency: release
     needs: [build]
     runs-on: ubuntu-20.04
