@@ -1,11 +1,7 @@
 name: Continuous Integration
 
 env:
-  BUILD_CONFIGURATION: Release
-  OUTPUT_DIR: publish
-  RELEASE_PREFIX: EasyDesk Clean Architecture
   DOTNET_VERSION: 5.x
-  NUGET_URL: https://api.nuget.org/v3/index.json
 
 on:
   push:
@@ -15,105 +11,76 @@ on:
       - "*"
 
 jobs:
-  release-checks:
-    name: Pre-release Checks
+  build:
+    name: Build
     runs-on: ubuntu-20.04
+    env:
+      PROJECT_DIRS:  |
+        EasyDesk.CleanArchitecture.Domain
+        EasyDesk.CleanArchitecture.Application
+        EasyDesk.CleanArchitecture.Infrastructure
+        EasyDesk.CleanArchitecture.Dal.EfCore
+        EasyDesk.CleanArchitecture.Web
+        EasyDesk.CleanArchitecture.Testing
+      OUTPUT_DIR: publish
     outputs:
-      should-release: ${{ steps.release-info.outputs.should-release }}
-      is-prerelease: ${{ steps.release-info.outputs.is-prerelease }}
-      version: ${{ steps.release-info.outputs.version }}
+      version: ${{ steps.semver.outputs.version }}
+      should-release: ${{ steps.semver.outputs.should-release }}
+      is-prerelease: ${{ steps.semver.outputs.is-prerelease }}
     steps:
-      - id: get-version
-        name: Get semantic version
-        uses: battila7/get-version-action@v2
-      - id: release-info
-        name: Get release info
-        run: |
-          SHOULD_RELEASE=${{ startsWith(github.ref, 'refs/tags/v') && steps.get-version.outputs.is-semver }}
-          PRERELEASE=${{ steps.get-version.outputs.prerelease != '' || startsWith(steps.get-version.outputs.version-without-v, '0.') }}
-          if [ "${SHOULD_RELEASE}" == "true" ]; then
-            ADAPTED_VERSION=${{ steps.get-version.outputs.version-without-v }}
-          else
-            ADAPTED_VERSION=0.0.0
-          fi
-          echo "::set-output name=should-release::${SHOULD_RELEASE}"
-          echo "::set-output name=is-prerelease::${PRERELEASE}"
-          echo "::set-output name=version::${ADAPTED_VERSION}"
-          
-  build_and_test:
-    name: Build and Test
-    runs-on: ubuntu-20.04
-    needs: [release-checks]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup .NET Core SDK v${{ env.DOTNET_VERSION }}
+      - id: semver
+        name: Checkout
+        uses: EasyDesk/action-semver-checkout@v1
+      - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Cache nuget packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget
-      - name: Install dependencies
-        run: dotnet restore
       - name: Build
-        run: dotnet build --no-restore -c ${{ env.BUILD_CONFIGURATION }}
-      - name: Run unit tests
-        run: dotnet test --no-build -c ${{ env.BUILD_CONFIGURATION }}
-      - name: Create Nuget packages for release
-        uses: EasyDesk/action-dotnet-pack@v0.1.3
+        uses: EasyDesk/action-dotnet-build@v1
         with:
+          warnings-as-errors: true
+      - name: Unit tests
+        uses: EasyDesk/action-dotnet-test@v1
+      - name: Pack
+        uses: EasyDesk/action-dotnet-pack@v1
+        with:
+          project-names: ${{ env.PROJECT_DIRS }}
+          package-version: ${{ steps.semver.outputs.version }}
           output-dir: ${{ env.OUTPUT_DIR }}
-          package-version: ${{ needs.release-checks.outputs.version }}
-          project-names: |
-            EasyDesk.CleanArchitecture.Domain
-            EasyDesk.CleanArchitecture.Application
-            EasyDesk.CleanArchitecture.Infrastructure
-            EasyDesk.CleanArchitecture.Dal.EfCore
-            EasyDesk.CleanArchitecture.Web
-            EasyDesk.CleanArchitecture.Testing
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: nuget-packages
+          name: nuget-package
           path: ${{ env.OUTPUT_DIR }}
   release:
-    if: ${{ needs.release-checks.outputs.should-release == 'true' }}
-    name: Release
-    environment: release
+    name: GitHub Release
+    if: needs.needs.outputs.should-release == 'true'
     concurrency: release
-    needs: [release-checks, build_and_test]
+    needs: [build]
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # All history
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: nuget-packages
-          path: ${{ env.OUTPUT_DIR }}
-      - name: GitHub Release
-        uses: marvinpinto/action-automatic-releases@latest
+          name: nuget-package
+      - name: Release
+        uses: EasyDesk/action-semver-release@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: ${{ needs.release-checks.outputs.is-prerelease }}
-          files: |
-            LICENSE
-            ${{ env.OUTPUT_DIR }}/*.nupkg
-          title: ${{ env.RELEASE_PREFIX }} ${{ needs.release-checks.outputs.version }}
-          draft: false
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+          version: ${{ needs.build.outputs.version }}
+          prerelease: ${{ needs.build.outputs.is-prerelease }}
+          files: '*.nupkg'
+  deploy:
+    name: Deploy to NuGet
+    needs: [release]
+    concurrency: deploy
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: nuget-package
+      - name: NuGet library deploy
+        uses: EasyDesk/job-nuget-library-deploy@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: NuGet Release
-        uses: EasyDesk/action-nuget-push@v0.1.0
-        with:
           nuget-api-key: ${{ secrets.NUGET_API_KEY }}
-          publish-dir: ${{ env.OUTPUT_DIR }}
