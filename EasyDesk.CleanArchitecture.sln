@@ -8,37 +8,38 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{787D543E-5
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA0FBFB1-B2B7-480D-8CC2-B051A0EA65DA}"
 	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		global.json = global.json
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+		Directory.Build.props = Directory.Build.props
+		Linter.targets = Linter.targets
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.UnitTests", "EasyDesk.CleanArchitecture.UnitTests\EasyDesk.CleanArchitecture.UnitTests.csproj", "{A963517F-4E93-405A-8B92-9CBB47250CD8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.UnitTests", "test\EasyDesk.CleanArchitecture.UnitTests\EasyDesk.CleanArchitecture.UnitTests.csproj", "{A963517F-4E93-405A-8B92-9CBB47250CD8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Application", "EasyDesk.CleanArchitecture.Application\EasyDesk.CleanArchitecture.Application.csproj", "{546D35C2-DC50-4EDF-A3AA-8C1464235FB9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Application", "src\EasyDesk.CleanArchitecture.Application\EasyDesk.CleanArchitecture.Application.csproj", "{546D35C2-DC50-4EDF-A3AA-8C1464235FB9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Web", "EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj", "{EB032800-8341-450A-90AD-60D1744946C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Web", "src\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj", "{EB032800-8341-450A-90AD-60D1744946C0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Infrastructure", "EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj", "{6A0FED26-3747-4B8A-A32E-B7AD53676F8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Infrastructure", "src\EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj", "{6A0FED26-3747-4B8A-A32E-B7AD53676F8E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Dal.EfCore", "EasyDesk.CleanArchitecture.Dal.EfCore\EasyDesk.CleanArchitecture.Dal.EfCore.csproj", "{1C075375-2764-4C5B-904A-EA42E5FED836}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Dal.EfCore", "src\EasyDesk.CleanArchitecture.Dal.EfCore\EasyDesk.CleanArchitecture.Dal.EfCore.csproj", "{1C075375-2764-4C5B-904A-EA42E5FED836}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Dal.Mongo", "EasyDesk.CleanArchitecture.Dal.Mongo\EasyDesk.CleanArchitecture.Dal.Mongo.csproj", "{B306C46B-3D3C-4E06-8A7D-C352C54A6081}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Dal.Mongo", "src\EasyDesk.CleanArchitecture.Dal.Mongo\EasyDesk.CleanArchitecture.Dal.Mongo.csproj", "{B306C46B-3D3C-4E06-8A7D-C352C54A6081}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Testing", "EasyDesk.CleanArchitecture.Testing\EasyDesk.CleanArchitecture.Testing.csproj", "{188330AE-81F0-4169-B35B-B49AB5B2A0E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Testing", "src\EasyDesk.CleanArchitecture.Testing\EasyDesk.CleanArchitecture.Testing.csproj", "{188330AE-81F0-4169-B35B-B49AB5B2A0E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Domain", "EasyDesk.CleanArchitecture.Domain\EasyDesk.CleanArchitecture.Domain.csproj", "{FCD36A82-ACA8-45B5-96F1-DA6F3E4C1744}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Domain", "src\EasyDesk.CleanArchitecture.Domain\EasyDesk.CleanArchitecture.Domain.csproj", "{FCD36A82-ACA8-45B5-96F1-DA6F3E4C1744}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{33B73B08-BCF2-49AA-BAA0-57CD06202AD1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2145C2CE-819C-42E4-956D-7D723ABD8B1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.SampleApp.Web", "EasyDesk.SampleApp\EasyDesk.SampleApp.Web\EasyDesk.SampleApp.Web.csproj", "{47D1A3C1-0AC4-485E-86CA-EB619EEE17D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.SampleApp.Web", "sample\src\EasyDesk.SampleApp.Web\EasyDesk.SampleApp.Web.csproj", "{47D1A3C1-0AC4-485E-86CA-EB619EEE17D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.SampleApp.Application", "EasyDesk.SampleApp\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj", "{3697A57A-5B64-4865-9A53-F78504FC2624}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.SampleApp.Application", "sample\src\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj", "{3697A57A-5B64-4865-9A53-F78504FC2624}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.SampleApp.Infrastructure", "EasyDesk.SampleApp\EasyDesk.SampleApp.Infrastructure\EasyDesk.SampleApp.Infrastructure.csproj", "{9F633EB5-B9AE-449D-8003-756EA987D42D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.SampleApp.Infrastructure", "sample\src\EasyDesk.SampleApp.Infrastructure\EasyDesk.SampleApp.Infrastructure.csproj", "{9F633EB5-B9AE-449D-8003-756EA987D42D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.SampleApp.Domain", "EasyDesk.SampleApp\EasyDesk.SampleApp.Domain\EasyDesk.SampleApp.Domain.csproj", "{050F3A8F-8831-4F13-ADEC-F4B96CCDC565}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.SampleApp.Domain", "sample\src\EasyDesk.SampleApp.Domain\EasyDesk.SampleApp.Domain.csproj", "{050F3A8F-8831-4F13-ADEC-F4B96CCDC565}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,7 +106,7 @@ Global
 		{6A0FED26-3747-4B8A-A32E-B7AD53676F8E} = {B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}
 		{1C075375-2764-4C5B-904A-EA42E5FED836} = {B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}
 		{B306C46B-3D3C-4E06-8A7D-C352C54A6081} = {B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}
-		{188330AE-81F0-4169-B35B-B49AB5B2A0E3} = {787D543E-56F2-4B79-8587-C7AE646D0D07}
+		{188330AE-81F0-4169-B35B-B49AB5B2A0E3} = {B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}
 		{FCD36A82-ACA8-45B5-96F1-DA6F3E4C1744} = {B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}
 		{2145C2CE-819C-42E4-956D-7D723ABD8B1E} = {33B73B08-BCF2-49AA-BAA0-57CD06202AD1}
 		{47D1A3C1-0AC4-485E-86CA-EB619EEE17D1} = {2145C2CE-819C-42E4-956D-7D723ABD8B1E}
