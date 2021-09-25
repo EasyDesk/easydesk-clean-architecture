@@ -11,6 +11,7 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers
         private IMapper _mapper;
 
         protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+
         protected IMapper Mapper => _mapper ??= HttpContext.RequestServices.GetRequiredService<IMapper>();
 
         protected ResultBuilder<TResponse> Send<TResponse>(RequestBase<TResponse> request)

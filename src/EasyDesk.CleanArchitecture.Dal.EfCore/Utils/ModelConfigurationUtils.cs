@@ -5,26 +5,26 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils
 {
     public static class ModelConfigurationUtils
     {
-        private const string _dateTimeType = "datetime";
-        private const string _dateType = "date";
-        private const string _timeType = "time";
+        private const string DateTimeType = "datetime";
+        private const string DateType = "date";
+        private const string TimeType = "time";
 
         public static PropertyBuilder<T> HasTypeDateTime<T>(this PropertyBuilder<T> property)
         {
             return property
-                .HasColumnType(_dateTimeType);
+                .HasColumnType(DateTimeType);
         }
 
         public static PropertyBuilder<T> HasTypeDate<T>(this PropertyBuilder<T> property)
         {
             return property
-                .HasColumnType(_dateType);
+                .HasColumnType(DateType);
         }
 
         public static PropertyBuilder<T> HasTypeTime<T>(this PropertyBuilder<T> property)
         {
             return property
-                .HasColumnType(_timeType);
+                .HasColumnType(TimeType);
         }
     }
 }

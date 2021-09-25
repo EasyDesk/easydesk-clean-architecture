@@ -3,7 +3,7 @@ using System;
 
 namespace EasyDesk.CleanArchitecture.Web.Converters
 {
-    public class ParseableStringConverter<T> : JsonConverter<T> 
+    public class ParseableStringConverter<T> : JsonConverter<T>
     {
         private readonly Func<string, T> _parser;
 

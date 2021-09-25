@@ -20,7 +20,7 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
 
             context.Result = new ObjectResult(response)
             {
-                StatusCode = (int) HttpStatusCode.InternalServerError
+                StatusCode = (int)HttpStatusCode.InternalServerError
             };
         }
     }

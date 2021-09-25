@@ -12,6 +12,6 @@ namespace EasyDesk.CleanArchitecture.Application.Json
     public static class JsonSerializerExtensions
     {
         public static T Deserialize<T>(this IJsonSerializer serializer, string json) =>
-            (T) serializer.Deserialize(json, typeof(T));
+            (T)serializer.Deserialize(json, typeof(T));
     }
 }

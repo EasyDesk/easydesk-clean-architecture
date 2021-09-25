@@ -46,7 +46,6 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt
         public Option<ClaimsIdentity> Validate(string jwt, TokenValidationParameters validationParameters, out JwtSecurityToken token)
         {
             validationParameters = validationParameters.Clone();
-            
             return ValidateUsingParameters(jwt, validationParameters, out token);
         }
 

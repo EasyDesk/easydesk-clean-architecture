@@ -8,7 +8,9 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel
     {
         internal abstract TId Identifier { get; }
 
-        private Entity() { }
+        private Entity()
+        {
+        }
 
         public bool Equals(T other) => other?.Identifier?.Equals(Identifier) ?? false;
 

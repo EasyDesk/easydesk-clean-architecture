@@ -40,7 +40,7 @@ namespace EasyDesk.CleanArchitecture.Application.Data
         }
 
         protected abstract Task<TTransaction> BeginTransaction();
-        
+
         public async Task<Response<Nothing>> Commit()
         {
             EnsureTransactionWasNotAlreadyCommitted();

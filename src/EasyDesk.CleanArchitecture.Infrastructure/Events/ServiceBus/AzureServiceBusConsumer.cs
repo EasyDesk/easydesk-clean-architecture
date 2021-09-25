@@ -59,13 +59,21 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
             var serviceBusMessage = eventArgs.Message;
             var message = serviceBusMessage.ToEventBusMessage();
             var handlerResult = await HandleMessage(message);
-            await (handlerResult switch
+            await ProcessMessageHandlerResult(handlerResult, serviceBusMessage, eventArgs);
+        }
+
+        private Task ProcessMessageHandlerResult(
+            EventBusMessageHandlerResult handlerResult,
+            ServiceBusReceivedMessage serviceBusMessage,
+            ProcessMessageEventArgs eventArgs)
+        {
+            return handlerResult switch
             {
                 Handled => eventArgs.CompleteMessageAsync(serviceBusMessage),
                 TransientFailure => eventArgs.AbandonMessageAsync(serviceBusMessage),
                 GenericFailure or NotSupported => eventArgs.DeadLetterMessageAsync(serviceBusMessage),
                 _ => Task.FromException(new InvalidOperationException())
-            });
+            };
         }
 
         private async Task<EventBusMessageHandlerResult> HandleMessage(EventBusMessage message)

@@ -23,7 +23,7 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers
             _requestToBeMapped = requestToBeMapped;
             _mapper = mapper;
         }
-        
+
         internal Task<IActionResult> Map(Func<T, IMapper, ResponseDto> responseFactory)
         {
             return _requestToBeMapped(res => res.Match(

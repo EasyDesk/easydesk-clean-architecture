@@ -32,7 +32,7 @@ namespace EasyDesk.CleanArchitecture.Web
 
         protected abstract bool UseAuthentication { get; }
 
-        protected abstract bool UseAuthorization{ get; }
+        protected abstract bool UseAuthorization { get; }
 
         protected abstract bool UseSwagger { get; }
 
@@ -80,7 +80,7 @@ namespace EasyDesk.CleanArchitecture.Web
             {
                 app.UseAuthorization();
             }
-            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

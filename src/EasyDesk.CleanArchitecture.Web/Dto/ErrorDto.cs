@@ -19,31 +19,41 @@ namespace EasyDesk.CleanArchitecture.Web.Dto
 
     public class DomainErrorToErrorDto : ErrorDtoMappingBase<DomainErrorWrapper>
     {
-        public DomainErrorToErrorDto() : base(src => src.DomainError) { }
+        public DomainErrorToErrorDto() : base(src => src.DomainError)
+        {
+        }
     }
 
     public class NotFoundErrorToErrorDto : ErrorDtoMappingBase<NotFoundError>
     {
         private record NotFoundParameters(string EntityType);
 
-        public NotFoundErrorToErrorDto() : base(src => new NotFoundParameters(src.EntityType.Name)) { }
+        public NotFoundErrorToErrorDto() : base(src => new NotFoundParameters(src.EntityType.Name))
+        {
+        }
     }
 
     public class GenericErrorToErrorDto : ErrorDtoMappingBase<GenericError>
     {
-        public GenericErrorToErrorDto() : base(src => src.Parameters) { }
+        public GenericErrorToErrorDto() : base(src => src.Parameters)
+        {
+        }
     }
 
     public class InternalErrorToErrorDto : ErrorDtoMappingBase<InternalError>
     {
-        public InternalErrorToErrorDto() : base(_ => Nothing.Value) { }
+        public InternalErrorToErrorDto() : base(_ => Nothing.Value)
+        {
+        }
     }
 
     public class ForbiddenErrorToErrorDto : ErrorDtoMappingBase<ForbiddenError>
     {
         private record ForbiddenParameters(string Reason);
 
-        public ForbiddenErrorToErrorDto() : base(src => new ForbiddenParameters(src.Reason)) { }
+        public ForbiddenErrorToErrorDto() : base(src => new ForbiddenParameters(src.Reason))
+        {
+        }
     }
 
     public class PropertyValidationErrorToErrorDto : ErrorDtoMappingBase<PropertyValidationError>
@@ -51,6 +61,8 @@ namespace EasyDesk.CleanArchitecture.Web.Dto
         private record PropertyValidationParameters(string PropertyName, string ErrorMessage);
 
         public PropertyValidationErrorToErrorDto()
-            : base(src => new PropertyValidationParameters(src.PropertyName, src.ErrorMessage)) { }
+            : base(src => new PropertyValidationParameters(src.PropertyName, src.ErrorMessage))
+        {
+        }
     }
 }

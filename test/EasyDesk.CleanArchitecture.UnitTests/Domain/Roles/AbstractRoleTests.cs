@@ -8,26 +8,25 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Roles
 {
     public class AbstractRoleTests
     {
-        private const string _primaryRole = "PrimaryRole";
-        private const string _secondaryRole = "SecondaryRole";
-        private const string _incorrectRole = "IncorrectRole";
+        private const string PrimaryRole = "PrimaryRole";
+        private const string SecondaryRole = "SecondaryRole";
+        private const string IncorrectRole = "IncorrectRole";
 
         private class TestRole : AbstractRole<TestRole>
         {
             private TestRole(RoleId roleId) : base(roleId)
             {
-
             }
 
-            public static TestRole PrimaryRole { get; } = new(RoleId.From(_primaryRole));
+            public static TestRole PrimaryRole { get; } = new(RoleId.From(AbstractRoleTests.PrimaryRole));
 
-            public static TestRole SecondaryRole { get; } = new(RoleId.From(_secondaryRole));
+            public static TestRole SecondaryRole { get; } = new(RoleId.From(AbstractRoleTests.SecondaryRole));
         }
 
         [Fact]
         public void ToString_ShouldReturnTheRoleIdAsAString()
         {
-            TestRole.PrimaryRole.ToString().ShouldBe(_primaryRole);
+            TestRole.PrimaryRole.ToString().ShouldBe(PrimaryRole);
         }
 
         [Fact]
@@ -45,7 +44,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Roles
         [Fact]
         public void From_ShouldFail_IfTheRoleIdDoesNotExist()
         {
-            Should.Throw<ArgumentException>(() => TestRole.From(_incorrectRole));
+            Should.Throw<ArgumentException>(() => TestRole.From(IncorrectRole));
         }
 
         [Fact]
@@ -57,7 +56,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Roles
         [Fact]
         public void FromRoleId_ShouldFail_IfTheRoleIdDoesNotExist()
         {
-            Should.Throw<ArgumentException>(() => TestRole.From(RoleId.From(_incorrectRole)));
+            Should.Throw<ArgumentException>(() => TestRole.From(RoleId.From(IncorrectRole)));
         }
     }
 }

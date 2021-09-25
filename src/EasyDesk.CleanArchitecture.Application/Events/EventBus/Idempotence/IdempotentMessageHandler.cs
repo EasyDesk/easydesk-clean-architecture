@@ -12,7 +12,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence
             _handler = handler;
             _idempotenceManager = idempotenceManager;
         }
-        
+
         public async Task<EventBusMessageHandlerResult> Handle(EventBusMessage message)
         {
             if (await _idempotenceManager.HasBeenProcessed(message))

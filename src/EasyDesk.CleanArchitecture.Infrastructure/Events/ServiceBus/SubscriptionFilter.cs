@@ -57,11 +57,15 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 
     public class OrFilter : BooleanOperationFilter
     {
-        public OrFilter(IEnumerable<SubscriptionFilter> terms) : base(terms, "OR") { }
+        public OrFilter(IEnumerable<SubscriptionFilter> terms) : base(terms, "OR")
+        {
+        }
     }
 
     public class AndFilter : BooleanOperationFilter
     {
-        public AndFilter(IEnumerable<SubscriptionFilter> terms) : base(terms, "AND") { }
+        public AndFilter(IEnumerable<SubscriptionFilter> terms) : base(terms, "AND")
+        {
+        }
     }
 }

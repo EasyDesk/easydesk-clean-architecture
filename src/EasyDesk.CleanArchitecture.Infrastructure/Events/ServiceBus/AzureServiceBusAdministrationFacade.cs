@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 {
     public class AzureServiceBusAdministrationFacade
     {
-        private const string _ruleName = "main";
+        private const string RuleName = "main";
 
         private readonly ServiceBusAdministrationClient _client;
 
@@ -26,13 +26,13 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
         private async Task CreateSubscription(string topicName, string subscriptionName, SubscriptionFilter filter)
         {
             var subscriptionOptions = new CreateSubscriptionOptions(topicName, subscriptionName);
-            var ruleOptions = new CreateRuleOptions(_ruleName, filter.GetRuleFilter());
+            var ruleOptions = new CreateRuleOptions(RuleName, filter.GetRuleFilter());
             await _client.CreateSubscriptionAsync(subscriptionOptions, ruleOptions);
         }
 
         private async Task UpdateSubscriptionRule(string topicName, string subscriptionName, SubscriptionFilter filter)
         {
-            var ruleProperties = await _client.GetRuleAsync(topicName, subscriptionName, _ruleName).Map(r => r.Value);
+            var ruleProperties = await _client.GetRuleAsync(topicName, subscriptionName, RuleName).Map(r => r.Value);
             ruleProperties.Filter = filter.GetRuleFilter();
             await _client.UpdateRuleAsync(topicName, subscriptionName, ruleProperties);
         }

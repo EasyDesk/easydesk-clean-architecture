@@ -17,7 +17,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
     {
         private record SupportedEvent : IExternalEvent;
 
-        private const string _json = "{}";
+        private const string Json = "{}";
 
         private readonly DefaultEventBusMessageHandler _sut;
         private readonly IExternalEventHandler _externalEventHandler;
@@ -34,7 +34,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
             _externalEventHandler.Handle(_event).Returns(Ok);
 
             _jsonSerializer = Substitute.For<IJsonSerializer>();
-            _jsonSerializer.Deserialize(_json, typeof(SupportedEvent)).Returns(_event);
+            _jsonSerializer.Deserialize(Json, typeof(SupportedEvent)).Returns(_event);
 
             _sut = new(_externalEventHandler, _jsonSerializer, _supportedTypes);
         }

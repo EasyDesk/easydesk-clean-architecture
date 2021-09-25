@@ -15,7 +15,7 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers
         private readonly AsyncFunc<Response<T>> _request;
         private readonly ControllerBase _controller;
         private readonly IMapper _mapper;
-        private readonly List<(Predicate<Error> errorPredicate, ResultProvider<Error> resultProvider)> _errorHandlers;
+        private readonly List<(Predicate<Error> ErrorPredicate, ResultProvider<Error> ResultProvider)> _errorHandlers;
 
         public ResultBuilder(AsyncFunc<Response<T>> request, ControllerBase controller, IMapper mapper)
         {
@@ -45,8 +45,8 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers
 
         private IActionResult HandleErrorResult(Error error, object body)
         {
-            return _errorHandlers.FirstOption(h => h.errorPredicate(error)).Match(
-                some: h => h.resultProvider(body, error),
+            return _errorHandlers.FirstOption(h => h.ErrorPredicate(error)).Match(
+                some: h => h.ResultProvider(body, error),
                 none: () => _controller.BadRequest(body));
         }
 

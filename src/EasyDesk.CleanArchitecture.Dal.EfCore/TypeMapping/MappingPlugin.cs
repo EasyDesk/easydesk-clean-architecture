@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture;
-using EasyDesk.Tools.Collections;
+﻿using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -52,7 +51,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping
             }
 
             public override long GetServiceProviderHashCode() => 0;
-            
+
             public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
             {
             }

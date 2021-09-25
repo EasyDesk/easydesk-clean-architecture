@@ -20,6 +20,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Authentication
         }
 
         public IServiceCollection Services { get; }
+
         public IConfiguration Configuration { get; }
 
         public AuthenticationSetupBuilder AddScheme<TOptions, THandler>(string schemeName, Action<TOptions> options)

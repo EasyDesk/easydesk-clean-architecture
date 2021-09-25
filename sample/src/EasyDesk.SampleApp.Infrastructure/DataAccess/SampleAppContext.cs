@@ -11,7 +11,6 @@ namespace EasyDesk.SampleApp.Infrastructure.DataAccess
         public SampleAppContext(DbContextOptions<SampleAppContext> options)
             : base(options)
         {
-
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -36,7 +36,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore
             return services;
         }
 
-        #region Legacy
         // TODO: this is the legacy way of configuring data access.
         public static IServiceCollection AddEfCoreDataAccess<TService, TImplementation>(this IServiceCollection services, string connectionString)
             where TService : class
@@ -62,7 +61,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore
 
             return services;
         }
-        #endregion
     }
 
     public class EfCoreDataAccessBuilder

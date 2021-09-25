@@ -22,7 +22,7 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement
             public const string PropertyValidationError = "PropertyValidationError";
         }
 
-        private const string _formatPadding = "#";
+        private const string FormatPadding = "#";
 
         public static Error Internal(Exception ex) => new InternalError(ex);
 
@@ -61,7 +61,7 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement
 
             var (name, format) = ParseContentInsideBraces(contentInsideBraces);
             var value = paramMap.GetOrAdd(name, () => argsQueue.Dequeue());
-            
+
             var formatString = format.Match(
                 some: f => $"{{0:{f}}}",
                 none: () => "{0}");
@@ -69,7 +69,7 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement
             return string.Format(formatString, value);
         }
 
-        private static (string name, Option<string> format) ParseContentInsideBraces(string occurence)
+        private static (string Name, Option<string> Format) ParseContentInsideBraces(string occurence)
         {
             var splits = occurence.Split(":", 2);
             return (splits[0], splits.Length == 2 ? Some(splits[1]) : None);

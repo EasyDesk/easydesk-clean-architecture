@@ -13,7 +13,7 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class OwnerOnlyOrAttribute : Attribute, IAsyncActionFilter
     {
-        private const string _defaultParamName = "userId";
+        private const string DefaultParamName = "userId";
 
         private readonly IEnumerable<RoleId> _authorizedRoles;
 
@@ -22,7 +22,7 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
             _authorizedRoles = authorizedRoles;
         }
 
-        public string RouteParamName { get; set; } = _defaultParamName;
+        public string RouteParamName { get; set; } = DefaultParamName;
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {

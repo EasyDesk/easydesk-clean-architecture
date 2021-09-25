@@ -12,6 +12,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Time
         {
             _timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(settings.TimeZoneId);
         }
+
         public LocalDateTime ToLocal(Timestamp timestamp) =>
             LocalDateTime.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(timestamp.AsDateTime, _timeZoneInfo));
 

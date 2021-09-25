@@ -19,7 +19,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping
 
         public TimestampMapping() : base(_converter, TimestampType)
         {
-
         }
 
         protected override RelationalTypeMapping Clone(RelationalTypeMappingParameters parameters) =>

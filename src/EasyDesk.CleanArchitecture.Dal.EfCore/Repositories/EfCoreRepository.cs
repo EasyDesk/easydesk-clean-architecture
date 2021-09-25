@@ -1,15 +1,14 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
-using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
-using EasyDesk.CleanArchitecture;
-using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
+using EasyDesk.Tools.Collections;
+using EasyDesk.Tools.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories
 {

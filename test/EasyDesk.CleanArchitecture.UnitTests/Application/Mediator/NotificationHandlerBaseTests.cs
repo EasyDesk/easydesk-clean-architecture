@@ -1,13 +1,13 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mediator;
+﻿using System;
+using System.Threading.Tasks;
+using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools;
 using NSubstitute;
 using Shouldly;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
-using EasyDesk.CleanArchitecture.Testing;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
 {
@@ -25,7 +25,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
             protected override Task<Response<Nothing>> Handle(int ev) => Task.FromResult(_handler(ev));
         }
 
-        private const int _value = 10;
+        private const int Value = 10;
         private readonly Func<int, Response<Nothing>> _handlerCode;
         private readonly TestHandler _sut;
 
@@ -40,15 +40,15 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
         [Fact]
         public async Task Handle_ShouldCallTheHandlerCodeWithTheGivenEventData()
         {
-            await _sut.Handle(new(_value), default);
+            await _sut.Handle(new(Value), default);
 
-            _handlerCode.Received(1)(_value);
+            _handlerCode.Received(1)(Value);
         }
 
         [Fact]
         public async Task Handle_ShouldNotCallTheHandlerCode_IfTheContextAlreadyContainsAnError()
         {
-            var context = new EventContext<int>(_value);
+            var context = new EventContext<int>(Value);
             context.SetError(TestError.Create());
 
             await _sut.Handle(context, default);
@@ -59,7 +59,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
         [Fact]
         public async Task Handle_ShouldSetAnErrorOnTheContext_IfTheHandlerCodeReturnsAnError()
         {
-            var context = new EventContext<int>(_value);
+            var context = new EventContext<int>(Value);
             var error = TestError.Create();
             _handlerCode(Arg.Any<int>()).Returns(error);
 

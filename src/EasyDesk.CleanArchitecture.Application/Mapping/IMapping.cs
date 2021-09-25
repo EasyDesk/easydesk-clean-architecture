@@ -11,7 +11,7 @@ namespace EasyDesk.CleanArchitecture.Application.Mapping
 
     public abstract class AbstractMapping<T> : IMapping
     {
-        protected Action<T> _mapAction;
+        private Action<T> _mapAction;
 
         public void ConfigureProfile(Profile profile)
         {

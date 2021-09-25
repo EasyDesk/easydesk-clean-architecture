@@ -1,15 +1,15 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Shouldly;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Xunit;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
-using EasyDesk.CleanArchitecture.Testing;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Jwt
 {
@@ -62,7 +62,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Jwt
         public void Validate_ShouldFail_IfTheTokenWasSignedWithADifferentKey()
         {
             var jwt = _sut.CreateToken(new(_claims), _settings with { Key = KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm") }, out _);
-            
+
             Validate(jwt, out _).ShouldBeEmpty();
         }
 

@@ -9,7 +9,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Time
 {
     public class ClientSentDateTime : ITimestampProvider
     {
-        private const string _dateTimeHeaderName = "x-custom-date";
+        private const string DateTimeHeaderName = "x-custom-date";
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ITimestampProvider _defaultDateTimeProvider;
@@ -24,7 +24,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Time
             .HttpContext
             .Request
             .Headers
-            .GetOption(_dateTimeHeaderName)
+            .GetOption(DateTimeHeaderName)
             .Map(s => Timestamp.FromUtcDateTime(DateTime.Parse(s.ToString())))
             .OrElseGet(() => _defaultDateTimeProvider.Now);
     }

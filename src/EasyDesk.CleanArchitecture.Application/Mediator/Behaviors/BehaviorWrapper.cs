@@ -11,8 +11,8 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors
     /// This is required since ASP.NET core DI container doesn't fully support open generics,
     /// therefore the real behavior would not be correctly detected by MediatR.
     /// </summary>
-    /// <typeparam name="TRequest">The request type</typeparam>
-    /// <typeparam name="TResponse">The response type</typeparam>
+    /// <typeparam name="TRequest">The request type.</typeparam>
+    /// <typeparam name="TResponse">The response type.</typeparam>
     public abstract class BehaviorWrapper<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
