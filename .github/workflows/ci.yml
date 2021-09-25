@@ -15,7 +15,7 @@ jobs:
     name: Build
     runs-on: ubuntu-20.04
     env:
-      PROJECT_DIRS:  |
+      PROJECT_DIRS: |
         EasyDesk.CleanArchitecture.Domain
         EasyDesk.CleanArchitecture.Application
         EasyDesk.CleanArchitecture.Infrastructure
