@@ -16,12 +16,12 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       PROJECT_DIRS: |
-        EasyDesk.CleanArchitecture.Domain
-        EasyDesk.CleanArchitecture.Application
-        EasyDesk.CleanArchitecture.Infrastructure
-        EasyDesk.CleanArchitecture.Dal.EfCore
-        EasyDesk.CleanArchitecture.Web
-        EasyDesk.CleanArchitecture.Testing
+        src/EasyDesk.CleanArchitecture.Domain
+        src/EasyDesk.CleanArchitecture.Application
+        src/EasyDesk.CleanArchitecture.Infrastructure
+        src/EasyDesk.CleanArchitecture.Dal.EfCore
+        src/EasyDesk.CleanArchitecture.Web
+        src/EasyDesk.CleanArchitecture.Testing
       OUTPUT_DIR: publish
     outputs:
       version: ${{ steps.semver.outputs.version }}
