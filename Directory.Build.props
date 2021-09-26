@@ -1,3 +1,4 @@
 <Project>
   <Import Project="Linter.targets" />
+  <Import Project="Packaging.targets" />
 </Project>

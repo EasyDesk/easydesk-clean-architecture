@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 		Directory.Build.props = Directory.Build.props
 		Linter.targets = Linter.targets
+		Packaging.targets = Packaging.targets
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.UnitTests", "test\EasyDesk.CleanArchitecture.UnitTests\EasyDesk.CleanArchitecture.UnitTests.csproj", "{A963517F-4E93-405A-8B92-9CBB47250CD8}"

@@ -5,22 +5,8 @@
     <Authors>Francesco Dente, Luca Deluigi</Authors>
     <Company>EasyDesk</Company>
     <Description>Utilities for the infrastructure layer of the clean architecture as seen by EasyDesk.</Description>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <Deterministic>true</Deterministic>
-    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="EasyDesk.Tools" Version="1.2.2" />
@@ -38,12 +24,5 @@
   <PropertyGroup>
     <RootFolder>../..</RootFolder>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="$(RootFolder)\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
 
 </Project>
