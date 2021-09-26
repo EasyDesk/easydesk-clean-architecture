@@ -30,7 +30,9 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <RootFolder>../..</RootFolder>
+    <RootFolder>..\..</RootFolder>
   </PropertyGroup>
+
+  <Import Project="$(RootFolder)\Packaging.targets" />
 
 </Project>

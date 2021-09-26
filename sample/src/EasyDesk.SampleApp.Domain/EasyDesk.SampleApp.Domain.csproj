@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <RootFolder>../../..</RootFolder>
+    <RootFolder>..\..\..</RootFolder>
   </PropertyGroup>
 
 </Project>
