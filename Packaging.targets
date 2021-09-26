@@ -13,7 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(RootFolder)\LICENSE">
+    <PackageReference Include="EasyDesk.Tools" Version="1.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
