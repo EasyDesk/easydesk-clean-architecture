@@ -20,8 +20,5 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Time
             Timestamp.FromUtcDateTime(TimeZoneInfo.ConvertTimeToUtc(localDateTime.AsDateTime, _timeZoneInfo));
     }
 
-    public class DateTimeLocaleSettings
-    {
-        public string TimeZoneId { get; set; }
-    }
+    public record DateTimeLocaleSettings(string TimeZoneId);
 }

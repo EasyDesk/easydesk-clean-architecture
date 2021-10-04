@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Infrastructure.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Environment;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Infrastructure.Time;
@@ -16,11 +15,10 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
         public void InstallServices(IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
         {
             services
-                .AddSingleton<IJsonSerializer, NewtonsoftJsonSerializer>()
+                .AddNewtonsoftJsonSerializer()
                 .AddHttpContextAccessor()
-                .AddDateTimeProvider(config)
-                .AddDateTimeLocale(config)
-                .AddTokenInfoRetriever()
+                .AddTimestampProvider(config)
+                .AddUserInfo()
                 .AddEnvironmentInfo()
                 .AddConfigAsSingleton<DisabledEndpoints>(config);
         }

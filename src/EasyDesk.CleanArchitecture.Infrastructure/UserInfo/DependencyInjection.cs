@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.UserInfo
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddTokenInfoRetriever(this IServiceCollection services)
+        public static IServiceCollection AddUserInfo(this IServiceCollection services)
         {
             return services.AddScoped<IUserInfo, TokenInfoRetriever>();
         }

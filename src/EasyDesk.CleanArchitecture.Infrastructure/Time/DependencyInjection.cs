@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Time;
-using EasyDesk.CleanArchitecture.Infrastructure.DependencyInjection;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,15 +8,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Time
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddDateTimeLocale(this IServiceCollection services, IConfiguration config)
-        {
-            services.AddConfigAsSingleton<DateTimeLocaleSettings>(config);
-            services.AddSingleton<ILocale, DateTimeLocale>();
-
-            return services;
-        }
-
-        public static IServiceCollection AddDateTimeProvider(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddTimestampProvider(this IServiceCollection services, IConfiguration config)
         {
             return services.AddSingleton(_ => CreateDefaultDateTimeService(config));
         }
