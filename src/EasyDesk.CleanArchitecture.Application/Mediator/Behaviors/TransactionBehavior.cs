@@ -26,6 +26,7 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors
     }
 
     public class TransactionBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
+        where TRequest : CommandBase<TResponse>
     {
         private readonly ITransactionManager _transactionManager;
 

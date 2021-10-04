@@ -42,6 +42,7 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors
     }
 
     public class ValidationBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
+        where TRequest : RequestBase<TResponse>
     {
         private readonly IEnumerable<IValidator<TRequest>> _validators;
 
