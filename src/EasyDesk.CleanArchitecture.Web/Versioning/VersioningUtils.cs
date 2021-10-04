@@ -16,6 +16,8 @@ namespace EasyDesk.CleanArchitecture.Web.Versioning
         public const string VersionHeader = "api-version";
         public const string VersionQueryParam = "version";
 
+        public static ApiVersion DefaultVersion => new(1, 0);
+
         public static Option<ApiVersion> GetControllerVersion(this Type controllerType)
         {
             return controllerType.Namespace
