@@ -47,7 +47,6 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
                     {
                         options.Filters.Add<UnhandledExceptionsFilter>();
                     }
-                    options.Filters.Add<DisabledEndpointsFilter>();
                     options.ModelBinderProviders.Insert(0, new TypedModelBinderProvider(new Dictionary<Type, Func<IModelBinder>>()
                     {
                         { typeof(Date), ModelBindersFactory.ForDate },
