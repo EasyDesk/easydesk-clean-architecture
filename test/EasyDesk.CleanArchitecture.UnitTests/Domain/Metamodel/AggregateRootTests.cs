@@ -103,6 +103,20 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
         }
 
         [Fact]
+        public void ConsumeAllEvens_ShouldConsumeEventsAsTheSequenceIsEnumerated()
+        {
+            _sut.Action(1);
+            _sut.Action(2);
+
+            var enumerator = _sut.ConsumeAllEvents().GetEnumerator();
+
+            enumerator.MoveNext();
+            _sut.EmittedEvents.ShouldBe(Items(ToEvent(2)));
+            enumerator.MoveNext();
+            _sut.EmittedEvents.ShouldBeEmpty();
+        }
+
+        [Fact]
         public void EmittedEvents_ShouldBeEmpty_IfNoEventsWereEmitted()
         {
             _sut.EmittedEvents.ShouldBeEmpty();
