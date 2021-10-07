@@ -1,12 +1,14 @@
-﻿using EasyDesk.Tools.Options;
+﻿using EasyDesk.Tools.Collections;
+using EasyDesk.Tools.Options;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel
 {
-    public abstract class AggregateRoot<T> : Entity<T, Guid>.ExplicitId, IDomainEventBuffer
+    public abstract class AggregateRoot<T> : Entity<T, Guid>.ExplicitId
         where T : AggregateRoot<T>
     {
         private IImmutableQueue<IDomainEvent> _events = ImmutableQueue<IDomainEvent>.Empty;
@@ -33,6 +35,13 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel
             }
             _events = _events.Dequeue(out var consumedEvent);
             return Some(consumedEvent);
+        }
+
+        public IEnumerable<IDomainEvent> ConsumeAllEvents()
+        {
+            return EnumerableUtils.Generate(ConsumeEvent)
+                .TakeWhile(ev => ev.IsPresent)
+                .Select(ev => ev.Value);
         }
     }
 }

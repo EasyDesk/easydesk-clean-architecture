@@ -66,6 +66,43 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
         }
 
         [Fact]
+        public void ConsumeEvent_ShouldRemoveTheConsumedEventFromTheEmittedEvents()
+        {
+            _sut.Action(1);
+            _sut.Action(2);
+            _sut.ConsumeEvent();
+
+            _sut.EmittedEvents.ShouldBe(Items(ToEvent(2)));
+        }
+
+        [Fact]
+        public void ConsumeAllEvents_ShouldReturnAnEmptySequence_IfNoEventsWereEmitted()
+        {
+            _sut.ConsumeAllEvents().ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void ConsumeAllEvents_ShouldReturnEmittedEventsInFifoOrder()
+        {
+            _sut.Action(1);
+            _sut.Action(2);
+            _sut.Action(3);
+
+            _sut.ConsumeAllEvents().ShouldBe(Items(ToEvent(1), ToEvent(2), ToEvent(3)));
+        }
+
+        [Fact]
+        public void ConsumeAllEvents_ShouldBeLazy()
+        {
+            _sut.Action(1);
+            _sut.Action(2);
+
+            _sut.ConsumeAllEvents();
+
+            _sut.EmittedEvents.ShouldNotBeEmpty();
+        }
+
+        [Fact]
         public void EmittedEvents_ShouldBeEmpty_IfNoEventsWereEmitted()
         {
             _sut.EmittedEvents.ShouldBeEmpty();
