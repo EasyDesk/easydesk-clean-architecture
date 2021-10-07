@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETCoreApp,Version=v5.0": {
+      "StyleCop.Analyzers": {
+        "type": "Direct",
+        "requested": "[1.2.0-beta.354, )",
+        "resolved": "1.2.0-beta.354",
+        "contentHash": "oDSJNxnEvIzAQTkpkc/FnJP4dQ7TV6fHMsI+2ckU5DOaMiwiEfh1fawMsSqz2bCoNwbTt9lS6MgYvyVKujNJoA==",
+        "dependencies": {
+          "StyleCop.Analyzers.Unstable": "1.2.0.354"
+        }
+      },
+      "EasyDesk.Tools": {
+        "type": "Transitive",
+        "resolved": "1.3.2",
+        "contentHash": "E/4Kq8Xic8R6l8Z9PSNABVqh1k7JjclQV72BcmlRbjTlcWRh1iMBNw/gQXgBkKF/j1uIy5PJFZmoYyCvVmArZg=="
+      },
+      "StyleCop.Analyzers.Unstable": {
+        "type": "Transitive",
+        "resolved": "1.2.0.354",
+        "contentHash": "/3RlM31XbJ02gaWh7dVumWOyMvGHswb/zygGJXd9oEJMRyyYc/HFJlAC5gBPxvi9cB4CMvIyyUTmZz5VLKwTvg=="
+      },
+      "easydesk.cleanarchitecture.domain": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.Tools": "1.3.2"
+        }
+      }
+    }
+  }
+}
