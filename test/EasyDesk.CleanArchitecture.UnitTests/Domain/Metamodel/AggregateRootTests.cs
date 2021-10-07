@@ -2,7 +2,7 @@
 using Shouldly;
 using System;
 using Xunit;
-using static EasyDesk.Tools.Options.OptionImports;
+using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
 {
@@ -29,7 +29,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
         [Fact]
         public void ConsumeEvent_ShouldReturnNone_IfNoEventsWereEmitted()
         {
-            _sut.ConsumeEvent().ShouldBe(None);
+            _sut.ConsumeEvent().ShouldBeEmpty();
         }
 
         [Fact]
@@ -38,9 +38,9 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
             _sut.Action(1);
             _sut.Action(2);
             _sut.Action(3);
-            _sut.ConsumeEvent().ShouldBe(Some(ToEvent(1)));
-            _sut.ConsumeEvent().ShouldBe(Some(ToEvent(2)));
-            _sut.ConsumeEvent().ShouldBe(Some(ToEvent(3)));
+            _sut.ConsumeEvent().ShouldContain(ToEvent(1));
+            _sut.ConsumeEvent().ShouldContain(ToEvent(2));
+            _sut.ConsumeEvent().ShouldContain(ToEvent(3));
         }
 
         [Fact]
@@ -51,7 +51,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
             _sut.ConsumeEvent();
             _sut.ConsumeEvent();
 
-            _sut.ConsumeEvent().ShouldBe(None);
+            _sut.ConsumeEvent().ShouldBeEmpty();
         }
 
         [Fact]
@@ -59,10 +59,38 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
         {
             _sut.Action(1);
             _sut.Action(2);
-            _sut.ConsumeEvent().ShouldBe(Some(ToEvent(1)));
+            _sut.ConsumeEvent().ShouldContain(ToEvent(1));
             _sut.Action(3);
-            _sut.ConsumeEvent().ShouldBe(Some(ToEvent(2)));
-            _sut.ConsumeEvent().ShouldBe(Some(ToEvent(3)));
+            _sut.ConsumeEvent().ShouldContain(ToEvent(2));
+            _sut.ConsumeEvent().ShouldContain(ToEvent(3));
+        }
+
+        [Fact]
+        public void EmittedEvents_ShouldBeEmpty_IfNoEventsWereEmitted()
+        {
+            _sut.EmittedEvents.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public void EmittedEvents_ShouldContainEmittedEventsInFifoOrder()
+        {
+            _sut.Action(1);
+            _sut.Action(2);
+            _sut.Action(3);
+
+            _sut.EmittedEvents.ShouldBe(Items(ToEvent(1), ToEvent(2), ToEvent(3)));
+        }
+
+        [Fact]
+        public void EmittedEvents_ShouldAllowForInterleavingEventEmission()
+        {
+            _sut.Action(1);
+            _sut.Action(2);
+
+            var events = _sut.EmittedEvents;
+            _sut.Action(3);
+
+            events.ShouldBe(Items(ToEvent(1), ToEvent(2)));
         }
     }
 }

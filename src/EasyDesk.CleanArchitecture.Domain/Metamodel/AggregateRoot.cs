@@ -1,6 +1,7 @@
 ﻿using EasyDesk.Tools.Options;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel
@@ -8,7 +9,7 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel
     public abstract class AggregateRoot<T> : Entity<T, Guid>.ExplicitId, IDomainEventBuffer
         where T : AggregateRoot<T>
     {
-        private readonly Queue<IDomainEvent> _events = new();
+        private IImmutableQueue<IDomainEvent> _events = ImmutableQueue<IDomainEvent>.Empty;
 
         public AggregateRoot(Guid id)
         {
@@ -17,14 +18,21 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel
 
         public sealed override Guid Id { get; }
 
+        public IEnumerable<IDomainEvent> EmittedEvents => _events;
+
         protected void EmitEvent(IDomainEvent domainEvent)
         {
-            _events.Enqueue(domainEvent);
+            _events = _events.Enqueue(domainEvent);
         }
 
         public Option<IDomainEvent> ConsumeEvent()
         {
-            return FromTryConstruct<IDomainEvent>(_events.TryDequeue);
+            if (_events.IsEmpty)
+            {
+                return None;
+            }
+            _events = _events.Dequeue(out var consumedEvent);
+            return Some(consumedEvent);
         }
     }
 }

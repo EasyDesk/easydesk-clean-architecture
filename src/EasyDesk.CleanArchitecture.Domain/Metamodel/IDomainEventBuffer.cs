@@ -7,6 +7,8 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel
 {
     public interface IDomainEventBuffer
     {
+        IEnumerable<IDomainEvent> EmittedEvents { get; }
+
         Option<IDomainEvent> ConsumeEvent();
     }
 
