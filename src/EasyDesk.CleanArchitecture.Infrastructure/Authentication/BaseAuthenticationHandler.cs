@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture;
-using EasyDesk.Tools.Collections;
+﻿using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
