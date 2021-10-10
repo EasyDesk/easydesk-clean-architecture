@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture;
-using EasyDesk.Tools.Collections;
+﻿using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;

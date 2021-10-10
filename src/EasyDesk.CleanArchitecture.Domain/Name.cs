@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 using System;
 
 namespace EasyDesk.CleanArchitecture.Domain

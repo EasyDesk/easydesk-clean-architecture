@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture;
-using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
