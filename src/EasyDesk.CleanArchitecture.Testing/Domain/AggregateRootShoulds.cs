@@ -6,8 +6,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Domain
     [ShouldlyMethods]
     public static class AggregateRootShoulds
     {
-        public static void ShouldHaveEmitted<T>(this T aggregateRoot, IDomainEvent expected)
-            where T : AggregateRoot<T>
+        public static void ShouldHaveEmitted(this AggregateRoot aggregateRoot, IDomainEvent expected)
         {
             aggregateRoot.EmittedEvents.ShouldContain(expected);
         }

@@ -13,11 +13,11 @@ using Microsoft.EntityFrameworkCore;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories
 {
     public abstract class EfCoreRepository<TDomain, TPersistence, TContext> :
-        Repository.ISaveRepository<TDomain>,
-        Repository.IRemoveRepository<TDomain>
+        ISaveRepository<TDomain>,
+        IRemoveRepository<TDomain>
         where TContext : DbContext
         where TPersistence : class, new()
-        where TDomain : AggregateRoot<TDomain>
+        where TDomain : AggregateRoot
     {
         private readonly TContext _context;
         private readonly IModelConverter<TDomain, TPersistence> _converter;

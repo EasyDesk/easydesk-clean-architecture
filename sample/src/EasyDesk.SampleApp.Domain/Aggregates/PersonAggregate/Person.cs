@@ -17,10 +17,11 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate
 
     public record PersonDivorcedEvent(Person Person) : IDomainEvent;
 
-    public class Person : AggregateRoot<Person>
+    public class Person : AggregateRoot
     {
-        public Person(Guid id, Name name, bool married) : base(id)
+        public Person(Guid id, Name name, bool married)
         {
+            Id = id;
             Name = name;
             Married = married;
         }
@@ -31,6 +32,8 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate
             person.EmitEvent(new PersonCreatedEvent(person));
             return person;
         }
+
+        public Guid Id { get; }
 
         public Name Name { get; }
 

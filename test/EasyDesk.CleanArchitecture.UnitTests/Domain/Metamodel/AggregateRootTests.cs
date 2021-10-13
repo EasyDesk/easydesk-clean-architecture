@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using Shouldly;
-using System;
 using Xunit;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
@@ -10,9 +9,9 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
     {
         private record Event(int Value) : IDomainEvent;
 
-        private class TestAggregateRoot : AggregateRoot<TestAggregateRoot>
+        private class TestAggregateRoot : AggregateRoot
         {
-            public TestAggregateRoot() : base(Guid.NewGuid())
+            public TestAggregateRoot()
             {
             }
 
@@ -103,7 +102,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
         }
 
         [Fact]
-        public void ConsumeAllEvens_ShouldConsumeEventsAsTheSequenceIsEnumerated()
+        public void ConsumeAllEvents_ShouldConsumeEventsAsTheSequenceIsEnumerated()
         {
             _sut.Action(1);
             _sut.Action(2);
