@@ -8,7 +8,7 @@ using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 namespace EasyDesk.CleanArchitecture.Application.Mediator
 {
     public abstract class DomainEventPropagator<T> : DomainEventHandlerBase<T>
-        where T : IDomainEvent
+        where T : DomainEvent
     {
         private readonly IExternalEventPublisher _publisher;
 
@@ -23,6 +23,6 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator
             return Ok;
         }
 
-        protected abstract IExternalEvent ConvertToExternalEvent(T ev);
+        protected abstract ExternalEvent ConvertToExternalEvent(T ev);
     }
 }

@@ -24,13 +24,13 @@ namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents
             _jsonSerializer = jsonSerializer;
         }
 
-        public async Task Publish(IEnumerable<IExternalEvent> events)
+        public async Task Publish(IEnumerable<ExternalEvent> events)
         {
             var eventBusMessages = events.Select(ToEventBusMessage).ToList();
             await _eventBusPublisher.Publish(eventBusMessages);
         }
 
-        private EventBusMessage ToEventBusMessage(IExternalEvent externalEvent)
+        private EventBusMessage ToEventBusMessage(ExternalEvent externalEvent)
         {
             return new EventBusMessage(
                 Id: Guid.NewGuid(),

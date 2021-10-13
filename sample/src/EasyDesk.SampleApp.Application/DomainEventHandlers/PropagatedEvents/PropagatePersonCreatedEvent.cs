@@ -5,7 +5,7 @@ using System;
 
 namespace EasyDesk.SampleApp.Application.DomainEventHandlers.PropagatedEvents
 {
-    public record PersonCreated(Guid PersonId) : IExternalEvent;
+    public record PersonCreated(Guid PersonId) : ExternalEvent;
 
     public class PropagatePersonCreatedEvent : DomainEventPropagator<PersonCreatedEvent>
     {
@@ -13,7 +13,7 @@ namespace EasyDesk.SampleApp.Application.DomainEventHandlers.PropagatedEvents
         {
         }
 
-        protected override IExternalEvent ConvertToExternalEvent(PersonCreatedEvent ev) =>
+        protected override ExternalEvent ConvertToExternalEvent(PersonCreatedEvent ev) =>
             new PersonCreated(ev.Person.Id);
     }
 }

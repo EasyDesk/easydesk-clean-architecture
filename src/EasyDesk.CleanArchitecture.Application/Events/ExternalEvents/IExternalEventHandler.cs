@@ -6,6 +6,6 @@ namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents
 {
     public interface IExternalEventHandler
     {
-        Task<Response<Nothing>> Handle(IExternalEvent ev);
+        Task<Response<Nothing>> Handle(ExternalEvent ev);
     }
 }

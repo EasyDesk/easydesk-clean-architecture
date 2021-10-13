@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel
 {
     public class AggregateRootTests
     {
-        private record Event(int Value) : IDomainEvent;
+        private record Event(int Value) : DomainEvent;
 
         private class TestAggregateRoot : AggregateRoot
         {

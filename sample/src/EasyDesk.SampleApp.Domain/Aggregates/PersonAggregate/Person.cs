@@ -11,11 +11,11 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate
 
     public record NotMarriedYet : DomainError;
 
-    public record PersonCreatedEvent(Person Person) : IDomainEvent;
+    public record PersonCreatedEvent(Person Person) : DomainEvent;
 
-    public record PersonGotMarriedEvent(Person Person) : IDomainEvent;
+    public record PersonGotMarriedEvent(Person Person) : DomainEvent;
 
-    public record PersonDivorcedEvent(Person Person) : IDomainEvent;
+    public record PersonDivorcedEvent(Person Person) : DomainEvent;
 
     public class Person : AggregateRoot
     {

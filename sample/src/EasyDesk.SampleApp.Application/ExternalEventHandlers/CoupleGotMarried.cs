@@ -11,7 +11,7 @@ using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.SampleApp.Application.ExternalEventHandlers
 {
-    public record CoupleGotMarried(Guid GroomId, Guid BrideId) : IExternalEvent;
+    public record CoupleGotMarried(Guid GroomId, Guid BrideId) : ExternalEvent;
 
     public class CoupleGotMarriedHandler : ExternalEventHandlerBase<CoupleGotMarried>
     {

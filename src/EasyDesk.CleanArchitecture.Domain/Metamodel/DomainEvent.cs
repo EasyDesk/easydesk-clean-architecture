@@ -1,6 +1,4 @@
 ﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel
 {
-    public interface IDomainEvent
-    {
-    }
+    public abstract record DomainEvent;
 }

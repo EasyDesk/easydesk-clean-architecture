@@ -15,7 +15,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents
             _mediator = mediator;
         }
 
-        public async Task<Response<Nothing>> Handle(IExternalEvent ev)
+        public async Task<Response<Nothing>> Handle(ExternalEvent ev)
         {
             return await _mediator.PublishEvent(ev);
         }

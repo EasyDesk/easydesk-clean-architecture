@@ -14,7 +14,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.DomainEvents
 {
     public class TransactionalDomainEventQueueTests
     {
-        private record Event(int Value) : IDomainEvent;
+        private record Event(int Value) : DomainEvent;
 
         private static readonly Event _event1 = new(1);
         private static readonly Event _event2 = new(2);

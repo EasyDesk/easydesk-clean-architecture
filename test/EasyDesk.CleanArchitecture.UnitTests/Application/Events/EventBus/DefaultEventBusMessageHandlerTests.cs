@@ -15,7 +15,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
 {
     public class DefaultEventBusMessageHandlerTests
     {
-        private record SupportedEvent : IExternalEvent;
+        private record SupportedEvent : ExternalEvent;
 
         private const string Json = "{}";
 

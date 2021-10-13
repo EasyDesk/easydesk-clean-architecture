@@ -9,16 +9,16 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel
 {
     public abstract class AggregateRoot : Entity
     {
-        private IImmutableQueue<IDomainEvent> _events = ImmutableQueue<IDomainEvent>.Empty;
+        private IImmutableQueue<DomainEvent> _events = ImmutableQueue<DomainEvent>.Empty;
 
-        public IEnumerable<IDomainEvent> EmittedEvents => _events;
+        public IEnumerable<DomainEvent> EmittedEvents => _events;
 
-        protected void EmitEvent(IDomainEvent domainEvent)
+        protected void EmitEvent(DomainEvent domainEvent)
         {
             _events = _events.Enqueue(domainEvent);
         }
 
-        public Option<IDomainEvent> ConsumeEvent()
+        public Option<DomainEvent> ConsumeEvent()
         {
             if (_events.IsEmpty)
             {
@@ -28,7 +28,7 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel
             return Some(consumedEvent);
         }
 
-        public IEnumerable<IDomainEvent> ConsumeAllEvents() => EnumerableUtils
+        public IEnumerable<DomainEvent> ConsumeAllEvents() => EnumerableUtils
             .Generate(ConsumeEvent)
             .TakeWhile(ev => ev.IsPresent)
             .Select(ev => ev.Value);

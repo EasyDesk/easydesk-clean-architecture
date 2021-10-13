@@ -14,7 +14,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents
     {
         private readonly ITransactionManager _transactionManager;
         private readonly IMediator _mediator;
-        private readonly Queue<IDomainEvent> _eventQueue = new();
+        private readonly Queue<DomainEvent> _eventQueue = new();
 
         public TransactionalDomainEventQueue(ITransactionManager transactionManager, IMediator mediator)
         {
@@ -22,7 +22,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents
             _mediator = mediator;
         }
 
-        public void Notify(IDomainEvent domainEvent)
+        public void Notify(DomainEvent domainEvent)
         {
             if (_eventQueue.Count == 0)
             {

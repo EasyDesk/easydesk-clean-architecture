@@ -2,6 +2,6 @@
 {
     public interface IDomainEventNotifier
     {
-        void Notify(IDomainEvent domainEvent);
+        void Notify(DomainEvent domainEvent);
     }
 }

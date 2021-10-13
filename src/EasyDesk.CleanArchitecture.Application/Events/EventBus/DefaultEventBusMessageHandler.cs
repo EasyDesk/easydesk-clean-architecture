@@ -34,7 +34,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.EventBus
 
         private async Task<EventBusMessageHandlerResult> HandleMessageWithType(Type eventType, string message)
         {
-            var externalEvent = _jsonSerializer.Deserialize(message, eventType) as IExternalEvent;
+            var externalEvent = _jsonSerializer.Deserialize(message, eventType) as ExternalEvent;
             var handlerResponse = await _externalEventHandler.Handle(externalEvent);
             return handlerResponse.Match(
                 success: _ => EventBusMessageHandlerResult.Handled,
