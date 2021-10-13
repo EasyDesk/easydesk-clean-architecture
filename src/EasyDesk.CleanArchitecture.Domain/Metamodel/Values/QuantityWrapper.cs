@@ -11,11 +11,21 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values
     /// </summary>
     /// <typeparam name="T">The same record that extends this one.</typeparam>
     public abstract record QuantityWrapper<T>
-        : AbstractValueWrapper<T>
-        where T : IEquatable<T>
+        : AbstractValueWrapper<T>, IComparable<QuantityWrapper<T>>
+        where T : IEquatable<T>, IComparable<T>
     {
         public QuantityWrapper(T value) : base(value)
         {
         }
+
+        public int CompareTo(QuantityWrapper<T> other) => Value.CompareTo(other.Value);
+
+        public static bool operator >(QuantityWrapper<T> a, QuantityWrapper<T> b) => a.CompareTo(b) > 0;
+
+        public static bool operator <(QuantityWrapper<T> a, QuantityWrapper<T> b) => a.CompareTo(b) < 0;
+
+        public static bool operator >=(QuantityWrapper<T> a, QuantityWrapper<T> b) => a.CompareTo(b) >= 0;
+
+        public static bool operator <=(QuantityWrapper<T> a, QuantityWrapper<T> b) => a.CompareTo(b) <= 0;
     }
 }

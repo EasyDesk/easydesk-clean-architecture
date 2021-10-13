@@ -39,5 +39,20 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values
         {
             _sut.InnerValue.ShouldBe(_innerValue);
         }
+
+        [Fact]
+        public void QuantityWrapper_ShouldBeComparable()
+        {
+            var other = new TestQuantityWrapper(_innerValue);
+            _sut.CompareTo(other).ShouldBe(0);
+            (_sut <= other && _sut >= other).ShouldBeTrue();
+            (_sut < other || _sut > other).ShouldBeFalse();
+            other = new TestQuantityWrapper(10000000);
+            _sut.CompareTo(other).ShouldBeLessThan(0);
+            (_sut < other && _sut <= other).ShouldBeTrue();
+            other = new TestQuantityWrapper(-100000000);
+            _sut.CompareTo(other).ShouldBeGreaterThan(0);
+            (_sut > other && _sut >= other).ShouldBeTrue();
+        }
     }
 }
