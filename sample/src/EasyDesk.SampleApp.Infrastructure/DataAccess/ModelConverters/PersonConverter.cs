@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
-using EasyDesk.CleanArchitecture.Domain;
+using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 

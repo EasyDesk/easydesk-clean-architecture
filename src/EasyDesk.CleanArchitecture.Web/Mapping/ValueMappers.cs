@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Domain;
+using EasyDesk.CleanArchitecture.Domain.Model;
 
 namespace EasyDesk.CleanArchitecture.Web.Mapping
 {

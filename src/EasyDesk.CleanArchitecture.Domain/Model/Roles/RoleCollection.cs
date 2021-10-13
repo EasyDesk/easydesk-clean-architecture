@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Domain.Roles
+namespace EasyDesk.CleanArchitecture.Domain.Model.Roles
 {
     public record RoleCollection<T> : IEnumerable<T>
         where T : IRole

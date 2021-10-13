@@ -2,7 +2,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace EasyDesk.CleanArchitecture.Domain.Roles
+namespace EasyDesk.CleanArchitecture.Domain.Model.Roles
 {
     public record RoleId : ValueWrapper<string>
     {

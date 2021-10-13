@@ -2,7 +2,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace EasyDesk.CleanArchitecture.Domain
+namespace EasyDesk.CleanArchitecture.Domain.Model
 {
     public record Email : ValueWrapper<string>
     {

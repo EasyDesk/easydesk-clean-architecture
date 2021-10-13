@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Domain;
-using EasyDesk.CleanArchitecture.Domain.Metamodel;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
+using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.Tools;
 using System;
 using static EasyDesk.CleanArchitecture.Domain.Metamodel.Results.ResultImports;

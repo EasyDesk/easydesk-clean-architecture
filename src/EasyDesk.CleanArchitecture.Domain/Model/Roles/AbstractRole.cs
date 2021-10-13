@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Threading;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Domain.Roles
+namespace EasyDesk.CleanArchitecture.Domain.Model.Roles
 {
     public abstract class AbstractRole<T> : IRole
         where T : AbstractRole<T>

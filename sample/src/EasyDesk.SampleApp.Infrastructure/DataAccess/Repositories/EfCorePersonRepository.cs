@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.ModelConverters;
@@ -23,6 +24,6 @@ namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Repositories
 
         protected override IQueryable<PersonModel> Includes(IQueryable<PersonModel> initialQuery) => initialQuery;
 
-        public Task<Option<Person>> GetById(Guid id) => GetSingle(q => q.Where(p => p.Id == id));
+        public Task<Result<Person>> GetById(Guid id) => GetSingle(q => q.Where(p => p.Id == id));
     }
 }

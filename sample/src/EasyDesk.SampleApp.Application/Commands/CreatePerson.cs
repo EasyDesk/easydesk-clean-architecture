@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Domain;
+using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.Tools;
 using System.Threading.Tasks;

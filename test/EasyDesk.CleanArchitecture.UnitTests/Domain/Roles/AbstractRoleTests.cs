@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Roles;
+﻿using EasyDesk.CleanArchitecture.Domain.Model.Roles;
 using Shouldly;
 using System;
 using Xunit;

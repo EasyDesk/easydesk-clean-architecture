@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Domain
+namespace EasyDesk.CleanArchitecture.Domain.Model
 {
     public record Name : ValueWrapper<string>
     {

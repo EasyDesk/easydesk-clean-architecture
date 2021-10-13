@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Roles
+﻿namespace EasyDesk.CleanArchitecture.Domain.Model.Roles
 {
     public interface IRole
     {

@@ -35,8 +35,8 @@ namespace EasyDesk.SampleApp.Application.ExternalEventHandlers
         {
             var person = await _personRepository.GetById(personId);
             return person.Match(
-                some: person => person.Marry().ToResponse(),
-                none: () => Ok);
+                success: person => person.Marry().ToResponse(),
+                failure: _ => Ok);
         }
     }
 }
