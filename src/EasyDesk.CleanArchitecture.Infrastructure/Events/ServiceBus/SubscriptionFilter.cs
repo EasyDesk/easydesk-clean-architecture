@@ -1,6 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus.Administration;
 using EasyDesk.Tools.Collections;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,18 +24,6 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
         protected override string SqlExpression() => $"{PropertyNames.EventType} IN {GetCommaSeparatedTypeList()}";
 
         private string GetCommaSeparatedTypeList() => _types.ToTupleString(t => $"'{t}'");
-    }
-
-    public class OrganizationScopedFilter : SubscriptionFilter
-    {
-        private readonly Guid _organizationId;
-
-        public OrganizationScopedFilter(Guid organizationId)
-        {
-            _organizationId = organizationId;
-        }
-
-        protected override string SqlExpression() => $"{PropertyNames.OrganizationId} = '{_organizationId}'";
     }
 
     public abstract class BooleanOperationFilter : SubscriptionFilter

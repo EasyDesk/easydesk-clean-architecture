@@ -21,7 +21,6 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
     {
         public static EventBusImplementationBuilder AddEventManagement(this IServiceCollection services)
         {
-            services.AddHostedService<EventBusInitializer>();
             return new(services);
         }
     }

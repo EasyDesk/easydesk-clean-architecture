@@ -16,6 +16,19 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
             _client = client;
         }
 
+        public async Task CreateQueueIdempotent(string queueName)
+        {
+            await TryCreate(
+                () => CreateQueue(queueName),
+                () => Task.CompletedTask);
+        }
+
+        private async Task CreateQueue(string queueName)
+        {
+            var queueOptions = new CreateQueueOptions(queueName);
+            await _client.CreateQueueAsync(queueOptions);
+        }
+
         public async Task CreateSubscriptionIdempotent(string topicName, string subscriptionName, SubscriptionFilter filter)
         {
             await TryCreate(

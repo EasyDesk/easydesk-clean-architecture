@@ -4,8 +4,6 @@
     {
         public const string EventType = "eventType";
 
-        public const string OrganizationId = "organizationId";
-
         public const string OccurredAt = "occurredAt";
     }
 }

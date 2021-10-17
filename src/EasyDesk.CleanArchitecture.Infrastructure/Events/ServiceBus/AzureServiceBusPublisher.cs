@@ -12,9 +12,11 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 
         public AzureServiceBusPublisher(
             ServiceBusClient client,
-            AzureServiceBusSettings settings)
+            AzureServiceBusSenderDescriptor descriptor)
         {
-            _sender = client.CreateSender(settings.CompleteTopicPath);
+            _sender = descriptor.Match(
+                queue: q => client.CreateSender(q),
+                topic: t => client.CreateSender(t));
         }
 
         public async Task Publish(IEnumerable<EventBusMessage> messages)

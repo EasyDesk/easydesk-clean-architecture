@@ -12,26 +12,26 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
     {
         private readonly ServiceBusProcessor _processor;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly AzureServiceBusSettings _settings;
+        private readonly AzureServiceBusReceiverDescriptor _descriptor;
         private readonly ILogger<AzureServiceBusConsumer> _logger;
 
         public AzureServiceBusConsumer(
             IServiceScopeFactory serviceScopeFactory,
             ServiceBusClient client,
-            AzureServiceBusSettings settings,
+            AzureServiceBusReceiverDescriptor descriptor,
             ILogger<AzureServiceBusConsumer> logger)
         {
-            _processor = client.CreateProcessor(
-                settings.CompleteTopicPath,
-                settings.SubscriptionName,
-                new ServiceBusProcessorOptions
-                {
-                    AutoCompleteMessages = false,
-                    ReceiveMode = ServiceBusReceiveMode.PeekLock,
-                    MaxConcurrentCalls = 1
-                });
+            var options = new ServiceBusProcessorOptions
+            {
+                AutoCompleteMessages = false,
+                ReceiveMode = ServiceBusReceiveMode.PeekLock,
+                MaxConcurrentCalls = 1
+            };
+            _processor = descriptor.Match(
+                queue: q => client.CreateProcessor(q, options),
+                subscription: (t, s) => client.CreateProcessor(t, s, options));
             _serviceScopeFactory = serviceScopeFactory;
-            _settings = settings;
+            _descriptor = descriptor;
             _logger = logger;
         }
 
@@ -43,10 +43,10 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
             try
             {
                 await _processor.StartProcessingAsync();
-                _logger.LogInformation(
-                    "Started listening on {topicName} -> {subscriptionName}",
-                    _settings.CompleteTopicPath,
-                    _settings.SubscriptionName);
+                _descriptor.Match(
+                    queue: q => _logger.LogInformation("Started listening on queue '{queueName}'", q),
+                    subscription: (t, s) => _logger.LogInformation(
+                        "Started listening on subscription '{subscriptionName}' of '{topicName}'", s, t));
             }
             catch (Exception ex)
             {

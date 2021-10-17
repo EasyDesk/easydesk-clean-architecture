@@ -15,6 +15,8 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
 {
     public abstract class PipelineInstallerBase : IServiceInstaller
     {
+        private const string DefaultServiceBusConnectionStringName = "AzureServiceBus";
+
         protected abstract Type ApplicationAssemblyMarker { get; }
 
         protected abstract Type InfrastructureAssemblyMarker { get; }
@@ -24,6 +26,8 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
         protected abstract bool UsesPublisher { get; }
 
         protected abstract bool UsesConsumer { get; }
+
+        protected virtual string ServiceBusConnectionStringName => DefaultServiceBusConnectionStringName;
 
         public void InstallServices(IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
         {
@@ -51,7 +55,9 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
 
             if (UsesConsumer || UsesPublisher)
             {
-                var builder = services.AddEventManagement().AddAzureServiceBus(config);
+                var builder = services
+                    .AddEventManagement()
+                    .AddAzureServiceBus(config, environment, config.GetConnectionString(ServiceBusConnectionStringName));
                 if (UsesPublisher)
                 {
                     builder.AddOutboxPublisher();
