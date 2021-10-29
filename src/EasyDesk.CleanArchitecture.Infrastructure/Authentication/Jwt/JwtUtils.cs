@@ -17,13 +17,13 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Authentication.Jwt
 
         public static JwtScope CreateScopeFromNameAndSettings(JwtService jwtService, IConfiguration config, string scopeName)
         {
-            var scopeSettings = config.GetSection($"AuthenticationSettings:JwtScopes:{scopeName}");
+            var scopeSettings = config.GetSection($"JwtScopes:{scopeName}");
             return CreateScopeFromSettings(jwtService, scopeSettings);
         }
 
         private static JwtScope CreateScopeFromSettings(JwtService jwtService, IConfigurationSection settings)
         {
-            var lifetime = Duration.FromTimeSpan(settings.GetValue<TimeSpan>("Lifetime"));
+            var lifetime = Duration.FromTimeSpan(settings.GetValue("Lifetime", TimeSpan.FromMinutes(5)));
             var key = KeyUtils.KeyFromString(settings.GetValue<string>("Key"));
 
             return new JwtScope(jwtService, new(lifetime, key));
