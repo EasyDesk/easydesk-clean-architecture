@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using System.IO;
 
 namespace EasyDesk.CleanArchitecture.Web
 {
@@ -15,15 +14,10 @@ namespace EasyDesk.CleanArchitecture.Web
                 {
                     var env = context.HostingEnvironment;
 
-                    var environment = env.EnvironmentName;
-                    var mainFileName = "appSettings";
-                    var sharedFileName = "sharedSettings";
-                    var sharedFileOutsideProjectFolder = Path.Combine(env.ContentRootPath, "..", "..", "SharedConfig", sharedFileName);
-                    var sharedFileInsideDocker = Path.Combine(env.ContentRootPath, "..", "SharedConfig", sharedFileName);
+                    var environmentName = env.EnvironmentName;
+                    var mainFileName = "appsettings";
 
-                    config.AddJsonFileWithEnvironment(sharedFileName, environment);
-                    config.AddJsonFileWithEnvironment(sharedFileOutsideProjectFolder, environment);
-                    config.AddJsonFileWithEnvironment(mainFileName, environment);
+                    config.AddJsonFileWithEnvironment(mainFileName, environmentName);
 
                     config.AddEnvironmentVariables();
 
