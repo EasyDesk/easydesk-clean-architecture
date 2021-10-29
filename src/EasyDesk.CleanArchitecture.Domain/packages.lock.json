@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v5.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[1.3.2, )",
-        "resolved": "1.3.2",
-        "contentHash": "E/4Kq8Xic8R6l8Z9PSNABVqh1k7JjclQV72BcmlRbjTlcWRh1iMBNw/gQXgBkKF/j1uIy5PJFZmoYyCvVmArZg=="
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "/+d4APsx/b7xbYd62JkGRnqTRZEssXcWd4W+ghUcXl0E8uWp0yJNeK0mVfARMBmROdgLC0Lu6Jb+oOaofjyGAg=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
