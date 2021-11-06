@@ -19,9 +19,7 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors
 
         public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Response<TResponse>> next)
         {
-            await _transactionManager.Begin();
-            return await next()
-                .ThenIfSuccessAsync(_ => _transactionManager.Commit());
+            return await _transactionManager.RunTransactionally(() => next());
         }
     }
 

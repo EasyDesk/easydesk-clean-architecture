@@ -74,8 +74,7 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
         {
             return services
                 .AddMediatR(assemblyTypes)
-                .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviorWrapper<,>))
-                .AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviorWrapper<,>));
+                .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviorWrapper<,>));
         }
 
         public static IServiceCollection AddRequestValidators(this IServiceCollection services, params Type[] assemblyTypes)

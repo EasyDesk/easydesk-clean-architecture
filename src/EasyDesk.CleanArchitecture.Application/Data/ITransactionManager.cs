@@ -5,6 +5,7 @@ using EasyDesk.Tools.Observables;
 using EasyDesk.Tools.Options;
 using System;
 using System.Threading.Tasks;
+using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Data
@@ -18,6 +19,19 @@ namespace EasyDesk.CleanArchitecture.Application.Data
         Task Begin();
 
         Task<Response<Nothing>> Commit();
+    }
+
+    public static class TransactionManagerExtensions
+    {
+        public static async Task<Response<T>> RunTransactionally<T>(this ITransactionManager transactionManager, AsyncFunc<Response<T>> action)
+        {
+            await transactionManager.Begin();
+            return await action()
+                .ThenRequireAsync(_ => transactionManager.Commit());
+        }
+
+        public static async Task<Response<T>> RunTransactionally<T>(this ITransactionManager transactionManager, AsyncFunc<T> action) =>
+            await transactionManager.RunTransactionally(async () => Success(await action()));
     }
 
     public class BeforeCommitContext

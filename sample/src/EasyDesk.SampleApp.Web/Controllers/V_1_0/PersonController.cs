@@ -13,7 +13,7 @@ namespace EasyDesk.SampleApp.Web.Controllers.V_1_0
         public async Task<IActionResult> CreatePerson([FromBody] CreatePersonBodyDto body)
         {
             var command = new CreatePerson.Command(body.Name);
-            return await Send(command)
+            return await Command(command)
                 .ReturnOk()
                 .MapEmpty();
         }
