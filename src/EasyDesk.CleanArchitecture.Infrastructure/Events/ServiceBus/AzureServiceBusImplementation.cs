@@ -30,6 +30,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
             services.AddSingleton(_ => new ServiceBusClient(_connectionString));
             services.AddSingleton(_ => new ServiceBusAdministrationClient(_connectionString));
             services.AddSingleton<AzureServiceBusAdministrationFacade>();
+            services.AddHostedService<AzureServiceBusSetup>();
         }
 
         public void AddPublisher(IServiceCollection services)
