@@ -13,13 +13,13 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers
     {
         private IMediator _mediator;
         private IMapper _mapper;
-        private readonly ITransactionManager _transactionManager;
+        private ITransactionManager _transactionManager;
 
         protected IMediator Mediator => _mediator ??= GetService<IMediator>();
 
         protected IMapper Mapper => _mapper ??= GetService<IMapper>();
 
-        protected ITransactionManager TransactionManager => _transactionManager ?? GetService<ITransactionManager>();
+        protected ITransactionManager TransactionManager => _transactionManager ??= GetService<ITransactionManager>();
 
         private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 
