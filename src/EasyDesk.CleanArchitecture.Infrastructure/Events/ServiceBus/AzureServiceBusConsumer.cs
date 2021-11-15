@@ -10,7 +10,11 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 {
     public sealed class AzureServiceBusConsumer : IEventBusConsumer
     {
-        private readonly ServiceBusProcessor _processor;
+        private const int DefaultPrefetchCount = 8;
+        private const int DeadLetterQueueBatchSize = 10;
+
+        private readonly ServiceBusProcessor _mainProcessor;
+        private readonly ServiceBusReceiver _deadLetterQueueReceiver;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly AzureServiceBusReceiverDescriptor _descriptor;
         private readonly ILogger<AzureServiceBusConsumer> _logger;
@@ -21,15 +25,27 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
             AzureServiceBusReceiverDescriptor descriptor,
             ILogger<AzureServiceBusConsumer> logger)
         {
-            var options = new ServiceBusProcessorOptions
+            var mainProcessorOptions = new ServiceBusProcessorOptions
             {
                 AutoCompleteMessages = false,
                 ReceiveMode = ServiceBusReceiveMode.PeekLock,
-                MaxConcurrentCalls = 1
+                MaxConcurrentCalls = 1,
+                PrefetchCount = DefaultPrefetchCount
             };
-            _processor = descriptor.Match(
-                queue: q => client.CreateProcessor(q, options),
-                subscription: (t, s) => client.CreateProcessor(t, s, options));
+            _mainProcessor = descriptor.Match(
+                queue: q => client.CreateProcessor(q, mainProcessorOptions),
+                subscription: (t, s) => client.CreateProcessor(t, s, mainProcessorOptions));
+
+            var deadLetterQueueReceiverOptions = new ServiceBusReceiverOptions
+            {
+                SubQueue = SubQueue.DeadLetter,
+                ReceiveMode = ServiceBusReceiveMode.PeekLock,
+                PrefetchCount = DefaultPrefetchCount
+            };
+            _deadLetterQueueReceiver = descriptor.Match(
+                queue: q => client.CreateReceiver(q, deadLetterQueueReceiverOptions),
+                subscription: (t, s) => client.CreateReceiver(t, s, deadLetterQueueReceiverOptions));
+
             _serviceScopeFactory = serviceScopeFactory;
             _descriptor = descriptor;
             _logger = logger;
@@ -37,16 +53,13 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 
         public async Task StartListening()
         {
-            _processor.ProcessMessageAsync += OnMessageReceived;
-            _processor.ProcessErrorAsync += OnError;
+            _mainProcessor.ProcessMessageAsync += OnMessageReceived;
+            _mainProcessor.ProcessErrorAsync += OnError;
 
             try
             {
-                await _processor.StartProcessingAsync();
-                _descriptor.Match(
-                    queue: q => _logger.LogInformation("Started listening on queue '{queueName}'", q),
-                    subscription: (t, s) => _logger.LogInformation(
-                        "Started listening on subscription '{subscriptionName}' of '{topicName}'", s, t));
+                await StartProcessor();
+                await FlushDeadLetterQueue();
             }
             catch (Exception ex)
             {
@@ -54,15 +67,50 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
             }
         }
 
+        private async Task StartProcessor()
+        {
+            await _mainProcessor.StartProcessingAsync();
+            _descriptor.Match(
+                queue: q => _logger.LogInformation("Started listening on queue '{queueName}'", q),
+                subscription: (t, s) => _logger.LogInformation(
+                    "Started listening on subscription '{subscriptionName}' of '{topicName}'", s, t));
+        }
+
+        private async Task FlushDeadLetterQueue()
+        {
+            while (await HandleNextBatchFromDeadLetter())
+            {
+            }
+        }
+
+        private async Task<bool> HandleNextBatchFromDeadLetter()
+        {
+            var messages = await _deadLetterQueueReceiver.ReceiveMessagesAsync(DeadLetterQueueBatchSize);
+            if (messages.Count == 0)
+            {
+                return false;
+            }
+            var allHandled = true;
+            foreach (var message in messages)
+            {
+                var handlerResult = await HandleMessage(message);
+                await ProcessDeadLetterHandlerResult(handlerResult, message);
+                if (handlerResult is not Handled)
+                {
+                    allHandled = false;
+                }
+            }
+            return allHandled;
+        }
+
         private async Task OnMessageReceived(ProcessMessageEventArgs eventArgs)
         {
             var serviceBusMessage = eventArgs.Message;
-            var message = serviceBusMessage.ToEventBusMessage();
-            var handlerResult = await HandleMessage(message);
-            await ProcessMessageHandlerResult(handlerResult, serviceBusMessage, eventArgs);
+            var handlerResult = await HandleMessage(serviceBusMessage);
+            await ProcessMainMessageResult(handlerResult, serviceBusMessage, eventArgs);
         }
 
-        private Task ProcessMessageHandlerResult(
+        private Task ProcessMainMessageResult(
             EventBusMessageHandlerResult handlerResult,
             ServiceBusReceivedMessage serviceBusMessage,
             ProcessMessageEventArgs eventArgs)
@@ -71,22 +119,33 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
             {
                 Handled => eventArgs.CompleteMessageAsync(serviceBusMessage),
                 TransientFailure => eventArgs.AbandonMessageAsync(serviceBusMessage),
-                GenericFailure or NotSupported => eventArgs.DeadLetterMessageAsync(serviceBusMessage),
-                _ => Task.FromException(new InvalidOperationException())
+                _ => eventArgs.DeadLetterMessageAsync(serviceBusMessage)
             };
         }
 
-        private async Task<EventBusMessageHandlerResult> HandleMessage(EventBusMessage message)
+        private Task ProcessDeadLetterHandlerResult(
+            EventBusMessageHandlerResult handlerResult,
+            ServiceBusReceivedMessage serviceBusMessage)
+        {
+            return handlerResult switch
+            {
+                Handled => _deadLetterQueueReceiver.CompleteMessageAsync(serviceBusMessage),
+                _ => _deadLetterQueueReceiver.AbandonMessageAsync(serviceBusMessage)
+            };
+        }
+
+        private async Task<EventBusMessageHandlerResult> HandleMessage(ServiceBusReceivedMessage serviceBusMessage)
         {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
+                var eventBusMessage = serviceBusMessage.ToEventBusMessage();
                 var handler = scope.ServiceProvider.GetRequiredService<IEventBusMessageHandler>();
-                return await handler.Handle(message);
+                return await handler.Handle(eventBusMessage);
             }
         }
 
         private Task OnError(ProcessErrorEventArgs eventArgs) => Task.CompletedTask;
 
-        public async void Dispose() => await _processor.DisposeAsync();
+        public async void Dispose() => await _mainProcessor.DisposeAsync();
     }
 }
