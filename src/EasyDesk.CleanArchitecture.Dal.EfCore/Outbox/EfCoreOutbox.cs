@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Time;
+using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -74,7 +75,8 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox
                 return;
             }
 
-            var eventBusMessages = outboxMessages.Select(m => new EventBusMessage(m.Id, m.EventType, m.Content, m.OccurredAt));
+            var eventBusMessages = outboxMessages.Select(m => new EventBusMessage(
+                m.Id, m.OccurredAt, m.EventType, m.TenantId.AsOption(), m.Content));
 
             await _eventBus.Publish(eventBusMessages);
 

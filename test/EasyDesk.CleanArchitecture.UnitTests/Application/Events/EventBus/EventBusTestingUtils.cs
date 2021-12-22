@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
+using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
 {
@@ -14,7 +15,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
             NewMessageWithType("EVENT_TYPE", timestampProvider);
 
         public static EventBusMessage NewMessageWithType(string eventType, ITimestampProvider timestampProvider = null) =>
-            new(Guid.NewGuid(), eventType, "{}", timestampProvider?.Now ?? Timestamp.Now);
+            new(Guid.NewGuid(), timestampProvider?.Now ?? Timestamp.Now, eventType, None, "{}");
 
         public static IEnumerable<EventBusMessage> NewMessageSequence(int count, ITimestampProvider timestampProvider = null) =>
             Generate(() => NewDefaultMessage(timestampProvider))

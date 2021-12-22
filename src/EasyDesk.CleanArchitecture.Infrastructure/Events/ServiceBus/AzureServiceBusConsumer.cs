@@ -136,9 +136,9 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 
         private async Task<EventBusMessageHandlerResult> HandleMessage(ServiceBusReceivedMessage serviceBusMessage)
         {
+            var eventBusMessage = serviceBusMessage.ToEventBusMessage();
             using (var scope = _serviceScopeFactory.CreateScope())
             {
-                var eventBusMessage = serviceBusMessage.ToEventBusMessage();
                 var handler = scope.ServiceProvider.GetRequiredService<IEventBusMessageHandler>();
                 return await handler.Handle(eventBusMessage);
             }

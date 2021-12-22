@@ -35,32 +35,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore
 
             return services;
         }
-
-        // TODO: this is the legacy way of configuring data access.
-        public static IServiceCollection AddEfCoreDataAccess<TService, TImplementation>(this IServiceCollection services, string connectionString)
-            where TService : class
-            where TImplementation : DbContext, TService
-        {
-            services.AddDbContext<TImplementation>(options =>
-            {
-                options.UseSqlServer(connectionString, sqlServerOptions =>
-                {
-                    var infrastructure = sqlServerOptions as IRelationalDbContextOptionsBuilderInfrastructure;
-                    var builder = infrastructure.OptionsBuilder as IDbContextOptionsBuilderInfrastructure;
-                    var mappingsByType = new Dictionary<Type, Func<RelationalTypeMapping>>
-                    {
-                        { typeof(Date), () => new DateMapping() },
-                        { typeof(Timestamp), () => new TimestampMapping() },
-                        { typeof(TimeOfDay), () => new TimeOfDayMapping() }
-                    };
-                    builder.AddOrUpdateExtension(new MappingPluginOptionsExtension(mappingsByType));
-                });
-            });
-
-            services.AddScoped<TService>(provider => provider.GetRequiredService<TImplementation>());
-
-            return services;
-        }
     }
 
     public class EfCoreDataAccessBuilder

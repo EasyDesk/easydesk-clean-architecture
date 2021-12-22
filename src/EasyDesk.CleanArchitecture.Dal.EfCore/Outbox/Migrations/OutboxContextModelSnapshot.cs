@@ -17,10 +17,10 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox.Migrations
             modelBuilder
                 .HasDefaultSchema("outbox")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.4")
+                .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("EasyDesk.Common.Dal.EfCore.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -37,6 +37,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox.Migrations
 
                     b.Property<DateTime>("OccurredAt")
                         .HasColumnType("datetime");
+
+                    b.Property<string>("TenantId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -5,11 +5,11 @@ using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
 using EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,7 +73,8 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
             _services.AddScoped<IExternalEventPublisher>(provider => new ExternalEventPublisher(
                 eventBusPublisherImplementation(provider),
                 provider.GetRequiredService<ITimestampProvider>(),
-                provider.GetRequiredService<IJsonSerializer>()));
+                provider.GetRequiredService<IJsonSerializer>(),
+                provider.GetRequiredService<ITenantProvider>()));
             return AddEventBusPublisherImplementation();
         }
 
@@ -85,19 +86,17 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
 
         public EventManagementBuilder AddIdempotentConsumer(params Type[] assemblyTypes)
         {
-            return AddConsumer(assemblyTypes, (handler, provider) => new IdempotentMessageHandler(
-                handler,
-                provider.GetRequiredService<IIdempotenceManager>()));
+            return AddConsumer(assemblyTypes, () => _services.Decorate<IEventBusMessageHandler, IdempotentMessageHandler>());
         }
 
         public EventManagementBuilder AddSimpleConsumer(params Type[] assemblyTypes)
         {
-            return AddConsumer(assemblyTypes, (handler, _) => handler);
+            return AddConsumer(assemblyTypes, () => { });
         }
 
         private EventManagementBuilder AddConsumer(
             IEnumerable<Type> assemblyTypes,
-            Func<IEventBusMessageHandler, IServiceProvider, IEventBusMessageHandler> decorate)
+            Action decorate)
         {
             var eventTypes = ReflectionUtils.InstantiableTypesInAssemblies(assemblyTypes)
                 .SelectMany(t => GetEventType(t))
@@ -105,32 +104,17 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
 
             _services.AddSingleton(new EventBusConsumerDefinition(eventTypes.Select(t => t.GetEventTypeName()).ToArray()));
             _services.AddScoped<IExternalEventHandler, MediatorEventHandler>();
-            _services.AddScoped(provider => CreateEventBusMessageHandler(eventTypes, provider, decorate));
-
-            return AddEventBusConsumerImplementation();
-        }
-
-        private IEventBusMessageHandler CreateEventBusMessageHandler(
-            IEnumerable<Type> eventTypes,
-            IServiceProvider provider,
-            Func<IEventBusMessageHandler, IServiceProvider, IEventBusMessageHandler> decorate)
-        {
-            var initial = new DefaultEventBusMessageHandler(
+            _services.AddScoped<IEventBusMessageHandler>(provider => new DefaultEventBusMessageHandler(
                 provider.GetRequiredService<IExternalEventHandler>(),
                 provider.GetRequiredService<IJsonSerializer>(),
-                eventTypes);
+                eventTypes));
 
-            var decorated = decorate(initial, provider);
+            decorate();
+            _services.Decorate<IEventBusMessageHandler, TenantAwareEventBusMessageHandler>();
+            _services.Decorate<IEventBusMessageHandler, TransactionalEventBusMessageHandler>();
+            _services.Decorate<IEventBusMessageHandler, ErrorSafeEventBusMessageHandler>();
 
-            var transactional = new TransactionalEventBusMessageHandler(
-                decorated,
-                provider.GetRequiredService<ITransactionManager>());
-
-            var errorSafe = new ErrorSafeEventBusMessageHandler(
-                transactional,
-                provider.GetRequiredService<ILogger<ErrorSafeEventBusMessageHandler>>());
-
-            return errorSafe;
+            return AddEventBusConsumerImplementation();
         }
 
         private static Option<Type> GetEventType(Type handlerType)

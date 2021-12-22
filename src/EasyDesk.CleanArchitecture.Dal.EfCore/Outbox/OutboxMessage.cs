@@ -13,6 +13,8 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox
 
         public string EventType { get; set; }
 
+        public string TenantId { get; set; }
+
         public Timestamp OccurredAt { get; set; }
 
         public class Configuration : IEntityTypeConfiguration<OutboxMessage>

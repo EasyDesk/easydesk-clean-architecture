@@ -5,5 +5,7 @@
         public const string EventType = "eventType";
 
         public const string OccurredAt = "occurredAt";
+
+        public const string TenantId = "tenantId";
     }
 }

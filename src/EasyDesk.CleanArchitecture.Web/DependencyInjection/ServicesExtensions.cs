@@ -43,6 +43,7 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
                 .AddControllers(options =>
                 {
                     options.EnableEndpointRouting = false;
+                    options.Filters.Add<TenantFilter>();
                     if (!environment.IsDevelopment())
                     {
                         options.Filters.Add<UnhandledExceptionsFilter>();

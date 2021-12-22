@@ -158,8 +158,8 @@
       },
       "EasyDesk.Tools": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "/+d4APsx/b7xbYd62JkGRnqTRZEssXcWd4W+ghUcXl0E8uWp0yJNeK0mVfARMBmROdgLC0Lu6Jb+oOaofjyGAg=="
+        "resolved": "2.2.0",
+        "contentHash": "OctXIsAyPDSdAQvQ+3vvAQr0WcDrtXrB7zqOTDemtFa2sVDulvVRrEJejBuA/yf1VUg2thTcAeQflThZDHB3fg=="
       },
       "EmptyFiles": {
         "type": "Transitive",
@@ -921,6 +921,15 @@
         "type": "Transitive",
         "resolved": "4.4.0",
         "contentHash": "YhEdSQUsTx+C8m8Bw7ar5/VesXvCFMItyZF7G1AUY+OM0VPZUOeAVpJ4Wl6fydBGUYZxojTDR3I6Bj/+BPkJNA=="
+      },
+      "Scrutor": {
+        "type": "Transitive",
+        "resolved": "3.3.0",
+        "contentHash": "BwqCnFzp2/Z+pq17iztxlIkR/ZANyPRR4PdE57WL1w/JW4AM/2imoxBWTL3+G+YXA46ce4s9OUgwWqTXYrtI8A==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "3.1.9",
+          "Microsoft.Extensions.DependencyModel": "3.1.6"
+        }
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
@@ -2378,17 +2387,18 @@
         "dependencies": {
           "AutoMapper": "10.1.1",
           "EasyDesk.CleanArchitecture.Domain": "1.0.0",
-          "EasyDesk.Tools": "2.0.0",
+          "EasyDesk.Tools": "2.2.0",
           "FluentValidation": "10.3.3",
           "MediatR": "9.0.0",
           "Microsoft.Extensions.Hosting.Abstractions": "5.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "5.0.0"
+          "Microsoft.Extensions.Logging.Abstractions": "5.0.0",
+          "Scrutor": "3.3.0"
         }
       },
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "2.0.0"
+          "EasyDesk.Tools": "2.2.0"
         }
       },
       "easydesk.cleanarchitecture.infrastructure": {
@@ -2396,7 +2406,7 @@
         "dependencies": {
           "Azure.Messaging.ServiceBus": "7.4.0",
           "EasyDesk.CleanArchitecture.Application": "1.0.0",
-          "EasyDesk.Tools": "2.0.0",
+          "EasyDesk.Tools": "2.2.0",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "5.0.10",
           "Newtonsoft.Json": "13.0.1",
@@ -2410,7 +2420,7 @@
           "EasyDesk.CleanArchitecture.Application": "1.0.0",
           "EasyDesk.CleanArchitecture.Infrastructure": "1.0.0",
           "EasyDesk.Testing": "0.3.1",
-          "EasyDesk.Tools": "2.0.0",
+          "EasyDesk.Tools": "2.2.0",
           "NSubstitute": "4.2.2",
           "Shouldly": "4.0.3"
         }
@@ -2420,7 +2430,7 @@
         "dependencies": {
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "8.1.1",
           "EasyDesk.CleanArchitecture.Infrastructure": "1.0.0",
-          "EasyDesk.Tools": "2.0.0",
+          "EasyDesk.Tools": "2.2.0",
           "FluentValidation.AspNetCore": "10.3.3",
           "MediatR.Extensions.Microsoft.DependencyInjection": "9.0.0",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "5.0.10",

@@ -18,10 +18,14 @@ namespace EasyDesk.CleanArchitecture.Application.Events.EventBus
         {
             await _transactionManager.Begin();
             var handlerResult = await _handler.Handle(message);
-            var commitResult = await _transactionManager.Commit();
-            return commitResult.Match(
-                success: _ => handlerResult,
-                failure: _ => EventBusMessageHandlerResult.TransientFailure);
+            if (handlerResult is EventBusMessageHandlerResult.Handled)
+            {
+                var commitResult = await _transactionManager.Commit();
+                return commitResult.Match(
+                    success: _ => handlerResult,
+                    failure: _ => EventBusMessageHandlerResult.TransientFailure);
+            }
+            return handlerResult;
         }
     }
 }

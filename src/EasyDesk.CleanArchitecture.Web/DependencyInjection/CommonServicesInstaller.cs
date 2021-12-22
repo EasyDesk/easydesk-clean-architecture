@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Environment;
+﻿using EasyDesk.CleanArchitecture.Application.Tenants;
+using EasyDesk.CleanArchitecture.Infrastructure.Environment;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Infrastructure.Time;
 using EasyDesk.CleanArchitecture.Infrastructure.UserInfo;
@@ -13,6 +14,7 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
         public void InstallServices(IServiceCollection services, IConfiguration config, IWebHostEnvironment env)
         {
             services
+                .AddTenantManagement()
                 .AddNewtonsoftJsonSerializer()
                 .AddHttpContextAccessor()
                 .AddTimestampProvider(config)
