@@ -16,7 +16,8 @@ namespace EasyDesk.CleanArchitecture.Web.Filters
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            _tenantInitializer.InitializeTenant(context.HttpContext.GetTenantId());
+            var tenantId = context.HttpContext.GetTenantId();
+            _tenantInitializer.InitializeTenant(tenantId);
             await next();
         }
     }

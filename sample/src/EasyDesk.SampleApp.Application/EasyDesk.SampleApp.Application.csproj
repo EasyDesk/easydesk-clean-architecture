@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Queries\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Application\EasyDesk.CleanArchitecture.Application.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Domain\EasyDesk.SampleApp.Domain.csproj" />
   </ItemGroup>

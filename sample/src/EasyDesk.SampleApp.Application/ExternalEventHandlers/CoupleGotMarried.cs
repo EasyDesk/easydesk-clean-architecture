@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.Tools;
 using System;
@@ -16,27 +17,24 @@ namespace EasyDesk.SampleApp.Application.ExternalEventHandlers
     public class CoupleGotMarriedHandler : ExternalEventHandlerBase<CoupleGotMarried>
     {
         private readonly IPersonRepository _personRepository;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public CoupleGotMarriedHandler(IPersonRepository personRepository, IUnitOfWork unitOfWork)
+        public CoupleGotMarriedHandler(IPersonRepository personRepository, IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             _personRepository = personRepository;
-            _unitOfWork = unitOfWork;
         }
 
         protected override async Task<Response<Nothing>> Handle(CoupleGotMarried ev)
         {
             return await SetPersonAsMarried(ev.GroomId)
-                .ThenRequireAsync(_ => SetPersonAsMarried(ev.BrideId))
-                .ThenRequireAsync(_ => _unitOfWork.Save());
+                .ThenRequireAsync(_ => SetPersonAsMarried(ev.BrideId));
         }
 
         private async Task<Response<Nothing>> SetPersonAsMarried(Guid personId)
         {
-            var person = await _personRepository.GetById(personId);
-            return person.Match(
-                success: person => person.Marry().ToResponse(),
-                failure: _ => Ok);
+            return await _personRepository.GetById(personId)
+                .ThenRequire(person => person.Marry())
+                .ThenIfSuccess(_personRepository.Save)
+                .ThenToResponse();
         }
     }
 }

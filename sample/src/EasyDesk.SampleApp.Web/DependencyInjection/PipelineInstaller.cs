@@ -1,7 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Web.DependencyInjection;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Configuration;
 using System;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace EasyDesk.SampleApp.Web.DependencyInjection
 {
@@ -16,5 +22,20 @@ namespace EasyDesk.SampleApp.Web.DependencyInjection
         protected override bool UsesPublisher => true;
 
         protected override bool UsesConsumer => true;
+
+        protected override void ConfigureMvc(MvcOptions options, IConfiguration config, IWebHostEnvironment environment)
+        {
+            options.Filters.Add<TenantTestFilter>();
+            base.ConfigureMvc(options, config, environment);
+        }
+    }
+
+    public class TenantTestFilter : IAsyncActionFilter
+    {
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        {
+            context.HttpContext.User.AddIdentity(new ClaimsIdentity(new Claim[] { new("tenantId", "test") }));
+            await next();
+        }
     }
 }

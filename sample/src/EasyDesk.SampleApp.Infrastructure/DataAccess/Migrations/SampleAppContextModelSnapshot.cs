@@ -17,7 +17,7 @@ namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations
             modelBuilder
                 .HasDefaultSchema("entities")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.8")
+                .HasAnnotation("ProductVersion", "5.0.10")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
@@ -30,6 +30,10 @@ namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TenantId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

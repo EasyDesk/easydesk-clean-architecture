@@ -58,8 +58,8 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 
             try
             {
-                await StartProcessor();
                 await FlushDeadLetterQueue();
+                await StartProcessor();
             }
             catch (Exception ex)
             {
