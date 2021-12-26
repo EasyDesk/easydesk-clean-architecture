@@ -12,6 +12,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
     {
         private const int DefaultPrefetchCount = 8;
         private const int DeadLetterQueueBatchSize = 10;
+        private static readonly TimeSpan _deadLetterQueueTimeout = TimeSpan.FromSeconds(1);
 
         private readonly ServiceBusProcessor _mainProcessor;
         private readonly ServiceBusReceiver _deadLetterQueueReceiver;
@@ -85,7 +86,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 
         private async Task<bool> HandleNextBatchFromDeadLetter()
         {
-            var messages = await _deadLetterQueueReceiver.ReceiveMessagesAsync(DeadLetterQueueBatchSize);
+            var messages = await _deadLetterQueueReceiver.ReceiveMessagesAsync(DeadLetterQueueBatchSize, maxWaitTime: _deadLetterQueueTimeout);
             if (messages.Count == 0)
             {
                 return false;
