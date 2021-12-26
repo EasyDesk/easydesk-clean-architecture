@@ -14,6 +14,10 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Results
         {
         }
 
+        public override string ToString() => Match(
+            success: v => $"Success({v})",
+            failure: e => $"Failure({e})");
+
         public static implicit operator Result<Nothing>(Result<T> result) => result.Map(_ => Nothing.Value);
 
         public static implicit operator Result<T>(T data) => Success(data);

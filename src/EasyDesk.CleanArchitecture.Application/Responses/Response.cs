@@ -15,6 +15,10 @@ namespace EasyDesk.CleanArchitecture.Application.Responses
         {
         }
 
+        public override string ToString() => Match(
+            success: v => $"Success({v})",
+            failure: e => $"Failure({e})");
+
         public static implicit operator Response<Nothing>(Response<T> response) => response.Map(_ => Nothing.Value);
 
         public static implicit operator Response<T>(T data) => Success(data);
