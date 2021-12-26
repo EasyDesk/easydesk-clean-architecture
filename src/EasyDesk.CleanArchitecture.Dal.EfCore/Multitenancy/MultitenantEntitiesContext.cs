@@ -11,54 +11,63 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy
 {
     public abstract class MultitenantEntitiesContext : EntitiesContext
     {
-        private readonly ITenantProvider _tenantService;
+        private const string TenantIdProperty = "TenantId";
 
-        protected MultitenantEntitiesContext(ITenantProvider tenantService)
+        private readonly ITenantProvider _tenantProvider;
+
+        protected MultitenantEntitiesContext(ITenantProvider tenantProvider)
         {
-            _tenantService = tenantService;
+            _tenantProvider = tenantProvider;
         }
 
         protected MultitenantEntitiesContext(ITenantProvider tenantService, DbContextOptions options) : base(options)
         {
-            _tenantService = tenantService;
+            _tenantProvider = tenantService;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Model
+            var entityTypesWithinTenant = modelBuilder.Model
                 .GetEntityTypes()
                 .SelectMany(e => e.ClrType.AsOption())
-                .Where(t => t.IsAssignableTo(typeof(IEntityWithinTenant)))
-                .ForEach(t =>
-                {
-                    var method = GetType().GetMethod(nameof(HasEntityWithinTenant)).MakeGenericMethod(t);
-                    method.Invoke(this, new object[] { modelBuilder });
-                });
+                .ToList();
+
+            if (entityTypesWithinTenant.Any())
+            {
+                var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureEntityWithinTenant));
+                var args = new object[] { modelBuilder };
+                entityTypesWithinTenant
+                    .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
+                    .ForEach(m => m.Invoke(this, args));
+            }
 
             base.OnModelCreating(modelBuilder);
         }
 
-        public void HasEntityWithinTenant<T>(ModelBuilder modelBuilder)
-            where T : class, IEntityWithinTenant
+        public void ConfigureEntityWithinTenant<T>(ModelBuilder modelBuilder)
+            where T : class
         {
             var entityBuilder = modelBuilder.Entity<T>();
-            entityBuilder.Property(x => x.TenantId)
+
+            entityBuilder.Property<string>(TenantIdProperty)
                 .IsRequired();
-            entityBuilder.HasQueryFilter(x => x.TenantId == _tenantService.TenantId.OrElseNull());
+
+            entityBuilder.HasQueryFilter(x => EF.Property<string>(x, TenantIdProperty) == _tenantProvider.TenantId.OrElseNull());
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            SetTenantIdToTrackedEntities();
+            SetTenantIdToAddedEntities();
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        private void SetTenantIdToTrackedEntities()
+        private void SetTenantIdToAddedEntities()
         {
-            _tenantService.TenantId.IfPresent(tenantId =>
+            _tenantProvider.TenantId.IfPresent(tenantId =>
             {
-                ChangeTracker.Entries<IEntityWithinTenant>()
-                .ForEach(entry => entry.Entity.TenantId = tenantId);
+                ChangeTracker.Entries()
+                    .Where(e => e.State == EntityState.Added)
+                    .ForEach(e => e.Property(TenantIdProperty).CurrentValue = tenantId);
             });
         }
     }

@@ -18,8 +18,6 @@ namespace EasyDesk.SampleApp.Infrastructure.DataAccess
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(SampleAppContext).Assembly);
 
-            HasEntityWithinTenant<PersonModel>(modelBuilder);
-
             base.OnModelCreating(modelBuilder);
         }
     }

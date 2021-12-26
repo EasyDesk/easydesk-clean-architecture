@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.SampleApp.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -7,15 +6,13 @@ using System;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model
 {
-    public class PersonModel : IEntityWithinTenant
+    public class PersonModel
     {
         public Guid Id { get; set; }
 
         public string Name { get; set; }
 
         public bool Married { get; set; }
-
-        public string TenantId { get; set; }
 
         public class Configuration : IEntityTypeConfiguration<PersonModel>
         {
