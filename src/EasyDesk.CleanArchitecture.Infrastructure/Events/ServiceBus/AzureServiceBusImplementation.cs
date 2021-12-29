@@ -2,28 +2,31 @@
 using Azure.Messaging.ServiceBus.Administration;
 using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus;
+using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
 {
-    internal class AzureServiceBusImplementation : IEventBusImplementation
+    public class AzureServiceBusImplementation : IEventBusImplementation
     {
+        private const string SettingsSectionName = "AzureServiceBusSettings";
+
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
         private readonly string _connectionString;
 
-        public AzureServiceBusImplementation(IConfiguration configuration, IWebHostEnvironment environment, string connectionString)
+        public AzureServiceBusImplementation(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            _configuration = configuration.GetSection("AzureServiceBusSettings");
+            _configuration = configuration;
             _environment = environment;
-            _connectionString = connectionString;
+            _connectionString = configuration.GetRequiredConnectionString("AzureServiceBus");
         }
 
-        private string TopicName => $"{_environment.EnvironmentName}/{_configuration.GetValue<string>("TopicName")}";
+        private string TopicName => $"{_environment.EnvironmentName}/{_configuration.GetRequiredValue<string>($"{SettingsSectionName}:TopicName")}";
 
-        private string SubscriptionName => _configuration.GetValue<string>("SubscriptionName");
+        private string SubscriptionName => _configuration.GetRequiredValue<string>($"{SettingsSectionName}:SubscriptionName");
 
         public void AddCommonServices(IServiceCollection services)
         {
@@ -43,18 +46,6 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
         {
             services.AddSingleton(AzureServiceBusReceiverDescriptor.Subscription(TopicName, SubscriptionName));
             services.AddSingleton<IEventBusConsumer, AzureServiceBusConsumer>();
-        }
-    }
-
-    public static class AzureServiceBusExtensions
-    {
-        public static EventManagementBuilder AddAzureServiceBus(
-            this EventBusImplementationBuilder builder,
-            IConfiguration configuration,
-            IWebHostEnvironment env,
-            string connectionString)
-        {
-            return builder.AddEventBusImplementation(new AzureServiceBusImplementation(configuration, env, connectionString));
         }
     }
 }

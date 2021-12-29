@@ -1,7 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
 using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
-using EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Converters;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Filters;
@@ -31,8 +33,6 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
 {
     public abstract class PipelineInstallerBase : IServiceInstaller
     {
-        private const string DefaultServiceBusConnectionStringName = "AzureServiceBus";
-
         protected abstract Type ApplicationAssemblyMarker { get; }
 
         protected abstract Type InfrastructureAssemblyMarker { get; }
@@ -43,7 +43,9 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
 
         protected abstract bool UsesConsumer { get; }
 
-        protected virtual string ServiceBusConnectionStringName => DefaultServiceBusConnectionStringName;
+        protected abstract IDataAccessImplementation GetDataAccessImplementation(IConfiguration configuration, IWebHostEnvironment environment);
+
+        protected abstract IEventBusImplementation GetEventBusImplementation(IConfiguration configuration, IWebHostEnvironment environment);
 
         public void InstallServices(IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
         {
@@ -52,7 +54,9 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
             AddRequestValidators(services);
             AddMappings(services);
             AddApiVersioning(services);
+            AddDataAccess(services, config, environment);
             AddEventManagement(services, config, environment);
+            AddUtilityDomainServices(services);
         }
 
         private void AddControllersWithPipeline(IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
@@ -137,13 +141,30 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
             });
         }
 
+        private class NamespaceConvention : IControllerConvention
+        {
+            public bool Apply(IControllerConventionBuilder controller, ControllerModel controllerModel)
+            {
+                VersioningUtils.GetControllerVersion(controllerModel.ControllerType)
+                    .Match(
+                        some: v => controller.HasApiVersion(v),
+                        none: () => controller.IsApiVersionNeutral());
+                return true;
+            }
+        }
+
+        private void AddDataAccess(IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
+        {
+            services.AddDataAccessImplementation(GetDataAccessImplementation(config, environment), UsesPublisher, UsesConsumer);
+        }
+
         private void AddEventManagement(IServiceCollection services, IConfiguration config, IWebHostEnvironment environment)
         {
             if (UsesConsumer || UsesPublisher)
             {
                 var builder = services
                     .AddEventManagement()
-                    .AddAzureServiceBus(config, environment, config.GetConnectionString(ServiceBusConnectionStringName));
+                    .AddEventBusImplementation(GetEventBusImplementation(config, environment));
                 if (UsesPublisher)
                 {
                     builder.AddOutboxPublisher();
@@ -155,16 +176,9 @@ namespace EasyDesk.CleanArchitecture.Web.DependencyInjection
             }
         }
 
-        private class NamespaceConvention : IControllerConvention
+        private void AddUtilityDomainServices(IServiceCollection services)
         {
-            public bool Apply(IControllerConventionBuilder controller, ControllerModel controllerModel)
-            {
-                VersioningUtils.GetControllerVersion(controllerModel.ControllerType)
-                    .Match(
-                        some: v => controller.HasApiVersion(v),
-                        none: () => controller.IsApiVersionNeutral());
-                return true;
-            }
+            services.AddScoped<IDomainEventNotifier, TransactionalDomainEventQueue>();
         }
     }
 }

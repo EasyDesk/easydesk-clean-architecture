@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,14 +18,14 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Authentication.Jwt
 
         public static JwtScope CreateScopeFromNameAndSettings(JwtService jwtService, IConfiguration config, string scopeName)
         {
-            var scopeSettings = config.GetSection($"JwtScopes:{scopeName}");
+            var scopeSettings = config.GetRequiredSection($"JwtScopes:{scopeName}");
             return CreateScopeFromSettings(jwtService, scopeSettings);
         }
 
         private static JwtScope CreateScopeFromSettings(JwtService jwtService, IConfigurationSection settings)
         {
-            var lifetime = Duration.FromTimeSpan(settings.GetValue("Lifetime", TimeSpan.FromMinutes(5)));
-            var key = KeyUtils.KeyFromString(settings.GetValue<string>("Key"));
+            var lifetime = Duration.FromTimeSpan(settings.GetRequiredValue<TimeSpan>("Lifetime"));
+            var key = KeyUtils.KeyFromString(settings.GetRequiredValue<string>("Key"));
 
             return new JwtScope(jwtService, new(lifetime, key));
         }

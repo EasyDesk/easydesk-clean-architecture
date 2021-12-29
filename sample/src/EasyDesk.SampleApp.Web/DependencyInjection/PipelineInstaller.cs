@@ -1,4 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Web.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
+using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
+using EasyDesk.CleanArchitecture.Web.DependencyInjection;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using Microsoft.AspNetCore.Hosting;
@@ -28,6 +32,12 @@ namespace EasyDesk.SampleApp.Web.DependencyInjection
             options.Filters.Add<TenantTestFilter>();
             base.ConfigureMvc(options, config, environment);
         }
+
+        protected override IDataAccessImplementation GetDataAccessImplementation(IConfiguration configuration, IWebHostEnvironment environment) =>
+            new EfCoreDataAccess<SampleAppContext>(configuration);
+
+        protected override IEventBusImplementation GetEventBusImplementation(IConfiguration configuration, IWebHostEnvironment environment) =>
+            new AzureServiceBusImplementation(configuration, environment);
     }
 
     public class TenantTestFilter : IAsyncActionFilter
