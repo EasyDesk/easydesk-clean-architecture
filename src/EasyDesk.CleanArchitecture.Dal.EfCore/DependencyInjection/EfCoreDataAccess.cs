@@ -74,7 +74,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection
 
             if (_applyMigrations)
             {
-                services.AddHostedService<MigrationsHostedService<T>>();
+                services.AddHostedService<MigrationsHostedService<C>>();
             }
 
             if (!_firstDbContextRegistered)

@@ -34,7 +34,7 @@ namespace EasyDesk.SampleApp.Web.DependencyInjection
         }
 
         protected override IDataAccessImplementation GetDataAccessImplementation(IConfiguration configuration, IWebHostEnvironment environment) =>
-            new EfCoreDataAccess<SampleAppContext>(configuration);
+            new EfCoreDataAccess<SampleAppContext>(configuration, applyMigrations: true);
 
         protected override IEventBusImplementation GetEventBusImplementation(IConfiguration configuration, IWebHostEnvironment environment) =>
             new AzureServiceBusImplementation(configuration, environment);
