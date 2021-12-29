@@ -31,5 +31,9 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Results
         public static Result<T> operator &(Result<T> a, Result<T> b) => a.Match(
             success: _ => b,
             failure: _ => a);
+
+        public static bool operator true(Result<T> a) => a.IsSuccess;
+
+        public static bool operator false(Result<T> a) => a.IsFailure;
     }
 }
