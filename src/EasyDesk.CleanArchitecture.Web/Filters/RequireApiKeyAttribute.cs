@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Authentication.ApiKey;
+﻿using EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

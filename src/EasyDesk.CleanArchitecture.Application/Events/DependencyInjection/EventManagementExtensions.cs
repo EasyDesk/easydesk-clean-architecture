@@ -19,25 +19,11 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
 {
     public static class EventManagementExtensions
     {
-        public static EventBusImplementationBuilder AddEventManagement(this IServiceCollection services)
+        public static EventManagementBuilder AddEventManagement(
+            this IServiceCollection services, IEventBusImplementation eventBusImplementation, bool multitenant)
         {
-            return new(services);
-        }
-    }
-
-    public class EventBusImplementationBuilder
-    {
-        private readonly IServiceCollection _services;
-
-        public EventBusImplementationBuilder(IServiceCollection services)
-        {
-            _services = services;
-        }
-
-        public EventManagementBuilder AddEventBusImplementation(IEventBusImplementation implementation)
-        {
-            implementation.AddCommonServices(_services);
-            return new(_services, implementation);
+            eventBusImplementation.AddCommonServices(services);
+            return new(services, eventBusImplementation, multitenant);
         }
     }
 
@@ -45,11 +31,13 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
     {
         private readonly IServiceCollection _services;
         private readonly IEventBusImplementation _implementation;
+        private readonly bool _multitenant;
 
-        public EventManagementBuilder(IServiceCollection services, IEventBusImplementation implementation)
+        public EventManagementBuilder(IServiceCollection services, IEventBusImplementation implementation, bool multitenant)
         {
             _services = services;
             _implementation = implementation;
+            _multitenant = multitenant;
         }
 
         public EventManagementBuilder AddOutboxPublisher()
@@ -74,7 +62,7 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
                 eventBusPublisherImplementation(provider),
                 provider.GetRequiredService<ITimestampProvider>(),
                 provider.GetRequiredService<IJsonSerializer>(),
-                provider.GetRequiredService<ITenantProvider>()));
+                _multitenant ? provider.GetRequiredService<ITenantProvider>() : new NoTenant()));
             return AddEventBusPublisherImplementation();
         }
 
@@ -110,7 +98,10 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection
                 eventTypes));
 
             decorate();
-            _services.Decorate<IEventBusMessageHandler, TenantAwareEventBusMessageHandler>();
+            if (_multitenant)
+            {
+                _services.Decorate<IEventBusMessageHandler, TenantAwareEventBusMessageHandler>();
+            }
             _services.Decorate<IEventBusMessageHandler, TransactionalEventBusMessageHandler>();
             _services.Decorate<IEventBusMessageHandler, ErrorSafeEventBusMessageHandler>();
 
