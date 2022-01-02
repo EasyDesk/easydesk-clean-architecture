@@ -30,7 +30,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
         {
             _configuration = configuration;
             _prefix = prefix;
-            _connectionString = configuration.GetRequiredConnectionString("AzureServiceBus");
+            _connectionString = configuration.RequireConnectionString("AzureServiceBus");
         }
 
         private string TopicNameWithoutPrefix => GetValueInsideConfigSection("TopicName");
@@ -42,7 +42,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
         private string SubscriptionName => GetValueInsideConfigSection("SubscriptionName");
 
         private string GetValueInsideConfigSection(string key) =>
-            _configuration.GetRequiredValue<string>($"AzureServiceBusSettings:{key}");
+            _configuration.RequireValue<string>($"AzureServiceBusSettings:{key}");
 
         public void AddCommonServices(IServiceCollection services)
         {

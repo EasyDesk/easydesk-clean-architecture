@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
     <Authors>Francesco Dente, Luca Deluigi</Authors>
     <Company>EasyDesk</Company>
     <Description>Utilities for the application layer of the clean architecture as seen by EasyDesk.</Description>
@@ -10,11 +9,11 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="EasyDesk.Tools" Version="2.2.0" />
-    <PackageReference Include="FluentValidation" Version="10.3.3" />
+    <PackageReference Include="EasyDesk.Tools" Version="3.0.0" />
+    <PackageReference Include="FluentValidation" Version="10.3.6" />
     <PackageReference Include="MediatR" Version="9.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="Scrutor" Version="3.3.0" />
   </ItemGroup>
 

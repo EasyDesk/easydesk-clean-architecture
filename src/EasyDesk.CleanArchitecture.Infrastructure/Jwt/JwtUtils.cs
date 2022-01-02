@@ -9,9 +9,9 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt
     {
         public static JwtSettings ReadJwtSettings(this IConfiguration configuration, string scopeName)
         {
-            var scopeSection = configuration.GetRequiredSection($"JwtScopes:{scopeName}");
-            var lifetime = Duration.FromTimeSpan(scopeSection.GetRequiredValue<TimeSpan>("Lifetime"));
-            var key = KeyUtils.KeyFromString(scopeSection.GetRequiredValue<string>("Key"));
+            var scopeSection = configuration.RequireSection($"JwtScopes:{scopeName}");
+            var lifetime = Duration.FromTimeSpan(scopeSection.RequireValue<TimeSpan>("Lifetime"));
+            var key = KeyUtils.KeyFromString(scopeSection.RequireValue<string>("Key"));
 
             return new(lifetime, key);
         }

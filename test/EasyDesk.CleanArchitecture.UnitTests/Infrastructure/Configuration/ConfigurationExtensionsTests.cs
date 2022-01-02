@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
-using System;
 using System.IO;
 using System.Text;
 using Xunit;
@@ -40,50 +39,44 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Configuration
         }
 
         [Fact]
-        public void GetRequiredSection_ShouldReturnASection_IfItExists()
+        public void RequireSection_ShouldReturnASection_IfItExists()
         {
-            _configuration.GetRequiredSection("A").ShouldBe(_configuration.GetSection("A"));
+            _configuration.RequireSection("A").ShouldBe(_configuration.GetSection("A"));
         }
 
         [Fact]
-        public void GetRequiredSection_ShouldReturnASection_IfPathExists()
+        public void RequireSection_ShouldReturnASection_IfPathExists()
         {
-            _configuration.GetRequiredSection("A:AA").ShouldBe(_configuration.GetSection("A:AA"));
+            _configuration.RequireSection("A:AA").ShouldBe(_configuration.GetSection("A:AA"));
         }
 
         [Fact]
-        public void GetRequiredSection_ShouldFail_IfTheSectionDoesNotExist()
+        public void RequireSection_ShouldFail_IfTheSectionDoesNotExist()
         {
-            var exception = Should.Throw<MissingConfigurationException>(() => _configuration.GetRequiredSection("D"));
+            var exception = Should.Throw<MissingConfigurationException>(() => _configuration.RequireSection("D"));
             exception.Key.ShouldBe("D");
         }
 
         [Fact]
-        public void GetRequiredSection_ShouldFail_IfThePathIsPartiallyWrong()
+        public void RequireSection_ShouldFail_IfThePathIsPartiallyWrong()
         {
-            var exception = Should.Throw<MissingConfigurationException>(() => _configuration.GetRequiredSection("B:BB"));
+            var exception = Should.Throw<MissingConfigurationException>(() => _configuration.RequireSection("B:BB"));
             exception.Key.ShouldBe("B:BB");
         }
 
         [Fact]
-        public void GetRequiredSection_ShouldReturnTheCorrectSubsection_WhenCalledOnASubsection()
+        public void RequireSection_ShouldReturnTheCorrectSubsection_WhenCalledOnASubsection()
         {
-            var subsection = _configuration.GetRequiredSection("B");
-            subsection.GetRequiredSection("BA").ShouldBe(_configuration.GetSection("B:BA"));
+            var subsection = _configuration.RequireSection("B");
+            subsection.RequireSection("BA").ShouldBe(_configuration.GetSection("B:BA"));
         }
 
         [Fact]
-        public void GetRequiredSection_ShouldFailWithTheCompletePathAsKey_WhenCalledOnASubsection()
+        public void RequireSection_ShouldFailWithTheCompletePathAsKey_WhenCalledOnASubsection()
         {
-            var subsection = _configuration.GetRequiredSection("B");
-            var exception = Should.Throw<MissingConfigurationException>(() => subsection.GetRequiredSection("BB"));
+            var subsection = _configuration.RequireSection("B");
+            var exception = Should.Throw<MissingConfigurationException>(() => subsection.RequireSection("BB"));
             exception.Key.ShouldBe("B:BB");
-        }
-
-        [Fact]
-        public void GetRequiredSection_ShouldFail_IfTheKeyIsEmpty()
-        {
-            Should.Throw<ArgumentException>(() => _configuration.GetRequiredSection(string.Empty));
         }
     }
 }

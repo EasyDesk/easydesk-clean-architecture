@@ -29,7 +29,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection
 
         public EfCoreDataAccess(IConfiguration configuration, bool applyMigrations = false, Action<DbContextOptionsBuilder> addtionalOptions = null)
         {
-            _connectionString = configuration.GetRequiredConnectionString("MainDb");
+            _connectionString = configuration.RequireConnectionString("MainDb");
             _applyMigrations = applyMigrations;
             _addtionalOptions = addtionalOptions;
         }

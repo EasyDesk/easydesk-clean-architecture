@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
     <Authors>Francesco Dente, Luca Deluigi</Authors>
     <Company>EasyDesk</Company>
     <Description>Utilities for the domain layer of the clean architecture as seen by EasyDesk.</Description>
@@ -9,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="2.2.0" />
+    <PackageReference Include="EasyDesk.Tools" Version="3.0.0" />
   </ItemGroup>
 
   <PropertyGroup>

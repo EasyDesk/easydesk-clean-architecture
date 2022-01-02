@@ -50,8 +50,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping
             {
             }
 
-            public override long GetServiceProviderHashCode() => 0;
-
             public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
             {
             }
@@ -59,6 +57,10 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping
             public override bool IsDatabaseProvider => false;
 
             public override string LogFragment => "MappingPlugin=ON";
+
+            public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) => other is MappingInfo;
+
+            public override int GetServiceProviderHashCode() => 0;
         }
 
         public DbContextOptionsExtensionInfo Info => new MappingInfo(this);
