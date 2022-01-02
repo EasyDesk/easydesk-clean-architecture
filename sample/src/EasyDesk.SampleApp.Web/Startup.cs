@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
+using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.CleanArchitecture.Web.Startup;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
@@ -46,7 +47,9 @@ namespace EasyDesk.SampleApp.Web
 
         protected override void ConfigureMvc(MvcOptions options)
         {
+            options.Filters.RemoveAt(options.Filters.Count - 1);
             options.Filters.Add<TenantTestFilter>();
+            options.Filters.Add<TenantFilter>();
         }
 
         protected override void SetupAuthentication(AuthenticationOptions options)
