@@ -1,4 +1,3 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel
-{
-    public abstract record DomainError;
-}
+﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel;
+
+public abstract record DomainError;

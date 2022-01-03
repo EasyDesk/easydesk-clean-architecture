@@ -1,6 +1,5 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.ErrorManagement
+﻿namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
+
+public abstract record Error(string Message, string ErrorCode)
 {
-    public abstract record Error(string Message, string ErrorCode)
-    {
-    }
 }

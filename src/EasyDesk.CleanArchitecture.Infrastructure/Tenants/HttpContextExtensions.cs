@@ -1,13 +1,12 @@
 ﻿using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Http;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Tenants
-{
-    public static class HttpContextExtensions
-    {
-        private const string TenantIdClaimName = "tenantId";
+namespace EasyDesk.CleanArchitecture.Infrastructure.Tenants;
 
-        public static Option<string> GetTenantId(this HttpContext httpContext) =>
-            httpContext.User.FindFirst(TenantIdClaimName).AsOption().Map(c => c.Value);
-    }
+public static class HttpContextExtensions
+{
+    private const string TenantIdClaimName = "tenantId";
+
+    public static Option<string> GetTenantId(this HttpContext httpContext) =>
+        httpContext.User.FindFirst(TenantIdClaimName).AsOption().Map(c => c.Value);
 }

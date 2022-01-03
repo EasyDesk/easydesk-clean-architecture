@@ -3,47 +3,46 @@ using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup
+namespace EasyDesk.CleanArchitecture.Web.Startup;
+
+public partial class BaseStartup
 {
-    public partial class BaseStartup
+    private IImmutableList<IAuthenticationScheme> _schemes;
+
+    private void AddAuthentication(IServiceCollection services)
     {
-        private IImmutableList<IAuthenticationScheme> _schemes;
-
-        private void AddAuthentication(IServiceCollection services)
+        var authOptions = new AuthenticationOptions();
+        SetupAuthentication(authOptions);
+        _schemes = authOptions.Schemes;
+        if (_schemes.Count == 0)
         {
-            var authOptions = new AuthenticationOptions();
-            SetupAuthentication(authOptions);
-            _schemes = authOptions.Schemes;
-            if (_schemes.Count == 0)
-            {
-                return;
-            }
-
-            var authBuilder = services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = _schemes[0].Name;
-                options.DefaultChallengeScheme = _schemes[0].Name;
-            });
-            authOptions.Schemes.ForEach(scheme =>
-            {
-                scheme.AddUtilityServices(services);
-                scheme.AddAuthenticationHandler(authBuilder);
-            });
+            return;
         }
 
-        protected virtual void SetupAuthentication(AuthenticationOptions options)
+        var authBuilder = services.AddAuthentication(options =>
         {
-        }
+            options.DefaultAuthenticateScheme = _schemes[0].Name;
+            options.DefaultChallengeScheme = _schemes[0].Name;
+        });
+        authOptions.Schemes.ForEach(scheme =>
+        {
+            scheme.AddUtilityServices(services);
+            scheme.AddAuthenticationHandler(authBuilder);
+        });
     }
 
-    public class AuthenticationOptions
+    protected virtual void SetupAuthentication(AuthenticationOptions options)
     {
-        public IImmutableList<IAuthenticationScheme> Schemes { get; private set; } = ImmutableList<IAuthenticationScheme>.Empty;
+    }
+}
 
-        public AuthenticationOptions AddScheme(IAuthenticationScheme scheme)
-        {
-            Schemes = Schemes.Add(scheme);
-            return this;
-        }
+public class AuthenticationOptions
+{
+    public IImmutableList<IAuthenticationScheme> Schemes { get; private set; } = ImmutableList<IAuthenticationScheme>.Empty;
+
+    public AuthenticationOptions AddScheme(IAuthenticationScheme scheme)
+    {
+        Schemes = Schemes.Add(scheme);
+        return this;
     }
 }

@@ -1,14 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.EventBus
+namespace EasyDesk.CleanArchitecture.Application.Events.EventBus;
+
+public interface IEventBusSetup
 {
-    public interface IEventBusSetup
-    {
-        Task SetupDefaults();
+    Task SetupDefaults();
 
-        Task SetupPublisher();
+    Task SetupPublisher();
 
-        Task SetupConsumer(EventBusConsumerDefinition consumerDefinition);
-    }
+    Task SetupConsumer(EventBusConsumerDefinition consumerDefinition);
 }

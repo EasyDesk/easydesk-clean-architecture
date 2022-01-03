@@ -2,10 +2,9 @@
 using EasyDesk.Tools;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Data
+namespace EasyDesk.CleanArchitecture.Application.Data;
+
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        Task<Response<Nothing>> Save();
-    }
+    Task<Response<Nothing>> Save();
 }

@@ -2,20 +2,19 @@
 using EasyDesk.CleanArchitecture.Web.Dto;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup
+namespace EasyDesk.CleanArchitecture.Web.Startup;
+
+public partial class BaseStartup
 {
-    public partial class BaseStartup
+    private void AddMappings(IServiceCollection services)
     {
-        private void AddMappings(IServiceCollection services)
+        services.AddAutoMapper(config =>
         {
-            services.AddAutoMapper(config =>
-            {
-                config.AddProfile(new DefaultMappingProfile(
-                    typeof(SupportedVersionDto),
-                    ApplicationAssemblyMarker,
-                    WebAssemblyMarker,
-                    InfrastructureAssemblyMarker));
-            });
-        }
+            config.AddProfile(new DefaultMappingProfile(
+                typeof(SupportedVersionDto),
+                ApplicationAssemblyMarker,
+                WebAssemblyMarker,
+                InfrastructureAssemblyMarker));
+        });
     }
 }

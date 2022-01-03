@@ -2,10 +2,9 @@
 using EasyDesk.Tools;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents
+namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
+
+public interface IExternalEventHandler
 {
-    public interface IExternalEventHandler
-    {
-        Task<Response<Nothing>> Handle(ExternalEvent ev);
-    }
+    Task<Response<Nothing>> Handle(ExternalEvent ev);
 }

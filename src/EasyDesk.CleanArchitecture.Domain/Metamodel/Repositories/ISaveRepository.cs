@@ -1,8 +1,7 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories
+﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
+
+public interface ISaveRepository<T>
+    where T : AggregateRoot
 {
-    public interface ISaveRepository<T>
-        where T : AggregateRoot
-    {
-        void Save(T entity);
-    }
+    void Save(T entity);
 }

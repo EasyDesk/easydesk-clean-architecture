@@ -1,7 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Model.Roles
+﻿namespace EasyDesk.CleanArchitecture.Domain.Model.Roles;
+
+public interface IRole
 {
-    public interface IRole
-    {
-        RoleId Id { get; }
-    }
+    RoleId Id { get; }
 }

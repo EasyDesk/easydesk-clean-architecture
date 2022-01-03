@@ -1,7 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Dal.Mongo
+﻿namespace EasyDesk.CleanArchitecture.Dal.Mongo;
+
+public interface IMongoConfiguration
 {
-    public interface IMongoConfiguration
-    {
-        void Apply();
-    }
+    void Apply();
 }

@@ -1,13 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup
+namespace EasyDesk.CleanArchitecture.Web.Startup;
+
+public partial class BaseStartup
 {
-    public partial class BaseStartup
+    private void AddRequestValidators(IServiceCollection services)
     {
-        private void AddRequestValidators(IServiceCollection services)
-        {
-            services.AddValidatorsFromAssemblyContaining(ApplicationAssemblyMarker);
-        }
+        services.AddValidatorsFromAssemblyContaining(ApplicationAssemblyMarker);
     }
 }

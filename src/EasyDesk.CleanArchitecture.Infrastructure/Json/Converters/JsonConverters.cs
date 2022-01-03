@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Json.Converters
+namespace EasyDesk.CleanArchitecture.Infrastructure.Json.Converters;
+
+public static class JsonConverters
 {
-    public static class JsonConverters
-    {
-        public static JsonConverter FromStringParser<T>(Func<string, T> parser) => new ParseableStringConverter<T>(parser);
-    }
+    public static JsonConverter FromStringParser<T>(Func<string, T> parser) => new ParseableStringConverter<T>(parser);
 }

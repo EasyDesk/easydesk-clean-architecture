@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.EventBus
+namespace EasyDesk.CleanArchitecture.Application.Events.EventBus;
+
+public interface IEventBusPublisher : IAsyncDisposable
 {
-    public interface IEventBusPublisher : IAsyncDisposable
-    {
-        Task Publish(IEnumerable<EventBusMessage> messages);
-    }
+    Task Publish(IEnumerable<EventBusMessage> messages);
 }

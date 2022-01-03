@@ -4,29 +4,28 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
 
-namespace EasyDesk.CleanArchitecture.Web.ModelBinders
+namespace EasyDesk.CleanArchitecture.Web.ModelBinders;
+
+public class TypedModelBinderProvider : IModelBinderProvider
 {
-    public class TypedModelBinderProvider : IModelBinderProvider
+    private readonly IDictionary<Type, Func<IModelBinder>> _bindersByType;
+
+    public TypedModelBinderProvider(IDictionary<Type, Func<IModelBinder>> bindersByType)
     {
-        private readonly IDictionary<Type, Func<IModelBinder>> _bindersByType;
+        _bindersByType = bindersByType;
+    }
 
-        public TypedModelBinderProvider(IDictionary<Type, Func<IModelBinder>> bindersByType)
+    public IModelBinder GetBinder(ModelBinderProviderContext context)
+    {
+        if (context == null)
         {
-            _bindersByType = bindersByType;
+            throw new ArgumentNullException(nameof(context));
         }
 
-        public IModelBinder GetBinder(ModelBinderProviderContext context)
-        {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            var modelType = context.Metadata.UnderlyingOrModelType;
-            return _bindersByType
-                .GetOption(modelType)
-                .Map(p => p())
-                .OrElseDefault();
-        }
+        var modelType = context.Metadata.UnderlyingOrModelType;
+        return _bindersByType
+            .GetOption(modelType)
+            .Map(p => p())
+            .OrElseDefault();
     }
 }

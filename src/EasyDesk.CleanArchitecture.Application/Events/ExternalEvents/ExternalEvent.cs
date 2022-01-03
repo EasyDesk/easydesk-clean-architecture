@@ -1,4 +1,3 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents
-{
-    public abstract record ExternalEvent;
-}
+﻿namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
+
+public abstract record ExternalEvent;

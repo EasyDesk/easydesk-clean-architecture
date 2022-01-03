@@ -1,18 +1,17 @@
 ﻿using MongoDB.Driver;
 
-namespace EasyDesk.CleanArchitecture.Dal.Mongo
+namespace EasyDesk.CleanArchitecture.Dal.Mongo;
+
+public abstract class MongoRepository<T>
+    where T : class
 {
-    public abstract class MongoRepository<T>
-        where T : class
+    public MongoRepository(MongoContext context)
     {
-        public MongoRepository(MongoContext context)
-        {
-            Context = context;
-            Collection = context.GetCollection<T>();
-        }
-
-        protected MongoContext Context { get; }
-
-        protected IMongoCollection<T> Collection { get; }
+        Context = context;
+        Collection = context.GetCollection<T>();
     }
+
+    protected MongoContext Context { get; }
+
+    protected IMongoCollection<T> Collection { get; }
 }

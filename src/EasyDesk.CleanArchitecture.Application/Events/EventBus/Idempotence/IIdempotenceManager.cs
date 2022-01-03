@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence
-{
-    public interface IIdempotenceManager
-    {
-        Task<bool> HasBeenProcessed(EventBusMessage message);
+namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
 
-        Task MarkAsProcessed(EventBusMessage message);
-    }
+public interface IIdempotenceManager
+{
+    Task<bool> HasBeenProcessed(EventBusMessage message);
+
+    Task MarkAsProcessed(EventBusMessage message);
 }

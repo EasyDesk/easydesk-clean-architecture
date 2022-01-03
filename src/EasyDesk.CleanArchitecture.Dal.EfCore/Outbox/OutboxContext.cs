@@ -1,24 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
+
+public class OutboxContext : DbContext
 {
-    public class OutboxContext : DbContext
+    public const string SchemaName = "outbox";
+
+    public OutboxContext(DbContextOptions<OutboxContext> options) : base(options)
     {
-        public const string SchemaName = "outbox";
+    }
 
-        public OutboxContext(DbContextOptions<OutboxContext> options) : base(options)
-        {
-        }
+    public DbSet<OutboxMessage> Messages { get; set; }
 
-        public DbSet<OutboxMessage> Messages { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.HasDefaultSchema(SchemaName);
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.HasDefaultSchema(SchemaName);
+        modelBuilder.ApplyConfiguration(new OutboxMessage.Configuration());
 
-            modelBuilder.ApplyConfiguration(new OutboxMessage.Configuration());
-
-            base.OnModelCreating(modelBuilder);
-        }
+        base.OnModelCreating(modelBuilder);
     }
 }

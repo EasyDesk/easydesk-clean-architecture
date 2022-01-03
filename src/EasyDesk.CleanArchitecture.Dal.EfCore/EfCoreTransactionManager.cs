@@ -9,49 +9,48 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore
+namespace EasyDesk.CleanArchitecture.Dal.EfCore;
+
+public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransaction>
 {
-    public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransaction>
+    private readonly DbContext _context;
+    private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
+
+    public EfCoreTransactionManager(DbContext context)
     {
-        private readonly DbContext _context;
-        private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
+        _context = context;
+        _registeredDbContexts.Add(context);
+    }
 
-        public EfCoreTransactionManager(DbContext context)
+    protected override async Task<IDbContextTransaction> BeginTransaction()
+    {
+        return await _context.Database.BeginTransactionAsync();
+    }
+
+    protected override async Task<Response<Nothing>> CommitTransaction(IDbContextTransaction transaction)
+    {
+        try
         {
-            _context = context;
-            _registeredDbContexts.Add(context);
+            await transaction.CommitAsync();
+            return Ok;
+        }
+        catch (Exception ex)
+        {
+            return Errors.Generic(
+                Errors.Codes.Internal,
+                "An error occurred while committing a transaction to the database: {message}",
+                ex.Message);
+        }
+    }
+
+    public async Task RegisterExternalDbContext(DbContext dbContext)
+    {
+        if (_registeredDbContexts.Contains(dbContext))
+        {
+            return;
         }
 
-        protected override async Task<IDbContextTransaction> BeginTransaction()
-        {
-            return await _context.Database.BeginTransactionAsync();
-        }
-
-        protected override async Task<Response<Nothing>> CommitTransaction(IDbContextTransaction transaction)
-        {
-            try
-            {
-                await transaction.CommitAsync();
-                return Ok;
-            }
-            catch (Exception ex)
-            {
-                return Errors.Generic(
-                    Errors.Codes.Internal,
-                    "An error occurred while committing a transaction to the database: {message}",
-                    ex.Message);
-            }
-        }
-
-        public async Task RegisterExternalDbContext(DbContext dbContext)
-        {
-            if (_registeredDbContexts.Contains(dbContext))
-            {
-                return;
-            }
-
-            await dbContext.Database.UseTransactionAsync(RequireTransaction().GetDbTransaction());
-            _registeredDbContexts.Add(dbContext);
-        }
+        await dbContext.Database.UseTransactionAsync(RequireTransaction().GetDbTransaction());
+        _registeredDbContexts.Add(dbContext);
     }
 }

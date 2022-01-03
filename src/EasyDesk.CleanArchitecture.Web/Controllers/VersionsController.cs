@@ -4,24 +4,23 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 
-namespace EasyDesk.CleanArchitecture.Web.Controllers
+namespace EasyDesk.CleanArchitecture.Web.Controllers;
+
+public abstract class VersionsController : AbstractController
 {
-    public abstract class VersionsController : AbstractController
+    private readonly Type[] _assemblyTypes;
+
+    public VersionsController(params Type[] assemblyTypes)
     {
-        private readonly Type[] _assemblyTypes;
+        _assemblyTypes = assemblyTypes;
+    }
 
-        public VersionsController(params Type[] assemblyTypes)
-        {
-            _assemblyTypes = assemblyTypes;
-        }
+    [HttpGet("versions")]
+    public IActionResult GetSupportedVersions()
+    {
+        var versions = VersioningUtils.GetSupportedVersions(_assemblyTypes)
+            .Select(v => new SupportedVersionDto(v.ToString()));
 
-        [HttpGet("versions")]
-        public IActionResult GetSupportedVersions()
-        {
-            var versions = VersioningUtils.GetSupportedVersions(_assemblyTypes)
-                .Select(v => new SupportedVersionDto(v.ToString()));
-
-            return Ok(ResponseDto.FromData(versions));
-        }
+        return Ok(ResponseDto.FromData(versions));
     }
 }

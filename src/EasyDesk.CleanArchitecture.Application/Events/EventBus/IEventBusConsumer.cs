@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.EventBus
+namespace EasyDesk.CleanArchitecture.Application.Events.EventBus;
+
+public interface IEventBusConsumer : IDisposable
 {
-    public interface IEventBusConsumer : IDisposable
-    {
-        Task StartListening();
-    }
+    Task StartListening();
 }

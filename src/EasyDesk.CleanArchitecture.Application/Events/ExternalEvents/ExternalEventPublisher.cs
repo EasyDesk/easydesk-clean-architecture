@@ -8,41 +8,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents
+namespace EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
+
+public class ExternalEventPublisher : IExternalEventPublisher
 {
-    public class ExternalEventPublisher : IExternalEventPublisher
+    private readonly IEventBusPublisher _eventBusPublisher;
+    private readonly ITimestampProvider _timestampProvider;
+    private readonly IJsonSerializer _jsonSerializer;
+    private readonly ITenantProvider _tenantProvider;
+
+    public ExternalEventPublisher(
+        IEventBusPublisher eventBusPublisher,
+        ITimestampProvider timestampProvider,
+        IJsonSerializer jsonSerializer,
+        ITenantProvider tenantProvider)
     {
-        private readonly IEventBusPublisher _eventBusPublisher;
-        private readonly ITimestampProvider _timestampProvider;
-        private readonly IJsonSerializer _jsonSerializer;
-        private readonly ITenantProvider _tenantProvider;
+        _eventBusPublisher = eventBusPublisher;
+        _timestampProvider = timestampProvider;
+        _jsonSerializer = jsonSerializer;
+        _tenantProvider = tenantProvider;
+    }
 
-        public ExternalEventPublisher(
-            IEventBusPublisher eventBusPublisher,
-            ITimestampProvider timestampProvider,
-            IJsonSerializer jsonSerializer,
-            ITenantProvider tenantProvider)
-        {
-            _eventBusPublisher = eventBusPublisher;
-            _timestampProvider = timestampProvider;
-            _jsonSerializer = jsonSerializer;
-            _tenantProvider = tenantProvider;
-        }
+    public async Task Publish(IEnumerable<ExternalEvent> events)
+    {
+        var eventBusMessages = events.Select(e => ToEventBusMessage(e)).ToList();
+        await _eventBusPublisher.Publish(eventBusMessages);
+    }
 
-        public async Task Publish(IEnumerable<ExternalEvent> events)
-        {
-            var eventBusMessages = events.Select(e => ToEventBusMessage(e)).ToList();
-            await _eventBusPublisher.Publish(eventBusMessages);
-        }
-
-        private EventBusMessage ToEventBusMessage(ExternalEvent externalEvent)
-        {
-            return new EventBusMessage(
-                Id: Guid.NewGuid(),
-                OccurredAt: _timestampProvider.Now,
-                EventType: externalEvent.GetType().GetEventTypeName(),
-                TenantId: _tenantProvider.TenantId,
-                Content: _jsonSerializer.Serialize(externalEvent));
-        }
+    private EventBusMessage ToEventBusMessage(ExternalEvent externalEvent)
+    {
+        return new EventBusMessage(
+            Id: Guid.NewGuid(),
+            OccurredAt: _timestampProvider.Now,
+            EventType: externalEvent.GetType().GetEventTypeName(),
+            TenantId: _tenantProvider.TenantId,
+            Content: _jsonSerializer.Serialize(externalEvent));
     }
 }

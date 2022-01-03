@@ -8,37 +8,36 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
-namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt
+namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
+
+public class JwtBearerOptions : AuthenticationSchemeOptions
 {
-    public class JwtBearerOptions : AuthenticationSchemeOptions
+    public JwtSettings JwtSettings { get; private set; }
+
+    public void UseJwtSettingsFromConfiguration(IConfiguration configuration, string scopeName = "Default") =>
+        JwtSettings = configuration.ReadJwtSettings(scopeName);
+
+    public void UseJwtSettings(JwtSettings settings) => JwtSettings = settings;
+}
+
+public class JwtBearerHandler : BaseAuthenticationHandler<JwtBearerOptions>
+{
+    private readonly JwtService _jwtService;
+
+    public JwtBearerHandler(
+        IOptionsMonitor<JwtBearerOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder,
+        ISystemClock clock,
+        JwtService jwtService)
+        : base(options, logger, encoder, clock, JwtBearerDefaults.AuthenticationScheme)
     {
-        public JwtSettings JwtSettings { get; private set; }
-
-        public void UseJwtSettingsFromConfiguration(IConfiguration configuration, string scopeName = "Default") =>
-            JwtSettings = configuration.ReadJwtSettings(scopeName);
-
-        public void UseJwtSettings(JwtSettings settings) => JwtSettings = settings;
+        _jwtService = jwtService;
     }
 
-    public class JwtBearerHandler : BaseAuthenticationHandler<JwtBearerOptions>
+    protected override Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
     {
-        private readonly JwtService _jwtService;
-
-        public JwtBearerHandler(
-            IOptionsMonitor<JwtBearerOptions> options,
-            ILoggerFactory logger,
-            UrlEncoder encoder,
-            ISystemClock clock,
-            JwtService jwtService)
-            : base(options, logger, encoder, clock, JwtBearerDefaults.AuthenticationScheme)
-        {
-            _jwtService = jwtService;
-        }
-
-        protected override Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
-        {
-            var scope = new JwtScope(_jwtService, Options.JwtSettings);
-            return scope.Validate(token, out var _).Map(x => new ClaimsPrincipal(x));
-        }
+        var scope = new JwtScope(_jwtService, Options.JwtSettings);
+        return scope.Validate(token, out var _).Map(x => new ClaimsPrincipal(x));
     }
 }

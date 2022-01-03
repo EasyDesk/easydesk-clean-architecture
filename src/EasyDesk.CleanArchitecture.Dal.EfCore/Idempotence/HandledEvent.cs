@@ -2,18 +2,17 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence
-{
-    public class HandledEvent
-    {
-        public Guid Id { get; set; }
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 
-        public class Configuration : IEntityTypeConfiguration<HandledEvent>
+public class HandledEvent
+{
+    public Guid Id { get; set; }
+
+    public class Configuration : IEntityTypeConfiguration<HandledEvent>
+    {
+        public void Configure(EntityTypeBuilder<HandledEvent> builder)
         {
-            public void Configure(EntityTypeBuilder<HandledEvent> builder)
-            {
-                builder.HasKey(x => x.Id);
-            }
+            builder.HasKey(x => x.Id);
         }
     }
 }

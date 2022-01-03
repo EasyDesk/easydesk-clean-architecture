@@ -1,9 +1,8 @@
-﻿namespace EasyDesk.CleanArchitecture.Infrastructure.Http
-{
-    public class HttpServiceSettings
-    {
-        public string ApiKey { get; set; }
+﻿namespace EasyDesk.CleanArchitecture.Infrastructure.Http;
 
-        public string BaseAddress { get; set; }
-    }
+public class HttpServiceSettings
+{
+    public string ApiKey { get; set; }
+
+    public string BaseAddress { get; set; }
 }

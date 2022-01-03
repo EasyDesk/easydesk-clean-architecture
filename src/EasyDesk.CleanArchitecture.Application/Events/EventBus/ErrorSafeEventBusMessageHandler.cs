@@ -2,30 +2,29 @@
 using System;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.EventBus
+namespace EasyDesk.CleanArchitecture.Application.Events.EventBus;
+
+public class ErrorSafeEventBusMessageHandler : IEventBusMessageHandler
 {
-    public class ErrorSafeEventBusMessageHandler : IEventBusMessageHandler
+    private readonly IEventBusMessageHandler _handler;
+    private readonly ILogger<ErrorSafeEventBusMessageHandler> _logger;
+
+    public ErrorSafeEventBusMessageHandler(IEventBusMessageHandler handler, ILogger<ErrorSafeEventBusMessageHandler> logger)
     {
-        private readonly IEventBusMessageHandler _handler;
-        private readonly ILogger<ErrorSafeEventBusMessageHandler> _logger;
+        _handler = handler;
+        _logger = logger;
+    }
 
-        public ErrorSafeEventBusMessageHandler(IEventBusMessageHandler handler, ILogger<ErrorSafeEventBusMessageHandler> logger)
+    public async Task<EventBusMessageHandlerResult> Handle(EventBusMessage message)
+    {
+        try
         {
-            _handler = handler;
-            _logger = logger;
+            return await _handler.Handle(message);
         }
-
-        public async Task<EventBusMessageHandlerResult> Handle(EventBusMessage message)
+        catch (Exception ex)
         {
-            try
-            {
-                return await _handler.Handle(message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while handling an event of type {eventType}", message.EventType);
-                return EventBusMessageHandlerResult.GenericFailure;
-            }
+            _logger.LogError(ex, "An error occurred while handling an event of type {eventType}", message.EventType);
+            return EventBusMessageHandlerResult.GenericFailure;
         }
     }
 }

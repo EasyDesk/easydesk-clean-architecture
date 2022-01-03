@@ -1,7 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Web.Authentication.ApiKey
+﻿namespace EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
+
+public static class ApiKeyDefaults
 {
-    public static class ApiKeyDefaults
-    {
-        public const string Scheme = "ApiKey";
-    }
+    public const string Scheme = "ApiKey";
 }

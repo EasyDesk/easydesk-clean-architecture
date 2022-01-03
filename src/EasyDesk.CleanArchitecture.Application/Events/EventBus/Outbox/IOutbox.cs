@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox
+namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
+
+public interface IOutbox
 {
-    public interface IOutbox
-    {
-        Task StoreMessages(IEnumerable<EventBusMessage> messages);
+    Task StoreMessages(IEnumerable<EventBusMessage> messages);
 
-        Task PublishMessages(IEnumerable<Guid> messageIds);
+    Task PublishMessages(IEnumerable<Guid> messageIds);
 
-        Task Flush();
-    }
+    Task Flush();
 }

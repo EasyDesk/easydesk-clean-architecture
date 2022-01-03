@@ -9,71 +9,70 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+
+public static class QueryableUtils
 {
-    public static class QueryableUtils
+    public static async Task<Option<T>> FirstOptionAsync<T>(this IQueryable<T> query)
+        where T : class
     {
-        public static async Task<Option<T>> FirstOptionAsync<T>(this IQueryable<T> query)
-            where T : class
+        return (await query.FirstOrDefaultAsync()).AsOption();
+    }
+
+    public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T> op)
+    {
+        return query.Conditionally(op != null, op);
+    }
+
+    public static IQueryable<T> Conditionally<T>(this IQueryable<T> query, bool condition, QueryWrapper<T> op)
+    {
+        return condition ? op(query) : query;
+    }
+
+    public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op)
+    {
+        return filter.Match(
+            some: f => query.Wrap(op(f)),
+            none: () => query);
+    }
+
+    public static Task<T> MaxByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
+    {
+        return query.OrderByDescending(keySelector).FirstOrDefaultAsync();
+    }
+
+    public static Task<T> MinByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
+    {
+        return query.OrderBy(keySelector).FirstOrDefaultAsync();
+    }
+
+    public static IOrderedQueryable<T> OrderBy<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector, OrderingDirection direction)
+    {
+        return direction switch
         {
-            return (await query.FirstOrDefaultAsync()).AsOption();
-        }
+            OrderingDirection.Descending => query.OrderByDescending(keySelector),
+            _ => query.OrderBy(keySelector)
+        };
+    }
 
-        public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T> op)
+    public static IOrderedQueryable<T> ThenBy<T, TKey>(this IOrderedQueryable<T> query, Expression<Func<T, TKey>> keySelector, OrderingDirection direction)
+    {
+        return direction switch
         {
-            return query.Conditionally(op != null, op);
-        }
+            OrderingDirection.Descending => query.ThenByDescending(keySelector),
+            _ => query.ThenBy(keySelector)
+        };
+    }
 
-        public static IQueryable<T> Conditionally<T>(this IQueryable<T> query, bool condition, QueryWrapper<T> op)
-        {
-            return condition ? op(query) : query;
-        }
+    public static async Task<Page<T>> GetPage<T>(this IQueryable<T> query, Pagination pagination)
+    {
+        var rowCount = await query.CountAsync();
 
-        public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op)
-        {
-            return filter.Match(
-                some: f => query.Wrap(op(f)),
-                none: () => query);
-        }
+        IEnumerable<T> values = await query
+            .Skip(pagination.PageIndex * pagination.PageSize)
+            .Take(pagination.PageSize)
+            .ToArrayAsync();
 
-        public static Task<T> MaxByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
-        {
-            return query.OrderByDescending(keySelector).FirstOrDefaultAsync();
-        }
-
-        public static Task<T> MinByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
-        {
-            return query.OrderBy(keySelector).FirstOrDefaultAsync();
-        }
-
-        public static IOrderedQueryable<T> OrderBy<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector, OrderingDirection direction)
-        {
-            return direction switch
-            {
-                OrderingDirection.Descending => query.OrderByDescending(keySelector),
-                _ => query.OrderBy(keySelector)
-            };
-        }
-
-        public static IOrderedQueryable<T> ThenBy<T, TKey>(this IOrderedQueryable<T> query, Expression<Func<T, TKey>> keySelector, OrderingDirection direction)
-        {
-            return direction switch
-            {
-                OrderingDirection.Descending => query.ThenByDescending(keySelector),
-                _ => query.ThenBy(keySelector)
-            };
-        }
-
-        public static async Task<Page<T>> GetPage<T>(this IQueryable<T> query, Pagination pagination)
-        {
-            var rowCount = await query.CountAsync();
-
-            IEnumerable<T> values = await query
-                .Skip(pagination.PageIndex * pagination.PageSize)
-                .Take(pagination.PageSize)
-                .ToArrayAsync();
-
-            return new Page<T>(values, pagination, rowCount);
-        }
+        return new Page<T>(values, pagination, rowCount);
     }
 }

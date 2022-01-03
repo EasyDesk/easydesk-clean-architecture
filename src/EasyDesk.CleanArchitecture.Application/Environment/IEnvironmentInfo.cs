@@ -1,7 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Environment
+﻿namespace EasyDesk.CleanArchitecture.Application.Environment;
+
+public interface IEnvironmentInfo
 {
-    public interface IEnvironmentInfo
-    {
-        public string EnvironmentName { get; }
-    }
+    public string EnvironmentName { get; }
 }

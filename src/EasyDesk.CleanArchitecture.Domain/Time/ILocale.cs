@@ -1,17 +1,16 @@
 ﻿using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 
-namespace EasyDesk.CleanArchitecture.Domain.Time
+namespace EasyDesk.CleanArchitecture.Domain.Time;
+
+public interface ILocale
 {
-    public interface ILocale
-    {
-        LocalDateTime ToLocal(Timestamp timestamp);
+    LocalDateTime ToLocal(Timestamp timestamp);
 
-        Timestamp ToTimestamp(LocalDateTime localDateTime);
-    }
+    Timestamp ToTimestamp(LocalDateTime localDateTime);
+}
 
-    public static class LocalTimeConversions
-    {
-        public static Date LocalToday(this ILocale locale, ITimestampProvider timestampProvider) =>
-            locale.ToLocal(timestampProvider.Now).Date;
-    }
+public static class LocalTimeConversions
+{
+    public static Date LocalToday(this ILocale locale, ITimestampProvider timestampProvider) =>
+        locale.ToLocal(timestampProvider.Now).Date;
 }

@@ -4,27 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus
+namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
+
+public class AzureServiceBusPublisher : IEventBusPublisher
 {
-    public class AzureServiceBusPublisher : IEventBusPublisher
+    private readonly ServiceBusSender _sender;
+
+    public AzureServiceBusPublisher(
+        ServiceBusClient client,
+        AzureServiceBusSenderDescriptor descriptor)
     {
-        private readonly ServiceBusSender _sender;
-
-        public AzureServiceBusPublisher(
-            ServiceBusClient client,
-            AzureServiceBusSenderDescriptor descriptor)
-        {
-            _sender = descriptor.Match(
-                queue: q => client.CreateSender(q),
-                topic: t => client.CreateSender(t));
-        }
-
-        public async Task Publish(IEnumerable<EventBusMessage> messages)
-        {
-            var serviceBusMessages = messages.Select(m => m.ToServiceBusMessage());
-            await _sender.SendMessagesAsync(serviceBusMessages);
-        }
-
-        public ValueTask DisposeAsync() => _sender.DisposeAsync();
+        _sender = descriptor.Match(
+            queue: q => client.CreateSender(q),
+            topic: t => client.CreateSender(t));
     }
+
+    public async Task Publish(IEnumerable<EventBusMessage> messages)
+    {
+        var serviceBusMessages = messages.Select(m => m.ToServiceBusMessage());
+        await _sender.SendMessagesAsync(serviceBusMessages);
+    }
+
+    public ValueTask DisposeAsync() => _sender.DisposeAsync();
 }

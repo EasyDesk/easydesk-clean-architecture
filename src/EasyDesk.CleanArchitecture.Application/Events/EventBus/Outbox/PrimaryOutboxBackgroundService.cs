@@ -5,40 +5,39 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox
+namespace EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
+
+public class PrimaryOutboxBackgroundService : BackgroundService
 {
-    public class PrimaryOutboxBackgroundService : BackgroundService
+    private readonly IOutboxChannel _outboxChannel;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ILogger<PrimaryOutboxBackgroundService> _logger;
+
+    public PrimaryOutboxBackgroundService(
+        IOutboxChannel outboxChannel,
+        IServiceScopeFactory serviceScopeFactory,
+        ILogger<PrimaryOutboxBackgroundService> logger)
     {
-        private readonly IOutboxChannel _outboxChannel;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly ILogger<PrimaryOutboxBackgroundService> _logger;
+        _outboxChannel = outboxChannel;
+        _serviceScopeFactory = serviceScopeFactory;
+        _logger = logger;
+    }
 
-        public PrimaryOutboxBackgroundService(
-            IOutboxChannel outboxChannel,
-            IServiceScopeFactory serviceScopeFactory,
-            ILogger<PrimaryOutboxBackgroundService> logger)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        await foreach (var messageGroup in _outboxChannel.GetAllMessageGroups())
         {
-            _outboxChannel = outboxChannel;
-            _serviceScopeFactory = serviceScopeFactory;
-            _logger = logger;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            await foreach (var messageGroup in _outboxChannel.GetAllMessageGroups())
+            try
             {
-                try
+                using (var scope = _serviceScopeFactory.CreateScope())
                 {
-                    using (var scope = _serviceScopeFactory.CreateScope())
-                    {
-                        var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
-                        await outbox.PublishMessages(messageGroup);
-                    }
+                    var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
+                    await outbox.PublishMessages(messageGroup);
                 }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Unexpected error while publishing outbox messages from primary outbox service");
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while publishing outbox messages from primary outbox service");
             }
         }
     }

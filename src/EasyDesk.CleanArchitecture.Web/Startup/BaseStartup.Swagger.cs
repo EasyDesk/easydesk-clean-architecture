@@ -9,59 +9,58 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Linq;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup
+namespace EasyDesk.CleanArchitecture.Web.Startup;
+
+public partial class BaseStartup
 {
-    public partial class BaseStartup
+    protected abstract bool UsesSwagger { get; }
+
+    private void AddSwagger(IServiceCollection services)
     {
-        protected abstract bool UsesSwagger { get; }
-
-        private void AddSwagger(IServiceCollection services)
+        if (!UsesSwagger)
         {
-            if (!UsesSwagger)
-            {
-                return;
-            }
+            return;
+        }
 
-            services.AddSwaggerGenNewtonsoftSupport();
-            services.AddSwaggerGen(options =>
-            {
-                VersioningUtils.GetSupportedVersions(WebAssemblyMarker)
-                    .Select(version => version.ToDisplayString())
-                    .ForEach(version =>
-                    {
-                        options.SwaggerDoc(version, new OpenApiInfo
-                        {
-                            Title = ServiceName,
-                            Version = version
-                        });
-                    });
-
-                options.OperationFilter<ApiVersionFilter>();
-                options.DocInclusionPredicate((version, api) =>
+        services.AddSwaggerGenNewtonsoftSupport();
+        services.AddSwaggerGen(options =>
+        {
+            VersioningUtils.GetSupportedVersions(WebAssemblyMarker)
+                .Select(version => version.ToDisplayString())
+                .ForEach(version =>
                 {
-                    if (api.ActionDescriptor.GetApiVersionModel().IsApiVersionNeutral)
+                    options.SwaggerDoc(version, new OpenApiInfo
                     {
-                        return true;
-                    }
-                    if (api.ActionDescriptor is not ControllerActionDescriptor descriptor)
-                    {
-                        return false;
-                    }
-                    return descriptor
-                        .ControllerTypeInfo
-                        .GetControllerVersion()
-                        .Map(v => v.ToDisplayString())
-                        .Contains(version);
+                        Title = ServiceName,
+                        Version = version
+                    });
                 });
 
-                _schemes.ForEach(scheme => scheme.ConfigureSwagger(options));
-
-                ConfigureSwagger(options);
+            options.OperationFilter<ApiVersionFilter>();
+            options.DocInclusionPredicate((version, api) =>
+            {
+                if (api.ActionDescriptor.GetApiVersionModel().IsApiVersionNeutral)
+                {
+                    return true;
+                }
+                if (api.ActionDescriptor is not ControllerActionDescriptor descriptor)
+                {
+                    return false;
+                }
+                return descriptor
+                    .ControllerTypeInfo
+                    .GetControllerVersion()
+                    .Map(v => v.ToDisplayString())
+                    .Contains(version);
             });
-        }
 
-        protected virtual void ConfigureSwagger(SwaggerGenOptions options)
-        {
-        }
+            _schemes.ForEach(scheme => scheme.ConfigureSwagger(options));
+
+            ConfigureSwagger(options);
+        });
+    }
+
+    protected virtual void ConfigureSwagger(SwaggerGenOptions options)
+    {
     }
 }

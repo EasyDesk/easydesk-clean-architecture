@@ -5,18 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyDesk.CleanArchitecture.Application.Mapping
-{
-    public class DefaultMappingProfile : Profile
-    {
-        public DefaultMappingProfile(params Type[] assemblyTypes) : this(assemblyTypes.AsEnumerable())
-        {
-        }
+namespace EasyDesk.CleanArchitecture.Application.Mapping;
 
-        public DefaultMappingProfile(IEnumerable<Type> assemblyTypes)
-        {
-            ReflectionUtils.InstancesOfSubtypesOf<IMapping>(assemblyTypes)
-                .ForEach(m => m.ConfigureProfile(this));
-        }
+public class DefaultMappingProfile : Profile
+{
+    public DefaultMappingProfile(params Type[] assemblyTypes) : this(assemblyTypes.AsEnumerable())
+    {
+    }
+
+    public DefaultMappingProfile(IEnumerable<Type> assemblyTypes)
+    {
+        ReflectionUtils.InstancesOfSubtypesOf<IMapping>(assemblyTypes)
+            .ForEach(m => m.ConfigureProfile(this));
     }
 }

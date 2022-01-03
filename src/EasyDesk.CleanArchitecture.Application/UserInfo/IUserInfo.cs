@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 
-namespace EasyDesk.CleanArchitecture.Application.UserInfo
+namespace EasyDesk.CleanArchitecture.Application.UserInfo;
+
+public interface IUserInfo
 {
-    public interface IUserInfo
-    {
-        bool IsLoggedIn { get; }
+    bool IsLoggedIn { get; }
 
-        Guid UserId { get; }
+    Guid UserId { get; }
 
-        IEnumerable<RoleId> Roles { get; }
-    }
+    IEnumerable<RoleId> Roles { get; }
 }

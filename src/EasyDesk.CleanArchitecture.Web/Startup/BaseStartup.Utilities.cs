@@ -7,23 +7,22 @@ using EasyDesk.CleanArchitecture.Web.UserInfo;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup
-{
-    public partial class BaseStartup
-    {
-        private void AddUtilityDomainServices(IServiceCollection services)
-        {
-            services
-                .AddScoped<IDomainEventNotifier, TransactionalDomainEventQueue>()
-                .AddNewtonsoftJsonSerializer(ConfigureJsonSerializerSettings)
-                .AddHttpContextAccessor()
-                .AddTimestampProvider(Configuration)
-                .AddUserInfo()
-                .AddEnvironmentInfo();
-        }
+namespace EasyDesk.CleanArchitecture.Web.Startup;
 
-        protected virtual void ConfigureJsonSerializerSettings(JsonSerializerSettings serializerSettings)
-        {
-        }
+public partial class BaseStartup
+{
+    private void AddUtilityDomainServices(IServiceCollection services)
+    {
+        services
+            .AddScoped<IDomainEventNotifier, TransactionalDomainEventQueue>()
+            .AddNewtonsoftJsonSerializer(ConfigureJsonSerializerSettings)
+            .AddHttpContextAccessor()
+            .AddTimestampProvider(Configuration)
+            .AddUserInfo()
+            .AddEnvironmentInfo();
+    }
+
+    protected virtual void ConfigureJsonSerializerSettings(JsonSerializerSettings serializerSettings)
+    {
     }
 }

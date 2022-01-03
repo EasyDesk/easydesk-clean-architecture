@@ -11,58 +11,57 @@ using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
-namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus
+namespace EasyDesk.CleanArchitecture.UnitTests.Application.Events.EventBus;
+
+public class DefaultEventBusMessageHandlerTests
 {
-    public class DefaultEventBusMessageHandlerTests
+    private record SupportedEvent : ExternalEvent;
+
+    private const string Json = "{}";
+
+    private readonly DefaultEventBusMessageHandler _sut;
+    private readonly IExternalEventHandler _externalEventHandler;
+    private readonly IJsonSerializer _jsonSerializer;
+    private readonly IEnumerable<Type> _supportedTypes = Items(typeof(SupportedEvent));
+    private readonly SupportedEvent _event = new();
+    private readonly EventBusMessage _supportedMessage;
+
+    public DefaultEventBusMessageHandlerTests()
     {
-        private record SupportedEvent : ExternalEvent;
+        _supportedMessage = EventBusTestingUtils.NewMessageWithType(typeof(SupportedEvent).GetEventTypeName());
 
-        private const string Json = "{}";
+        _externalEventHandler = Substitute.For<IExternalEventHandler>();
+        _externalEventHandler.Handle(_event).Returns(Ok);
 
-        private readonly DefaultEventBusMessageHandler _sut;
-        private readonly IExternalEventHandler _externalEventHandler;
-        private readonly IJsonSerializer _jsonSerializer;
-        private readonly IEnumerable<Type> _supportedTypes = Items(typeof(SupportedEvent));
-        private readonly SupportedEvent _event = new();
-        private readonly EventBusMessage _supportedMessage;
+        _jsonSerializer = Substitute.For<IJsonSerializer>();
+        _jsonSerializer.Deserialize(Json, typeof(SupportedEvent)).Returns(_event);
 
-        public DefaultEventBusMessageHandlerTests()
-        {
-            _supportedMessage = EventBusTestingUtils.NewMessageWithType(typeof(SupportedEvent).GetEventTypeName());
+        _sut = new(_externalEventHandler, _jsonSerializer, _supportedTypes);
+    }
 
-            _externalEventHandler = Substitute.For<IExternalEventHandler>();
-            _externalEventHandler.Handle(_event).Returns(Ok);
+    [Fact]
+    public async Task Handle_ShouldSucceed_IfTheEventTypeIsSupportedAndTheExternalEventHandlerSucceeds()
+    {
+        var result = await _sut.Handle(_supportedMessage);
 
-            _jsonSerializer = Substitute.For<IJsonSerializer>();
-            _jsonSerializer.Deserialize(Json, typeof(SupportedEvent)).Returns(_event);
+        result.ShouldBe(EventBusMessageHandlerResult.Handled);
+    }
 
-            _sut = new(_externalEventHandler, _jsonSerializer, _supportedTypes);
-        }
+    [Fact]
+    public async Task Handle_ShouldReturnNotSupported_IfTheEventTypeIsNotSupported()
+    {
+        var result = await _sut.Handle(EventBusTestingUtils.NewMessageWithType("UNSUPPORTED"));
 
-        [Fact]
-        public async Task Handle_ShouldSucceed_IfTheEventTypeIsSupportedAndTheExternalEventHandlerSucceeds()
-        {
-            var result = await _sut.Handle(_supportedMessage);
+        result.ShouldBe(EventBusMessageHandlerResult.NotSupported);
+    }
 
-            result.ShouldBe(EventBusMessageHandlerResult.Handled);
-        }
+    [Fact]
+    public async Task Handle_ShouldReturnGenericFailurte_IfTheExternalEventHandlerFails()
+    {
+        _externalEventHandler.Handle(_event).Returns(TestError.Create());
 
-        [Fact]
-        public async Task Handle_ShouldReturnNotSupported_IfTheEventTypeIsNotSupported()
-        {
-            var result = await _sut.Handle(EventBusTestingUtils.NewMessageWithType("UNSUPPORTED"));
+        var result = await _sut.Handle(_supportedMessage);
 
-            result.ShouldBe(EventBusMessageHandlerResult.NotSupported);
-        }
-
-        [Fact]
-        public async Task Handle_ShouldReturnGenericFailurte_IfTheExternalEventHandlerFails()
-        {
-            _externalEventHandler.Handle(_event).Returns(TestError.Create());
-
-            var result = await _sut.Handle(_supportedMessage);
-
-            result.ShouldBe(EventBusMessageHandlerResult.GenericFailure);
-        }
+        result.ShouldBe(EventBusMessageHandlerResult.GenericFailure);
     }
 }

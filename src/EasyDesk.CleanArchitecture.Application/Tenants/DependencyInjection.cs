@@ -1,15 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Tenants
+namespace EasyDesk.CleanArchitecture.Application.Tenants;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddTenantManagement(this IServiceCollection services)
     {
-        public static IServiceCollection AddTenantManagement(this IServiceCollection services)
-        {
-            return services
-                .AddScoped<TenantService>()
-                .AddScoped<ITenantInitializer>(p => p.GetRequiredService<TenantService>())
-                .AddScoped<ITenantProvider>(p => p.GetRequiredService<TenantService>());
-        }
+        return services
+            .AddScoped<TenantService>()
+            .AddScoped<ITenantInitializer>(p => p.GetRequiredService<TenantService>())
+            .AddScoped<ITenantProvider>(p => p.GetRequiredService<TenantService>());
     }
 }

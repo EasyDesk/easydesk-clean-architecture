@@ -1,6 +1,5 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel
+﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel;
+
+public abstract class Entity
 {
-    public abstract class Entity
-    {
-    }
 }

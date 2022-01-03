@@ -2,23 +2,22 @@
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Time
+namespace EasyDesk.CleanArchitecture.Infrastructure.Time;
+
+public class DateTimeLocale : ILocale
 {
-    public class DateTimeLocale : ILocale
+    private readonly TimeZoneInfo _timeZoneInfo;
+
+    public DateTimeLocale(DateTimeLocaleSettings settings)
     {
-        private readonly TimeZoneInfo _timeZoneInfo;
-
-        public DateTimeLocale(DateTimeLocaleSettings settings)
-        {
-            _timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(settings.TimeZoneId);
-        }
-
-        public LocalDateTime ToLocal(Timestamp timestamp) =>
-            LocalDateTime.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(timestamp.AsDateTime, _timeZoneInfo));
-
-        public Timestamp ToTimestamp(LocalDateTime localDateTime) =>
-            Timestamp.FromUtcDateTime(TimeZoneInfo.ConvertTimeToUtc(localDateTime.AsDateTime, _timeZoneInfo));
+        _timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(settings.TimeZoneId);
     }
 
-    public record DateTimeLocaleSettings(string TimeZoneId);
+    public LocalDateTime ToLocal(Timestamp timestamp) =>
+        LocalDateTime.FromDateTime(TimeZoneInfo.ConvertTimeFromUtc(timestamp.AsDateTime, _timeZoneInfo));
+
+    public Timestamp ToTimestamp(LocalDateTime localDateTime) =>
+        Timestamp.FromUtcDateTime(TimeZoneInfo.ConvertTimeToUtc(localDateTime.AsDateTime, _timeZoneInfo));
 }
+
+public record DateTimeLocaleSettings(string TimeZoneId);

@@ -4,32 +4,31 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model
+namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
+
+public class PersonModel
 {
-    public class PersonModel
+    public Guid Id { get; set; }
+
+    public string Name { get; set; }
+
+    public bool Married { get; set; }
+
+    public class Configuration : IEntityTypeConfiguration<PersonModel>
     {
-        public Guid Id { get; set; }
-
-        public string Name { get; set; }
-
-        public bool Married { get; set; }
-
-        public class Configuration : IEntityTypeConfiguration<PersonModel>
+        public void Configure(EntityTypeBuilder<PersonModel> builder)
         {
-            public void Configure(EntityTypeBuilder<PersonModel> builder)
-            {
-                builder.HasKey(x => x.Id);
+            builder.HasKey(x => x.Id);
 
-                builder.Property(x => x.Name)
-                    .IsRequired();
-            }
+            builder.Property(x => x.Name)
+                .IsRequired();
         }
+    }
 
-        public class MappingToSnapshot : DirectMapping<PersonModel, GetPeople.PersonSnapshot>
+    public class MappingToSnapshot : DirectMapping<PersonModel, GetPeople.PersonSnapshot>
+    {
+        public MappingToSnapshot() : base(src => new(src.Id, src.Name, src.Married))
         {
-            public MappingToSnapshot() : base(src => new(src.Id, src.Name, src.Married))
-            {
-            }
         }
     }
 }

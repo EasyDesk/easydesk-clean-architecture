@@ -1,9 +1,8 @@
 ﻿using EasyDesk.Tools.Options;
 
-namespace EasyDesk.CleanArchitecture.Application.Tenants
+namespace EasyDesk.CleanArchitecture.Application.Tenants;
+
+public interface ITenantInitializer
 {
-    public interface ITenantInitializer
-    {
-        public void InitializeTenant(Option<string> tenantId);
-    }
+    public void InitializeTenant(Option<string> tenantId);
 }

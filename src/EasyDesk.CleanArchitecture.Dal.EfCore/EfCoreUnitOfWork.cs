@@ -6,38 +6,37 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore
+namespace EasyDesk.CleanArchitecture.Dal.EfCore;
+
+public class EfCoreUnitOfWork : IUnitOfWork
 {
-    public class EfCoreUnitOfWork : IUnitOfWork
+    private readonly DbContext _context;
+
+    public EfCoreUnitOfWork(DbContext context)
     {
-        private readonly DbContext _context;
+        _context = context;
+    }
 
-        public EfCoreUnitOfWork(DbContext context)
+    public async Task<Response<Nothing>> Save()
+    {
+        try
         {
-            _context = context;
+            await _context.SaveChangesAsync();
+            return Ok;
         }
-
-        public async Task<Response<Nothing>> Save()
+        catch (DbUpdateConcurrencyException ex)
         {
-            try
-            {
-                await _context.SaveChangesAsync();
-                return Ok;
-            }
-            catch (DbUpdateConcurrencyException ex)
-            {
-                return Errors.Generic(
-                    Errors.Codes.Internal,
-                    "A concurrency error occurred while saving changes to the database: {message}",
-                    ex.Message);
-            }
-            catch (DbUpdateException ex)
-            {
-                return Errors.Generic(
-                    Errors.Codes.Internal,
-                    "An error occurred while saving changes to the database: {message}",
-                    ex.Message);
-            }
+            return Errors.Generic(
+                Errors.Codes.Internal,
+                "A concurrency error occurred while saving changes to the database: {message}",
+                ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            return Errors.Generic(
+                Errors.Codes.Internal,
+                "An error occurred while saving changes to the database: {message}",
+                ex.Message);
         }
     }
 }

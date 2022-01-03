@@ -15,58 +15,57 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace EasyDesk.SampleApp.Web
+namespace EasyDesk.SampleApp.Web;
+
+public class Startup : BaseStartup
 {
-    public class Startup : BaseStartup
+    public Startup(IConfiguration configuration, IWebHostEnvironment environment) : base(configuration, environment)
     {
-        public Startup(IConfiguration configuration, IWebHostEnvironment environment) : base(configuration, environment)
-        {
-        }
-
-        protected override Type ApplicationAssemblyMarker => typeof(CoupleGotMarried);
-
-        protected override Type InfrastructureAssemblyMarker => typeof(SampleAppContext);
-
-        protected override Type WebAssemblyMarker => typeof(Startup);
-
-        protected override bool IsMultitenant => true;
-
-        protected override bool UsesSwagger => true;
-
-        protected override bool UsesPublisher => true;
-
-        protected override bool UsesConsumer => true;
-
-        protected override IDataAccessImplementation DataAccessImplementation =>
-            new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: true);
-
-        protected override IEventBusImplementation EventBusImplementation =>
-            new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName);
-
-        protected override string ServiceName => "Sample App";
-
-        protected override void ConfigureMvc(MvcOptions options)
-        {
-            options.Filters.RemoveAt(options.Filters.Count - 1);
-            options.Filters.Add<TenantTestFilter>();
-            options.Filters.Add<TenantFilter>();
-        }
-
-        protected override void SetupAuthentication(AuthenticationOptions options)
-        {
-            options.AddScheme(new JwtBearerScheme(options =>
-            {
-                options.UseJwtSettingsFromConfiguration(Configuration);
-            }));
-        }
     }
 
-    public class TenantTestFilter : IAsyncActionFilter
+    protected override Type ApplicationAssemblyMarker => typeof(CoupleGotMarried);
+
+    protected override Type InfrastructureAssemblyMarker => typeof(SampleAppContext);
+
+    protected override Type WebAssemblyMarker => typeof(Startup);
+
+    protected override bool IsMultitenant => true;
+
+    protected override bool UsesSwagger => true;
+
+    protected override bool UsesPublisher => true;
+
+    protected override bool UsesConsumer => true;
+
+    protected override IDataAccessImplementation DataAccessImplementation =>
+        new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: true);
+
+    protected override IEventBusImplementation EventBusImplementation =>
+        new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName);
+
+    protected override string ServiceName => "Sample App";
+
+    protected override void ConfigureMvc(MvcOptions options)
     {
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        options.Filters.RemoveAt(options.Filters.Count - 1);
+        options.Filters.Add<TenantTestFilter>();
+        options.Filters.Add<TenantFilter>();
+    }
+
+    protected override void SetupAuthentication(AuthenticationOptions options)
+    {
+        options.AddScheme(new JwtBearerScheme(options =>
         {
-            context.HttpContext.User.AddIdentity(new ClaimsIdentity(new Claim[] { new("tenantId", "test") }));
-            await next();
-        }
+            options.UseJwtSettingsFromConfiguration(Configuration);
+        }));
+    }
+}
+
+public class TenantTestFilter : IAsyncActionFilter
+{
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    {
+        context.HttpContext.User.AddIdentity(new ClaimsIdentity(new Claim[] { new("tenantId", "test") }));
+        await next();
     }
 }

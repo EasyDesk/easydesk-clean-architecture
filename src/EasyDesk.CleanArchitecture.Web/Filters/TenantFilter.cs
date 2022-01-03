@@ -3,22 +3,21 @@ using EasyDesk.CleanArchitecture.Infrastructure.Tenants;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Web.Filters
+namespace EasyDesk.CleanArchitecture.Web.Filters;
+
+public class TenantFilter : IAsyncActionFilter
 {
-    public class TenantFilter : IAsyncActionFilter
+    private readonly ITenantInitializer _tenantInitializer;
+
+    public TenantFilter(ITenantInitializer tenantInitializer)
     {
-        private readonly ITenantInitializer _tenantInitializer;
+        _tenantInitializer = tenantInitializer;
+    }
 
-        public TenantFilter(ITenantInitializer tenantInitializer)
-        {
-            _tenantInitializer = tenantInitializer;
-        }
-
-        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
-        {
-            var tenantId = context.HttpContext.GetTenantId();
-            _tenantInitializer.InitializeTenant(tenantId);
-            await next();
-        }
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    {
+        var tenantId = context.HttpContext.GetTenantId();
+        _tenantInitializer.InitializeTenant(tenantId);
+        await next();
     }
 }

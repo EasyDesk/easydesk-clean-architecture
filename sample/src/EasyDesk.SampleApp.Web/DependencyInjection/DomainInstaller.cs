@@ -5,13 +5,12 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.SampleApp.Web.DependencyInjection
+namespace EasyDesk.SampleApp.Web.DependencyInjection;
+
+public class DomainInstaller : IServiceInstaller
 {
-    public class DomainInstaller : IServiceInstaller
+    public void InstallServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
-        public void InstallServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
-        {
-            services.AddScoped<IPersonRepository, EfCorePersonRepository>();
-        }
+        services.AddScoped<IPersonRepository, EfCorePersonRepository>();
     }
 }

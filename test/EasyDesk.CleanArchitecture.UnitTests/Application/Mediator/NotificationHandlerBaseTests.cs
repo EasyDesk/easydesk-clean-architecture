@@ -10,106 +10,105 @@ using Shouldly;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
-namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator
+namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator;
+
+public class NotificationHandlerBaseTests
 {
-    public class NotificationHandlerBaseTests
+    public class TestHandler : NotificationHandlerBase<int>
     {
-        public class TestHandler : NotificationHandlerBase<int>
+        private readonly Func<int, Response<Nothing>> _handler;
+
+        public TestHandler(Func<int, Response<Nothing>> handler)
         {
-            private readonly Func<int, Response<Nothing>> _handler;
-
-            public TestHandler(Func<int, Response<Nothing>> handler)
-            {
-                _handler = handler;
-            }
-
-            public TestHandler(Func<int, Response<Nothing>> handler, IUnitOfWork unitOfWork) : base(unitOfWork)
-            {
-                _handler = handler;
-            }
-
-            protected override Task<Response<Nothing>> Handle(int ev) => Task.FromResult(_handler(ev));
+            _handler = handler;
         }
 
-        private const int Value = 10;
-        private readonly Func<int, Response<Nothing>> _handlerCode;
-        private readonly EventContext<int> _eventContext;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public NotificationHandlerBaseTests()
+        public TestHandler(Func<int, Response<Nothing>> handler, IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            _handlerCode = Substitute.For<Func<int, Response<Nothing>>>();
-            _handlerCode(Arg.Any<int>()).Returns(Ok);
-
-            _eventContext = new(Value);
-
-            _unitOfWork = Substitute.For<IUnitOfWork>();
-            _unitOfWork.Save().Returns(Ok);
+            _handler = handler;
         }
 
-        private async Task Handle() =>
-            await new TestHandler(_handlerCode).Handle(_eventContext, default);
+        protected override Task<Response<Nothing>> Handle(int ev) => Task.FromResult(_handler(ev));
+    }
 
-        private async Task HandleWithUnitOfWork() =>
-            await new TestHandler(_handlerCode, _unitOfWork).Handle(_eventContext, default);
+    private const int Value = 10;
+    private readonly Func<int, Response<Nothing>> _handlerCode;
+    private readonly EventContext<int> _eventContext;
+    private readonly IUnitOfWork _unitOfWork;
 
-        [Fact]
-        public async Task Handle_ShouldCallTheHandlerCodeWithTheGivenEventData()
-        {
-            await Handle();
+    public NotificationHandlerBaseTests()
+    {
+        _handlerCode = Substitute.For<Func<int, Response<Nothing>>>();
+        _handlerCode(Arg.Any<int>()).Returns(Ok);
 
-            _handlerCode.Received(1)(Value);
-        }
+        _eventContext = new(Value);
 
-        [Fact]
-        public async Task Handle_ShouldNotCallTheHandlerCode_IfTheContextAlreadyContainsAnError()
-        {
-            _eventContext.SetError(TestError.Create());
+        _unitOfWork = Substitute.For<IUnitOfWork>();
+        _unitOfWork.Save().Returns(Ok);
+    }
 
-            await Handle();
+    private async Task Handle() =>
+        await new TestHandler(_handlerCode).Handle(_eventContext, default);
 
-            _handlerCode.DidNotReceiveWithAnyArgs()(default);
-        }
+    private async Task HandleWithUnitOfWork() =>
+        await new TestHandler(_handlerCode, _unitOfWork).Handle(_eventContext, default);
 
-        [Fact]
-        public async Task Handle_ShouldSetAnErrorOnTheContext_IfTheHandlerCodeReturnsAnError()
-        {
-            var error = TestError.Create();
-            _handlerCode(Arg.Any<int>()).Returns(error);
+    [Fact]
+    public async Task Handle_ShouldCallTheHandlerCodeWithTheGivenEventData()
+    {
+        await Handle();
 
-            await Handle();
+        _handlerCode.Received(1)(Value);
+    }
 
-            _eventContext.Error.ShouldContain(error);
-        }
+    [Fact]
+    public async Task Handle_ShouldNotCallTheHandlerCode_IfTheContextAlreadyContainsAnError()
+    {
+        _eventContext.SetError(TestError.Create());
 
-        [Fact]
-        public async Task Handle_ShouldSaveTheUnitOfWork_IfItWasPassedThroughTheConstructorAndTheHandlerCodeWasSuccessful()
-        {
-            await HandleWithUnitOfWork();
+        await Handle();
 
-            await _unitOfWork.Received(1).Save();
-        }
+        _handlerCode.DidNotReceiveWithAnyArgs()(default);
+    }
 
-        [Fact]
-        public async Task Handle_ShouldSetAnErrorOnTheContext_IfSavingTheUnitOfWorkFails()
-        {
-            var error = TestError.Create();
-            _unitOfWork.Save().Returns(error);
+    [Fact]
+    public async Task Handle_ShouldSetAnErrorOnTheContext_IfTheHandlerCodeReturnsAnError()
+    {
+        var error = TestError.Create();
+        _handlerCode(Arg.Any<int>()).Returns(error);
 
-            await HandleWithUnitOfWork();
+        await Handle();
 
-            _eventContext.Error.ShouldContain(error);
-        }
+        _eventContext.Error.ShouldContain(error);
+    }
 
-        [Fact]
-        public async Task Handle_ShouldNotSaveTheUnitOfWork_IfTheHandlerCodeFails()
-        {
-            var error = TestError.Create();
-            _handlerCode(Arg.Any<int>()).Returns(error);
+    [Fact]
+    public async Task Handle_ShouldSaveTheUnitOfWork_IfItWasPassedThroughTheConstructorAndTheHandlerCodeWasSuccessful()
+    {
+        await HandleWithUnitOfWork();
 
-            await HandleWithUnitOfWork();
+        await _unitOfWork.Received(1).Save();
+    }
 
-            await _unitOfWork.DidNotReceiveWithAnyArgs().Save();
-        }
+    [Fact]
+    public async Task Handle_ShouldSetAnErrorOnTheContext_IfSavingTheUnitOfWorkFails()
+    {
+        var error = TestError.Create();
+        _unitOfWork.Save().Returns(error);
+
+        await HandleWithUnitOfWork();
+
+        _eventContext.Error.ShouldContain(error);
+    }
+
+    [Fact]
+    public async Task Handle_ShouldNotSaveTheUnitOfWork_IfTheHandlerCodeFails()
+    {
+        var error = TestError.Create();
+        _handlerCode(Arg.Any<int>()).Returns(error);
+
+        await HandleWithUnitOfWork();
+
+        await _unitOfWork.DidNotReceiveWithAnyArgs().Save();
     }
 }

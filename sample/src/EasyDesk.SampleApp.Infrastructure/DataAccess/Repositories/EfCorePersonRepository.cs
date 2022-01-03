@@ -10,20 +10,19 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Repositories
+namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Repositories;
+
+public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, SampleAppContext>, IPersonRepository
 {
-    public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, SampleAppContext>, IPersonRepository
+    public EfCorePersonRepository(
+        SampleAppContext context,
+        IDomainEventNotifier eventNotifier) : base(context, new PersonConverter(), eventNotifier)
     {
-        public EfCorePersonRepository(
-            SampleAppContext context,
-            IDomainEventNotifier eventNotifier) : base(context, new PersonConverter(), eventNotifier)
-        {
-        }
-
-        protected override DbSet<PersonModel> GetDbSet(SampleAppContext context) => context.People;
-
-        protected override IQueryable<PersonModel> Includes(IQueryable<PersonModel> initialQuery) => initialQuery;
-
-        public Task<Result<Person>> GetById(Guid id) => GetSingle(q => q.Where(p => p.Id == id));
     }
+
+    protected override DbSet<PersonModel> GetDbSet(SampleAppContext context) => context.People;
+
+    protected override IQueryable<PersonModel> Includes(IQueryable<PersonModel> initialQuery) => initialQuery;
+
+    public Task<Result<Person>> GetById(Guid id) => GetSingle(q => q.Where(p => p.Id == id));
 }

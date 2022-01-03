@@ -1,7 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel
+﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel;
+
+public interface IDomainEventNotifier
 {
-    public interface IDomainEventNotifier
-    {
-        void Notify(DomainEvent domainEvent);
-    }
+    void Notify(DomainEvent domainEvent);
 }

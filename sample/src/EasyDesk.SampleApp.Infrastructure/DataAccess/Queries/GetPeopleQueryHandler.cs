@@ -7,24 +7,23 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using System.Threading.Tasks;
 using static EasyDesk.SampleApp.Application.Queries.GetPeople;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Queries
+namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Queries;
+
+public class GetPeopleQueryHandler : PaginatedQueryHandlerBase<Query, PersonSnapshot>
 {
-    public class GetPeopleQueryHandler : PaginatedQueryHandlerBase<Query, PersonSnapshot>
+    private readonly SampleAppContext _context;
+    private readonly IMapper _mapper;
+
+    public GetPeopleQueryHandler(SampleAppContext context, IMapper mapper)
     {
-        private readonly SampleAppContext _context;
-        private readonly IMapper _mapper;
+        _context = context;
+        _mapper = mapper;
+    }
 
-        public GetPeopleQueryHandler(SampleAppContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-
-        protected override async Task<Response<Page<PersonSnapshot>>> Handle(Query request)
-        {
-            return await _context.People
-                .ProjectTo<PersonSnapshot>(_mapper.ConfigurationProvider)
-                .GetPage(request.Pagination);
-        }
+    protected override async Task<Response<Page<PersonSnapshot>>> Handle(Query request)
+    {
+        return await _context.People
+            .ProjectTo<PersonSnapshot>(_mapper.ConfigurationProvider)
+            .GetPage(request.Pagination);
     }
 }

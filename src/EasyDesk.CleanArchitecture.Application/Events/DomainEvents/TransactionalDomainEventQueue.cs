@@ -8,46 +8,45 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents
+namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
+
+public class TransactionalDomainEventQueue : IDomainEventNotifier
 {
-    public class TransactionalDomainEventQueue : IDomainEventNotifier
+    private readonly ITransactionManager _transactionManager;
+    private readonly IMediator _mediator;
+    private readonly Queue<DomainEvent> _eventQueue = new();
+
+    public TransactionalDomainEventQueue(ITransactionManager transactionManager, IMediator mediator)
     {
-        private readonly ITransactionManager _transactionManager;
-        private readonly IMediator _mediator;
-        private readonly Queue<DomainEvent> _eventQueue = new();
+        _transactionManager = transactionManager;
+        _mediator = mediator;
+    }
 
-        public TransactionalDomainEventQueue(ITransactionManager transactionManager, IMediator mediator)
+    public void Notify(DomainEvent domainEvent)
+    {
+        if (_eventQueue.Count == 0)
         {
-            _transactionManager = transactionManager;
-            _mediator = mediator;
+            _transactionManager.BeforeCommit.Subscribe(Flush);
         }
+        _eventQueue.Enqueue(domainEvent);
+    }
 
-        public void Notify(DomainEvent domainEvent)
+    private async Task Flush(BeforeCommitContext context)
+    {
+        await HandleEnqueuedEvents()
+            .ThenIfFailure(error => context.CancelCommit(error));
+    }
+
+    private async Task<Response<Nothing>> HandleEnqueuedEvents()
+    {
+        while (_eventQueue.TryDequeue(out var nextEvent))
         {
-            if (_eventQueue.Count == 0)
+            var result = await _mediator.PublishEvent(nextEvent);
+            if (result.IsFailure)
             {
-                _transactionManager.BeforeCommit.Subscribe(Flush);
+                return result;
             }
-            _eventQueue.Enqueue(domainEvent);
         }
-
-        private async Task Flush(BeforeCommitContext context)
-        {
-            await HandleEnqueuedEvents()
-                .ThenIfFailure(error => context.CancelCommit(error));
-        }
-
-        private async Task<Response<Nothing>> HandleEnqueuedEvents()
-        {
-            while (_eventQueue.TryDequeue(out var nextEvent))
-            {
-                var result = await _mediator.PublishEvent(nextEvent);
-                if (result.IsFailure)
-                {
-                    return result;
-                }
-            }
-            return Ok;
-        }
+        return Ok;
     }
 }

@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace EasyDesk.CleanArchitecture.Web.Controllers
+namespace EasyDesk.CleanArchitecture.Web.Controllers;
+
+[ApiController]
+public class AbstractController : ControllerBase
 {
-    [ApiController]
-    public class AbstractController : ControllerBase
-    {
-    }
 }
