@@ -15,6 +15,7 @@ public class TransactionalDomainEventQueue : IDomainEventNotifier
     private readonly ITransactionManager _transactionManager;
     private readonly IMediator _mediator;
     private readonly Queue<DomainEvent> _eventQueue = new();
+    private bool _hasEnqueuedAnyEvents = false;
 
     public TransactionalDomainEventQueue(ITransactionManager transactionManager, IMediator mediator)
     {
@@ -24,9 +25,10 @@ public class TransactionalDomainEventQueue : IDomainEventNotifier
 
     public void Notify(DomainEvent domainEvent)
     {
-        if (_eventQueue.Count == 0)
+        if (!_hasEnqueuedAnyEvents)
         {
             _transactionManager.BeforeCommit.Subscribe(Flush);
+            _hasEnqueuedAnyEvents = true;
         }
         _eventQueue.Enqueue(domainEvent);
     }
