@@ -11,6 +11,7 @@ public partial class BaseStartup
     {
         if (!IsMultitenant)
         {
+            services.AddScoped<ITenantProvider, NoTenant>();
             return;
         }
         services.AddTenantManagement();
