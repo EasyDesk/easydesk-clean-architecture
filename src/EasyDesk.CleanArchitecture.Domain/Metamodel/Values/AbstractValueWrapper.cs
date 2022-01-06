@@ -2,21 +2,18 @@
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
-public abstract record AbstractValueWrapper<T>
+public abstract record AbstractValueWrapper<T, S>
     where T : IEquatable<T>
+    where S : AbstractValueWrapper<T, S>
 {
-    protected T Value { get; }
+    public T Value { get; }
 
-    public AbstractValueWrapper(T value)
+    protected AbstractValueWrapper(T value)
     {
-        Validate(value);
         Value = value;
     }
 
-    /// <summary>
-    /// This method should check the passed value based on domain
-    /// constraints and throw ArgumentException if it fails.
-    /// </summary>
-    /// <param name="value">The value passed in the constructor.</param>
-    protected abstract void Validate(T value);
+    public sealed override string ToString() => StringRepresentation();
+
+    protected virtual string StringRepresentation() => Value.ToString();
 }

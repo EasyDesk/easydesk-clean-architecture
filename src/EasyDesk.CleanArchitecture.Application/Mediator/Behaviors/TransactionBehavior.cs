@@ -24,7 +24,7 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
 }
 
 public class TransactionBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
-    where TRequest : CommandBase<TResponse>
+    where TRequest : IRequest<TResponse>
 {
     private readonly ITransactionManager _transactionManager;
 

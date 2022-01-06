@@ -42,7 +42,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
 }
 
 public class ValidationBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
-    where TRequest : RequestBase<TResponse>
+    where TRequest : IRequest<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 

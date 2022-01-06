@@ -14,7 +14,7 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 /// <typeparam name="TRequest">The request type.</typeparam>
 /// <typeparam name="TResponse">The response type.</typeparam>
 public abstract class BehaviorWrapper<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : RequestBase<TResponse>
+    where TRequest : IRequest<TResponse>
 {
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
     {

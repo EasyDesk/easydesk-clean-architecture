@@ -1,6 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+using EasyDesk.CleanArchitecture.Testing;
 using Shouldly;
-using System;
 using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values;
@@ -9,21 +10,12 @@ public class ValueWrapperTests
 {
     private static readonly int _innerValue = 5;
 
-    private record TestValueWrapper : ValueWrapper<int>
+    private record TestValueWrapper : ValueWrapper<int, TestValueWrapper>
     {
         public TestValueWrapper(int value) : base(value)
         {
+            DomainConstraints.Require(value != 0, () => TestDomainError.Create());
         }
-
-        protected override void Validate(int value)
-        {
-            if (value == 0)
-            {
-                throw new ArgumentException("Value should not be 0.", nameof(value));
-            }
-        }
-
-        public int InnerValue => Value;
     }
 
     private readonly TestValueWrapper _sut = new(_innerValue);
@@ -31,13 +23,14 @@ public class ValueWrapperTests
     [Fact]
     public void Validate_ShouldThrowException_WithWrongValue()
     {
-        Should.Throw<ArgumentException>(() => new TestValueWrapper(0));
+        var exception = Should.Throw<DomainConstraintException>(() => new TestValueWrapper(0));
+        exception.DomainError.ShouldBe(TestDomainError.Create());
     }
 
     [Fact]
     public void WrappedValue_ShouldBeAccessible()
     {
-        _sut.InnerValue.ShouldBe(_innerValue);
+        _sut.Value.ShouldBe(_innerValue);
     }
 
     [Fact]

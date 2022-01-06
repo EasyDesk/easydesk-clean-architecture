@@ -1,26 +1,19 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
-using System;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Domain.Model.Roles;
 
-public record RoleId : ValueWrapper<string>
+public record RoleId : ValueWrapper<string, RoleId>
 {
     public const string Pattern = @"^[A-Za-z0-9_]+$";
 
     private RoleId(string value) : base(value)
     {
+        DomainConstraints.Require(Regex.IsMatch(Value, Pattern), () => new InvalidRoleId());
     }
 
-    protected override void Validate(string value)
-    {
-        if (!Regex.IsMatch(value, Pattern))
-        {
-            throw new ArgumentException("The given string is not a valid role name", nameof(value));
-        }
-    }
-
-    public override string ToString() => Value;
-
-    public static RoleId From(string id) => new(id);
+    public static RoleId From(string value) => new(value);
 }
+
+public record InvalidRoleId : DomainError;

@@ -2,5 +2,7 @@
 
 public record BasicRole(RoleId Id) : IRole
 {
-    public static BasicRole From(string roleId) => new(RoleId.From(roleId));
+    public static BasicRole From(string rawRoleId) => From(RoleId.From(rawRoleId));
+
+    public static BasicRole From(RoleId roleId) => new(roleId);
 }

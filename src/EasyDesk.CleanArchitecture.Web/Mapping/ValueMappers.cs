@@ -17,9 +17,9 @@ public class MapStringToName : DirectMapping<string, Name>
     }
 }
 
-public class MapStringToTokenValue : DirectMapping<string, TokenValue>
+public class MapStringToTokenValue : DirectMapping<string, Token>
 {
-    public MapStringToTokenValue() : base(e => TokenValue.From(e))
+    public MapStringToTokenValue() : base(e => Token.From(e))
     {
     }
 }

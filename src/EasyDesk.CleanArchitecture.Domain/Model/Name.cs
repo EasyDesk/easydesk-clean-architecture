@@ -1,24 +1,16 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
-using System;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
 namespace EasyDesk.CleanArchitecture.Domain.Model;
 
-public record Name : ValueWrapper<string>
+public record Name : ValueWrapper<string, Name>
 {
-    private Name(string name) : base(name)
+    private Name(string name) : base(name.Trim())
     {
+        DomainConstraints.RequireFalse(string.IsNullOrWhiteSpace(Value), () => new EmptyName());
     }
 
-    protected override void Validate(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            // TODO: throw a more specific error.
-            throw new ArgumentException("A name must not be empty", nameof(name));
-        }
-    }
-
-    public override string ToString() => Value;
-
-    public static Name From(string name) => new(name);
+    public static Name From(string value) => new(value);
 }
+
+public record EmptyName : DomainError;

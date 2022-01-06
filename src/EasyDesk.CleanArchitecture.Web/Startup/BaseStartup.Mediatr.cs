@@ -10,6 +10,7 @@ public partial class BaseStartup
     {
         services
             .AddMediatR(ApplicationAssemblyMarker, InfrastructureAssemblyMarker)
-            .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviorWrapper<,>));
+            .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviorWrapper<,>))
+            .AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainConstraintsViolationHandlerWrapper<,>));
     }
 }
