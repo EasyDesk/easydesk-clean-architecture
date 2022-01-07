@@ -7,7 +7,9 @@ using EasyDesk.Tools;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
@@ -31,7 +33,12 @@ public class ResponseMapper<T>
             failure: error => CreateErrorResponse(error)));
     }
 
-    private ResponseDto CreateErrorResponse(Error error) => ResponseDto.FromError(_mapper.Map<ErrorDto>(error));
+    private ResponseDto CreateErrorResponse(Error error) =>
+        ResponseDto.FromErrors(error switch
+        {
+            MultipleErrors(var errors) => errors.Select(ErrorDto.FromError),
+            _ => Some(ErrorDto.FromError(error))
+        });
 }
 
 public static class ResultMapperExtensions

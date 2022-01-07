@@ -11,8 +11,8 @@ public record RoleId : ValueWrapper<string, RoleId>
     private RoleId(string value) : base(value)
     {
         DomainConstraints.Check()
-            .If(Regex.IsMatch(Value, Pattern), () => new InvalidRoleId())
-            .OtherwiseThrowException();
+            .IfNot(Regex.IsMatch(Value, Pattern), () => new InvalidRoleId())
+            .ThrowException();
     }
 
     public static RoleId From(string value) => new(value);

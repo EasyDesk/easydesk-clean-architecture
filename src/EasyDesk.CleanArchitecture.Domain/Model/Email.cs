@@ -11,8 +11,8 @@ public record Email : ValueWrapper<string, Email>
     private Email(string email) : base(email.Trim().ToLower())
     {
         DomainConstraints.Check()
-            .If(Regex.IsMatch(Value, Pattern), () => new InvalidEmailAddress())
-            .OtherwiseThrowException();
+            .IfNot(Regex.IsMatch(Value, Pattern), () => new InvalidEmailAddress())
+            .ThrowException();
     }
 
     public static Email From(string email) => new(email);

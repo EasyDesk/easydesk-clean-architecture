@@ -38,7 +38,7 @@ public static class Errors
 
     public static Error FromDomain(DomainError domainError) => new DomainErrorWrapper(domainError);
 
-    public static Error FromDomain(IEnumerable<DomainError> domainErrors) => domainErrors.SingleOption().Select(FromDomain).OrElse(new DomainErrorsWrapper(domainErrors));
+    public static Error FromDomain(IEnumerable<DomainError> domainErrors) => Multiple(domainErrors.Select(FromDomain));
 
     public static Error Generic(string errorCode, string message, params object[] args)
     {
@@ -79,4 +79,6 @@ public static class Errors
     }
 
     private static string GetGroup(Match match, int groupIndex) => match.Groups[groupIndex].Value;
+
+    public static MultipleErrors Multiple(IEnumerable<Error> errors) => new MultipleErrors(errors.ToEquatableList());
 }

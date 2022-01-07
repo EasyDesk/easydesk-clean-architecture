@@ -12,8 +12,8 @@ public class UnhandledExceptionsFilter : IExceptionFilter
     public void OnException(ExceptionContext context)
     {
         var error = new ErrorDto(
-            $"Internal server error ({context.Exception.GetType()})",
             Errors.Codes.Internal,
+            $"Internal server error ({context.Exception.GetType()})",
             Nothing.Value);
 
         var response = ResponseDto.FromError(error);

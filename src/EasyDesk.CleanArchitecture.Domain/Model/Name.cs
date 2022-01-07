@@ -8,8 +8,8 @@ public record Name : ValueWrapper<string, Name>
     private Name(string name) : base(name.Trim())
     {
         DomainConstraints.Check()
-            .IfNot(string.IsNullOrWhiteSpace(Value), () => new EmptyName())
-            .OtherwiseThrowException();
+            .If(string.IsNullOrWhiteSpace(Value), () => new EmptyName())
+            .ThrowException();
     }
 
     public static Name From(string value) => new(value);

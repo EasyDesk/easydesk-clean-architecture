@@ -14,7 +14,7 @@ public class DomainConstraints
 
     public DomainConstraints If(bool requirement, Func<DomainError> error)
     {
-        if (!requirement)
+        if (requirement)
         {
             _errors.Add(error());
         }
@@ -23,7 +23,7 @@ public class DomainConstraints
 
     public DomainConstraints IfNot(bool requirement, Func<DomainError> error) => If(!requirement, error);
 
-    public void OtherwiseThrowException()
+    public void ThrowException()
     {
         if (!_errors.IsEmpty())
         {

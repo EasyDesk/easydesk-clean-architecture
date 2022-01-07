@@ -1,5 +1,8 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
+﻿using System.Collections;
+using System.Collections.Immutable;
 
-public abstract record Error(string Message, string ErrorCode)
-{
-}
+namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
+
+public abstract record Error;
+
+public record MultipleErrors(IImmutableList<Error> Errors) : Error;

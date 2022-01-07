@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Testing;
 
-public record TestError(string Code) : Error(ErrorCode: Code, Message: "MESSAGE")
+public record TestError(string Code) : Error
 {
     public static Error Create() => Create("ERROR_CODE");
 
