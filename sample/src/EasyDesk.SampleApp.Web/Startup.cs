@@ -47,6 +47,7 @@ public class Startup : BaseStartup
 
     protected override void ConfigureMvc(MvcOptions options)
     {
+        // Need to add TenantTestFilter this way for testing purposes
         options.Filters.RemoveAt(options.Filters.Count - 1);
         options.Filters.Add<TenantTestFilter>();
         options.Filters.Add<TenantFilter>();
