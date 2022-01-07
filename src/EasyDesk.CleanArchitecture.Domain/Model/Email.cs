@@ -10,7 +10,9 @@ public record Email : ValueWrapper<string, Email>
 
     private Email(string email) : base(email.Trim().ToLower())
     {
-        DomainConstraints.Require(Regex.IsMatch(Value, Pattern), () => new InvalidEmailAddress());
+        DomainConstraints.Check()
+            .If(Regex.IsMatch(Value, Pattern), () => new InvalidEmailAddress())
+            .OtherwiseThrowException();
     }
 
     public static Email From(string email) => new(email);

@@ -14,7 +14,9 @@ public class ValueWrapperTests
     {
         public TestValueWrapper(int value) : base(value)
         {
-            DomainConstraints.Require(value != 0, () => TestDomainError.Create());
+            DomainConstraints.Check()
+                .If(value != 0, () => TestDomainError.Create())
+                .OtherwiseThrowException();
         }
     }
 
@@ -24,7 +26,7 @@ public class ValueWrapperTests
     public void Validate_ShouldThrowException_WithWrongValue()
     {
         var exception = Should.Throw<DomainConstraintException>(() => new TestValueWrapper(0));
-        exception.DomainError.ShouldBe(TestDomainError.Create());
+        exception.DomainErrors.ShouldHaveSingleItem().ShouldBe(TestDomainError.Create());
     }
 
     [Fact]

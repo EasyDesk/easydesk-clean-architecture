@@ -19,7 +19,7 @@ public class DomainConstraintsViolationHandler<TRequest, TResponse> : IPipelineB
         }
         catch (DomainConstraintException ex)
         {
-            return Errors.FromDomain(ex.DomainError);
+            return Errors.FromDomain(ex.DomainErrors);
         }
     }
 }

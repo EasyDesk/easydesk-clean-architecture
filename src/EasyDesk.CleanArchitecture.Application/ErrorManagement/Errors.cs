@@ -3,6 +3,7 @@ using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 using static EasyDesk.Tools.Options.OptionImports;
@@ -36,6 +37,8 @@ public static class Errors
         new PropertyValidationError(propertyName, errorMessage);
 
     public static Error FromDomain(DomainError domainError) => new DomainErrorWrapper(domainError);
+
+    public static Error FromDomain(IEnumerable<DomainError> domainErrors) => domainErrors.SingleOption().Select(FromDomain).OrElse(new DomainErrorsWrapper(domainErrors));
 
     public static Error Generic(string errorCode, string message, params object[] args)
     {

@@ -1,13 +1,15 @@
-﻿using System;
+﻿using EasyDesk.Tools.Collections;
+using System;
+using System.Collections.Generic;
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel;
 
 public class DomainConstraintException : Exception
 {
-    public DomainConstraintException(DomainError error) : base($"Domain constraint violated. Error: {error}")
+    public DomainConstraintException(IEnumerable<DomainError> errors) : base($"Domain constraints violated. Errors: {errors.ConcatStrings(", ")}")
     {
-        DomainError = error;
+        DomainErrors = errors;
     }
 
-    public DomainError DomainError { get; }
+    public IEnumerable<DomainError> DomainErrors { get; }
 }

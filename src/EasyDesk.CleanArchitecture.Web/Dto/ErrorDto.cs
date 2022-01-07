@@ -19,7 +19,14 @@ public abstract class ErrorDtoMappingBase<T> : SimpleMapping<T, ErrorDto>
 
 public class DomainErrorToErrorDto : ErrorDtoMappingBase<DomainErrorWrapper>
 {
-    public DomainErrorToErrorDto() : base(src => src.DomainError)
+    public DomainErrorToErrorDto() : base(src => src.Error)
+    {
+    }
+}
+
+public class DomainErrorsToErrorDto : ErrorDtoMappingBase<DomainErrorsWrapper>
+{
+    public DomainErrorsToErrorDto() : base(src => src.Errors) // TODO: understand better and improve
     {
     }
 }

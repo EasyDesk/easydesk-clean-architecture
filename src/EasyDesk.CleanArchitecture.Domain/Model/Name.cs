@@ -7,7 +7,9 @@ public record Name : ValueWrapper<string, Name>
 {
     private Name(string name) : base(name.Trim())
     {
-        DomainConstraints.RequireFalse(string.IsNullOrWhiteSpace(Value), () => new EmptyName());
+        DomainConstraints.Check()
+            .IfNot(string.IsNullOrWhiteSpace(Value), () => new EmptyName())
+            .OtherwiseThrowException();
     }
 
     public static Name From(string value) => new(value);
