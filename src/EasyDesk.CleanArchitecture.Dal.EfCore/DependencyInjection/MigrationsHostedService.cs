@@ -1,28 +1,40 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
-public class MigrationsHostedService<T> : IHostedService
-    where T : DbContext
+public class MigrationsHostedService : IHostedService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IEnumerable<Type> _dbContextTypes;
 
-    public MigrationsHostedService(IServiceScopeFactory serviceScopeFactory)
+    public MigrationsHostedService(IServiceScopeFactory serviceScopeFactory, IEnumerable<Type> dbContextTypes)
     {
         _serviceScopeFactory = serviceScopeFactory;
+        _dbContextTypes = dbContextTypes;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         using (var scope = _serviceScopeFactory.CreateScope())
         {
-            var dbContext = scope.ServiceProvider.GetRequiredService<T>();
-            await dbContext.Database.MigrateAsync(cancellationToken);
+            foreach (var dbContextType in _dbContextTypes)
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService(dbContextType) as DbContext;
+                MigrateDatabase(dbContext);
+            }
         }
+        return Task.CompletedTask;
+    }
+
+    private void MigrateDatabase(DbContext dbContext)
+    {
+        dbContext.Database.Migrate();
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

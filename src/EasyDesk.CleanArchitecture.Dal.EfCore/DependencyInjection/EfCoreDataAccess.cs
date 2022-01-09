@@ -7,6 +7,7 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,10 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 public class EfCoreDataAccess<T> : IDataAccessImplementation
     where T : EntitiesContext
 {
-    private bool _firstDbContextRegistered = false;
     private readonly string _connectionString;
     private readonly bool _applyMigrations;
     private readonly Action<DbContextOptionsBuilder> _addtionalOptions;
+    private readonly List<Type> _registeredDbContextTypes = new();
 
     public EfCoreDataAccess(IConfiguration configuration, bool applyMigrations = false, Action<DbContextOptionsBuilder> addtionalOptions = null)
     {
@@ -72,16 +73,18 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
             _addtionalOptions?.Invoke(options);
         });
 
-        if (_applyMigrations)
-        {
-            services.AddHostedService<MigrationsHostedService<C>>();
-        }
-
-        if (!_firstDbContextRegistered)
+        if (_registeredDbContextTypes.IsEmpty())
         {
             services.AddScoped<DbContext>(provider => provider.GetRequiredService<C>());
-            _firstDbContextRegistered = true;
+
+            if (_applyMigrations)
+            {
+                services.AddHostedService(provider => new MigrationsHostedService(
+                    provider.GetRequiredService<IServiceScopeFactory>(),
+                    _registeredDbContextTypes));
+            }
         }
+        _registeredDbContextTypes.Add(typeof(C));
     }
 
     private void ConfigureDbContextOptions(IServiceProvider provider, DbContextOptionsBuilder options, string schema)
