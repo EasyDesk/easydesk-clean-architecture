@@ -2,18 +2,17 @@
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Model;
+using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
-using EasyDesk.Tools;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
 public static class CreatePerson
 {
-    public record Command(string Name) : CommandBase<Nothing>;
+    public record Command(string Name) : CommandBase<PersonSnapshot>;
 
-    public class Handler : UnitOfWorkHandler<Command, Nothing>
+    public class Handler : UnitOfWorkHandler<Command, PersonSnapshot>
     {
         private readonly IPersonRepository _personRepository;
 
@@ -22,11 +21,11 @@ public static class CreatePerson
             _personRepository = personRepository;
         }
 
-        protected override Task<Response<Nothing>> HandleRequest(Command request)
+        protected override Task<Response<PersonSnapshot>> HandleRequest(Command request)
         {
             var person = Person.Create(Name.From(request.Name));
             _personRepository.Save(person);
-            return OkAsync;
+            return Task.FromResult<Response<PersonSnapshot>>(new PersonSnapshot(person.Id, person.Name, person.Married));
         }
     }
 }

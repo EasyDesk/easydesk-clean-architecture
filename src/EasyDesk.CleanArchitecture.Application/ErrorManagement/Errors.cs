@@ -15,6 +15,8 @@ public static class Errors
 
     public static Error Internal(Exception ex) => new InternalError(ex);
 
+    public static Error NotFound() => new NotFoundError();
+
     public static Error Forbidden(string message = null) => new ForbiddenError(message ?? "Not authorized");
 
     public static Error InvalidInput(string propertyName, string errorMessage) =>

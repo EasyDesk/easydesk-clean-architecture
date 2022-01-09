@@ -6,9 +6,9 @@ public record Pagination
 {
     public const int MaxPageSize = 100;
 
-    public int PageIndex { get; }
+    public int PageIndex { get; init; }
 
-    public int PageSize { get; }
+    public int PageSize { get; init; }
 
     public Pagination(int pageIndex, int pageSize)
     {

@@ -25,7 +25,7 @@ public class PersonModel
         }
     }
 
-    public class MappingToSnapshot : DirectMapping<PersonModel, GetPeople.PersonSnapshot>
+    public class MappingToSnapshot : DirectMapping<PersonModel, PersonSnapshot>
     {
         public MappingToSnapshot() : base(src => new(src.Id, src.Name, src.Married))
         {

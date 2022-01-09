@@ -14,7 +14,7 @@ public record CreatePersonBodyDto(string Name);
 
 public record PersonDto(Guid Id, string Name, bool Married)
 {
-    public class MappingFromSnapshot : DirectMapping<GetPeople.PersonSnapshot, PersonDto>
+    public class MappingFromSnapshot : DirectMapping<PersonSnapshot, PersonDto>
     {
         public MappingFromSnapshot() : base(src => new(src.Id, src.Name, src.Married))
         {
@@ -29,8 +29,8 @@ public class PersonController : AbstractMediatrController
     {
         var command = new CreatePerson.Command(body.Name);
         return await Command(command)
-            .ReturnOk()
-            .MapEmpty();
+            .MappingContent(Mapper.Map<PersonDto>)
+            .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }
 
     [HttpGet("people")]
@@ -38,7 +38,15 @@ public class PersonController : AbstractMediatrController
     {
         var query = new GetPeople.Query(Mapper.Map<Pagination>(pagination));
         return await Query(query)
-            .ReturnOk()
-            .MapToMany<GetPeople.PersonSnapshot, PersonDto>();
+            .Paging(Mapper.Map<PersonDto>)
+            .ReturnOk();
+    }
+
+    [HttpGet("people/{id}")]
+    public async Task<IActionResult> GetPerson([FromRoute] Guid id)
+    {
+        return await Query(new GetPerson.Query(id))
+            .MappingContent(Mapper.Map<PersonDto>)
+            .ReturnOk();
     }
 }

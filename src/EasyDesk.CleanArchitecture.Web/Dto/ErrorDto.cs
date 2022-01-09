@@ -8,9 +8,13 @@ public record ErrorDto(string Code, string Detail, object Meta)
 {
     public static ErrorDto FromError(Error error) => error switch
     {
-        InternalError(_) => new(
+        InternalError => new(
             Code: "Internal",
             Detail: "Unknown internal error occurred",
+            Meta: Nothing.Value),
+        NotFoundError => new(
+            Code: "NotFound",
+            Detail: "Unable to fine the requested resource",
             Meta: Nothing.Value),
         ForbiddenError(var reason) => new(
             Code: "Forbidden",

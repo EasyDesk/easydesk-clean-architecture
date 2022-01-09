@@ -23,7 +23,7 @@ public abstract partial class AbstractMediatrController : AbstractController
 
     private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 
-    protected ResultBuilder<TResponse> Command<TResponse>(CommandBase<TResponse> command, bool transactional = true) =>
+    protected ActionResultBuilder<TResponse> Command<TResponse>(CommandBase<TResponse> command, bool transactional = true) =>
         MakeRequest(() => RunCommand(command, transactional));
 
     private async Task<Response<TResponse>> RunCommand<TResponse>(CommandBase<TResponse> command, bool transactional)
@@ -35,12 +35,12 @@ public abstract partial class AbstractMediatrController : AbstractController
         return await DefaultSend(command);
     }
 
-    protected ResultBuilder<TResponse> Query<TResponse>(QueryBase<TResponse> query) =>
+    protected ActionResultBuilder<TResponse> Query<TResponse>(QueryBase<TResponse> query) =>
         MakeRequest(() => DefaultSend(query));
 
-    private ResultBuilder<TResponse> MakeRequest<TResponse>(AsyncFunc<Response<TResponse>> request)
+    private ActionResultBuilder<TResponse> MakeRequest<TResponse>(AsyncFunc<Response<TResponse>> request)
     {
-        return new(request, this, Mapper);
+        return new(request, this);
     }
 
     private async Task<Response<T>> DefaultSend<T>(RequestBase<T> request) => await Mediator.Send(request);

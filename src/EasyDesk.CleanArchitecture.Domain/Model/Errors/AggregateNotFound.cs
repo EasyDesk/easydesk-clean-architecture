@@ -1,9 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Domain.Model.Errors;
 
-public record AggregateNotFound(Type AggregateType) : DomainError
+public record AggregateNotFound(string AggregateType) : DomainError
 {
-    public static AggregateNotFound OfType<T>() => new(typeof(T));
+    public static AggregateNotFound OfType<T>() where T : AggregateRoot => new(typeof(T).Name);
 }

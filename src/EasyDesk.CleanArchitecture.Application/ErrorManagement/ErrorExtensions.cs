@@ -9,9 +9,9 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
 public static class ErrorExtensions
 {
-    public static Response<T> OrElseError<T>(this Option<T> option, Func<Error> errorSupplier) => option.Match<Response<T>>(
+    public static Response<T> OrElseError<T>(this Option<T> option, Func<Error> error) => option.Match<Response<T>>(
         some: t => t,
-        none: () => errorSupplier());
+        none: () => error());
 
     public static Response<T> ToResponse<T>(this Result<T> result) =>
         result.Match<Response<T>>(
