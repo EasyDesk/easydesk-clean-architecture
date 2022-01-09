@@ -21,7 +21,7 @@ public class AzureServiceBusSetup : BackgroundService
         _administrationFacade = administrationFacade;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         var sender = _serviceProvider.GetService<AzureServiceBusSenderDescriptor>();
         if (sender is not null)

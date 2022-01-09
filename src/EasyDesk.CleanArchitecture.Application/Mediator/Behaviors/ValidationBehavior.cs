@@ -33,7 +33,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             .Select(x => x.Validate(context))
             .SelectMany(x => x.Errors)
             .Where(x => x != null)
-            .Select(x => Errors.InvalidProperty(x.PropertyName, x.ErrorMessage))
+            .Select(x => Errors.InvalidInput(x.PropertyName, x.ErrorMessage))
             .FirstOption()
             .Match(
                 some: error => Task.FromResult(Failure<TResponse>(error)),

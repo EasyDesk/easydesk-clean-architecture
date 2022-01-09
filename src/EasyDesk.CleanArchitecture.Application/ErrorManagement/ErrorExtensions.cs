@@ -13,9 +13,6 @@ public static class ErrorExtensions
         some: t => t,
         none: () => errorSupplier());
 
-    public static Response<T> OrElseNotFound<T>(this Option<T> option) =>
-        option.OrElseError(Errors.NotFound<T>);
-
     public static Response<T> ToResponse<T>(this Result<T> result) =>
         result.Match<Response<T>>(
             success: t => t,

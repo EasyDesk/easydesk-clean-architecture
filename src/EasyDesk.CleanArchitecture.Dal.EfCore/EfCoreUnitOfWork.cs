@@ -27,14 +27,12 @@ public class EfCoreUnitOfWork : IUnitOfWork
         catch (DbUpdateConcurrencyException ex)
         {
             return Errors.Generic(
-                Errors.Codes.Internal,
                 "A concurrency error occurred while saving changes to the database: {message}",
                 ex.Message);
         }
         catch (DbUpdateException ex)
         {
             return Errors.Generic(
-                Errors.Codes.Internal,
                 "An error occurred while saving changes to the database: {message}",
                 ex.Message);
         }

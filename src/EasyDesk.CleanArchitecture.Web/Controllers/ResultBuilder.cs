@@ -50,13 +50,6 @@ public class ResultBuilder<T>
             none: () => _controller.BadRequest(body));
     }
 
-    public ResultBuilder<T> HandleNotFound<TNotFound>()
-    {
-        return OnFailure(
-            e => e is NotFoundError notFoundError && notFoundError.EntityType == typeof(TNotFound),
-            (body, _) => _controller.NotFound(body));
-    }
-
     public ResponseMapper<T> ReturnOk() =>
         OnSuccess((body, _) => _controller.Ok(body));
 

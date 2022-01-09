@@ -38,8 +38,6 @@ public class BeforeCommitContext
 {
     public Option<Error> Error { get; private set; } = None;
 
-    public void CancelCommit() => CancelCommit(Errors.Generic(Errors.Codes.Internal, "This unit of work was canceled"));
-
     public void CancelCommit(Error error)
     {
         Error = Some(error);

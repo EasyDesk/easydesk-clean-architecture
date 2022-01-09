@@ -10,16 +10,14 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.ErrorManagement;
 
 public class ErrorsTests
 {
-    private const string ErrorCode = "TestErrorCode";
-
     [Theory]
     [MemberData(nameof(GenericErrorData))]
     public void Generic_ShouldReplaceWordsInCurlyBracesWithTheRespectiveValue(
         string messageFormat, string expectedMessage, IImmutableDictionary<string, object> expectedParams, params object[] args)
     {
-        var error = Errors.Generic(ErrorCode, messageFormat, args);
+        var error = Errors.Generic(messageFormat, args);
 
-        error.ShouldBe(new GenericError(expectedMessage, ErrorCode, expectedParams));
+        error.ShouldBe(new GenericError(expectedMessage, expectedParams));
     }
 
     public static IEnumerable<object[]> GenericErrorData()
@@ -75,7 +73,7 @@ public class ErrorsTests
     public void Generic_ShouldFail_IfNotEnoughArgumentsArePassed(
         string messageFormat, params object[] args)
     {
-        Should.Throw<Exception>(() => Errors.Generic(ErrorCode, messageFormat, args));
+        Should.Throw<Exception>(() => Errors.Generic(messageFormat, args));
     }
 
     public static IEnumerable<object[]> NotEnoughArgumentsData()

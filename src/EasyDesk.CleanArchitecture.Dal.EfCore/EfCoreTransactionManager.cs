@@ -37,7 +37,6 @@ public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransac
         catch (Exception ex)
         {
             return Errors.Generic(
-                Errors.Codes.Internal,
                 "An error occurred while committing a transaction to the database: {message}",
                 ex.Message);
         }

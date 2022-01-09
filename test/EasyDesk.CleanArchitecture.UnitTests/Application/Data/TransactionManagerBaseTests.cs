@@ -118,7 +118,7 @@ public class TransactionManagerBaseTests
     public async Task Commit_ShouldNotifyAfterCommitHandlers_IfCommitFails()
     {
         var handler = Substitute.For<AsyncAction<AfterCommitContext>>();
-        var error = Errors.Generic(Errors.Codes.Internal, "Commit failed");
+        var error = Errors.Generic("Commit failed");
         _transaction.Commit().Returns(Failure<Nothing>(error));
 
         _sut.AfterCommit.Subscribe(handler);
