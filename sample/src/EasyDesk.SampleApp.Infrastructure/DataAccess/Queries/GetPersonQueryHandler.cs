@@ -5,7 +5,6 @@ using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.SampleApp.Application.Queries;
-using EasyDesk.Tools;
 using System.Linq;
 using System.Threading.Tasks;
 using static EasyDesk.SampleApp.Application.Queries.GetPerson;
@@ -29,6 +28,6 @@ public class GetPersonQueryHandler : RequestHandlerBase<Query, PersonSnapshot>
             .Where(p => p.Id == request.Id)
             .ProjectTo<PersonSnapshot>(_mapper.ConfigurationProvider)
             .FirstOptionAsync()
-            .Map(x => x.OrElseError(() => Errors.NotFound()));
+            .ThenOrElseError(Errors.NotFound);
     }
 }
