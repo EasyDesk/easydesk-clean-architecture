@@ -13,6 +13,10 @@ public static class ErrorExtensions
         some: t => t,
         none: () => error());
 
+    public static Task<Response<T>> ThenOrElseError<T>(this Task<Option<T>> option, Func<Error> error) => option.ThenMatch<T, Response<T>>(
+        some: t => t,
+        none: () => error());
+
     public static Response<T> ToResponse<T>(this Result<T> result) =>
         result.Match<Response<T>>(
             success: t => t,
