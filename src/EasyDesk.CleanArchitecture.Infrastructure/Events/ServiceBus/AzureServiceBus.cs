@@ -14,7 +14,6 @@ public class AzureServiceBus : IEventBusImplementation
 {
     private readonly IConfiguration _configuration;
     private readonly Option<string> _prefix;
-    private readonly string _connectionString;
 
     public AzureServiceBus(IConfiguration configuration)
         : this(configuration, None)
@@ -30,8 +29,9 @@ public class AzureServiceBus : IEventBusImplementation
     {
         _configuration = configuration;
         _prefix = prefix;
-        _connectionString = configuration.RequireConnectionString("AzureServiceBus");
     }
+
+    private string ConnectionString => _configuration.RequireConnectionString("AzureServiceBus");
 
     private string TopicNameWithoutPrefix => GetValueInsideConfigSection("TopicName");
 
@@ -46,8 +46,8 @@ public class AzureServiceBus : IEventBusImplementation
 
     public void AddCommonServices(IServiceCollection services)
     {
-        services.AddSingleton(_ => new ServiceBusClient(_connectionString));
-        services.AddSingleton(_ => new ServiceBusAdministrationClient(_connectionString));
+        services.AddSingleton(_ => new ServiceBusClient(ConnectionString));
+        services.AddSingleton(_ => new ServiceBusAdministrationClient(ConnectionString));
         services.AddSingleton<AzureServiceBusAdministrationFacade>();
         services.AddHostedService<AzureServiceBusSetup>();
     }

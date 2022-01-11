@@ -23,21 +23,23 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 public class EfCoreDataAccess<T> : IDataAccessImplementation
     where T : EntitiesContext
 {
-    private readonly string _connectionString;
+    private readonly IConfiguration _configuration;
     private readonly bool _applyMigrations;
     private readonly Action<DbContextOptionsBuilder> _addtionalOptions;
     private readonly List<Type> _registeredDbContextTypes = new();
 
     public EfCoreDataAccess(IConfiguration configuration, bool applyMigrations = false, Action<DbContextOptionsBuilder> addtionalOptions = null)
     {
-        _connectionString = configuration.RequireConnectionString("MainDb");
+        _configuration = configuration;
         _applyMigrations = applyMigrations;
         _addtionalOptions = addtionalOptions;
     }
 
+    private string ConnectionString => _configuration.RequireConnectionString("MainDb");
+
     public void AddUtilityServices(IServiceCollection services)
     {
-        services.AddScoped(_ => new SqlConnection(_connectionString));
+        services.AddScoped(_ => new SqlConnection(ConnectionString));
     }
 
     public void AddUnitOfWork(IServiceCollection services)
