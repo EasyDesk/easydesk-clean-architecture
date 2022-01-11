@@ -1,4 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Time;
+using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,16 +10,16 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Time;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddTimestampProvider(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddTimestampProvider(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.AddSingleton(_ => CreateDefaultDateTimeService(config));
+        return services.AddSingleton(_ => CreateDefaultDateTimeService(configuration));
     }
 
-    private static ITimestampProvider CreateDefaultDateTimeService(IConfiguration config)
+    private static ITimestampProvider CreateDefaultDateTimeService(IConfiguration configuration)
     {
-        if (config.GetValue("DateTimeTestingUtils:UseFixedDateTime", false))
+        if (configuration.GetValueAsOption<bool>("DateTimeTestingUtils:UseFixedDateTime").OrElse(false))
         {
-            var utcNow = config.GetValue("DateTimeTestingUtils:FixedDateTime", DateTime.UtcNow);
+            var utcNow = configuration.RequireValue<DateTime>("DateTimeTestingUtils:FixedDateTime");
             utcNow = DateTime.SpecifyKind(utcNow, DateTimeKind.Utc);
             return new FixedDateTime(Timestamp.FromUtcDateTime(utcNow));
         }

@@ -17,6 +17,4 @@ public static class JwtClaimNames
     public const string Role = "role";
 
     public const string JwtId = "jti";
-
-    public const string OrganizationId = "orgid";
 }

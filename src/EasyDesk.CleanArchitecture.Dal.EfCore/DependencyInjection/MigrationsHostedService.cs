@@ -25,15 +25,15 @@ public class MigrationsHostedService : IHostedService
         {
             foreach (var dbContextType in _dbContextTypes)
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService(dbContextType) as DbContext;
-                MigrateDatabase(dbContext);
+                MigrateDatabase(scope.ServiceProvider, dbContextType);
             }
         }
         return Task.CompletedTask;
     }
 
-    private void MigrateDatabase(DbContext dbContext)
+    private void MigrateDatabase(IServiceProvider serviceProvider, Type dbContextType)
     {
+        var dbContext = serviceProvider.GetRequiredService(dbContextType) as DbContext;
         dbContext.Database.Migrate();
     }
 

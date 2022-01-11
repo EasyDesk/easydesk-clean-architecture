@@ -37,7 +37,6 @@ public class JwtBearerHandler : BaseAuthenticationHandler<JwtBearerOptions>
 
     protected override Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
     {
-        var scope = new JwtScope(_jwtService, Options.JwtSettings);
-        return scope.Validate(token, out var _).Map(x => new ClaimsPrincipal(x));
+        return _jwtService.Validate(token, Options.JwtSettings, out var _).Map(x => new ClaimsPrincipal(x));
     }
 }

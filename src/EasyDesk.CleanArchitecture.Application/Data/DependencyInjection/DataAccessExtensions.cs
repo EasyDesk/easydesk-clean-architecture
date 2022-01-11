@@ -4,7 +4,7 @@ namespace EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 
 public static class DataAccessExtensions
 {
-    public static IServiceCollection AddDataAccessImplementation(
+    public static IServiceCollection AddDataAccess(
         this IServiceCollection services,
         IDataAccessImplementation dataAccessImplementation,
         bool usesPublisher,

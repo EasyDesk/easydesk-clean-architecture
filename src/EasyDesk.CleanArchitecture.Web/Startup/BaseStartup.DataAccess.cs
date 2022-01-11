@@ -9,6 +9,6 @@ public partial class BaseStartup
 
     private void AddDataAccess(IServiceCollection services)
     {
-        services.AddDataAccessImplementation(DataAccessImplementation, UsesPublisher, UsesConsumer);
+        services.AddDataAccess(DataAccessImplementation, UsesPublisher, UsesConsumer);
     }
 }
