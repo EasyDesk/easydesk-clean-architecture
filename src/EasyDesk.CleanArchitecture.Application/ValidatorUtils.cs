@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
-using FluentValidation;
+﻿using FluentValidation;
 using System;
 using System.Linq;
 using static EasyDesk.Tools.Functions;
@@ -21,7 +20,7 @@ public static class ValidatorUtils
 
     public static IRuleBuilderOptions<T, string> NameValid<T>(this IRuleBuilder<T, string> builder)
     {
-        return builder.NotEmpty().MaximumLength(DataConstraints.NameLength);
+        return builder.NotEmpty();
     }
 
     public static IRuleBuilderOptions<T, string> PasswordValid<T>(this IRuleBuilder<T, string> builder)
