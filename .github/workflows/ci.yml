@@ -19,6 +19,7 @@ jobs:
         src/EasyDesk.CleanArchitecture.Domain
         src/EasyDesk.CleanArchitecture.Application
         src/EasyDesk.CleanArchitecture.Infrastructure
+        src/EasyDesk.CleanArchitecture.Messaging.ServiceBus
         src/EasyDesk.CleanArchitecture.Dal.EfCore
         src/EasyDesk.CleanArchitecture.Web
         src/EasyDesk.CleanArchitecture.Testing

@@ -5,7 +5,7 @@ using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.CleanArchitecture.Web.Startup;

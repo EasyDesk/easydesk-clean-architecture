@@ -3,12 +3,15 @@ using Azure.Messaging.ServiceBus.Administration;
 using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Utils;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using static EasyDesk.Tools.Options.OptionImports;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
+namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.DependencyInjection;
 
 public class AzureServiceBus : IEventBusImplementation
 {

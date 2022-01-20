@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup>
+    <Authors>Francesco Dente, Luca Deluigi</Authors>
+    <Company>EasyDesk</Company>
+    <Description>Utilities for the application layer of the clean architecture as seen by EasyDesk.</Description>
+    <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootFolder>..\..</RootFolder>
+  </PropertyGroup>
+
+  <Import Project="$(RootFolder)\Packaging.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Messaging.ServiceBus" Version="7.5.1" />
+  </ItemGroup>
+
+</Project>

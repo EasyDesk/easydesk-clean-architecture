@@ -1224,7 +1224,6 @@
       "easydesk.cleanarchitecture.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "Azure.Messaging.ServiceBus": "7.5.1",
           "EasyDesk.CleanArchitecture.Application": "1.0.0",
           "EasyDesk.Tools": "3.0.0",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
@@ -1232,6 +1231,13 @@
           "Newtonsoft.Json": "13.0.1",
           "RazorLight": "2.0.0-rc.3",
           "System.IdentityModel.Tokens.Jwt": "6.15.0"
+        }
+      },
+      "easydesk.cleanarchitecture.messaging.servicebus": {
+        "type": "Project",
+        "dependencies": {
+          "Azure.Messaging.ServiceBus": "7.5.1",
+          "EasyDesk.CleanArchitecture.Infrastructure": "1.0.0"
         }
       },
       "easydesk.cleanarchitecture.web": {
