@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Authors>Francesco Dente, Luca Deluigi</Authors>
     <Company>EasyDesk</Company>
-    <Description>Utilities for the application layer of the clean architecture as seen by EasyDesk.</Description>
+    <Description>A Message Bus implementation based on Azure Service Bus, to be plugged in projects using EasyDesk.CleanArchitecture.</Description>
     <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
 
