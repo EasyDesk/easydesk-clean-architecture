@@ -1,16 +1,16 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-internal class JsonSerializationFeature : IAppFeature
+internal class JsonSerializationModule : IAppModule
 {
     private readonly Action<JsonSerializerSettings> _configureSettings;
 
-    public JsonSerializationFeature(Action<JsonSerializerSettings> configureSettings = null)
+    public JsonSerializationModule(Action<JsonSerializerSettings> configureSettings = null)
     {
         _configureSettings = configureSettings;
     }
@@ -26,10 +26,10 @@ internal class JsonSerializationFeature : IAppFeature
     }
 }
 
-public static class NewtonsoftJsonSerializationFeatureExtensions
+public static class NewtonsoftJsonSerializationModuleExtensions
 {
     public static AppBuilder AddJsonSerialization(this AppBuilder builder, Action<JsonSerializerSettings> configureSettings = null)
     {
-        return builder.AddFeature(new JsonSerializationFeature(configureSettings));
+        return builder.AddModule(new JsonSerializationModule(configureSettings));
     }
 }

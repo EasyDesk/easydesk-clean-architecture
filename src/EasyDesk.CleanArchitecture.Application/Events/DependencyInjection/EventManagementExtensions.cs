@@ -1,19 +1,19 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
 using EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
-using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Features;
+namespace EasyDesk.CleanArchitecture.Application.Modules;
 
-public interface IAppFeature
+public interface IAppModule
 {
     void ConfigureServices(IServiceCollection services, AppDescription app);
 }

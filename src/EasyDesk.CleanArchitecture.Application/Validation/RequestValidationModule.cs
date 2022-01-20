@@ -1,10 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
-public class RequestValidationFeature : IAppFeature
+public class RequestValidationModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
@@ -12,12 +12,12 @@ public class RequestValidationFeature : IAppFeature
     }
 }
 
-public static class RequestValidationFeatureExtensions
+public static class RequestValidationModuleExtensions
 {
     public static AppBuilder AddRequestValidation(this AppBuilder builder)
     {
-        return builder.AddFeature(new RequestValidationFeature());
+        return builder.AddModule(new RequestValidationModule());
     }
 
-    public static bool HasRequestValidation(this AppDescription app) => app.HasFeature<RequestValidationFeature>();
+    public static bool HasRequestValidation(this AppDescription app) => app.HasModule<RequestValidationModule>();
 }

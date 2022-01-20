@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Features;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -19,7 +19,7 @@ public class RoleBasedAuthorizationOptions
 
     public RoleBasedAuthorizationOptions WithDataAccessPermissions()
     {
-        _app.RequireFeature<DataAccessFeature>().Implementation.AddRoleBasedPermissionsProvider(_services, _app);
+        _app.RequireModule<DataAccessModule>().Implementation.AddRoleBasedPermissionsProvider(_services, _app);
         return this;
     }
 
@@ -30,7 +30,7 @@ public class RoleBasedAuthorizationOptions
         var rolesToPermissionsMapper = builder.Build();
 
         _services.AddSingleton<IRolesToPermissionsMapper>(rolesToPermissionsMapper);
-        _app.RequireFeature<DataAccessFeature>().Implementation.AddRoleManager(_services, _app);
+        _app.RequireModule<DataAccessModule>().Implementation.AddRoleManager(_services, _app);
         _services.AddScoped<IPermissionsProvider, RoleBasedPermissionsProvider>();
         return this;
     }

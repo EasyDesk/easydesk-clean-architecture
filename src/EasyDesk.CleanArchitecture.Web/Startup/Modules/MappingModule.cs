@@ -1,11 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
-using EasyDesk.CleanArchitecture.Application.Mapping;
+﻿using EasyDesk.CleanArchitecture.Application.Mapping;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class MappingFeature : IAppFeature
+public class MappingModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
@@ -20,10 +20,10 @@ public class MappingFeature : IAppFeature
     }
 }
 
-public static class MappingFeatureExtensions
+public static class MappingModuleExtensions
 {
     public static AppBuilder AddMapping(this AppBuilder builder)
     {
-        return builder.AddFeature(new MappingFeature());
+        return builder.AddModule(new MappingModule());
     }
 }

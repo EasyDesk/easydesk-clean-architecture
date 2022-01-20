@@ -1,10 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
 
-public class DomainFeature : IAppFeature
+public class DomainModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
@@ -12,10 +12,10 @@ public class DomainFeature : IAppFeature
     }
 }
 
-public static class DomainFeatureExtensions
+public static class DomainModuleExtensions
 {
     public static AppBuilder AddDomain(this AppBuilder builder)
     {
-        return builder.AddFeature(new DomainFeature());
+        return builder.AddModule(new DomainModule());
     }
 }

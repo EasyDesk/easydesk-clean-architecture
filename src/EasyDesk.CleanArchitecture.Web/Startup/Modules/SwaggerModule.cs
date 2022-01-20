@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Web.Swagger;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
@@ -11,13 +11,13 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Linq;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class SwaggerFeature : IAppFeature
+public class SwaggerModule : IAppModule
 {
     private readonly Action<SwaggerGenOptions> _configure;
 
-    public SwaggerFeature(Action<SwaggerGenOptions> configure = null)
+    public SwaggerModule(Action<SwaggerGenOptions> configure = null)
     {
         _configure = configure;
     }
@@ -56,7 +56,7 @@ public class SwaggerFeature : IAppFeature
                     .Contains(version);
             });
 
-            app.GetFeature<AuthenticationFeature>().IfPresent(auth =>
+            app.GetModule<AuthenticationModule>().IfPresent(auth =>
             {
                 auth.Schemes.ForEach(scheme => scheme.ConfigureSwagger(options));
             });
@@ -66,12 +66,12 @@ public class SwaggerFeature : IAppFeature
     }
 }
 
-public static class SwaggerFeatureExtensions
+public static class SwaggerModuleExtensions
 {
     public static AppBuilder AddSwagger(this AppBuilder builder, Action<SwaggerGenOptions> configure = null)
     {
-        return builder.AddFeature(new SwaggerFeature(configure));
+        return builder.AddModule(new SwaggerModule(configure));
     }
 
-    public static bool HasSwagger(this AppDescription app) => app.HasFeature<SwaggerFeature>();
+    public static bool HasSwagger(this AppDescription app) => app.HasModule<SwaggerModule>();
 }

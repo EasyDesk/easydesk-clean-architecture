@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
-using EasyDesk.CleanArchitecture.Web.Startup.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
+using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class ApiVersioningFeature : IAppFeature
+public class ApiVersioningModule : IAppModule
 {
     private readonly Action<ApiVersioningOptions> _configure;
 
-    public ApiVersioningFeature(Action<ApiVersioningOptions> configure = null)
+    public ApiVersioningModule(Action<ApiVersioningOptions> configure = null)
     {
         _configure = configure;
     }
@@ -54,10 +54,10 @@ public class ApiVersioningFeature : IAppFeature
     }
 }
 
-public static class ApiVersioningFeatureExtensions
+public static class ApiVersioningModuleExtensions
 {
     public static AppBuilder AddApiVersioning(this AppBuilder builder, Action<ApiVersioningOptions> configure = null)
     {
-        return builder.AddFeature(new ApiVersioningFeature(configure));
+        return builder.AddModule(new ApiVersioningModule(configure));
     }
 }

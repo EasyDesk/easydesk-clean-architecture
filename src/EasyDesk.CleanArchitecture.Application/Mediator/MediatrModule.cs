@@ -1,13 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator;
 
-public class MediatrFeature : IAppFeature
+public class MediatrModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
@@ -25,10 +25,10 @@ public class MediatrFeature : IAppFeature
     }
 }
 
-public static class MediatrFeatureExtensions
+public static class MediatrModuleExtensions
 {
     public static AppBuilder AddMediatr(this AppBuilder builder)
     {
-        return builder.AddFeature(new MediatrFeature());
+        return builder.AddModule(new MediatrModule());
     }
 }

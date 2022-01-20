@@ -1,12 +1,12 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Features;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 
-public class EventManagementFeature : IAppFeature
+public class EventManagementModule : IAppModule
 {
-    public EventManagementFeature(IEventBusImplementation implementation, bool usesPublisher, bool usesConsumer)
+    public EventManagementModule(IEventBusImplementation implementation, bool usesPublisher, bool usesConsumer)
     {
         Implementation = implementation;
         UsesPublisher = usesPublisher;
@@ -24,7 +24,7 @@ public class EventManagementFeature : IAppFeature
         if (UsesConsumer || UsesPublisher)
         {
             var builder = services.AddEventManagement(Implementation, app);
-            var dataAccessImplementation = app.RequireFeature<DataAccessFeature>().Implementation;
+            var dataAccessImplementation = app.RequireModule<DataAccessModule>().Implementation;
             if (UsesPublisher)
             {
                 builder.AddOutboxPublisher();
@@ -39,10 +39,10 @@ public class EventManagementFeature : IAppFeature
     }
 }
 
-public static class EventManagementFeatureExtensions
+public static class EventManagementModuleExtensions
 {
     public static AppBuilder AddEventManagement(this AppBuilder builder, IEventBusImplementation implementation, bool usesPublisher, bool usesConsumer)
     {
-        return builder.AddFeature(new EventManagementFeature(implementation, usesPublisher, usesConsumer));
+        return builder.AddModule(new EventManagementModule(implementation, usesPublisher, usesConsumer));
     }
 }

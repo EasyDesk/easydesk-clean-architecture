@@ -1,14 +1,14 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 
-public class AuthorizationFeature : IAppFeature
+public class AuthorizationModule : IAppModule
 {
     private readonly Action<AuthorizationOptions> _configure;
 
-    public AuthorizationFeature(Action<AuthorizationOptions> configure)
+    public AuthorizationModule(Action<AuthorizationOptions> configure)
     {
         _configure = configure;
     }
@@ -20,12 +20,12 @@ public class AuthorizationFeature : IAppFeature
     }
 }
 
-public static class AuthorizationFeatureExtensions
+public static class AuthorizationModuleExtensions
 {
     public static AppBuilder AddAuthorization(this AppBuilder builder, Action<AuthorizationOptions> configure)
     {
-        return builder.AddFeature(new AuthorizationFeature(configure));
+        return builder.AddModule(new AuthorizationModule(configure));
     }
 
-    public static bool HasAuthorization(this AppDescription app) => app.HasFeature<AuthorizationFeature>();
+    public static bool HasAuthorization(this AppDescription app) => app.HasModule<AuthorizationModule>();
 }

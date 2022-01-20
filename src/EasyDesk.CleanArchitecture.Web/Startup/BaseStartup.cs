@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
 using EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
-using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Web.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Startup.Features;
+using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
@@ -24,16 +24,16 @@ namespace EasyDesk.CleanArchitecture.Web.Startup;
 
 /// <summary>
 /// A base class for configuring services based on the CleanArchitecture framework.
-/// This implementation adds these default <see cref="IAppFeature"/> to the <see cref="AppBuilder"/>:
+/// This implementation adds these default <see cref="IAppModule"/> to the <see cref="AppBuilder"/>:
 /// <list type="bullet">
-///     <item><see cref="ControllersFeature"/></item>
-///     <item><see cref="DomainFeature"/></item>
-///     <item><see cref="HttpContextFeature"/></item>
-///     <item><see cref="TimeManagementFeature"/></item>
-///     <item><see cref="MediatrFeature"/></item>
-///     <item><see cref="JsonSerializationFeature"/></item>
-///     <item><see cref="MappingFeature"/></item>
-///     <item><see cref="RequestValidationFeature"/></item>
+///     <item><see cref="ControllersModule"/></item>
+///     <item><see cref="DomainModule"/></item>
+///     <item><see cref="HttpContextModule"/></item>
+///     <item><see cref="TimeManagementModule"/></item>
+///     <item><see cref="MediatrModule"/></item>
+///     <item><see cref="JsonSerializationModule"/></item>
+///     <item><see cref="MappingModule"/></item>
+///     <item><see cref="RequestValidationModule"/></item>
 /// </list>
 /// </summary>
 public abstract class BaseStartup

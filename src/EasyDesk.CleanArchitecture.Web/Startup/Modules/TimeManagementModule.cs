@@ -1,15 +1,15 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Time;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class TimeManagementFeature : IAppFeature
+public class TimeManagementModule : IAppModule
 {
     private readonly IConfiguration _configuration;
 
-    public TimeManagementFeature(IConfiguration configuration)
+    public TimeManagementModule(IConfiguration configuration)
     {
         _configuration = configuration;
     }
@@ -20,10 +20,10 @@ public class TimeManagementFeature : IAppFeature
     }
 }
 
-public static class TimeManagementFeatureExtensions
+public static class TimeManagementModuleExtensions
 {
     public static AppBuilder AddTimeManagement(this AppBuilder builder, IConfiguration configuration)
     {
-        return builder.AddFeature(new TimeManagementFeature(configuration));
+        return builder.AddModule(new TimeManagementModule(configuration));
     }
 }

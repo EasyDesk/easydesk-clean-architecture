@@ -1,12 +1,12 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Features;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Data;
 
-public class DataAccessFeature : IAppFeature
+public class DataAccessModule : IAppModule
 {
-    public DataAccessFeature(IDataAccessImplementation implementation)
+    public DataAccessModule(IDataAccessImplementation implementation)
     {
         Implementation = implementation;
     }
@@ -21,10 +21,10 @@ public class DataAccessFeature : IAppFeature
     }
 }
 
-public static class DataAccessFeatureExtensions
+public static class DataAccessModuleExtensions
 {
     public static AppBuilder AddDataAccess(this AppBuilder builder, IDataAccessImplementation implementation)
     {
-        return builder.AddFeature(new DataAccessFeature(implementation));
+        return builder.AddModule(new DataAccessModule(implementation));
     }
 }

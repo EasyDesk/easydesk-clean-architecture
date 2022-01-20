@@ -2,30 +2,30 @@
 using System;
 using System.Collections.Generic;
 
-namespace EasyDesk.CleanArchitecture.Application.Features;
+namespace EasyDesk.CleanArchitecture.Application.Modules;
 
 public class AppBuilder
 {
-    private readonly Dictionary<Type, IAppFeature> _features = new();
+    private readonly Dictionary<Type, IAppModule> _modules = new();
 
-    public AppBuilder AddFeature<T>(T feature) where T : IAppFeature
+    public AppBuilder AddModule<T>(T module) where T : IAppModule
     {
-        _features.Merge(typeof(T), feature, (_, f) => f);
+        _modules.Merge(typeof(T), module, (_, f) => f);
         return this;
     }
 
-    public AppBuilder RemoveFeature<T>() where T : IAppFeature
+    public AppBuilder RemoveModule<T>() where T : IAppModule
     {
-        if (_features.ContainsKey(typeof(T)))
+        if (_modules.ContainsKey(typeof(T)))
         {
-            _features.Remove(typeof(T));
+            _modules.Remove(typeof(T));
         }
         return this;
     }
 
     public AppDescription Build(string name, Type web, Type application, Type infrastructure)
     {
-        return new(_features.Values)
+        return new(_modules.Values)
         {
             Name = name,
             WebAssemblyMarker = web,

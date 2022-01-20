@@ -1,19 +1,19 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Features;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Web.Authentication;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Startup.Features;
+using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Immutable;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class AuthenticationFeature : IAppFeature
+public class AuthenticationModule : IAppModule
 {
-    public AuthenticationFeature(IImmutableList<IAuthenticationScheme> schemes)
+    public AuthenticationModule(IImmutableList<IAuthenticationScheme> schemes)
     {
         Schemes = schemes;
     }
@@ -36,7 +36,7 @@ public class AuthenticationFeature : IAppFeature
     }
 }
 
-public static class AuthenticationFeatureExtensions
+public static class AuthenticationModuleExtensions
 {
     public static AppBuilder AddAuthentication(this AppBuilder builder, Action<AuthenticationOptions> configure)
     {
@@ -46,10 +46,10 @@ public static class AuthenticationFeatureExtensions
         {
             throw new Exception("No authentication scheme was specified");
         }
-        return builder.AddFeature(new AuthenticationFeature(authOptions.Schemes));
+        return builder.AddModule(new AuthenticationModule(authOptions.Schemes));
     }
 
-    public static bool HasAuthentication(this AppDescription app) => app.HasFeature<AuthenticationFeature>();
+    public static bool HasAuthentication(this AppDescription app) => app.HasModule<AuthenticationModule>();
 }
 
 public class AuthenticationOptions

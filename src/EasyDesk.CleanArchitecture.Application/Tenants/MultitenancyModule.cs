@@ -1,9 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Tenants;
 
-public class MultitenancyFeature : IAppFeature
+public class MultitenancyModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
@@ -11,12 +11,12 @@ public class MultitenancyFeature : IAppFeature
     }
 }
 
-public static class MultitenancyFeatureExtensions
+public static class MultitenancyModuleExtensions
 {
     public static AppBuilder AddMultitenancy(this AppBuilder builder)
     {
-        return builder.AddFeature(new MultitenancyFeature());
+        return builder.AddModule(new MultitenancyModule());
     }
 
-    public static bool IsMultitenant(this AppDescription app) => app.HasFeature<MultitenancyFeature>();
+    public static bool IsMultitenant(this AppDescription app) => app.HasModule<MultitenancyModule>();
 }

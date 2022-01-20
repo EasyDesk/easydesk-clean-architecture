@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using EasyDesk.CleanArchitecture.Application.Features;
+using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Filters;
@@ -13,14 +13,14 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class ControllersFeature : IAppFeature
+public class ControllersModule : IAppModule
 {
     private readonly IWebHostEnvironment _environment;
     private readonly Action<MvcOptions> _configureMvc;
 
-    public ControllersFeature(IWebHostEnvironment environment, Action<MvcOptions> configureMvc = null)
+    public ControllersModule(IWebHostEnvironment environment, Action<MvcOptions> configureMvc = null)
     {
         _environment = environment;
         _configureMvc = configureMvc;
@@ -29,7 +29,7 @@ public class ControllersFeature : IAppFeature
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         var mvcBuilder = services.AddControllers(options => DefaultMvcConfiguration(options, app));
-        app.GetFeature<JsonSerializationFeature>().IfPresent(f =>
+        app.GetModule<JsonSerializationModule>().IfPresent(f =>
         {
             mvcBuilder.AddNewtonsoftJson(options =>
             {
@@ -61,10 +61,10 @@ public class ControllersFeature : IAppFeature
     }
 }
 
-public static class ControllersFeatureExtension
+public static class ControllersModuleExtension
 {
     public static AppBuilder AddControllers(this AppBuilder builder, IWebHostEnvironment environment, Action<MvcOptions> configureMvc = null)
     {
-        return builder.AddFeature(new ControllersFeature(environment, configureMvc));
+        return builder.AddModule(new ControllersModule(environment, configureMvc));
     }
 }
