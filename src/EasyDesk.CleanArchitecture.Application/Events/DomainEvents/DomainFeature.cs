@@ -1,9 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
-using EasyDesk.CleanArchitecture.Application.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
 
 public class DomainFeature : IAppFeature
 {

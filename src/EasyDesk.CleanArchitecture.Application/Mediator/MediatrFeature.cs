@@ -1,10 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
+using EasyDesk.CleanArchitecture.Application.Validation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Application.Mediator;
 
 public class MediatrFeature : IAppFeature
 {

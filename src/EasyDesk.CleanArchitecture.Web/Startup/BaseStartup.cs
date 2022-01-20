@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
+using EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
 using EasyDesk.CleanArchitecture.Application.Features;
+using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Web.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Startup.Features;
 using EasyDesk.CleanArchitecture.Web.Versioning;

@@ -1,9 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.Features;
-using EasyDesk.CleanArchitecture.Web.Startup.Features;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Features;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 
 public class RoleBasedAuthorizationOptions
 {

@@ -1,7 +1,9 @@
-using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Features;
+using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;

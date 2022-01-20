@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Features;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 
 public class AuthorizationOptions
 {

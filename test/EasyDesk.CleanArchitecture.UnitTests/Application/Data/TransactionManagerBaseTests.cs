@@ -23,11 +23,11 @@ public class TransactionManagerBaseTests
         Response<Nothing> Commit();
     }
 
-    public class TestUnitOfWork : TransactionManagerBase<ITestTransaction>
+    public class TestTransactionManager : TransactionManagerBase<ITestTransaction>
     {
         private readonly ITestTransaction _testTransaction;
 
-        public TestUnitOfWork(ITestTransaction testTransaction)
+        public TestTransactionManager(ITestTransaction testTransaction)
         {
             _testTransaction = testTransaction;
         }
@@ -42,7 +42,7 @@ public class TransactionManagerBaseTests
             Task.FromResult(transaction.Commit());
     }
 
-    private readonly TestUnitOfWork _sut;
+    private readonly TestTransactionManager _sut;
     private readonly ITestTransaction _transaction;
 
     public TransactionManagerBaseTests()

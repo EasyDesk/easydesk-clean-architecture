@@ -8,7 +8,6 @@ using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Domain.Time;
-using EasyDesk.CleanArchitecture.Web.Startup.Features;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.DependencyInjection;

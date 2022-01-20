@@ -1,8 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Features;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 
 public class EventManagementFeature : IAppFeature
 {

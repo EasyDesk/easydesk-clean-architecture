@@ -1,8 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Features;
-using EasyDesk.CleanArchitecture.Application.Tenants;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Application.Tenants;
 
 public class MultitenancyFeature : IAppFeature
 {

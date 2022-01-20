@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Features;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Features;
+namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public class DataAccessFeature : IAppFeature
 {
