@@ -2,22 +2,16 @@
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
 
-public abstract class EntitiesContext : DbContext
+public abstract class EntitiesContext : ExtendedDbContext
 {
     public const string SchemaName = "entities";
-
-    protected EntitiesContext()
-    {
-    }
 
     protected EntitiesContext(DbContextOptions options) : base(options)
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void SetupModel(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
-
-        base.OnModelCreating(modelBuilder);
     }
 }

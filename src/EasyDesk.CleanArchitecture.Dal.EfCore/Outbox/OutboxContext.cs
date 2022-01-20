@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 
-public class OutboxContext : DbContext
+public class OutboxContext : ExtendedDbContext
 {
     public const string SchemaName = "outbox";
 
@@ -12,12 +12,10 @@ public class OutboxContext : DbContext
 
     public DbSet<OutboxMessage> Messages { get; set; }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void SetupModel(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
         modelBuilder.ApplyConfiguration(new OutboxMessage.Configuration());
-
-        base.OnModelCreating(modelBuilder);
     }
 }

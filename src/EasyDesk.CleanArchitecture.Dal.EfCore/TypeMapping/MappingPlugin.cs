@@ -33,6 +33,7 @@ public class MappingPluginOptionsExtension : IDbContextOptionsExtension
     public MappingPluginOptionsExtension(IDictionary<Type, Func<RelationalTypeMapping>> mappingsByType)
     {
         _mappingsByType = mappingsByType;
+        Info = new MappingInfo(this);
     }
 
     public void ApplyServices(IServiceCollection services)
@@ -63,5 +64,5 @@ public class MappingPluginOptionsExtension : IDbContextOptionsExtension
         public override int GetServiceProviderHashCode() => 0;
     }
 
-    public DbContextOptionsExtensionInfo Info => new MappingInfo(this);
+    public DbContextOptionsExtensionInfo Info { get; }
 }

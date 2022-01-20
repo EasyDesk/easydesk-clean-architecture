@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Web.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Startup.Features;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
@@ -8,15 +10,33 @@ using EasyDesk.Tools.Options;
 using FluentValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup;
 
-public abstract partial class BaseStartup
+/// <summary>
+/// A base class for configuring services based on the CleanArchitecture framework.
+/// This implementation adds these default <see cref="IAppFeature"/> to the <see cref="AppBuilder"/>:
+/// <list type="bullet">
+///     <item><see cref="ControllersFeature"/></item>
+///     <item><see cref="DomainFeature"/></item>
+///     <item><see cref="HttpContextFeature"/></item>
+///     <item><see cref="TimeManagementFeature"/></item>
+///     <item><see cref="MediatrFeature"/></item>
+///     <item><see cref="JsonSerializationFeature"/></item>
+///     <item><see cref="MappingFeature"/></item>
+///     <item><see cref="RequestValidationFeature"/></item>
+/// </list>
+/// </summary>
+public abstract class BaseStartup
 {
+    private AppDescription _appDescription;
+
     public BaseStartup(IConfiguration configuration, IWebHostEnvironment environment)
     {
         Configuration = configuration;
@@ -37,23 +57,41 @@ public abstract partial class BaseStartup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        AddControllersWithPipeline(services);
-        AddMediatr(services);
-        AddRequestValidators(services);
-        AddMappings(services);
-        AddApiVersioning(services);
-        AddDataAccess(services);
-        AddEventManagement(services);
-        AddUtilityDomainServices(services);
-        AddAuthentication(services);
-        AddSwagger(services);
-        AddMultitenancySupport(services);
+        var appBuilder = new AppBuilder()
+            .AddControllers(Environment, ConfigureMvc)
+            .AddDomain()
+            .AddHttpContext()
+            .AddTimeManagement(Configuration)
+            .AddMediatr()
+            .AddJsonSerialization(ConfigureJsonSettings)
+            .AddMapping()
+            .AddRequestValidation();
+
+        ConfigureApp(appBuilder);
+
+        _appDescription = appBuilder.Build(
+            ServiceName,
+            WebAssemblyMarker,
+            ApplicationAssemblyMarker,
+            InfrastructureAssemblyMarker);
+
+        _appDescription.ConfigureServices(services);
 
         ReflectionUtils.InstancesOfSubtypesOf<IServiceInstaller>(WebAssemblyMarker)
             .ForEach(installer => installer.InstallServices(services, Configuration, Environment));
     }
 
-    public virtual void Configure(IApplicationBuilder app)
+    protected virtual void ConfigureMvc(MvcOptions options)
+    {
+    }
+
+    protected virtual void ConfigureJsonSettings(JsonSerializerSettings settings)
+    {
+    }
+
+    public abstract void ConfigureApp(AppBuilder builder);
+
+    public void Configure(IApplicationBuilder app)
     {
         if (Environment.IsDevelopment())
         {
@@ -66,7 +104,7 @@ public abstract partial class BaseStartup
 
         app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
-        if (UsesSwagger)
+        if (_appDescription.HasSwagger())
         {
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -82,7 +120,7 @@ public abstract partial class BaseStartup
 
         app.UseRouting();
 
-        if (_schemes.Any())
+        if (_appDescription.HasAuthentication())
         {
             app.UseAuthentication();
         }

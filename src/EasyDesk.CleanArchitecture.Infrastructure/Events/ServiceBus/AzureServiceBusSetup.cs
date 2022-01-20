@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus;
+﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;

@@ -69,6 +69,7 @@ public class ActionResultBuilder<T>
         NotFoundError => _controller.NotFound(body),
         DomainErrorWrapper => _controller.BadRequest(body),
         ForbiddenError => ActionResults.Forbidden(body),
+        UnknownUserError => _controller.Unauthorized(body),
         _ => ActionResults.InternalServerError(body)
     };
 

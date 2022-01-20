@@ -3,10 +3,12 @@ using EasyDesk.CleanArchitecture.Application.Events.EventBus;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
 using EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
+using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Domain.Time;
+using EasyDesk.CleanArchitecture.Web.Startup.Features;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,10 +22,10 @@ namespace EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 public static class EventManagementExtensions
 {
     public static EventManagementBuilder AddEventManagement(
-        this IServiceCollection services, IEventBusImplementation eventBusImplementation, bool multitenant)
+        this IServiceCollection services, IEventBusImplementation eventBusImplementation, AppDescription app)
     {
         eventBusImplementation.AddCommonServices(services);
-        return new(services, eventBusImplementation, multitenant);
+        return new(services, eventBusImplementation, app);
     }
 }
 
@@ -31,13 +33,13 @@ public class EventManagementBuilder
 {
     private readonly IServiceCollection _services;
     private readonly IEventBusImplementation _implementation;
-    private readonly bool _multitenant;
+    private readonly AppDescription _app;
 
-    public EventManagementBuilder(IServiceCollection services, IEventBusImplementation implementation, bool multitenant)
+    public EventManagementBuilder(IServiceCollection services, IEventBusImplementation implementation, AppDescription app)
     {
         _services = services;
         _implementation = implementation;
-        _multitenant = multitenant;
+        _app = app;
     }
 
     public EventManagementBuilder AddOutboxPublisher()
@@ -62,7 +64,7 @@ public class EventManagementBuilder
             eventBusPublisherImplementation(provider),
             provider.GetRequiredService<ITimestampProvider>(),
             provider.GetRequiredService<IJsonSerializer>(),
-            _multitenant ? provider.GetRequiredService<ITenantProvider>() : new NoTenant()));
+            _app.IsMultitenant() ? provider.GetRequiredService<ITenantProvider>() : new NoTenant()));
         return AddEventBusPublisherImplementation();
     }
 
@@ -98,7 +100,7 @@ public class EventManagementBuilder
             eventTypes));
 
         decorate();
-        if (_multitenant)
+        if (_app.IsMultitenant())
         {
             _services.Decorate<IEventBusMessageHandler, TenantAwareEventBusMessageHandler>();
         }

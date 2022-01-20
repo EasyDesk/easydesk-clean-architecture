@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Model.Roles;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
@@ -21,7 +21,7 @@ public class ApiKeyClaimsBuilder
 
     private void AddClaim(string claimName, string value) => _claims.Add(new Claim(claimName, value));
 
-    public void AddRole(RoleId role) => AddClaim(JwtClaimNames.Role, role.ToString());
+    public void AddRole(Role role) => AddClaim(JwtClaimNames.Role, role.ToString());
 
     public void AddApiKeyName(string subject) => AddClaim(ApiKeyAuthenticationOptions.ApiKeyClaimName, subject);
 }

@@ -1,23 +1,22 @@
-﻿using EasyDesk.CleanArchitecture.Application.Tenants;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess;
 
-public class SampleAppContext : MultitenantEntitiesContext
+public class SampleAppContext : EntitiesContext
 {
     public DbSet<PersonModel> People { get; set; }
 
-    public SampleAppContext(ITenantProvider tenantProvider, DbContextOptions<SampleAppContext> options)
-        : base(tenantProvider, options)
+    public SampleAppContext(DbContextOptions<SampleAppContext> options)
+        : base(options)
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void SetupModel(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SampleAppContext).Assembly);
+        base.SetupModel(modelBuilder);
 
-        base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SampleAppContext).Assembly);
     }
 }

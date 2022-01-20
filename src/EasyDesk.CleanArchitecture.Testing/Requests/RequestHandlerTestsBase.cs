@@ -1,9 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Application.UserInfo;
 using EasyDesk.Testing.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Testing.Requests;
@@ -12,17 +10,9 @@ public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse> : D
     where THandler : RequestHandlerBase<TRequest, TResponse>
     where TRequest : RequestBase<TResponse>
 {
-    public RequestHandlerTestsBase() : this(Substitute.For<IUserInfo>())
+    public RequestHandlerTestsBase()
     {
-        UserInfo.IsLoggedIn.Returns(false);
     }
-
-    public RequestHandlerTestsBase(IUserInfo userInfo)
-    {
-        UserInfo = userInfo;
-    }
-
-    protected IUserInfo UserInfo { get; }
 
     protected override void ConfigureServices(IServiceCollection services)
     {

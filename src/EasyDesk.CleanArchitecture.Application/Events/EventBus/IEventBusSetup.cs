@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Events.EventBus;
 

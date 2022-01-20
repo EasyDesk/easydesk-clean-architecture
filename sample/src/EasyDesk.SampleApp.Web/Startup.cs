@@ -1,16 +1,20 @@
-using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Features;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Events.ServiceBus;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.CleanArchitecture.Web.Startup;
+using EasyDesk.CleanArchitecture.Web.Startup.Features;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -29,20 +33,6 @@ public class Startup : BaseStartup
 
     protected override Type WebAssemblyMarker => typeof(Startup);
 
-    protected override bool IsMultitenant => true;
-
-    protected override bool UsesSwagger => true;
-
-    protected override bool UsesPublisher => true;
-
-    protected override bool UsesConsumer => true;
-
-    protected override IDataAccessImplementation DataAccessImplementation =>
-        new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: true);
-
-    protected override IEventBusImplementation EventBusImplementation =>
-        new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName);
-
     protected override string ServiceName => "Sample App";
 
     protected override void ConfigureMvc(MvcOptions options)
@@ -53,13 +43,39 @@ public class Startup : BaseStartup
         options.Filters.Add<TenantFilter>();
     }
 
-    protected override void SetupAuthentication(AuthenticationOptions options)
+    public override void ConfigureApp(AppBuilder builder)
     {
-        options.AddScheme(new JwtBearerScheme(options =>
-        {
-            options.UseJwtSettingsFromConfiguration(Configuration);
-        }));
+        builder
+            .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: Environment.IsDevelopment()))
+            .AddEventManagement(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), usesPublisher: true, usesConsumer: true)
+            .AddMultitenancy()
+            .AddAuthentication(options =>
+            {
+                options.AddScheme(new JwtBearerScheme(options =>
+                {
+                    options.UseJwtSettingsFromConfiguration(Configuration);
+                }));
+            })
+            .AddAuthorization(options =>
+            {
+                options
+                    .UseRoleBasedPermissions()
+                    .WithDataAccessPermissions();
+            })
+            .AddSwagger();
     }
+}
+
+public enum SampleAppRole
+{
+    Admin,
+    User
+}
+
+public enum SampleAppPermission
+{
+    Read,
+    Write
 }
 
 public class TenantTestFilter : IAsyncActionFilter

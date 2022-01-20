@@ -16,6 +16,10 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: "NotFound",
             Detail: "Unable to fine the requested resource",
             Meta: Nothing.Value),
+        UnknownUserError => new(
+            Code: "UnknownUser",
+            Detail: "Missing authentication information on the given request",
+            Meta: Nothing.Value),
         ForbiddenError(var reason) => new(
             Code: "Forbidden",
             Detail: $"Forbidden: {reason}",

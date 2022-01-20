@@ -1,10 +1,12 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Pages;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -75,4 +77,16 @@ public static class QueryableUtils
 
         return new Page<T>(values, pagination, rowCount);
     }
+
+    public static async Task<IImmutableSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query) =>
+        await query.ToListThenMap(x => x.ToEquatableSet());
+
+    public static async Task<IImmutableSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query, IEqualityComparer<T> equalityComparer) =>
+        await query.ToListThenMap(x => x.ToEquatableSet(equalityComparer));
+
+    public static async Task<IImmutableList<T>> ToEquatableListAsync<T>(this IQueryable<T> query) =>
+        await query.ToListThenMap(x => x.ToEquatableList());
+
+    private static async Task<R> ToListThenMap<T, R>(this IQueryable<T> query, Func<IEnumerable<T>, R> mapper) =>
+        await query.ToListAsync().Map(mapper);
 }
