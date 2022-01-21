@@ -128,7 +128,7 @@ csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true
 csharp_style_allow_embedded_statements_on_same_line_experimental = true
 
 # Namespace style preferences
-csharp_style_namespace_declarations=file_scoped
+csharp_style_namespace_declarations=file_scoped:warning
 
 #### C# Formatting Rules ####
 
