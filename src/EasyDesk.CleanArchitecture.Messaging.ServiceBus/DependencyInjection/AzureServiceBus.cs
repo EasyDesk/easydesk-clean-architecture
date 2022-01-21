@@ -55,13 +55,13 @@ public class AzureServiceBus : IEventBusImplementation
         services.AddHostedService<AzureServiceBusSetup>();
     }
 
-    public void AddPublisher(IServiceCollection services)
+    public void AddEventBusPublisher(IServiceCollection services)
     {
         services.AddSingleton(AzureServiceBusSenderDescriptor.Topic(TopicName));
         services.AddSingleton<IEventBusPublisher, AzureServiceBusPublisher>();
     }
 
-    public void AddConsumer(IServiceCollection services)
+    public void AddEventBusConsumer(IServiceCollection services)
     {
         services.AddSingleton(AzureServiceBusReceiverDescriptor.Subscription(TopicName, SubscriptionName));
         services.AddSingleton<IEventBusConsumer, AzureServiceBusConsumer>();

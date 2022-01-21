@@ -1,13 +1,16 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Tenants;
+namespace EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 
 public class MultitenancyModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddTenantManagement();
+        services
+            .AddScoped<TenantService>()
+            .AddScoped<ITenantInitializer>(p => p.GetRequiredService<TenantService>())
+            .AddScoped<ITenantProvider>(p => p.GetRequiredService<TenantService>());
     }
 }
 

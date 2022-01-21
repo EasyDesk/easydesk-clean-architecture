@@ -2,7 +2,7 @@
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Validation;
+namespace EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 
 public class RequestValidationModule : IAppModule
 {

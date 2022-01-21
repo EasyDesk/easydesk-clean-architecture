@@ -6,7 +6,7 @@ public interface IEventBusImplementation
 {
     void AddCommonServices(IServiceCollection services);
 
-    void AddPublisher(IServiceCollection services);
+    void AddEventBusPublisher(IServiceCollection services);
 
-    void AddConsumer(IServiceCollection services);
+    void AddEventBusConsumer(IServiceCollection services);
 }

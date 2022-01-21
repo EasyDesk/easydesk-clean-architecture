@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants;
+using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Extensions;

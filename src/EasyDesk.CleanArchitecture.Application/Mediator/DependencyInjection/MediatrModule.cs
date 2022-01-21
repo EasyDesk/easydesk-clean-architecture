@@ -1,11 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Validation;
+using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Mediator;
+namespace EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
 
 public class MediatrModule : IAppModule
 {

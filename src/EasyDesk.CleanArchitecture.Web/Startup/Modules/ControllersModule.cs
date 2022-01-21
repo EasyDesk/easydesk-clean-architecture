@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants;
+using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
+using EasyDesk.CleanArchitecture.Infrastructure.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.CleanArchitecture.Web.ModelBinders;
 using EasyDesk.Tools.Options;

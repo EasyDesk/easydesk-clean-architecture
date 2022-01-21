@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
-using EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
-using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Validation;
+using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;

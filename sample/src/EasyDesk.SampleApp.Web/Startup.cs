@@ -1,9 +1,9 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants;
+using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
@@ -12,6 +12,7 @@ using EasyDesk.CleanArchitecture.Web.Startup;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
+using EasyDesk.SampleApp.Web.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -49,7 +50,10 @@ public class Startup : BaseStartup
     {
         builder
             .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: Environment.IsDevelopment()))
-            .AddEventManagement(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), usesPublisher: true, usesConsumer: true)
+            .AddEventManagement(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), options =>
+            {
+                options.AddOutboxPublisher().AddIdempotentConsumer();
+            })
             .AddMultitenancy()
             .AddAuthentication(options =>
             {
@@ -64,7 +68,8 @@ public class Startup : BaseStartup
                     .UseRoleBasedPermissions()
                     .WithDataAccessPermissions();
             })
-            .AddSwagger();
+            .AddSwagger()
+            .AddModule(new SampleAppDomainModule());
     }
 }
 

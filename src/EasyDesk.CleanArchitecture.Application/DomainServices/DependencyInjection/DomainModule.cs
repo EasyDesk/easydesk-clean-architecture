@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Events.DomainEvents;
+namespace EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 
 public class DomainModule : IAppModule
 {

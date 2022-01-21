@@ -1,8 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Modules;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Data;
+namespace EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 
 public class DataAccessModule : IAppModule
 {
