@@ -54,7 +54,6 @@ public class Startup : BaseStartup
             {
                 options.AddOutboxPublisher().AddIdempotentConsumer();
             })
-            .AddMultitenancy()
             .AddAuthentication(options =>
             {
                 options.AddScheme(new JwtBearerScheme(options =>
@@ -68,6 +67,7 @@ public class Startup : BaseStartup
                     .UseRoleBasedPermissions()
                     .WithDataAccessPermissions();
             })
+            .AddMultitenancy()
             .AddSwagger()
             .AddModule(new SampleAppDomainModule());
     }
