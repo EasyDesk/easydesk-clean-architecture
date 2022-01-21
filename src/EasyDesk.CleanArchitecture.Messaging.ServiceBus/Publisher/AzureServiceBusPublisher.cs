@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
 
-public class AzureServiceBusPublisher : IMessagePublisher
+public sealed class AzureServiceBusPublisher : IMessagePublisher
 {
     private readonly ServiceBusSender _sender;
 
@@ -26,5 +26,5 @@ public class AzureServiceBusPublisher : IMessagePublisher
         await _sender.SendMessagesAsync(serviceBusMessages);
     }
 
-    public ValueTask DisposeAsync() => _sender.DisposeAsync();
+    public async void Dispose() => await _sender.DisposeAsync();
 }

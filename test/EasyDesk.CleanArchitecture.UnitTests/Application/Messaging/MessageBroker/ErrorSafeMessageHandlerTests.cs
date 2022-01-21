@@ -58,6 +58,6 @@ public class ErrorSafeMessageHandlerTests
 
         await _sut.Handle(_message);
 
-        _logger.ReceivedWithAnyArgs(1).LogError(default(Exception), default);
+        _logger.ReceivedWithAnyArgs(1).LogError(default(Exception), " ");
     }
 }

@@ -25,6 +25,6 @@ public class SaveChangesExtensionsRunner
     public async Task<int> RunAsync(DbContext dbContext, CancellationToken cancellationToken)
     {
         AsyncFunc<CancellationToken, int> saveChangesAsync = dbContext.SaveChangesAsync;
-        return await _extensions.FoldRight(saveChangesAsync, (ext, curr) => t => ext.RunAsync(dbContext, t, curr))(cancellationToken);
+        return await _extensions.FoldRight(saveChangesAsync, (ext, curr) => t => ext.RunAsync(dbContext, curr, t))(cancellationToken);
     }
 }

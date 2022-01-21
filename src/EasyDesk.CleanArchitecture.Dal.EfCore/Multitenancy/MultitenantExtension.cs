@@ -76,7 +76,7 @@ public class MultitenantExtension : IDbContextOptionsExtension
             return next();
         }
 
-        public async Task<int> RunAsync(DbContext dbContext, CancellationToken cancellationToken, AsyncFunc<CancellationToken, int> next)
+        public async Task<int> RunAsync(DbContext dbContext, AsyncFunc<CancellationToken, int> next, CancellationToken cancellationToken)
         {
             SetTenantIdToAddedEntities(dbContext);
             return await next(cancellationToken);

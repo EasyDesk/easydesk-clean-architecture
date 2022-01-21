@@ -11,7 +11,7 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
 public static class Errors
 {
-    public static MultipleErrors Multiple(IEnumerable<Error> errors) => new MultipleErrors(errors.ToEquatableList());
+    public static MultipleErrors Multiple(IEnumerable<Error> errors) => new(errors.ToEquatableList());
 
     public static Error Internal(Exception ex) => new InternalError(ex);
 

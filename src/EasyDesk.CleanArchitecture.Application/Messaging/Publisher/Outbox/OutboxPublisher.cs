@@ -8,7 +8,7 @@ using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
 
-public class OutboxPublisher : IMessagePublisher
+public sealed class OutboxPublisher : IMessagePublisher
 {
     private readonly ITransactionManager _transactionManager;
     private readonly IOutbox _outbox;
@@ -37,5 +37,7 @@ public class OutboxPublisher : IMessagePublisher
         _outboxChannel.OnNewMessageGroup(messageIds);
     }
 
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    public void Dispose()
+    {
+    }
 }
