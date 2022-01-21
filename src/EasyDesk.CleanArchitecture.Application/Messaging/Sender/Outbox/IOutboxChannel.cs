@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Channels;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 
 public interface IOutboxChannel
 {

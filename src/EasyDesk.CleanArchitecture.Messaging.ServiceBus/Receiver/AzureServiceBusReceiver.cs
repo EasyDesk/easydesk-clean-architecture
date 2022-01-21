@@ -1,15 +1,15 @@
 ﻿using Azure.Messaging.ServiceBus;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.MessageHandlerResult;
+using static EasyDesk.CleanArchitecture.Application.Messaging.Receiver.MessageHandlerResult;
 
-namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
+namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Receiver;
 
-public sealed class AzureServiceBusConsumer : IMessageConsumer
+public sealed class AzureServiceBusReceiver : IMessageReceiver
 {
     private const int DefaultPrefetchCount = 8;
     private const int DeadLetterQueueBatchSize = 10;
@@ -19,13 +19,13 @@ public sealed class AzureServiceBusConsumer : IMessageConsumer
     private readonly ServiceBusReceiver _deadLetterQueueReceiver;
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly AzureServiceBusReceiverDescriptor _descriptor;
-    private readonly ILogger<AzureServiceBusConsumer> _logger;
+    private readonly ILogger<AzureServiceBusReceiver> _logger;
 
-    public AzureServiceBusConsumer(
+    public AzureServiceBusReceiver(
         IServiceScopeFactory serviceScopeFactory,
         ServiceBusClient client,
         AzureServiceBusReceiverDescriptor descriptor,
-        ILogger<AzureServiceBusConsumer> logger)
+        ILogger<AzureServiceBusReceiver> logger)
     {
         var mainProcessorOptions = new ServiceBusProcessorOptions
         {
@@ -53,7 +53,7 @@ public sealed class AzureServiceBusConsumer : IMessageConsumer
         _logger = logger;
     }
 
-    public async Task StartListening()
+    public async Task Start()
     {
         _mainProcessor.ProcessMessageAsync += OnMessageReceived;
         _mainProcessor.ProcessErrorAsync += OnError;

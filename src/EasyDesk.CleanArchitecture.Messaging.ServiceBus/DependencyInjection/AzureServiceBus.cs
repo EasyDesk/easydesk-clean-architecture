@@ -1,10 +1,11 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
 using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
-using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
-using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Receiver;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Sender;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Utils;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.Configuration;
@@ -55,15 +56,15 @@ public class AzureServiceBus : IMessageBrokerImplementation
         services.AddHostedService<AzureServiceBusSetup>();
     }
 
-    public void AddMessagePublisher(IServiceCollection services)
+    public void AddMessageSender(IServiceCollection services)
     {
         services.AddSingleton(AzureServiceBusSenderDescriptor.Topic(TopicName));
-        services.AddSingleton<IMessagePublisher, AzureServiceBusPublisher>();
+        services.AddSingleton<IMessageSender, AzureServiceBusSender>();
     }
 
-    public void AddMessageConsumer(IServiceCollection services)
+    public void AddMessageReceiver(IServiceCollection services)
     {
         services.AddSingleton(AzureServiceBusReceiverDescriptor.Subscription(TopicName, SubscriptionName));
-        services.AddSingleton<IMessageConsumer, AzureServiceBusConsumer>();
+        services.AddSingleton<IMessageReceiver, AzureServiceBusReceiver>();
     }
 }

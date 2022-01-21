@@ -1,6 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
-using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Receiver;
 using EasyDesk.Tools;
 using System.Threading.Tasks;
 

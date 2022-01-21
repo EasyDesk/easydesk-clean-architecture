@@ -6,7 +6,7 @@ public interface IMessageBrokerImplementation
 {
     void AddCommonServices(IServiceCollection services);
 
-    void AddMessagePublisher(IServiceCollection services);
+    void AddMessageSender(IServiceCollection services);
 
-    void AddMessageConsumer(IServiceCollection services);
+    void AddMessageReceiver(IServiceCollection services);
 }

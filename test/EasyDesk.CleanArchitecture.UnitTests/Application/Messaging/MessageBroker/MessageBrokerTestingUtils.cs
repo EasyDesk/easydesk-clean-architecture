@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using System;

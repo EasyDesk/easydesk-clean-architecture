@@ -1,17 +1,18 @@
 ﻿using Azure.Messaging.ServiceBus;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Utils;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
+namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Sender;
 
-public sealed class AzureServiceBusPublisher : IMessagePublisher
+public sealed class AzureServiceBusSender : IMessageSender
 {
     private readonly ServiceBusSender _sender;
 
-    public AzureServiceBusPublisher(
+    public AzureServiceBusSender(
         ServiceBusClient client,
         AzureServiceBusSenderDescriptor descriptor)
     {
@@ -20,7 +21,7 @@ public sealed class AzureServiceBusPublisher : IMessagePublisher
             topic: t => client.CreateSender(t));
     }
 
-    public async Task Publish(IEnumerable<Message> messages)
+    public async Task Send(IEnumerable<Message> messages)
     {
         var serviceBusMessages = messages.Select(m => m.ToServiceBusMessage());
         await _sender.SendMessagesAsync(serviceBusMessages);

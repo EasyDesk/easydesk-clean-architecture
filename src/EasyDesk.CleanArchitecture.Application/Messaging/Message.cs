@@ -2,7 +2,7 @@
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public record Message(
     Guid Id,

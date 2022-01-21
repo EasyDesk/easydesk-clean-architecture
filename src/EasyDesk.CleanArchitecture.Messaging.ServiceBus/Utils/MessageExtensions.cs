@@ -1,5 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using System;

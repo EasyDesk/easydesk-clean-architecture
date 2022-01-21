@@ -5,39 +5,36 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 
-public class PrimaryOutboxBackgroundService : BackgroundService
+public class FallbackOutboxBackgroundService : BackgroundService
 {
-    private readonly IOutboxChannel _outboxChannel;
+    private static readonly TimeSpan _pollingPeriod = TimeSpan.FromSeconds(30);
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ILogger<PrimaryOutboxBackgroundService> _logger;
+    private readonly ILogger<FallbackOutboxBackgroundService> _logger;
 
-    public PrimaryOutboxBackgroundService(
-        IOutboxChannel outboxChannel,
-        IServiceScopeFactory serviceScopeFactory,
-        ILogger<PrimaryOutboxBackgroundService> logger)
+    public FallbackOutboxBackgroundService(IServiceScopeFactory serviceScopeFactory, ILogger<FallbackOutboxBackgroundService> logger)
     {
-        _outboxChannel = outboxChannel;
         _serviceScopeFactory = serviceScopeFactory;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await foreach (var messageGroup in _outboxChannel.GetAllMessageGroups())
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
-                    await outbox.PublishMessages(messageGroup);
+                    await outbox.Flush();
                 }
+                await Task.Delay(_pollingPeriod, stoppingToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while publishing outbox messages from primary outbox service");
+                _logger.LogError(ex, "Unexpected error while sending outbox messages from Fallback sender");
             }
         }
     }

@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Testing;
 using EasyDesk.Tools.Observables;
@@ -13,15 +13,15 @@ using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Messaging.MessageBroker.Outbox;
 
-public class OutboxPublisherTests
+public class OutboxSenderTests
 {
-    private readonly OutboxPublisher _sut;
+    private readonly OutboxSender _sut;
     private readonly ITransactionManager _transactionManager;
     private readonly IOutbox _outbox;
     private readonly IOutboxChannel _outboxChannel;
     private readonly SimpleAsyncEvent<AfterCommitContext> _afterCommit = new();
 
-    public OutboxPublisherTests()
+    public OutboxSenderTests()
     {
         _transactionManager = Substitute.For<ITransactionManager>();
         _transactionManager.AfterCommit.Returns(_afterCommit);
@@ -34,23 +34,23 @@ public class OutboxPublisherTests
     }
 
     [Fact]
-    public async Task Publish_ShouldStoreMessagesInTheOutbox()
+    public async Task Send_ShouldStoreMessagesInTheOutbox()
     {
         var messages = NewMessageSequence(2);
 
-        await _sut.Publish(messages);
+        await _sut.Send(messages);
 
         await _outbox.Received(1).StoreMessages(Args.Are(messages));
     }
 
     [Fact]
-    public async Task Publish_ShouldNotifyTheOutboxChannelOfAllMessageGroups_WhenUnitOfWorkIsCommitted()
+    public async Task Send_ShouldNotifyTheOutboxChannelOfAllMessageGroups_WhenUnitOfWorkIsCommitted()
     {
         var messageGroups = Items(NewMessageSequence(2), NewMessageSequence(3));
 
         foreach (var group in messageGroups)
         {
-            await _sut.Publish(group);
+            await _sut.Send(group);
         }
         await Commit();
 
@@ -64,9 +64,9 @@ public class OutboxPublisherTests
     }
 
     [Fact]
-    public async Task Publish_ShouldNotNotifyTheOutbxChannel_IfCommitFails()
+    public async Task Send_ShouldNotNotifyTheOutbxChannel_IfCommitFails()
     {
-        await _sut.Publish(NewMessageSequence(2));
+        await _sut.Send(NewMessageSequence(2));
         await Commit(successful: false);
 
         _outboxChannel.DidNotReceiveWithAnyArgs().OnNewMessageGroup(default);

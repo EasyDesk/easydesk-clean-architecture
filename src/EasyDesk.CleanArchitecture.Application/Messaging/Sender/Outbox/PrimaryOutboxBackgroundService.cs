@@ -5,36 +5,39 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 
-public class FallbackOutboxBackgroundService : BackgroundService
+public class PrimaryOutboxBackgroundService : BackgroundService
 {
-    private static readonly TimeSpan _pollingPeriod = TimeSpan.FromSeconds(30);
+    private readonly IOutboxChannel _outboxChannel;
     private readonly IServiceScopeFactory _serviceScopeFactory;
-    private readonly ILogger<FallbackOutboxBackgroundService> _logger;
+    private readonly ILogger<PrimaryOutboxBackgroundService> _logger;
 
-    public FallbackOutboxBackgroundService(IServiceScopeFactory serviceScopeFactory, ILogger<FallbackOutboxBackgroundService> logger)
+    public PrimaryOutboxBackgroundService(
+        IOutboxChannel outboxChannel,
+        IServiceScopeFactory serviceScopeFactory,
+        ILogger<PrimaryOutboxBackgroundService> logger)
     {
+        _outboxChannel = outboxChannel;
         _serviceScopeFactory = serviceScopeFactory;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        await foreach (var messageGroup in _outboxChannel.GetAllMessageGroups())
         {
             try
             {
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {
                     var outbox = scope.ServiceProvider.GetRequiredService<IOutbox>();
-                    await outbox.Flush();
+                    await outbox.PublishMessages(messageGroup);
                 }
-                await Task.Delay(_pollingPeriod, stoppingToken);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Unexpected error while publishing outbox messages from Fallback publisher");
+                _logger.LogError(ex, "Unexpected error while publishing outbox messages from primary outbox service");
             }
         }
     }

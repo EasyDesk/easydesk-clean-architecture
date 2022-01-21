@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools.Options;
@@ -12,18 +13,18 @@ namespace EasyDesk.CleanArchitecture.Application.ExternalEvents;
 
 public class ExternalEventPublisher : IExternalEventPublisher
 {
-    private readonly IMessagePublisher _messagePublisher;
+    private readonly IMessageSender _sender;
     private readonly ITimestampProvider _timestampProvider;
     private readonly IJsonSerializer _jsonSerializer;
     private readonly ITenantProvider _tenantProvider;
 
     public ExternalEventPublisher(
-        IMessagePublisher messagePublisher,
+        IMessageSender sender,
         ITimestampProvider timestampProvider,
         IJsonSerializer jsonSerializer,
         ITenantProvider tenantProvider)
     {
-        _messagePublisher = messagePublisher;
+        _sender = sender;
         _timestampProvider = timestampProvider;
         _jsonSerializer = jsonSerializer;
         _tenantProvider = tenantProvider;
@@ -32,7 +33,7 @@ public class ExternalEventPublisher : IExternalEventPublisher
     public async Task Publish(IEnumerable<ExternalEvent> events)
     {
         var messages = events.Select(e => ToMessage(e)).ToList();
-        await _messagePublisher.Publish(messages);
+        await _sender.Send(messages);
     }
 
     private Message ToMessage(ExternalEvent externalEvent)

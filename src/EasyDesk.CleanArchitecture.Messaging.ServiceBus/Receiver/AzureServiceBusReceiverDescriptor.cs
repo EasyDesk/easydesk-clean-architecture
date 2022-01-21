@@ -1,7 +1,7 @@
 ﻿using System;
 using static EasyDesk.Tools.Functions;
 
-namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
+namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Receiver;
 
 public abstract record AzureServiceBusReceiverDescriptor
 {

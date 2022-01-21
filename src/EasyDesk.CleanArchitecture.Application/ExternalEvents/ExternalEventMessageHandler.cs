@@ -1,9 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 
 namespace EasyDesk.CleanArchitecture.Application.ExternalEvents;
 

@@ -1,5 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Idempotence;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver.Idempotence;
 using EasyDesk.CleanArchitecture.UnitTests.Application.Messaging.MessageBroker;
 using NSubstitute;
 using Shouldly;

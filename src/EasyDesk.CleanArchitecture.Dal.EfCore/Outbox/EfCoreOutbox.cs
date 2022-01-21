@@ -1,5 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools.Options;
@@ -18,13 +19,13 @@ public class EfCoreOutbox : IOutbox
 
     private readonly OutboxContext _outboxContext;
     private readonly EfCoreTransactionManager _unitOfWork;
-    private readonly IMessagePublisher _publisher;
+    private readonly IMessageSender _publisher;
     private readonly ITimestampProvider _timestampProvider;
 
     public EfCoreOutbox(
         OutboxContext outboxContext,
         EfCoreTransactionManager unitOfWork,
-        IMessagePublisher publisher,
+        IMessageSender publisher,
         ITimestampProvider timestampProvider)
     {
         _outboxContext = outboxContext;
@@ -78,7 +79,7 @@ public class EfCoreOutbox : IOutbox
         var messages = outboxMessages.Select(m => new Message(
             m.Id, m.Timestamp, m.Type, m.TenantId.AsOption(), m.Content));
 
-        await _publisher.Publish(messages);
+        await _publisher.Send(messages);
 
         _outboxContext.Messages.RemoveRange(outboxMessages);
         await _outboxContext.SaveChangesAsync();

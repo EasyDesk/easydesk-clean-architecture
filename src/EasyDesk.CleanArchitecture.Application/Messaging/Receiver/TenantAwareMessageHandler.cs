@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Tenants;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 
 internal class TenantAwareMessageHandler : IMessageHandler
 {

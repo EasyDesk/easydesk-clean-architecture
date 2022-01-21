@@ -6,28 +6,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using static EasyDesk.Tools.Options.OptionImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 
-public sealed class OutboxPublisher : IMessagePublisher
+public sealed class OutboxSender : IMessageSender
 {
     private readonly ITransactionManager _transactionManager;
     private readonly IOutbox _outbox;
     private readonly IOutboxChannel _outboxChannel;
 
-    public OutboxPublisher(ITransactionManager transactionManager, IOutbox outbox, IOutboxChannel outboxChannel)
+    public OutboxSender(ITransactionManager transactionManager, IOutbox outbox, IOutboxChannel outboxChannel)
     {
         _transactionManager = transactionManager;
         _outbox = outbox;
         _outboxChannel = outboxChannel;
     }
 
-    public async Task Publish(IEnumerable<Message> messages)
+    public async Task Send(IEnumerable<Message> messages)
     {
         await _outbox.StoreMessages(messages);
-        _transactionManager.AfterCommit.Subscribe(context => TryPublishingMessages(context, messages));
+        _transactionManager.AfterCommit.Subscribe(context => TrySendingMessages(context, messages));
     }
 
-    private void TryPublishingMessages(AfterCommitContext context, IEnumerable<Message> messages)
+    private void TrySendingMessages(AfterCommitContext context, IEnumerable<Message> messages)
     {
         if (!context.Successful)
         {

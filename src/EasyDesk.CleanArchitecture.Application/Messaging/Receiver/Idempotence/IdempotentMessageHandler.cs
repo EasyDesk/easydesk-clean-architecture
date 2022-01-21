@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Idempotence;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver.Idempotence;
 
 public class IdempotentMessageHandler : IMessageHandler
 {

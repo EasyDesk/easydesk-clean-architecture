@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
-using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
-using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Receiver;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Sender;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -24,29 +24,29 @@ public class AzureServiceBusSetup : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        var sender = _serviceProvider.GetService<AzureServiceBusSenderDescriptor>();
-        if (sender is not null)
+        var senderInfo = _serviceProvider.GetService<AzureServiceBusSenderDescriptor>();
+        if (senderInfo is not null)
         {
-            await sender.Match(
+            await senderInfo.Match(
                 queue: q => _administrationFacade.CreateQueueIdempotent(q),
                 topic: t => _administrationFacade.CreateTopicIdempotent(t));
         }
 
-        var receiver = _serviceProvider.GetService<AzureServiceBusReceiverDescriptor>();
-        if (receiver is not null)
+        var receiverInfo = _serviceProvider.GetService<AzureServiceBusReceiverDescriptor>();
+        if (receiverInfo is not null)
         {
-            await receiver.Match(
+            await receiverInfo.Match(
                 queue: q => _administrationFacade.CreateQueueIdempotent(q),
                 subscription: async (t, s) =>
                 {
-                    var consumerDefinition = _serviceProvider.GetRequiredService<MessageConsumerDefinition>();
-                    var filter = new MessageTypeFilter(consumerDefinition.SupportedTypes);
+                    var receiverDefinition = _serviceProvider.GetRequiredService<MessageReceiverDefinition>();
+                    var filter = new MessageTypeFilter(receiverDefinition.SupportedTypes);
                     await _administrationFacade.CreateTopicIdempotent(t);
                     await _administrationFacade.CreateSubscriptionIdempotent(t, s, filter);
                 });
 
-            var consumer = _serviceProvider.GetRequiredService<IMessageConsumer>();
-            await consumer.StartListening();
+            var receiver = _serviceProvider.GetRequiredService<IMessageReceiver>();
+            await receiver.Start();
         }
     }
 }

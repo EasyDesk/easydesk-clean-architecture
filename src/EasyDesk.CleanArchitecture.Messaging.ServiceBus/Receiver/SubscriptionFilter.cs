@@ -4,7 +4,7 @@ using EasyDesk.Tools.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
+namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Receiver;
 
 public abstract class SubscriptionFilter
 {

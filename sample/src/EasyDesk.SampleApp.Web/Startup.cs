@@ -52,7 +52,7 @@ public class Startup : BaseStartup
             .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: Environment.IsDevelopment()))
             .AddMessaging(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), options =>
             {
-                options.AddOutboxPublisher().AddIdempotentConsumer();
+                options.AddOutboxSender().AddIdempotentReceiver();
             })
             .AddAuthentication(options =>
             {

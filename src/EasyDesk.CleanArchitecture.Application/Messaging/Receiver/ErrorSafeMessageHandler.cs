@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 
 public class ErrorSafeMessageHandler : IMessageHandler
 {

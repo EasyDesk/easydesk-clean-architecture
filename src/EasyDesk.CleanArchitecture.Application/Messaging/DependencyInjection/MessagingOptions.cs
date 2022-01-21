@@ -3,9 +3,10 @@ using System.Linq;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Idempotence;
-using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver.Idempotence;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
@@ -29,9 +30,9 @@ public class MessagingOptions
         _app = app;
     }
 
-    public MessagingOptions AddSimplePublisher() => AddPublisher();
+    public MessagingOptions AddSimpleSender() => AddPublisher();
 
-    public MessagingOptions AddOutboxPublisher()
+    public MessagingOptions AddOutboxSender()
     {
         _app.RequireModule<DataAccessModule>().Implementation.AddOutbox(_services, _app);
 
@@ -41,18 +42,18 @@ public class MessagingOptions
 
         return AddPublisher(() =>
         {
-            _services.Decorate<IMessagePublisher, OutboxPublisher>();
+            _services.Decorate<IMessageSender, OutboxSender>();
         });
     }
 
     private MessagingOptions AddPublisher(Action decorate = null)
     {
-        _messageBrokerImplementation.AddMessagePublisher(_services);
+        _messageBrokerImplementation.AddMessageSender(_services);
 
         decorate?.Invoke();
 
         _services.AddScoped<IExternalEventPublisher>(provider => new ExternalEventPublisher(
-            provider.GetRequiredService<IMessagePublisher>(),
+            provider.GetRequiredService<IMessageSender>(),
             provider.GetRequiredService<ITimestampProvider>(),
             provider.GetRequiredService<IJsonSerializer>(),
             _app.IsMultitenant() ? provider.GetRequiredService<ITenantProvider>() : new NoTenant()));
@@ -60,9 +61,9 @@ public class MessagingOptions
         return this;
     }
 
-    public MessagingOptions AddSimpleConsumer() => AddConsumer();
+    public MessagingOptions AddSimpleReceiver() => AddConsumer();
 
-    public MessagingOptions AddIdempotentConsumer()
+    public MessagingOptions AddIdempotentReceiver()
     {
         _app.RequireModule<DataAccessModule>().Implementation.AddIdempotenceManager(_services, _app);
 
@@ -74,11 +75,11 @@ public class MessagingOptions
 
     private MessagingOptions AddConsumer(Action decorate = null)
     {
-        _messageBrokerImplementation.AddMessageConsumer(_services);
+        _messageBrokerImplementation.AddMessageReceiver(_services);
 
         var eventTypes = EventTypeScanning.FindExternalEventTypes(_app.ApplicationAssemblyMarker);
 
-        _services.AddSingleton(new MessageConsumerDefinition(eventTypes.Select(t => t.GetEventTypeName()).ToArray()));
+        _services.AddSingleton(new MessageReceiverDefinition(eventTypes.Select(t => t.GetEventTypeName()).ToArray()));
         _services.AddScoped<IMessageHandler>(provider => new ExternalEventMessageHandler(
             provider.GetRequiredService<IExternalEventHandler>(),
             provider.GetRequiredService<IJsonSerializer>(),

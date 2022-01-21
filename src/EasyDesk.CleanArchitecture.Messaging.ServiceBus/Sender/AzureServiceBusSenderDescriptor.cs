@@ -1,7 +1,7 @@
 ﻿using System;
 using static EasyDesk.Tools.Functions;
 
-namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
+namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Sender;
 
 public abstract record AzureServiceBusSenderDescriptor
 {
