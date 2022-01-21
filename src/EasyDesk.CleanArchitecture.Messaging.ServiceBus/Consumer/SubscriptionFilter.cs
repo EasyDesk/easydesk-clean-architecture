@@ -13,16 +13,16 @@ public abstract class SubscriptionFilter
     public RuleFilter GetRuleFilter() => new SqlRuleFilter(SqlExpression());
 }
 
-public class EventTypeFilter : SubscriptionFilter
+public class MessageTypeFilter : SubscriptionFilter
 {
     private readonly IEnumerable<string> _types;
 
-    public EventTypeFilter(IEnumerable<string> types)
+    public MessageTypeFilter(IEnumerable<string> types)
     {
         _types = types;
     }
 
-    protected override string SqlExpression() => $"{PropertyNames.EventType} IN {GetCommaSeparatedTypeList()}";
+    protected override string SqlExpression() => $"{PropertyNames.MessageType} IN {GetCommaSeparatedTypeList()}";
 
     private string GetCommaSeparatedTypeList() => _types.ToTupleString(t => $"'{t}'");
 }

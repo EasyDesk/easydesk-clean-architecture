@@ -1,15 +1,15 @@
 ﻿using Azure.Messaging.ServiceBus;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Events.EventBus.EventBusMessageHandlerResult;
+using static EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.MessageHandlerResult;
 
 namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
 
-public sealed class AzureServiceBusConsumer : IEventBusConsumer
+public sealed class AzureServiceBusConsumer : IMessageConsumer
 {
     private const int DefaultPrefetchCount = 8;
     private const int DeadLetterQueueBatchSize = 10;
@@ -113,7 +113,7 @@ public sealed class AzureServiceBusConsumer : IEventBusConsumer
     }
 
     private Task ProcessMainMessageResult(
-        EventBusMessageHandlerResult handlerResult,
+        MessageHandlerResult handlerResult,
         ServiceBusReceivedMessage serviceBusMessage,
         ProcessMessageEventArgs eventArgs)
     {
@@ -126,7 +126,7 @@ public sealed class AzureServiceBusConsumer : IEventBusConsumer
     }
 
     private Task ProcessDeadLetterHandlerResult(
-        EventBusMessageHandlerResult handlerResult,
+        MessageHandlerResult handlerResult,
         ServiceBusReceivedMessage serviceBusMessage)
     {
         return handlerResult switch
@@ -136,13 +136,13 @@ public sealed class AzureServiceBusConsumer : IEventBusConsumer
         };
     }
 
-    private async Task<EventBusMessageHandlerResult> HandleMessage(ServiceBusReceivedMessage serviceBusMessage)
+    private async Task<MessageHandlerResult> HandleMessage(ServiceBusReceivedMessage serviceBusMessage)
     {
-        var eventBusMessage = serviceBusMessage.ToEventBusMessage();
+        var message = serviceBusMessage.ToMessage();
         using (var scope = _serviceScopeFactory.CreateScope())
         {
-            var handler = scope.ServiceProvider.GetRequiredService<IEventBusMessageHandler>();
-            return await handler.Handle(eventBusMessage);
+            var handler = scope.ServiceProvider.GetRequiredService<IMessageHandler>();
+            return await handler.Handle(message);
         }
     }
 

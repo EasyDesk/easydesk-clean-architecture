@@ -2,8 +2,8 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Idempotence;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;

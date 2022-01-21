@@ -1,5 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Utils;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
 
-public class AzureServiceBusPublisher : IEventBusPublisher
+public class AzureServiceBusPublisher : IMessagePublisher
 {
     private readonly ServiceBusSender _sender;
 
@@ -20,7 +20,7 @@ public class AzureServiceBusPublisher : IEventBusPublisher
             topic: t => client.CreateSender(t));
     }
 
-    public async Task Publish(IEnumerable<EventBusMessage> messages)
+    public async Task Publish(IEnumerable<Message> messages)
     {
         var serviceBusMessages = messages.Select(m => m.ToServiceBusMessage());
         await _sender.SendMessagesAsync(serviceBusMessages);

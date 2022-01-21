@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.ExternalEvents;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Tools;

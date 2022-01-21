@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,13 +39,13 @@ public class AzureServiceBusSetup : BackgroundService
                 queue: q => _administrationFacade.CreateQueueIdempotent(q),
                 subscription: async (t, s) =>
                 {
-                    var consumerDefinition = _serviceProvider.GetRequiredService<EventBusConsumerDefinition>();
-                    var filter = new EventTypeFilter(consumerDefinition.EventTypes);
+                    var consumerDefinition = _serviceProvider.GetRequiredService<MessageConsumerDefinition>();
+                    var filter = new MessageTypeFilter(consumerDefinition.SupportedTypes);
                     await _administrationFacade.CreateTopicIdempotent(t);
                     await _administrationFacade.CreateSubscriptionIdempotent(t, s, filter);
                 });
 
-            var consumer = _serviceProvider.GetRequiredService<IEventBusConsumer>();
+            var consumer = _serviceProvider.GetRequiredService<IMessageConsumer>();
             await consumer.StartListening();
         }
     }

@@ -6,10 +6,8 @@ using EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
-using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using FluentValidation;
@@ -81,9 +79,6 @@ public abstract class BaseStartup
             InfrastructureAssemblyMarker);
 
         _appDescription.ConfigureServices(services);
-
-        ReflectionUtils.InstancesOfSubtypesOf<IServiceInstaller>(WebAssemblyMarker)
-            .ForEach(installer => installer.InstallServices(services, Configuration, Environment));
     }
 
     protected virtual void ConfigureMvc(MvcOptions options)

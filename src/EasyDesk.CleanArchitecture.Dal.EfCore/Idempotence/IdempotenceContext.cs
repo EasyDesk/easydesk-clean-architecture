@@ -10,12 +10,12 @@ public class IdempotenceContext : ExtendedDbContext
     {
     }
 
-    public DbSet<HandledEvent> HandledEvents { get; set; }
+    public DbSet<HandledMessage> HandledMessages { get; set; }
 
     protected override void SetupModel(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
-        modelBuilder.ApplyConfiguration(new HandledEvent.Configuration());
+        modelBuilder.ApplyConfiguration(new HandledMessage.Configuration());
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using System;
@@ -9,31 +9,31 @@ namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.Utils;
 
 public static class MessageExtensions
 {
-    public static ServiceBusMessage ToServiceBusMessage(this EventBusMessage eventBusMessage)
+    public static ServiceBusMessage ToServiceBusMessage(this Message message)
     {
-        var serviceBusMessage = new ServiceBusMessage(eventBusMessage.Content)
+        var serviceBusMessage = new ServiceBusMessage(message.Content)
         {
             ContentType = "application/json",
-            MessageId = eventBusMessage.Id.ToString()
+            MessageId = message.Id.ToString()
         };
-        serviceBusMessage.ApplicationProperties.Add(PropertyNames.EventType, eventBusMessage.EventType);
-        serviceBusMessage.ApplicationProperties.Add(PropertyNames.OccurredAt, eventBusMessage.OccurredAt.ToString());
-        eventBusMessage.TenantId.IfPresent(tenant =>
+        serviceBusMessage.ApplicationProperties.Add(PropertyNames.MessageType, message.Type);
+        serviceBusMessage.ApplicationProperties.Add(PropertyNames.MessageTimestamp, message.Timestamp.ToString());
+        message.TenantId.IfPresent(tenant =>
         {
             serviceBusMessage.ApplicationProperties.Add(PropertyNames.TenantId, tenant);
         });
         return serviceBusMessage;
     }
 
-    public static EventBusMessage ToEventBusMessage(this ServiceBusReceivedMessage serviceBusMessage)
+    public static Message ToMessage(this ServiceBusReceivedMessage serviceBusMessage)
     {
         var tenantId = serviceBusMessage.ApplicationProperties.TryGetValue(PropertyNames.TenantId, out var tenant)
             ? Some(tenant as string)
             : None;
         return new(
             Id: Guid.Parse(serviceBusMessage.MessageId),
-            OccurredAt: Timestamp.Parse(serviceBusMessage.ApplicationProperties[PropertyNames.OccurredAt] as string),
-            EventType: serviceBusMessage.ApplicationProperties[PropertyNames.EventType] as string,
+            Timestamp: Timestamp.Parse(serviceBusMessage.ApplicationProperties[PropertyNames.MessageTimestamp] as string),
+            Type: serviceBusMessage.ApplicationProperties[PropertyNames.MessageType] as string,
             TenantId: tenantId,
             Content: serviceBusMessage.Body.ToString());
     }

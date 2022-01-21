@@ -1,7 +1,7 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
@@ -50,7 +50,7 @@ public class Startup : BaseStartup
     {
         builder
             .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: Environment.IsDevelopment()))
-            .AddEventManagement(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), options =>
+            .AddMessaging(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), options =>
             {
                 options.AddOutboxPublisher().AddIdempotentConsumer();
             })

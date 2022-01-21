@@ -1,7 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Azure.Messaging.ServiceBus.Administration;
-using EasyDesk.CleanArchitecture.Application.Events.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus;
+using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Consumer;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus.Publisher;
@@ -13,7 +13,7 @@ using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Messaging.ServiceBus.DependencyInjection;
 
-public class AzureServiceBus : IEventBusImplementation
+public class AzureServiceBus : IMessageBrokerImplementation
 {
     private readonly IConfiguration _configuration;
     private readonly Option<string> _prefix;
@@ -55,15 +55,15 @@ public class AzureServiceBus : IEventBusImplementation
         services.AddHostedService<AzureServiceBusSetup>();
     }
 
-    public void AddEventBusPublisher(IServiceCollection services)
+    public void AddMessagePublisher(IServiceCollection services)
     {
         services.AddSingleton(AzureServiceBusSenderDescriptor.Topic(TopicName));
-        services.AddSingleton<IEventBusPublisher, AzureServiceBusPublisher>();
+        services.AddSingleton<IMessagePublisher, AzureServiceBusPublisher>();
     }
 
-    public void AddEventBusConsumer(IServiceCollection services)
+    public void AddMessageConsumer(IServiceCollection services)
     {
         services.AddSingleton(AzureServiceBusReceiverDescriptor.Subscription(TopicName, SubscriptionName));
-        services.AddSingleton<IEventBusConsumer, AzureServiceBusConsumer>();
+        services.AddSingleton<IMessageConsumer, AzureServiceBusConsumer>();
     }
 }

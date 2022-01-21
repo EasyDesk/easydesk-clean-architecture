@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus.Outbox;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools.Options;
@@ -18,22 +18,22 @@ public class EfCoreOutbox : IOutbox
 
     private readonly OutboxContext _outboxContext;
     private readonly EfCoreTransactionManager _unitOfWork;
-    private readonly IEventBusPublisher _eventBus;
+    private readonly IMessagePublisher _publisher;
     private readonly ITimestampProvider _timestampProvider;
 
     public EfCoreOutbox(
         OutboxContext outboxContext,
         EfCoreTransactionManager unitOfWork,
-        IEventBusPublisher eventBus,
+        IMessagePublisher publisher,
         ITimestampProvider timestampProvider)
     {
         _outboxContext = outboxContext;
         _unitOfWork = unitOfWork;
-        _eventBus = eventBus;
+        _publisher = publisher;
         _timestampProvider = timestampProvider;
     }
 
-    public async Task StoreMessages(IEnumerable<EventBusMessage> messages)
+    public async Task StoreMessages(IEnumerable<Message> messages)
     {
         await _unitOfWork.RegisterExternalDbContext(_outboxContext);
         var outboxMessages = messages.Select(ToOutboxMessage);
@@ -41,14 +41,14 @@ public class EfCoreOutbox : IOutbox
         await _outboxContext.SaveChangesAsync();
     }
 
-    private static OutboxMessage ToOutboxMessage(EventBusMessage message)
+    private static OutboxMessage ToOutboxMessage(Message message)
     {
         return new OutboxMessage
         {
             Id = message.Id,
             Content = message.Content,
-            EventType = message.EventType,
-            OccurredAt = message.OccurredAt
+            EventType = message.Type,
+            OccurredAt = message.Timestamp
         };
     }
 
@@ -75,10 +75,10 @@ public class EfCoreOutbox : IOutbox
             return;
         }
 
-        var eventBusMessages = outboxMessages.Select(m => new EventBusMessage(
+        var messages = outboxMessages.Select(m => new Message(
             m.Id, m.OccurredAt, m.EventType, m.TenantId.AsOption(), m.Content));
 
-        await _eventBus.Publish(eventBusMessages);
+        await _publisher.Publish(messages);
 
         _outboxContext.Messages.RemoveRange(outboxMessages);
         await _outboxContext.SaveChangesAsync();

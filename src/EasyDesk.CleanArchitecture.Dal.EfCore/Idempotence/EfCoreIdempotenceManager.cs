@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Events.EventBus;
-using EasyDesk.CleanArchitecture.Application.Events.EventBus.Idempotence;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Idempotence;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -16,18 +16,18 @@ public class EfCoreIdempotenceManager : IIdempotenceManager
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<bool> HasBeenProcessed(EventBusMessage message)
+    public async Task<bool> HasBeenProcessed(Message message)
     {
         await _unitOfWork.RegisterExternalDbContext(_idempotenceContext);
         return await _idempotenceContext
-            .HandledEvents
+            .HandledMessages
             .AnyAsync(e => e.Id == message.Id);
     }
 
-    public async Task MarkAsProcessed(EventBusMessage message)
+    public async Task MarkAsProcessed(Message message)
     {
         await _unitOfWork.RegisterExternalDbContext(_idempotenceContext);
-        _idempotenceContext.HandledEvents.Add(new HandledEvent
+        _idempotenceContext.HandledMessages.Add(new HandledMessage
         {
             Id = message.Id
         });
