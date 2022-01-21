@@ -2,7 +2,7 @@
 using EasyDesk.Tools;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
+namespace EasyDesk.CleanArchitecture.Application.ExternalEvents;
 
 public interface IExternalEventHandler
 {

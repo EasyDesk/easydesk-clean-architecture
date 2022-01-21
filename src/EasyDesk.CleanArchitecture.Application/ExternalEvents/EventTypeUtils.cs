@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
+namespace EasyDesk.CleanArchitecture.Application.ExternalEvents;
 
 public static class EventTypeUtils
 {

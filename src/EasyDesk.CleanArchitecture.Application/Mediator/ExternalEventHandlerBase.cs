@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
+using EasyDesk.CleanArchitecture.Application.ExternalEvents;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator;
 

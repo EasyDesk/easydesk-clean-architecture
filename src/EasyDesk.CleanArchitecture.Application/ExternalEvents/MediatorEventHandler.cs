@@ -4,7 +4,7 @@ using EasyDesk.Tools;
 using MediatR;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
+namespace EasyDesk.CleanArchitecture.Application.ExternalEvents;
 
 public class MediatorEventHandler : IExternalEventHandler
 {

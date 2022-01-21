@@ -1,6 +1,6 @@
 ﻿using System;
+using EasyDesk.CleanArchitecture.Application.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.DomainEventHandlers.PropagatedEvents;

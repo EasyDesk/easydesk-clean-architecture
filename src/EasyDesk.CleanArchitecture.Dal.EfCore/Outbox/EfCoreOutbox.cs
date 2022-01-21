@@ -47,8 +47,8 @@ public class EfCoreOutbox : IOutbox
         {
             Id = message.Id,
             Content = message.Content,
-            EventType = message.Type,
-            OccurredAt = message.Timestamp
+            Type = message.Type,
+            Timestamp = message.Timestamp
         };
     }
 
@@ -60,14 +60,14 @@ public class EfCoreOutbox : IOutbox
     public async Task Flush()
     {
         var from = _timestampProvider.Now - MessageAgingTime.AsTimeOffset;
-        await Publish(q => q.Where(m => m.OccurredAt < from));
+        await Publish(q => q.Where(m => m.Timestamp < from));
     }
 
     private async Task Publish(QueryWrapper<OutboxMessage> filter)
     {
         var outboxMessages = await _outboxContext.Messages
             .Wrap(filter)
-            .OrderBy(m => m.OccurredAt)
+            .OrderBy(m => m.Timestamp)
             .ToListAsync();
 
         if (!outboxMessages.Any())
@@ -76,7 +76,7 @@ public class EfCoreOutbox : IOutbox
         }
 
         var messages = outboxMessages.Select(m => new Message(
-            m.Id, m.OccurredAt, m.EventType, m.TenantId.AsOption(), m.Content));
+            m.Id, m.Timestamp, m.Type, m.TenantId.AsOption(), m.Content));
 
         await _publisher.Publish(messages);
 

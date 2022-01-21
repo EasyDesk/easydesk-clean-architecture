@@ -11,11 +11,11 @@ public class OutboxMessage
 
     public string Content { get; set; }
 
-    public string EventType { get; set; }
+    public string Type { get; set; }
 
     public string TenantId { get; set; }
 
-    public Timestamp OccurredAt { get; set; }
+    public Timestamp Timestamp { get; set; }
 
     public class Configuration : IEntityTypeConfiguration<OutboxMessage>
     {
@@ -26,11 +26,11 @@ public class OutboxMessage
             builder.Property(x => x.Content)
                 .IsRequired();
 
-            builder.Property(x => x.EventType)
+            builder.Property(x => x.Type)
                 .IsRequired()
                 .HasMaxLength(50);
 
-            builder.Property(x => x.OccurredAt)
+            builder.Property(x => x.Timestamp)
                 .IsRequired();
         }
     }

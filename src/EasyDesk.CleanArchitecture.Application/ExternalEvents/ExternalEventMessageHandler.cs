@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
+namespace EasyDesk.CleanArchitecture.Application.ExternalEvents;
 
 public class ExternalEventMessageHandler : IMessageHandler
 {

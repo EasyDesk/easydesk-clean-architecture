@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Application.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;

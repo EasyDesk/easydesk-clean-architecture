@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using EasyDesk.CleanArchitecture.Application.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 using EasyDesk.CleanArchitecture.Testing;
+using EasyDesk.CleanArchitecture.UnitTests.Application.Messaging.MessageBroker;
 using NSubstitute;
 using Shouldly;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
-namespace EasyDesk.CleanArchitecture.UnitTests.Application.Messaging.MessageBroker;
+namespace EasyDesk.CleanArchitecture.UnitTests.Application.ExternalEvents;
 
 public class ExternalEventMessageHandlerTests
 {

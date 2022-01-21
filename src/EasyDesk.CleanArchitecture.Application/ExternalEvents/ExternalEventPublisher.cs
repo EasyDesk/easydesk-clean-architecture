@@ -8,7 +8,7 @@ using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools.Options;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
+namespace EasyDesk.CleanArchitecture.Application.ExternalEvents;
 
 public class ExternalEventPublisher : IExternalEventPublisher
 {

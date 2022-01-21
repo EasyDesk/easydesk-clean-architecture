@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Messaging.ExternalEvents;
 using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker;
 using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Messaging.MessageBroker.Outbox;
