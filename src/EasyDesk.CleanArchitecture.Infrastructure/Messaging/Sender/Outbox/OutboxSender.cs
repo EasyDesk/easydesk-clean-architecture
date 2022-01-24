@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.Tools.Observables;
 using EasyDesk.Tools.Options;

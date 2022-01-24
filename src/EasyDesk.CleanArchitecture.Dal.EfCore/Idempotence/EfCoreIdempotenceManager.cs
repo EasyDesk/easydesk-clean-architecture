@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;

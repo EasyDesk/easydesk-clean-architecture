@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using EasyDesk.CleanArchitecture.Application.ExternalEvents;
-using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing;
 using NSubstitute;
 using Shouldly;

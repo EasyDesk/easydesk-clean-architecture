@@ -5,7 +5,7 @@ using System;
 using System.Collections.Immutable;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
 public record Message(Guid Id, object Content, IImmutableDictionary<string, string> Metadata)
 {

@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 using EasyDesk.CleanArchitecture.Testing;
 using NSubstitute;

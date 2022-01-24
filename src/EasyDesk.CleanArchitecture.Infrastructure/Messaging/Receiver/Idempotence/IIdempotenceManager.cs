@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
 

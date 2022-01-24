@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.ExternalEvents;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
@@ -11,6 +7,8 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Linq;
 using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;

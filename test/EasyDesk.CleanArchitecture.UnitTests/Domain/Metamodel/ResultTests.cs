@@ -1,12 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using NSubstitute;
 using Shouldly;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Domain.Metamodel.Results.ResultImports;
 

@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using System.Collections.Generic;
 using System.Linq;
 using static EasyDesk.Tools.Collections.EnumerableUtils;

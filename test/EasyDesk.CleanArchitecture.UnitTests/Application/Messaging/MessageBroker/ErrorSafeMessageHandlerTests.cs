@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 using Microsoft.Extensions.Logging;
 using NSubstitute;

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;

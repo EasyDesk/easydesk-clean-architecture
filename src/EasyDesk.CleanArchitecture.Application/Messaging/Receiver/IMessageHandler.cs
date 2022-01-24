@@ -1,16 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using Rebus.Handlers;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 
-public enum MessageHandlerResult
+public interface IMessageHandler<M> : IHandleMessages<M>
+    where M : IMessage
 {
-    Handled,
-    TransientFailure,
-    GenericFailure,
-    NotSupported
-}
-
-public interface IMessageHandler
-{
-    Task<MessageHandlerResult> Handle(Message message);
 }

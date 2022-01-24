@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.Tools;
+﻿using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
 using System;
 using System.Collections.Generic;
