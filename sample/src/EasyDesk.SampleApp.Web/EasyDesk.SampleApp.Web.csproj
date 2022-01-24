@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Messaging.ServiceBus\EasyDesk.CleanArchitecture.Messaging.ServiceBus.csproj" />
     <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Infrastructure\EasyDesk.SampleApp.Infrastructure.csproj" />

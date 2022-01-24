@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 
 public class MessagingModule : IAppModule
 {

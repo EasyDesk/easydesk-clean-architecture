@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Testing;
 using EasyDesk.Tools.Observables;

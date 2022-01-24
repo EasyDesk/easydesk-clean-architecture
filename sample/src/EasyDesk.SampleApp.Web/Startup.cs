@@ -1,11 +1,9 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
-using EasyDesk.CleanArchitecture.Messaging.ServiceBus.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.CleanArchitecture.Web.Startup;
@@ -50,10 +48,10 @@ public class Startup : BaseStartup
     {
         builder
             .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration, applyMigrations: Environment.IsDevelopment()))
-            .AddMessaging(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), options =>
-            {
-                options.AddOutboxSender().AddIdempotentReceiver();
-            })
+            ////.AddMessaging(new AzureServiceBus(Configuration, prefix: Environment.EnvironmentName), options =>
+            ////{
+            ////    options.AddOutboxSender().AddIdempotentReceiver();
+            ////})
             .AddAuthentication(options =>
             {
                 options.AddScheme(new JwtBearerScheme(options =>

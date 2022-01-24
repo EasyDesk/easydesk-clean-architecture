@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 
 public class ErrorSafeMessageHandler : IMessageHandler
 {
@@ -23,7 +25,7 @@ public class ErrorSafeMessageHandler : IMessageHandler
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred while handling a message of type {messageType}", message.Type);
+            _logger.LogError(ex, "An error occurred while handling a message of type {messageType}", message.Content.GetType().Name);
             return MessageHandlerResult.GenericFailure;
         }
     }

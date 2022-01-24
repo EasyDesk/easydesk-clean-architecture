@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
-using EasyDesk.CleanArchitecture.Infrastructure.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.CleanArchitecture.Web.ModelBinders;
-using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -30,13 +28,9 @@ public class ControllersModule : IAppModule
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         var mvcBuilder = services.AddControllers(options => DefaultMvcConfiguration(options, app));
-        app.GetModule<JsonSerializationModule>().IfPresent(f =>
+        mvcBuilder.AddNewtonsoftJson(options =>
         {
-            mvcBuilder.AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ApplyDefaultConfiguration();
-                f.ConfigureJsonSerializerSettings(options.SerializerSettings);
-            });
+            options.SerializerSettings.ApplyDefaultConfiguration();
         });
     }
 

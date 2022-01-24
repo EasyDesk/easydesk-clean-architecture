@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 
 public interface IMessageBrokerImplementation
 {

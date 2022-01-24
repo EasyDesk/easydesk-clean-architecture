@@ -1,58 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using EasyDesk.CleanArchitecture.Application.ExternalEvents;
-using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 using EasyDesk.CleanArchitecture.Testing;
-using EasyDesk.CleanArchitecture.UnitTests.Application.Messaging.MessageBroker;
 using NSubstitute;
 using Shouldly;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
-using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.ExternalEvents;
 
 public class ExternalEventMessageHandlerTests
 {
-    private record SupportedEvent : ExternalEvent;
-
-    private const string Json = "{}";
+    private record TestEvent : ExternalEvent;
 
     private readonly ExternalEventMessageHandler _sut;
     private readonly IExternalEventHandler _externalEventHandler;
-    private readonly IJsonSerializer _jsonSerializer;
-    private readonly IEnumerable<Type> _supportedTypes = Items(typeof(SupportedEvent));
-    private readonly SupportedEvent _event = new();
-    private readonly Message _supportedMessage;
+    private readonly TestEvent _event = new();
+    private readonly Message _message;
 
     public ExternalEventMessageHandlerTests()
     {
-        _supportedMessage = MessageBrokerTestingUtils.NewMessageWithType(typeof(SupportedEvent).GetEventTypeName());
+        _message = Message.Create(new TestEvent());
 
         _externalEventHandler = Substitute.For<IExternalEventHandler>();
         _externalEventHandler.Handle(_event).Returns(Ok);
 
-        _jsonSerializer = Substitute.For<IJsonSerializer>();
-        _jsonSerializer.Deserialize(Json, typeof(SupportedEvent)).Returns(_event);
-
-        _sut = new(_externalEventHandler, _jsonSerializer, _supportedTypes);
+        _sut = new(_externalEventHandler);
     }
 
     [Fact]
     public async Task Handle_ShouldSucceed_IfTheEventTypeIsSupportedAndTheExternalEventHandlerSucceeds()
     {
-        var result = await _sut.Handle(_supportedMessage);
+        var result = await _sut.Handle(_message);
 
         result.ShouldBe(MessageHandlerResult.Handled);
     }
 
     [Fact]
-    public async Task Handle_ShouldReturnNotSupported_IfTheEventTypeIsNotSupported()
+    public async Task Handle_ShouldReturnNotSupported_IfTheMessageContentIsNotAnExternalEvent()
     {
-        var result = await _sut.Handle(MessageBrokerTestingUtils.NewMessageWithType("UNSUPPORTED"));
+        var result = await _sut.Handle(Message.Create(new object()));
 
         result.ShouldBe(MessageHandlerResult.NotSupported);
     }
@@ -62,7 +50,7 @@ public class ExternalEventMessageHandlerTests
     {
         _externalEventHandler.Handle(_event).Returns(TestError.Create());
 
-        var result = await _sut.Handle(_supportedMessage);
+        var result = await _sut.Handle(_message);
 
         result.ShouldBe(MessageHandlerResult.GenericFailure);
     }

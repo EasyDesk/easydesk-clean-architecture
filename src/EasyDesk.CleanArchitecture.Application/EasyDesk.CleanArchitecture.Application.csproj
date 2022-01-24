@@ -17,6 +17,7 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Rebus" Version="6.6.2" />
     <PackageReference Include="Scrutor" Version="3.3.0" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 using EasyDesk.CleanArchitecture.Testing;
 using NSubstitute;
 using Shouldly;
@@ -15,7 +16,7 @@ public class TransactionalMessageHandlerTests
     private readonly TransactionalMessageHandler _sut;
     private readonly IMessageHandler _handler;
     private readonly ITransactionManager _transactionManager;
-    private readonly Message _message = MessageBrokerTestingUtils.NewDefaultMessage();
+    private readonly Message _message = Message.CreateEmpty();
 
     public TransactionalMessageHandlerTests()
     {

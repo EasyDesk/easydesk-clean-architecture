@@ -5,7 +5,6 @@ using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
@@ -31,7 +30,6 @@ namespace EasyDesk.CleanArchitecture.Web.Startup;
 ///     <item><see cref="HttpContextModule"/></item>
 ///     <item><see cref="TimeManagementModule"/></item>
 ///     <item><see cref="MediatrModule"/></item>
-///     <item><see cref="JsonSerializationModule"/></item>
 ///     <item><see cref="MappingModule"/></item>
 ///     <item><see cref="RequestValidationModule"/></item>
 /// </list>
@@ -66,7 +64,6 @@ public abstract class BaseStartup
             .AddHttpContext()
             .AddTimeManagement(Configuration)
             .AddMediatr()
-            .AddJsonSerialization(ConfigureJsonSettings)
             .AddMapping()
             .AddRequestValidation();
 

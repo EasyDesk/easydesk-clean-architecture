@@ -2,8 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver.Idempotence;
-using EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
@@ -15,6 +13,8 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Data.SqlClient;

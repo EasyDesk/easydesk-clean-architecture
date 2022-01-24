@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static EasyDesk.Tools.Options.OptionImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 
 public static class EventTypeScanning
 {

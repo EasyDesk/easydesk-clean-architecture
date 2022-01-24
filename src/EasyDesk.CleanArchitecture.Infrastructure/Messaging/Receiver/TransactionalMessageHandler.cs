@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 
 public class TransactionalMessageHandler : IMessageHandler
 {

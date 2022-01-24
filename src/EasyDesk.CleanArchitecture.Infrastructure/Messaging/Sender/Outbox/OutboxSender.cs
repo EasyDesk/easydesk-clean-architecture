@@ -1,4 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.Tools.Observables;
 using EasyDesk.Tools.Options;
 using System.Collections.Generic;
@@ -6,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static EasyDesk.Tools.Options.OptionImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 
 public sealed class OutboxSender : IMessageSender
 {

@@ -2,20 +2,18 @@
 using System.Linq;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.ExternalEvents;
-using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
-using EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
-using EasyDesk.CleanArchitecture.Domain.Time;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.DependencyInjection;
 using static EasyDesk.Tools.Options.OptionImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 
 public class MessagingOptions
 {
@@ -52,11 +50,7 @@ public class MessagingOptions
 
         decorate?.Invoke();
 
-        _services.AddScoped<IExternalEventPublisher>(provider => new ExternalEventPublisher(
-            provider.GetRequiredService<IMessageSender>(),
-            provider.GetRequiredService<ITimestampProvider>(),
-            provider.GetRequiredService<IJsonSerializer>(),
-            _app.IsMultitenant() ? provider.GetRequiredService<ITenantProvider>() : new NoTenant()));
+        _services.AddScoped<IExternalEventPublisher, ExternalEventPublisher>();
 
         return this;
     }
@@ -80,10 +74,7 @@ public class MessagingOptions
         var eventTypes = EventTypeScanning.FindExternalEventTypes(_app.ApplicationAssemblyMarker);
 
         _services.AddSingleton(new MessageReceiverDefinition(eventTypes.Select(t => t.GetEventTypeName()).ToArray()));
-        _services.AddScoped<IMessageHandler>(provider => new ExternalEventMessageHandler(
-            provider.GetRequiredService<IExternalEventHandler>(),
-            provider.GetRequiredService<IJsonSerializer>(),
-            eventTypes));
+        _services.AddScoped<IMessageHandler, ExternalEventMessageHandler>();
 
         decorate?.Invoke();
         if (_app.IsMultitenant())

@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver.Idempotence;
-using EasyDesk.CleanArchitecture.UnitTests.Application.Messaging.MessageBroker;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
 using NSubstitute;
 using Shouldly;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ public class IdempotentMessageHandlerTests
     private readonly IdempotentMessageHandler _sut;
     private readonly IMessageHandler _handler;
     private readonly IIdempotenceManager _idempotenceManager;
-    private readonly Message _message = MessageBrokerTestingUtils.NewDefaultMessage();
+    private readonly Message _message = Message.CreateEmpty();
 
     public IdempotentMessageHandlerTests()
     {

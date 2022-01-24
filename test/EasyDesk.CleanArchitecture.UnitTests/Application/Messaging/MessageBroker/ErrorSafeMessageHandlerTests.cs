@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -15,7 +16,7 @@ public class ErrorSafeMessageHandlerTests
     private readonly ErrorSafeMessageHandler _sut;
     private readonly IMessageHandler _handler;
     private readonly ILogger<ErrorSafeMessageHandler> _logger;
-    private readonly Message _message = MessageBrokerTestingUtils.NewDefaultMessage();
+    private readonly Message _message = Message.CreateEmpty();
 
     public ErrorSafeMessageHandlerTests()
     {

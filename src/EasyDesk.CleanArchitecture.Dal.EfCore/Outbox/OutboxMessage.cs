@@ -9,13 +9,13 @@ public class OutboxMessage
 {
     public Guid Id { get; set; }
 
-    public string Content { get; set; }
+    public byte[] Content { get; set; }
+
+    public byte[] Metadata { get; set; }
 
     public string Type { get; set; }
 
-    public string TenantId { get; set; }
-
-    public Timestamp Timestamp { get; set; }
+    public Timestamp EnqueuedTimestamp { get; set; }
 
     public class Configuration : IEntityTypeConfiguration<OutboxMessage>
     {
@@ -27,10 +27,9 @@ public class OutboxMessage
                 .IsRequired();
 
             builder.Property(x => x.Type)
-                .IsRequired()
-                .HasMaxLength(50);
+                .IsRequired();
 
-            builder.Property(x => x.Timestamp)
+            builder.Property(x => x.EnqueuedTimestamp)
                 .IsRequired();
         }
     }

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 
 public record MessageReceiverDefinition(IEnumerable<string> SupportedTypes);

@@ -1,7 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Application.Tenants;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+using EasyDesk.CleanArchitecture.Application.Tenants;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver;
 
 internal class TenantAwareMessageHandler : IMessageHandler
 {
@@ -16,7 +18,7 @@ internal class TenantAwareMessageHandler : IMessageHandler
 
     public async Task<MessageHandlerResult> Handle(Message message)
     {
-        _tenantInitializer.InitializeTenant(message.TenantId);
+        _tenantInitializer.InitializeTenant(message.GetMetadata("TenantId")); // TODO: use a constant.
         return await _handler.Handle(message);
     }
 }

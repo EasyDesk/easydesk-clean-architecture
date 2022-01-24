@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver.Idempotence;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 

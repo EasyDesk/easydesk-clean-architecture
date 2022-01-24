@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Sender.Outbox;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 
 public class PrimaryOutboxBackgroundService : BackgroundService
 {
