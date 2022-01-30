@@ -44,7 +44,6 @@ public class NotificationHandlerBaseTests
         _eventContext = new(Value);
 
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _unitOfWork.Save().Returns(Ok);
     }
 
     private async Task Handle() =>
@@ -88,17 +87,6 @@ public class NotificationHandlerBaseTests
         await HandleWithUnitOfWork();
 
         await _unitOfWork.Received(1).Save();
-    }
-
-    [Fact]
-    public async Task Handle_ShouldSetAnErrorOnTheContext_IfSavingTheUnitOfWorkFails()
-    {
-        var error = TestError.Create();
-        _unitOfWork.Save().Returns(error);
-
-        await HandleWithUnitOfWork();
-
-        _eventContext.Error.ShouldContain(error);
     }
 
     [Fact]

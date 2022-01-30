@@ -41,7 +41,6 @@ public class UnitOfWorkHandlerTests
         _resultProvider().Returns(Ok);
 
         _unitOfWork = Substitute.For<IUnitOfWork>();
-        _unitOfWork.Save().Returns(Ok);
 
         _sut = new(_resultProvider, _unitOfWork);
     }
@@ -79,20 +78,7 @@ public class UnitOfWorkHandlerTests
         await _unitOfWork.DidNotReceive().Save();
     }
 
-    [Fact]
-    public async Task Handle_ShouldReturnAnError_IfSavingReturnsAnError()
-    {
-        var response = SaveFailedResponse();
-        _unitOfWork.Save().Returns(response);
-
-        var result = await SendCommand();
-
-        result.ShouldBe(response);
-    }
-
     private async Task<Response<Nothing>> SendCommand() => await _sut.Handle(new(), default);
 
     private static Response<Nothing> HandlerFailedResponse() => TestError.Create("HANDLER_FAILED");
-
-    private static Response<Nothing> SaveFailedResponse() => TestError.Create("SAVE_FAILED");
 }

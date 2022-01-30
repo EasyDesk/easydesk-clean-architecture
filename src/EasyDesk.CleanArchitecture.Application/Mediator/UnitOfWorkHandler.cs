@@ -17,7 +17,7 @@ public abstract class UnitOfWorkHandler<TRequest, TResponse> : RequestHandlerBas
     protected sealed override async Task<Response<TResponse>> Handle(TRequest request)
     {
         return await HandleRequest(request)
-            .ThenRequireAsync(_ => _unitOfWork.Save());
+            .ThenIfSuccessAsync(_ => _unitOfWork.Save());
     }
 
     protected abstract Task<Response<TResponse>> HandleRequest(TRequest request);

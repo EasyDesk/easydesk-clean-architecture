@@ -10,5 +10,5 @@ public interface ISaveChangesExtension
 {
     int Run(DbContext context, Func<int> next);
 
-    Task<int> RunAsync(DbContext context, AsyncFunc<CancellationToken, int> next, CancellationToken cancellationToken);
+    Task<int> RunAsync(DbContext context, AsyncFunc<int> next, CancellationToken cancellationToken);
 }

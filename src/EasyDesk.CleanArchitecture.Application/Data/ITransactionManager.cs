@@ -18,7 +18,9 @@ public interface ITransactionManager : IDisposable
 
     Task Begin();
 
-    Task<Response<Nothing>> Commit();
+    Task Commit();
+
+    Task Rollback();
 }
 
 public static class TransactionManagerExtensions
@@ -26,12 +28,26 @@ public static class TransactionManagerExtensions
     public static async Task<Response<T>> RunTransactionally<T>(this ITransactionManager transactionManager, AsyncFunc<Response<T>> action)
     {
         await transactionManager.Begin();
-        return await action()
-            .ThenRequireAsync(_ => transactionManager.Commit());
+        try
+        {
+            var response = await action();
+            await response.MatchAsync(
+                success: _ => transactionManager.Commit(),
+                failure: _ => transactionManager.Rollback());
+            return response;
+        }
+        catch
+        {
+            await transactionManager.Rollback();
+            throw;
+        }
     }
 
     public static async Task<Response<T>> RunTransactionally<T>(this ITransactionManager transactionManager, AsyncFunc<T> action) =>
         await transactionManager.RunTransactionally(async () => Success(await action()));
+
+    public static async Task<Response<Nothing>> RunTransactionally(this ITransactionManager transactionManager, AsyncAction action) =>
+        await transactionManager.RunTransactionally(() => Functions.Execute(action));
 }
 
 public class BeforeCommitContext

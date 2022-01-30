@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using System;
 
@@ -10,7 +9,7 @@ public record PersonCreated(Guid PersonId) : IMessage;
 
 public class PropagatePersonCreatedEvent : DomainEventPropagator<PersonCreatedEvent>
 {
-    public PropagatePersonCreatedEvent(IMessageSender publisher) : base(publisher)
+    public PropagatePersonCreatedEvent(MessageBroker broker) : base(broker)
     {
     }
 

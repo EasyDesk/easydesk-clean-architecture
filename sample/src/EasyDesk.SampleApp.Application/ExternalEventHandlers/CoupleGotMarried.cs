@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Receiver;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -13,7 +12,7 @@ namespace EasyDesk.SampleApp.Application.ExternalEventHandlers;
 
 public record CoupleGotMarried(Guid GroomId, Guid BrideId) : IMessage;
 
-public class CoupleGotMarriedHandler : TransactionalMessageHandler<CoupleGotMarried>
+public class CoupleGotMarriedHandler : IMessageHandler<CoupleGotMarried>
 {
     private readonly IPersonRepository _personRepository;
 

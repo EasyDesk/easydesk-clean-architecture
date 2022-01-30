@@ -1,16 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Observables;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Shouldly;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data;
 
@@ -18,9 +15,11 @@ public class TransactionManagerBaseTests
 {
     public interface ITestTransaction : IDisposable
     {
-        void Begin();
+        Task Begin();
 
-        Response<Nothing> Commit();
+        Task Commit();
+
+        Task Rollback();
     }
 
     public class TestTransactionManager : TransactionManagerBase<ITestTransaction>
@@ -32,14 +31,15 @@ public class TransactionManagerBaseTests
             _testTransaction = testTransaction;
         }
 
-        protected override Task<ITestTransaction> BeginTransaction()
+        protected override async Task<ITestTransaction> BeginTransaction()
         {
-            _testTransaction.Begin();
-            return Task.FromResult(_testTransaction);
+            await _testTransaction.Begin();
+            return _testTransaction;
         }
 
-        protected override Task<Response<Nothing>> CommitTransaction(ITestTransaction transaction) =>
-            Task.FromResult(transaction.Commit());
+        protected override Task CommitTransaction(ITestTransaction transaction) => transaction.Commit();
+
+        protected override Task RollbackTransaction(ITestTransaction transaction) => transaction.Rollback();
     }
 
     private readonly TestTransactionManager _sut;
@@ -48,7 +48,6 @@ public class TransactionManagerBaseTests
     public TransactionManagerBaseTests()
     {
         _transaction = Substitute.For<ITestTransaction>();
-        _transaction.Commit().Returns(Ok);
         _sut = new(_transaction);
     }
 
@@ -57,7 +56,7 @@ public class TransactionManagerBaseTests
     {
         await _sut.Begin();
 
-        _transaction.Received(1).Begin();
+        await _transaction.Received(1).Begin();
     }
 
     [Fact]
@@ -74,7 +73,7 @@ public class TransactionManagerBaseTests
         await _sut.Begin();
         await _sut.Commit();
 
-        _transaction.Received(1).Commit();
+        await _transaction.Received(1).Commit();
     }
 
     [Fact]
@@ -96,10 +95,9 @@ public class TransactionManagerBaseTests
 
         _sut.BeforeCommit.Subscribe(context => context.CancelCommit(error));
         await _sut.Begin();
-        var commitResult = await _sut.Commit();
+        await _sut.Commit();
 
-        commitResult.ShouldBe(Failure<Nothing>(error));
-        _transaction.DidNotReceive().Commit();
+        await _transaction.DidNotReceive().Commit();
     }
 
     [Fact]
@@ -115,17 +113,22 @@ public class TransactionManagerBaseTests
     }
 
     [Fact]
-    public async Task Commit_ShouldNotifyAfterCommitHandlers_IfCommitFails()
+    public async Task Commit_ShouldNotNotifyAfterCommitHandlers_IfCommitFails()
     {
         var handler = Substitute.For<AsyncAction<AfterCommitContext>>();
-        var error = Errors.Generic("Commit failed");
-        _transaction.Commit().Returns(Failure<Nothing>(error));
+        _transaction.Commit().Throws<Exception>();
 
-        _sut.AfterCommit.Subscribe(handler);
-        await _sut.Begin();
-        await _sut.Commit();
+        try
+        {
+            _sut.AfterCommit.Subscribe(handler);
+            await _sut.Begin();
+            await _sut.Commit();
+        }
+        catch
+        {
+        }
 
-        await handler.Received(1)(Arg.Is<AfterCommitContext>(ctx => ctx.Error.Contains(error)));
+        await handler.DidNotReceiveWithAnyArgs()(default);
     }
 
     [Fact]

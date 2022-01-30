@@ -3,6 +3,7 @@ using System.Linq;
 using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
@@ -16,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
+using Rebus.Config;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup;
@@ -82,13 +83,9 @@ public abstract class BaseStartup
     {
     }
 
-    protected virtual void ConfigureJsonSettings(JsonSerializerSettings settings)
-    {
-    }
-
     public abstract void ConfigureApp(AppBuilder builder);
 
-    public void Configure(IApplicationBuilder app)
+    public virtual void Configure(IApplicationBuilder app)
     {
         if (Environment.IsDevelopment())
         {
@@ -97,6 +94,12 @@ public abstract class BaseStartup
         else
         {
             app.UseHttpsRedirection();
+        }
+
+        // TODO: move this away.
+        if (_appDescription.HasRebusMessaging())
+        {
+            app.ApplicationServices.UseRebus();
         }
 
         app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

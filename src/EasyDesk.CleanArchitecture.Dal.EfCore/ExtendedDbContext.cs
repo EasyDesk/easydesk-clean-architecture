@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Extensions;
+using EasyDesk.Tools.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,20 +14,29 @@ public abstract class ExtendedDbContext : DbContext
     {
     }
 
-    protected sealed override void OnModelCreating(ModelBuilder modelBuilder) =>
-        this.GetService<ModelExtensionsRunner>().Run(modelBuilder, builder =>
+    protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        void LastStep()
         {
-            SetupModel(builder);
-            base.OnModelCreating(builder);
-        });
+            SetupModel(modelBuilder);
+            base.OnModelCreating(modelBuilder);
+        }
+        this.GetService<IEnumerable<IModelExtension>>().FoldRight(LastStep, (ext, curr) => () => ext.Run(modelBuilder, curr))();
+    }
 
     protected virtual void SetupModel(ModelBuilder modelBuilder)
     {
     }
 
-    public override int SaveChanges() =>
-        this.GetService<SaveChangesExtensionsRunner>().Run(this);
+    public override int SaveChanges()
+    {
+        return this.GetService<IEnumerable<ISaveChangesExtension>>()
+            .FoldRight(() => base.SaveChanges(), (ext, curr) => () => ext.Run(this, curr))();
+    }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        this.GetService<SaveChangesExtensionsRunner>().RunAsync(this, cancellationToken);
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await this.GetService<IEnumerable<ISaveChangesExtension>>()
+            .FoldRight(() => base.SaveChangesAsync(), (ext, curr) => () => ext.RunAsync(this, () => curr(), cancellationToken))();
+    }
 }

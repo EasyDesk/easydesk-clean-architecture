@@ -35,17 +35,16 @@ public abstract class NotificationHandlerBase<T> : INotificationHandler<EventCon
         }
 
         await Handle(context.EventData)
-            .ThenRequireAsync(_ => Save())
+            .ThenIfSuccessAsync(_ => Save())
             .ThenIfFailure(context.SetError);
     }
 
-    private async Task<Response<Nothing>> Save()
+    private async Task Save()
     {
         if (_unitOfWork.IsPresent)
         {
-            return await _unitOfWork.Value.Save();
+            await _unitOfWork.Value.Save();
         }
-        return Ok;
     }
 
     protected abstract Task<Response<Nothing>> Handle(T ev);

@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Tools;
@@ -11,16 +10,16 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator;
 public abstract class DomainEventPropagator<T> : DomainEventHandlerBase<T>
     where T : DomainEvent
 {
-    private readonly IMessageSender _publisher;
+    private readonly MessageBroker _broker;
 
-    public DomainEventPropagator(IMessageSender publisher)
+    public DomainEventPropagator(MessageBroker broker)
     {
-        _publisher = publisher;
+        _broker = broker;
     }
 
     protected override async Task<Response<Nothing>> Handle(T ev)
     {
-        await _publisher.Publish(ConvertToMessage(ev));
+        await _broker.Publish(ConvertToMessage(ev));
         return Ok;
     }
 

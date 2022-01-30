@@ -1,14 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.Sender;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
-using EasyDesk.CleanArchitecture.Domain.Time;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
+using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.Tools.Options;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.EntityFrameworkCore;
-using System;
+using Newtonsoft.Json;
+using Rebus.Messages;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,81 +18,57 @@ public class EfCoreOutbox : IOutbox
 
     private readonly OutboxContext _outboxContext;
     private readonly EfCoreTransactionManager _transactionManager;
-    private readonly IMessageSender _publisher;
-    private readonly ITimestampProvider _timestampProvider;
-    private readonly OutboxSerializer _outboxSerializer;
+    private readonly JsonSerializer _serializer;
 
     public EfCoreOutbox(
         OutboxContext outboxContext,
-        EfCoreTransactionManager transactionManager,
-        IMessageSender publisher,
-        ITimestampProvider timestampProvider,
-        OutboxSerializer outboxSerializer)
+        EfCoreTransactionManager transactionManager)
     {
         _outboxContext = outboxContext;
         _transactionManager = transactionManager;
-        _publisher = publisher;
-        _timestampProvider = timestampProvider;
-        _outboxSerializer = outboxSerializer;
+        _serializer = JsonSerializer.Create(JsonDefaults.DefaultSerializerSettings());
     }
 
-    public async Task StoreMessages(IEnumerable<Message> messages)
+    public void EnqueueMessageForStorage(TransportMessage message, string destinationAddress)
+    {
+        var outboxMessages = new OutboxMessage
+        {
+            Content = message.Body,
+            Headers = _serializer.SerializeToBsonBytes(message.Headers),
+            DestinationAddress = destinationAddress
+        };
+        _outboxContext.Messages.AddRange(outboxMessages);
+    }
+
+    public async Task StoreEnqueuedMessages()
     {
         await _transactionManager.RegisterExternalDbContext(_outboxContext);
-        var outboxMessages = messages.Select(m => ToOutboxMessage(m, _timestampProvider.Now));
-        _outboxContext.Messages.AddRange(outboxMessages);
         await _outboxContext.SaveChangesAsync();
     }
 
-    private OutboxMessage ToOutboxMessage(Message message, Timestamp timestamp)
+    public async Task<IEnumerable<(TransportMessage, string)>> RetrieveNextMessages(int count)
     {
-        return new OutboxMessage
-        {
-            Id = message.Id,
-            Content = _outboxSerializer.Serialize(message.Content),
-            Metadata = _outboxSerializer.Serialize(message.Metadata),
-            EnqueuedTimestamp = timestamp,
-            Type = message.Content.GetType().AssemblyQualifiedName
-        };
-    }
+        await _transactionManager.RegisterExternalDbContext(_outboxContext);
 
-    public async Task PublishMessages(IEnumerable<Guid> messageIds)
-    {
-        await Publish(q => q.Where(m => messageIds.Contains(m.Id)));
-    }
-
-    public async Task Flush()
-    {
-        var from = _timestampProvider.Now - MessageAgingTime.AsTimeOffset;
-        await Publish(q => q.Where(m => m.EnqueuedTimestamp < from));
-    }
-
-    private async Task Publish(QueryWrapper<OutboxMessage> filter)
-    {
         var outboxMessages = await _outboxContext.Messages
-            .Wrap(filter)
-            .OrderBy(m => m.EnqueuedTimestamp)
+            .OrderBy(m => m.Id)
+            .Take(count)
             .ToListAsync();
 
-        if (!outboxMessages.Any())
+        var messages = outboxMessages.Select(m => (ToTransportMessage(m), m.DestinationAddress));
+
+        if (messages.Any())
         {
-            return;
+            _outboxContext.Messages.RemoveRange(outboxMessages);
+            await _outboxContext.SaveChangesAsync();
         }
 
-        var messages = outboxMessages.Select(ToMessage);
-
-        await _publisher.Send(messages);
-
-        _outboxContext.Messages.RemoveRange(outboxMessages);
-        await _outboxContext.SaveChangesAsync();
+        return messages;
     }
 
-    private Message ToMessage(OutboxMessage outboxMessage)
+    private TransportMessage ToTransportMessage(OutboxMessage outboxMessage)
     {
-        var messageType = Type.GetType(outboxMessage.Type);
-        return new Message(
-            Id: outboxMessage.Id,
-            Content: _outboxSerializer.Deserialize(outboxMessage.Content, messageType),
-            Metadata: _outboxSerializer.Deserialize<IImmutableDictionary<string, string>>(outboxMessage.Metadata));
+        var headers = _serializer.DeserializeFromBsonBytes<Dictionary<string, string>>(outboxMessage.Headers);
+        return new TransportMessage(headers, outboxMessage.Content);
     }
 }

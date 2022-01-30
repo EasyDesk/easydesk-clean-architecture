@@ -1,11 +1,7 @@
 ﻿using AutoMapper;
-using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.Tools;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
@@ -13,35 +9,21 @@ public abstract partial class AbstractMediatrController : AbstractController
 {
     private IMediator _mediator;
     private IMapper _mapper;
-    private ITransactionManager _transactionManager;
 
     protected IMediator Mediator => _mediator ??= GetService<IMediator>();
 
     protected IMapper Mapper => _mapper ??= GetService<IMapper>();
 
-    protected ITransactionManager TransactionManager => _transactionManager ??= GetService<ITransactionManager>();
-
     private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 
-    protected ActionResultBuilder<TResponse> Command<TResponse>(CommandBase<TResponse> command, bool transactional = true) =>
-        MakeRequest(() => RunCommand(command, transactional));
-
-    private async Task<Response<TResponse>> RunCommand<TResponse>(CommandBase<TResponse> command, bool transactional)
-    {
-        if (transactional)
-        {
-            return await TransactionManager.RunTransactionally(() => DefaultSend(command));
-        }
-        return await DefaultSend(command);
-    }
+    protected ActionResultBuilder<TResponse> Command<TResponse>(CommandBase<TResponse> command) =>
+        MakeRequest(command);
 
     protected ActionResultBuilder<TResponse> Query<TResponse>(QueryBase<TResponse> query) =>
-        MakeRequest(() => DefaultSend(query));
+        MakeRequest(query);
 
-    private ActionResultBuilder<TResponse> MakeRequest<TResponse>(AsyncFunc<Response<TResponse>> request)
+    private ActionResultBuilder<TResponse> MakeRequest<TResponse>(RequestBase<TResponse> request)
     {
-        return new(request, this);
+        return new(() => Mediator.Send(request), this);
     }
-
-    private async Task<Response<T>> DefaultSend<T>(RequestBase<T> request) => await Mediator.Send(request);
 }

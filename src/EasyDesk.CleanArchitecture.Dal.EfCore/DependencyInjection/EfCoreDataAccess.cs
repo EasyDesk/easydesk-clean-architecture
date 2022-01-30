@@ -2,6 +2,8 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
+using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
@@ -13,8 +15,6 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Data.SqlClient;
@@ -29,7 +29,7 @@ using System.Collections.Generic;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
 public class EfCoreDataAccess<T> : IDataAccessImplementation
-    where T : EntitiesContext
+    where T : DomainContext
 {
     private readonly IConfiguration _configuration;
     private readonly bool _applyMigrations;
@@ -61,7 +61,7 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 
     public void AddUnitOfWork(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<T>(services, EntitiesContext.SchemaName, app);
+        AddDbContext<T>(services, DomainContext.SchemaName, app, ConfigureForMultitenancy(app));
         services.AddScoped<IUnitOfWork>(provider => new EfCoreUnitOfWork(provider.GetRequiredService<T>()));
     }
 
@@ -91,11 +91,19 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 
     public void AddRoleManager(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName, app);
+        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName, app, ConfigureForMultitenancy(app));
         services.AddScoped<EfCoreAuthorizationManager>();
         services.AddScoped<IUserRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
         services.AddScoped<IUserRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
     }
+
+    private Action<IServiceProvider, DbContextOptionsBuilder> ConfigureForMultitenancy(AppDescription app) => (provider, options) =>
+    {
+        if (app.IsMultitenant())
+        {
+            options.AddOrUpdateExtension(new MultitenantExtension(provider.GetRequiredService<ITenantProvider>()));
+        }
+    };
 
     private void AddDbContext<C>(IServiceCollection services, string schema, AppDescription app, Action<IServiceProvider, DbContextOptionsBuilder> configure = null)
         where C : DbContext
@@ -129,10 +137,6 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
             ConfigureMigrationsHistoryTable(sqlServerOptions, schema);
         });
         options.AddOrUpdateExtension(new MappingPluginOptionsExtension(_mappingsByType));
-        if (app.IsMultitenant())
-        {
-            options.AddOrUpdateExtension(new MultitenantExtension(provider.GetRequiredService<ITenantProvider>()));
-        }
     }
 
     private void ConfigureMigrationsHistoryTable(SqlServerDbContextOptionsBuilder sqlServerOptions, string schema)

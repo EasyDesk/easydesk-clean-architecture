@@ -6,7 +6,6 @@ using EasyDesk.Tools.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +16,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 
 public class MultitenantExtension : IDbContextOptionsExtension
 {
-    private const string TenantIdProperty = "TenantId";
-
     private readonly ITenantProvider _tenantProvider;
 
     public MultitenantExtension(ITenantProvider tenantProvider)
@@ -30,8 +27,6 @@ public class MultitenantExtension : IDbContextOptionsExtension
     public void ApplyServices(IServiceCollection services)
     {
         services.AddSingleton(_tenantProvider);
-        services.TryAddSingleton<ModelExtensionsRunner>();
-        services.TryAddSingleton<SaveChangesExtensionsRunner>();
         services.AddSingleton<ISaveChangesExtension, SaveChangesExtension>();
         services.AddSingleton<IModelExtension, ModelExtension>();
     }
@@ -76,20 +71,18 @@ public class MultitenantExtension : IDbContextOptionsExtension
             return next();
         }
 
-        public async Task<int> RunAsync(DbContext dbContext, AsyncFunc<CancellationToken, int> next, CancellationToken cancellationToken)
+        public async Task<int> RunAsync(DbContext dbContext, AsyncFunc<int> next, CancellationToken cancellationToken)
         {
             SetTenantIdToAddedEntities(dbContext);
-            return await next(cancellationToken);
+            return await next();
         }
 
         private void SetTenantIdToAddedEntities(DbContext dbContext)
         {
-            _tenantProvider.TenantId.IfPresent(tenantId =>
-            {
-                dbContext.ChangeTracker.Entries()
-                    .Where(e => e.State == EntityState.Added)
-                    .ForEach(e => e.Property(TenantIdProperty).CurrentValue = tenantId);
-            });
+            var tenantId = _tenantProvider.TenantId.OrElseNull();
+            dbContext.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added)
+                .ForEach(e => e.Property(nameof(IMultitenantEntity.TenantId)).CurrentValue = tenantId);
         }
     }
 
@@ -102,11 +95,12 @@ public class MultitenantExtension : IDbContextOptionsExtension
             _tenantProvider = tenantProvider;
         }
 
-        public void Run(ModelBuilder modelBuilder, Action<ModelBuilder> next)
+        public void Run(ModelBuilder modelBuilder, Action next)
         {
             var entityTypesWithinTenant = modelBuilder.Model
                 .GetEntityTypes()
                 .SelectMany(e => e.ClrType.AsOption())
+                .Where(t => t.IsAssignableTo(typeof(IMultitenantEntity)))
                 .ToList();
 
             if (entityTypesWithinTenant.Any())
@@ -118,20 +112,17 @@ public class MultitenantExtension : IDbContextOptionsExtension
                     .ForEach(m => m.Invoke(this, args));
             }
 
-            next(modelBuilder);
+            next();
         }
 
         public void ConfigureEntityWithinTenant<T>(ModelBuilder modelBuilder)
-            where T : class
+            where T : class, IMultitenantEntity
         {
             var entityBuilder = modelBuilder.Entity<T>();
 
-            entityBuilder.Property<string>(TenantIdProperty)
-                .IsRequired();
+            entityBuilder.HasIndex(x => x.TenantId);
 
-            entityBuilder.HasIndex(TenantIdProperty);
-
-            entityBuilder.HasQueryFilter(x => EF.Property<string>(x, TenantIdProperty) == _tenantProvider.TenantId.OrElseNull());
+            entityBuilder.HasQueryFilter(x => x.TenantId == null || x.TenantId == _tenantProvider.TenantId.OrElseNull());
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -16,20 +15,20 @@ public class EfCoreIdempotenceManager : IIdempotenceManager
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<bool> HasBeenProcessed(Message message)
+    public async Task<bool> HasBeenProcessed(string messageId)
     {
         await _unitOfWork.RegisterExternalDbContext(_idempotenceContext);
         return await _idempotenceContext
             .HandledMessages
-            .AnyAsync(e => e.Id == message.Id);
+            .AnyAsync(e => e.Id == messageId);
     }
 
-    public async Task MarkAsProcessed(Message message)
+    public async Task MarkAsProcessed(string messageId)
     {
         await _unitOfWork.RegisterExternalDbContext(_idempotenceContext);
         _idempotenceContext.HandledMessages.Add(new HandledMessage
         {
-            Id = message.Id
+            Id = messageId
         });
         await _idempotenceContext.SaveChangesAsync();
     }

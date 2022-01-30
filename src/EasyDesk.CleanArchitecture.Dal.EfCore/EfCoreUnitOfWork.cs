@@ -1,10 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.Tools;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore;
 
@@ -17,24 +13,5 @@ public class EfCoreUnitOfWork : IUnitOfWork
         _context = context;
     }
 
-    public async Task<Response<Nothing>> Save()
-    {
-        try
-        {
-            await _context.SaveChangesAsync();
-            return Ok;
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            return Errors.Generic(
-                "A concurrency error occurred while saving changes to the database: {message}",
-                ex.Message);
-        }
-        catch (DbUpdateException ex)
-        {
-            return Errors.Generic(
-                "An error occurred while saving changes to the database: {message}",
-                ex.Message);
-        }
-    }
+    public async Task Save() => await _context.SaveChangesAsync();
 }

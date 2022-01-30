@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.Tools;
+﻿using EasyDesk.Tools;
 using EasyDesk.Tools.Observables;
 using EasyDesk.Tools.Options;
 using System;
@@ -41,7 +40,7 @@ public abstract class TransactionManagerBase<TTransaction> : ITransactionManager
 
     protected abstract Task<TTransaction> BeginTransaction();
 
-    public async Task<Response<Nothing>> Commit()
+    public async Task Commit()
     {
         EnsureTransactionWasNotAlreadyCommitted();
         _wasCommitted = true;
@@ -49,12 +48,10 @@ public abstract class TransactionManagerBase<TTransaction> : ITransactionManager
         var beforeCommitContext = new BeforeCommitContext();
         await _beforeCommit.Emit(beforeCommitContext);
 
-        var commitResult = await CommitIfNotCanceled(beforeCommitContext);
+        await CommitIfNotCanceled(beforeCommitContext);
 
-        var afterCommitContext = new AfterCommitContext(commitResult.Error);
+        var afterCommitContext = new AfterCommitContext(beforeCommitContext.Error);
         await _afterCommit.Emit(afterCommitContext);
-
-        return commitResult;
     }
 
     private void EnsureTransactionWasNotAlreadyCommitted()
@@ -65,14 +62,21 @@ public abstract class TransactionManagerBase<TTransaction> : ITransactionManager
         }
     }
 
-    private async Task<Response<Nothing>> CommitIfNotCanceled(BeforeCommitContext beforeCommitContext)
+    private async Task CommitIfNotCanceled(BeforeCommitContext beforeCommitContext)
     {
-        return await beforeCommitContext.Error.Match(
+        await beforeCommitContext.Error.Match(
             some: e => Task.FromResult(Failure<Nothing>(e)),
             none: () => CommitTransaction(RequireTransaction()));
     }
 
-    protected abstract Task<Response<Nothing>> CommitTransaction(TTransaction transaction);
+    protected abstract Task CommitTransaction(TTransaction transaction);
+
+    public async Task Rollback()
+    {
+        await RollbackTransaction(RequireTransaction());
+    }
+
+    protected abstract Task RollbackTransaction(TTransaction transaction);
 
     public void Dispose()
     {
