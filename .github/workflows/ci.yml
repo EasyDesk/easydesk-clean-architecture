@@ -59,6 +59,7 @@ jobs:
     concurrency: release
     needs: [build]
     runs-on: ubuntu-20.04
+    permissions: write-all
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
