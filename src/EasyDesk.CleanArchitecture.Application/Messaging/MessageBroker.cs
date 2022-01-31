@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Time;
 using EasyDesk.Tools;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Rebus.Bus;
 using System;
 using System.Collections.Generic;
@@ -24,20 +23,6 @@ public sealed class MessageBroker
 
     public async Task SendLocal(IMessage message, Action<MessageOptions> configure = null) =>
         await UsingConfiguredHeaders(configure, headers => _bus.SendLocal(message, headers));
-
-    public async Task Defer(Duration delay, IMessage message, Action<MessageOptions> configure = null) =>
-        await UsingConfiguredHeaders(configure, headers => _bus.Defer(delay.AsTimeSpan, message, headers));
-
-    public async Task DeferLocal(Duration delay, IMessage message, Action<MessageOptions> configure = null) =>
-        await UsingConfiguredHeaders(configure, headers => _bus.DeferLocal(delay.AsTimeSpan, message, headers));
-
-    public async Task Defer(Timestamp time, IMessage message, Action<MessageOptions> configure = null) =>
-        await Defer(DurationUntil(time), message, configure);
-
-    public async Task DeferLocal(Timestamp time, IMessage message, Action<MessageOptions> configure = null) =>
-        await DeferLocal(DurationUntil(time), message, configure);
-
-    private Duration DurationUntil(Timestamp time) => Duration.FromTimeOffset(time - _timestampProvider.Now);
 
     public async Task Publish(IMessage message, Action<MessageOptions> configure = null) =>
         await UsingConfiguredHeaders(configure, headers => _bus.Publish(message, headers));

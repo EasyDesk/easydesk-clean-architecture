@@ -95,6 +95,7 @@ public abstract class BaseStartup
     ///     <item><see cref="RequestValidationModule"/></item>
     /// </list>
     /// </summary>
+    /// <param name="builder">The <see cref="AppBuilder"/>.</param>
     public abstract void ConfigureApp(AppBuilder builder);
 
     public virtual void Configure(IApplicationBuilder app)

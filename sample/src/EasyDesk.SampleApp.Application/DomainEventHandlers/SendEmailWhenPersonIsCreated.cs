@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.Tools;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using System;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ public class SendEmailWhenPersonIsCreated : DomainEventHandlerBase<PersonCreated
 
     protected override async Task<Response<Nothing>> Handle(PersonCreatedEvent ev)
     {
-        await _messageBroker.Defer(Duration.FromSeconds(10), new SendPersonCreatedEmail(ev.Person.Id));
+        await _messageBroker.Send(new SendPersonCreatedEmail(ev.Person.Id));
         return ResponseImports.Ok;
     }
 }
