@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.Tools.Options;
 using Rebus.Config;
 using Rebus.Injection;
+using Rebus.Routing;
 using Rebus.Transport;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,9 @@ public class RebusMessagingOptions
 
     public RebusMessagingOptions ConfigureTransport(Action<StandardConfigurer<ITransport>> configurationAction) =>
         ConfigureRebus(c => c.Transport(configurationAction));
+
+    public RebusMessagingOptions ConfigureRouting(Action<StandardConfigurer<IRouter>> configurationAction) =>
+        ConfigureRebus(c => c.Routing(configurationAction));
 
     public RebusMessagingOptions ConfigureRebusOptions(Action<OptionsConfigurer> configurationAction) =>
         ConfigureRebus(c => c.Options(configurationAction));

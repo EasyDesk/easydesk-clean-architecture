@@ -28,7 +28,7 @@ public class TransactionalDomainEventQueueTests
     }
 
     [Fact]
-    public async Task Notify_ShouldEnqueueEventsUntilTheUnitOfWorkIsCommitted()
+    public async Task Notify_ShouldEnqueueEventsUntilTheQueueIsFlushed()
     {
         _sut.Notify(_event1);
         _sut.Notify(_event2);

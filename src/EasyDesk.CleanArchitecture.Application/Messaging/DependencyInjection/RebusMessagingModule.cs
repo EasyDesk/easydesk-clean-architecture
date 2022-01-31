@@ -68,8 +68,9 @@ public class RebusMessagingModule : IAppModule
 
             configurer.Options(o => o.Decorate<IPipeline>(c =>
             {
-                var step = new ServiceScopeOpeningStep();
-                return new PipelineStepConcatenator(c.Get<IPipeline>()).OnReceive(step, PipelineAbsolutePosition.Front);
+                return new PipelineStepConcatenator(c.Get<IPipeline>())
+                    .OnReceive(new ServiceScopeOpeningStep(), PipelineAbsolutePosition.Front)
+                    .OnReceive(new DomainEventHandlingStep(), PipelineAbsolutePosition.Back);
             }));
 
             return configurer;

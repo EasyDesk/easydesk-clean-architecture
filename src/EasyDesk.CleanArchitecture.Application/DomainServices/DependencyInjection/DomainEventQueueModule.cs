@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 
-public class DomainModule : IAppModule
+public class DomainEventQueueModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
@@ -17,6 +17,6 @@ public static class DomainModuleExtensions
 {
     public static AppBuilder AddDomain(this AppBuilder builder)
     {
-        return builder.AddModule(new DomainModule());
+        return builder.AddModule(new DomainEventQueueModule());
     }
 }

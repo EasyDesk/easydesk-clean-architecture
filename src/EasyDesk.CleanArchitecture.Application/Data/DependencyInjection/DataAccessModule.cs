@@ -14,9 +14,7 @@ public class DataAccessModule : IAppModule
 
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        Implementation.AddUtilityServices(services, app);
-        Implementation.AddUnitOfWork(services, app);
-        Implementation.AddTransactionManager(services, app);
+        Implementation.AddMainDataAccessServices(services, app);
     }
 }
 

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Mediator;
+﻿using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
@@ -12,16 +11,16 @@ public static class CreatePerson
 {
     public record Command(string Name) : CommandBase<PersonSnapshot>;
 
-    public class Handler : UnitOfWorkHandler<Command, PersonSnapshot>
+    public class Handler : RequestHandlerBase<Command, PersonSnapshot>
     {
         private readonly IPersonRepository _personRepository;
 
-        public Handler(IPersonRepository personRepository, IUnitOfWork unitOfWork) : base(unitOfWork)
+        public Handler(IPersonRepository personRepository)
         {
             _personRepository = personRepository;
         }
 
-        protected override Task<Response<PersonSnapshot>> HandleRequest(Command request)
+        protected override Task<Response<PersonSnapshot>> Handle(Command request)
         {
             var person = Person.Create(Name.From(request.Name));
             _personRepository.Save(person);

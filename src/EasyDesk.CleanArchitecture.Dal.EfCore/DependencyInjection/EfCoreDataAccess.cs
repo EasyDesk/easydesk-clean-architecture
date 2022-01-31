@@ -54,20 +54,11 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 
     private string ConnectionString => _configuration.RequireConnectionString("MainDb");
 
-    public void AddUtilityServices(IServiceCollection services, AppDescription app)
+    public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         services.AddScoped(_ => new SqlConnection(ConnectionString));
-    }
-
-    public void AddUnitOfWork(IServiceCollection services, AppDescription app)
-    {
         AddDbContext<T>(services, DomainContext.SchemaName, app, ConfigureForMultitenancy(app));
-        services.AddScoped<IUnitOfWork>(provider => new EfCoreUnitOfWork(provider.GetRequiredService<T>()));
-    }
-
-    public void AddTransactionManager(IServiceCollection services, AppDescription app)
-    {
-        services.AddScoped<EfCoreTransactionManager>();
+        services.AddScoped(provider => new EfCoreTransactionManager(provider.GetRequiredService<T>()));
         services.AddScoped<ITransactionManager>(provider => provider.GetRequiredService<EfCoreTransactionManager>());
     }
 
@@ -110,7 +101,7 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     {
         services.AddDbContext<C>((provider, options) =>
         {
-            ConfigureDbContextOptions(provider, options, schema, app);
+            ConfigureDbContextOptions(provider, options, schema);
             _addtionalOptions?.Invoke(options);
             configure?.Invoke(provider, options);
         });
@@ -129,7 +120,7 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         _registeredDbContextTypes.Add(typeof(C));
     }
 
-    private void ConfigureDbContextOptions(IServiceProvider provider, DbContextOptionsBuilder options, string schema, AppDescription app)
+    private void ConfigureDbContextOptions(IServiceProvider provider, DbContextOptionsBuilder options, string schema)
     {
         var connection = provider.GetRequiredService<SqlConnection>();
         options.UseSqlServer(connection, sqlServerOptions =>

@@ -22,7 +22,11 @@ public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransac
         return await _context.Database.BeginTransactionAsync();
     }
 
-    protected override async Task CommitTransaction(IDbContextTransaction transaction) => await transaction.CommitAsync();
+    protected override async Task CommitTransaction(IDbContextTransaction transaction)
+    {
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+    }
 
     protected override async Task RollbackTransaction(IDbContextTransaction transaction) => await transaction.RollbackAsync();
 
@@ -32,7 +36,6 @@ public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransac
         {
             return;
         }
-
         await dbContext.Database.UseTransactionAsync(RequireTransaction().GetDbTransaction());
         _registeredDbContexts.Add(dbContext);
     }
