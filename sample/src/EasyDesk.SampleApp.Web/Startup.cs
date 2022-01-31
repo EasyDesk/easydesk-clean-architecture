@@ -93,9 +93,12 @@ public class Startup : BaseStartup
 
 public class TenantTestFilter : IAsyncActionFilter
 {
+    private static string _currentTenant = "test";
+
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        context.HttpContext.User.AddIdentity(new ClaimsIdentity(new Claim[] { new("tenantId", "test") }));
+        context.HttpContext.User.AddIdentity(new ClaimsIdentity(new Claim[] { new("tenantId", _currentTenant) }));
+        _currentTenant += "x";
         await next();
     }
 }

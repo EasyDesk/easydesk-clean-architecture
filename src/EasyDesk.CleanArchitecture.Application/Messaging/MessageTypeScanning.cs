@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using static EasyDesk.Tools.Options.OptionImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public static class MessageTypeScanning
 {

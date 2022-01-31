@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 
-public class IdempotenceContext : ExtendedDbContext
+public class IdempotenceContext : DbContext
 {
     public const string SchemaName = "idempotence";
 
@@ -12,10 +12,12 @@ public class IdempotenceContext : ExtendedDbContext
 
     public DbSet<HandledMessage> HandledMessages { get; set; }
 
-    protected override void SetupModel(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
         modelBuilder.ApplyConfiguration(new HandledMessage.Configuration());
+
+        base.OnModelCreating(modelBuilder);
     }
 }

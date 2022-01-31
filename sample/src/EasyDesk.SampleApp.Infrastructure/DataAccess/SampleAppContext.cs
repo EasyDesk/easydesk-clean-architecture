@@ -8,15 +8,14 @@ public class SampleAppContext : DomainContext
 {
     public DbSet<PersonModel> People { get; set; }
 
-    public SampleAppContext(DbContextOptions<SampleAppContext> options)
-        : base(options)
+    public SampleAppContext(DbContextOptions<SampleAppContext> options) : base(options)
     {
     }
 
-    protected override void SetupModel(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.SetupModel(modelBuilder);
-
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(SampleAppContext).Assembly);
+
+        base.OnModelCreating(modelBuilder);
     }
 }

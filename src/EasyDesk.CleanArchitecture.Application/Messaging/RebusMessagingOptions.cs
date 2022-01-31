@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.Tools.Options;
 using Rebus.Config;
 using Rebus.Injection;

@@ -5,13 +5,10 @@ using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants;
-using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Extensions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
@@ -57,7 +54,7 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         services.AddScoped(_ => new SqlConnection(ConnectionString));
-        AddDbContext<T>(services, DomainContext.SchemaName, app, ConfigureForMultitenancy(app));
+        AddDbContext<T>(services, DomainContext.SchemaName, app);
         services.AddScoped(provider => new EfCoreTransactionManager(provider.GetRequiredService<T>()));
         services.AddScoped<ITransactionManager>(provider => provider.GetRequiredService<EfCoreTransactionManager>());
     }
@@ -82,19 +79,11 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 
     public void AddRoleManager(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName, app, ConfigureForMultitenancy(app));
+        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName, app);
         services.AddScoped<EfCoreAuthorizationManager>();
         services.AddScoped<IUserRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
         services.AddScoped<IUserRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
     }
-
-    private Action<IServiceProvider, DbContextOptionsBuilder> ConfigureForMultitenancy(AppDescription app) => (provider, options) =>
-    {
-        if (app.IsMultitenant())
-        {
-            options.AddOrUpdateExtension(new MultitenantExtension(provider.GetRequiredService<ITenantProvider>()));
-        }
-    };
 
     private void AddDbContext<C>(IServiceCollection services, string schema, AppDescription app, Action<IServiceProvider, DbContextOptionsBuilder> configure = null)
         where C : DbContext

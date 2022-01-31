@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
 
-public abstract class DomainContext : ExtendedDbContext
+public abstract class DomainContext : MultitenantDbContext
 {
     public const string SchemaName = "domain";
 
@@ -10,8 +11,10 @@ public abstract class DomainContext : ExtendedDbContext
     {
     }
 
-    protected override void SetupModel(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
+
+        base.OnModelCreating(modelBuilder);
     }
 }
