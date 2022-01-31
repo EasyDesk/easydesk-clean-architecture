@@ -3,5 +3,5 @@
 public interface IRemoveRepository<T>
     where T : AggregateRoot
 {
-    void Remove(T entity);
+    void Remove(T aggregate);
 }
