@@ -1,5 +1,7 @@
 ﻿using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,19 +11,29 @@ public class PeriodicOutboxAwaker : BackgroundService
 {
     private readonly Duration _period;
     private readonly OutboxFlushRequestsChannel _requestsChannel;
+    private readonly ILogger<PeriodicOutboxAwaker> _logger;
 
-    public PeriodicOutboxAwaker(Duration period, OutboxFlushRequestsChannel requestsChannel)
+    public PeriodicOutboxAwaker(Duration period, OutboxFlushRequestsChannel requestsChannel, ILogger<PeriodicOutboxAwaker> logger)
     {
         _period = period;
         _requestsChannel = requestsChannel;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            _requestsChannel.RequestNewFlush();
-            await Task.Delay(_period.AsTimeSpan);
+            try
+            {
+                _requestsChannel.RequestNewFlush();
+                await Task.Delay(_period.AsTimeSpan);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error while requesting a new outbox flush");
+                throw;
+            }
         }
     }
 }

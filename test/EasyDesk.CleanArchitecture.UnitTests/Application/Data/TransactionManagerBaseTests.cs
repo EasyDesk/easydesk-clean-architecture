@@ -1,7 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools;
-using EasyDesk.Tools.Observables;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Shouldly;
@@ -79,7 +77,7 @@ public class TransactionManagerBaseTests
     [Fact]
     public async Task Commit_ShouldNotifyBeforeCommitHandlers()
     {
-        var handler = Substitute.For<AsyncAction<BeforeCommitContext>>();
+        var handler = Substitute.For<AsyncAction<Nothing>>();
 
         _sut.BeforeCommit.Subscribe(handler);
         await _sut.Begin();
@@ -89,33 +87,21 @@ public class TransactionManagerBaseTests
     }
 
     [Fact]
-    public async Task Commit_ShouldNotCommitThePhysicalTransaction_IfAnHandlerRequestsCancellation()
-    {
-        var error = TestError.Create();
-
-        _sut.BeforeCommit.Subscribe(context => context.CancelCommit(error));
-        await _sut.Begin();
-        await _sut.Commit();
-
-        await _transaction.DidNotReceive().Commit();
-    }
-
-    [Fact]
     public async Task Commit_ShouldNotifyAfterCommitHandlers_IfCommitIsSuccessful()
     {
-        var handler = Substitute.For<AsyncAction<AfterCommitContext>>();
+        var handler = Substitute.For<AsyncAction<Nothing>>();
 
         _sut.AfterCommit.Subscribe(handler);
         await _sut.Begin();
         await _sut.Commit();
 
-        await handler.Received(1)(Arg.Is<AfterCommitContext>(ctx => ctx.Error.IsAbsent));
+        await handler.Received(1)(Nothing.Value);
     }
 
     [Fact]
     public async Task Commit_ShouldNotNotifyAfterCommitHandlers_IfCommitFails()
     {
-        var handler = Substitute.For<AsyncAction<AfterCommitContext>>();
+        var handler = Substitute.For<AsyncAction<Nothing>>();
         _transaction.Commit().Throws<Exception>();
 
         try

@@ -8,7 +8,8 @@ public class DomainModule : IAppModule
 {
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped<IDomainEventNotifier, TransactionalDomainEventQueue>();
+        services.AddScoped<DomainEventQueue>();
+        services.AddScoped<IDomainEventNotifier>(provider => provider.GetRequiredService<DomainEventQueue>());
     }
 }
 

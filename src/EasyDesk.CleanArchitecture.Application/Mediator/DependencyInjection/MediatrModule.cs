@@ -29,6 +29,7 @@ public class MediatrModule : IAppModule
         }
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviorWrapper<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainConstraintsViolationHandlerWrapper<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainEventHandlingBehaviorWrapper<,>));
     }
 }
 

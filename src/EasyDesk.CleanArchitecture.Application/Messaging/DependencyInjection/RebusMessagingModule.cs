@@ -1,5 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
+﻿using System;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Application.Modules;
@@ -10,12 +12,10 @@ using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Pipeline;
-using Rebus.Serialization.Json;
 using Rebus.Serialization;
+using Rebus.Serialization.Json;
 using Rebus.Topic;
 using Rebus.Transport;
-using System;
-using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 
@@ -54,7 +54,7 @@ public class RebusMessagingModule : IAppModule
 
             _options.OutboxOptions.IfPresent(_ =>
             {
-                configurer.Options(t => t.Decorate(c => new TransportWithOutbox(c.Get<ITransport>())));
+                configurer.Options(t => t.Decorate<ITransport>(c => new TransportWithOutbox(c.Get<ITransport>())));
             });
 
             if (_options.IsIdempotent)
@@ -84,7 +84,8 @@ public class RebusMessagingModule : IAppModule
             services.AddScoped<OutboxTransactionHelper>();
             services.AddHostedService(provider => new PeriodicOutboxAwaker(
                 outboxOptions.FlushingPeriod,
-                provider.GetRequiredService<OutboxFlushRequestsChannel>()));
+                provider.GetRequiredService<OutboxFlushRequestsChannel>(),
+                provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
 
             services.AddHostedService<OutboxFlusherBackgroundService>();
             services.AddSingleton<OutboxFlushRequestsChannel>();

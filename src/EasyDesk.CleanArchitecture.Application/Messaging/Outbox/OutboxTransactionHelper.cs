@@ -25,7 +25,7 @@ public class OutboxTransactionHelper
         }
 
         _transactionManager.BeforeCommit.Subscribe(_ => _outbox.StoreEnqueuedMessages());
-        _transactionManager.AfterCommit.Subscribe(context => _requestsChannel.RequestNewFlush());
+        _transactionManager.AfterCommit.Subscribe(_ => _requestsChannel.RequestNewFlush());
         _flushRequestWasRegistered = true;
     }
 }

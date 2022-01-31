@@ -31,6 +31,7 @@ public class OutboxFlusherBackgroundService : BackgroundService
             {
                 using var scope = _serviceScopeFactory.CreateScope();
                 await scope.ServiceProvider.GetRequiredService<OutboxFlusher>().Flush();
+                _logger.LogInformation("Correctly flushed outbox");
             }
             catch (Exception ex)
             {

@@ -14,7 +14,11 @@ public class OutboxFlusher
     private readonly IOutbox _outbox;
     private readonly ITransport _transport;
 
-    public OutboxFlusher(int batchSize, ITransactionManager transactionManager, IOutbox outbox, ITransport transport)
+    public OutboxFlusher(
+        int batchSize,
+        ITransactionManager transactionManager,
+        IOutbox outbox,
+        ITransport transport)
     {
         _batchSize = batchSize;
         _transactionManager = transactionManager;

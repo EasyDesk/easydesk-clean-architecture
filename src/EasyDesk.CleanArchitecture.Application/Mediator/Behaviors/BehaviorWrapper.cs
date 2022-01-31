@@ -1,8 +1,10 @@
-﻿using MediatR;
+﻿using EasyDesk.Tools.Options;
+using MediatR;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
@@ -18,17 +20,23 @@ public abstract class BehaviorWrapper<TRequest, TResponse> : IPipelineBehavior<T
 {
     public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
     {
+        return await CreateBehaviorIfPossible().Match(
+            some: behavior => behavior.Handle(request, cancellationToken, next),
+            none: () => next());
+    }
+
+    private Option<IPipelineBehavior<TRequest, TResponse>> CreateBehaviorIfPossible()
+    {
         try
         {
             var responseType = typeof(TResponse);
             var openResponseType = responseType.GetGenericTypeDefinition();
             var wrappedType = responseType.GetGenericArguments().First();
-            var behavior = CreateBehavior(typeof(TRequest), wrappedType);
-            return await behavior.Handle(request, cancellationToken, next);
+            return Some(CreateBehavior(typeof(TRequest), wrappedType));
         }
         catch
         {
-            return await next();
+            return None;
         }
     }
 
