@@ -11,14 +11,12 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Extensions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
-using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -28,7 +26,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 public class EfCoreDataAccess<T> : IDataAccessImplementation
     where T : DomainContext
 {
-    private readonly IConfiguration _configuration;
+    private readonly string _connectionString;
     private readonly bool _applyMigrations;
     private readonly Action<DbContextOptionsBuilder> _addtionalOptions;
     private readonly List<Type> _registeredDbContextTypes = new();
@@ -40,20 +38,18 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     };
 
     public EfCoreDataAccess(
-        IConfiguration configuration,
+        string connectionString,
         bool applyMigrations = false,
         Action<DbContextOptionsBuilder> addtionalOptions = null)
     {
-        _configuration = configuration;
+        _connectionString = connectionString;
         _applyMigrations = applyMigrations;
         _addtionalOptions = addtionalOptions;
     }
 
-    private string ConnectionString => _configuration.RequireConnectionString("MainDb");
-
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped(_ => new SqlConnection(ConnectionString));
+        services.AddScoped(_ => new SqlConnection(_connectionString));
         AddDbContext<T>(services, DomainContext.SchemaName, app);
         services.AddScoped(provider => new EfCoreTransactionManager(provider.GetRequiredService<T>()));
         services.AddScoped<ITransactionManager>(provider => provider.GetRequiredService<EfCoreTransactionManager>());
