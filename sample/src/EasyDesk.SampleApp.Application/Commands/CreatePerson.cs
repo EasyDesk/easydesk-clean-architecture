@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using FluentValidation;
 using System.Threading.Tasks;
 
 namespace EasyDesk.SampleApp.Application.Commands;
@@ -10,6 +11,14 @@ namespace EasyDesk.SampleApp.Application.Commands;
 public static class CreatePerson
 {
     public record Command(string Name) : CommandBase<PersonSnapshot>;
+
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator()
+        {
+            RuleFor(x => x.Name).NotEmpty();
+        }
+    }
 
     public class Handler : RequestHandlerBase<Command, PersonSnapshot>
     {
