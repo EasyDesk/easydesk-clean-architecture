@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.CleanArchitecture.Web.Startup;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
@@ -19,6 +18,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Rebus.AzureServiceBus.NameFormat;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
@@ -57,9 +57,9 @@ public class Startup : BaseStartup
             .AddRebusMessaging(options =>
             {
                 options
-                    ////.ConfigureTransport(t => t.UseAzureServiceBus(Configuration.GetConnectionString("AzureServiceBus"), "sample-service"))
-                    ////.DecorateRebusService<INameFormatter>(c => new PrefixNameFormatter($"testing/", c.Get<INameFormatter>()))
-                    .ConfigureTransport(t => t.UseRabbitMq(Configuration.RequireConnectionString("RabbitMq"), "sample-service"))
+                    .ConfigureTransport(t => t.UseAzureServiceBus(Configuration.GetConnectionString("AzureServiceBus"), "sample-service"))
+                    .DecorateRebusService<INameFormatter>(c => new PrefixNameFormatter($"testing/", c.Get<INameFormatter>()))
+                    ////.ConfigureTransport(t => t.UseRabbitMq(Configuration.RequireConnectionString("RabbitMq"), "sample-service"))
                     .ConfigureRouting(r => r.TypeBased().Map<SendPersonCreatedEmail>("sample-service"))
                     .AddKnownMessageTypesFromAssembliesOf(ApplicationAssemblyMarker)
                     .UseOutbox()

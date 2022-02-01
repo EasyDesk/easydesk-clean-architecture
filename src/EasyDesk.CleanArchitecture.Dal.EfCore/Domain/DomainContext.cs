@@ -11,10 +11,17 @@ public abstract class DomainContext : MultitenantDbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
+        ConfigureDomainModel(modelBuilder);
+
         base.OnModelCreating(modelBuilder);
+    }
+
+    protected virtual void ConfigureDomainModel(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

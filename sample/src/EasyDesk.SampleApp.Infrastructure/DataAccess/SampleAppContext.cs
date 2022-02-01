@@ -11,11 +11,4 @@ public class SampleAppContext : DomainContext
     public SampleAppContext(DbContextOptions<SampleAppContext> options) : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SampleAppContext).Assembly);
-
-        base.OnModelCreating(modelBuilder);
-    }
 }
