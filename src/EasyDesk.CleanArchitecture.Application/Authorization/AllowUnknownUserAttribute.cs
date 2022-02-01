@@ -3,6 +3,6 @@
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-public class AllowUnknownUser : Attribute
+public class AllowUnknownUserAttribute : Attribute
 {
 }
