@@ -56,15 +56,15 @@ public abstract class EfCoreRepository<TDomain, TPersistence, TContext> :
             .OrElseError(AggregateNotFound.OfType<TDomain>);
     }
 
-    public void Save(TDomain entity)
+    public void Save(TDomain aggregate)
     {
-        if (_trackedAggregates.ContainsKey(entity))
+        if (_trackedAggregates.ContainsKey(aggregate))
         {
-            Update(entity);
+            Update(aggregate);
         }
         else
         {
-            Add(entity);
+            Add(aggregate);
         }
     }
 

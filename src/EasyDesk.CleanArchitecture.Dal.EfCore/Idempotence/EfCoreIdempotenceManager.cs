@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -8,28 +7,28 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 public class EfCoreIdempotenceManager : IIdempotenceManager
 {
     private readonly IdempotenceContext _idempotenceContext;
-    private readonly EfCoreTransactionManager _unitOfWork;
+    private readonly EfCoreTransactionManager _transactionManager;
 
-    public EfCoreIdempotenceManager(IdempotenceContext idempotenceContext, EfCoreTransactionManager unitOfWork)
+    public EfCoreIdempotenceManager(IdempotenceContext idempotenceContext, EfCoreTransactionManager transactionManager)
     {
         _idempotenceContext = idempotenceContext;
-        _unitOfWork = unitOfWork;
+        _transactionManager = transactionManager;
     }
 
-    public async Task<bool> HasBeenProcessed(Message message)
+    public async Task<bool> HasBeenProcessed(string messageId)
     {
-        await _unitOfWork.RegisterExternalDbContext(_idempotenceContext);
+        await _transactionManager.RegisterExternalDbContext(_idempotenceContext);
         return await _idempotenceContext
             .HandledMessages
-            .AnyAsync(e => e.Id == message.Id);
+            .AnyAsync(e => e.Id == messageId);
     }
 
-    public async Task MarkAsProcessed(Message message)
+    public async Task MarkAsProcessed(string messageId)
     {
-        await _unitOfWork.RegisterExternalDbContext(_idempotenceContext);
+        await _transactionManager.RegisterExternalDbContext(_idempotenceContext);
         _idempotenceContext.HandledMessages.Add(new HandledMessage
         {
-            Id = message.Id
+            Id = messageId
         });
         await _idempotenceContext.SaveChangesAsync();
     }

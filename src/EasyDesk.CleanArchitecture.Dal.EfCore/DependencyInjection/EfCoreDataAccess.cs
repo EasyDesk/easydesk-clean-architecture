@@ -2,26 +2,21 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
+using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants;
-using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Extensions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
-using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Receiver.Idempotence;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Sender.Outbox;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -29,9 +24,9 @@ using System.Collections.Generic;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
 public class EfCoreDataAccess<T> : IDataAccessImplementation
-    where T : EntitiesContext
+    where T : DomainContext
 {
-    private readonly IConfiguration _configuration;
+    private readonly string _connectionString;
     private readonly bool _applyMigrations;
     private readonly Action<DbContextOptionsBuilder> _addtionalOptions;
     private readonly List<Type> _registeredDbContextTypes = new();
@@ -43,31 +38,20 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     };
 
     public EfCoreDataAccess(
-        IConfiguration configuration,
+        string connectionString,
         bool applyMigrations = false,
         Action<DbContextOptionsBuilder> addtionalOptions = null)
     {
-        _configuration = configuration;
+        _connectionString = connectionString;
         _applyMigrations = applyMigrations;
         _addtionalOptions = addtionalOptions;
     }
 
-    private string ConnectionString => _configuration.RequireConnectionString("MainDb");
-
-    public void AddUtilityServices(IServiceCollection services, AppDescription app)
+    public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped(_ => new SqlConnection(ConnectionString));
-    }
-
-    public void AddUnitOfWork(IServiceCollection services, AppDescription app)
-    {
-        AddDbContext<T>(services, EntitiesContext.SchemaName, app);
-        services.AddScoped<IUnitOfWork>(provider => new EfCoreUnitOfWork(provider.GetRequiredService<T>()));
-    }
-
-    public void AddTransactionManager(IServiceCollection services, AppDescription app)
-    {
-        services.AddScoped<EfCoreTransactionManager>();
+        services.AddScoped(_ => new SqlConnection(_connectionString));
+        AddDbContext<T>(services, DomainContext.SchemaName, app);
+        services.AddScoped(provider => new EfCoreTransactionManager(provider.GetRequiredService<T>()));
         services.AddScoped<ITransactionManager>(provider => provider.GetRequiredService<EfCoreTransactionManager>());
     }
 
@@ -102,7 +86,7 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     {
         services.AddDbContext<C>((provider, options) =>
         {
-            ConfigureDbContextOptions(provider, options, schema, app);
+            ConfigureDbContextOptions(provider, options, schema);
             _addtionalOptions?.Invoke(options);
             configure?.Invoke(provider, options);
         });
@@ -121,7 +105,7 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         _registeredDbContextTypes.Add(typeof(C));
     }
 
-    private void ConfigureDbContextOptions(IServiceProvider provider, DbContextOptionsBuilder options, string schema, AppDescription app)
+    private void ConfigureDbContextOptions(IServiceProvider provider, DbContextOptionsBuilder options, string schema)
     {
         var connection = provider.GetRequiredService<SqlConnection>();
         options.UseSqlServer(connection, sqlServerOptions =>
@@ -129,10 +113,6 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
             ConfigureMigrationsHistoryTable(sqlServerOptions, schema);
         });
         options.AddOrUpdateExtension(new MappingPluginOptionsExtension(_mappingsByType));
-        if (app.IsMultitenant())
-        {
-            options.AddOrUpdateExtension(new MultitenantExtension(provider.GetRequiredService<ITenantProvider>()));
-        }
     }
 
     private void ConfigureMigrationsHistoryTable(SqlServerDbContextOptionsBuilder sqlServerOptions, string schema)

@@ -13,8 +13,8 @@
       },
       "EasyDesk.Tools": {
         "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "Yr3QzLw0peJBWFFprJ5HCT9nn7XVmfm+KbhAbyrz6f2RfBx0xSWFHU+9lxLPf9H+kGj8u230nG3fvxn/3BWmVA=="
+        "resolved": "4.0.1",
+        "contentHash": "NpWkY5cQZvRm9nGOVnPCNNiI1f0L0v27I/mhxK6c4yZyecVww/f8sNtX2DSNo4kNCFP6Z1yUY2vNpo5gyZx7Fg=="
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
@@ -24,7 +24,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "3.0.0"
+          "EasyDesk.Tools": "4.0.1"
         }
       }
     }

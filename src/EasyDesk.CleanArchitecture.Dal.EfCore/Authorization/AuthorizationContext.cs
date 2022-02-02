@@ -1,9 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-public class AuthorizationContext : ExtendedDbContext
+public class AuthorizationContext : MultitenantDbContext
 {
     public const string SchemaName = "auth";
 
@@ -15,11 +16,13 @@ public class AuthorizationContext : ExtendedDbContext
 
     public DbSet<RolePermissionModel> RolePermissions { get; set; }
 
-    protected override void SetupModel(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
         modelBuilder.ApplyConfiguration(new UserRoleModel.Configuration());
         modelBuilder.ApplyConfiguration(new RolePermissionModel.Configuration());
+
+        base.OnModelCreating(modelBuilder);
     }
 }

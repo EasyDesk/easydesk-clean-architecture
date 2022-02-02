@@ -30,8 +30,8 @@
       },
       "EasyDesk.Tools": {
         "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "Yr3QzLw0peJBWFFprJ5HCT9nn7XVmfm+KbhAbyrz6f2RfBx0xSWFHU+9lxLPf9H+kGj8u230nG3fvxn/3BWmVA=="
+        "resolved": "4.0.1",
+        "contentHash": "NpWkY5cQZvRm9nGOVnPCNNiI1f0L0v27I/mhxK6c4yZyecVww/f8sNtX2DSNo4kNCFP6Z1yUY2vNpo5gyZx7Fg=="
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -434,6 +434,32 @@
           "System.Text.Json": "5.0.0"
         }
       },
+      "Rebus.Microsoft.Extensions.Logging": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "fUAbaGFJQnaKPoAskrUgou0Xt5yRS2onL7E3gNAKbrAR8PpeyxtDIWXEoUe3DqWZd7UP2sPNrY7mdoL+mxmUFg==",
+        "dependencies": {
+          "microsoft.extensions.logging": "3.1.3",
+          "rebus": "6.1.0"
+        }
+      },
+      "Rebus.ServiceProvider": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "gGbp4p8D3ativ1oAonbo4r1blLNp1x7JekPiSoRpBSrw9OnJ8Ef+hbwCso74oBh+c4RUZ92XqBQi5R9r4GI8GQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Hosting.Abstractions": "[3.0.0, 7.0.0)",
+          "Rebus": "6.0.0"
+        }
+      },
+      "Rebus.UnitOfWork": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "SwQIEo2jdtE0W4p/lZekvOcl35UOUCBQDIV6otgBNlcoMt2g/x9HIfIakMQhHFAchRQ92nXDGhFSF71FVdo0jQ==",
+        "dependencies": {
+          "Rebus": "6.0.0"
+        }
+      },
       "Scrutor": {
         "type": "Transitive",
         "resolved": "3.3.0",
@@ -830,7 +856,7 @@
           "AutoMapper": "11.0.0",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "11.0.0",
           "EasyDesk.CleanArchitecture.Domain": "1.0.0",
-          "EasyDesk.Tools": "3.0.0",
+          "EasyDesk.Tools": "4.0.1",
           "FluentValidation": "10.3.6",
           "FluentValidation.DependencyInjectionExtensions": "10.3.6",
           "MediatR": "10.0.1",
@@ -838,6 +864,9 @@
           "Microsoft.Extensions.Hosting.Abstractions": "6.0.0",
           "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
           "Rebus": "6.6.2",
+          "Rebus.Microsoft.Extensions.Logging": "2.0.0",
+          "Rebus.ServiceProvider": "7.0.0",
+          "Rebus.UnitOfWork": "6.0.0",
           "Scrutor": "3.3.0"
         }
       },
@@ -846,7 +875,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "1.0.0",
           "EasyDesk.CleanArchitecture.Infrastructure": "1.0.0",
-          "EasyDesk.Tools": "3.0.0",
+          "EasyDesk.Tools": "4.0.1",
           "Microsoft.EntityFrameworkCore.Relational": "6.0.1",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.1",
           "Newtonsoft.Json.Bson": "1.0.2"
@@ -855,14 +884,14 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "3.0.0"
+          "EasyDesk.Tools": "4.0.1"
         }
       },
       "easydesk.cleanarchitecture.infrastructure": {
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "1.0.0",
-          "EasyDesk.Tools": "3.0.0",
+          "EasyDesk.Tools": "4.0.1",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.1",
           "Newtonsoft.Json": "13.0.1",

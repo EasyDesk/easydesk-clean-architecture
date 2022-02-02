@@ -5,11 +5,7 @@ namespace EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 
 public interface IDataAccessImplementation
 {
-    void AddUtilityServices(IServiceCollection services, AppDescription app);
-
-    void AddUnitOfWork(IServiceCollection services, AppDescription app);
-
-    void AddTransactionManager(IServiceCollection services, AppDescription app);
+    void AddMainDataAccessServices(IServiceCollection services, AppDescription app);
 
     void AddOutbox(IServiceCollection services, AppDescription app);
 

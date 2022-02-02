@@ -1,13 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.Tools;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore;
 
@@ -27,20 +22,13 @@ public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransac
         return await _context.Database.BeginTransactionAsync();
     }
 
-    protected override async Task<Response<Nothing>> CommitTransaction(IDbContextTransaction transaction)
+    protected override async Task CommitTransaction(IDbContextTransaction transaction)
     {
-        try
-        {
-            await transaction.CommitAsync();
-            return Ok;
-        }
-        catch (Exception ex)
-        {
-            return Errors.Generic(
-                "An error occurred while committing a transaction to the database: {message}",
-                ex.Message);
-        }
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
     }
+
+    protected override async Task RollbackTransaction(IDbContextTransaction transaction) => await transaction.RollbackAsync();
 
     public async Task RegisterExternalDbContext(DbContext dbContext)
     {
@@ -48,7 +36,6 @@ public class EfCoreTransactionManager : TransactionManagerBase<IDbContextTransac
         {
             return;
         }
-
         await dbContext.Database.UseTransactionAsync(RequireTransaction().GetDbTransaction());
         _registeredDbContexts.Add(dbContext);
     }

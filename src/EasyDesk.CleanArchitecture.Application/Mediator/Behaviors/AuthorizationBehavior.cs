@@ -47,7 +47,7 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
     private async Task<Response<TResponse>> HandleUnknownUserRequest(RequestHandlerDelegate<Response<TResponse>> next) =>
         UnknownUserIsAllowed() ? await next() : Errors.UnknownUser();
 
-    private bool UnknownUserIsAllowed() => typeof(TRequest).GetCustomAttribute<AllowUnknownUser>() is not null;
+    private bool UnknownUserIsAllowed() => typeof(TRequest).GetCustomAttribute<AllowUnknownUserAttribute>() is not null;
 
     private bool IsAuthorized(RequireAnyOfAttribute attribute, IImmutableSet<Permission> userPermissions) =>
         userPermissions.Overlaps(attribute.Permissions);

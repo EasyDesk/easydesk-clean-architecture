@@ -1,31 +1,29 @@
-﻿using System;
-using System.Threading.Tasks;
-using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.ExternalEvents;
-using EasyDesk.CleanArchitecture.Application.Mediator;
+﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.Tools;
+using System;
+using System.Threading.Tasks;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.SampleApp.Application.ExternalEventHandlers;
 
-public record CoupleGotMarried(Guid GroomId, Guid BrideId) : ExternalEvent;
+public record CoupleGotMarried(Guid GroomId, Guid BrideId) : IMessage;
 
-public class CoupleGotMarriedHandler : ExternalEventHandlerBase<CoupleGotMarried>
+public class CoupleGotMarriedHandler : IMessageHandler<CoupleGotMarried>
 {
     private readonly IPersonRepository _personRepository;
 
-    public CoupleGotMarriedHandler(IPersonRepository personRepository, IUnitOfWork unitOfWork) : base(unitOfWork)
+    public CoupleGotMarriedHandler(IPersonRepository personRepository)
     {
         _personRepository = personRepository;
     }
 
-    protected override async Task<Response<Nothing>> Handle(CoupleGotMarried ev)
+    public async Task Handle(CoupleGotMarried ev)
     {
-        return await SetPersonAsMarried(ev.GroomId)
+        await SetPersonAsMarried(ev.GroomId)
             .ThenRequireAsync(_ => SetPersonAsMarried(ev.BrideId));
     }
 

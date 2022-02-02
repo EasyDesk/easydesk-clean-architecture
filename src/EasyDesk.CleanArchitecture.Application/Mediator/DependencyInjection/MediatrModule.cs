@@ -1,5 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
+using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using MediatR;
@@ -21,7 +23,13 @@ public class MediatrModule : IAppModule
         {
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviorWrapper<,>));
         }
+        if (app.HasRebusMessaging())
+        {
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehavior<,>));
+        }
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviorWrapper<,>));
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainConstraintsViolationHandlerWrapper<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainEventHandlingBehaviorWrapper<,>));
     }
 }
 
