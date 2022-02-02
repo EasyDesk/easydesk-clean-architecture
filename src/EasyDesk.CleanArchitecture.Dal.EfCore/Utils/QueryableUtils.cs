@@ -66,7 +66,7 @@ public static class QueryableUtils
         };
     }
 
-    public static async Task<Page<T>> GetPage<T>(this IQueryable<T> query, Pagination pagination)
+    public static async Task<Page<T>> GetPageAsync<T>(this IQueryable<T> query, Pagination pagination)
     {
         var rowCount = await query.CountAsync();
 

@@ -27,6 +27,6 @@ public class GetPeopleQueryHandler : PaginatedQueryHandlerBase<Query, PersonSnap
         return await _context.People
             .OrderBy(p => p.Name)
             .ProjectTo<PersonSnapshot>(_mapper.ConfigurationProvider)
-            .GetPage(request.Pagination);
+            .GetPageAsync(request.Pagination);
     }
 }
