@@ -58,16 +58,20 @@ public class ActionResultBuilder<T>
 
     private IActionResult HandleErrorResult(Error error, ResponseDto body)
     {
-        return _errorHandlers.FirstOption(h => h.ErrorPredicate(error)).Match(
-            some: h => h.ResultProvider(body, error),
-            none: () => DefaultErrorHandler(error, body));
+        var errorToMatchAgainst = error switch
+        {
+            MultipleErrors(var primary, _) => primary,
+            _ => error
+        };
+        return _errorHandlers.FirstOption(h => h.ErrorPredicate(errorToMatchAgainst)).Match(
+            some: h => h.ResultProvider(body, errorToMatchAgainst),
+            none: () => DefaultErrorHandler(body, errorToMatchAgainst));
     }
 
-    private IActionResult DefaultErrorHandler(Error error, object body) => error switch
+    private IActionResult DefaultErrorHandler(object body, Error error) => error switch
     {
-        MultipleErrors(var errors) => DefaultErrorHandler(errors[0], body),
         NotFoundError => _controller.NotFound(body),
-        DomainErrorWrapper => _controller.BadRequest(body),
+        DomainErrorWrapper or InputValidationError => _controller.BadRequest(body),
         ForbiddenError => ActionResults.Forbidden(body),
         UnknownUserError => _controller.Unauthorized(body),
         _ => ActionResults.InternalServerError(body)

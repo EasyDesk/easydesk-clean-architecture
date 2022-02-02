@@ -30,11 +30,11 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         var errors = _validators
             .Select(x => x.Validate(context))
             .SelectMany(x => x.Errors)
-            .Where(x => x != null)
+            .Where(x => x is not null)
             .Select(x => Errors.InvalidInput(x.PropertyName, x.ErrorMessage))
             .ToList();
 
-        return errors.Any() ? Errors.Multiple(errors) : await next();
+        return errors.Any() ? Errors.Multiple(errors[0], errors.Skip(1)) : await next();
     }
 }
 

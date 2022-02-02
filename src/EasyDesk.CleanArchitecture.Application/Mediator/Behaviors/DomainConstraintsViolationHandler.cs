@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using MediatR;
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,7 +20,9 @@ public class DomainConstraintsViolationHandler<TRequest, TResponse> : IPipelineB
         }
         catch (DomainConstraintException ex)
         {
-            return Errors.FromDomain(ex.DomainErrors);
+            var primaryError = Errors.FromDomain(ex.DomainErrors.First());
+            var secondaryErrors = ex.DomainErrors.Skip(1).Select(Errors.FromDomain);
+            return Errors.Multiple(primaryError, secondaryErrors);
         }
     }
 }

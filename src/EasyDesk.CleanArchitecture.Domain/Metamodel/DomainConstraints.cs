@@ -1,6 +1,7 @@
 ﻿using EasyDesk.Tools.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel;
 
@@ -25,7 +26,7 @@ public class DomainConstraints
 
     public void ThrowException()
     {
-        if (!_errors.IsEmpty())
+        if (_errors.Any())
         {
             throw new DomainConstraintException(_errors);
         }
