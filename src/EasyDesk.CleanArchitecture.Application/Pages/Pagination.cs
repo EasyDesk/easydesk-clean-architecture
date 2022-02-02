@@ -24,4 +24,10 @@ public record Pagination
         PageIndex = pageIndex;
         PageSize = pageSize;
     }
+
+    public void Deconstruct(out int pageIndex, out int pageSize)
+    {
+        pageIndex = PageIndex;
+        pageSize = PageSize;
+    }
 }
