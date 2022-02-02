@@ -9,7 +9,7 @@ public record Token : ValueWrapper<string, Token>
     private Token(string value) : base(value)
     {
         DomainConstraints.Check()
-            .IfNot(string.IsNullOrWhiteSpace(value), () => new EmptyToken())
+            .If(string.IsNullOrWhiteSpace(value), () => new EmptyToken())
             .ThrowException();
     }
 
