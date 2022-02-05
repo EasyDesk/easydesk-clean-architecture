@@ -26,7 +26,7 @@ public class ApiKeyClaimsBuilder
     public void AddApiKeyName(string subject) => AddClaim(ApiKeyAuthenticationOptions.ApiKeyClaimName, subject);
 }
 
-public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
+public class ApiKeyAuthenticationOptions : TokenAuthenticationOptions
 {
     public const string ApiKeyClaimName = "ApiKey";
 
@@ -56,13 +56,13 @@ public class ApiKeyAuthenticationOptions : AuthenticationSchemeOptions
     public Option<IEnumerable<Claim>> GetClaims(string apiKey) => _apiKeys.GetOption(apiKey);
 }
 
-public class ApiKeyAuthenticationHandler : BaseAuthenticationHandler<ApiKeyAuthenticationOptions>
+public class ApiKeyAuthenticationHandler : TokenAuthenticationHandler<ApiKeyAuthenticationOptions>
 {
     public ApiKeyAuthenticationHandler(
         IOptionsMonitor<ApiKeyAuthenticationOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        ISystemClock clock) : base(options, logger, encoder, clock, ApiKeyDefaults.Scheme)
+        ISystemClock clock) : base(options, logger, encoder, clock)
     {
     }
 

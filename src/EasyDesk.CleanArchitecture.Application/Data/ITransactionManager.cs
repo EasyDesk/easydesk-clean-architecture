@@ -7,7 +7,7 @@ using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Data;
 
-public interface ITransactionManager : IDisposable
+public interface ITransactionManager
 {
     IAsyncObservable<Nothing> BeforeCommit { get; }
 

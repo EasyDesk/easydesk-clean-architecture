@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Tenants;
 
 public static class HttpContextExtensions
 {
-    private const string TenantIdClaimName = "tenantId";
+    public const string TenantIdClaimName = "tenantId";
 
     public static Option<string> GetTenantId(this HttpContext httpContext) =>
         httpContext.User.FindFirst(TenantIdClaimName).AsOption().Map(c => c.Value);

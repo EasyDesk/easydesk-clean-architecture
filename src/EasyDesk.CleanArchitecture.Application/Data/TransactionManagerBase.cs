@@ -7,7 +7,7 @@ using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Data;
 
-public abstract class TransactionManagerBase<TTransaction> : ITransactionManager
+public abstract class TransactionManagerBase<TTransaction> : ITransactionManager, IDisposable
     where TTransaction : IDisposable
 {
     private readonly SimpleAsyncEvent<Nothing> _beforeCommit = new();

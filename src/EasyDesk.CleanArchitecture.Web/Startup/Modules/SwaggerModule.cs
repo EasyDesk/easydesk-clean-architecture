@@ -58,7 +58,7 @@ public class SwaggerModule : IAppModule
 
             app.GetModule<AuthenticationModule>().IfPresent(auth =>
             {
-                auth.Schemes.ForEach(scheme => scheme.ConfigureSwagger(options));
+                auth.Schemes.ForEach(scheme => scheme.Value.ConfigureSwagger(options));
             });
 
             _configure?.Invoke(options);

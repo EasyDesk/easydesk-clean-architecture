@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Application.Pages;
 using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.SampleApp.Application.Commands;
@@ -36,7 +35,7 @@ public class PersonController : AbstractMediatrController
     [HttpGet("people")]
     public async Task<IActionResult> GetPeople([FromQuery] PaginationDto pagination)
     {
-        var query = new GetPeople.Query(Mapper.Map<Pagination>(pagination));
+        var query = new GetPeople.Query(pagination);
         return await Query(query)
             .Paging(Mapper.Map<PersonDto>)
             .ReturnOk();

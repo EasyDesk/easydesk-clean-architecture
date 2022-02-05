@@ -13,52 +13,61 @@ namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
 public class AuthenticationModule : IAppModule
 {
-    public AuthenticationModule(IImmutableList<IAuthenticationScheme> schemes)
+    private readonly string _defaultScheme;
+
+    public AuthenticationModule(string defaultScheme, IImmutableDictionary<string, IAuthenticationScheme> schemes)
     {
+        _defaultScheme = defaultScheme;
         Schemes = schemes;
     }
 
-    public IImmutableList<IAuthenticationScheme> Schemes { get; }
+    public IImmutableDictionary<string, IAuthenticationScheme> Schemes { get; }
 
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddScoped<IUserInfoProvider, HttpContextUserInfoProvider>();
         var authBuilder = services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = Schemes[0].Name;
-            options.DefaultChallengeScheme = Schemes[0].Name;
+            options.DefaultAuthenticateScheme = _defaultScheme;
+            options.DefaultChallengeScheme = _defaultScheme;
         });
         Schemes.ForEach(scheme =>
         {
-            scheme.AddUtilityServices(services);
-            scheme.AddAuthenticationHandler(authBuilder);
+            scheme.Value.AddUtilityServices(services);
+            scheme.Value.AddAuthenticationHandler(scheme.Key, authBuilder);
         });
     }
 }
 
 public static class AuthenticationModuleExtensions
 {
-    public static AppBuilder AddAuthentication(this AppBuilder builder, Action<AuthenticationOptions> configure)
+    public static AppBuilder AddAuthentication(this AppBuilder builder, Action<AuthenticationModuleOptions> configure)
     {
-        var authOptions = new AuthenticationOptions();
+        var authOptions = new AuthenticationModuleOptions();
         configure(authOptions);
         if (authOptions.Schemes.Count == 0)
         {
             throw new Exception("No authentication scheme was specified");
         }
-        return builder.AddModule(new AuthenticationModule(authOptions.Schemes));
+        return builder.AddModule(new AuthenticationModule(authOptions.DefaultScheme, authOptions.Schemes));
     }
 
     public static bool HasAuthentication(this AppDescription app) => app.HasModule<AuthenticationModule>();
 }
 
-public class AuthenticationOptions
+public class AuthenticationModuleOptions
 {
-    public IImmutableList<IAuthenticationScheme> Schemes { get; private set; } = List<IAuthenticationScheme>();
+    public string DefaultScheme { get; private set; }
 
-    public AuthenticationOptions AddScheme(IAuthenticationScheme scheme)
+    public IImmutableDictionary<string, IAuthenticationScheme> Schemes { get; private set; } = Map<string, IAuthenticationScheme>();
+
+    public AuthenticationModuleOptions AddScheme(string name, IAuthenticationScheme scheme)
     {
-        Schemes = Schemes.Add(scheme);
+        if (Schemes.IsEmpty())
+        {
+            DefaultScheme = name;
+        }
+        Schemes = Schemes.Add(name, scheme);
         return this;
     }
 }

@@ -1,8 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -10,33 +8,34 @@ using System.Text.Encodings.Web;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
-public class JwtBearerOptions : AuthenticationSchemeOptions
+public class JwtBearerOptions : TokenAuthenticationOptions
 {
-    public JwtSettings JwtSettings { get; private set; }
+    public JwtValidationConfiguration ConfigureValidation { get; private set; }
 
-    public void UseJwtSettingsFromConfiguration(IConfiguration configuration, string scopeName = "Default") =>
-        JwtSettings = configuration.ReadJwtSettings(scopeName);
-
-    public void UseJwtSettings(JwtSettings settings) => JwtSettings = settings;
+    public JwtBearerOptions ConfigureValidationParameters(JwtValidationConfiguration configure)
+    {
+        ConfigureValidation += configure;
+        return this;
+    }
 }
 
-public class JwtBearerHandler : BaseAuthenticationHandler<JwtBearerOptions>
+public class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
 {
-    private readonly JwtService _jwtService;
+    private readonly JwtFacade _jwtFacade;
 
     public JwtBearerHandler(
         IOptionsMonitor<JwtBearerOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
         ISystemClock clock,
-        JwtService jwtService)
-        : base(options, logger, encoder, clock, JwtBearerDefaults.AuthenticationScheme)
+        JwtFacade jwtFacade)
+        : base(options, logger, encoder, clock)
     {
-        _jwtService = jwtService;
+        _jwtFacade = jwtFacade;
     }
 
     protected override Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
     {
-        return _jwtService.Validate(token, Options.JwtSettings, out var _).Map(x => new ClaimsPrincipal(x));
+        return _jwtFacade.Validate(token, Options.ConfigureValidation).Map(x => new ClaimsPrincipal(x));
     }
 }

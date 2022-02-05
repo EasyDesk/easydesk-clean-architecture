@@ -6,11 +6,9 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 
 public interface IAuthenticationScheme
 {
-    string Name { get; }
-
     void AddUtilityServices(IServiceCollection services);
 
-    void AddAuthenticationHandler(AuthenticationBuilder authenticationBuilder);
+    void AddAuthenticationHandler(string schemeName, AuthenticationBuilder authenticationBuilder);
 
     void ConfigureSwagger(SwaggerGenOptions options);
 }

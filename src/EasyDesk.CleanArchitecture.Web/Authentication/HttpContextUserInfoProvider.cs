@@ -16,10 +16,9 @@ public class HttpContextUserInfoProvider : IUserInfoProvider
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Option<UserInfo> GetUserInfo() =>
-        _httpContextAccessor.HttpContext switch
-        {
-            { User: var user } when user.Identity.IsAuthenticated => new UserInfo(user.FindFirstValue(JwtClaimNames.Subject)),
-            _ => None
-        };
+    public Option<UserInfo> GetUserInfo() => _httpContextAccessor switch
+    {
+        { HttpContext.User: var user } => new UserInfo(user.FindFirstValue(JwtClaimNames.Subject)),
+        _ => None
+    };
 }

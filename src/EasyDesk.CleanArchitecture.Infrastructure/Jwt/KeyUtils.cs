@@ -6,10 +6,15 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
 public static class KeyUtils
 {
-    public static SecurityKey KeyFromString(string rawKey)
+    public static SecurityKey KeyFromString(string rawKey, string keyId = null)
     {
         var encodedKey = Encoding.ASCII.GetBytes(rawKey);
-        return new SymmetricSecurityKey(encodedKey);
+        var securityKey = new SymmetricSecurityKey(encodedKey);
+        if (keyId is not null)
+        {
+            securityKey.KeyId = keyId;
+        }
+        return securityKey;
     }
 
     public static SecurityKey RandomKey() => KeyFromString(Guid.NewGuid().ToString());
