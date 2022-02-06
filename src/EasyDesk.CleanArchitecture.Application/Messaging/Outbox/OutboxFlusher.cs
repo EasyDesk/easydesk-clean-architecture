@@ -10,25 +10,25 @@ namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 public class OutboxFlusher
 {
     private readonly int _batchSize;
-    private readonly ITransactionManager _transactionManager;
+    private readonly IUnitOfWorkProvider _unitOfWorkProvider;
     private readonly IOutbox _outbox;
     private readonly ITransport _transport;
 
     public OutboxFlusher(
         int batchSize,
-        ITransactionManager transactionManager,
+        IUnitOfWorkProvider unitOfWorkProvider,
         IOutbox outbox,
         ITransport transport)
     {
         _batchSize = batchSize;
-        _transactionManager = transactionManager;
+        _unitOfWorkProvider = unitOfWorkProvider;
         _outbox = outbox;
         _transport = transport;
     }
 
     public async Task Flush()
     {
-        await _transactionManager.RunTransactionally(() => Execute(FlushWithinTransaction));
+        await _unitOfWorkProvider.RunTransactionally(() => Execute(FlushWithinTransaction));
     }
 
     private async Task FlushWithinTransaction()

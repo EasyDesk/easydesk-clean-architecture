@@ -10,32 +10,32 @@ namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
     where TRequest : CommandBase<TResponse>
 {
-    private readonly ITransactionManager _transactionManager;
+    private readonly IUnitOfWorkProvider _unitOfWorkProvider;
 
-    public TransactionBehavior(ITransactionManager transactionManager)
+    public TransactionBehavior(IUnitOfWorkProvider unitOfWorkProvider)
     {
-        _transactionManager = transactionManager;
+        _unitOfWorkProvider = unitOfWorkProvider;
     }
 
     public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Response<TResponse>> next)
     {
-        return await _transactionManager.RunTransactionally(() => next());
+        return await _unitOfWorkProvider.RunTransactionally(() => next());
     }
 }
 
 public class TransactionBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    private readonly ITransactionManager _transactionManager;
+    private readonly IUnitOfWorkProvider _unitOfWorkProvider;
 
-    public TransactionBehaviorWrapper(ITransactionManager transactionManager)
+    public TransactionBehaviorWrapper(IUnitOfWorkProvider unitOfWorkProvider)
     {
-        _transactionManager = transactionManager;
+        _unitOfWorkProvider = unitOfWorkProvider;
     }
 
     protected override IPipelineBehavior<TRequest, TResponse> CreateBehavior(Type requestType, Type responseType)
     {
         var behaviorType = typeof(TransactionBehavior<,>).MakeGenericType(requestType, responseType);
-        return Activator.CreateInstance(behaviorType, _transactionManager) as IPipelineBehavior<TRequest, TResponse>;
+        return Activator.CreateInstance(behaviorType, _unitOfWorkProvider) as IPipelineBehavior<TRequest, TResponse>;
     }
 }

@@ -7,17 +7,17 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 public class EfCoreIdempotenceManager : IIdempotenceManager
 {
     private readonly IdempotenceContext _idempotenceContext;
-    private readonly EfCoreTransactionManager _transactionManager;
+    private readonly EfCoreUnitOfWorkProvider _unitOfWorkProvider;
 
-    public EfCoreIdempotenceManager(IdempotenceContext idempotenceContext, EfCoreTransactionManager transactionManager)
+    public EfCoreIdempotenceManager(IdempotenceContext idempotenceContext, EfCoreUnitOfWorkProvider unitOfWorkProvider)
     {
         _idempotenceContext = idempotenceContext;
-        _transactionManager = transactionManager;
+        _unitOfWorkProvider = unitOfWorkProvider;
     }
 
     public async Task<bool> HasBeenProcessed(string messageId)
     {
-        await _transactionManager.RegisterExternalDbContext(_idempotenceContext);
+        await _unitOfWorkProvider.RegisterExternalDbContext(_idempotenceContext);
         return await _idempotenceContext
             .HandledMessages
             .AnyAsync(e => e.Id == messageId);
@@ -25,7 +25,7 @@ public class EfCoreIdempotenceManager : IIdempotenceManager
 
     public async Task MarkAsProcessed(string messageId)
     {
-        await _transactionManager.RegisterExternalDbContext(_idempotenceContext);
+        await _unitOfWorkProvider.RegisterExternalDbContext(_idempotenceContext);
         _idempotenceContext.HandledMessages.Add(new HandledMessage
         {
             Id = messageId

@@ -9,133 +9,96 @@ using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data;
 
-public class TransactionManagerBaseTests
+public class UnitOfWorkBaseTests
 {
     public interface ITestTransaction : IDisposable
     {
-        Task Begin();
-
         Task Commit();
 
         Task Rollback();
     }
 
-    public class TestTransactionManager : TransactionManagerBase<ITestTransaction>
+    public class TestUnitOfWork : UnitOfWorkBase<ITestTransaction>
     {
-        private readonly ITestTransaction _testTransaction;
-
-        public TestTransactionManager(ITestTransaction testTransaction)
+        public TestUnitOfWork(ITestTransaction testTransaction) : base(testTransaction)
         {
-            _testTransaction = testTransaction;
         }
 
-        protected override async Task<ITestTransaction> BeginTransaction()
-        {
-            await _testTransaction.Begin();
-            return _testTransaction;
-        }
+        protected override Task CommitTransaction() => Transaction.Commit();
 
-        protected override Task CommitTransaction(ITestTransaction transaction) => transaction.Commit();
-
-        protected override Task RollbackTransaction(ITestTransaction transaction) => transaction.Rollback();
+        protected override Task RollbackTransaction() => Transaction.Rollback();
     }
 
-    private readonly TestTransactionManager _sut;
+    private readonly TestUnitOfWork _sut;
     private readonly ITestTransaction _transaction;
 
-    public TransactionManagerBaseTests()
+    public UnitOfWorkBaseTests()
     {
         _transaction = Substitute.For<ITestTransaction>();
         _sut = new(_transaction);
     }
 
     [Fact]
-    public async Task Begin_ShouldStartThePhysicalTransaction()
+    public async Task ShouldCommitThePhysicalTransactionWhenCommitted()
     {
-        await _sut.Begin();
-
-        await _transaction.Received(1).Begin();
-    }
-
-    [Fact]
-    public async Task Begin_ShouldFail_IfCalledMultipleTimes()
-    {
-        await _sut.Begin();
-
-        await Should.ThrowAsync<InvalidOperationException>(() => _sut.Begin());
-    }
-
-    [Fact]
-    public async Task Commit_ShouldCommitThePhysicalTransaction()
-    {
-        await _sut.Begin();
         await _sut.Commit();
 
         await _transaction.Received(1).Commit();
     }
 
     [Fact]
-    public async Task Commit_ShouldNotifyBeforeCommitHandlers()
+    public async Task ShouldNotifyBeforeCommitHandlersWhenCommitted()
     {
         var handler = Substitute.For<AsyncAction<Nothing>>();
 
         _sut.BeforeCommit.Subscribe(handler);
-        await _sut.Begin();
         await _sut.Commit();
 
         await handler.ReceivedWithAnyArgs(1)(default);
     }
 
     [Fact]
-    public async Task Commit_ShouldNotifyAfterCommitHandlers_IfCommitIsSuccessful()
+    public async Task ShouldNotifyAfterCommitHandlersWhenCommitted_IfCommitIsSuccessful()
     {
         var handler = Substitute.For<AsyncAction<Nothing>>();
 
         _sut.AfterCommit.Subscribe(handler);
-        await _sut.Begin();
         await _sut.Commit();
 
         await handler.Received(1)(Nothing.Value);
     }
 
     [Fact]
-    public async Task Commit_ShouldNotNotifyAfterCommitHandlers_IfCommitFails()
+    public async Task ShouldNotNotifyAfterCommitHandlers_IfCommitFails()
     {
         var handler = Substitute.For<AsyncAction<Nothing>>();
         _transaction.Commit().Throws<Exception>();
 
-        try
-        {
-            _sut.AfterCommit.Subscribe(handler);
-            await _sut.Begin();
-            await _sut.Commit();
-        }
-        catch
-        {
-        }
+        _sut.AfterCommit.Subscribe(handler);
+        await Should.ThrowAsync<Exception>(() => _sut.Commit());
 
         await handler.DidNotReceiveWithAnyArgs()(default);
     }
 
     [Fact]
-    public async Task Commit_ShouldFail_IfTransactionWasNotStarted()
+    public async Task ShouldFailCommittingMultipleTimes()
     {
-        await Should.ThrowAsync<InvalidOperationException>(() => _sut.Commit());
-    }
-
-    [Fact]
-    public async Task Commit_ShouldFail_IfCalledMultipleTimes()
-    {
-        await _sut.Begin();
         await _sut.Commit();
 
         await Should.ThrowAsync<InvalidOperationException>(() => _sut.Commit());
     }
 
     [Fact]
-    public async Task Dispose_ShouldDisposeTheTransaction()
+    public async Task ShouldFailCommittingAfterRollback()
     {
-        await _sut.Begin();
+        await _sut.Rollback();
+
+        await Should.ThrowAsync<InvalidOperationException>(() => _sut.Commit());
+    }
+
+    [Fact]
+    public void ShouldDisposeTheInnerTransactionWhenDisposed()
+    {
         _sut.Dispose();
 
         _transaction.Received(1).Dispose();

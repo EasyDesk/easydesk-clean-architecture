@@ -51,8 +51,8 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     {
         services.AddScoped(_ => new SqlConnection(_connectionString));
         AddDbContext<T>(services, DomainContext.SchemaName, app);
-        services.AddScoped(provider => new EfCoreTransactionManager(provider.GetRequiredService<T>()));
-        services.AddScoped<ITransactionManager>(provider => provider.GetRequiredService<EfCoreTransactionManager>());
+        services.AddScoped(provider => new EfCoreUnitOfWorkProvider(provider.GetRequiredService<T>()));
+        services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
     }
 
     public void AddOutbox(IServiceCollection services, AppDescription app)

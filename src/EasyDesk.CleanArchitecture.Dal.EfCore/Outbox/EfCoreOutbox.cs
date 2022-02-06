@@ -17,15 +17,15 @@ public class EfCoreOutbox : IOutbox
     public static readonly Duration MessageAgingTime = Duration.FromSeconds(30);
 
     private readonly OutboxContext _outboxContext;
-    private readonly EfCoreTransactionManager _transactionManager;
+    private readonly EfCoreUnitOfWorkProvider _unitOfWorkProvider;
     private readonly JsonSerializer _serializer;
 
     public EfCoreOutbox(
         OutboxContext outboxContext,
-        EfCoreTransactionManager transactionManager)
+        EfCoreUnitOfWorkProvider unitOfWorkProvider)
     {
         _outboxContext = outboxContext;
-        _transactionManager = transactionManager;
+        _unitOfWorkProvider = unitOfWorkProvider;
         _serializer = JsonSerializer.Create(JsonDefaults.DefaultSerializerSettings());
     }
 
@@ -42,13 +42,13 @@ public class EfCoreOutbox : IOutbox
 
     public async Task StoreEnqueuedMessages()
     {
-        await _transactionManager.RegisterExternalDbContext(_outboxContext);
+        await _unitOfWorkProvider.RegisterExternalDbContext(_outboxContext);
         await _outboxContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<(TransportMessage, string)>> RetrieveNextMessages(int count)
     {
-        await _transactionManager.RegisterExternalDbContext(_outboxContext);
+        await _unitOfWorkProvider.RegisterExternalDbContext(_outboxContext);
 
         var outboxMessages = await _outboxContext.Messages
             .OrderBy(m => m.Id)

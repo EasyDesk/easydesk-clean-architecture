@@ -96,7 +96,7 @@ public class RebusMessagingModule : IAppModule
                 _ = provider.GetRequiredService<IBus>();
                 return new OutboxFlusher(
                     outboxOptions.FlushingBatchSize,
-                    provider.GetRequiredService<ITransactionManager>(),
+                    provider.GetRequiredService<IUnitOfWorkProvider>(),
                     provider.GetRequiredService<IOutbox>(),
                     originalTransport);
             });

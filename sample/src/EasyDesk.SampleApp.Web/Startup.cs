@@ -43,6 +43,7 @@ public class Startup : BaseStartup
         builder
             .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration.RequireConnectionString("MainDb"), applyMigrations: Environment.IsDevelopment()))
             .AddAuthentication(options => options.AddTestAuth("Test"))
+            ////.AddAuthentication(options => options.AddJwtBearer("JWT", o => o.ConfigureValidationParameters(Configuration.GetJwtValidationConfiguration("JwtSettings"))))
             .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
             .AddMultitenancy()
             .AddSwagger()
