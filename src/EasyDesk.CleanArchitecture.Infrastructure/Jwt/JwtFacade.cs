@@ -22,7 +22,8 @@ public class JwtFacade
     {
         var descriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(claims)
+            Subject = new ClaimsIdentity(claims),
+            IssuedAt = _timestampProvider.Now.AsDateTime
         };
         configure(new JwtTokenBuilder<JwtTokenBuilderSteps.Initial>(descriptor));
 

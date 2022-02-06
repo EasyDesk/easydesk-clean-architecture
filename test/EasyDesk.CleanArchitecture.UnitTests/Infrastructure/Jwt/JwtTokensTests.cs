@@ -38,7 +38,7 @@ public class JwtFacadeTests
     {
         _configureJwtToken = builder => builder
             .WithSigningCredentials(_key, Algorithm)
-            .WithLifetime(_lifetime, _timestampProvider)
+            .WithLifetime(_lifetime)
             .WithIssuer(Issuer)
             .WithAudience(Audience);
 

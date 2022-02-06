@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Time;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
+﻿using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -41,13 +40,11 @@ public static class JwtTokenBuilderSteps
     public static JwtTokenBuilder<Lifetime> WithSigningCredentials(this JwtTokenBuilder<Initial> builder, SecurityKey key, string algorithm) =>
         builder.NextStep<Lifetime>(t => t.SigningCredentials = new SigningCredentials(key, algorithm));
 
-    public static JwtTokenBuilder<Issuer> WithLifetime(this JwtTokenBuilder<Lifetime> builder, Duration lifetime, ITimestampProvider timestampProvider) =>
+    public static JwtTokenBuilder<Issuer> WithLifetime(this JwtTokenBuilder<Lifetime> builder, Duration lifetime) =>
         builder.NextStep<Issuer>(t =>
         {
-            var now = timestampProvider.Now.AsDateTime;
-            t.NotBefore = now;
-            t.IssuedAt = now;
-            t.Expires = now + lifetime.AsTimeSpan;
+            t.NotBefore = t.IssuedAt;
+            t.Expires = t.IssuedAt + lifetime.AsTimeSpan;
         });
 
     public static JwtTokenBuilder<Audience> WithIssuer(this JwtTokenBuilder<Issuer> builder, string issuer) =>
