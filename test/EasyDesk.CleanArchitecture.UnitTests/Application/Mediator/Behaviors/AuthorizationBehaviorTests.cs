@@ -6,11 +6,9 @@ using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Tools;
 using NSubstitute;
 using Shouldly;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
-using static EasyDesk.Tools.Collections.ImmutableCollections;
 using static EasyDesk.Tools.Options.OptionImports;
 using Next = MediatR.RequestHandlerDelegate<EasyDesk.CleanArchitecture.Application.Responses.Response<EasyDesk.Tools.Nothing>>;
 
@@ -18,112 +16,84 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator.Behaviors;
 
 public class AuthorizationBehaviorTests
 {
-    private const string A = "A";
-    private const string B = "B";
-    private const string C = "C";
-    private const string D = "D";
+    public record TestRequest : RequestBase<Nothing>;
 
     [AllowUnknownUser]
-    private record RequestWithUnknownUserAllowed : RequestBase<Nothing>;
-
-    private record RequestWithNoRequirements : RequestBase<Nothing>;
-
-    [RequireAnyOf(A, B)]
-    [RequireAnyOf(C)]
-    private record RequestWithRequirements : RequestBase<Nothing>;
+    public record TestRequestWithUnknownUserAllowed : RequestBase<Nothing>;
 
     private readonly UserInfo _userInfo = new("user");
-    private readonly IPermissionsProvider _permissionsProvider;
     private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IAuthorizer<TestRequest> _authorizer;
+    private readonly TestRequest _request = new();
     private readonly Next _next;
 
     public AuthorizationBehaviorTests()
     {
-        _permissionsProvider = Substitute.For<IPermissionsProvider>();
-        _permissionsProvider.GetPermissionsForUser(_userInfo).Returns(Set<Permission>());
-
         _userInfoProvider = Substitute.For<IUserInfoProvider>();
         _userInfoProvider.GetUserInfo().Returns(None);
 
         _next = Substitute.For<Next>();
         _next().Returns(Ok);
+
+        _authorizer = Substitute.For<IAuthorizer<TestRequest>>();
+        _authorizer.IsAuthorized(_request, _userInfo).Returns(false);
     }
 
-    private AuthorizationBehavior<T, Nothing> CreateBehavior<T>() where T : RequestBase<Nothing> =>
-        new(_permissionsProvider, _userInfoProvider);
-
-    private async Task<Response<Nothing>> Handle<T>() where T : RequestBase<Nothing>, new() =>
-        await CreateBehavior<T>().Handle(new T(), default, _next);
-
-    private void Authenticate() => _userInfoProvider.GetUserInfo().Returns(_userInfo);
-
-    private void SetPermissions(params string[] permissions)
+    private async Task ShouldNotBeAuthorized<T>(Error error, bool authorizerResult = false) where T : RequestBase<Nothing>, new()
     {
-        var permissionSet = permissions.Select(p => new Permission(p)).ToEquatableSet();
-        _permissionsProvider.GetPermissionsForUser(_userInfo).Returns(permissionSet);
-    }
-
-    private async Task ShouldNotBeAuthorized<T>(Error error) where T : RequestBase<Nothing>, new()
-    {
-        var result = await Handle<T>();
+        var result = await Handle<T>(authorizerResult);
         result.ShouldBe(error);
         await _next.DidNotReceive()();
     }
 
-    private async Task ShouldBeAuthorized<T>() where T : RequestBase<Nothing>, new()
+    private async Task ShouldBeAuthorized<T>(bool authorizerResult = false) where T : RequestBase<Nothing>, new()
     {
-        var result = await Handle<T>();
+        var result = await Handle<T>(authorizerResult);
         result.ShouldBe(Ok);
         await _next.Received(1)();
     }
 
-    [Fact]
-    public async Task ShouldBeAuthorized_IfRequestAllowsUnknownUserAndUserIsNotAuthenticated()
+    private async Task<Response<Nothing>> Handle<T>(bool authorizerResult) where T : RequestBase<Nothing>, new()
     {
-        await ShouldBeAuthorized<RequestWithUnknownUserAllowed>();
+        var request = new T();
+        var authorizer = Substitute.For<IAuthorizer<T>>();
+        authorizer.IsAuthorized(request, _userInfo).Returns(authorizerResult);
+        var behavior = new AuthorizationBehavior<T, Nothing>(authorizer, _userInfoProvider);
+        return await behavior.Handle(request, default, _next);
+    }
+
+    private void Authenticate() => _userInfoProvider.GetUserInfo().Returns(_userInfo);
+
+    [Fact]
+    public async Task ShouldAllowNonAuthenticatedUserIfRequestAllowsUnknownUser()
+    {
+        await ShouldBeAuthorized<TestRequestWithUnknownUserAllowed>();
     }
 
     [Fact]
-    public async Task ShouldBeAuthorized_IfRequestAllowsUnknownUserAndUserIsAuthenticated()
+    public async Task ShouldAllowAuthenticatedUserIfRequestAllowsUnknownUser()
     {
         Authenticate();
-        await ShouldBeAuthorized<RequestWithUnknownUserAllowed>();
+        await ShouldBeAuthorized<TestRequestWithUnknownUserAllowed>(authorizerResult: true);
     }
 
     [Fact]
-    public async Task ShouldBeAuthorized_IfRequestHasNoRequirementsAndUserIsAuthenticated()
+    public async Task ShouldAllowAuthenticatedUserIfTheyAreAuthorized()
     {
         Authenticate();
-        await ShouldBeAuthorized<RequestWithNoRequirements>();
+        await ShouldBeAuthorized<TestRequest>(authorizerResult: true);
     }
 
     [Fact]
-    public async Task ShouldNotBeAuthorized_ReturningUnknownUser_IfTheRequestHasNoRequirementsButUserIsNotAuthenticated()
+    public async Task ShouldNotAllowNonAuthenticatedUserIfTheRequestDoesNotAllowUnknownUsers()
     {
-        await ShouldNotBeAuthorized<RequestWithNoRequirements>(Errors.UnknownUser());
+        await ShouldNotBeAuthorized<TestRequest>(Errors.UnknownUser());
     }
 
     [Fact]
-    public async Task ShouldBeAuthorized_IfUserHasTheCorrectPermissions()
-    {
-        Authenticate();
-        SetPermissions(A, C);
-        await ShouldBeAuthorized<RequestWithRequirements>();
-    }
-
-    [Fact]
-    public async Task ShouldNotBeAuthorized_ReturningForbidden_IfUserDoesNotHaveCorrectPermissions()
+    public async Task ShouldNotAllowAuthenticatedUserIfTheyAreNotAuthorized()
     {
         Authenticate();
-        SetPermissions(D);
-        await ShouldNotBeAuthorized<RequestWithRequirements>(Errors.Forbidden());
-    }
-
-    [Fact]
-    public async Task ShouldNotBeAuthorized_ReturningForbidden_IfUserHasPartiallyCorrectPermissions()
-    {
-        Authenticate();
-        SetPermissions(A, B);
-        await ShouldNotBeAuthorized<RequestWithRequirements>(Errors.Forbidden());
+        await ShouldNotBeAuthorized<TestRequest>(Errors.Forbidden());
     }
 }

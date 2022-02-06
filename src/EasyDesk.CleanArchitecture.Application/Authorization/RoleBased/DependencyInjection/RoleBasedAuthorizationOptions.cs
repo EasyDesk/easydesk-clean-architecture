@@ -38,6 +38,9 @@ public class RoleBasedAuthorizationOptions
 
 public static class RoleBasedExtensions
 {
-    public static RoleBasedAuthorizationOptions UseRoleBasedPermissions(this AuthorizationOptions options) =>
-        new(options.Services, options.App);
+    public static RoleBasedAuthorizationOptions UseRoleBasedPermissions(this AuthorizationOptions options)
+    {
+        options.Services.AddScoped(typeof(IAuthorizer<>), typeof(RoleBasedAuthorizer<>));
+        return new(options.Services, options.App);
+    }
 }

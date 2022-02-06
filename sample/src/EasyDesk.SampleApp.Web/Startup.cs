@@ -45,6 +45,7 @@ public class Startup : BaseStartup
             .AddAuthentication(options => options.AddTestAuth("Test"))
             ////.AddAuthentication(options => options.AddJwtBearer("JWT", o => o.ConfigureValidationParameters(Configuration.GetJwtValidationConfiguration("JwtSettings"))))
             .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
+            ////.AddAuthorization()
             .AddMultitenancy()
             .AddSwagger()
             .AddModule(new SampleAppDomainModule())

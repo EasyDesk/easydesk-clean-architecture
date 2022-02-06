@@ -16,13 +16,14 @@ public class AuthorizationModule : IAppModule
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         var options = new AuthorizationOptions(services, app);
-        _configure(options);
+        services.AddScoped(typeof(IAuthorizer<>), typeof(NoAuthorizer<>));
+        _configure?.Invoke(options);
     }
 }
 
 public static class AuthorizationModuleExtensions
 {
-    public static AppBuilder AddAuthorization(this AppBuilder builder, Action<AuthorizationOptions> configure)
+    public static AppBuilder AddAuthorization(this AppBuilder builder, Action<AuthorizationOptions> configure = null)
     {
         return builder.AddModule(new AuthorizationModule(configure));
     }
