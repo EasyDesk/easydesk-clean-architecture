@@ -2,6 +2,7 @@
 using EasyDesk.Tools.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using static EasyDesk.Tools.Options.OptionImports;
@@ -17,9 +18,12 @@ public class JwtFacade
         _timestampProvider = timestampProvider;
     }
 
-    public string Create(JwtTokenConfiguration configure, out JwtSecurityToken token)
+    public string Create(IEnumerable<Claim> claims, out JwtSecurityToken token, JwtTokenConfiguration configure)
     {
-        var descriptor = new SecurityTokenDescriptor();
+        var descriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims)
+        };
         configure(new JwtTokenBuilder<JwtTokenBuilderSteps.Initial>(descriptor));
 
         var handler = new JwtSecurityTokenHandler();
@@ -27,7 +31,7 @@ public class JwtFacade
         return handler.WriteToken(token);
     }
 
-    public string Create(JwtTokenConfiguration build) => Create(build, out _);
+    public string Create(IEnumerable<Claim> claims, JwtTokenConfiguration configure) => Create(claims, out _, configure);
 
     private TokenValidationParameters CreateDefaultValidationParameters()
     {

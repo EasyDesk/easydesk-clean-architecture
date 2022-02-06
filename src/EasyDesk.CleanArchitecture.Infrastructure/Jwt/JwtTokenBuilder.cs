@@ -3,7 +3,6 @@ using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 using static EasyDesk.CleanArchitecture.Infrastructure.Jwt.JwtTokenBuilderSteps;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
@@ -31,8 +30,6 @@ public static class JwtTokenBuilderSteps
 {
     public record struct Initial;
 
-    public record struct Claims;
-
     public record struct Lifetime;
 
     public record struct Issuer;
@@ -41,11 +38,8 @@ public static class JwtTokenBuilderSteps
 
     public record struct Final;
 
-    public static JwtTokenBuilder<Claims> WithSigningCredentials(this JwtTokenBuilder<Initial> builder, SecurityKey key, string algorithm) =>
-        builder.NextStep<Claims>(t => t.SigningCredentials = new SigningCredentials(key, algorithm));
-
-    public static JwtTokenBuilder<Lifetime> WithClaims(this JwtTokenBuilder<Claims> builder, IEnumerable<Claim> claims) =>
-        builder.NextStep<Lifetime>(t => t.Subject = new(claims));
+    public static JwtTokenBuilder<Lifetime> WithSigningCredentials(this JwtTokenBuilder<Initial> builder, SecurityKey key, string algorithm) =>
+        builder.NextStep<Lifetime>(t => t.SigningCredentials = new SigningCredentials(key, algorithm));
 
     public static JwtTokenBuilder<Issuer> WithLifetime(this JwtTokenBuilder<Lifetime> builder, Duration lifetime, ITimestampProvider timestampProvider) =>
         builder.NextStep<Issuer>(t =>
