@@ -13,7 +13,7 @@ public delegate Option<string> TokenReader(HttpContext httpContext);
 
 public abstract class TokenAuthenticationOptions : AuthenticationSchemeOptions
 {
-    public TokenReader TokenReader { get; } = TokenReaders.Bearer();
+    public TokenReader TokenReader { get; set; } = TokenReaders.Bearer();
 }
 
 public abstract class TokenAuthenticationHandler<T> : AuthenticationHandler<T>
