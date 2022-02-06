@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Options;
 using NSubstitute;
 using Shouldly;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ public class AuthorizationBehaviorTests
         return await behavior.Handle(request, default, _next);
     }
 
-    private void Authenticate() => _userInfoProvider.GetUserInfo().Returns(_userInfo);
+    private void Authenticate() => _userInfoProvider.GetUserInfo().Returns(_userInfo.AsSome());
 
     [Fact]
     public async Task ShouldAllowNonAuthenticatedUserIfRequestAllowsUnknownUser()

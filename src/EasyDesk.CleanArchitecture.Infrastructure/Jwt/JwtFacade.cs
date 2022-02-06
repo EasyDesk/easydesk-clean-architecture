@@ -75,7 +75,7 @@ public class JwtFacade
         {
             var principal = handler.ValidateToken(jwt, parameters, out var genericToken);
             token = genericToken as JwtSecurityToken;
-            return principal;
+            return Some(principal);
         }
         catch
         {

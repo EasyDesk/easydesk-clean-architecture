@@ -38,7 +38,7 @@ public class TestAuthHandler : TokenAuthenticationHandler<TestAuthOptions>
     {
         var claims = token.Split(";", System.StringSplitOptions.RemoveEmptyEntries)
             .SelectMany(p => ConvertTokenPartToClaim(p));
-        return new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Test"));
+        return Some(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Test")));
     }
 
     private Option<Claim> ConvertTokenPartToClaim(string part)

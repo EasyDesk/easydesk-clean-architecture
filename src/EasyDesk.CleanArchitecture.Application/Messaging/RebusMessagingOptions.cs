@@ -59,7 +59,7 @@ public class RebusMessagingOptions
     {
         var outboxOptions = OutboxOptions.OrElseGet(() => new OutboxOptions());
         configureOutbox?.Invoke(outboxOptions);
-        OutboxOptions = outboxOptions;
+        OutboxOptions = Some(outboxOptions);
         return this;
     }
 
