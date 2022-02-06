@@ -15,15 +15,16 @@ public static class JwtConfigurationUtils
     public static JwtValidationConfiguration GetJwtValidationConfiguration(this IConfiguration configuration, string sectionName)
     {
         var section = configuration.RequireSection(sectionName);
+        var validationSection = section.RequireSection("Validation");
 
         JwtValidationConfiguration validation = builder => builder
             .WithSigningCredentials(GetSecretKeyFromSecction(section));
 
-        section.GetValueAsOption<IEnumerable<string>>("ValidIssuers").IfPresent(issuers =>
+        validationSection.GetValueAsOption<IEnumerable<string>>("ValidIssuers").IfPresent(issuers =>
         {
             validation = builder => validation(builder).WithIssuerValidation(issuers);
         });
-        section.GetValueAsOption<IEnumerable<string>>("ValidAudiences").IfPresent(audiences =>
+        validationSection.GetValueAsOption<IEnumerable<string>>("ValidAudiences").IfPresent(audiences =>
         {
             validation = builder => validation(builder).WithAudienceValidation(audiences);
         });
@@ -31,14 +32,15 @@ public static class JwtConfigurationUtils
         return validation;
     }
 
-    public static JwtTokenConfiguration GetJwtTokenConfiguration(IConfiguration configuration, string sectionName)
+    public static JwtTokenConfiguration GetJwtTokenConfiguration(this IConfiguration configuration, string sectionName)
     {
         var section = configuration.RequireSection(sectionName);
+        var authoritySection = section.RequireSection("Authority");
         return builder => builder
             .WithSigningCredentials(GetSecretKeyFromSecction(section), SecurityAlgorithms.HmacSha256Signature)
-            .WithLifetime(Duration.FromTimeSpan(section.RequireValue<TimeSpan>("Lifetime")))
-            .WithIssuer(section.RequireValue<string>("Issuer"))
-            .WithAudience(section.RequireValue<string>("Audience"));
+            .WithLifetime(Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>("Lifetime")))
+            .WithIssuer(authoritySection.RequireValue<string>("Issuer"))
+            .WithAudience(authoritySection.RequireValue<string>("Audience"));
     }
 
     private static SecurityKey GetSecretKeyFromSecction(IConfigurationSection scopeSection) =>
