@@ -32,4 +32,16 @@ public abstract class AggregateRoot : Entity
         .Generate(ConsumeEvent)
         .TakeWhile(ev => ev.IsPresent)
         .Select(ev => ev.Value);
+
+    public void NotifyCreation() => OnCreation();
+
+    protected virtual void OnCreation()
+    {
+    }
+
+    public void NotifyRemoval() => OnRemoval();
+
+    protected virtual void OnRemoval()
+    {
+    }
 }
