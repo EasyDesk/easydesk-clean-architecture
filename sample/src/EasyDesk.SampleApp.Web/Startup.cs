@@ -6,12 +6,13 @@ using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Startup;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.SampleApp.Application.DomainEventHandlers;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
-using EasyDesk.SampleApp.Web.Authentication;
 using EasyDesk.SampleApp.Web.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -42,8 +43,8 @@ public class Startup : BaseStartup
     {
         builder
             .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration.RequireConnectionString("MainDb"), applyMigrations: Environment.IsDevelopment()))
-            .AddAuthentication(options => options.AddTestAuth("Test"))
-            ////.AddAuthentication(options => options.AddJwtBearer("JWT", o => o.ConfigureValidationParameters(Configuration.GetJwtValidationConfiguration("JwtSettings"))))
+            ////.AddAuthentication(options => options.AddTestAuth("Test"))
+            .AddAuthentication(options => options.AddJwtBearer("JWT", o => o.ConfigureValidationParameters(Configuration.GetJwtValidationConfiguration("JwtSettings"))))
             .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
             ////.AddAuthorization()
             .AddMultitenancy()

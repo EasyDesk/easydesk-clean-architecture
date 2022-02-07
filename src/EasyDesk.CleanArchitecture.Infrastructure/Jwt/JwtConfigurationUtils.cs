@@ -16,20 +16,16 @@ public static class JwtConfigurationUtils
     {
         var section = configuration.RequireSection(sectionName);
         var validationSection = section.RequireSection("Validation");
+        var issuers = validationSection.GetValueAsOption<IEnumerable<string>>("ValidIssuers");
+        var audiences = validationSection.GetValueAsOption<IEnumerable<string>>("ValidAudiences");
 
-        JwtValidationConfiguration validation = builder => builder
-            .WithSigningCredentials(GetSecretKeyFromSecction(section));
-
-        validationSection.GetValueAsOption<IEnumerable<string>>("ValidIssuers").IfPresent(issuers =>
+        return builder =>
         {
-            validation = builder => validation(builder).WithIssuerValidation(issuers);
-        });
-        validationSection.GetValueAsOption<IEnumerable<string>>("ValidAudiences").IfPresent(audiences =>
-        {
-            validation = builder => validation(builder).WithAudienceValidation(audiences);
-        });
-
-        return validation;
+            var finalBuilder = builder.WithSigningCredentials(GetSecretKeyFromSecction(section));
+            issuers.IfPresent(issuers => finalBuilder.WithIssuerValidation(issuers));
+            audiences.IfPresent(audiences => finalBuilder.WithAudienceValidation(audiences));
+            return finalBuilder;
+        };
     }
 
     public static JwtTokenConfiguration GetJwtTokenConfiguration(this IConfiguration configuration, string sectionName)
