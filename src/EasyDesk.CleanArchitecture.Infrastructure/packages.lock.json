@@ -4,9 +4,9 @@
     "net6.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[5.0.0, )",
-        "resolved": "5.0.0",
-        "contentHash": "IQ8/24a/HBO2L2asoGgVQBC5U1eSVKI/6k2zLuGY8q01HMWZivse0LBewkfB+UpfxdO+3vRiHsMVtIu2Tdwa1g=="
+        "requested": "[5.1.0, )",
+        "resolved": "5.1.0",
+        "contentHash": "Z2/jbezBxS9d0WihrINdTDD7IGs97GB+xUeQGgH7dIkQ6DeEndgcCBGNofgSG+qgUPmE52LcqijsNROLzmlezg=="
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Direct",
@@ -1381,7 +1381,7 @@
           "AutoMapper": "11.0.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "11.0.0",
           "EasyDesk.CleanArchitecture.Domain": "1.0.0",
-          "EasyDesk.Tools": "5.0.0",
+          "EasyDesk.Tools": "5.1.0",
           "FluentValidation": "10.3.6",
           "FluentValidation.DependencyInjectionExtensions": "10.3.6",
           "MediatR": "10.0.1",
@@ -1398,7 +1398,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "5.0.0"
+          "EasyDesk.Tools": "5.1.0"
         }
       }
     }

@@ -26,18 +26,18 @@ public class Person : AggregateRoot
         Married = married;
     }
 
-    public static Person Create(Name name)
-    {
-        var person = new Person(Guid.NewGuid(), name, married: false);
-        person.EmitEvent(new PersonCreatedEvent(person));
-        return person;
-    }
+    public static Person Create(Name name) => new Person(Guid.NewGuid(), name, married: false);
 
     public Guid Id { get; }
 
     public Name Name { get; }
 
     public bool Married { get; private set; }
+
+    protected override void OnCreation()
+    {
+        EmitEvent(new PersonCreatedEvent(this));
+    }
 
     public Result<Nothing> Marry()
     {

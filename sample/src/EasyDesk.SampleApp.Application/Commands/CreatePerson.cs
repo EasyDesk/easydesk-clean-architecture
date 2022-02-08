@@ -1,10 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using FluentValidation;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace EasyDesk.SampleApp.Application.Commands;
@@ -22,7 +24,7 @@ public static class CreatePerson
         }
     }
 
-    public class Handler : RequestHandlerBase<Command, PersonSnapshot>
+    public class Handler : ICommandHandler<Command, PersonSnapshot>
     {
         private readonly IPersonRepository _personRepository;
 
@@ -31,7 +33,7 @@ public static class CreatePerson
             _personRepository = personRepository;
         }
 
-        protected override Task<Response<PersonSnapshot>> Handle(Command request)
+        public Task<Response<PersonSnapshot>> Handle(Command request, CancellationToken cancellationToken)
         {
             var person = Person.Create(Name.From(request.Name));
             _personRepository.Save(person);

@@ -35,11 +35,11 @@ public abstract class AggregateRoot : Entity
 
     public void NotifyCreation() => OnCreation();
 
+    public void NotifyRemoval() => OnRemoval();
+
     protected virtual void OnCreation()
     {
     }
-
-    public void NotifyRemoval() => OnRemoval();
 
     protected virtual void OnRemoval()
     {

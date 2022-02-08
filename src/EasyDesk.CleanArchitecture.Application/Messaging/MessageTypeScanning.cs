@@ -13,16 +13,12 @@ public static class MessageTypeScanning
     public static IEnumerable<Type> FindHandledMessageTypes(params Type[] assemblyMarkers)
     {
         return ReflectionUtils.InstantiableTypesInAssemblies(assemblyMarkers)
-            .SelectMany(t => GetHandledMessageTypes(t))
+            .SelectMany(GetHandledMessageTypes)
             .ToArray();
     }
 
     private static IEnumerable<Type> GetHandledMessageTypes(Type handlerType)
     {
-        if (handlerType is null)
-        {
-            return Enumerable.Empty<Type>();
-        }
         return handlerType.GetTypeInfo()
             .GetInterfaces()
             .Where(t => t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(IMessageHandler<>)))
@@ -31,7 +27,6 @@ public static class MessageTypeScanning
 
     public static IEnumerable<Type> FindMessageTypes(params Type[] assemblyMarkers)
     {
-        return ReflectionUtils.InstantiableTypesInAssemblies(assemblyMarkers)
-            .Where(t => t.IsAssignableTo(typeof(IMessage)));
+        return ReflectionUtils.InstantiableSubtypesOf<IMessage>(assemblyMarkers);
     }
 }

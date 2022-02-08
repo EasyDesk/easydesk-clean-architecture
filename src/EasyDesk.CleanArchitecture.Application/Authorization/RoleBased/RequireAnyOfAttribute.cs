@@ -3,7 +3,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
 public class RequireAnyOfAttribute : Attribute

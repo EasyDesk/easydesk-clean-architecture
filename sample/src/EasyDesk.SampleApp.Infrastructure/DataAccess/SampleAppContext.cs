@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 

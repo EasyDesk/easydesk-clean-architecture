@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using Microsoft.EntityFrameworkCore;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 
 public abstract class DomainContext : MultitenantDbContext
 {

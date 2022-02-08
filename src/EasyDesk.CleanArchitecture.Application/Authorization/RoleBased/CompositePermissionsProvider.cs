@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 public class CompositePermissionsProvider : IPermissionsProvider
 {

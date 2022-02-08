@@ -27,7 +27,7 @@ namespace EasyDesk.CleanArchitecture.Web.Startup;
 /// This implementation adds these default <see cref="IAppModule"/> to the <see cref="AppBuilder"/>:
 /// <list type="bullet">
 ///     <item><see cref="ControllersModule"/></item>
-///     <item><see cref="DomainEventQueueModule"/></item>
+///     <item><see cref="DomainServicesModule"/></item>
 ///     <item><see cref="HttpContextModule"/></item>
 ///     <item><see cref="TimeManagementModule"/></item>
 ///     <item><see cref="MediatrModule"/></item>
@@ -87,7 +87,7 @@ public abstract class BaseStartup
     /// Override this method to setup additional modules to the default list:
     /// <list type="bullet">
     ///     <item><see cref="ControllersModule"/></item>
-    ///     <item><see cref="DomainEventQueueModule"/></item>
+    ///     <item><see cref="DomainServicesModule"/></item>
     ///     <item><see cref="HttpContextModule"/></item>
     ///     <item><see cref="TimeManagementModule"/></item>
     ///     <item><see cref="MediatrModule"/></item>

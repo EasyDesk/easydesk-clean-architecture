@@ -1,22 +1,20 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Domain.Metamodel;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.Tools;
-using MediatR;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
+using static EasyDesk.CleanArchitecture.Domain.Metamodel.Results.ResultImports;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
 public class DomainEventQueue : IDomainEventNotifier
 {
     private readonly Queue<DomainEvent> _eventQueue = new();
-    private readonly IMediator _mediator;
+    private readonly IDomainEventPublisher _publisher;
 
-    public DomainEventQueue(IMediator mediator)
+    public DomainEventQueue(IDomainEventPublisher publisher)
     {
-        _mediator = mediator;
+        _publisher = publisher;
     }
 
     public void Notify(DomainEvent domainEvent)
@@ -24,11 +22,11 @@ public class DomainEventQueue : IDomainEventNotifier
         _eventQueue.Enqueue(domainEvent);
     }
 
-    public async Task<Response<Nothing>> Flush()
+    public async Task<Result<Nothing>> Flush()
     {
-        while (_eventQueue.TryDequeue(out var ev))
+        while (_eventQueue.TryDequeue(out var nextEvent))
         {
-            var result = await _mediator.PublishEvent(ev);
+            var result = await _publisher.Publish(nextEvent);
             if (result.IsFailure)
             {
                 return result;

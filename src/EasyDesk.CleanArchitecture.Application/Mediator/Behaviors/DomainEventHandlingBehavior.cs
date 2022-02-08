@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Responses;
 using MediatR;
 using System;
@@ -21,7 +22,7 @@ public class DomainEventHandlingBehavior<TRequest, TResponse> : IPipelineBehavio
     public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Response<TResponse>> next)
     {
         var response = await next();
-        return await response.RequireAsync(_ => _domainEventQueue.Flush());
+        return await response.RequireAsync(_ => _domainEventQueue.Flush().ThenToResponse());
     }
 }
 

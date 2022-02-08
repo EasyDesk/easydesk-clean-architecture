@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using System;
 

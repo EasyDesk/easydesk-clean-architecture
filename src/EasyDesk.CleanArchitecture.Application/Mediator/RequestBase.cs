@@ -10,4 +10,4 @@ public abstract record CommandBase<TResponse> : RequestBase<TResponse>;
 
 public abstract record QueryBase<TResponse> : RequestBase<TResponse>;
 
-public abstract record PaginatedQueryBase<TResponse>(Pagination Pagination) : QueryBase<Page<TResponse>>;
+public abstract record QueryWithPaginationBase<TResponse>(Pagination Pagination) : QueryBase<Page<TResponse>>;

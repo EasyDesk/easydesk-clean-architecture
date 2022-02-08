@@ -1,12 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Entities;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Extensions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
