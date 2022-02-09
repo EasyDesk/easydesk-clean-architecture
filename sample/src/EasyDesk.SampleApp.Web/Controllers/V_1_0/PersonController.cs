@@ -37,7 +37,7 @@ public class PersonController : AbstractMediatrController
     {
         var query = new GetPeople.Query(pagination);
         return await Query(query)
-            .Paging(Mapper.Map<PersonDto>)
+            .MappingPageContent(Mapper.Map<PersonDto>)
             .ReturnOk();
     }
 

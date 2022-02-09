@@ -94,7 +94,7 @@ public static class ActionResultBuilderExtensions
         return builder.ConvertSuccessfulResponseWith(value => ResponseDto.FromData(mapper(value)));
     }
 
-    public static ActionResultBuilder<Page<T>> Paging<T>(this ActionResultBuilder<Page<T>> builder, Func<T, object> mapper = null)
+    public static ActionResultBuilder<Page<T>> MappingPageContent<T>(this ActionResultBuilder<Page<T>> builder, Func<T, object> mapper = null)
     {
         return builder.ConvertSuccessfulResponseWith(page =>
         {

@@ -28,6 +28,7 @@ public class GetPeopleQueryHandler : IQueryWithPaginationHandler<Query, PersonSn
         return await _context.People
             .OrderBy(p => p.Name)
             .ProjectTo<PersonSnapshot>(_mapper.ConfigurationProvider)
-            .GetPageAsync(request.Pagination);
+            .GetPageAsync(request.Pagination)
+            .MapPage(p => p);
     }
 }
