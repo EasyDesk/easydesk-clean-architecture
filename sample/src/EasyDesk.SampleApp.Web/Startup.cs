@@ -1,6 +1,5 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
@@ -41,12 +40,12 @@ public class Startup : BaseStartup
     public override void ConfigureApp(AppBuilder builder)
     {
         builder
-            .AddDataAccess(new EfCoreDataAccess<SampleAppContext>(Configuration.RequireConnectionString("MainDb"), applyMigrations: Environment.IsDevelopment()))
+            .AddEfCoreDataAccess<SampleAppContext>(Configuration.RequireConnectionString("MainDb"), applyMigrations: Environment.IsDevelopment())
             .AddAuthentication(options => options.AddTestAuth("Test"))
             .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
             .AddMultitenancy()
             .AddSwagger()
-            .AddModule(new SampleAppDomainModule())
+            .AddModule<SampleAppDomainModule>()
             .AddRebusMessaging(options =>
             {
                 options

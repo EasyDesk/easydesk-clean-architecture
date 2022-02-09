@@ -49,20 +49,20 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         services.AddScoped(_ => new SqlConnection(_connectionString));
-        AddDbContext<T>(services, DomainContext.SchemaName, app);
+        AddDbContext<T>(services, DomainContext.SchemaName);
         services.AddScoped(provider => new EfCoreUnitOfWorkProvider(provider.GetRequiredService<T>()));
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
     }
 
     public void AddOutbox(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<OutboxContext>(services, OutboxContext.SchemaName, app);
+        AddDbContext<OutboxContext>(services, OutboxContext.SchemaName);
         services.AddScoped<IOutbox, EfCoreOutbox>();
     }
 
     public void AddIdempotenceManager(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<IdempotenceContext>(services, IdempotenceContext.SchemaName, app);
+        AddDbContext<IdempotenceContext>(services, IdempotenceContext.SchemaName);
         services.AddScoped<IIdempotenceManager, EfCoreIdempotenceManager>();
     }
 
@@ -74,13 +74,13 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 
     public void AddRoleManager(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName, app);
+        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName);
         services.AddScoped<EfCoreAuthorizationManager>();
         services.AddScoped<IUserRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
         services.AddScoped<IUserRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
     }
 
-    private void AddDbContext<C>(IServiceCollection services, string schema, AppDescription app, Action<IServiceProvider, DbContextOptionsBuilder> configure = null)
+    private void AddDbContext<C>(IServiceCollection services, string schema, Action<IServiceProvider, DbContextOptionsBuilder> configure = null)
         where C : DbContext
     {
         services.AddDbContext<C>((provider, options) =>
@@ -90,16 +90,11 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
             configure?.Invoke(provider, options);
         });
 
-        if (_registeredDbContextTypes.IsEmpty())
+        if (_registeredDbContextTypes.IsEmpty() && _applyMigrations)
         {
-            services.AddScoped<DbContext>(provider => provider.GetRequiredService<C>());
-
-            if (_applyMigrations)
-            {
-                services.AddHostedService(provider => new MigrationsHostedService(
-                    provider.GetRequiredService<IServiceScopeFactory>(),
-                    _registeredDbContextTypes));
-            }
+            services.AddHostedService(provider => new MigrationsHostedService(
+                provider.GetRequiredService<IServiceScopeFactory>(),
+                _registeredDbContextTypes));
         }
         _registeredDbContextTypes.Add(typeof(C));
     }
@@ -117,5 +112,17 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     private void ConfigureMigrationsHistoryTable(SqlServerDbContextOptionsBuilder sqlServerOptions, string schema)
     {
         sqlServerOptions.MigrationsHistoryTable(tableName: "__EFMigrationsHistory", schema);
+    }
+}
+
+public static class EfCoreDataAccessExtensions
+{
+    public static AppBuilder AddEfCoreDataAccess<T>(
+        this AppBuilder builder,
+        string connectionString,
+        bool applyMigrations = false,
+        Action<DbContextOptionsBuilder> addtionalOptions = null) where T : DomainContext
+    {
+        return builder.AddDataAccess(new EfCoreDataAccess<T>(connectionString, applyMigrations, addtionalOptions));
     }
 }

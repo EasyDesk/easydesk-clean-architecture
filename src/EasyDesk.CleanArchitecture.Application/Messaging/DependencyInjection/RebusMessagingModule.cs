@@ -1,7 +1,6 @@
 ﻿using System;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Application.Modules;
@@ -31,6 +30,7 @@ public class RebusMessagingModule : IAppModule
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         ITransport originalTransport = null;
+
         services.AddRebus((configurer, provider) =>
         {
             configurer
@@ -57,13 +57,9 @@ public class RebusMessagingModule : IAppModule
                 configurer.Options(t => t.Decorate<ITransport>(c => new TransportWithOutbox(c.Get<ITransport>())));
             });
 
-            if (_options.IsIdempotent)
+            if (_options.UseIdempotentConsumer)
             {
-                configurer.Options(o => o.Decorate<IPipeline>(c =>
-                {
-                    return new PipelineStepInjector(c.Get<IPipeline>())
-                        .OnReceive(new IdempotentHandlingStep(), PipelineRelativePosition.After, typeof(TransactionStep));
-                }));
+                configurer.Options(o => o.HandleMessagesIdempotently());
             }
 
             configurer.Options(o => o.Decorate<IPipeline>(c =>
@@ -75,6 +71,7 @@ public class RebusMessagingModule : IAppModule
 
             return configurer;
         });
+
         services.AutoRegisterHandlersFromAssembly(app.ApplicationAssemblyMarker.Assembly);
 
         services.AddScoped<MessageBroker>();
@@ -82,19 +79,20 @@ public class RebusMessagingModule : IAppModule
         _options.OutboxOptions.IfPresent(outboxOptions =>
         {
             app.RequireModule<DataAccessModule>().Implementation.AddOutbox(services, app);
+
             services.AddScoped<OutboxTransactionHelper>();
-            services.AddHostedService(provider => new PeriodicOutboxAwaker(
+            services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
                 outboxOptions.FlushingPeriod,
                 provider.GetRequiredService<OutboxFlushRequestsChannel>(),
                 provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
 
             services.AddHostedService<OutboxFlusherBackgroundService>();
             services.AddSingleton<OutboxFlushRequestsChannel>();
-            services.AddScoped(provider =>
+            services.AddScoped<OutboxFlusher>(provider =>
             {
                 // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
                 _ = provider.GetRequiredService<IBus>();
-                return new OutboxFlusher(
+                return new(
                     outboxOptions.FlushingBatchSize,
                     provider.GetRequiredService<IUnitOfWorkProvider>(),
                     provider.GetRequiredService<IOutbox>(),
@@ -102,7 +100,7 @@ public class RebusMessagingModule : IAppModule
             });
         });
 
-        if (_options.IsIdempotent)
+        if (_options.UseIdempotentConsumer)
         {
             app.RequireModule<DataAccessModule>().Implementation.AddIdempotenceManager(services, app);
         }

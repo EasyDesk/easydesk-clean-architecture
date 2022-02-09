@@ -21,7 +21,7 @@ public class RebusMessagingOptions
 
     internal Option<OutboxOptions> OutboxOptions { get; private set; } = None;
 
-    internal bool IsIdempotent { get; private set; } = false;
+    internal bool UseIdempotentConsumer { get; private set; } = false;
 
     internal IEnumerable<Type> KnownMessageTypes => _knownMessageTypes;
 
@@ -65,7 +65,7 @@ public class RebusMessagingOptions
 
     public RebusMessagingOptions UseIdempotentHandling()
     {
-        IsIdempotent = true;
+        UseIdempotentConsumer = true;
         return this;
     }
 

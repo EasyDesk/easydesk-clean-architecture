@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
+using Microsoft.Extensions.DependencyInjection;
 using Rebus.Config;
 using Rebus.Pipeline;
 using Rebus.Transport;
@@ -24,6 +25,15 @@ public static class RebusPipelineExtensions
         {
             var step = new TransactionStep();
             return new PipelineStepConcatenator(c.Get<IPipeline>()).OnReceive(step, PipelineAbsolutePosition.Front);
+        });
+    }
+
+    public static void HandleMessagesIdempotently(this OptionsConfigurer configurer)
+    {
+        configurer.Decorate<IPipeline>(c =>
+        {
+            return new PipelineStepInjector(c.Get<IPipeline>())
+                .OnReceive(new IdempotentHandlingStep(), PipelineRelativePosition.After, typeof(TransactionStep));
         });
     }
 
