@@ -18,17 +18,6 @@
         "resolved": "1.14.0",
         "contentHash": "yORzATlNmCp4kEwkxznLZ3maTaUJc5yTcu3aPufY8Tq4141/bRRWsa91u8I24MR3BTCCJlZO98xuQWB4arlKCw=="
       },
-      "Rebus.AzureServiceBus": {
-        "type": "Direct",
-        "requested": "[9.0.8, )",
-        "resolved": "9.0.8",
-        "contentHash": "ec/rk7p5Md1p/I1GRB20herdbG+EsYS5rpbrm+DM1911SuPNqXzZ0OmPg+Ixy+WSBR9qbtELc+XwwcYBdGvODA==",
-        "dependencies": {
-          "Azure.Messaging.ServiceBus": "7.5.1",
-          "Rebus": "[6.0.0, 7.0.0)",
-          "azure.identity": "1.4.1"
-        }
-      },
       "StyleCop.Analyzers": {
         "type": "Direct",
         "requested": "[1.2.0-beta.354, )",
@@ -586,6 +575,16 @@
           "System.Dynamic.Runtime": "4.3.0",
           "System.Reflection.Emit.LightWeight": "4.3.0",
           "System.Text.Json": "5.0.0"
+        }
+      },
+      "Rebus.AzureServiceBus": {
+        "type": "Transitive",
+        "resolved": "9.0.8",
+        "contentHash": "ec/rk7p5Md1p/I1GRB20herdbG+EsYS5rpbrm+DM1911SuPNqXzZ0OmPg+Ixy+WSBR9qbtELc+XwwcYBdGvODA==",
+        "dependencies": {
+          "Azure.Messaging.ServiceBus": "7.5.1",
+          "Rebus": "[6.0.0, 7.0.0)",
+          "azure.identity": "1.4.1"
         }
       },
       "Rebus.Microsoft.Extensions.Logging": {
@@ -1432,6 +1431,13 @@
           "Newtonsoft.Json": "13.0.1",
           "RazorLight": "2.0.0-rc.3",
           "System.IdentityModel.Tokens.Jwt": "6.15.1"
+        }
+      },
+      "easydesk.cleanarchitecture.messaging.servicebus": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.CleanArchitecture.Application": "1.0.0",
+          "Rebus.AzureServiceBus": "9.0.8"
         }
       },
       "easydesk.cleanarchitecture.web": {

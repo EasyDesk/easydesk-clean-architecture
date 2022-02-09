@@ -31,18 +31,21 @@ public class RebusMessagingModule : IAppModule
     {
         ITransport originalTransport = null;
 
+        var knownMessageTypes = MessageTypeScanning.FindMessageTypes(app.ApplicationAssemblyMarker);
+
         services.AddRebus((configurer, provider) =>
         {
             configurer
                 .Options(o => o.LogPipeline(verbose: true))
                 .Logging(l => l.MicrosoftExtensionsLogging(provider.GetRequiredService<ILoggerFactory>()))
+                .Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
                 .Options(o =>
                 {
                     o.Decorate<ITopicNameConvention>(c => new TopicNameConvention());
-                    o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(_options.KnownMessageTypes));
+                    o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(knownMessageTypes));
                     o.WrapHandlersInsideTransaction();
-                })
-                .Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson));
+                });
+
             _options.ApplyDefaultConfiguration(configurer);
 
             configurer.Options(o => o.Decorate(c => originalTransport = c.Get<ITransport>()));

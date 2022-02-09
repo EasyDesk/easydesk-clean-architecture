@@ -44,6 +44,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dal", "Dal", "{00DB6729-9D3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Messaging", "Messaging", "{AD9B0D22-6CDC-45E1-8616-D75FD0F80F40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.CleanArchitecture.Messaging.ServiceBus", "src\EasyDesk.CleanArchitecture.Messaging.ServiceBus\EasyDesk.CleanArchitecture.Messaging.ServiceBus.csproj", "{09FBB562-3D4D-4FBB-9B92-B0CF71370354}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,10 @@ Global
 		{050F3A8F-8831-4F13-ADEC-F4B96CCDC565}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{050F3A8F-8831-4F13-ADEC-F4B96CCDC565}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050F3A8F-8831-4F13-ADEC-F4B96CCDC565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09FBB562-3D4D-4FBB-9B92-B0CF71370354}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09FBB562-3D4D-4FBB-9B92-B0CF71370354}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09FBB562-3D4D-4FBB-9B92-B0CF71370354}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09FBB562-3D4D-4FBB-9B92-B0CF71370354}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +119,7 @@ Global
 		{050F3A8F-8831-4F13-ADEC-F4B96CCDC565} = {2145C2CE-819C-42E4-956D-7D723ABD8B1E}
 		{00DB6729-9D39-4965-83BA-4C8B6E47F7EE} = {B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}
 		{AD9B0D22-6CDC-45E1-8616-D75FD0F80F40} = {B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}
+		{09FBB562-3D4D-4FBB-9B92-B0CF71370354} = {AD9B0D22-6CDC-45E1-8616-D75FD0F80F40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D8D92860-D9D0-4987-985E-F151E0C54794}

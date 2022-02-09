@@ -5,7 +5,6 @@ using Rebus.Injection;
 using Rebus.Routing;
 using Rebus.Transport;
 using System;
-using System.Collections.Generic;
 using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
@@ -13,7 +12,6 @@ namespace EasyDesk.CleanArchitecture.Application.Messaging;
 public class RebusMessagingOptions
 {
     private Action<RebusConfigurer> _configureRebus = _ => { };
-    private readonly ISet<Type> _knownMessageTypes = new HashSet<Type>();
 
     public RebusMessagingOptions()
     {
@@ -22,8 +20,6 @@ public class RebusMessagingOptions
     internal Option<OutboxOptions> OutboxOptions { get; private set; } = None;
 
     internal bool UseIdempotentConsumer { get; private set; } = false;
-
-    internal IEnumerable<Type> KnownMessageTypes => _knownMessageTypes;
 
     public RebusMessagingOptions ConfigureRebus(Action<RebusConfigurer> configurationAction)
     {
@@ -42,18 +38,6 @@ public class RebusMessagingOptions
 
     public RebusMessagingOptions DecorateRebusService<T>(Func<IResolutionContext, T> factory, string description = null) =>
         ConfigureRebusOptions(o => o.Decorate(factory, description));
-
-    public RebusMessagingOptions AddKnownMessageType<T>() where T : IMessage
-    {
-        _knownMessageTypes.Add(typeof(T));
-        return this;
-    }
-
-    public RebusMessagingOptions AddKnownMessageTypesFromAssembliesOf(params Type[] assemblyMarkers)
-    {
-        _knownMessageTypes.UnionWith(MessageTypeScanning.FindMessageTypes(assemblyMarkers));
-        return this;
-    }
 
     public RebusMessagingOptions UseOutbox(Action<OutboxOptions> configureOutbox = null)
     {

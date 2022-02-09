@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.CleanArchitecture.Messaging.ServiceBus;
 using EasyDesk.CleanArchitecture.Web.Startup;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.SampleApp.Application.DomainEventHandlers;
@@ -16,8 +17,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Rebus.AzureServiceBus.NameFormat;
-using Rebus.Config;
 using Rebus.Routing.TypeBased;
 using System;
 
@@ -49,10 +48,11 @@ public class Startup : BaseStartup
             .AddRebusMessaging(options =>
             {
                 options
-                    .ConfigureTransport(t => t.UseAzureServiceBus(Configuration.GetConnectionString("AzureServiceBus"), "sample-service"))
-                    .DecorateRebusService<INameFormatter>(c => new PrefixNameFormatter("testing/", c.Get<INameFormatter>()))
+                    .ConfigureTransport(t => t.UseAzureServiceBusWithinEnvironment(
+                        connectionString: Configuration.GetConnectionString("AzureServiceBus"),
+                        inputQueueAddress: "sample-service",
+                        environmentName: Environment.EnvironmentName))
                     .ConfigureRouting(r => r.TypeBased().Map<SendPersonCreatedEmail>("sample-service"))
-                    .AddKnownMessageTypesFromAssembliesOf(ApplicationAssemblyMarker)
                     .UseOutbox()
                     .UseIdempotentHandling();
             });
