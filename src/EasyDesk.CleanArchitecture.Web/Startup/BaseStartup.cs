@@ -138,6 +138,11 @@ public abstract class BaseStartup
             app.UseAuthentication();
         }
 
+        if (_appDescription.HasAspNetCoreAuthroization())
+        {
+            app.UseAuthorization();
+        }
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
