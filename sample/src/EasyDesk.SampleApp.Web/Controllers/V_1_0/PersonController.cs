@@ -5,6 +5,7 @@ using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0;
@@ -24,28 +25,29 @@ public record PersonDto(Guid Id, string Name, bool Married)
 public class PersonController : AbstractMediatrController
 {
     [HttpPost("people")]
-    public async Task<IActionResult> CreatePerson([FromBody] CreatePersonBodyDto body)
+    public async Task<ActionResult<ResponseDto<PersonDto>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
-        var command = new CreatePerson.Command(body.Name);
-        return await Command(command)
-            .MappingContent(Mapper.Map<PersonDto>)
+        var response = await Send(new CreatePerson.Command(body.Name));
+        return ForResponse(response)
+            .Map(Mapper.Map<PersonDto>)
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }
 
     [HttpGet("people")]
-    public async Task<IActionResult> GetPeople([FromQuery] PaginationDto pagination)
+    public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>>>> GetPeople([FromQuery] PaginationDto pagination)
     {
-        var query = new GetPeople.Query(pagination);
-        return await Query(query)
-            .MappingPageContent(Mapper.Map<PersonDto>)
+        var response = await Send(new GetPeople.Query(pagination));
+        return ForPageResponse(response)
+            .MapEachElement(Mapper.Map<PersonDto>)
             .ReturnOk();
     }
 
     [HttpGet("people/{id}")]
-    public async Task<IActionResult> GetPerson([FromRoute] Guid id)
+    public async Task<ActionResult<ResponseDto<PersonDto>>> GetPerson([FromRoute] Guid id)
     {
-        return await Query(new GetPerson.Query(id))
-            .MappingContent(Mapper.Map<PersonDto>)
+        var response = await Send(new GetPerson.Query(id));
+        return ForResponse(response)
+            .Map(Mapper.Map<PersonDto>)
             .ReturnOk();
     }
 }

@@ -1,7 +1,12 @@
 ﻿using AutoMapper;
-using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Pages;
+using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.CleanArchitecture.Web.Dto;
+using EasyDesk.Tools;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
@@ -10,20 +15,20 @@ public abstract partial class AbstractMediatrController : AbstractController
     private IMediator _mediator;
     private IMapper _mapper;
 
-    protected IMediator Mediator => _mediator ??= GetService<IMediator>();
+    private IMediator Mediator => _mediator ??= GetService<IMediator>();
 
     protected IMapper Mapper => _mapper ??= GetService<IMapper>();
 
     private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 
-    protected ActionResultBuilder<TResponse> Command<TResponse>(CommandBase<TResponse> command) =>
-        MakeRequest(command);
+    protected Task<T> Send<T>(IRequest<T> request) => Mediator.Send(request);
 
-    protected ActionResultBuilder<TResponse> Query<TResponse>(QueryBase<TResponse> query) =>
-        MakeRequest(query);
+    protected ActionResultBuilder<T> ForResponse<T>(Response<T> response) where T : class =>
+        new(response, Nothing.Value, this);
 
-    private ActionResultBuilder<TResponse> MakeRequest<TResponse>(RequestBase<TResponse> request)
+    protected ActionResultBuilder<IEnumerable<T>> ForPageResponse<T>(Response<Page<T>> response)
     {
-        return new(() => Mediator.Send(request), this);
+        var meta = PaginationResponseMetaDto.FromResponse(response);
+        return new(response.Map(page => page.Items), meta, this);
     }
 }

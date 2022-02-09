@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
@@ -21,6 +22,6 @@ public abstract class VersionsController : AbstractController
         var versions = VersioningUtils.GetSupportedVersions(_assemblyTypes)
             .Select(v => new SupportedVersionDto(v.ToString()));
 
-        return Ok(ResponseDto.FromData(versions));
+        return Ok(ResponseDto<IEnumerable<SupportedVersionDto>>.FromData(versions));
     }
 }

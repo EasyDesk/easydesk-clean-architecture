@@ -11,7 +11,7 @@ public class UnhandledExceptionsFilter : IExceptionFilter
     public void OnException(ExceptionContext context)
     {
         var error = ErrorDto.FromError(Errors.Internal(context.Exception));
-        var response = ResponseDto.FromError(error);
+        var response = ResponseDto<object>.FromError(error);
 
         context.Result = new ObjectResult(response)
         {

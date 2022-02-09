@@ -1,11 +1,20 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Tools;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
 public record ErrorDto(string Code, string Detail, object Meta)
 {
+    public static IEnumerable<ErrorDto> CreateErrorDtoList(Error error) => error switch
+    {
+        MultipleErrors(var errors) => errors.Select(FromError),
+        _ => Some(FromError(error))
+    };
+
     public static ErrorDto FromError(Error error) => error switch
     {
         InternalError => new(

@@ -4,106 +4,107 @@ using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
+using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Threading.Tasks;
+using static EasyDesk.Tools.Collections.ImmutableCollections;
 using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
-public class ActionResultBuilder<T>
-{
-    private readonly AsyncFunc<Response<T>> _request;
-    private readonly ControllerBase _controller;
-    private readonly List<(Predicate<Error> ErrorPredicate, ActionResultProvider<Error> ResultProvider)> _errorHandlers = new();
-    private Func<T, ResponseDto> _successfulResponseConverter = x => ResponseDto.FromData(x);
+public delegate Option<ActionResult> ErrorHandler(object body, Error error);
 
-    public ActionResultBuilder(AsyncFunc<Response<T>> request, ControllerBase controller)
+public delegate ActionResult SuccessHandler<T>(object body, T data)
+    where T : class;
+
+public class ActionResultBuilder<T>
+    where T : class
+{
+    private readonly Response<T> _response;
+    private readonly ControllerBase _controller;
+    private readonly object _meta;
+    private IImmutableList<ErrorHandler> _errorHandlers;
+
+    public ActionResultBuilder(Response<T> response, object meta, ControllerBase controller)
+        : this(response, controller, meta, List<ErrorHandler>())
     {
-        _request = request;
+    }
+
+    private ActionResultBuilder(
+        Response<T> response,
+        ControllerBase controller,
+        object meta,
+        IImmutableList<ErrorHandler> errorHandlers)
+    {
+        _response = response;
+        _meta = meta;
+        _errorHandlers = errorHandlers;
         _controller = controller;
     }
 
-    public ActionResultBuilder<T> ConvertSuccessfulResponseWith(Func<T, ResponseDto> converter)
+    public ActionResultBuilder<T> OnFailure(ErrorHandler errorHandler)
     {
-        _successfulResponseConverter = converter;
+        _errorHandlers = _errorHandlers.Add(errorHandler);
         return this;
     }
 
-    public ActionResultBuilder<T> OnFailure(Predicate<Error> errorPredicate, ActionResultProvider<Error> resultProvider)
+    public ActionResultBuilder<R> Map<R>(Func<T, R> mapper) where R : class
     {
-        _errorHandlers.Add((errorPredicate, resultProvider));
-        return this;
+        return new(_response.Map(mapper), _controller, _meta, _errorHandlers);
     }
 
-    public async Task<IActionResult> OnSuccess(ActionResultProvider<T> resultProvider)
+    public ActionResult<ResponseDto<T>> OnSuccess(SuccessHandler<T> handler)
     {
-        var response = await _request();
-        var body = response.Match(
-            success: t => _successfulResponseConverter(t),
-            failure: e => CreateErrorResponse(e));
-        return response.Match(
-            success: t => resultProvider(body, t),
-            failure: e => HandleErrorResult(e, body));
+        var body = ResponseDto<T>.FromResponse(_response);
+        return _response.Match(
+            success: t => handler(body, t),
+            failure: e => HandleErrorResult(body, e));
     }
 
-    private ResponseDto CreateErrorResponse(Error error) =>
-       ResponseDto.FromErrors(error switch
-       {
-           MultipleErrors(var errors) => errors.Select(ErrorDto.FromError),
-           _ => Some(ErrorDto.FromError(error))
-       });
-
-    private IActionResult HandleErrorResult(Error error, ResponseDto body)
+    private ActionResult HandleErrorResult(ResponseDto<T> body, Error error)
     {
         var errorToMatchAgainst = error switch
         {
             MultipleErrors(var primary, _) => primary,
             _ => error
         };
-        return _errorHandlers.FirstOption(h => h.ErrorPredicate(errorToMatchAgainst)).Match(
-            some: h => h.ResultProvider(body, errorToMatchAgainst),
-            none: () => DefaultErrorHandler(body, errorToMatchAgainst));
+        return _errorHandlers
+            .SelectMany(h => h(body, errorToMatchAgainst))
+            .FirstOption()
+            .OrElseGet(() => DefaultErrorHandler(body, errorToMatchAgainst));
     }
 
-    private IActionResult DefaultErrorHandler(object body, Error error) => error switch
+    private ActionResult DefaultErrorHandler(ResponseDto<T> body, Error error)
     {
-        NotFoundError => _controller.NotFound(body),
-        DomainErrorWrapper or InputValidationError => _controller.BadRequest(body),
-        ForbiddenError => ActionResults.Forbidden(body),
-        UnknownUserError => _controller.Unauthorized(body),
-        _ => ActionResults.InternalServerError(body)
-    };
+        return error switch
+        {
+            NotFoundError => _controller.NotFound(body),
+            DomainErrorWrapper or InputValidationError => _controller.BadRequest(body),
+            ForbiddenError => ActionResults.Forbidden(body),
+            UnknownUserError => _controller.Unauthorized(body),
+            _ => ActionResults.InternalServerError(body)
+        };
+    }
 
-    public Task<IActionResult> ReturnOk() =>
+    public ActionResult<ResponseDto<T>> ReturnOk() =>
         OnSuccess((body, _) => _controller.Ok(body));
 
-    public Task<IActionResult> ReturnCreatedAtAction(string actionName, Func<T, object> routeValues) =>
+    public ActionResult<ResponseDto<T>> ReturnCreatedAtAction(string actionName, Func<T, object> routeValues) =>
         OnSuccess((body, result) => _controller.CreatedAtAction(actionName, routeValues(result), body));
 
-    public Task<IActionResult> ReturnCreatedAtAction(string actionName, string controllerName, Func<T, object> routeValues) =>
+    public ActionResult<ResponseDto<T>> ReturnCreatedAtAction(string actionName, string controllerName, Func<T, object> routeValues) =>
         OnSuccess((body, result) => _controller.CreatedAtAction(actionName, controllerName, routeValues(result), body));
 }
 
 public static class ActionResultBuilderExtensions
 {
-    public static ActionResultBuilder<T> MappingContent<T>(this ActionResultBuilder<T> builder, Func<T, object> mapper)
+    public static ActionResultBuilder<IEnumerable<R>> MapEachElement<T, R>(
+        this ActionResultBuilder<IEnumerable<T>> builder,
+        Func<T, R> mapper)
     {
-        return builder.ConvertSuccessfulResponseWith(value => ResponseDto.FromData(mapper(value)));
-    }
-
-    public static ActionResultBuilder<Page<T>> MappingPageContent<T>(this ActionResultBuilder<Page<T>> builder, Func<T, object> mapper = null)
-    {
-        return builder.ConvertSuccessfulResponseWith(page =>
-        {
-            var meta = new PaginationResponseMetaDto(
-                page.Pagination.PageIndex,
-                page.Pagination.PageSize,
-                page.Count,
-                page.PageCount);
-            return ResponseDto.FromData(mapper is null ? page.Items : page.Items.Select(mapper), meta);
-        });
+        return builder.Map(ts => ts.Select(mapper));
     }
 }

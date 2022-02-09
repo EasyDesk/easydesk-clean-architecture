@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
 public static class ActionResults
 {
-    public static IActionResult FromBodyAndStatusCode(object body, HttpStatusCode statusCode)
+    public static ActionResult FromBodyAndStatusCode(object body, HttpStatusCode statusCode)
     {
         return new ObjectResult(body)
         {
@@ -13,7 +13,7 @@ public static class ActionResults
         };
     }
 
-    public static IActionResult Forbidden(object body) => FromBodyAndStatusCode(body, HttpStatusCode.Forbidden);
+    public static ActionResult Forbidden(object body) => FromBodyAndStatusCode(body, HttpStatusCode.Forbidden);
 
-    public static IActionResult InternalServerError(object body) => FromBodyAndStatusCode(body, HttpStatusCode.InternalServerError);
+    public static ActionResult InternalServerError(object body) => FromBodyAndStatusCode(body, HttpStatusCode.InternalServerError);
 }
