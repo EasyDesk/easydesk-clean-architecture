@@ -154,8 +154,8 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "6.0.1",
-        "contentHash": "5LDZ36RYl/31dRl807Ad1WV3GwaYprYyPu6+pjTkjpjsv/e2wIs7/VMtcp04RKIjO9oANcvCahZWX1zpH2+tHg==",
+        "resolved": "6.0.2",
+        "contentHash": "piqHQnFONTynowTNuMDqCyL2oWSVrnoDhwc7iywwl4VG0Y2WCbpyoYQyiXlHpyc9htWy2KcM2cAe2twC4gBt8w==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.10.0"
         }
@@ -2003,7 +2003,7 @@
           "EasyDesk.CleanArchitecture.Application": "1.0.0",
           "EasyDesk.Tools": "5.1.0",
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.1",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.2",
           "Newtonsoft.Json": "13.0.1",
           "RazorLight": "2.0.0-rc.3",
           "System.IdentityModel.Tokens.Jwt": "6.15.1"
