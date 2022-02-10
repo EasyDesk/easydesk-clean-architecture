@@ -13,13 +13,11 @@ public class RebusMessagingOptions
 {
     private Action<RebusConfigurer> _configureRebus = _ => { };
 
-    public RebusMessagingOptions()
-    {
-    }
-
     internal Option<OutboxOptions> OutboxOptions { get; private set; } = None;
 
     internal bool UseIdempotentConsumer { get; private set; } = false;
+
+    internal bool AutoSubscribe { get; private set; }
 
     public RebusMessagingOptions ConfigureRebus(Action<RebusConfigurer> configurationAction)
     {
@@ -38,6 +36,12 @@ public class RebusMessagingOptions
 
     public RebusMessagingOptions DecorateRebusService<T>(Func<IResolutionContext, T> factory, string description = null) =>
         ConfigureRebusOptions(o => o.Decorate(factory, description));
+
+    public RebusMessagingOptions EnableAutoSubscribe(bool autoSubscribe = true)
+    {
+        AutoSubscribe = autoSubscribe;
+        return this;
+    }
 
     public RebusMessagingOptions UseOutbox(Action<OutboxOptions> configureOutbox = null)
     {

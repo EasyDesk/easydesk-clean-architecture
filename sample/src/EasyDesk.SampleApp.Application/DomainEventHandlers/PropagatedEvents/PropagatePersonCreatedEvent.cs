@@ -5,6 +5,7 @@ using System;
 
 namespace EasyDesk.SampleApp.Application.DomainEventHandlers.PropagatedEvents;
 
+[RebusAutoSubscribe]
 public record PersonCreated(Guid PersonId) : IMessage;
 
 public class PropagatePersonCreatedEvent : IDomainEventPropagator<PersonCreatedEvent>

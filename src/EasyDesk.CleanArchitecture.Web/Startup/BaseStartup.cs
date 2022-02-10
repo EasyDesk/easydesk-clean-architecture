@@ -109,7 +109,6 @@ public abstract class BaseStartup
             app.UseHttpsRedirection();
         }
 
-        // TODO: move this away.
         if (_appDescription.HasRebusMessaging())
         {
             app.ApplicationServices.UseRebus();

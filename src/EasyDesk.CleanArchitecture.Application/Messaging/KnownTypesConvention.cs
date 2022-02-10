@@ -11,9 +11,9 @@ public class KnownTypesConvention : IMessageTypeNameConvention
 {
     private readonly IDictionary<string, Type> _knownTypes;
 
-    public KnownTypesConvention(IEnumerable<Type> knownTypes)
+    public KnownTypesConvention(KnownMessageTypes knownTypes)
     {
-        _knownTypes = knownTypes.ToDictionary(GetTypeName);
+        _knownTypes = knownTypes.Types.ToDictionary(GetTypeName);
     }
 
     public string GetTypeName(Type type) => type.Name;

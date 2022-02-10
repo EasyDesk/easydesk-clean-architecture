@@ -17,12 +17,12 @@ public interface IDomainEventPropagator<T>
 public class PropagateDomainEvent<T> : IDomainEventHandler<T>
     where T : DomainEvent
 {
-    private readonly MessageBroker _broker;
+    private readonly IMessagePublisher _publisher;
     private readonly IEnumerable<IDomainEventPropagator<T>> _propagators;
 
-    public PropagateDomainEvent(MessageBroker broker, IEnumerable<IDomainEventPropagator<T>> propagators)
+    public PropagateDomainEvent(IMessagePublisher publisher, IEnumerable<IDomainEventPropagator<T>> propagators)
     {
-        _broker = broker;
+        _publisher = publisher;
         _propagators = propagators;
     }
 
@@ -31,7 +31,7 @@ public class PropagateDomainEvent<T> : IDomainEventHandler<T>
         var messages = _propagators.Select(p => p.ConvertToMessage(ev));
         foreach (var message in messages)
         {
-            await _broker.Publish(message);
+            await _publisher.Publish(message);
         }
         return Ok;
     }

@@ -610,14 +610,6 @@
           "Rebus": "6.0.0"
         }
       },
-      "Rebus.UnitOfWork": {
-        "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "SwQIEo2jdtE0W4p/lZekvOcl35UOUCBQDIV6otgBNlcoMt2g/x9HIfIakMQhHFAchRQ92nXDGhFSF71FVdo0jQ==",
-        "dependencies": {
-          "Rebus": "6.0.0"
-        }
-      },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1987,7 +1979,6 @@
           "Rebus": "6.6.2",
           "Rebus.Microsoft.Extensions.Logging": "2.0.0",
           "Rebus.ServiceProvider": "7.0.0",
-          "Rebus.UnitOfWork": "6.0.0",
           "Scrutor": "4.0.0"
         }
       },

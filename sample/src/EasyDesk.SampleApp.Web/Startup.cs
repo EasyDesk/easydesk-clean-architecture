@@ -52,6 +52,7 @@ public class Startup : BaseStartup
                         connectionString: Configuration.GetConnectionString("AzureServiceBus"),
                         inputQueueAddress: "sample-service",
                         environmentName: Environment.EnvironmentName))
+                    .EnableAutoSubscribe()
                     .ConfigureRouting(r => r.TypeBased().Map<SendPersonCreatedEmail>("sample-service"))
                     .UseOutbox()
                     .UseIdempotentHandling();

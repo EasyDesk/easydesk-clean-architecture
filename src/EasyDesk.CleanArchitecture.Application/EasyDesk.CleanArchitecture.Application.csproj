@@ -20,7 +20,6 @@
     <PackageReference Include="Rebus" Version="6.6.2" />
     <PackageReference Include="Rebus.Microsoft.Extensions.Logging" Version="2.0.0" />
     <PackageReference Include="Rebus.ServiceProvider" Version="7.0.0" />
-    <PackageReference Include="Rebus.UnitOfWork" Version="6.0.0" />
     <PackageReference Include="Scrutor" Version="4.0.0" />
   </ItemGroup>
 

@@ -122,15 +122,6 @@
           "Rebus": "6.0.0"
         }
       },
-      "Rebus.UnitOfWork": {
-        "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "SwQIEo2jdtE0W4p/lZekvOcl35UOUCBQDIV6otgBNlcoMt2g/x9HIfIakMQhHFAchRQ92nXDGhFSF71FVdo0jQ==",
-        "dependencies": {
-          "Rebus": "6.0.0"
-        }
-      },
       "Scrutor": {
         "type": "Direct",
         "requested": "[4.0.0, )",

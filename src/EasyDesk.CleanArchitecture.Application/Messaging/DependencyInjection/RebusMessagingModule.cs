@@ -31,12 +31,12 @@ public class RebusMessagingModule : IAppModule
     {
         ITransport originalTransport = null;
 
-        var knownMessageTypes = MessageTypeScanning.FindMessageTypes(app.ApplicationAssemblyMarker);
+        var knownMessageTypes = KnownMessageTypes.ScanAssemblies(app.ApplicationAssemblyMarker);
+        services.AddSingleton(knownMessageTypes);
 
         services.AddRebus((configurer, provider) =>
         {
             configurer
-                .Options(o => o.LogPipeline(verbose: true))
                 .Logging(l => l.MicrosoftExtensionsLogging(provider.GetRequiredService<ILoggerFactory>()))
                 .Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
                 .Options(o =>
@@ -48,29 +48,33 @@ public class RebusMessagingModule : IAppModule
 
             _options.ApplyDefaultConfiguration(configurer);
 
-            configurer.Options(o => o.Decorate(c => originalTransport = c.Get<ITransport>()));
-
-            if (app.IsMultitenant())
+            configurer.Options(o =>
             {
-                configurer.Options(o => o.AddMultitenancySupport());
-            }
+                o.Decorate(c => originalTransport = c.Get<ITransport>());
 
-            _options.OutboxOptions.IfPresent(_ =>
-            {
-                configurer.Options(t => t.Decorate<ITransport>(c => new TransportWithOutbox(c.Get<ITransport>())));
+                if (app.IsMultitenant())
+                {
+                    o.AddMultitenancySupport();
+                }
+
+                _options.OutboxOptions.IfPresent(_ =>
+                {
+                    o.Decorate<ITransport>(c => new TransportWithOutbox(c.Get<ITransport>()));
+                });
+
+                if (_options.UseIdempotentConsumer)
+                {
+                    o.HandleMessagesIdempotently();
+                }
+
+                o.HandleDomainEventsAfterMessageHandlers();
+
+                o.Decorate<IPipeline>(c =>
+                {
+                    return new PipelineStepConcatenator(c.Get<IPipeline>())
+                        .OnReceive(new ServiceScopeOpeningStep(), PipelineAbsolutePosition.Front);
+                });
             });
-
-            if (_options.UseIdempotentConsumer)
-            {
-                configurer.Options(o => o.HandleMessagesIdempotently());
-            }
-
-            configurer.Options(o => o.Decorate<IPipeline>(c =>
-            {
-                return new PipelineStepConcatenator(c.Get<IPipeline>())
-                    .OnReceive(new ServiceScopeOpeningStep(), PipelineAbsolutePosition.Front)
-                    .OnReceive(new DomainEventHandlingStep(), PipelineAbsolutePosition.Back);
-            }));
 
             return configurer;
         });
@@ -78,6 +82,13 @@ public class RebusMessagingModule : IAppModule
         services.AutoRegisterHandlersFromAssembly(app.ApplicationAssemblyMarker.Assembly);
 
         services.AddScoped<MessageBroker>();
+        services.AddScoped<IMessagePublisher>(provider => provider.GetRequiredService<MessageBroker>());
+        services.AddScoped<IMessageSender>(provider => provider.GetRequiredService<MessageBroker>());
+
+        if (_options.AutoSubscribe)
+        {
+            services.AddHostedService<AutoSubscriptionService>();
+        }
 
         _options.OutboxOptions.IfPresent(outboxOptions =>
         {
@@ -95,6 +106,7 @@ public class RebusMessagingModule : IAppModule
             {
                 // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
                 _ = provider.GetRequiredService<IBus>();
+
                 return new(
                     outboxOptions.FlushingBatchSize,
                     provider.GetRequiredService<IUnitOfWorkProvider>(),

@@ -13,16 +13,16 @@ public record SendPersonCreatedEmail(Guid Id) : IMessage;
 
 public class SendEmailWhenPersonIsCreated : IDomainEventHandler<PersonCreatedEvent>
 {
-    private readonly MessageBroker _messageBroker;
+    private readonly IMessageSender _sender;
 
-    public SendEmailWhenPersonIsCreated(MessageBroker messageBroker)
+    public SendEmailWhenPersonIsCreated(IMessageSender sender)
     {
-        _messageBroker = messageBroker;
+        _sender = sender;
     }
 
     public async Task<Result<Nothing>> Handle(PersonCreatedEvent ev)
     {
-        await _messageBroker.Send(new SendPersonCreatedEmail(ev.Person.Id));
+        await _sender.Send(new SendPersonCreatedEmail(ev.Person.Id));
         return Ok;
     }
 }

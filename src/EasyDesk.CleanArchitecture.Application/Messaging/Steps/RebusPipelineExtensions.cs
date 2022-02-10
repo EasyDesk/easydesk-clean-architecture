@@ -23,8 +23,8 @@ public static class RebusPipelineExtensions
     {
         configurer.Decorate<IPipeline>(c =>
         {
-            var step = new TransactionStep();
-            return new PipelineStepConcatenator(c.Get<IPipeline>()).OnReceive(step, PipelineAbsolutePosition.Front);
+            return new PipelineStepConcatenator(c.Get<IPipeline>())
+                .OnReceive(new TransactionStep(), PipelineAbsolutePosition.Front);
         });
     }
 
@@ -34,6 +34,15 @@ public static class RebusPipelineExtensions
         {
             return new PipelineStepInjector(c.Get<IPipeline>())
                 .OnReceive(new IdempotentHandlingStep(), PipelineRelativePosition.After, typeof(TransactionStep));
+        });
+    }
+
+    public static void HandleDomainEventsAfterMessageHandlers(this OptionsConfigurer configurer)
+    {
+        configurer.Decorate<IPipeline>(c =>
+        {
+            return new PipelineStepConcatenator(c.Get<IPipeline>())
+                .OnReceive(new DomainEventHandlingStep(), PipelineAbsolutePosition.Back);
         });
     }
 

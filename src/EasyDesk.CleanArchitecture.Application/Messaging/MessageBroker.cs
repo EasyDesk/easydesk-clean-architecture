@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Time;
-using EasyDesk.Tools;
+﻿using EasyDesk.Tools;
 using Rebus.Bus;
 using System;
 using System.Collections.Generic;
@@ -7,15 +6,13 @@ using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public sealed class MessageBroker
+public sealed class MessageBroker : IMessagePublisher, IMessageSender
 {
     private readonly IBus _bus;
-    private readonly ITimestampProvider _timestampProvider;
 
-    public MessageBroker(IBus bus, ITimestampProvider timestampProvider)
+    public MessageBroker(IBus bus)
     {
         _bus = bus;
-        _timestampProvider = timestampProvider;
     }
 
     public async Task Send(IMessage message, Action<MessageOptions> configure = null) =>
