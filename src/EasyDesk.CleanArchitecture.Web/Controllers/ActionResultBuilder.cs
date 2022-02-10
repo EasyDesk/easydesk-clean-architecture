@@ -58,7 +58,7 @@ public class ActionResultBuilder<T>
 
     public ActionResult<ResponseDto<T>> OnSuccess(SuccessHandler<T> handler)
     {
-        var body = ResponseDto<T>.FromResponse(_response);
+        var body = ResponseDto<T>.FromResponse(_response, _meta);
         return _response.Match(
             success: t => handler(body, t),
             failure: e => HandleErrorResult(body, e));
