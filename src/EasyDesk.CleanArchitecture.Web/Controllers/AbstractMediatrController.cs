@@ -23,7 +23,7 @@ public abstract partial class AbstractMediatrController : AbstractController
 
     protected Task<T> Send<T>(IRequest<T> request) => Mediator.Send(request);
 
-    protected ActionResultBuilder<T> ForResponse<T>(Response<T> response) where T : class =>
+    protected ActionResultBuilder<T> ForResponse<T>(Response<T> response) =>
         new(response, Nothing.Value, this);
 
     protected ActionResultBuilder<IEnumerable<T>> ForPageResponse<T>(Response<Page<T>> response)

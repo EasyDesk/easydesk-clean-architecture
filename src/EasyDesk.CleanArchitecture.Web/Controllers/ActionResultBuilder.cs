@@ -17,11 +17,9 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
 public delegate Option<ActionResult> ErrorHandler(object body, Error error);
 
-public delegate ActionResult SuccessHandler<T>(object body, T data)
-    where T : class;
+public delegate ActionResult SuccessHandler<T>(object body, T data);
 
 public class ActionResultBuilder<T>
-    where T : class
 {
     private readonly Response<T> _response;
     private readonly ControllerBase _controller;
@@ -51,7 +49,7 @@ public class ActionResultBuilder<T>
         return this;
     }
 
-    public ActionResultBuilder<R> Map<R>(Func<T, R> mapper) where R : class
+    public ActionResultBuilder<R> Map<R>(Func<T, R> mapper)
     {
         return new(_response.Map(mapper), _controller, _meta, _errorHandlers);
     }
