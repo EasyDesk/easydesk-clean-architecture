@@ -10,9 +10,10 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
 public static class JwtConfigurationUtils
 {
-    public const string JwtConfigurationKey = "JwtScopes";
+    public const string DefaultConfigurationSectionName = "JwtSettings";
 
-    public static JwtValidationConfiguration GetJwtValidationConfiguration(this IConfiguration configuration, string sectionName)
+    public static JwtValidationConfiguration GetJwtValidationConfiguration(
+        this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
         var validationSection = section.RequireSection("Validation");
@@ -28,7 +29,8 @@ public static class JwtConfigurationUtils
         };
     }
 
-    public static JwtTokenConfiguration GetJwtTokenConfiguration(this IConfiguration configuration, string sectionName)
+    public static JwtTokenConfiguration GetJwtTokenConfiguration(
+        this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
         var authoritySection = section.RequireSection("Authority");

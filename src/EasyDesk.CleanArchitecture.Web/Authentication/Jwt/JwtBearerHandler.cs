@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -10,12 +11,19 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
 public class JwtBearerOptions : TokenAuthenticationOptions
 {
-    public JwtValidationConfiguration ConfigureValidation { get; private set; }
+    public JwtValidationConfiguration ConfigureValidation { get; private set; } = x => x
+        .WithSigningCredentials(KeyUtils.RandomKey());
 
     public JwtBearerOptions ConfigureValidationParameters(JwtValidationConfiguration configure)
     {
-        ConfigureValidation += configure;
+        ConfigureValidation = configure;
         return this;
+    }
+
+    public JwtBearerOptions LoadParametersFromConfiguration(
+        IConfiguration configuration, string sectionName = JwtConfigurationUtils.DefaultConfigurationSectionName)
+    {
+        return ConfigureValidationParameters(configuration.GetJwtValidationConfiguration(sectionName));
     }
 }
 
