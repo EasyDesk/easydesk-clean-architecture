@@ -19,6 +19,7 @@ public static class JsonDefaults
         serializerSettings.Converters.Add(JsonConverters.FromStringParser(TimeOfDay.Parse));
         serializerSettings.Converters.Add(JsonConverters.FromStringParser(Duration.Parse));
         serializerSettings.Converters.Add(JsonConverters.FromStringParser(LocalDateTime.Parse));
+        serializerSettings.Converters.Add(new OptionConverter());
     }
 
     public static JsonSerializerSettings DefaultSerializerSettings()
