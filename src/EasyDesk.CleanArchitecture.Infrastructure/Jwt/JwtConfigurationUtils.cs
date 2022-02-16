@@ -22,7 +22,7 @@ public static class JwtConfigurationUtils
 
         return builder =>
         {
-            builder.WithSignatureValidation(GetSecretKeyFromSecction(section));
+            builder.WithSignatureValidation(GetSecretKeyFromSection(section));
             issuers.IfPresent(i => builder.WithIssuerValidation(i));
             audiences.IfPresent(a => builder.WithAudienceValidation(a));
         };
@@ -39,13 +39,13 @@ public static class JwtConfigurationUtils
         return builder =>
         {
             builder
-                .WithSigningCredentials(GetSecretKeyFromSecction(section), SecurityAlgorithms.HmacSha256Signature)
+                .WithSigningCredentials(GetSecretKeyFromSection(section), SecurityAlgorithms.HmacSha256Signature)
                 .WithLifetime(lifetime);
             issuer.IfPresent(i => builder.WithIssuer(i));
             audience.IfPresent(a => builder.WithAudience(a));
         };
     }
 
-    private static SecurityKey GetSecretKeyFromSecction(IConfigurationSection scopeSection) =>
+    private static SecurityKey GetSecretKeyFromSection(IConfigurationSection scopeSection) =>
         KeyUtils.KeyFromString(scopeSection.RequireValue<string>("SecretKey"));
 }
