@@ -20,6 +20,6 @@ public abstract record ValueWrapper<T, S> : AbstractValueWrapper<T, S>
     }
 
     public static implicit operator T(ValueWrapper<T, S> wrapper) => wrapper is null
-        ? throw new ArgumentNullException("Implicit conversion of a null ValueWrapper.", nameof(wrapper))
+        ? throw new ArgumentNullException(nameof(wrapper), "Implicit conversion of a null ValueWrapper.")
         : wrapper.Value;
 }
