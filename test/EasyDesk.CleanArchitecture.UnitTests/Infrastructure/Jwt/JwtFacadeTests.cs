@@ -43,7 +43,7 @@ public class JwtFacadeTests
             .WithAudience(Audience);
 
         _configureDefaultValidation = builder => builder
-            .WithSigningCredentials(_key);
+            .WithSignatureValidation(_key);
 
         _sut = new(_timestampProvider);
     }
@@ -77,7 +77,7 @@ public class JwtFacadeTests
     {
         var jwt = _sut.Create(_claims, _configureJwtToken);
 
-        _sut.Validate(jwt, b => b.WithSigningCredentials(KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm", KeyId))).ShouldBeEmpty();
+        _sut.Validate(jwt, b => b.WithSignatureValidation(KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm", KeyId))).ShouldBeEmpty();
     }
 
     [Fact]
@@ -110,14 +110,22 @@ public class JwtFacadeTests
     public void ShouldFailIfTheIssuerIsNotValid()
     {
         var jwt = _sut.Create(_claims, _configureJwtToken);
-        _sut.Validate(jwt, b => _configureDefaultValidation(b).WithIssuerValidation("another-issuer")).ShouldBeEmpty();
+        _sut.Validate(jwt, b =>
+        {
+            _configureDefaultValidation(b);
+            b.WithIssuerValidation("another-issuer");
+        }).ShouldBeEmpty();
     }
 
     [Fact]
     public void ShouldFailIfTheAudienceIsNotValid()
     {
         var jwt = _sut.Create(_claims, _configureJwtToken);
-        _sut.Validate(jwt, b => _configureDefaultValidation(b).WithAudienceValidation("another-audience")).ShouldBeEmpty();
+        _sut.Validate(jwt, b =>
+        {
+            _configureDefaultValidation(b);
+            b.WithAudienceValidation("another-audience");
+        }).ShouldBeEmpty();
     }
 
     [Fact]
@@ -127,7 +135,11 @@ public class JwtFacadeTests
 
         AdvanceToPostExpiration();
 
-        _sut.Validate(jwt, b => _configureDefaultValidation(b).WithoutLifetimeValidation()).ShouldNotBeEmpty();
+        _sut.Validate(jwt, b =>
+        {
+            _configureDefaultValidation(b);
+            b.WithoutLifetimeValidation();
+        }).ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -135,9 +147,11 @@ public class JwtFacadeTests
     {
         var jwt = _sut.Create(_claims, _configureJwtToken);
 
-        var result = _sut.Validate(jwt, b => _configureDefaultValidation(b)
-            .WithAudienceValidation(Audience)
-            .WithIssuerValidation(Issuer));
+        var result = _sut.Validate(jwt, b =>
+        {
+            _configureDefaultValidation(b);
+            b.WithAudienceValidation(Audience).WithIssuerValidation(Issuer);
+        });
 
         result.ShouldNotBeEmpty();
     }

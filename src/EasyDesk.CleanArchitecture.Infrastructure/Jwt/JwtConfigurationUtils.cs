@@ -16,16 +16,15 @@ public static class JwtConfigurationUtils
         this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
-        var validationSection = section.RequireSection("Validation");
-        var issuers = validationSection.GetValueAsOption<IEnumerable<string>>("ValidIssuers");
-        var audiences = validationSection.GetValueAsOption<IEnumerable<string>>("ValidAudiences");
+        var validationSection = section.GetSectionAsOption("Validation");
+        var issuers = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>("ValidIssuers"));
+        var audiences = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>("ValidAudiences"));
 
         return builder =>
         {
-            var finalBuilder = builder.WithSigningCredentials(GetSecretKeyFromSecction(section));
-            issuers.IfPresent(issuers => finalBuilder.WithIssuerValidation(issuers));
-            audiences.IfPresent(audiences => finalBuilder.WithAudienceValidation(audiences));
-            return finalBuilder;
+            builder.WithSignatureValidation(GetSecretKeyFromSecction(section));
+            issuers.IfPresent(i => builder.WithIssuerValidation(i));
+            audiences.IfPresent(a => builder.WithAudienceValidation(a));
         };
     }
 
@@ -34,11 +33,17 @@ public static class JwtConfigurationUtils
     {
         var section = configuration.RequireSection(sectionName);
         var authoritySection = section.RequireSection("Authority");
-        return builder => builder
-            .WithSigningCredentials(GetSecretKeyFromSecction(section), SecurityAlgorithms.HmacSha256Signature)
-            .WithLifetime(Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>("Lifetime")))
-            .WithIssuer(authoritySection.RequireValue<string>("Issuer"))
-            .WithAudience(authoritySection.RequireValue<string>("Audience"));
+        var lifetime = Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>("Lifetime"));
+        var issuer = authoritySection.GetValueAsOption<string>("Issuer");
+        var audience = authoritySection.GetValueAsOption<string>("Audience");
+        return builder =>
+        {
+            builder
+                .WithSigningCredentials(GetSecretKeyFromSecction(section), SecurityAlgorithms.HmacSha256Signature)
+                .WithLifetime(lifetime);
+            issuer.IfPresent(i => builder.WithIssuer(i));
+            audience.IfPresent(a => builder.WithAudience(a));
+        };
     }
 
     private static SecurityKey GetSecretKeyFromSecction(IConfigurationSection scopeSection) =>

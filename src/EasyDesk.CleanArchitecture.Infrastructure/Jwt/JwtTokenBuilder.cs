@@ -2,63 +2,87 @@
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using static EasyDesk.CleanArchitecture.Infrastructure.Jwt.JwtTokenBuilderSteps;
+using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
-public class JwtTokenBuilder<T>
+public delegate void JwtTokenConfiguration(JwtTokenBuilder builder);
+
+public class JwtTokenBuilder
 {
-    private readonly SecurityTokenDescriptor _token;
+    private bool _wasBuilt = false;
+    private bool _hasSigningCredentials = false;
+    private bool _hasLifetime = false;
+    private readonly SecurityTokenDescriptor _descriptor;
+    private readonly ISet<Claim> _claims = new HashSet<Claim>();
 
-    public JwtTokenBuilder(SecurityTokenDescriptor token)
+    public JwtTokenBuilder(Timestamp issuedAt)
     {
-        _token = token;
-    }
-
-    public JwtTokenBuilder<R> NextStep<R>(Action<SecurityTokenDescriptor> updateToken)
-    {
-        updateToken(_token);
-        return new(_token);
-    }
-}
-
-public delegate JwtTokenBuilder<Final> JwtTokenConfiguration(
-    JwtTokenBuilder<Initial> builder);
-
-public static class JwtTokenBuilderSteps
-{
-    public record struct Initial;
-
-    public record struct Lifetime;
-
-    public record struct Issuer;
-
-    public record struct Audience;
-
-    public record struct Final;
-
-    public static JwtTokenBuilder<Lifetime> WithSigningCredentials(this JwtTokenBuilder<Initial> builder, SecurityKey key, string algorithm) =>
-        builder.NextStep<Lifetime>(t => t.SigningCredentials = new SigningCredentials(key, algorithm));
-
-    public static JwtTokenBuilder<Issuer> WithLifetime(this JwtTokenBuilder<Lifetime> builder, Duration lifetime) =>
-        builder.NextStep<Issuer>(t =>
+        _descriptor = new SecurityTokenDescriptor
         {
-            t.NotBefore = t.IssuedAt;
-            t.Expires = t.IssuedAt + lifetime.AsTimeSpan;
+            IssuedAt = issuedAt.AsDateTime
+        };
+    }
+
+    public SecurityTokenDescriptor Build()
+    {
+        if (_wasBuilt)
+        {
+            throw new InvalidOperationException("Cannot call Build() multiple times");
+        }
+        if (!_hasSigningCredentials)
+        {
+            throw new InvalidOperationException("Cannot build token without signing credentials");
+        }
+        if (!_hasLifetime)
+        {
+            throw new InvalidOperationException("Cannot build token without lifetime information");
+        }
+
+        _wasBuilt = true;
+        _descriptor.Subject = new ClaimsIdentity(_claims);
+        return _descriptor;
+    }
+
+    public JwtTokenBuilder WithClaims(IEnumerable<Claim> claims) =>
+        NextStep(() => _claims.UnionWith(claims));
+
+    public JwtTokenBuilder WithClaim(Claim claim) =>
+        NextStep(() => _claims.Add(claim));
+
+    public JwtTokenBuilder WithSigningCredentials(SecurityKey key, string algorithm) =>
+        NextStep(() =>
+        {
+            _descriptor.SigningCredentials = new SigningCredentials(key, algorithm);
+            _hasSigningCredentials = true;
         });
 
-    public static JwtTokenBuilder<Audience> WithIssuer(this JwtTokenBuilder<Issuer> builder, string issuer) =>
-        builder.NextStep<Audience>(t => t.Issuer = issuer);
+    public JwtTokenBuilder WithLifetime(Duration lifetime) =>
+        NextStep(() =>
+        {
+            _descriptor.NotBefore = _descriptor.IssuedAt;
+            _descriptor.Expires = _descriptor.IssuedAt + lifetime.AsTimeSpan;
+            _hasLifetime = true;
+        });
 
-    public static JwtTokenBuilder<Final> WithAudience(this JwtTokenBuilder<Audience> builder, string audience) =>
-        builder.NextStep<Final>(t => t.Audience = audience);
+    public JwtTokenBuilder WithIssuer(string issuer) =>
+        NextStep(() => _descriptor.Issuer = issuer);
 
-    public static JwtTokenBuilder<Final> WithEncryptingCredentials(this JwtTokenBuilder<Final> builder, EncryptingCredentials encryptingCredentials) =>
-        builder.NextStep<Final>(t => t.EncryptingCredentials = encryptingCredentials);
+    public JwtTokenBuilder WithAudience(string audience) =>
+        NextStep(() => _descriptor.Audience = audience);
 
-    public static JwtTokenBuilder<Final> WithCompressionAlgorithm(this JwtTokenBuilder<Final> builder, string compressionAlgorithm) =>
-        builder.NextStep<Final>(t => t.CompressionAlgorithm = compressionAlgorithm);
+    public JwtTokenBuilder WithEncryptingCredentials(EncryptingCredentials encryptingCredentials) =>
+        NextStep(() => _descriptor.EncryptingCredentials = encryptingCredentials);
 
-    public static JwtTokenBuilder<Final> WithAdditionalHeaderClaims(this JwtTokenBuilder<Final> builder, IDictionary<string, object> claims) =>
-        builder.NextStep<Final>(t => t.AdditionalHeaderClaims = claims);
+    public JwtTokenBuilder WithCompressionAlgorithm(string compressionAlgorithm) =>
+        NextStep(() => _descriptor.CompressionAlgorithm = compressionAlgorithm);
+
+    public JwtTokenBuilder WithAdditionalHeaderClaims(IDictionary<string, object> claims) =>
+        NextStep(() => _descriptor.AdditionalHeaderClaims = claims);
+
+    private JwtTokenBuilder NextStep(Action update)
+    {
+        update();
+        return this;
+    }
 }

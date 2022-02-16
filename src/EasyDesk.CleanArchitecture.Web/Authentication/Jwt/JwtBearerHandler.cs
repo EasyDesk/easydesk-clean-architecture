@@ -12,7 +12,7 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 public class JwtBearerOptions : TokenAuthenticationOptions
 {
     public JwtValidationConfiguration ConfigureValidation { get; private set; } = x => x
-        .WithSigningCredentials(KeyUtils.RandomKey());
+        .WithSignatureValidation(KeyUtils.RandomKey());
 
     public JwtBearerOptions ConfigureValidationParameters(JwtValidationConfiguration configure)
     {

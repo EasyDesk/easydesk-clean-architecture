@@ -1,4 +1,5 @@
-﻿using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
+﻿using EasyDesk.CleanArchitecture.Domain.Time;
+using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -6,67 +7,105 @@ using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
-public class JwtValidationBuilder<T>
+public delegate void JwtValidationConfiguration(JwtValidationBuilder builder);
+
+public class JwtValidationBuilder
 {
+    private bool _wasBuilt = false;
+    private bool _hasSignatureValidation = false;
     private readonly TokenValidationParameters _parameters;
+    private readonly ITimestampProvider _timestampProvider;
 
-    public JwtValidationBuilder(TokenValidationParameters parameters)
+    public JwtValidationBuilder(ITimestampProvider timestampProvider)
     {
-        _parameters = parameters;
+        _timestampProvider = timestampProvider;
+        _parameters = new TokenValidationParameters
+        {
+            LifetimeValidator = ValidateLifetime,
+            ValidateLifetime = true,
+            ValidateAudience = false,
+            ValidateIssuer = false,
+            ClockSkew = TimeSpan.Zero
+        };
     }
 
-    public JwtValidationBuilder<R> NextStep<R>(Action<TokenValidationParameters> configureParameters)
+    private bool ValidateLifetime(DateTime? nbf, DateTime? exp, SecurityToken token, TokenValidationParameters validationParameters)
     {
-        configureParameters(_parameters);
-        return new(_parameters);
+        if (!validationParameters.ValidateLifetime)
+        {
+            return true;
+        }
+
+        var now = _timestampProvider.Now.AsDateTime;
+        if (nbf is not null && now < nbf - validationParameters.ClockSkew)
+        {
+            return false;
+        }
+        if (exp is not null && now > exp + validationParameters.ClockSkew)
+        {
+            return false;
+        }
+        return true;
     }
-}
 
-public delegate JwtValidationBuilder<JwtValidationSteps.Final> JwtValidationConfiguration(
-    JwtValidationBuilder<JwtValidationSteps.Initial> builder);
-
-public static class JwtValidationSteps
-{
-    public record struct Initial;
-
-    public record struct Final;
-
-    public static JwtValidationBuilder<Final> WithSigningCredentials(this JwtValidationBuilder<Initial> builder, SecurityKey key) =>
-        builder.NextStep<Final>(p =>
+    public TokenValidationParameters Build()
+    {
+        if (_wasBuilt)
         {
-            p.ValidateIssuerSigningKey = true;
-            p.IssuerSigningKey = key;
+            throw new InvalidOperationException("Cannot call Build() multiple times");
+        }
+        if (!_hasSignatureValidation)
+        {
+            throw new InvalidOperationException("Cannot validate token without signature validation");
+        }
+
+        _wasBuilt = true;
+        return _parameters;
+    }
+
+    public JwtValidationBuilder WithSignatureValidation(SecurityKey key) =>
+        NextStep(() =>
+        {
+            _parameters.ValidateIssuerSigningKey = true;
+            _parameters.IssuerSigningKey = key;
+            _hasSignatureValidation = true;
         });
 
-    public static JwtValidationBuilder<Final> WithoutLifetimeValidation(this JwtValidationBuilder<Final> builder) =>
-        builder.NextStep<Final>(p => p.ValidateLifetime = false);
+    public JwtValidationBuilder WithoutLifetimeValidation() =>
+        NextStep(() => _parameters.ValidateLifetime = false);
 
-    public static JwtValidationBuilder<Final> WithIssuerValidation(this JwtValidationBuilder<Final> builder, IEnumerable<string> validIssuers) =>
-        builder.NextStep<Final>(p =>
+    public JwtValidationBuilder WithIssuerValidation(IEnumerable<string> validIssuers) =>
+        NextStep(() =>
         {
-            p.ValidIssuers = validIssuers;
-            p.ValidateIssuer = true;
+            _parameters.ValidIssuers = validIssuers;
+            _parameters.ValidateIssuer = true;
         });
 
-    public static JwtValidationBuilder<Final> WithIssuerValidation(this JwtValidationBuilder<Final> builder, string validIssuer) =>
-        builder.WithIssuerValidation(Items(validIssuer));
+    public JwtValidationBuilder WithIssuerValidation(string validIssuer) =>
+        WithIssuerValidation(Items(validIssuer));
 
-    public static JwtValidationBuilder<Final> WithAudienceValidation(this JwtValidationBuilder<Final> builder, IEnumerable<string> validAudiences) =>
-        builder.NextStep<Final>(p =>
+    public JwtValidationBuilder WithAudienceValidation(IEnumerable<string> validAudiences) =>
+        NextStep(() =>
         {
-            p.ValidAudiences = validAudiences;
-            p.ValidateAudience = true;
+            _parameters.ValidAudiences = validAudiences;
+            _parameters.ValidateAudience = true;
         });
 
-    public static JwtValidationBuilder<Final> WithAudienceValidation(this JwtValidationBuilder<Final> builder, string validAudience) =>
-        builder.WithAudienceValidation(Items(validAudience));
+    public JwtValidationBuilder WithAudienceValidation(string validAudience) =>
+        WithAudienceValidation(Items(validAudience));
 
-    public static JwtValidationBuilder<Final> WithClockSkew(this JwtValidationBuilder<Final> builder, Duration skew) =>
-        builder.NextStep<Final>(p => p.ClockSkew = skew.AsTimeSpan);
+    public JwtValidationBuilder WithClockSkew(Duration skew) =>
+        NextStep(() => _parameters.ClockSkew = skew.AsTimeSpan);
 
-    public static JwtValidationBuilder<Final> WithDecryption(this JwtValidationBuilder<Final> builder, SecurityKey key) =>
-        builder.WithDecryption(Items(key));
+    public JwtValidationBuilder WithDecryption(SecurityKey key) =>
+        WithDecryption(Items(key));
 
-    public static JwtValidationBuilder<Final> WithDecryption(this JwtValidationBuilder<Final> builder, IEnumerable<SecurityKey> keys) =>
-        builder.NextStep<Final>(p => p.TokenDecryptionKeys = keys);
+    public JwtValidationBuilder WithDecryption(IEnumerable<SecurityKey> keys) =>
+        NextStep(() => _parameters.TokenDecryptionKeys = keys);
+
+    public JwtValidationBuilder NextStep(Action configureParameters)
+    {
+        configureParameters();
+        return this;
+    }
 }
