@@ -8,7 +8,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Messaging.ServiceBus;
 using EasyDesk.CleanArchitecture.Web.Startup;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
-using EasyDesk.SampleApp.Application.DomainEventHandlers;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Authentication;
@@ -17,7 +16,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Rebus.Routing.TypeBased;
 using System;
 
 namespace EasyDesk.SampleApp.Web;
@@ -28,7 +26,7 @@ public class Startup : BaseStartup
     {
     }
 
-    protected override Type ApplicationAssemblyMarker => typeof(CoupleGotMarried);
+    protected override Type ApplicationAssemblyMarker => typeof(LogAllMessages);
 
     protected override Type InfrastructureAssemblyMarker => typeof(SampleAppContext);
 
@@ -53,7 +51,6 @@ public class Startup : BaseStartup
                         inputQueueAddress: "sample-service",
                         environmentName: Environment.EnvironmentName))
                     .EnableAutoSubscribe()
-                    .ConfigureRouting(r => r.TypeBased().Map<SendPersonCreatedEmail>("sample-service"))
                     .UseOutbox()
                     .UseIdempotentHandling();
             });
