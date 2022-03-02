@@ -18,7 +18,7 @@ public class LogAllMessages : IMessageHandler<IMessage>
 
     public Task<Result<Nothing>> Handle(IMessage message)
     {
-        _logger.LogInformation("{message}", message);
+        _logger.LogInformation("Message received: {message}", message);
         return Task.FromResult(Ok);
     }
 }
