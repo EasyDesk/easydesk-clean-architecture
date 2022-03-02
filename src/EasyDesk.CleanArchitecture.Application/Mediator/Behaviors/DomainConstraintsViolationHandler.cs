@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Tools.Results;
 using MediatR;
 using System;
 using System.Linq;
@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
-public class DomainConstraintsViolationHandler<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
+public class DomainConstraintsViolationHandler<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
     where TRequest : RequestBase<TResponse>
 {
-    public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Response<TResponse>> next)
+    public async Task<Result<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Result<TResponse>> next)
     {
         try
         {
@@ -20,8 +20,8 @@ public class DomainConstraintsViolationHandler<TRequest, TResponse> : IPipelineB
         }
         catch (DomainConstraintException ex)
         {
-            var primaryError = Errors.FromDomain(ex.DomainErrors.First());
-            var secondaryErrors = ex.DomainErrors.Skip(1).Select(Errors.FromDomain);
+            var primaryError = ex.DomainErrors.First();
+            var secondaryErrors = ex.DomainErrors.Skip(1);
             return Errors.Multiple(primaryError, secondaryErrors);
         }
     }

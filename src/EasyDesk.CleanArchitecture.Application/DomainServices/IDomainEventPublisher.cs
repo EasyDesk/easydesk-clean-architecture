@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Results;
 using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;

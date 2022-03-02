@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.Tools;
+﻿using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Results;
 using System.Collections.Generic;
 using System.Linq;
 using static EasyDesk.Tools.Options.OptionImports;
@@ -15,7 +15,7 @@ public record ResponseDto<T>(Option<T> Data, IEnumerable<ErrorDto> Errors, objec
 
     public static ResponseDto<T> FromError(ErrorDto error, object meta = null) => FromErrors(Some(error), meta);
 
-    public static ResponseDto<T> FromResponse(Response<T> response, object meta = null) => response.Match(
+    public static ResponseDto<T> FromResult(Result<T> result, object meta = null) => result.Match(
         success: t => FromData(t, meta),
         failure: e => FromErrors(ErrorDto.CreateErrorDtoList(e), meta));
 }

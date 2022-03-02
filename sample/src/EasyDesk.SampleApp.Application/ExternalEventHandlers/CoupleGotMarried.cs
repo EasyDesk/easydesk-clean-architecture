@@ -1,12 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Results;
 using System;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
+using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.SampleApp.Application.ExternalEventHandlers;
 
@@ -24,14 +22,13 @@ public class CoupleGotMarriedHandler : IMessageHandler<CoupleGotMarried>
     public async Task Handle(CoupleGotMarried ev)
     {
         await SetPersonAsMarried(ev.GroomId)
-            .ThenRequireAsync(_ => SetPersonAsMarried(ev.BrideId));
+            .ThenFlatTapAsync(_ => SetPersonAsMarried(ev.BrideId));
     }
 
-    private async Task<Response<Nothing>> SetPersonAsMarried(Guid personId)
+    private async Task<Result<Nothing>> SetPersonAsMarried(Guid personId)
     {
         return await _personRepository.GetById(personId)
-            .ThenRequire(person => person.Marry())
-            .ThenIfSuccess(_personRepository.Save)
-            .ThenToResponse();
+            .ThenFlatTap(person => person.Marry())
+            .ThenIfSuccess(_personRepository.Save);
     }
 }

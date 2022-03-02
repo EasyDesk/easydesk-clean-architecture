@@ -1,6 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Pages;
-using EasyDesk.CleanArchitecture.Application.Responses;
+﻿using EasyDesk.CleanArchitecture.Application.Pages;
+using EasyDesk.Tools.Results;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
@@ -16,6 +15,6 @@ public record PaginationResponseMetaDto(
     public static PaginationResponseMetaDto FromFailure(Error error) =>
         new(PageIndex: 0, PageSize: 0, RowCount: 0, PageCount: 0);
 
-    public static PaginationResponseMetaDto FromResponse<T>(Response<Page<T>> response) =>
-        response.Match(success: FromPage, failure: FromFailure);
+    public static PaginationResponseMetaDto FromResult<T>(Result<Page<T>> result) =>
+        result.Match(success: FromPage, failure: FromFailure);
 }

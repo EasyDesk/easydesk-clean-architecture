@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Web.Dto;
+using EasyDesk.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
@@ -11,7 +12,7 @@ public class UnhandledExceptionsFilter : IExceptionFilter
     public void OnException(ExceptionContext context)
     {
         var error = ErrorDto.FromError(Errors.Internal(context.Exception));
-        var response = ResponseDto<object>.FromError(error);
+        var response = ResponseDto<Nothing>.FromError(error);
 
         context.Result = new ObjectResult(response)
         {

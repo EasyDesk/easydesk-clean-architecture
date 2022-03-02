@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Results;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -27,17 +27,17 @@ public class HttpRequestBuilder
         return await response.Content.ReadAsAsync<HttpResponseDto<T>>();
     }
 
-    public async Task<Response<T>> As<T>()
+    public async Task<Result<T>> As<T>()
     {
         return await MakeRequest<T>().Map(DtoToObjectResponse);
     }
 
-    public async Task<Response<Nothing>> AsEmpty()
+    public async Task<Result<Nothing>> AsEmpty()
     {
         return await As<Nothing>();
     }
 
-    private Response<T> DtoToObjectResponse<T>(HttpResponseDto<T> responseDto)
+    private Result<T> DtoToObjectResponse<T>(HttpResponseDto<T> responseDto)
     {
         if (responseDto.Error is not null)
         {

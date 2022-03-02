@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
-using EasyDesk.CleanArchitecture.Application.Responses;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
+using EasyDesk.Tools.Results;
 using Rebus.Messages;
 using Rebus.Pipeline;
 using System;

@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+﻿using EasyDesk.Tools.Results;
 
 namespace EasyDesk.CleanArchitecture.Testing;
 

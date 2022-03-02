@@ -1,10 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Pages;
-using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.Tools.Results;
 using MediatR;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator;
 
-public abstract record RequestBase<TResponse> : IRequest<Response<TResponse>>;
+public abstract record RequestBase<TResponse> : IRequest<Result<TResponse>>;
 
 public abstract record CommandBase<TResponse> : RequestBase<TResponse>;
 

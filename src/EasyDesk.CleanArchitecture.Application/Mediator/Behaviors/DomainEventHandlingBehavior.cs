@@ -1,15 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.Tools.Results;
 using MediatR;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
+using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
-public class DomainEventHandlingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
+public class DomainEventHandlingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
     where TRequest : CommandBase<TResponse>
 {
     private readonly DomainEventQueue _domainEventQueue;
@@ -19,10 +18,10 @@ public class DomainEventHandlingBehavior<TRequest, TResponse> : IPipelineBehavio
         _domainEventQueue = domainEventQueue;
     }
 
-    public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Response<TResponse>> next)
+    public async Task<Result<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Result<TResponse>> next)
     {
         var response = await next();
-        return await response.RequireAsync(_ => _domainEventQueue.Flush().ThenToResponse());
+        return await response.FlatTapAsync(_ => _domainEventQueue.Flush());
     }
 }
 

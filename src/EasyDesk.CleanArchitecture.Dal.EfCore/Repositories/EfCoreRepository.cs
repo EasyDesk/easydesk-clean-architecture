@@ -6,11 +6,10 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.CleanArchitecture.Domain.Model.Errors;
-using EasyDesk.CleanArchitecture.Domain.Utils;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;

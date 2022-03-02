@@ -1,10 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.ModelConverters;
 using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Results;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

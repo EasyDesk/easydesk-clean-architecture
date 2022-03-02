@@ -2,16 +2,16 @@
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Results;
 using NSubstitute;
 using Shouldly;
 using System.Threading.Tasks;
 using Xunit;
-using static EasyDesk.CleanArchitecture.Application.Responses.ResponseImports;
 using static EasyDesk.Tools.Options.OptionImports;
-using Next = MediatR.RequestHandlerDelegate<EasyDesk.CleanArchitecture.Application.Responses.Response<EasyDesk.Tools.Nothing>>;
+using static EasyDesk.Tools.Results.ResultImports;
+using Next = MediatR.RequestHandlerDelegate<EasyDesk.Tools.Results.Result<EasyDesk.Tools.Nothing>>;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator.Behaviors;
 
@@ -54,7 +54,7 @@ public class AuthorizationBehaviorTests
         await _next.Received(1)();
     }
 
-    private async Task<Response<Nothing>> Handle<T>(bool authorizerResult) where T : RequestBase<Nothing>, new()
+    private async Task<Result<Nothing>> Handle<T>(bool authorizerResult) where T : RequestBase<Nothing>, new()
     {
         var request = new T();
         var authorizer = Substitute.For<IAuthorizer<T>>();

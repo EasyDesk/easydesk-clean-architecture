@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.Tools.Results;
 using MediatR;
 using System;
 using System.Threading;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
-public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
+public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
     where TRequest : CommandBase<TResponse>
 {
     private readonly IUnitOfWorkProvider _unitOfWorkProvider;
@@ -17,7 +17,7 @@ public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         _unitOfWorkProvider = unitOfWorkProvider;
     }
 
-    public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Response<TResponse>> next)
+    public async Task<Result<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Result<TResponse>> next)
     {
         return await _unitOfWorkProvider.RunTransactionally(() => next());
     }

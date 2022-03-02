@@ -1,5 +1,6 @@
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Tools.Collections;
+using EasyDesk.Tools.Results;
 using System;
 using System.Collections.Generic;
 
@@ -7,7 +8,7 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
 public static class Errors
 {
-    public static MultipleErrors Multiple(Error primaryError, IEnumerable<Error> secondaryErrors) =>
+    public static MultiError Multiple(Error primaryError, IEnumerable<Error> secondaryErrors) =>
         new(primaryError, secondaryErrors.ToEquatableSet());
 
     public static Error Internal(Exception ex) => new InternalError(ex);
@@ -20,8 +21,6 @@ public static class Errors
 
     public static Error InvalidInput(string propertyName, string errorMessage) =>
         new InputValidationError(propertyName, errorMessage);
-
-    public static Error FromDomain(DomainError domainError) => new DomainErrorWrapper(domainError);
 
     public static Error Generic(string message, params object[] args) => GenericError.Create(message, args);
 }

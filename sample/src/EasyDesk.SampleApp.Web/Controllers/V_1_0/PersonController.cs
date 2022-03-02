@@ -28,7 +28,7 @@ public class PersonController : AbstractMediatrController
     public async Task<ActionResult<ResponseDto<PersonDto>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
         var response = await Send(new CreatePerson.Command(body.Name));
-        return ForResponse(response)
+        return ForResult(response)
             .Map(Mapper.Map<PersonDto>)
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }
@@ -37,7 +37,7 @@ public class PersonController : AbstractMediatrController
     public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>>>> GetPeople([FromQuery] PaginationDto pagination)
     {
         var response = await Send(new GetPeople.Query(pagination));
-        return ForPageResponse(response)
+        return ForPageResult(response)
             .MapEachElement(Mapper.Map<PersonDto>)
             .ReturnOk();
     }
@@ -46,7 +46,7 @@ public class PersonController : AbstractMediatrController
     public async Task<ActionResult<ResponseDto<PersonDto>>> GetPerson([FromRoute] Guid id)
     {
         var response = await Send(new GetPerson.Query(id));
-        return ForResponse(response)
+        return ForResult(response)
             .Map(Mapper.Map<PersonDto>)
             .ReturnOk();
     }

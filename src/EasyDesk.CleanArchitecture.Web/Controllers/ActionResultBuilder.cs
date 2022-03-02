@@ -1,10 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Pages;
-using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Results;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,23 +22,23 @@ public delegate ActionResult SuccessHandler<T>(object body, T data);
 
 public class ActionResultBuilder<T>
 {
-    private readonly Response<T> _response;
+    private readonly Result<T> _result;
     private readonly ControllerBase _controller;
     private readonly object _meta;
     private IImmutableList<ErrorHandler> _errorHandlers;
 
-    public ActionResultBuilder(Response<T> response, object meta, ControllerBase controller)
-        : this(response, controller, meta, List<ErrorHandler>())
+    public ActionResultBuilder(Result<T> result, object meta, ControllerBase controller)
+        : this(result, controller, meta, List<ErrorHandler>())
     {
     }
 
     private ActionResultBuilder(
-        Response<T> response,
+        Result<T> result,
         ControllerBase controller,
         object meta,
         IImmutableList<ErrorHandler> errorHandlers)
     {
-        _response = response;
+        _result = result;
         _meta = meta;
         _errorHandlers = errorHandlers;
         _controller = controller;
@@ -51,13 +52,13 @@ public class ActionResultBuilder<T>
 
     public ActionResultBuilder<R> Map<R>(Func<T, R> mapper)
     {
-        return new(_response.Map(mapper), _controller, _meta, _errorHandlers);
+        return new(_result.Map(mapper), _controller, _meta, _errorHandlers);
     }
 
     public ActionResult<ResponseDto<T>> OnSuccess(SuccessHandler<T> handler)
     {
-        var body = ResponseDto<T>.FromResponse(_response, _meta);
-        return _response.Match(
+        var body = ResponseDto<T>.FromResult(_result, _meta);
+        return _result.Match(
             success: t => handler(body, t),
             failure: e => HandleErrorResult(body, e));
     }
@@ -66,7 +67,7 @@ public class ActionResultBuilder<T>
     {
         var errorToMatchAgainst = error switch
         {
-            MultipleErrors(var primary, _) => primary,
+            MultiError(var primary, _) => primary,
             _ => error
         };
         return _errorHandlers
@@ -80,7 +81,7 @@ public class ActionResultBuilder<T>
         return error switch
         {
             NotFoundError => _controller.NotFound(body),
-            DomainErrorWrapper or InputValidationError => _controller.BadRequest(body),
+            DomainError or InputValidationError => _controller.BadRequest(body),
             ForbiddenError => ActionResults.Forbidden(body),
             UnknownUserError => _controller.Unauthorized(body),
             _ => ActionResults.InternalServerError(body)

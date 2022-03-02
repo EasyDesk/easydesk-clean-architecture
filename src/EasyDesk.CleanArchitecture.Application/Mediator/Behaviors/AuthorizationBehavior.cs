@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
+using EasyDesk.Tools.Results;
 using MediatR;
 using System;
 using System.Reflection;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
-public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
+public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
     where TRequest : RequestBase<TResponse>
 {
     private readonly IAuthorizer<TRequest> _authorizer;
@@ -21,20 +21,20 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         _userInfoProvider = userInfoProvider;
     }
 
-    public async Task<Response<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Response<TResponse>> next)
+    public async Task<Result<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Result<TResponse>> next)
     {
         return await _userInfoProvider.GetUserInfo().Match(
             some: userInfo => HandleAuthenticatedRequest(request, userInfo, next),
             none: () => HandleUnknownUserRequest(next));
     }
 
-    private async Task<Response<TResponse>> HandleAuthenticatedRequest(TRequest request, UserInfo userInfo, RequestHandlerDelegate<Response<TResponse>> next)
+    private async Task<Result<TResponse>> HandleAuthenticatedRequest(TRequest request, UserInfo userInfo, RequestHandlerDelegate<Result<TResponse>> next)
     {
         var isAuthorized = await _authorizer.IsAuthorized(request, userInfo);
         return isAuthorized ? await next() : Errors.Forbidden();
     }
 
-    private async Task<Response<TResponse>> HandleUnknownUserRequest(RequestHandlerDelegate<Response<TResponse>> next) =>
+    private async Task<Result<TResponse>> HandleUnknownUserRequest(RequestHandlerDelegate<Result<TResponse>> next) =>
         UnknownUserIsAllowed() ? await next() : Errors.UnknownUser();
 
     private bool UnknownUserIsAllowed() => typeof(TRequest).GetCustomAttribute<AllowUnknownUserAttribute>() is not null;

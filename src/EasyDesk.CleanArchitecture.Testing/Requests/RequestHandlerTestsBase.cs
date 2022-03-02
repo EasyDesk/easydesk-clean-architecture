@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Testing.DependencyInjection;
+using EasyDesk.Tools.Results;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace EasyDesk.CleanArchitecture.Testing.Requests;
 
 public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse> : DependencyInjectionTestBase
-    where THandler : class, IRequestHandler<TRequest, Response<TResponse>>
+    where THandler : class, IRequestHandler<TRequest, Result<TResponse>>
     where TRequest : RequestBase<TResponse>
 {
     public RequestHandlerTestsBase()
@@ -22,5 +22,5 @@ public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse> : D
 
     protected THandler CreateHandler() => Service<THandler>();
 
-    protected Task<Response<TResponse>> Send(TRequest request) => CreateHandler().Handle(request, default);
+    protected Task<Result<TResponse>> Send(TRequest request) => CreateHandler().Handle(request, default);
 }

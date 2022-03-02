@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Tools;
-using System;
+using EasyDesk.Tools.Results;
 using System.Collections.Generic;
 using System.Linq;
 using static EasyDesk.Tools.Options.OptionImports;
@@ -11,7 +11,7 @@ public record ErrorDto(string Code, string Detail, object Meta)
 {
     public static IEnumerable<ErrorDto> CreateErrorDtoList(Error error) => error switch
     {
-        MultipleErrors(var errors) => errors.Select(FromError),
+        MultiError(var errors) => errors.Select(FromError),
         _ => Some(FromError(error))
     };
 
@@ -37,14 +37,13 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: "Generic",
             Detail: message,
             Meta: parameters),
-        DomainErrorWrapper(var domainError) => new(
-            Code: domainError.GetType().Name,
-            Detail: $"Domain Error: {domainError.GetType().Name}",
-            Meta: domainError),
         InputValidationError(var propertyName, var errorMessage) => new(
             Code: "InputValidationError",
             Detail: errorMessage,
             Meta: new { PropertyName = propertyName }),
-        _ => throw new ArgumentException("Can't convert to single error", nameof(error))
+        _ => new(
+            Code: error.GetType().Name,
+            Detail: $"Domain Error: {error.GetType().Name}",
+            Meta: error)
     };
 }

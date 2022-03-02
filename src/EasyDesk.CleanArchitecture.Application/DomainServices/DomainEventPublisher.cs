@@ -1,11 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Results;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using static EasyDesk.CleanArchitecture.Domain.Metamodel.Results.ResultImports;
+using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 

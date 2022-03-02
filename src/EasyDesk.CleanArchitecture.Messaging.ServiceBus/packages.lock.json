@@ -99,8 +99,8 @@
       },
       "EasyDesk.Tools": {
         "type": "Transitive",
-        "resolved": "5.1.0",
-        "contentHash": "Z2/jbezBxS9d0WihrINdTDD7IGs97GB+xUeQGgH7dIkQ6DeEndgcCBGNofgSG+qgUPmE52LcqijsNROLzmlezg=="
+        "resolved": "6.1.0",
+        "contentHash": "BXeJ9P1xYV40CncM5vP7HKpbyAwJw7gCdbXttxoQCbzFPwHXQmwwJa+PgMKw9D9pxRyp4Yf15lgz3RqazRzTxA=="
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -995,7 +995,7 @@
           "AutoMapper": "11.0.1",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "11.0.0",
           "EasyDesk.CleanArchitecture.Domain": "1.0.0",
-          "EasyDesk.Tools": "5.1.0",
+          "EasyDesk.Tools": "6.1.0",
           "FluentValidation": "10.3.6",
           "FluentValidation.DependencyInjectionExtensions": "10.3.6",
           "MediatR": "10.0.1",
@@ -1011,7 +1011,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "5.1.0"
+          "EasyDesk.Tools": "6.1.0"
         }
       }
     }

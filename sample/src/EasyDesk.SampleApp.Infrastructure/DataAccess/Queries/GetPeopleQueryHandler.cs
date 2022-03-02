@@ -2,9 +2,9 @@
 using AutoMapper.QueryableExtensions;
 using EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
 using EasyDesk.CleanArchitecture.Application.Pages;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.Tools.Results;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,7 +23,7 @@ public class GetPeopleQueryHandler : IQueryWithPaginationHandler<Query, PersonSn
         _mapper = mapper;
     }
 
-    public async Task<Response<Page<PersonSnapshot>>> Handle(Query request, CancellationToken cancellationToken)
+    public async Task<Result<Page<PersonSnapshot>>> Handle(Query request, CancellationToken cancellationToken)
     {
         return await _context.People
             .OrderBy(p => p.Name)

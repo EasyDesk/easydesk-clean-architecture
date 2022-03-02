@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Results;
+﻿using EasyDesk.Tools.Results;
 using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;

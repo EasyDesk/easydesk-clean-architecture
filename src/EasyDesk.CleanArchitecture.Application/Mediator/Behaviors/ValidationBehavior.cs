@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Results;
 using FluentValidation;
 using MediatR;
 using System;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Response<TResponse>>
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
     where TRequest : RequestBase<TResponse>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
@@ -21,10 +21,10 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         _validators = validators;
     }
 
-    public async Task<Response<TResponse>> Handle(
+    public async Task<Result<TResponse>> Handle(
         TRequest request,
         CancellationToken cancellationToken,
-        RequestHandlerDelegate<Response<TResponse>> next)
+        RequestHandlerDelegate<Result<TResponse>> next)
     {
         var context = new ValidationContext<TRequest>(request);
         var errors = _validators

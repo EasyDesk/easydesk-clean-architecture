@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using EasyDesk.CleanArchitecture.Application.Pages;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools;
+using EasyDesk.Tools.Results;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
@@ -23,12 +23,12 @@ public abstract partial class AbstractMediatrController : AbstractController
 
     protected Task<T> Send<T>(IRequest<T> request) => Mediator.Send(request);
 
-    protected ActionResultBuilder<T> ForResponse<T>(Response<T> response) =>
-        new(response, Nothing.Value, this);
+    protected ActionResultBuilder<T> ForResult<T>(Result<T> result) =>
+        new(result, Nothing.Value, this);
 
-    protected ActionResultBuilder<IEnumerable<T>> ForPageResponse<T>(Response<Page<T>> response)
+    protected ActionResultBuilder<IEnumerable<T>> ForPageResult<T>(Result<Page<T>> result)
     {
-        var meta = PaginationResponseMetaDto.FromResponse(response);
-        return new(response.Map(page => page.Items), meta, this);
+        var meta = PaginationResponseMetaDto.FromResult(result);
+        return new(result.Map(page => page.Items), meta, this);
     }
 }

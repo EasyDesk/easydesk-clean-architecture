@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyDesk.Tools.Results;
+using System;
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 

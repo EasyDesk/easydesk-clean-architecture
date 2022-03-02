@@ -1,13 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
-using EasyDesk.CleanArchitecture.Application.Responses;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using EasyDesk.Tools.Results;
 using FluentValidation;
 using System.Threading;
 using System.Threading.Tasks;
+using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
@@ -33,11 +34,11 @@ public static class CreatePerson
             _personRepository = personRepository;
         }
 
-        public Task<Response<PersonSnapshot>> Handle(Command request, CancellationToken cancellationToken)
+        public Task<Result<PersonSnapshot>> Handle(Command request, CancellationToken cancellationToken)
         {
             var person = Person.Create(Name.From(request.Name));
             _personRepository.Save(person);
-            return Task.FromResult<Response<PersonSnapshot>>(new PersonSnapshot(person.Id, person.Name, person.Married));
+            return Task.FromResult(Success(new PersonSnapshot(person.Id, person.Name, person.Married)));
         }
     }
 }
