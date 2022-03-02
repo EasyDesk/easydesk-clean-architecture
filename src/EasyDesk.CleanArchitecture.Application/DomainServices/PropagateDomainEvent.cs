@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static EasyDesk.Tools.Results.ResultImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
+namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
 public interface IDomainEventPropagator<T>
 {

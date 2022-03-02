@@ -7,11 +7,11 @@ using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.SampleApp.Application.ExternalEventHandlers;
 
-public class HandleAllMessages : IMessageHandler<IMessage>
+public class LogAllMessages : IMessageHandler<IMessage>
 {
-    private readonly ILogger<HandleAllMessages> _logger;
+    private readonly ILogger<LogAllMessages> _logger;
 
-    public HandleAllMessages(ILogger<HandleAllMessages> logger)
+    public LogAllMessages(ILogger<LogAllMessages> logger)
     {
         _logger = logger;
     }

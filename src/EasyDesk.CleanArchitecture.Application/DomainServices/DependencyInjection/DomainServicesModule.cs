@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Tools;
