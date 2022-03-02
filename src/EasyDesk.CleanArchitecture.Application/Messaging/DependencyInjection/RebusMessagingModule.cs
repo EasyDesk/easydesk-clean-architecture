@@ -1,15 +1,19 @@
 ﻿using System;
+using System.Linq;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
+using EasyDesk.Tools;
+using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Config;
+using Rebus.Handlers;
 using Rebus.Pipeline;
 using Rebus.Serialization;
 using Rebus.Serialization.Json;
@@ -79,7 +83,14 @@ public class RebusMessagingModule : IAppModule
             return configurer;
         });
 
-        services.AutoRegisterHandlersFromAssembly(app.ApplicationAssemblyMarker.Assembly);
+        ReflectionUtils.InstantiableSubtypesOfGenericInterface(typeof(IMessageHandler<>), app.ApplicationAssemblyMarker).ForEach(x =>
+        {
+            services.AddTransient(x.Interface, x.Implementation);
+            var messageType = x.Interface.GetGenericArguments().First();
+            var rebusHandlerType = typeof(IHandleMessages<>).MakeGenericType(messageType);
+            var adapterType = typeof(MessageHandlerAdapter<>).MakeGenericType(messageType);
+            services.AddTransient(rebusHandlerType, adapterType);
+        });
 
         services.AddScoped<MessageBroker>();
         services.AddScoped<IMessagePublisher>(provider => provider.GetRequiredService<MessageBroker>());

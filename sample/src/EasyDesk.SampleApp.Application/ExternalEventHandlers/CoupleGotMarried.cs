@@ -19,9 +19,9 @@ public class CoupleGotMarriedHandler : IMessageHandler<CoupleGotMarried>
         _personRepository = personRepository;
     }
 
-    public async Task Handle(CoupleGotMarried ev)
+    public async Task<Result<Nothing>> Handle(CoupleGotMarried ev)
     {
-        await SetPersonAsMarried(ev.GroomId)
+        return await SetPersonAsMarried(ev.GroomId)
             .ThenFlatTapAsync(_ => SetPersonAsMarried(ev.BrideId));
     }
 

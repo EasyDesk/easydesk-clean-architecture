@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.SampleApp.Application.DomainEventHandlers;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Results;
 using Microsoft.Extensions.Logging;
@@ -8,18 +7,18 @@ using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.SampleApp.Application.ExternalEventHandlers;
 
-public class HandleCommand : IMessageHandler<SendPersonCreatedEmail>
+public class HandleAllMessages : IMessageHandler<IMessage>
 {
-    private readonly ILogger<HandleCommand> _logger;
+    private readonly ILogger<HandleAllMessages> _logger;
 
-    public HandleCommand(ILogger<HandleCommand> logger)
+    public HandleAllMessages(ILogger<HandleAllMessages> logger)
     {
         _logger = logger;
     }
 
-    public Task<Result<Nothing>> Handle(SendPersonCreatedEmail message)
+    public Task<Result<Nothing>> Handle(IMessage message)
     {
-        _logger.LogInformation("{message} received", message);
+        _logger.LogInformation("{message}", message);
         return Task.FromResult(Ok);
     }
 }
