@@ -26,7 +26,7 @@ public class Person : AggregateRoot
         Married = married;
     }
 
-    public static Person Create(Name name) => new Person(Guid.NewGuid(), name, married: false);
+    public static Person Create(Name name) => new(Guid.NewGuid(), name, married: false);
 
     public Guid Id { get; }
 
