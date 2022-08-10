@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.Tools.Options;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 

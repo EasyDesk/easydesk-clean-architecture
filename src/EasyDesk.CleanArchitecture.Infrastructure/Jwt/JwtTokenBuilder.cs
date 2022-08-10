@@ -1,5 +1,5 @@
-﻿using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -16,11 +16,11 @@ public class JwtTokenBuilder
     private readonly SecurityTokenDescriptor _descriptor;
     private readonly ISet<Claim> _claims = new HashSet<Claim>();
 
-    public JwtTokenBuilder(Timestamp issuedAt)
+    public JwtTokenBuilder(Instant issuedAt)
     {
         _descriptor = new SecurityTokenDescriptor
         {
-            IssuedAt = issuedAt.AsDateTime
+            IssuedAt = issuedAt.ToDateTimeUtc()
         };
     }
 
@@ -61,7 +61,7 @@ public class JwtTokenBuilder
         NextStep(() =>
         {
             _descriptor.NotBefore = _descriptor.IssuedAt;
-            _descriptor.Expires = _descriptor.IssuedAt + lifetime.AsTimeSpan;
+            _descriptor.Expires = _descriptor.IssuedAt + lifetime.ToTimeSpan();
             _hasLifetime = true;
         });
 

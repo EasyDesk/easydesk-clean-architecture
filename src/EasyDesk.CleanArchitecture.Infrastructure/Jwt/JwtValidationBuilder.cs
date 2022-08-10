@@ -1,6 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Time;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
@@ -14,11 +13,11 @@ public class JwtValidationBuilder
     private bool _wasBuilt = false;
     private bool _hasSignatureValidation = false;
     private readonly TokenValidationParameters _parameters;
-    private readonly ITimestampProvider _timestampProvider;
+    private readonly IClock _clock;
 
-    public JwtValidationBuilder(ITimestampProvider timestampProvider)
+    public JwtValidationBuilder(IClock clock)
     {
-        _timestampProvider = timestampProvider;
+        _clock = clock;
         _parameters = new TokenValidationParameters
         {
             LifetimeValidator = ValidateLifetime,
@@ -36,7 +35,7 @@ public class JwtValidationBuilder
             return true;
         }
 
-        var now = _timestampProvider.Now.AsDateTime;
+        var now = _clock.GetCurrentInstant().ToDateTimeUtc();
         if (nbf is not null && now < nbf - validationParameters.ClockSkew)
         {
             return false;
@@ -95,7 +94,7 @@ public class JwtValidationBuilder
         WithAudienceValidation(Items(validAudience));
 
     public JwtValidationBuilder WithClockSkew(Duration skew) =>
-        NextStep(() => _parameters.ClockSkew = skew.AsTimeSpan);
+        NextStep(() => _parameters.ClockSkew = skew.ToTimeSpan());
 
     public JwtValidationBuilder WithDecryption(SecurityKey key) =>
         WithDecryption(Items(key));

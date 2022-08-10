@@ -2,9 +2,9 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.Tools.Options;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NodaTime;
 using Rebus.Messages;
 using System.Collections.Generic;
 using System.Linq;

@@ -6,16 +6,12 @@ using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Extensions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
-using EasyDesk.CleanArchitecture.Dal.EfCore.TypeMapping;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -29,12 +25,6 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     private readonly bool _applyMigrations;
     private readonly Action<DbContextOptionsBuilder> _addtionalOptions;
     private readonly List<Type> _registeredDbContextTypes = new();
-    private readonly Dictionary<Type, Func<RelationalTypeMapping>> _mappingsByType = new()
-    {
-        { typeof(Date), () => new DateMapping() },
-        { typeof(Timestamp), () => new TimestampMapping() },
-        { typeof(TimeOfDay), () => new TimeOfDayMapping() }
-    };
 
     public EfCoreDataAccess(
         string connectionString,
@@ -106,7 +96,6 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         {
             ConfigureMigrationsHistoryTable(sqlServerOptions, schema);
         });
-        options.AddOrUpdateExtension(new MappingPluginOptionsExtension(_mappingsByType));
     }
 
     private void ConfigureMigrationsHistoryTable(SqlServerDbContextOptionsBuilder sqlServerOptions, string schema)

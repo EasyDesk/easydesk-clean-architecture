@@ -1,8 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Json.Converters;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using NodaTime;
+using NodaTime.Serialization.JsonNet;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Json;
 
@@ -14,11 +15,7 @@ public static class JsonDefaults
         serializerSettings.DateParseHandling = DateParseHandling.None;
 
         serializerSettings.Converters.Add(new StringEnumConverter());
-        serializerSettings.Converters.Add(JsonConverters.FromStringParser(Date.Parse));
-        serializerSettings.Converters.Add(JsonConverters.FromStringParser(Timestamp.Parse));
-        serializerSettings.Converters.Add(JsonConverters.FromStringParser(TimeOfDay.Parse));
-        serializerSettings.Converters.Add(JsonConverters.FromStringParser(Duration.Parse));
-        serializerSettings.Converters.Add(JsonConverters.FromStringParser(LocalDateTime.Parse));
+        serializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
         serializerSettings.Converters.Add(new OptionConverter());
     }
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using NodaTime;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Linq;
@@ -55,6 +56,8 @@ public class SwaggerModule : IAppModule
                     .Map(v => v.ToDisplayString())
                     .Contains(version);
             });
+
+            options.MapType<LocalDateTime>(() => new OpenApiSchema { Type = "date-time", Format = "date-time" });
 
             app.GetModule<AuthenticationModule>().IfPresent(auth =>
             {

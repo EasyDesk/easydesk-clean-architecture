@@ -1,6 +1,6 @@
-﻿using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,7 +27,7 @@ public class PeriodicOutboxAwaker : BackgroundService
             try
             {
                 _requestsChannel.RequestNewFlush();
-                await Task.Delay(_period.AsTimeSpan);
+                await Task.Delay(_period.ToTimeSpan());
             }
             catch (Exception ex)
             {

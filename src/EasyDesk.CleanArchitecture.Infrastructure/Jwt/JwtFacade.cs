@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Time;
-using EasyDesk.Tools.Options;
+﻿using EasyDesk.Tools.Options;
+using NodaTime;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,11 +9,11 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
 public class JwtFacade
 {
-    private readonly ITimestampProvider _timestampProvider;
+    private readonly IClock _clock;
 
-    public JwtFacade(ITimestampProvider timestampProvider)
+    public JwtFacade(IClock clock)
     {
-        _timestampProvider = timestampProvider;
+        _clock = clock;
     }
 
     public string Create(IEnumerable<Claim> claims, JwtTokenConfiguration configure) =>
@@ -21,7 +21,7 @@ public class JwtFacade
 
     public string Create(IEnumerable<Claim> claims, out JwtSecurityToken token, JwtTokenConfiguration configure)
     {
-        var builder = new JwtTokenBuilder(_timestampProvider.Now).WithClaims(claims);
+        var builder = new JwtTokenBuilder(_clock.GetCurrentInstant()).WithClaims(claims);
         configure(builder);
         var descriptor = builder.Build();
 
@@ -35,7 +35,7 @@ public class JwtFacade
 
     public Option<ClaimsPrincipal> Validate(string jwt, out JwtSecurityToken token, JwtValidationConfiguration configure)
     {
-        var builder = new JwtValidationBuilder(_timestampProvider);
+        var builder = new JwtValidationBuilder(_clock);
         configure(builder);
         var parameters = builder.Build();
 

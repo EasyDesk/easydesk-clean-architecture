@@ -1,29 +1,22 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Infrastructure.Time;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
 public class TimeManagementModule : IAppModule
 {
-    private readonly IConfiguration _configuration;
-
-    public TimeManagementModule(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddTimestampProvider(_configuration);
+        services.AddSingleton<IClock>(_ => SystemClock.Instance);
+        services.AddSingleton(_ => DateTimeZoneProviders.Tzdb);
     }
 }
 
 public static class TimeManagementModuleExtensions
 {
-    public static AppBuilder AddTimeManagement(this AppBuilder builder, IConfiguration configuration)
+    public static AppBuilder AddTimeManagement(this AppBuilder builder)
     {
-        return builder.AddModule(new TimeManagementModule(configuration));
+        return builder.AddModule(new TimeManagementModule());
     }
 }

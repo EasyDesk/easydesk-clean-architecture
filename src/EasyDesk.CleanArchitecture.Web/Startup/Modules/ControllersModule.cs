@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Filters;
-using EasyDesk.CleanArchitecture.Web.ModelBinders;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -45,13 +41,13 @@ public class ControllersModule : IAppModule
             options.Filters.Add<TenantFilter>();
         }
         options.EnableEndpointRouting = false;
-        options.ModelBinderProviders.Insert(0, new TypedModelBinderProvider(new Dictionary<Type, Func<IModelBinder>>()
-        {
-            { typeof(Date), ModelBindersFactory.ForDate },
-            { typeof(Timestamp), ModelBindersFactory.ForTimestamp },
-            { typeof(Duration), ModelBindersFactory.ForDuration },
-            { typeof(TimeOfDay), ModelBindersFactory.ForTimeOfDay }
-        }));
+        ////options.ModelBinderProviders.Insert(0, new TypedModelBinderProvider(new Dictionary<Type, Func<IModelBinder>>()
+        ////{
+        ////    { typeof(Date), ModelBindersFactory.ForDate },
+        ////    { typeof(Timestamp), ModelBindersFactory.ForTimestamp },
+        ////    { typeof(Duration), ModelBindersFactory.ForDuration },
+        ////    { typeof(TimeOfDay), ModelBindersFactory.ForTimeOfDay }
+        ////}));
         _configureMvc?.Invoke(options);
     }
 }

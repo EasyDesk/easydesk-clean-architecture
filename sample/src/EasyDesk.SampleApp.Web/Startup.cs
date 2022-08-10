@@ -1,11 +1,9 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
-using EasyDesk.CleanArchitecture.Messaging.ServiceBus;
 using EasyDesk.CleanArchitecture.Web.Startup;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.SampleApp.Application.ExternalEventHandlers;
@@ -42,17 +40,17 @@ public class Startup : BaseStartup
             .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
             .AddMultitenancy()
             .AddSwagger()
-            .AddModule<SampleAppDomainModule>()
-            .AddRebusMessaging(options =>
-            {
-                options
-                    .ConfigureTransport(t => t.UseAzureServiceBusWithinEnvironment(
-                        connectionString: Configuration.GetConnectionString("AzureServiceBus"),
-                        inputQueueAddress: "sample-service",
-                        environmentName: Environment.EnvironmentName))
-                    .EnableAutoSubscribe()
-                    .UseOutbox()
-                    .UseIdempotentHandling();
-            });
+            .AddModule<SampleAppDomainModule>();
+            ////.AddRebusMessaging(options =>
+            ////{
+            ////    options
+            ////        .ConfigureTransport(t => t.UseAzureServiceBusWithinEnvironment(
+            ////            connectionString: Configuration.GetConnectionString("AzureServiceBus"),
+            ////            inputQueueAddress: "sample-service",
+            ////            environmentName: Environment.EnvironmentName))
+            ////        .EnableAutoSubscribe()
+            ////        .UseOutbox()
+            ////        .UseIdempotentHandling();
+            ////});
     }
 }

@@ -1,4 +1,4 @@
-﻿using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
+﻿using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 

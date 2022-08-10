@@ -28,10 +28,10 @@ public abstract class MultitenantDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var entityTypesWithinTenant = modelBuilder.Model
-                .GetEntityTypes()
-                .SelectMany(e => e.ClrType.AsOption())
-                .Where(t => t.IsAssignableTo(typeof(IMultitenantEntity)))
-                .ToList();
+            .GetEntityTypes()
+            .SelectMany(e => e.ClrType.AsOption())
+            .Where(t => t.IsAssignableTo(typeof(IMultitenantEntity)))
+            .ToList();
 
         if (entityTypesWithinTenant.Any())
         {

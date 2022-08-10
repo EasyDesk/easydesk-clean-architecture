@@ -63,7 +63,7 @@ public abstract class BaseStartup
             .AddControllers(Environment, ConfigureMvc)
             .AddDomain()
             .AddHttpContext()
-            .AddTimeManagement(Configuration)
+            .AddTimeManagement()
             .AddMediatr()
             .AddMapping()
             .AddRequestValidation();

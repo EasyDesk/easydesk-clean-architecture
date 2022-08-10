@@ -8,6 +8,16 @@
         "resolved": "6.1.0",
         "contentHash": "BXeJ9P1xYV40CncM5vP7HKpbyAwJw7gCdbXttxoQCbzFPwHXQmwwJa+PgMKw9D9pxRyp4Yf15lgz3RqazRzTxA=="
       },
+      "EntityFrameworkCore.SqlServer.NodaTime": {
+        "type": "Direct",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "AYtHrM/NNqXb0/VN8KJ0Ga+hULu2MFJJD8xFMTz4jbRbELYVp07Y1JdfSZVRjI0UanC87fxSsfGrmJXXtEvBmA==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore.SqlServer": "5.0.1",
+          "NodaTime": "3.0.1"
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Direct",
         "requested": "[6.0.2, )",
@@ -436,6 +446,23 @@
         "type": "Transitive",
         "resolved": "13.0.1",
         "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+      },
+      "NodaTime": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "x5IqJNff9ITRaw83P8IbdudB1tpMDbTqdeVlppBx346ywmLj2ZhE+kf7GJfkCks1piJazxDr2+0EYKc7l1K2WA==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
+        }
+      },
+      "NodaTime.Serialization.JsonNet": {
+        "type": "Transitive",
+        "resolved": "3.0.0",
+        "contentHash": "buSE64oL5eHDiImMgFRF74X/URygSpklFsblyqXafjSW6lMsB7iWfGO5lu7D7Zikj9bXggnMa90a5EqgpPJEYg==",
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.1",
+          "NodaTime": "[3.0.0, 4.0.0)"
+        }
       },
       "RazorLight": {
         "type": "Transitive",
@@ -907,7 +934,8 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "6.1.0"
+          "EasyDesk.Tools": "6.1.0",
+          "NodaTime": "3.1.0"
         }
       },
       "easydesk.cleanarchitecture.infrastructure": {
@@ -918,6 +946,7 @@
           "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "6.0.2",
           "Newtonsoft.Json": "13.0.1",
+          "NodaTime.Serialization.JsonNet": "3.0.0",
           "RazorLight": "2.0.0-rc.3",
           "System.IdentityModel.Tokens.Jwt": "6.15.1"
         }

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
-using EasyDesk.CleanArchitecture.Testing;
 using EasyDesk.Tools;
-using EasyDesk.Tools.PrimitiveTypes.DateAndTime;
 using Microsoft.IdentityModel.Tokens;
+using NodaTime;
+using NodaTime.Testing;
 using Shouldly;
 using Xunit;
 
@@ -18,7 +18,7 @@ public class JwtFacadeTests
     private const string Algorithm = SecurityAlgorithms.HmacSha256Signature;
     private const string KeyId = "test-kid";
 
-    private readonly SettableTimestampProvider _timestampProvider = new SettableTimestampProvider(Timestamp.Now);
+    private readonly FakeClock _clock = new(SystemClock.Instance.GetCurrentInstant());
     private readonly SecurityKey _key = KeyUtils.KeyFromString("abcdefghijklmnopqrstuvwxyz", KeyId);
     private readonly Duration _lifetime = Duration.FromMinutes(5);
     private readonly JwtTokenConfiguration _configureJwtToken;
@@ -45,7 +45,7 @@ public class JwtFacadeTests
         _configureDefaultValidation = builder => builder
             .WithSignatureValidation(_key);
 
-        _sut = new(_timestampProvider);
+        _sut = new(_clock);
     }
 
     [Fact]
@@ -63,7 +63,9 @@ public class JwtFacadeTests
     {
         _sut.Create(_claims, out var token, _configureJwtToken);
 
-        token.ValidTo.ShouldBe(_timestampProvider.Now.AsDateTime + _lifetime.AsTimeSpan, tolerance: TimeSpan.FromSeconds(1));
+        token.ValidTo.ShouldBe(
+            (_clock.GetCurrentInstant() + _lifetime).ToDateTimeUtc(),
+            tolerance: TimeSpan.FromSeconds(1));
     }
 
     [Fact]
@@ -158,7 +160,7 @@ public class JwtFacadeTests
 
     private void AdvanceToPostExpiration()
     {
-        _timestampProvider.Advance(_lifetime);
-        _timestampProvider.Advance(Duration.FromSeconds(1));
+        _clock.Advance(_lifetime);
+        _clock.Advance(Duration.FromSeconds(1));
     }
 }
