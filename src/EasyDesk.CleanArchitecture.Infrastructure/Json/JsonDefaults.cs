@@ -9,20 +9,19 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Json;
 
 public static class JsonDefaults
 {
-    public static void ApplyDefaultConfiguration(this JsonSerializerSettings serializerSettings)
+    public static void ApplyDefaultConfiguration(this JsonSerializerSettings serializerSettings, IDateTimeZoneProvider dateTimeZoneProvider = null)
     {
         serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-        serializerSettings.DateParseHandling = DateParseHandling.None;
 
         serializerSettings.Converters.Add(new StringEnumConverter());
-        serializerSettings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
         serializerSettings.Converters.Add(new OptionConverter());
+        serializerSettings.ConfigureForNodaTime(dateTimeZoneProvider ?? DateTimeZoneProviders.Tzdb);
     }
 
-    public static JsonSerializerSettings DefaultSerializerSettings()
+    public static JsonSerializerSettings DefaultSerializerSettings(IDateTimeZoneProvider dateTimeZoneProvider = null)
     {
         var serializerSettings = new JsonSerializerSettings();
-        serializerSettings.ApplyDefaultConfiguration();
+        serializerSettings.ApplyDefaultConfiguration(dateTimeZoneProvider);
         return serializerSettings;
     }
 }

@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Filters;
+using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,11 +24,15 @@ public class ControllersModule : IAppModule
 
     public void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        var mvcBuilder = services.AddControllers(options => DefaultMvcConfiguration(options, app));
-        mvcBuilder.AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.ApplyDefaultConfiguration();
-        });
+        services
+            .AddControllers(options => DefaultMvcConfiguration(options, app))
+            .AddNewtonsoftJson(options =>
+            {
+                var dateTimeZoneProvider = app.GetModule<TimeManagementModule>()
+                    .Map(m => m.DateTimeZoneProvider)
+                    .OrElseNull();
+                options.SerializerSettings.ApplyDefaultConfiguration(dateTimeZoneProvider);
+            });
     }
 
     protected void DefaultMvcConfiguration(MvcOptions options, AppDescription app)
@@ -41,13 +46,6 @@ public class ControllersModule : IAppModule
             options.Filters.Add<TenantFilter>();
         }
         options.EnableEndpointRouting = false;
-        ////options.ModelBinderProviders.Insert(0, new TypedModelBinderProvider(new Dictionary<Type, Func<IModelBinder>>()
-        ////{
-        ////    { typeof(Date), ModelBindersFactory.ForDate },
-        ////    { typeof(Timestamp), ModelBindersFactory.ForTimestamp },
-        ////    { typeof(Duration), ModelBindersFactory.ForDuration },
-        ////    { typeof(TimeOfDay), ModelBindersFactory.ForTimeOfDay }
-        ////}));
         _configureMvc?.Invoke(options);
     }
 }

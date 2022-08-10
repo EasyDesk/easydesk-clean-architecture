@@ -39,6 +39,7 @@ public class Startup : BaseStartup
             .AddAuthentication(options => options.AddTestAuth("Test"))
             .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
             .AddMultitenancy()
+            .AddApiVersioning()
             .AddSwagger()
             .AddModule<SampleAppDomainModule>();
             ////.AddRebusMessaging(options =>

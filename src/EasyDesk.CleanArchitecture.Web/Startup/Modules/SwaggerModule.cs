@@ -1,13 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Swagger;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
+using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using NodaTime;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Linq;
@@ -28,43 +29,74 @@ public class SwaggerModule : IAppModule
         services.AddSwaggerGenNewtonsoftSupport();
         services.AddSwaggerGen(options =>
         {
-            VersioningUtils.GetSupportedVersions(app.WebAssemblyMarker)
-                .Select(version => version.ToDisplayString())
-                .ForEach(version =>
-                {
-                    options.SwaggerDoc(version, new OpenApiInfo
-                    {
-                        Title = app.Name,
-                        Version = version
-                    });
-                });
-
-            options.OperationFilter<ApiVersionFilter>();
-            options.DocInclusionPredicate((version, api) =>
-            {
-                if (api.ActionDescriptor.GetApiVersionModel().IsApiVersionNeutral)
-                {
-                    return true;
-                }
-                if (api.ActionDescriptor is not ControllerActionDescriptor descriptor)
-                {
-                    return false;
-                }
-                return descriptor
-                    .ControllerTypeInfo
-                    .GetControllerVersion()
-                    .Map(v => v.ToDisplayString())
-                    .Contains(version);
-            });
-
-            options.MapType<LocalDateTime>(() => new OpenApiSchema { Type = "date-time", Format = "date-time" });
-
-            app.GetModule<AuthenticationModule>().IfPresent(auth =>
-            {
-                auth.Schemes.ForEach(scheme => scheme.Value.ConfigureSwagger(options));
-            });
+            SetupSwaggerDocs(app, options);
+            AddNodaTimeSupport(app, options);
+            AddAuthenticationSchemesSupport(app, options);
 
             _configure?.Invoke(options);
+        });
+    }
+
+    private void SetupSwaggerDocs(AppDescription app, SwaggerGenOptions options)
+    {
+        if (app.HasModule<ApiVersioningModule>())
+        {
+            SetupApiVersionedDocs(app, options);
+        }
+        else
+        {
+            options.SwaggerDoc("main", new OpenApiInfo
+            {
+                Title = app.Name
+            });
+        }
+    }
+
+    private void SetupApiVersionedDocs(AppDescription app, SwaggerGenOptions options)
+    {
+        VersioningUtils.GetSupportedVersions(app.WebAssemblyMarker)
+            .Select(version => version.ToDisplayString())
+            .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
+            {
+                Title = app.Name,
+                Version = version
+            }));
+
+        options.OperationFilter<AddApiVersionParameterFilter>();
+        options.DocInclusionPredicate((version, api) =>
+        {
+            if (api.ActionDescriptor.GetApiVersionModel().IsApiVersionNeutral)
+            {
+                return true;
+            }
+            if (api.ActionDescriptor is not ControllerActionDescriptor descriptor)
+            {
+                return false;
+            }
+            return descriptor
+                .ControllerTypeInfo
+                .GetControllerVersion()
+                .Map(v => v.ToDisplayString())
+                .Contains(version);
+        });
+    }
+
+    private static void AddNodaTimeSupport(AppDescription app, SwaggerGenOptions options)
+    {
+        var dateTimeZoneProvider = app.GetModule<TimeManagementModule>()
+            .Map(m => m.DateTimeZoneProvider)
+            .OrElseNull();
+
+        options.ConfigureForNodaTime(
+            serializerSettings: JsonDefaults.DefaultSerializerSettings(),
+            dateTimeZoneProvider: dateTimeZoneProvider);
+    }
+
+    private void AddAuthenticationSchemesSupport(AppDescription app, SwaggerGenOptions options)
+    {
+        app.GetModule<AuthenticationModule>().IfPresent(auth =>
+        {
+            auth.Schemes.ForEach(scheme => scheme.Value.ConfigureSwagger(options));
         });
     }
 }

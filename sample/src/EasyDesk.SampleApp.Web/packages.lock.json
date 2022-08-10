@@ -147,6 +147,17 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
         }
       },
+      "MicroElements.Swashbuckle.NodaTime": {
+        "type": "Transitive",
+        "resolved": "4.0.1",
+        "contentHash": "y3IOcX/DGMn8YlfeJPdNAHz3kRsGPqwallH0AuSfU51TlP//8/V/OEqeNoVMM7xA5hRL9b8qgVCTJwL6oj1ALg==",
+        "dependencies": {
+          "NodaTime": "3.0.0",
+          "NodaTime.Serialization.JsonNet": "3.0.0",
+          "NodaTime.Serialization.SystemTextJson": "1.0.0",
+          "Swashbuckle.AspNetCore": "5.5.1"
+        }
+      },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Transitive",
         "resolved": "5.2.7",
@@ -573,6 +584,15 @@
         "dependencies": {
           "Newtonsoft.Json": "12.0.1",
           "NodaTime": "[3.0.0, 4.0.0)"
+        }
+      },
+      "NodaTime.Serialization.SystemTextJson": {
+        "type": "Transitive",
+        "resolved": "1.0.0",
+        "contentHash": "q1Io5ELt6nqRUQEVtrssC6pZ9Cl1gllsCAHuAU6lv7rxVMZV0aaJi0xkXPRip2JmD7NaIczkiJ/MsqQMLOFxAQ==",
+        "dependencies": {
+          "NodaTime": "[3.0.0, 4.0.0)",
+          "System.Text.Json": "4.7.1"
         }
       },
       "RazorLight": {
@@ -1465,6 +1485,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Infrastructure": "1.0.0",
           "EasyDesk.Tools": "6.1.0",
+          "MicroElements.Swashbuckle.NodaTime": "4.0.1",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "6.0.2",
           "Microsoft.AspNetCore.Mvc.Versioning": "5.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "6.0.2",
