@@ -316,9 +316,9 @@ dotnet_diagnostic.SA1402.severity=none
 dotnet_diagnostic.SA1412.severity=none
 dotnet_diagnostic.SA1413.severity=none
 dotnet_diagnostic.SA1414.severity=none
-dotnet_diagnostic.SA1600.severity=suggestion
-dotnet_diagnostic.SA1601.severity=suggestion
-dotnet_diagnostic.SA1602.severity=suggestion
+dotnet_diagnostic.SA1600.severity=silent
+dotnet_diagnostic.SA1601.severity=silent
+dotnet_diagnostic.SA1602.severity=silent
 
 # IDE0022: Use expression body for methods
 dotnet_diagnostic.IDE0022.severity = none
