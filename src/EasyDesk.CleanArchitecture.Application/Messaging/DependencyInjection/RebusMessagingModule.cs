@@ -5,7 +5,7 @@ using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;

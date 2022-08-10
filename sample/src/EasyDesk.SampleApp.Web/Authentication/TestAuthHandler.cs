@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Tenants;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Authentication;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;

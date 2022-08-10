@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Tenants;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Options;
 using Microsoft.EntityFrameworkCore;

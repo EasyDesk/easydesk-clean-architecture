@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Tenants;
-using EasyDesk.CleanArchitecture.Infrastructure.Tenants;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Threading.Tasks;
 

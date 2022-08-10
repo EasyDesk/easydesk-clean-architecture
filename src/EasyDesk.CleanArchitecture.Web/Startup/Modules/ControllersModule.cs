@@ -1,6 +1,6 @@
 ﻿using System;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using EasyDesk.Tools.Options;

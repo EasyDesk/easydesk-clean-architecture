@@ -1,7 +1,7 @@
 ﻿using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Http;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Tenants;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 
 public static class HttpContextExtensions
 {

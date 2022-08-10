@@ -2,7 +2,7 @@
 using System;
 using static EasyDesk.Tools.Options.OptionImports;
 
-namespace EasyDesk.CleanArchitecture.Application.Tenants;
+namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 public class TenantService : ITenantProvider, ITenantInitializer
 {

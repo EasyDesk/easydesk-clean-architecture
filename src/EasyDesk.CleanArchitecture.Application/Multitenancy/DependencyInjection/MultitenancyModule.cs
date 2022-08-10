@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 
 public class MultitenancyModule : IAppModule
 {

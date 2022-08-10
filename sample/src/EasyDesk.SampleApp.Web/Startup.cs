@@ -1,7 +1,7 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Tenants.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web.Startup;
