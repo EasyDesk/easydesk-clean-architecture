@@ -1,39 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
-using EasyDesk.CleanArchitecture.Domain.Model.Errors;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
-using EasyDesk.Tools.Results;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
-public abstract class EfCoreRepository<TDomain, TPersistence, TContext> :
-    ISaveRepository<TDomain>,
-    IRemoveRepository<TDomain>,
-    ISaveAndHydrateRepository<TDomain>
+public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
+    ISaveRepository<TAggregate>,
+    IRemoveRepository<TAggregate>,
+    ISaveAndHydrateRepository<TAggregate>
     where TContext : DbContext
     where TPersistence : class, new()
-    where TDomain : AggregateRoot
+    where TAggregate : AggregateRoot
 {
     private readonly TContext _context;
-    private readonly IModelConverter<TDomain, TPersistence> _converter;
     private readonly IDomainEventNotifier _eventNotifier;
-    private readonly Dictionary<TDomain, TPersistence> _trackedAggregates = new();
+    private readonly AggregatesTracker<TAggregate, TPersistence> _tracker;
 
     public EfCoreRepository(
         TContext context,
-        IModelConverter<TDomain, TPersistence> converter,
+        IModelConverter<TAggregate, TPersistence> converter,
         IDomainEventNotifier eventNotifier)
     {
         _context = context;
-        _converter = converter;
+        _tracker = new(converter);
         _eventNotifier = eventNotifier;
     }
 
@@ -41,104 +33,60 @@ public abstract class EfCoreRepository<TDomain, TPersistence, TContext> :
 
     private IQueryable<TPersistence> InitialQuery() => Includes(DbSet);
 
-    private void StartTracking(TDomain aggregate, TPersistence persistenceModel) => _trackedAggregates.Add(aggregate, persistenceModel);
-
-    private bool IsTracked(TDomain aggregate) => _trackedAggregates.ContainsKey(aggregate);
-
-    private TPersistence GetTrackedPersistenceModel(TDomain aggregate)
-    {
-        return _trackedAggregates
-            .GetOption(aggregate)
-            .OrElseThrow(() => new InvalidOperationException("Trying to update an aggregate that was not retrieved using this repository"));
-    }
-
-    protected async Task<Result<TDomain>> GetSingle(QueryWrapper<TPersistence> queryWrapper)
+    protected async Task<Option<TAggregate>> GetSingle(QueryWrapper<TPersistence> queryWrapper)
     {
         var persistenceModel = await queryWrapper(InitialQuery()).FirstOptionAsync();
-        return persistenceModel
-            .Map(ConvertAndStartTracking)
-            .OrElseError(AggregateNotFound.OfType<TDomain>);
+        return persistenceModel.Map(_tracker.TrackFromPersistenceModel);
     }
 
-    protected async Task<IEnumerable<TDomain>> GetMany(QueryWrapper<TPersistence> queryWrapper)
+    protected async Task<IEnumerable<TAggregate>> GetMany(QueryWrapper<TPersistence> queryWrapper)
     {
         var persistenceModels = await queryWrapper(InitialQuery()).ToListAsync();
-        return persistenceModels.Select(ConvertAndStartTracking);
+        return persistenceModels.Select(_tracker.TrackFromPersistenceModel);
     }
 
-    private TDomain ConvertAndStartTracking(TPersistence persistenceModel)
-    {
-        var aggregate = _converter.ToDomain(persistenceModel);
-        StartTracking(aggregate, persistenceModel);
-        return aggregate;
-    }
+    public async Task Save(TAggregate aggregate) => await SaveImpl(aggregate);
 
-    public void Save(TDomain aggregate)
+    public async Task<TAggregate> SaveAndHydrate(TAggregate aggregate) => await SaveImpl(aggregate, hydrateAfterSave: true);
+
+    private async Task<TAggregate> SaveImpl(TAggregate aggregate, bool hydrateAfterSave = false)
     {
-        if (IsTracked(aggregate))
+        var wasTracked = _tracker.IsTracked(aggregate);
+        var persistenceModel = _tracker.TrackFromAggregate(aggregate);
+
+        if (wasTracked)
         {
-            Update(aggregate);
+            DbSet.Update(persistenceModel);
         }
         else
         {
-            Add(aggregate);
+            DbSet.Add(persistenceModel);
         }
-    }
 
-    public async Task<TDomain> SaveAndHydrate(TDomain aggregate)
-    {
-        if (IsTracked(aggregate))
+        await _context.SaveChangesAsync();
+
+        var newAggregate = hydrateAfterSave ? _tracker.ReHydrate(aggregate) : aggregate;
+
+        if (!wasTracked)
         {
-            throw new InvalidOperationException("The given aggregate is already being tracked by this repository.");
+            aggregate.NotifyCreation();
         }
-        var persistenceModel = _converter.ToPersistence(aggregate);
-        await DbSet.AddAsync(persistenceModel);
-        var hydratedAggregate = _converter.ToDomain(persistenceModel);
-        MarkAggregateAsCreated(hydratedAggregate, persistenceModel);
-        return hydratedAggregate;
+        NotifyAllEvents(newAggregate);
+
+        return newAggregate;
     }
 
-    private void Add(TDomain aggregate)
+    public async Task Remove(TAggregate aggregate)
     {
-        var persistenceModel = _converter.ToPersistence(aggregate);
-        DbSet.Add(persistenceModel);
-        MarkAggregateAsCreated(aggregate, persistenceModel);
-    }
-
-    private void Update(TDomain aggregate)
-    {
-        var persistenceModel = GetTrackedPersistenceModel(aggregate);
-        _converter.ApplyChanges(aggregate, persistenceModel);
-        DbSet.Update(persistenceModel);
-        NotifyAllEvents(aggregate);
-    }
-
-    public void Remove(TDomain aggregate)
-    {
-        var persistenceModel = GetTrackedPersistenceModel(aggregate);
+        var persistenceModel = _tracker.GetPersistenceModel(aggregate);
         DbSet.Remove(persistenceModel);
-        MarkAggregateAsRemoved(aggregate);
-    }
-
-    private void MarkAggregateAsCreated(TDomain aggregate, TPersistence persistenceModel)
-    {
-        FlushAggregateEvents(aggregate);
-        aggregate.NotifyCreation();
-        NotifyAllEvents(aggregate);
-        StartTracking(aggregate, persistenceModel);
-    }
-
-    private void MarkAggregateAsRemoved(TDomain aggregate)
-    {
+        await _context.SaveChangesAsync();
         aggregate.NotifyRemoval();
         NotifyAllEvents(aggregate);
     }
 
-    private void NotifyAllEvents(TDomain aggregate) =>
+    private void NotifyAllEvents(TAggregate aggregate) =>
         aggregate.ConsumeAllEvents().ForEach(_eventNotifier.Notify);
-
-    private void FlushAggregateEvents(TDomain aggregate) =>
-        aggregate.ConsumeAllEvents().ForEach(_ => { });
 
     protected abstract DbSet<TPersistence> GetDbSet(TContext context);
 

@@ -2,16 +2,14 @@
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class ApiVersioningModule : IAppModule
+public class ApiVersioningModule : AppModule
 {
     private readonly Action<ApiVersioningOptions> _configure;
 
@@ -20,7 +18,7 @@ public class ApiVersioningModule : IAppModule
         _configure = configure;
     }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddApiVersioning(options =>
         {
@@ -31,7 +29,7 @@ public class ApiVersioningModule : IAppModule
                 new HeaderApiVersionReader("Api-Version"));
 
             options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = VersioningUtils.GetSupportedVersions(app.WebAssemblyMarker)
+            options.DefaultApiVersion = VersioningUtils.GetSupportedVersions(app)
                 .MaxOption()
                 .OrElseGet(() => VersioningUtils.DefaultVersion);
 

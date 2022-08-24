@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Pages;
 using Shouldly;
-using System.Collections.Generic;
 using Xunit;
 using static System.Linq.Enumerable;
 

@@ -1,9 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rebus.Messages;
 using Rebus.Transport;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 

@@ -1,15 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
-using EasyDesk.Tools.Results;
 using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
 public class DomainEventHandlingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
-    where TRequest : CommandBase<TResponse>
+    where TRequest : ICommand<TResponse>
 {
     private readonly DomainEventQueue _domainEventQueue;
 

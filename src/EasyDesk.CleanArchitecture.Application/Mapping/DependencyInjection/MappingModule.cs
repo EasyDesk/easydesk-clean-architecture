@@ -1,38 +1,37 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
+using System.Reflection;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
 
-public class MappingModule : IAppModule
+public class MappingModule : AppModule
 {
-    private readonly Type[] _additionalAssemblyMarkers;
+    private readonly Assembly[] _additionalAssemblies;
 
-    public MappingModule(Type[] additionalAssemblyMarkers)
+    public MappingModule(Assembly[] additionalAssemblies)
     {
-        _additionalAssemblyMarkers = additionalAssemblyMarkers;
+        _additionalAssemblies = additionalAssemblies;
     }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddAutoMapper(config =>
         {
-            var userAsseblyMarkers = Items(
-                app.ApplicationAssemblyMarker,
-                app.WebAssemblyMarker,
-                app.InfrastructureAssemblyMarker);
+            var assemblies = Items(
+                app.GetLayerAssembly(CleanArchitectureLayer.Infrastructure),
+                app.GetLayerAssembly(CleanArchitectureLayer.Application),
+                app.GetLayerAssembly(CleanArchitectureLayer.Web));
 
-            config.AddProfile(new DefaultMappingProfile(_additionalAssemblyMarkers.Concat(userAsseblyMarkers)));
+            config.AddProfile(new DefaultMappingProfile(assemblies.Concat(_additionalAssemblies)));
         });
     }
 }
 
 public static class MappingModuleExtensions
 {
-    public static AppBuilder AddMapping(this AppBuilder builder, params Type[] additionalAssemblyMarkers)
+    public static AppBuilder AddMapping(this AppBuilder builder, params Assembly[] additionalAssemblies)
     {
-        return builder.AddModule(new MappingModule(additionalAssemblyMarkers));
+        return builder.AddModule(new MappingModule(additionalAssemblies));
     }
 }

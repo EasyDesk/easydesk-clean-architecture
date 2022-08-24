@@ -1,42 +1,61 @@
-﻿using EasyDesk.Tools.Collections;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Immutable;
+using System.Reflection;
+using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.Modules;
 
 public class AppBuilder
 {
-    private readonly Dictionary<Type, IAppModule> _modules = new();
+    private IImmutableDictionary<Type, AppModule> _modules = Map<Type, AppModule>();
+    private IImmutableDictionary<CleanArchitectureLayer, Assembly> _layers = Map<CleanArchitectureLayer, Assembly>();
+    private string _serviceName;
 
-    public AppBuilder AddModule<T>(T module) where T : IAppModule
+    public AppBuilder(string defaultServiceName)
     {
-        _modules.Merge(typeof(T), module, (_, f) => f);
+        _serviceName = defaultServiceName;
+    }
+
+    public AppBuilder WithServiceName(string name)
+    {
+        _serviceName = name;
         return this;
     }
 
-    public AppBuilder RemoveModule<T>() where T : IAppModule
+    public AppBuilder WithDomainLayer(Assembly domainLayer) =>
+        WithLayer(CleanArchitectureLayer.Domain, domainLayer);
+
+    public AppBuilder WithApplicationLayer(Assembly applicationLayer) =>
+        WithLayer(CleanArchitectureLayer.Application, applicationLayer);
+
+    public AppBuilder WithInfrastructureLayer(Assembly infrastructureLayer) =>
+        WithLayer(CleanArchitectureLayer.Infrastructure, infrastructureLayer);
+
+    public AppBuilder WithWebLayer(Assembly webLayer) =>
+        WithLayer(CleanArchitectureLayer.Web, webLayer);
+
+    private AppBuilder WithLayer(CleanArchitectureLayer layer, Assembly layerAssembly)
     {
-        if (_modules.ContainsKey(typeof(T)))
-        {
-            _modules.Remove(typeof(T));
-        }
+        _layers = _layers.SetItem(layer, layerAssembly);
         return this;
     }
 
-    public AppDescription Build(string name, Type web, Type application, Type infrastructure)
+    public AppBuilder AddModule<T>(T module) where T : AppModule
     {
-        return new(_modules.Values)
-        {
-            Name = name,
-            WebAssemblyMarker = web,
-            ApplicationAssemblyMarker = application,
-            InfrastructureAssemblyMarker = infrastructure
-        };
+        _modules = _modules.SetItem(typeof(T), module);
+        return this;
     }
+
+    public AppBuilder RemoveModule<T>() where T : AppModule
+    {
+        _modules = _modules.Remove(typeof(T));
+        return this;
+    }
+
+    public AppDescription Build() => new(_serviceName, _modules, _layers);
 }
 
 public static class AppBuilderExtensions
 {
-    public static AppBuilder AddModule<T>(this AppBuilder builder) where T : IAppModule, new() =>
+    public static AppBuilder AddModule<T>(this AppBuilder builder) where T : AppModule, new() =>
         builder.AddModule(new T());
 }

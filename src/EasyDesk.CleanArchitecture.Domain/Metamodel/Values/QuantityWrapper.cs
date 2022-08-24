@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
 /// <summary>
 /// Extend this class to declare a wrapper of a physical quantity.

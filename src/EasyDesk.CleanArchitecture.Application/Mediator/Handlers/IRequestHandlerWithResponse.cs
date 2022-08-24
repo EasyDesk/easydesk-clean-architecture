@@ -1,9 +1,8 @@
-﻿using EasyDesk.Tools.Results;
-using MediatR;
+﻿using MediatR;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
 
 public interface IRequestHandlerWithResponse<TRequest, TResponse> : IRequestHandler<TRequest, Result<TResponse>>
-    where TRequest : RequestBase<TResponse>
+    where TRequest : ICqrsRequest<TResponse>
 {
 }

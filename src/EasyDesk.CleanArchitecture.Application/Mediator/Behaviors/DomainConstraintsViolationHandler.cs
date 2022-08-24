@@ -1,16 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.Tools.Results;
 using MediatR;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
 public class DomainConstraintsViolationHandler<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
-    where TRequest : RequestBase<TResponse>
+    where TRequest : ICqrsRequest<TResponse>
 {
     public async Task<Result<TResponse>> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<Result<TResponse>> next)
     {

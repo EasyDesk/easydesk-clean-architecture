@@ -1,5 +1,4 @@
 ﻿using Rebus.Transport;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 

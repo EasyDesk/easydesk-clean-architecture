@@ -1,9 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
-using EasyDesk.Tools.Results;
 using Rebus.Messages;
 using Rebus.Pipeline;
-using System;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 

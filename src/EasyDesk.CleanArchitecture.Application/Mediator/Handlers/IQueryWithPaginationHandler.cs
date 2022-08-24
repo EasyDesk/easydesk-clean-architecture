@@ -3,6 +3,6 @@
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
 
 public interface IQueryWithPaginationHandler<TRequest, TResponse> : IQueryHandler<TRequest, Page<TResponse>>
-    where TRequest : QueryWithPaginationBase<TResponse>
+    where TRequest : IPagedQuery<TResponse>
 {
 }

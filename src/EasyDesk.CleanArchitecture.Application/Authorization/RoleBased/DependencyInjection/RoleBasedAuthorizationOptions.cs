@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 

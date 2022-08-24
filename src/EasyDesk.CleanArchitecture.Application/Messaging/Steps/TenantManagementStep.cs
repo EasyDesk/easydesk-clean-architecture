@@ -1,10 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
 using Rebus.Messages;
 using Rebus.Pipeline;
-using System;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 

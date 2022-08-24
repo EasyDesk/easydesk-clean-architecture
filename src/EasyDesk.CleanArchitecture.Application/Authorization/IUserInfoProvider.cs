@@ -1,6 +1,4 @@
-﻿using EasyDesk.Tools.Options;
-
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+﻿namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public interface IUserInfoProvider
 {

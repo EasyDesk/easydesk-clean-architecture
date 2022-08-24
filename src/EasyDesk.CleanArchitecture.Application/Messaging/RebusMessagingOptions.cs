@@ -1,11 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
-using EasyDesk.Tools.Options;
 using Rebus.Config;
 using Rebus.Injection;
 using Rebus.Routing;
 using Rebus.Transport;
-using System;
-using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 

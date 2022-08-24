@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
-using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

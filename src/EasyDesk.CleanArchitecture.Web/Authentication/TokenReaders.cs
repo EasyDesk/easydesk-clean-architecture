@@ -1,7 +1,4 @@
 ﻿using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
-using System;
-using System.Linq;
 using System.Net.Http.Headers;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication;
@@ -24,6 +21,6 @@ public static class TokenReaders
 
     private static Option<AuthenticationHeaderValue> ParseHeader(string rawHeader)
     {
-        return OptionImports.FromTryConstruct<string, AuthenticationHeaderValue>(rawHeader, AuthenticationHeaderValue.TryParse);
+        return TryOption<string, AuthenticationHeaderValue>(AuthenticationHeaderValue.TryParse, rawHeader);
     }
 }

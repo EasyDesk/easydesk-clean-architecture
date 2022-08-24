@@ -4,10 +4,6 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.SampleApp.Application.Queries;
-using EasyDesk.Tools.Results;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using static EasyDesk.SampleApp.Application.Queries.GetPerson;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Queries;

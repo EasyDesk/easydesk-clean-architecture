@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
+﻿namespace EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 
 public interface IIdempotenceManager
 {

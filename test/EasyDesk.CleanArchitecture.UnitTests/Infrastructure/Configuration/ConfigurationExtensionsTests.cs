@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
-using System.IO;
 using System.Text;
 using Xunit;
 

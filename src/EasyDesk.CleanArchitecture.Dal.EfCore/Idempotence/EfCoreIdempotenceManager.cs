@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
 

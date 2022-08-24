@@ -1,8 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.Tools.Options;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore;
 

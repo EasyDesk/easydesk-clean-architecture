@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Pages;
-using EasyDesk.Tools.Results;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 

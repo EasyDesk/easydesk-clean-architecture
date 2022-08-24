@@ -1,8 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-namespace EasyDesk.CleanArchitecture.Infrastructure.Http;
+﻿namespace EasyDesk.CleanArchitecture.Infrastructure.Http;
 
 public delegate Task<HttpResponseMessage> HttpRequest(HttpClient client);
 

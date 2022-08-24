@@ -1,9 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.Tools;
-using EasyDesk.Tools.Results;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.SampleApp.Application.ExternalEventHandlers;
 

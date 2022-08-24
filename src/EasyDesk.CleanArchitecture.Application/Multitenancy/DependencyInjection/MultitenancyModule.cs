@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 
-public class MultitenancyModule : IAppModule
+public class MultitenancyModule : AppModule
 {
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services
             .AddScoped<TenantService>()

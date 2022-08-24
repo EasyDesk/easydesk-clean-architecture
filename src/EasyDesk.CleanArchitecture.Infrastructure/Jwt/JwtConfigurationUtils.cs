@@ -1,10 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
-using EasyDesk.Tools.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
-using System;
-using System.Collections.Generic;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 

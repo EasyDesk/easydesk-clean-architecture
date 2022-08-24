@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyDesk.CleanArchitecture.Application.Data;
+﻿namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public class AfterCommitException : Exception
 {

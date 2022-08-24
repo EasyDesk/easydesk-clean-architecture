@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyDesk.CleanArchitecture.Application.Pages;
+﻿namespace EasyDesk.CleanArchitecture.Application.Pages;
 
 public record Pagination
 {

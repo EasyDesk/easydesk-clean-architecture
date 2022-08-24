@@ -23,9 +23,9 @@
       },
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[6.1.0, )",
-        "resolved": "6.1.0",
-        "contentHash": "BXeJ9P1xYV40CncM5vP7HKpbyAwJw7gCdbXttxoQCbzFPwHXQmwwJa+PgMKw9D9pxRyp4Yf15lgz3RqazRzTxA=="
+        "requested": "[7.1.0, )",
+        "resolved": "7.1.0",
+        "contentHash": "Qbgc3GmK2ZRK/bufTl1IC3VPJs3i329MyDFeC9fYk2fHPt9TuKmylAq/eAbXvvxcDTpYk9WN1ckArEP+LbPYQQ=="
       },
       "FluentValidation": {
         "type": "Direct",
@@ -555,8 +555,8 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "6.1.0",
-          "NodaTime": "3.1.0"
+          "EasyDesk.Tools": "[7.1.0, )",
+          "NodaTime": "[3.1.0, )"
         }
       }
     }

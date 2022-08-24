@@ -1,11 +1,4 @@
-﻿using EasyDesk.Tools;
-using EasyDesk.Tools.Options;
-using EasyDesk.Tools.Results;
-using System.Collections.Generic;
-using System.Linq;
-using static EasyDesk.Tools.Options.OptionImports;
-
-namespace EasyDesk.CleanArchitecture.Web.Dto;
+﻿namespace EasyDesk.CleanArchitecture.Web.Dto;
 
 public record ResponseDto<T>(Option<T> Data, IEnumerable<ErrorDto> Errors, object Meta)
 {

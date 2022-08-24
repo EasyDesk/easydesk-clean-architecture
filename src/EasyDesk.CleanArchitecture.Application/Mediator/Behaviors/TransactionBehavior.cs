@@ -1,14 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.Tools.Results;
 using MediatR;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
 public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
-    where TRequest : CommandBase<TResponse>
+    where TRequest : ICommand<TResponse>
 {
     private readonly IUnitOfWorkProvider _unitOfWorkProvider;
 

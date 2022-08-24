@@ -4,18 +4,14 @@ using EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
-using EasyDesk.Tools.Results;
 using FluentValidation;
-using System.Threading;
-using System.Threading.Tasks;
-using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
 public static class CreatePerson
 {
     [RequireAnyOf("People.Write")]
-    public record Command(string Name) : CommandBase<PersonSnapshot>;
+    public record Command(string Name) : ICommand<PersonSnapshot>;
 
     public class Validator : AbstractValidator<Command>
     {

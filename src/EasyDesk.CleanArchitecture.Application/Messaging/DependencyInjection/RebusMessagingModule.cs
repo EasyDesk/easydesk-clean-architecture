@@ -1,14 +1,12 @@
-﻿using System;
-using System.Linq;
-using EasyDesk.CleanArchitecture.Application.Data;
+﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
-using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Rebus.Bus;
@@ -22,7 +20,7 @@ using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 
-public class RebusMessagingModule : IAppModule
+public class RebusMessagingModule : AppModule
 {
     private readonly RebusMessagingOptions _options;
 
@@ -31,11 +29,16 @@ public class RebusMessagingModule : IAppModule
         _options = options;
     }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void BeforeServiceConfiguration(AppDescription app)
+    {
+        app.RequireModule<MediatrModule>().Pipeline.AddBehavior(typeof(RebusTransactionScopeBehavior<,>));
+    }
+
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         ITransport originalTransport = null;
 
-        var knownMessageTypes = KnownMessageTypes.ScanAssemblies(app.ApplicationAssemblyMarker);
+        var knownMessageTypes = ScanForKnownMessageTypes(app);
         services.AddSingleton(knownMessageTypes);
 
         services.AddRebus((configurer, provider) =>
@@ -83,14 +86,23 @@ public class RebusMessagingModule : IAppModule
             return configurer;
         });
 
-        ReflectionUtils.InstantiableSubtypesOfGenericInterface(typeof(IMessageHandler<>), app.ApplicationAssemblyMarker).ForEach(x =>
-        {
-            services.AddTransient(x.Interface, x.Implementation);
-            var messageType = x.Interface.GetGenericArguments().First();
-            var rebusHandlerType = typeof(IHandleMessages<>).MakeGenericType(messageType);
-            var adapterType = typeof(MessageHandlerAdapter<>).MakeGenericType(messageType);
-            services.AddTransient(rebusHandlerType, adapterType);
-        });
+        new AssemblyScanner()
+            .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
+            .NonAbstract()
+            .SubtypesOrImplementationsOf(typeof(IMessageHandler<>))
+            .FindTypes()
+            .ForEach(t =>
+            {
+                var implementedInterfaces = t.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMessageHandler<>));
+                implementedInterfaces.ForEach(i =>
+                {
+                    services.AddTransient(i, t);
+                    var messageType = i.GetGenericArguments().First();
+                    var rebusHandlerType = typeof(IHandleMessages<>).MakeGenericType(messageType);
+                    var adapterType = typeof(MessageHandlerAdapter<>).MakeGenericType(messageType);
+                    services.AddTransient(rebusHandlerType, adapterType);
+                });
+            });
 
         services.AddScoped<MessageBroker>();
         services.AddScoped<IMessagePublisher>(provider => provider.GetRequiredService<MessageBroker>());
@@ -131,6 +143,17 @@ public class RebusMessagingModule : IAppModule
             app.RequireModule<DataAccessModule>().Implementation.AddIdempotenceManager(services, app);
         }
     }
+
+    private KnownMessageTypes ScanForKnownMessageTypes(AppDescription app)
+    {
+        var knownMessageTypes = new AssemblyScanner()
+            .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
+            .NonAbstract()
+            .SubtypesOrImplementationsOf<IMessage>()
+            .FindTypes()
+            .ToEquatableSet();
+        return new(knownMessageTypes);
+    }
 }
 
 public static class RebusMessagingModuleExtensions
@@ -144,4 +167,6 @@ public static class RebusMessagingModuleExtensions
     }
 
     public static bool HasRebusMessaging(this AppDescription app) => app.HasModule<RebusMessagingModule>();
+
+    public static RebusMessagingModule RequireRebusMessaging(this AppDescription app) => app.RequireModule<RebusMessagingModule>();
 }

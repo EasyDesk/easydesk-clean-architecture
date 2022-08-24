@@ -1,7 +1,4 @@
-﻿using EasyDesk.Tools;
-using EasyDesk.Tools.Observables;
-using System;
-using System.Threading.Tasks;
+﻿using EasyDesk.Tools.Observables;
 
 namespace EasyDesk.CleanArchitecture.Application.Data;
 

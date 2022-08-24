@@ -1,5 +1,4 @@
-﻿using EasyDesk.Tools.Options;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 

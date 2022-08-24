@@ -2,25 +2,19 @@
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mediator;
 using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
-using EasyDesk.Tools;
-using EasyDesk.Tools.Options;
-using EasyDesk.Tools.Results;
 using NSubstitute;
 using Shouldly;
-using System.Threading.Tasks;
 using Xunit;
-using static EasyDesk.Tools.Options.OptionImports;
-using static EasyDesk.Tools.Results.ResultImports;
-using Next = MediatR.RequestHandlerDelegate<EasyDesk.Tools.Results.Result<EasyDesk.Tools.Nothing>>;
+using Next = MediatR.RequestHandlerDelegate<EasyDesk.Tools.Result<EasyDesk.Tools.Nothing>>;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator.Behaviors;
 
 public class AuthorizationBehaviorTests
 {
-    public record TestRequest : RequestBase<Nothing>;
+    public record TestRequest : ICqrsRequest<Nothing>;
 
     [AllowUnknownUser]
-    public record TestRequestWithUnknownUserAllowed : RequestBase<Nothing>;
+    public record TestRequestWithUnknownUserAllowed : ICqrsRequest<Nothing>;
 
     private readonly UserInfo _userInfo = new("user");
     private readonly IUserInfoProvider _userInfoProvider;
@@ -40,21 +34,21 @@ public class AuthorizationBehaviorTests
         _authorizer.IsAuthorized(_request, _userInfo).Returns(false);
     }
 
-    private async Task ShouldNotBeAuthorized<T>(Error error, bool authorizerResult = false) where T : RequestBase<Nothing>, new()
+    private async Task ShouldNotBeAuthorized<T>(Error error, bool authorizerResult = false) where T : ICqrsRequest<Nothing>, new()
     {
         var result = await Handle<T>(authorizerResult);
         result.ShouldBe(error);
         await _next.DidNotReceive()();
     }
 
-    private async Task ShouldBeAuthorized<T>(bool authorizerResult = false) where T : RequestBase<Nothing>, new()
+    private async Task ShouldBeAuthorized<T>(bool authorizerResult = false) where T : ICqrsRequest<Nothing>, new()
     {
         var result = await Handle<T>(authorizerResult);
         result.ShouldBe(Ok);
         await _next.Received(1)();
     }
 
-    private async Task<Result<Nothing>> Handle<T>(bool authorizerResult) where T : RequestBase<Nothing>, new()
+    private async Task<Result<Nothing>> Handle<T>(bool authorizerResult) where T : ICqrsRequest<Nothing>, new()
     {
         var request = new T();
         var authorizer = Substitute.For<IAuthorizer<T>>();

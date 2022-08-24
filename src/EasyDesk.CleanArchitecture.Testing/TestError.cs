@@ -1,6 +1,4 @@
-﻿using EasyDesk.Tools.Results;
-
-namespace EasyDesk.CleanArchitecture.Testing;
+﻿namespace EasyDesk.CleanArchitecture.Testing;
 
 public record TestError(string Code) : Error
 {

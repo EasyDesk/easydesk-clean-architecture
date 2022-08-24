@@ -1,10 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.Tools;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Shouldly;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data;

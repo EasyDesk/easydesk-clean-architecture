@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace EasyDesk.CleanArchitecture.Application.Pages;
+﻿namespace EasyDesk.CleanArchitecture.Application.Pages;
 
 public static class PageFactories
 {

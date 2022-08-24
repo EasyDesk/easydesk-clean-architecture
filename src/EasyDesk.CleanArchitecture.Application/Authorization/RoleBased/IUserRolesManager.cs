@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 public interface IUserRolesManager : IUserRolesProvider
 {

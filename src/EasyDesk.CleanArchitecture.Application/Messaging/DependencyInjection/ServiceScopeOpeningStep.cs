@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Rebus.Pipeline;
 using Rebus.Transport;
-using System;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 

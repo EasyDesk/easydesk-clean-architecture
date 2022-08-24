@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.SampleApp.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 

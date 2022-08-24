@@ -3,19 +3,16 @@ using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Swagger;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
 using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System;
-using System.Linq;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class SwaggerModule : IAppModule
+public class SwaggerModule : AppModule
 {
     private readonly Action<SwaggerGenOptions> _configure;
 
@@ -24,7 +21,7 @@ public class SwaggerModule : IAppModule
         _configure = configure;
     }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddSwaggerGenNewtonsoftSupport();
         services.AddSwaggerGen(options =>
@@ -54,7 +51,7 @@ public class SwaggerModule : IAppModule
 
     private void SetupApiVersionedDocs(AppDescription app, SwaggerGenOptions options)
     {
-        VersioningUtils.GetSupportedVersions(app.WebAssemblyMarker)
+        VersioningUtils.GetSupportedVersions(app)
             .Select(version => version.ToDisplayString())
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
             {

@@ -1,9 +1,6 @@
-﻿using EasyDesk.Tools.Options;
-using NodaTime;
-using System.Collections.Generic;
+﻿using NodaTime;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 

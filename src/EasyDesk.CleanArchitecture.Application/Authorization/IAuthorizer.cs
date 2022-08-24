@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+﻿namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public interface IAuthorizer<T>
 {

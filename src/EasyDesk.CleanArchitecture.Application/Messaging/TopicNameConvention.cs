@@ -1,5 +1,4 @@
 ﻿using Rebus.Topic;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 

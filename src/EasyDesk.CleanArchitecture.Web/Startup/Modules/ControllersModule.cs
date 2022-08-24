@@ -1,9 +1,7 @@
-﻿using System;
-using EasyDesk.CleanArchitecture.Application.Modules;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Filters;
-using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class ControllersModule : IAppModule
+public class ControllersModule : AppModule
 {
     private readonly IWebHostEnvironment _environment;
     private readonly Action<MvcOptions> _configureMvc;
@@ -22,7 +20,7 @@ public class ControllersModule : IAppModule
         _configureMvc = configureMvc;
     }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services
             .AddControllers(options => DefaultMvcConfiguration(options, app))

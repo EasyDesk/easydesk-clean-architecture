@@ -5,13 +5,12 @@ using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
 using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Immutable;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class AuthenticationModule : IAppModule
+public class AuthenticationModule : AppModule
 {
     private readonly string _defaultScheme;
 
@@ -23,7 +22,7 @@ public class AuthenticationModule : IAppModule
 
     public IImmutableDictionary<string, IAuthenticationScheme> Schemes { get; }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddScoped<IUserInfoProvider, HttpContextUserInfoProvider>();
         var authBuilder = services.AddAuthentication(options =>

@@ -1,11 +1,4 @@
-﻿using EasyDesk.Tools;
-using EasyDesk.Tools.Options;
-using EasyDesk.Tools.Results;
-using System;
-using System.Threading.Tasks;
-using static EasyDesk.Tools.Results.ResultImports;
-
-namespace EasyDesk.CleanArchitecture.Application.Data;
+﻿namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public interface IUnitOfWorkProvider
 {
@@ -42,5 +35,5 @@ public static class UnitOfWorkProviderExtensions
         await unitOfWorkProvider.RunTransactionally(async () => Success(await action()));
 
     public static async Task<Result<Nothing>> RunTransactionally(this IUnitOfWorkProvider unitOfWorkProvider, AsyncAction action) =>
-        await unitOfWorkProvider.RunTransactionally(() => Functions.Execute(action));
+        await unitOfWorkProvider.RunTransactionally(() => ReturningNothing(action));
 }

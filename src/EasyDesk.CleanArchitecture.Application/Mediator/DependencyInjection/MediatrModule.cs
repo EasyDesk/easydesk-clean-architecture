@@ -1,42 +1,41 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
-using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
 
-public class MediatrModule : IAppModule
+public class MediatrModule : AppModule
 {
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public MediatrModule(Action<MediatrPipelineBuilder> configurePipeline = null)
     {
-        services.AddMediatR(app.ApplicationAssemblyMarker, app.InfrastructureAssemblyMarker);
+        configurePipeline?.Invoke(Pipeline);
+    }
 
-        if (app.HasRequestValidation())
+    public MediatrPipelineBuilder Pipeline { get; } = new();
+
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    {
+        services.AddMediatR(
+            app.GetLayerAssembly(CleanArchitectureLayer.Application),
+            app.GetLayerAssembly(CleanArchitectureLayer.Infrastructure));
+
+        Pipeline.AddBehavior(typeof(TransactionBehaviorWrapper<,>));
+        Pipeline.AddBehavior(typeof(DomainConstraintsViolationHandlerWrapper<,>));
+        Pipeline.AddBehavior(typeof(DomainEventHandlingBehaviorWrapper<,>));
+
+        var behaviors = Pipeline.GetOrderedBehaviors().ToList();
+        behaviors.ForEach(b =>
         {
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviorWrapper<,>));
-        }
-        if (app.HasAuthorization())
-        {
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviorWrapper<,>));
-        }
-        if (app.HasRebusMessaging())
-        {
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionScopeBehavior<,>));
-        }
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehaviorWrapper<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainConstraintsViolationHandlerWrapper<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(DomainEventHandlingBehaviorWrapper<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), b);
+        });
     }
 }
 
 public static class MediatrModuleExtensions
 {
-    public static AppBuilder AddMediatr(this AppBuilder builder)
+    public static AppBuilder AddMediatr(this AppBuilder builder, Action<MediatrPipelineBuilder> configurePipeline = null)
     {
-        return builder.AddModule(new MediatrModule());
+        return builder.AddModule(new MediatrModule(configurePipeline));
     }
 }

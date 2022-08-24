@@ -1,6 +1,4 @@
-﻿using EasyDesk.Tools;
-using System.Collections.Generic;
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 

@@ -1,11 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class AspNetCoreAuthorizationModule : IAppModule
+public class AspNetCoreAuthorizationModule : AppModule
 {
     private readonly Action<AuthorizationOptions> _configure;
 
@@ -14,7 +13,7 @@ public class AspNetCoreAuthorizationModule : IAppModule
         _configure = configure;
     }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddAuthorization(options => _configure?.Invoke(options));
     }
@@ -27,5 +26,5 @@ public static class AspNetCoreAuthorizationModuleExtensions
         return builder.AddModule(new AspNetCoreAuthorizationModule(configure));
     }
 
-    public static bool HasAspNetCoreAuthroization(this AppDescription app) => app.HasModule<AspNetCoreAuthorizationModule>();
+    public static bool HasAspNetCoreAuthorization(this AppDescription app) => app.HasModule<AspNetCoreAuthorizationModule>();
 }

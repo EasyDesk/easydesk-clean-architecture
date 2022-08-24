@@ -1,16 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.Tools.Results;
+﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Application.Mediator;
 using MediatR;
-using System;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
+namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
-    where TRequest : RequestBase<TResponse>
+    where TRequest : ICqrsRequest<TResponse>
 {
     private readonly IAuthorizer<TRequest> _authorizer;
     private readonly IUserInfoProvider _userInfoProvider;
@@ -38,23 +34,4 @@ public class AuthorizationBehavior<TRequest, TResponse> : IPipelineBehavior<TReq
         UnknownUserIsAllowed() ? await next() : Errors.UnknownUser();
 
     private bool UnknownUserIsAllowed() => typeof(TRequest).GetCustomAttribute<AllowUnknownUserAttribute>() is not null;
-}
-
-public class AuthorizationBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
-{
-    private readonly IAuthorizer<TRequest> _authorizer;
-    private readonly IUserInfoProvider _userInfoProvider;
-
-    public AuthorizationBehaviorWrapper(IAuthorizer<TRequest> authorizer, IUserInfoProvider userInfoProvider)
-    {
-        _authorizer = authorizer;
-        _userInfoProvider = userInfoProvider;
-    }
-
-    protected override IPipelineBehavior<TRequest, TResponse> CreateBehavior(Type requestType, Type responseType)
-    {
-        var behaviorType = typeof(AuthorizationBehavior<,>).MakeGenericType(requestType, responseType);
-        return Activator.CreateInstance(behaviorType, _authorizer, _userInfoProvider) as IPipelineBehavior<TRequest, TResponse>;
-    }
 }

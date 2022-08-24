@@ -7,5 +7,5 @@ namespace EasyDesk.SampleApp.Application.Queries;
 public static class GetPeople
 {
     [RequireAnyOf("People.Read")]
-    public record Query(Pagination Pagination) : QueryWithPaginationBase<PersonSnapshot>(Pagination);
+    public record Query(Pagination Pagination) : IPagedQuery<PersonSnapshot>;
 }

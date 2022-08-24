@@ -1,9 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.Tools.Collections;
 using Rebus.Transport;
-using System.Linq;
-using System.Threading.Tasks;
-using static EasyDesk.Tools.Functions;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 
@@ -28,7 +25,7 @@ public class OutboxFlusher
 
     public async Task Flush()
     {
-        await _unitOfWorkProvider.RunTransactionally(() => Execute(FlushWithinTransaction));
+        await _unitOfWorkProvider.RunTransactionally(FlushWithinTransaction);
     }
 
     private async Task FlushWithinTransaction()

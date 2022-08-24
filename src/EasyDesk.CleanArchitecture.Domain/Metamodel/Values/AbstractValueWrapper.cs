@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
 public abstract record AbstractValueWrapper<T, S>
     where T : IEquatable<T>

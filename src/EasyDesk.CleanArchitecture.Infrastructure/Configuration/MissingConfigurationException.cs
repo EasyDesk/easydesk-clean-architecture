@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+﻿namespace EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 
 public class MissingConfigurationException : Exception
 {

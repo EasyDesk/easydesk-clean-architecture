@@ -1,9 +1,4 @@
-﻿using EasyDesk.Tools;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace EasyDesk.CleanArchitecture.Application.Pages;
+﻿namespace EasyDesk.CleanArchitecture.Application.Pages;
 
 public static class PageExtensions
 {

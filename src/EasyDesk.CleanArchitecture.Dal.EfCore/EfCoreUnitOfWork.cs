@@ -1,8 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore;
 

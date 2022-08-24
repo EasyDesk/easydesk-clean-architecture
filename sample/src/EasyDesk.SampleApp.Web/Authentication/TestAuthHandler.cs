@@ -1,16 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Authentication;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
-using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.SampleApp.Web.Authentication;
 
@@ -36,7 +31,7 @@ public class TestAuthHandler : TokenAuthenticationHandler<TestAuthOptions>
 
     protected override Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
     {
-        var claims = token.Split(";", System.StringSplitOptions.RemoveEmptyEntries)
+        var claims = token.Split(";", StringSplitOptions.RemoveEmptyEntries)
             .SelectMany(p => ConvertTokenPartToClaim(p));
         return Some(new ClaimsPrincipal(new ClaimsIdentity(claims, authenticationType: "Test")));
     }

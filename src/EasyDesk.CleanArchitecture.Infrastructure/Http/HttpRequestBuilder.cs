@@ -1,8 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.Tools;
-using EasyDesk.Tools.Results;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Http;
 

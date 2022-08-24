@@ -1,11 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class TimeManagementModule : IAppModule
+public class TimeManagementModule : AppModule
 {
     private readonly TimeManagementOptions _options;
 
@@ -18,7 +17,7 @@ public class TimeManagementModule : IAppModule
 
     public IClock Clock => _options.Clock;
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddSingleton(_ => Clock);
         services.AddSingleton(_ => DateTimeZoneProvider);

@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 
-public class HttpContextModule : IAppModule
+public class HttpContextModule : AppModule
 {
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services.AddHttpContextAccessor();
     }

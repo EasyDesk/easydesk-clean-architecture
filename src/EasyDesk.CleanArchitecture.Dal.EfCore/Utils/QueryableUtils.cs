@@ -1,15 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Pages;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
-using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 

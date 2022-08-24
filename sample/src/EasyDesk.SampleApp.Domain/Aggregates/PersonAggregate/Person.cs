@@ -1,9 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Model;
-using EasyDesk.Tools;
-using EasyDesk.Tools.Results;
-using System;
-using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 

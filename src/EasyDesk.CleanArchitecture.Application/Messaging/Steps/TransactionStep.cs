@@ -1,7 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using Rebus.Pipeline;
-using System;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 

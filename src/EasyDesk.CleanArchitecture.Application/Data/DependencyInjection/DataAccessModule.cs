@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 
-public class DataAccessModule : IAppModule
+public class DataAccessModule : AppModule
 {
     public DataAccessModule(IDataAccessImplementation implementation)
     {
@@ -12,7 +12,7 @@ public class DataAccessModule : IAppModule
 
     public IDataAccessImplementation Implementation { get; }
 
-    public void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         Implementation.AddMainDataAccessServices(services, app);
     }

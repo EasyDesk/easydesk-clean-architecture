@@ -3,8 +3,6 @@ using Rebus.Bus;
 using Rebus.Messages;
 using Rebus.Pipeline;
 using Rebus.Transport;
-using System;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
 

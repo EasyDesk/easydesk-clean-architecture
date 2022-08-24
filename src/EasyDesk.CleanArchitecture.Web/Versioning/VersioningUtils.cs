@@ -1,13 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Web.Controllers;
-using EasyDesk.Tools;
+﻿using EasyDesk.CleanArchitecture.Application.Modules;
+using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
+using EasyDesk.Tools.Reflection;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
-using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Web.Versioning;
 
@@ -42,16 +38,14 @@ public static class VersioningUtils
         }
     }
 
-    public static IEnumerable<ApiVersion> GetSupportedVersions(params Type[] controllersAssemblyTypes) =>
-        GetSupportedVersions(controllersAssemblyTypes.AsEnumerable());
-
-    public static IEnumerable<ApiVersion> GetSupportedVersions(IEnumerable<Type> controllersAssemblyTypes)
-    {
-        return ReflectionUtils.InstantiableSubtypesOf<AbstractController>(controllersAssemblyTypes)
-            .SelectMany(t => t.GetControllerVersion())
-            .OrderBy(x => x)
-            .Distinct();
-    }
+    public static IEnumerable<ApiVersion> GetSupportedVersions(AppDescription app) => new AssemblyScanner()
+        .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Web))
+        .NonAbstract()
+        .SubtypesOrImplementationsOf<AbstractController>()
+        .FindTypes()
+        .SelectMany(t => t.GetControllerVersion())
+        .OrderBy(x => x)
+        .Distinct();
 
     public static string ToDisplayString(this ApiVersion apiVersion)
     {

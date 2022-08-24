@@ -1,9 +1,4 @@
-﻿using EasyDesk.Tools.Options;
-using System;
-using System.Threading.Tasks;
-using static EasyDesk.Tools.Options.OptionImports;
-
-namespace EasyDesk.CleanArchitecture.Application.Data;
+﻿namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public abstract class UnitOfWorkProviderBase<T> : IUnitOfWorkProvider
     where T : IUnitOfWork

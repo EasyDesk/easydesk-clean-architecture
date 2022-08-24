@@ -2,9 +2,7 @@
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Testing;
 using NSubstitute;
-using System.Threading.Tasks;
 using Xunit;
-using static EasyDesk.Tools.Results.ResultImports;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.DomainServices;
 

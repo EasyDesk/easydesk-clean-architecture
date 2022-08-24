@@ -1,8 +1,4 @@
-﻿using EasyDesk.Tools;
-using Rebus.Bus;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using Rebus.Bus;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 

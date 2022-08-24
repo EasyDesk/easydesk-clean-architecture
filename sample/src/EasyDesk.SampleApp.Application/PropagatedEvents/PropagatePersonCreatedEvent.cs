@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
-using System;
 
 namespace EasyDesk.SampleApp.Application.PropagatedEvents;
 

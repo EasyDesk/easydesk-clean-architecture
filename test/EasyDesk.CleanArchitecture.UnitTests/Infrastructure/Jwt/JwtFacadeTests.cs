@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
-using EasyDesk.Tools;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using NodaTime.Testing;

@@ -2,11 +2,8 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using NSubstitute;
 using Shouldly;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
-using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator.Behaviors;
 

@@ -4,9 +4,6 @@ using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.Queries;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0;
 
@@ -22,7 +19,7 @@ public record PersonDto(Guid Id, string Name, bool Married)
     }
 }
 
-public class PersonController : AbstractMediatrController
+public class PersonController : MediatrController
 {
     [HttpPost("people")]
     public async Task<ActionResult<ResponseDto<PersonDto>>> CreatePerson([FromBody] CreatePersonBodyDto body)

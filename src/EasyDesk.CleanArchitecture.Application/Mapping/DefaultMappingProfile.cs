@@ -1,21 +1,25 @@
 ﻿using AutoMapper;
-using EasyDesk.Tools;
 using EasyDesk.Tools.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using EasyDesk.Tools.Reflection;
+using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Mapping;
 
 public class DefaultMappingProfile : Profile
 {
-    public DefaultMappingProfile(params Type[] assemblyTypes) : this(assemblyTypes.AsEnumerable())
+    public DefaultMappingProfile(params Assembly[] assemblies) : this(assemblies.AsEnumerable())
     {
     }
 
-    public DefaultMappingProfile(IEnumerable<Type> assemblyTypes)
+    public DefaultMappingProfile(IEnumerable<Assembly> assemblies)
     {
-        ReflectionUtils.InstancesOfSubtypesOf<IMapping>(assemblyTypes)
+        new AssemblyScanner()
+            .FromAssemblies(assemblies)
+            .NonAbstract()
+            .SubtypesOrImplementationsOf<IMapping>()
+            .FindTypes()
+            .Select(Activator.CreateInstance)
+            .Cast<IMapping>()
             .ForEach(m => m.ConfigureProfile(this));
     }
 }

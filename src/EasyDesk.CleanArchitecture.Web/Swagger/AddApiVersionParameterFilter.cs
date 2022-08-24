@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Versioning;
-using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;

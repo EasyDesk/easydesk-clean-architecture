@@ -1,7 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using NodaTime;
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;

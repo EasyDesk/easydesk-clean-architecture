@@ -1,10 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.Tools.Collections;
-using EasyDesk.Tools.Options;
 using Microsoft.AspNetCore.Http;
-using System.Linq;
 using System.Security.Claims;
-using static EasyDesk.Tools.Options.OptionImports;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication;
 

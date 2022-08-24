@@ -1,6 +1,4 @@
-﻿using EasyDesk.Tools.Options;
-
-namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 public interface ITenantInitializer
 {

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using System;
 using System.Linq.Expressions;
 
 namespace EasyDesk.CleanArchitecture.Application.Mapping;

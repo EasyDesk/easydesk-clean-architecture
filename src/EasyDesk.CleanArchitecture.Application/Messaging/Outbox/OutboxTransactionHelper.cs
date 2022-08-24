@@ -1,7 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.Tools.Observables;
-using EasyDesk.Tools.Options;
-using System;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 

@@ -1,17 +1,14 @@
 ﻿using MediatR;
 using Rebus.Transport;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class TransactionScopeBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class RebusTransactionScopeBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public TransactionScopeBehavior(IServiceProvider serviceProvider)
+    public RebusTransactionScopeBehavior(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }

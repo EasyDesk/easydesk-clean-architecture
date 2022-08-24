@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace EasyDesk.CleanArchitecture.Application.Messaging;
+﻿namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public interface IMessageSender
 {

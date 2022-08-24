@@ -1,15 +1,9 @@
-﻿using EasyDesk.Tools.Options;
-using MediatR;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using static EasyDesk.Tools.Options.OptionImports;
+﻿using MediatR;
 
 namespace EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 
 /// <summary>
-/// A wrapper for pipeline behaviors on requests extending from <see cref="RequestBase{T}"/>.
+/// A wrapper for pipeline behaviors on requests extending from <see cref="ICqrsRequest{T}"/>.
 /// This is required since ASP.NET core DI container doesn't fully support open generics,
 /// therefore the real behavior would not be correctly detected by MediatR.
 /// </summary>

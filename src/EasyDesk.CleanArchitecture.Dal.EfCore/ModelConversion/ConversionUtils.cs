@@ -1,7 +1,4 @@
 ﻿using EasyDesk.Tools.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 
