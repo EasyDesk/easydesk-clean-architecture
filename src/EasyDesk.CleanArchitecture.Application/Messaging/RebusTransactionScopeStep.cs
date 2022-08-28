@@ -1,19 +1,20 @@
-﻿using MediatR;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class RebusTransactionScopeBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : IRequest<TResponse>
+public class RebusTransactionScopeStep<TRequest, TResult> : IPipelineStep<TRequest, TResult>
+    where TRequest : ICqrsRequest<TResult>
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public RebusTransactionScopeBehavior(IServiceProvider serviceProvider)
+    public RebusTransactionScopeStep(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
     }
 
-    public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    public async Task<Result<TResult>> Run(TRequest request, NextPipelineStep<TResult> next)
     {
         using (var scope = new RebusTransactionScope())
         {

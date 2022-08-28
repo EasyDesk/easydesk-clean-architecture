@@ -1,24 +1,21 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Mediator;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using FluentValidation;
-using MediatR;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
-public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, Result<TResponse>>
-    where TRequest : ICqrsRequest<TResponse>
+public class ValidationStep<TRequest, TResult> : IPipelineStep<TRequest, TResult>
+    where TRequest : ICqrsRequest<TResult>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-    public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    public ValidationStep(IEnumerable<IValidator<TRequest>> validators)
     {
         _validators = validators;
     }
 
-    public async Task<Result<TResponse>> Handle(
-        TRequest request,
-        CancellationToken cancellationToken,
-        RequestHandlerDelegate<Result<TResponse>> next)
+    public async Task<Result<TResult>> Run(TRequest request, NextPipelineStep<TResult> next)
     {
         var context = new ValidationContext<TRequest>(request);
         var errors = _validators

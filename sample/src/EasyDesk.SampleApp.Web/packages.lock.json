@@ -94,8 +94,8 @@
       },
       "EasyDesk.Tools": {
         "type": "Transitive",
-        "resolved": "7.1.0",
-        "contentHash": "Qbgc3GmK2ZRK/bufTl1IC3VPJs3i329MyDFeC9fYk2fHPt9TuKmylAq/eAbXvvxcDTpYk9WN1ckArEP+LbPYQQ=="
+        "resolved": "7.2.0",
+        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
       },
       "EntityFrameworkCore.SqlServer.NodaTime": {
         "type": "Transitive",
@@ -124,28 +124,6 @@
         "type": "Transitive",
         "resolved": "2.8.26",
         "contentHash": "OiKusGL20vby4uDEswj2IgkdchC1yQ6rwbIkZDVBPIR6al2b7n3pC91elBul9q33KaBgRKhbZH3+2Ur4fnWx2A=="
-      },
-      "MediatR": {
-        "type": "Transitive",
-        "resolved": "10.0.1",
-        "contentHash": "vnjbk4giDJzJelh34Ygt0eorApCKrRFB7j0pauFPY1oxfO3cEZ7FugBrIOjCM76SDGTOmPFfbfmVnz1t3iFrGA==",
-        "dependencies": {
-          "MediatR.Contracts": "1.0.1"
-        }
-      },
-      "MediatR.Contracts": {
-        "type": "Transitive",
-        "resolved": "1.0.1",
-        "contentHash": "NsRvOxthhkYml4DcBMyJsmym8C4MchioH7wxKVPEg7plFj9Euh/i4IcmZ3Gvgx6+K8obeuhPeJdoBl56wnuo3A=="
-      },
-      "MediatR.Extensions.Microsoft.DependencyInjection": {
-        "type": "Transitive",
-        "resolved": "10.0.1",
-        "contentHash": "mYdfMvpkahCAj4tRfBoeMlUBZa2WthaONdQ4y5TtIyxcZYb5e7AE7c1eITTZVWcQhguxvD8AdExdaiAW6RhrVA==",
-        "dependencies": {
-          "MediatR": "10.0.1",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0"
-        }
       },
       "MicroElements.Swashbuckle.NodaTime": {
         "type": "Transitive",
@@ -1428,11 +1406,9 @@
           "AutoMapper": "[11.0.1, )",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "[11.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.1.0, )",
+          "EasyDesk.Tools": "[7.2.0, )",
           "FluentValidation": "[10.3.6, )",
           "FluentValidation.DependencyInjectionExtensions": "[10.3.6, )",
-          "MediatR": "[10.0.1, )",
-          "MediatR.Extensions.Microsoft.DependencyInjection": "[10.0.1, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, )",
           "Rebus": "[6.6.2, )",
@@ -1446,7 +1422,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.1.0, )",
+          "EasyDesk.Tools": "[7.2.0, )",
           "EntityFrameworkCore.SqlServer.NodaTime": "[5.0.1, )",
           "Microsoft.EntityFrameworkCore.Relational": "[6.0.2, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[6.0.2, )",
@@ -1456,7 +1432,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[7.1.0, )",
+          "EasyDesk.Tools": "[7.2.0, )",
           "NodaTime": "[3.1.0, )"
         }
       },
@@ -1464,7 +1440,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.1.0, )",
+          "EasyDesk.Tools": "[7.2.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.7, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[6.0.2, )",
           "Newtonsoft.Json": "[13.0.1, )",
@@ -1484,7 +1460,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.1.0, )",
+          "EasyDesk.Tools": "[7.2.0, )",
           "MicroElements.Swashbuckle.NodaTime": "[4.0.1, )",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[6.0.2, )",
           "Microsoft.AspNetCore.Mvc.Versioning": "[5.0.0, )",

@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Pages;
+﻿using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Tools.Collections;
 using Microsoft.EntityFrameworkCore;
@@ -60,16 +60,47 @@ public static class QueryableUtils
         };
     }
 
-    public static async Task<Page<T>> GetPageAsync<T>(this IQueryable<T> query, Pagination pagination)
+    public static Pageable<T> ToPageable<T>(this IQueryable<T> queryable, Func<IQueryable<T>, IOrderedQueryable<T>> ordering) =>
+        new QueryablePageable<T>(queryable, ordering);
+
+    private class QueryablePageable<T> : Pageable<T>
     {
-        var rowCount = await query.CountAsync();
+        private readonly IQueryable<T> _queryable;
+        private readonly Func<IQueryable<T>, IOrderedQueryable<T>> _ordering;
 
-        IEnumerable<T> values = await query
-            .Skip(pagination.PageIndex * pagination.PageSize)
-            .Take(pagination.PageSize)
-            .ToArrayAsync();
+        public QueryablePageable(IQueryable<T> queryable, Func<IQueryable<T>, IOrderedQueryable<T>> ordering)
+        {
+            _queryable = queryable;
+            _ordering = ordering;
+        }
 
-        return new Page<T>(values, pagination, rowCount);
+        public override async Task<int> GetTotalCount() => await _queryable.CountAsync();
+
+        public override async Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex) =>
+            await GetPageAsArray(pageSize, pageIndex);
+
+        public override async IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
+        {
+            var index = 0;
+            T[] page;
+            do
+            {
+                page = await GetPageAsArray(pageSize, index);
+                if (page.Length > 0)
+                {
+                    yield return page;
+                }
+            }
+            while (page.Length == pageSize);
+        }
+
+        private async Task<T[]> GetPageAsArray(int pageSize, int pageIndex)
+        {
+            return await _ordering(_queryable)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
+                .ToArrayAsync();
+        }
     }
 
     public static async Task<IImmutableSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query) =>

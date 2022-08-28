@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Pages;
+using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools.Collections;
@@ -11,52 +11,59 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
 public delegate Option<ActionResult> ErrorHandler(object body, Error error);
 
-public delegate ActionResult SuccessHandler<T>(object body, T data);
+public delegate ActionResult SuccessHandler<TResult>(object body, TResult result);
 
-public class ActionResultBuilder<T>
+public class ActionResultBuilder<TResult, TDto>
 {
-    private readonly Result<T> _result;
+    private readonly AsyncFunc<Result<TResult>> _resultProvider;
+    private readonly Func<TResult, TDto> _mapper;
+    private readonly Func<Result<TResult>, object> _meta;
     private readonly ControllerBase _controller;
-    private readonly object _meta;
     private IImmutableList<ErrorHandler> _errorHandlers;
 
-    public ActionResultBuilder(Result<T> result, object meta, ControllerBase controller)
-        : this(result, controller, meta, List<ErrorHandler>())
+    public ActionResultBuilder(
+        AsyncFunc<Result<TResult>> resultProvider,
+        Func<TResult, TDto> mapper,
+        Func<Result<TResult>, object> meta,
+        ControllerBase controller) : this(resultProvider, mapper, meta, controller, List<ErrorHandler>())
     {
     }
 
     private ActionResultBuilder(
-        Result<T> result,
+        AsyncFunc<Result<TResult>> resultProvider,
+        Func<TResult, TDto> mapper,
+        Func<Result<TResult>, object> meta,
         ControllerBase controller,
-        object meta,
         IImmutableList<ErrorHandler> errorHandlers)
     {
-        _result = result;
+        _resultProvider = resultProvider;
+        _mapper = mapper;
         _meta = meta;
         _errorHandlers = errorHandlers;
         _controller = controller;
     }
 
-    public ActionResultBuilder<T> OnFailure(ErrorHandler errorHandler)
+    public ActionResultBuilder<TResult, TDto> OnFailure(ErrorHandler errorHandler)
     {
         _errorHandlers = _errorHandlers.Add(errorHandler);
         return this;
     }
 
-    public ActionResultBuilder<R> Map<R>(Func<T, R> mapper)
+    public ActionResultBuilder<TResult, TNewDto> Map<TNewDto>(Func<TDto, TNewDto> mapper)
     {
-        return new(_result.Map(mapper), _controller, _meta, _errorHandlers);
+        return new(_resultProvider, x => mapper(_mapper(x)), _meta, _controller, _errorHandlers);
     }
 
-    public ActionResult<ResponseDto<T>> OnSuccess(SuccessHandler<T> handler)
+    public async Task<ActionResult<ResponseDto<TDto>>> OnSuccess(SuccessHandler<TResult> handler)
     {
-        var body = ResponseDto<T>.FromResult(_result, _meta);
-        return _result.Match(
+        var result = await _resultProvider();
+        var body = ResponseDto<TDto>.FromResult(result.Map(_mapper), _meta(result));
+        return result.Match(
             success: t => handler(body, t),
             failure: e => HandleErrorResult(body, e));
     }
 
-    private ActionResult HandleErrorResult(ResponseDto<T> body, Error error)
+    private ActionResult HandleErrorResult(ResponseDto<TDto> body, Error error)
     {
         var errorToMatchAgainst = error switch
         {
@@ -69,7 +76,7 @@ public class ActionResultBuilder<T>
             .OrElseGet(() => DefaultErrorHandler(body, errorToMatchAgainst));
     }
 
-    private ActionResult DefaultErrorHandler(ResponseDto<T> body, Error error)
+    private ActionResult DefaultErrorHandler(ResponseDto<TDto> body, Error error)
     {
         return error switch
         {
@@ -81,21 +88,21 @@ public class ActionResultBuilder<T>
         };
     }
 
-    public ActionResult<ResponseDto<T>> ReturnOk() =>
+    public Task<ActionResult<ResponseDto<TDto>>> ReturnOk() =>
         OnSuccess((body, _) => _controller.Ok(body));
 
-    public ActionResult<ResponseDto<T>> ReturnCreatedAtAction(string actionName, Func<T, object> routeValues) =>
+    public Task<ActionResult<ResponseDto<TDto>>> ReturnCreatedAtAction(string actionName, Func<TResult, object> routeValues) =>
         OnSuccess((body, result) => _controller.CreatedAtAction(actionName, routeValues(result), body));
 
-    public ActionResult<ResponseDto<T>> ReturnCreatedAtAction(string actionName, string controllerName, Func<T, object> routeValues) =>
+    public Task<ActionResult<ResponseDto<TDto>>> ReturnCreatedAtAction(string actionName, string controllerName, Func<TResult, object> routeValues) =>
         OnSuccess((body, result) => _controller.CreatedAtAction(actionName, controllerName, routeValues(result), body));
 }
 
 public static class ActionResultBuilderExtensions
 {
-    public static ActionResultBuilder<IEnumerable<R>> MapEachElement<T, R>(
-        this ActionResultBuilder<IEnumerable<T>> builder,
-        Func<T, R> mapper)
+    public static ActionResultBuilder<PageInfo<TResult>, IEnumerable<TNewDto>> MapEachElement<TResult, TDto, TNewDto>(
+        this ActionResultBuilder<PageInfo<TResult>, IEnumerable<TDto>> builder,
+        Func<TDto, TNewDto> mapper)
     {
         return builder.Map(ts => ts.Select(mapper));
     }

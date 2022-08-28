@@ -19,13 +19,12 @@ public record PersonDto(Guid Id, string Name, bool Married)
     }
 }
 
-public class PersonController : MediatrController
+public class PersonController : CleanArchitectureController
 {
     [HttpPost("people")]
     public async Task<ActionResult<ResponseDto<PersonDto>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
-        var response = await Send(new CreatePerson.Command(body.Name));
-        return ForResult(response)
+        return await Dispatch(new CreatePerson.Command(body.Name))
             .Map(Mapper.Map<PersonDto>)
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }
@@ -33,8 +32,7 @@ public class PersonController : MediatrController
     [HttpGet("people")]
     public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>>>> GetPeople([FromQuery] PaginationDto pagination)
     {
-        var response = await Send(new GetPeople.Query(pagination));
-        return ForPageResult(response)
+        return await DispatchWithPagination(new GetPeople.Query(), pagination)
             .MapEachElement(Mapper.Map<PersonDto>)
             .ReturnOk();
     }
@@ -42,8 +40,7 @@ public class PersonController : MediatrController
     [HttpGet("people/{id}")]
     public async Task<ActionResult<ResponseDto<PersonDto>>> GetPerson([FromRoute] Guid id)
     {
-        var response = await Send(new GetPerson.Query(id));
-        return ForResult(response)
+        return await Dispatch(new GetPerson.Query(id))
             .Map(Mapper.Map<PersonDto>)
             .ReturnOk();
     }

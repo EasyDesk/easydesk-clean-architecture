@@ -5,7 +5,7 @@ using Shouldly;
 using Xunit;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator.Behaviors;
+namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
 
 public class RoleBasedAuthorizerTests
 {

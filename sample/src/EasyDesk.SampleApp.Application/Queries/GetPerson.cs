@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
-using EasyDesk.CleanArchitecture.Application.Mediator;
+using EasyDesk.CleanArchitecture.Application.Cqrs;
 
 namespace EasyDesk.SampleApp.Application.Queries;
 

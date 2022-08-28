@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;

@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
-using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Mediator.Handlers;
+using EasyDesk.CleanArchitecture.Application.Cqrs;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -30,7 +30,7 @@ public static class CreatePerson
             _personRepository = personRepository;
         }
 
-        public Task<Result<PersonSnapshot>> Handle(Command request, CancellationToken cancellationToken)
+        public Task<Result<PersonSnapshot>> Handle(Command request)
         {
             var person = Person.Create(Name.From(request.Name));
             _personRepository.Save(person);

@@ -1,19 +1,21 @@
-﻿using EasyDesk.CleanArchitecture.Application.Pages;
+﻿using EasyDesk.CleanArchitecture.Application.Pagination;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
-public record PaginationResponseMetaDto(
+public record PaginationMetaDto(
     int PageIndex,
     int PageSize,
-    int RowCount,
+    int TotalCount,
     int PageCount)
 {
-    public static PaginationResponseMetaDto FromPage<T>(Page<T> page) =>
-        new(page.Pagination.PageIndex, page.Pagination.PageSize, page.Count, page.PageCount);
+    public static PaginationMetaDto FromPageInfo<T>(PageInfo<T> page, int pageSize, int pageIndex) =>
+        new(pageIndex, pageSize, page.TotalCount, (page.TotalCount + pageSize - 1) / pageSize);
 
-    public static PaginationResponseMetaDto FromFailure(Error error) =>
-        new(PageIndex: 0, PageSize: 0, RowCount: 0, PageCount: 0);
+    public static PaginationMetaDto FromFailure(int pageSize, int pageIndex) =>
+        new(PageIndex: pageIndex, PageSize: pageSize, TotalCount: 0, PageCount: 0);
 
-    public static PaginationResponseMetaDto FromResult<T>(Result<Page<T>> result) =>
-        result.Match(success: FromPage, failure: FromFailure);
+    public static PaginationMetaDto FromResult<T>(Result<PageInfo<T>> result, int pageSize, int pageIndex) =>
+        result.Match(
+            success: t => FromPageInfo(t, pageSize, pageIndex),
+            failure: _ => FromFailure(pageSize, pageIndex));
 }

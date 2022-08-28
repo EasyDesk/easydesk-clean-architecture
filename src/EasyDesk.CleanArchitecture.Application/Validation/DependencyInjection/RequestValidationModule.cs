@@ -1,34 +1,15 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
-using EasyDesk.CleanArchitecture.Application.Mediator.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 
 public class RequestValidationModule : AppModule
 {
-    private class ValidationBehaviorWrapper<TRequest, TResponse> : BehaviorWrapper<TRequest, TResponse>
-        where TRequest : IRequest<TResponse>
-    {
-        private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-        public ValidationBehaviorWrapper(IEnumerable<IValidator<TRequest>> validators)
-        {
-            _validators = validators;
-        }
-
-        protected override IPipelineBehavior<TRequest, TResponse> CreateBehavior(Type requestType, Type responseType)
-        {
-            var behaviorType = typeof(ValidationBehavior<,>).MakeGenericType(requestType, responseType);
-            return Activator.CreateInstance(behaviorType, _validators) as IPipelineBehavior<TRequest, TResponse>;
-        }
-    }
-
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<MediatrModule>().Pipeline.AddBehavior(typeof(ValidationBehaviorWrapper<,>));
+        app.RequireModule<MediatrModule>().Pipeline.AddStep(typeof(ValidationStep<,>));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

@@ -1,15 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.Cqrs;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Mediator;
-using EasyDesk.CleanArchitecture.Application.Mediator.Behaviors;
 using NSubstitute;
 using Shouldly;
 using Xunit;
-using Next = MediatR.RequestHandlerDelegate<EasyDesk.Tools.Result<EasyDesk.Tools.Nothing>>;
 
-namespace EasyDesk.CleanArchitecture.UnitTests.Application.Mediator.Behaviors;
+namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
 
-public class AuthorizationBehaviorTests
+public class AuthorizationStepTests
 {
     public record TestRequest : ICqrsRequest<Nothing>;
 
@@ -20,14 +19,14 @@ public class AuthorizationBehaviorTests
     private readonly IUserInfoProvider _userInfoProvider;
     private readonly IAuthorizer<TestRequest> _authorizer;
     private readonly TestRequest _request = new();
-    private readonly Next _next;
+    private readonly NextPipelineStep<Nothing> _next;
 
-    public AuthorizationBehaviorTests()
+    public AuthorizationStepTests()
     {
         _userInfoProvider = Substitute.For<IUserInfoProvider>();
         _userInfoProvider.GetUserInfo().Returns(None);
 
-        _next = Substitute.For<Next>();
+        _next = Substitute.For<NextPipelineStep<Nothing>>();
         _next().Returns(Ok);
 
         _authorizer = Substitute.For<IAuthorizer<TestRequest>>();
@@ -53,8 +52,8 @@ public class AuthorizationBehaviorTests
         var request = new T();
         var authorizer = Substitute.For<IAuthorizer<T>>();
         authorizer.IsAuthorized(request, _userInfo).Returns(authorizerResult);
-        var behavior = new AuthorizationBehavior<T, Nothing>(authorizer, _userInfoProvider);
-        return await behavior.Handle(request, default, _next);
+        var step = new AuthorizationStep<T, Nothing>(authorizer, _userInfoProvider);
+        return await step.Run(request, _next);
     }
 
     private void Authenticate() => _userInfoProvider.GetUserInfo().Returns(_userInfo.AsSome());
