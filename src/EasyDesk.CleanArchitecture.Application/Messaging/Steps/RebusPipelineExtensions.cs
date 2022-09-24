@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.Inbox;
+using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using Microsoft.Extensions.DependencyInjection;
 using Rebus.Config;
 using Rebus.Pipeline;
@@ -19,21 +21,26 @@ public static class RebusPipelineExtensions
         });
     }
 
-    public static void WrapHandlersInsideTransaction(this OptionsConfigurer configurer)
+    public static void WrapHandlersInsideUnitOfWork(this OptionsConfigurer configurer)
     {
         configurer.Decorate<IPipeline>(c =>
         {
             return new PipelineStepConcatenator(c.Get<IPipeline>())
-                .OnReceive(new TransactionStep(), PipelineAbsolutePosition.Front);
+                .OnReceive(new UnitOfWorkStep(), PipelineAbsolutePosition.Front);
         });
     }
 
-    public static void HandleMessagesIdempotently(this OptionsConfigurer configurer)
+    public static void UseOutbox(this OptionsConfigurer configurer)
+    {
+        configurer.Decorate<ITransport>(c => new TransportWithOutbox(c.Get<ITransport>()));
+    }
+
+    public static void UseInbox(this OptionsConfigurer configurer)
     {
         configurer.Decorate<IPipeline>(c =>
         {
             return new PipelineStepInjector(c.Get<IPipeline>())
-                .OnReceive(new IdempotentHandlingStep(), PipelineRelativePosition.After, typeof(TransactionStep));
+                .OnReceive(new InboxStep(), PipelineRelativePosition.After, typeof(UnitOfWorkStep));
         });
     }
 
@@ -43,6 +50,15 @@ public static class RebusPipelineExtensions
         {
             return new PipelineStepConcatenator(c.Get<IPipeline>())
                 .OnReceive(new DomainEventHandlingStep(), PipelineAbsolutePosition.Back);
+        });
+    }
+
+    public static void OpenServiceScopeBeforeMessageHandlers(this OptionsConfigurer configurer)
+    {
+        configurer.Decorate<IPipeline>(c =>
+        {
+            return new PipelineStepConcatenator(c.Get<IPipeline>())
+                .OnReceive(new ServiceScopeOpeningStep(), PipelineAbsolutePosition.Front);
         });
     }
 

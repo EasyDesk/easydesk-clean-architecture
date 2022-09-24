@@ -7,11 +7,9 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
-using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Authentication;
 using EasyDesk.SampleApp.Web.DependencyInjection;
-using EasyDesk.Tools.Collections;
 using Rebus.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,18 +21,11 @@ var appDescription = builder.ConfigureForCleanArchitecture(config => config
     .AddMultitenancy()
     .AddApiVersioning()
     .AddSwagger()
+    .AddRebusMessaging(options =>
+    {
+        options.ConfigureTransport(t => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), "sample"));
+    })
     .AddModule<SampleAppDomainModule>());
-    ////.AddRebusMessaging(options =>
-    ////{
-    ////    options
-    ////        .ConfigureTransport(t => t.UseAzureServiceBusWithinEnvironment(
-    ////            connectionString: Configuration.GetConnectionString("AzureServiceBus"),
-    ////            inputQueueAddress: "sample-service",
-    ////            environmentName: Environment.EnvironmentName))
-    ////        .EnableAutoSubscribe()
-    ////        .UseOutbox()
-    ////        .UseIdempotentHandling();
-    ////});
 
 var app = builder.Build();
 
@@ -47,36 +38,13 @@ else
     app.UseHttpsRedirection();
 }
 
-if (appDescription.HasRebusMessaging())
-{
-    app.Services.UseRebus();
-}
+app.Services.UseRebus();
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
-if (appDescription.HasSwagger())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        VersioningUtils.GetSupportedVersions(appDescription)
-            .Select(version => version.ToDisplayString())
-            .ForEach(version =>
-            {
-                c.SwaggerEndpoint($"/swagger/{version}/swagger.json", version);
-            });
-    });
-}
+app.UseSwaggerModule();
 
-if (appDescription.HasAuthentication())
-{
-    app.UseAuthentication();
-}
-
-if (appDescription.HasAspNetCoreAuthorization())
-{
-    app.UseAuthorization();
-}
+app.UseAuthentication();
 
 app.MapControllers();
 

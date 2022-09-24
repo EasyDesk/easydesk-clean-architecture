@@ -3,7 +3,7 @@ using Rebus.Pipeline;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 
-internal class TransactionStep : IIncomingStep
+internal class UnitOfWorkStep : IIncomingStep
 {
     public async Task Process(IncomingStepContext context, Func<Task> next)
     {

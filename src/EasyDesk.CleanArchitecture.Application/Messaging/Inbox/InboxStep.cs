@@ -4,25 +4,25 @@ using Rebus.Messages;
 using Rebus.Pipeline;
 using Rebus.Transport;
 
-namespace EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
+namespace EasyDesk.CleanArchitecture.Application.Messaging.Inbox;
 
-public class IdempotentHandlingStep : IIncomingStep
+public class InboxStep : IIncomingStep
 {
     public async Task Process(IncomingStepContext context, Func<Task> next)
     {
         var messageId = context.Load<TransportMessage>().GetMessageId();
-        var idempotenceManager = context
+        var inbox = context
             .Load<ITransactionContext>()
             .GetServiceProvider()
-            .GetRequiredService<IIdempotenceManager>();
+            .GetRequiredService<IInbox>();
 
-        if (await idempotenceManager.HasBeenProcessed(messageId))
+        if (await inbox.HasBeenProcessed(messageId))
         {
             return;
         }
 
         await next();
 
-        await idempotenceManager.MarkAsProcessed(messageId);
+        await inbox.MarkAsProcessed(messageId);
     }
 }

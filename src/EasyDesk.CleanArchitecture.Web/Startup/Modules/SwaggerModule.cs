@@ -4,9 +4,11 @@ using EasyDesk.CleanArchitecture.Web.Swagger;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
 using MicroElements.Swashbuckle.NodaTime;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -55,7 +57,7 @@ public class SwaggerModule : AppModule
             .Select(version => version.ToDisplayString())
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
             {
-                Title = app.Name,
+                Title = $"{app.Name} {version}",
                 Version = version
             }));
 
@@ -106,4 +108,18 @@ public static class SwaggerModuleExtensions
     }
 
     public static bool HasSwagger(this AppDescription app) => app.HasModule<SwaggerModule>();
+
+    public static void UseSwaggerModule(this WebApplication app)
+    {
+        var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            swaggerOptions.SwaggerGeneratorOptions.SwaggerDocs.ForEach(doc =>
+            {
+                c.SwaggerEndpoint($"/swagger/{doc.Key}/swagger.json", doc.Value.Title);
+            });
+        });
+    }
 }

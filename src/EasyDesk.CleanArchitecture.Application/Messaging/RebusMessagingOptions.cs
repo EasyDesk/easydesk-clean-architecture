@@ -8,13 +8,11 @@ namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public class RebusMessagingOptions
 {
-    private Action<RebusConfigurer> _configureRebus = _ => { };
+    private Action<RebusConfigurer> _configureRebus;
 
-    internal Option<OutboxOptions> OutboxOptions { get; private set; } = None;
+    public OutboxOptions OutboxOptions { get; private set; } = new();
 
-    internal bool UseIdempotentConsumer { get; private set; } = false;
-
-    internal bool AutoSubscribe { get; private set; }
+    public bool AutoSubscribe { get; set; } = true;
 
     public RebusMessagingOptions ConfigureRebus(Action<RebusConfigurer> configurationAction)
     {
@@ -34,28 +32,8 @@ public class RebusMessagingOptions
     public RebusMessagingOptions DecorateRebusService<T>(Func<IResolutionContext, T> factory, string description = null) =>
         ConfigureRebusOptions(o => o.Decorate(factory, description));
 
-    public RebusMessagingOptions EnableAutoSubscribe(bool autoSubscribe = true)
-    {
-        AutoSubscribe = autoSubscribe;
-        return this;
-    }
-
-    public RebusMessagingOptions UseOutbox(Action<OutboxOptions> configureOutbox = null)
-    {
-        var outboxOptions = OutboxOptions.OrElseGet(() => new OutboxOptions());
-        configureOutbox?.Invoke(outboxOptions);
-        OutboxOptions = Some(outboxOptions);
-        return this;
-    }
-
-    public RebusMessagingOptions UseIdempotentHandling()
-    {
-        UseIdempotentConsumer = true;
-        return this;
-    }
-
     internal void ApplyDefaultConfiguration(RebusConfigurer configurer)
     {
-        _configureRebus(configurer);
+        _configureRebus?.Invoke(configurer);
     }
 }

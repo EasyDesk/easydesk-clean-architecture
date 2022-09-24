@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
-public class HandledMessage
+public class InboxMessage
 {
     public string Id { get; set; }
 
-    public class Configuration : IEntityTypeConfiguration<HandledMessage>
+    public class Configuration : IEntityTypeConfiguration<InboxMessage>
     {
-        public void Configure(EntityTypeBuilder<HandledMessage> builder)
+        public void Configure(EntityTypeBuilder<InboxMessage> builder)
         {
             builder.HasKey(x => x.Id);
 

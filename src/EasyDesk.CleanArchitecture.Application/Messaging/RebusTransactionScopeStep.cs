@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
-using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
@@ -16,15 +15,9 @@ public class RebusTransactionScopeStep<TRequest, TResult> : IPipelineStep<TReque
 
     public async Task<Result<TResult>> Run(TRequest request, NextPipelineStep<TResult> next)
     {
-        using (var scope = new RebusTransactionScope())
-        {
-            scope.TransactionContext.SetServiceProvider(_serviceProvider);
-
-            var response = await next();
-
-            await scope.CompleteAsync();
-
-            return response;
-        }
+        using var scope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(_serviceProvider);
+        var response = await next();
+        await scope.CompleteAsync();
+        return response;
     }
 }

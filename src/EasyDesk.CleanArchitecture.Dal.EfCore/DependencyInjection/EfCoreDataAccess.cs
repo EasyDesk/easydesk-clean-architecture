@@ -1,13 +1,12 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Messaging.Idempotence;
+using EasyDesk.CleanArchitecture.Application.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Idempotence;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Outbox;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using EasyDesk.Tools.Collections;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -42,16 +41,11 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
     }
 
-    public void AddOutbox(IServiceCollection services, AppDescription app)
+    public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<OutboxContext>(services, OutboxContext.SchemaName);
+        AddDbContext<MessagingContext>(services, MessagingContext.SchemaName);
         services.AddScoped<IOutbox, EfCoreOutbox>();
-    }
-
-    public void AddIdempotenceManager(IServiceCollection services, AppDescription app)
-    {
-        AddDbContext<IdempotenceContext>(services, IdempotenceContext.SchemaName);
-        services.AddScoped<IIdempotenceManager, EfCoreIdempotenceManager>();
+        services.AddScoped<IInbox, EfCoreInbox>();
     }
 
     public void AddRoleBasedPermissionsProvider(IServiceCollection services, AppDescription app)

@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
-using Rebus.Pipeline;
 using Rebus.Serialization;
 using Rebus.Serialization.Json;
 using Rebus.Topic;
@@ -43,20 +42,14 @@ public class RebusMessagingModule : AppModule
 
         services.AddRebus((configurer, provider) =>
         {
-            configurer
-                .Logging(l => l.MicrosoftExtensionsLogging(provider.GetRequiredService<ILoggerFactory>()))
-                .Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson))
-                .Options(o =>
-                {
-                    o.Decorate<ITopicNameConvention>(c => new TopicNameConvention());
-                    o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(knownMessageTypes));
-                    o.WrapHandlersInsideTransaction();
-                });
-
             _options.ApplyDefaultConfiguration(configurer);
-
+            configurer.Logging(l => l.MicrosoftExtensionsLogging(provider.GetRequiredService<ILoggerFactory>()));
+            configurer.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson));
             configurer.Options(o =>
             {
+                o.Decorate<ITopicNameConvention>(_ => new TopicNameConvention());
+                o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(knownMessageTypes));
+                o.WrapHandlersInsideUnitOfWork();
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
 
                 if (app.IsMultitenant())
@@ -64,28 +57,31 @@ public class RebusMessagingModule : AppModule
                     o.AddMultitenancySupport();
                 }
 
-                _options.OutboxOptions.IfPresent(_ =>
-                {
-                    o.Decorate<ITransport>(c => new TransportWithOutbox(c.Get<ITransport>()));
-                });
-
-                if (_options.UseIdempotentConsumer)
-                {
-                    o.HandleMessagesIdempotently();
-                }
-
+                o.UseOutbox();
+                o.UseInbox();
                 o.HandleDomainEventsAfterMessageHandlers();
-
-                o.Decorate<IPipeline>(c =>
-                {
-                    return new PipelineStepConcatenator(c.Get<IPipeline>())
-                        .OnReceive(new ServiceScopeOpeningStep(), PipelineAbsolutePosition.Front);
-                });
+                o.OpenServiceScopeBeforeMessageHandlers();
             });
-
             return configurer;
         });
 
+        RegisterMessageHandlers(services, app);
+
+        services.AddScoped<MessageBroker>();
+        services.AddScoped<IMessagePublisher>(provider => provider.GetRequiredService<MessageBroker>());
+        services.AddScoped<IMessageSender>(provider => provider.GetRequiredService<MessageBroker>());
+
+        if (_options.AutoSubscribe)
+        {
+            services.AddHostedService<AutoSubscriptionService>();
+        }
+
+        app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
+        AddOutboxServices(services, originalTransport);
+    }
+
+    private void RegisterMessageHandlers(IServiceCollection services, AppDescription app)
+    {
         new AssemblyScanner()
             .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
             .NonAbstract()
@@ -103,45 +99,29 @@ public class RebusMessagingModule : AppModule
                     services.AddTransient(rebusHandlerType, adapterType);
                 });
             });
+    }
 
-        services.AddScoped<MessageBroker>();
-        services.AddScoped<IMessagePublisher>(provider => provider.GetRequiredService<MessageBroker>());
-        services.AddScoped<IMessageSender>(provider => provider.GetRequiredService<MessageBroker>());
+    private void AddOutboxServices(IServiceCollection services, ITransport originalTransport)
+    {
+        services.AddScoped<OutboxTransactionHelper>();
+        services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
+            _options.OutboxOptions.FlushingPeriod,
+            provider.GetRequiredService<OutboxFlushRequestsChannel>(),
+            provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
 
-        if (_options.AutoSubscribe)
+        services.AddHostedService<OutboxFlusherBackgroundService>();
+        services.AddSingleton<OutboxFlushRequestsChannel>();
+        services.AddScoped(provider =>
         {
-            services.AddHostedService<AutoSubscriptionService>();
-        }
+            // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
+            _ = provider.GetRequiredService<IBus>();
 
-        _options.OutboxOptions.IfPresent(outboxOptions =>
-        {
-            app.RequireModule<DataAccessModule>().Implementation.AddOutbox(services, app);
-
-            services.AddScoped<OutboxTransactionHelper>();
-            services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
-                outboxOptions.FlushingPeriod,
-                provider.GetRequiredService<OutboxFlushRequestsChannel>(),
-                provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
-
-            services.AddHostedService<OutboxFlusherBackgroundService>();
-            services.AddSingleton<OutboxFlushRequestsChannel>();
-            services.AddScoped<OutboxFlusher>(provider =>
-            {
-                // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
-                _ = provider.GetRequiredService<IBus>();
-
-                return new(
-                    outboxOptions.FlushingBatchSize,
-                    provider.GetRequiredService<IUnitOfWorkProvider>(),
-                    provider.GetRequiredService<IOutbox>(),
-                    originalTransport);
-            });
+            return new OutboxFlusher(
+                _options.OutboxOptions.FlushingBatchSize,
+                provider.GetRequiredService<IUnitOfWorkProvider>(),
+                provider.GetRequiredService<IOutbox>(),
+                originalTransport);
         });
-
-        if (_options.UseIdempotentConsumer)
-        {
-            app.RequireModule<DataAccessModule>().Implementation.AddIdempotenceManager(services, app);
-        }
     }
 
     private KnownMessageTypes ScanForKnownMessageTypes(AppDescription app)

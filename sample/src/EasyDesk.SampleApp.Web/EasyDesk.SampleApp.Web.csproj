@@ -11,11 +11,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Rebus.RabbitMq" Version="7.4.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
-    <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Messaging.ServiceBus\EasyDesk.CleanArchitecture.Messaging.ServiceBus.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Infrastructure\EasyDesk.SampleApp.Infrastructure.csproj" />
   </ItemGroup>
