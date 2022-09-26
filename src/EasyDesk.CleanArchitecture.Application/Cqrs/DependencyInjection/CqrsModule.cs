@@ -1,5 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Modules;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
@@ -17,6 +19,8 @@ public class CqrsModule : AppModule
     {
         services.AddTransient<ICqrsRequestDispatcher, CqrsRequestDispatcher>();
 
+        RegisterRequestHandlers(services, app);
+
         Pipeline.AddStep(typeof(UnitOfWorkStep<,>));
         Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
 
@@ -25,6 +29,15 @@ public class CqrsModule : AppModule
         {
             services.AddTransient(typeof(IPipelineStep<,>), b);
         });
+    }
+
+    private void RegisterRequestHandlers(IServiceCollection services, AppDescription app)
+    {
+        services.RegisterImplementationsAsTransient(
+            typeof(ICqrsRequestHandler<,>),
+            s => s.FromAssemblies(
+                app.GetLayerAssembly(CleanArchitectureLayer.Application),
+                app.GetLayerAssembly(CleanArchitectureLayer.Infrastructure)));
     }
 }
 

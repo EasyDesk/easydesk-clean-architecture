@@ -918,6 +918,7 @@
         "dependencies": {
           "AutoMapper": "[11.0.1, )",
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "[11.0.0, )",
+          "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
           "EasyDesk.Tools": "[7.2.0, )",
           "FluentValidation": "[10.3.6, )",
@@ -939,6 +940,13 @@
           "EntityFrameworkCore.SqlServer.NodaTime": "[5.0.1, )",
           "Microsoft.EntityFrameworkCore.Relational": "[6.0.2, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[6.0.2, )"
+        }
+      },
+      "easydesk.cleanarchitecture.dependencyinjection": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.Tools": "[7.2.0, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {
