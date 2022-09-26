@@ -18,7 +18,7 @@ public abstract class UnitOfWorkBase<T> : IUnitOfWork
 
     public IAsyncObservable<Nothing> AfterCommit => _afterCommit;
 
-    protected T Transaction { get; }
+    public T Transaction { get; }
 
     private void EnsureHasNotAlreadyEnded()
     {

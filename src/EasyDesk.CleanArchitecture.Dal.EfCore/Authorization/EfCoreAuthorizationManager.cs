@@ -10,12 +10,10 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 public class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesManager, IRolesToPermissionsMapper
 {
     private readonly AuthorizationContext _context;
-    private readonly EfCoreUnitOfWorkProvider _unitOfWorkProvider;
 
-    public EfCoreAuthorizationManager(AuthorizationContext context, EfCoreUnitOfWorkProvider unitOfWorkProvider)
+    public EfCoreAuthorizationManager(AuthorizationContext context)
     {
         _context = context;
-        _unitOfWorkProvider = unitOfWorkProvider;
     }
 
     private IQueryable<UserRoleModel> RolesByUser(UserInfo userInfo) => _context
@@ -40,8 +38,6 @@ public class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesManage
 
     public async Task GrantRolesToUser(UserInfo userInfo, IEnumerable<Role> roles)
     {
-        await _unitOfWorkProvider.RegisterExternalDbContext(_context);
-
         var currentRoleIds = await RolesByUser(userInfo)
             .Select(r => r.RoleId)
             .ToListAsync();
@@ -56,8 +52,6 @@ public class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesManage
 
     public async Task RevokeRolesToUser(UserInfo userInfo, IEnumerable<Role> roles)
     {
-        await _unitOfWorkProvider.RegisterExternalDbContext(_context);
-
         var roleIds = RoleIds(roles);
         var rolesToBeRemoved = await RolesByUser(userInfo)
             .Where(x => roleIds.Contains(x.RoleId))

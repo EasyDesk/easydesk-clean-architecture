@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
 
-public class MediatrModule : AppModule
+public class CqrsModule : AppModule
 {
-    public MediatrModule(Action<PipelineBuilder> configurePipeline = null)
+    public CqrsModule(Action<PipelineBuilder> configurePipeline = null)
     {
         configurePipeline?.Invoke(Pipeline);
     }
@@ -32,6 +32,6 @@ public static class MediatrModuleExtensions
 {
     public static AppBuilder AddMediatr(this AppBuilder builder, Action<PipelineBuilder> configurePipeline = null)
     {
-        return builder.AddModule(new MediatrModule(configurePipeline));
+        return builder.AddModule(new CqrsModule(configurePipeline));
     }
 }

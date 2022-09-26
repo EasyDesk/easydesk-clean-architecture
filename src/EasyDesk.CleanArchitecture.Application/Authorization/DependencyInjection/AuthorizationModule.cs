@@ -15,7 +15,7 @@ public class AuthorizationModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<MediatrModule>().Pipeline.AddStep(typeof(AuthorizationStep<,>));
+        app.RequireModule<CqrsModule>().Pipeline.AddStep(typeof(AuthorizationStep<,>));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

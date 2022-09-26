@@ -30,7 +30,7 @@ public class RebusMessagingModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<MediatrModule>().Pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
+        app.RequireModule<CqrsModule>().Pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

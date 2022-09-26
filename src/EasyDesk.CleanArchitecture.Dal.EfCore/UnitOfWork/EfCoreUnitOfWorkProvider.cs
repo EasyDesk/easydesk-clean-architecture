@@ -1,25 +1,25 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
 public class EfCoreUnitOfWorkProvider : UnitOfWorkProviderBase<EfCoreUnitOfWork>
 {
-    private readonly DbContext _dbContext;
+    private readonly DbContext _context;
 
-    public EfCoreUnitOfWorkProvider(DbContext dbContext)
+    public EfCoreUnitOfWorkProvider(DbContext context)
     {
-        _dbContext = dbContext;
+        _context = context;
     }
 
     protected override async Task<EfCoreUnitOfWork> CreateUnitOfWork()
     {
-        var transaction = await _dbContext.Database.BeginTransactionAsync();
-        var unitOfWork = new EfCoreUnitOfWork(_dbContext, transaction);
+        var transaction = await _context.Database.BeginTransactionAsync();
+        var unitOfWork = new EfCoreUnitOfWork(_context, transaction);
         return unitOfWork;
     }
 
-    public async Task RegisterExternalDbContext(DbContext context) => await UnitOfWork
+    public async Task EnlistDbContextForCurrentTransaction(DbContext context) => await UnitOfWork
         .OrElseThrow(() => new InvalidOperationException($"Unit of work was not started when registering DbContext of type {context.GetType()} to the transaction"))
-        .RegisterExternalDbContext(context);
+        .EnlistDbContext(context);
 }

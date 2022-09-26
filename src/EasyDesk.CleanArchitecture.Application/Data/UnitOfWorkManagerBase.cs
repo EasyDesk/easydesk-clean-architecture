@@ -3,7 +3,7 @@
 public abstract class UnitOfWorkProviderBase<T> : IUnitOfWorkProvider
     where T : IUnitOfWork
 {
-    protected Option<T> UnitOfWork { get; private set; }
+    public Option<T> UnitOfWork { get; private set; }
 
     public Option<IUnitOfWork> CurrentUnitOfWork => UnitOfWork.Map(x => x as IUnitOfWork);
 

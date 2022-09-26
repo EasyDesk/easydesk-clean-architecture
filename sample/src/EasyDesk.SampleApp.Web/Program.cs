@@ -15,7 +15,7 @@ using Rebus.Config;
 var builder = WebApplication.CreateBuilder(args);
 
 var appDescription = builder.ConfigureForCleanArchitecture(config => config
-    .AddEfCoreDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"), applyMigrations: builder.Environment.IsDevelopment())
+    .AddEfCoreDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"), applyMigrations: true)
     .AddAuthentication(options => options.AddTestAuth("Test"))
     .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
     .AddMultitenancy()

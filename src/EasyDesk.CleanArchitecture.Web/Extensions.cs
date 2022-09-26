@@ -20,7 +20,7 @@ public static class Extensions
     ///     <item><see cref="DomainLayerModule"/></item>
     ///     <item><see cref="HttpContextModule"/></item>
     ///     <item><see cref="TimeManagementModule"/></item>
-    ///     <item><see cref="MediatrModule"/></item>
+    ///     <item><see cref="CqrsModule"/></item>
     ///     <item><see cref="MappingModule"/></item>
     ///     <item><see cref="RequestValidationModule"/></item>
     /// </list>

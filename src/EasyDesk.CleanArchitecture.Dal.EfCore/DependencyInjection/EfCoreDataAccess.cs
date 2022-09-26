@@ -7,10 +7,11 @@ using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
+using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Tools.Collections;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
@@ -39,11 +40,12 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         AddDbContext<T>(services, DomainContext.SchemaName);
         services.AddScoped(provider => new EfCoreUnitOfWorkProvider(provider.GetRequiredService<T>()));
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
+        services.AddScoped<TransactionEnlistingInterceptor>();
     }
 
     public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<MessagingContext>(services, MessagingContext.SchemaName);
+        AddDbContext<MessagingContext>(services, MessagingContext.SchemaName, ConfigureAsSecondaryDbContext);
         services.AddScoped<IOutbox, EfCoreOutbox>();
         services.AddScoped<IInbox, EfCoreInbox>();
     }
@@ -56,10 +58,15 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 
     public void AddRoleManager(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName);
+        AddDbContext<AuthorizationContext>(services, AuthorizationContext.SchemaName, ConfigureAsSecondaryDbContext);
         services.AddScoped<EfCoreAuthorizationManager>();
         services.AddScoped<IUserRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
         services.AddScoped<IUserRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
+    }
+
+    private void ConfigureAsSecondaryDbContext(IServiceProvider provider, DbContextOptionsBuilder options)
+    {
+        options.AddInterceptors(provider.GetRequiredService<TransactionEnlistingInterceptor>());
     }
 
     private void AddDbContext<C>(IServiceCollection services, string schema, Action<IServiceProvider, DbContextOptionsBuilder> configure = null)
@@ -68,8 +75,8 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         services.AddDbContext<C>((provider, options) =>
         {
             ConfigureDbContextOptions(provider, options, schema);
-            _addtionalOptions?.Invoke(options);
             configure?.Invoke(provider, options);
+            _addtionalOptions?.Invoke(options);
         });
 
         if (_registeredDbContextTypes.IsEmpty() && _applyMigrations)
@@ -86,13 +93,8 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         var connection = provider.GetRequiredService<SqlConnection>();
         options.UseSqlServer(connection, sqlServerOptions =>
         {
-            ConfigureMigrationsHistoryTable(sqlServerOptions, schema);
+            sqlServerOptions.MigrationsHistoryTable(tableName: "__EFMigrationsHistory", schema);
         });
-    }
-
-    private void ConfigureMigrationsHistoryTable(SqlServerDbContextOptionsBuilder sqlServerOptions, string schema)
-    {
-        sqlServerOptions.MigrationsHistoryTable(tableName: "__EFMigrationsHistory", schema);
     }
 }
 

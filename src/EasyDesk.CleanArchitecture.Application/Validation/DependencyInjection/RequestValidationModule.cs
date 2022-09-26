@@ -9,7 +9,7 @@ public class RequestValidationModule : AppModule
 {
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<MediatrModule>().Pipeline.AddStep(typeof(ValidationStep<,>));
+        app.RequireModule<CqrsModule>().Pipeline.AddStep(typeof(ValidationStep<,>));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

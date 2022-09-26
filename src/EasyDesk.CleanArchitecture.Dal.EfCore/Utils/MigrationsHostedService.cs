@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
 public class MigrationsHostedService : IHostedService
 {

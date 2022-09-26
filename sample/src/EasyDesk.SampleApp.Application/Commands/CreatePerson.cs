@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
-using EasyDesk.CleanArchitecture.Application.Cqrs;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
@@ -10,7 +9,6 @@ namespace EasyDesk.SampleApp.Application.Commands;
 
 public static class CreatePerson
 {
-    [RequireAnyOf("People.Write")]
     public record Command(string Name) : ICommand<PersonSnapshot>;
 
     public class Validator : AbstractValidator<Command>
