@@ -9,11 +9,13 @@ using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
 using Rebus.Serialization;
 using Rebus.Serialization.Json;
+using Rebus.Time;
 using Rebus.Topic;
 using Rebus.Transport;
 
@@ -47,6 +49,7 @@ public class RebusMessagingModule : AppModule
             configurer.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson));
             configurer.Options(o =>
             {
+                o.Decorate<IRebusTime>(_ => new NodaTimeRebusClock(provider.GetRequiredService<IClock>()));
                 o.Decorate<ITopicNameConvention>(_ => new TopicNameConvention());
                 o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(knownMessageTypes));
                 o.WrapHandlersInsideUnitOfWork();
