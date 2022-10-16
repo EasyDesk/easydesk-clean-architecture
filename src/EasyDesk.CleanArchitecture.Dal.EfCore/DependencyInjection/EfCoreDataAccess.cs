@@ -40,7 +40,8 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         AddDbContext<T>(services, DomainContext.SchemaName);
         services.AddScoped(provider => new EfCoreUnitOfWorkProvider(provider.GetRequiredService<T>()));
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
-        services.AddScoped<TransactionEnlistingInterceptor>();
+        services.AddScoped<TransactionEnlistingOnCommandInterceptor>();
+        services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
     }
 
     public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
@@ -66,7 +67,8 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 
     private void ConfigureAsSecondaryDbContext(IServiceProvider provider, DbContextOptionsBuilder options)
     {
-        options.AddInterceptors(provider.GetRequiredService<TransactionEnlistingInterceptor>());
+        options.AddInterceptors(provider.GetRequiredService<TransactionEnlistingOnCommandInterceptor>());
+        options.AddInterceptors(provider.GetRequiredService<DbContextEnlistingOnSaveChangesInterceptor>());
     }
 
     private void AddDbContext<C>(IServiceCollection services, string schema, Action<IServiceProvider, DbContextOptionsBuilder> configure = null)

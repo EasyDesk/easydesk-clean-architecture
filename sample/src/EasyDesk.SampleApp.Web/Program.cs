@@ -7,10 +7,12 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.Startup.Modules;
+using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Authentication;
 using EasyDesk.SampleApp.Web.DependencyInjection;
 using Rebus.Config;
+using Rebus.Routing.TypeBased;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config => config
     .AddRebusMessaging(options =>
     {
         options.ConfigureTransport(t => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), "sample"));
+        options.ConfigureRouting(t => t.TypeBased().Map<WelcomePerson>("sample"));
     })
     .AddModule<SampleAppDomainModule>());
 

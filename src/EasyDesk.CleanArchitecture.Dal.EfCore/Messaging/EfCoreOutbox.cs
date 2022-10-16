@@ -23,13 +23,13 @@ public class EfCoreOutbox : IOutbox
 
     public void EnqueueMessageForStorage(TransportMessage message, string destinationAddress)
     {
-        var outboxMessages = new OutboxMessage
+        var outboxMessage = new OutboxMessage
         {
             Content = message.Body,
             Headers = _serializer.SerializeToBsonBytes(message.Headers),
             DestinationAddress = destinationAddress
         };
-        _context.Outbox.AddRange(outboxMessages);
+        _context.Outbox.Add(outboxMessage);
     }
 
     public async Task StoreEnqueuedMessages()

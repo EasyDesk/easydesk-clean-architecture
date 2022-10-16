@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_PID: Developer
+      SA_PASSWORD: samplepass-123
+    volumes:
+      - samplesqlvolume:/var/opt/mssql
+    ports:
+      - "5678:1433"
+
+volumes:
+  samplesqlvolume:
+    
+networks:
+  samplenet:

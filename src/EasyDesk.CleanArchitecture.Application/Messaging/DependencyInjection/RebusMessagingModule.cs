@@ -80,7 +80,7 @@ public class RebusMessagingModule : AppModule
         }
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        AddOutboxServices(services, originalTransport);
+        AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
     }
 
     private void RegisterMessageHandlers(IServiceCollection services, AppDescription app)
@@ -104,7 +104,7 @@ public class RebusMessagingModule : AppModule
             });
     }
 
-    private void AddOutboxServices(IServiceCollection services, ITransport originalTransport)
+    private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)
     {
         services.AddScoped<OutboxTransactionHelper>();
         services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
@@ -123,7 +123,7 @@ public class RebusMessagingModule : AppModule
                 _options.OutboxOptions.FlushingBatchSize,
                 provider.GetRequiredService<IUnitOfWorkProvider>(),
                 provider.GetRequiredService<IOutbox>(),
-                originalTransport);
+                originalTransport.Value);
         });
     }
 

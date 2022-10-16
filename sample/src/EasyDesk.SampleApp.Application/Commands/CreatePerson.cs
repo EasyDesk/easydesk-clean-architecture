@@ -28,11 +28,11 @@ public static class CreatePerson
             _personRepository = personRepository;
         }
 
-        public Task<Result<PersonSnapshot>> Handle(Command request)
+        public async Task<Result<PersonSnapshot>> Handle(Command request)
         {
             var person = Person.Create(Name.From(request.Name));
-            _personRepository.Save(person);
-            return Task.FromResult(Success(new PersonSnapshot(person.Id, person.Name, person.Married)));
+            await _personRepository.Save(person);
+            return new PersonSnapshot(person.Id, person.Name, person.Married);
         }
     }
 }
