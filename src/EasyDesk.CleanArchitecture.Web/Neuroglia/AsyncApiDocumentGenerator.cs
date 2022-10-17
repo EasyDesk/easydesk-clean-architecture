@@ -1,6 +1,10 @@
-﻿using Neuroglia.AsyncApi.Configuration;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.Tools.Collections;
+using EasyDesk.Tools.Reflection;
+using Neuroglia.AsyncApi.Configuration;
 using Neuroglia.AsyncApi.Models;
 using Neuroglia.AsyncApi.Services.Generators;
+using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Web.Neuroglia;
 public class AsyncApiDocumentGenerator : IAsyncApiDocumentGenerator
@@ -16,11 +20,21 @@ public class AsyncApiDocumentGenerator : IAsyncApiDocumentGenerator
         {
             throw new ArgumentNullException(nameof(markupTypes));
         }
-        IEnumerable<Type> types = markupTypes
-            .Select(t => t.Assembly)
-            .Distinct()
-            .SelectMany(t => t.GetTypes())
-            .Where(t => true);
+        var types = ScanAssemblyForSubtypesOrImplementationsOf<IIncomingMessage, IOutgoingCommand, IOutgoingEvent>(markupTypes);
+
+        // TODO: implement generation of async api documents
         return null;
     }
+
+    private IImmutableSet<Type> ScanAssemblyForSubtypesOrImplementationsOf<T>(IEnumerable<Type> markers) => new AssemblyScanner()
+        .FromAssembliesContaining(markers)
+        .NonAbstract()
+        .SubtypesOrImplementationsOf<T>()
+        .FindTypes()
+        .ToEquatableSet();
+
+    private KnownMessageTypes ScanAssemblyForSubtypesOrImplementationsOf<T1, T2, T3>(IEnumerable<Type> markers) =>
+        new(ScanAssemblyForSubtypesOrImplementationsOf<T1>(markers)
+            .Union(ScanAssemblyForSubtypesOrImplementationsOf<T2>(markers))
+            .Union(ScanAssemblyForSubtypesOrImplementationsOf<T3>(markers)));
 }
