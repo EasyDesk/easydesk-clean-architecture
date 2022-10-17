@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.SampleApp.Application.ExternalEventHandlers;
 
-public class LogAllMessages : IMessageHandler<IMessage>
+public class LogAllMessages : IMessageHandler<IIncomingMessage>
 {
     private readonly ILogger<LogAllMessages> _logger;
 
@@ -12,7 +12,7 @@ public class LogAllMessages : IMessageHandler<IMessage>
         _logger = logger;
     }
 
-    public Task<Result<Nothing>> Handle(IMessage message)
+    public Task<Result<Nothing>> Handle(IIncomingMessage message)
     {
         _logger.LogInformation("Message received: {message}", message);
         return Task.FromResult(Ok);

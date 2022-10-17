@@ -71,8 +71,8 @@ public class RebusMessagingModule : AppModule
         RegisterMessageHandlers(services, app);
 
         services.AddScoped<MessageBroker>();
-        services.AddScoped<IMessagePublisher>(provider => provider.GetRequiredService<MessageBroker>());
-        services.AddScoped<IMessageSender>(provider => provider.GetRequiredService<MessageBroker>());
+        services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
+        services.AddScoped<ICommandSender>(provider => provider.GetRequiredService<MessageBroker>());
 
         if (_options.AutoSubscribe)
         {
@@ -98,7 +98,7 @@ public class RebusMessagingModule : AppModule
                     services.AddTransient(i, t);
                     var messageType = i.GetGenericArguments().First();
                     var rebusHandlerType = typeof(IHandleMessages<>).MakeGenericType(messageType);
-                    var adapterType = typeof(MessageHandlerAdapter<>).MakeGenericType(messageType);
+                    var adapterType = typeof(EventHandlerAdapter<>).MakeGenericType(messageType);
                     services.AddTransient(rebusHandlerType, adapterType);
                 });
             });
@@ -132,7 +132,7 @@ public class RebusMessagingModule : AppModule
         var knownMessageTypes = new AssemblyScanner()
             .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
             .NonAbstract()
-            .SubtypesOrImplementationsOf<IMessage>()
+            .SubtypesOrImplementationsOf<IIncomingMessage>()
             .FindTypes()
             .ToEquatableSet();
         return new(knownMessageTypes);

@@ -7,9 +7,9 @@ namespace EasyDesk.SampleApp.Application.DomainEventHandlers;
 
 public class WelcomePersonOnCreation : IDomainEventHandler<PersonCreatedEvent>
 {
-    private readonly IMessageSender _sender;
+    private readonly ICommandSender _sender;
 
-    public WelcomePersonOnCreation(IMessageSender sender)
+    public WelcomePersonOnCreation(ICommandSender sender)
     {
         _sender = sender;
     }

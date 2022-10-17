@@ -2,12 +2,12 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class MessageHandlerAdapter<M> : IHandleMessages<M>
-    where M : IMessage
+public class EventHandlerAdapter<M> : IHandleMessages<M>
+    where M : IIncomingEvent
 {
     private readonly IMessageHandler<M> _innerHandler;
 
-    public MessageHandlerAdapter(IMessageHandler<M> innerHandler)
+    public EventHandlerAdapter(IMessageHandler<M> innerHandler)
     {
         _innerHandler = innerHandler;
     }

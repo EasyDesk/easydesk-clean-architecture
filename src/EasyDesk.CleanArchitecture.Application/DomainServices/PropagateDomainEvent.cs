@@ -5,16 +5,16 @@ namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
 public interface IDomainEventPropagator<T>
 {
-    IMessage ConvertToMessage(T ev);
+    IOutgoingEvent ConvertToMessage(T ev);
 }
 
 public class PropagateDomainEvent<T> : IDomainEventHandler<T>
     where T : DomainEvent
 {
-    private readonly IMessagePublisher _publisher;
+    private readonly IEventPublisher _publisher;
     private readonly IEnumerable<IDomainEventPropagator<T>> _propagators;
 
-    public PropagateDomainEvent(IMessagePublisher publisher, IEnumerable<IDomainEventPropagator<T>> propagators)
+    public PropagateDomainEvent(IEventPublisher publisher, IEnumerable<IDomainEventPropagator<T>> propagators)
     {
         _publisher = publisher;
         _propagators = propagators;

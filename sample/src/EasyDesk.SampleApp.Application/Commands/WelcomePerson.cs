@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-public record WelcomePerson(string Name) : IMessage;
+public record WelcomePerson(string Name) : IOutgoingCommand, IIncomingCommand;
 
 public class HandleWelcome : IMessageHandler<WelcomePerson>
 {
