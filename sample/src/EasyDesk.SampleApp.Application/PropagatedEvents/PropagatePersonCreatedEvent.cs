@@ -5,10 +5,10 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 namespace EasyDesk.SampleApp.Application.PropagatedEvents;
 
 [RebusAutoSubscribe]
-public record PersonCreated(Guid PersonId) : IMessage;
+public record PersonCreated(Guid PersonId) : IOutgoingEvent;
 
 public class PropagatePersonCreatedEvent : IDomainEventPropagator<PersonCreatedEvent>
 {
-    public IMessage ConvertToMessage(PersonCreatedEvent ev) =>
+    public IOutgoingEvent ConvertToMessage(PersonCreatedEvent ev) =>
         new PersonCreated(ev.Person.Id);
 }

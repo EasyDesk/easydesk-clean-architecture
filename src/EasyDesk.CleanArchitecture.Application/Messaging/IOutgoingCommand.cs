@@ -1,5 +1,4 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Messaging;
-
-public interface IMessage
+public interface IOutgoingCommand
 {
 }
