@@ -30,25 +30,33 @@ public class AsyncApiDocumentGenerator : IAsyncApiDocumentGenerator
             throw new ArgumentNullException(nameof(markupTypes));
         }
         var types = ScanAssemblyForSubtypesOrImplementationsOf<IIncomingMessage, IOutgoingCommand, IOutgoingEvent>(markupTypes);
-
-        List<AsyncApiDocument> documents = new(types.Types.Count());
-        foreach (var type in types.Types)
-        {
-            documents.Add(await GenerateDocumentAsync(type, options));
-        }
-        return documents;
+        return await GenerateDocumentsAsync(types, options);
     }
 
-    private Task<AsyncApiDocument> GenerateDocumentAsync(Type type, AsyncApiDocumentGenerationOptions options)
+    private Task<IEnumerable<AsyncApiDocument>> GenerateDocumentsAsync(KnownMessageTypes types, AsyncApiDocumentGenerationOptions options)
     {
-        if (type == null)
+        if (types == null)
         {
-            throw new ArgumentNullException(nameof(type));
+            throw new ArgumentNullException(nameof(types));
         }
         IAsyncApiDocumentBuilder builder = _serviceProvider.GetRequiredService<IAsyncApiDocumentBuilder>();
         options?.DefaultConfiguration.Invoke(builder);
         builder
-            .WithTitle(type.Name);
+            .WithId("MICROSERVICE_NAME") // TODO
+            .WithVersion("API_VERSION") // TODO
+            .WithTitle("MICROSERVICE_VERBOSE_NAME"); // TODO
+
+        // TODO: add license/contact info?
+
+        // TODO: use rebus to fetch outgoing routing channels
+
+        // TODO: use rebus to fetch information about the servers (message brokers)
+        foreach (var messageType in types.Types.Select(x => x.IsSubtypeOrImplementationOf(typeof(IIncomingEvent))))
+        {
+            // link 1: https://github.com/neuroglia-io/AsyncApi/blob/5d46f9b3118237729c5645de901d4dc0480c1a41/src/Neuroglia.AsyncApi.Core/Services/Generators/AsyncApiDocumentGenerator.cs
+            // link 2: https://github.com/neuroglia-io/AsyncApi#1-mark-your-services-with-adequate-attributes
+            // link 3: https://www.asyncapi.com/docs/reference/specification/v2.0.0#a-namechannelsobjectachannels-object
+        }
         return null;
     }
 
