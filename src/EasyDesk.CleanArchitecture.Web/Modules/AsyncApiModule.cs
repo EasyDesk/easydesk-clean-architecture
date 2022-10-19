@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Web.AsyncApi;
 using Microsoft.AspNetCore.Builder;
@@ -9,6 +10,7 @@ using Neuroglia.AsyncApi.Services.FluentBuilders;
 using Neuroglia.AsyncApi.Services.Generators;
 
 namespace EasyDesk.CleanArchitecture.Web.Modules;
+
 public class AsyncApiModule : AppModule
 {
     private readonly Action<IAsyncApiGenerationOptionsBuilder> _configure;
@@ -16,6 +18,11 @@ public class AsyncApiModule : AppModule
     public AsyncApiModule(Action<IAsyncApiGenerationOptionsBuilder> configure = null)
     {
         _configure = configure;
+    }
+
+    public override void BeforeServiceConfiguration(AppDescription app)
+    {
+        app.RequireModule<RebusMessagingModule>();
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
