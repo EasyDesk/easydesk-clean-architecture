@@ -63,11 +63,11 @@ public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
             {
                 if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand)))
                 {
-                    ConfigureOperation(channel, messageType, OperationType.Subscribe, "Receive");
+                    ConfigureOperation(channel, messageType, OperationType.Subscribe, "Command");
                 }
                 if (messageType.IsSubtypeOrImplementationOf(typeof(IOutgoingEvent)))
                 {
-                    ConfigureOperation(channel, messageType, OperationType.Publish, "Publish");
+                    ConfigureOperation(channel, messageType, OperationType.Publish, "Event");
                 }
             });
         }
@@ -79,17 +79,17 @@ public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
         IChannelDefinitionBuilder builder,
         Type messageType,
         OperationType operationType,
-        string operationSubtype)
+        string messageClassifier)
     {
         builder.DefineOperation(operationType, operation =>
         {
             operation
-                .WithOperationId($"{messageType.Name}.{operationSubtype}")
+                .WithOperationId(messageType.Name)
                 .UseMessage(message => message
                     .WithName(messageType.Name)
                     .WithTitle(messageType.Name.ToCamelCase().SplitCamelCase())
                     .WithPayloadSchema(JsonSchema.FromType(messageType, _jsonSchemaGeneratorSettings)))
-                .TagWith(tag => tag.WithName(operationSubtype));
+                .TagWith(tag => tag.WithName(messageClassifier));
         });
     }
 }
