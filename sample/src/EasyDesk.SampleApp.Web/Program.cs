@@ -25,10 +25,10 @@ var appDescription = builder.ConfigureForCleanArchitecture(config => config
     .AddApiVersioning()
     .AddSwagger()
     .AddAsyncApi()
-    .AddRebusMessaging(options =>
+    .AddRebusMessaging("sample", options =>
     {
-        options.ConfigureTransport(t => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), "sample"));
-        options.ConfigureRouting(t => t.TypeBased().Map<WelcomePerson>("sample"));
+        options.ConfigureTransport(t => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), options.InputQueueAddress));
+        options.ConfigureRouting(t => t.TypeBased().Map<WelcomePerson>(options.InputQueueAddress));
     })
     .AddModule<SampleAppDomainModule>());
 

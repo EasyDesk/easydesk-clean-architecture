@@ -20,16 +20,19 @@ public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
     private readonly IAsyncApiDocumentBuilder _documentBuilder;
     private readonly KnownMessageTypes _knownMessageTypes;
     private readonly string _microserviceName;
+    private readonly string _address;
     private readonly JsonSchemaGeneratorSettings _jsonSchemaGeneratorSettings;
 
     public KnownTypesDocumentGenerator(
         IAsyncApiDocumentBuilder documentBuilder,
         KnownMessageTypes knownMessageTypes,
-        string microserviceName)
+        string microserviceName,
+        string address)
     {
         _documentBuilder = documentBuilder;
         _knownMessageTypes = knownMessageTypes;
         _microserviceName = microserviceName;
+        _address = address;
         _jsonSchemaGeneratorSettings = new JsonSchemaGeneratorSettings
         {
             SerializerSettings = JsonDefaults.DefaultSerializerSettings()
@@ -71,6 +74,14 @@ public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
                 }
             });
         }
+        _documentBuilder.UseServer($"Rebus @ {_address}", server =>
+        {
+            server
+                .WithUrl(new Uri("https://github.com/rebus-org/Rebus"))
+                .WithProtocol("https")
+                .WithDescription($"Use \"{_address}\" as the name of the routing destination " +
+                    "for commands directed to this service, within Rebus router.");
+        });
         options?.DefaultConfiguration?.Invoke(_documentBuilder);
         yield return _documentBuilder.Build();
     }

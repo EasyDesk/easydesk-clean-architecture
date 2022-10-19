@@ -37,11 +37,12 @@ public class RebusMessagingModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        ITransport originalTransport = null;
+        services.AddSingleton(_options);
 
         var knownMessageTypes = ScanForKnownMessageTypes(app);
         services.AddSingleton(knownMessageTypes);
 
+        ITransport originalTransport = null;
         services.AddRebus((configurer, provider) =>
         {
             _options.ApplyDefaultConfiguration(configurer);
@@ -141,9 +142,9 @@ public class RebusMessagingModule : AppModule
 
 public static class RebusMessagingModuleExtensions
 {
-    public static AppBuilder AddRebusMessaging(this AppBuilder builder, Action<RebusMessagingOptions> configure)
+    public static AppBuilder AddRebusMessaging(this AppBuilder builder, string inputQueueAddress, Action<RebusMessagingOptions> configure)
     {
-        var options = new RebusMessagingOptions();
+        var options = new RebusMessagingOptions(inputQueueAddress);
         configure(options);
 
         return builder.AddModule(new RebusMessagingModule(options));

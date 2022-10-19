@@ -25,7 +25,8 @@ public class AsyncApiModule : AppModule
         services.AddTransient<IAsyncApiDocumentGenerator>(p => new KnownTypesDocumentGenerator(
             p.GetRequiredService<IAsyncApiDocumentBuilder>(),
             p.GetRequiredService<KnownMessageTypes>(),
-            app.Name));
+            app.Name,
+            p.GetRequiredService<RebusMessagingOptions>().InputQueueAddress));
     }
 }
 

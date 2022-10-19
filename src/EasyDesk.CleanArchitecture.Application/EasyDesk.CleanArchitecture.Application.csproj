@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Messaging\Messages\**" />
+    <EmbeddedResource Remove="Messaging\Messages\**" />
+    <None Remove="Messaging\Messages\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="EasyDesk.Tools" Version="7.2.0" />
@@ -24,10 +30,6 @@
   <ItemGroup>
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.DependencyInjection\EasyDesk.CleanArchitecture.DependencyInjection.csproj" />
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Domain\EasyDesk.CleanArchitecture.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Messaging\Messages\" />
   </ItemGroup>
 
   <PropertyGroup>

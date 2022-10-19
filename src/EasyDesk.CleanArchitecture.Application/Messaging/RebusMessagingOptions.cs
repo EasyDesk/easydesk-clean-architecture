@@ -10,9 +10,16 @@ public class RebusMessagingOptions
 {
     private Action<RebusConfigurer> _configureRebus;
 
+    public RebusMessagingOptions(string inputQueueAddress)
+    {
+        InputQueueAddress = inputQueueAddress;
+    }
+
     public OutboxOptions OutboxOptions { get; private set; } = new();
 
     public bool AutoSubscribe { get; set; } = true;
+
+    public string InputQueueAddress { get; }
 
     public RebusMessagingOptions ConfigureRebus(Action<RebusConfigurer> configurationAction)
     {
