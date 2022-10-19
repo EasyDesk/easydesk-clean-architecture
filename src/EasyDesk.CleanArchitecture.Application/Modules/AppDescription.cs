@@ -7,15 +7,18 @@ namespace EasyDesk.CleanArchitecture.Application.Modules;
 
 public class AppDescription
 {
+    private readonly string _assemblyPrefix;
     private readonly IImmutableDictionary<Type, AppModule> _modules;
     private readonly IImmutableDictionary<CleanArchitectureLayer, Assembly> _layers;
 
     public AppDescription(
         string name,
+        string assemblyPrefix,
         IImmutableDictionary<Type, AppModule> modules,
         IImmutableDictionary<CleanArchitectureLayer, Assembly> layers)
     {
         Name = name;
+        _assemblyPrefix = assemblyPrefix;
         _modules = modules;
         _layers = layers;
     }
@@ -23,7 +26,7 @@ public class AppDescription
     public string Name { get; }
 
     public Assembly GetLayerAssembly(CleanArchitectureLayer layer) =>
-        _layers.Update(layer, It, () => Assembly.Load($"{Name}.{layer}"))[layer];
+        _layers.Update(layer, It, () => Assembly.Load($"{_assemblyPrefix}.{layer}"))[layer];
 
     public Option<T> GetModule<T>() where T : AppModule =>
         _modules.GetOption(typeof(T)).Map(m => (T)m);

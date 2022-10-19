@@ -8,11 +8,13 @@ public class AppBuilder
 {
     private IImmutableDictionary<Type, AppModule> _modules = Map<Type, AppModule>();
     private IImmutableDictionary<CleanArchitectureLayer, Assembly> _layers = Map<CleanArchitectureLayer, Assembly>();
+    private readonly string _assemblyPrefix;
     private string _serviceName;
 
-    public AppBuilder(string defaultServiceName)
+    public AppBuilder(string assemblyPrefix)
     {
-        _serviceName = defaultServiceName;
+        _assemblyPrefix = assemblyPrefix;
+        _serviceName = assemblyPrefix;
     }
 
     public AppBuilder WithServiceName(string name)
@@ -51,7 +53,7 @@ public class AppBuilder
         return this;
     }
 
-    public AppDescription Build() => new(_serviceName, _modules, _layers);
+    public AppDescription Build() => new(_serviceName, _assemblyPrefix, _modules, _layers);
 }
 
 public static class AppBuilderExtensions

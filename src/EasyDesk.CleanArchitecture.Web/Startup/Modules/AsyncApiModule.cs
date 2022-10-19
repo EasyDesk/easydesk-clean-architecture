@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Neuroglia.AsyncApi;
 using Neuroglia.AsyncApi.Configuration;
 using Neuroglia.AsyncApi.Services.FluentBuilders;
-using Rebus.Topic;
+using Neuroglia.AsyncApi.Services.Generators;
 
 namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
 public class AsyncApiModule : AppModule
@@ -20,21 +20,12 @@ public class AsyncApiModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddSingleton(p => new AsyncApiDocumentGenerator(
+        services.AddAsyncApiGeneration(options => _configure?.Invoke(options));
+        services.AddAsyncApiUI();
+        services.AddTransient<IAsyncApiDocumentGenerator>(p => new KnownTypesDocumentGenerator(
             p.GetRequiredService<IAsyncApiDocumentBuilder>(),
             p.GetRequiredService<KnownMessageTypes>(),
-            app.Name,
-            p.GetRequiredService<ITopicNameConvention>()));
-        services.AddAsyncApiGeneration(options =>
-        {
-            SetupAsyncApiDocs(app, options);
-            _configure?.Invoke(options);
-        });
-        services.AddAsyncApiUI();
-    }
-
-    private void SetupAsyncApiDocs(AppDescription app, IAsyncApiGenerationOptionsBuilder options)
-    {
+            app.Name));
     }
 }
 
@@ -50,5 +41,6 @@ public static class AsyncApiModuleExtensions
     public static void UseAsyncApiModule(this WebApplication app)
     {
         app.UseAsyncApiGeneration();
+        app.MapRazorPages();
     }
 }

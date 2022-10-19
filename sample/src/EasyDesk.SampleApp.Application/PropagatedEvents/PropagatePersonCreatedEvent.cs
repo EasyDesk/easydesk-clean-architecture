@@ -5,7 +5,7 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 namespace EasyDesk.SampleApp.Application.PropagatedEvents;
 
 [RebusAutoSubscribe]
-public record PersonCreated(Guid PersonId) : IOutgoingEvent;
+public record PersonCreated(Guid PersonId) : IOutgoingEvent, IIncomingEvent;
 
 public class PropagatePersonCreatedEvent : IDomainEventPropagator<PersonCreatedEvent>
 {

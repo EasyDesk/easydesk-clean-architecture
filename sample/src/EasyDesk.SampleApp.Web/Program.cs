@@ -17,7 +17,7 @@ using Rebus.Routing.TypeBased;
 var builder = WebApplication.CreateBuilder(args);
 
 var appDescription = builder.ConfigureForCleanArchitecture(config => config
-    //// TODO: fix .WithServiceName("EasyDesk.Sample.App")
+    .WithServiceName("EasyDesk.Sample.App")
     .AddEfCoreDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"), applyMigrations: true)
     .AddAuthentication(options => options.AddTestAuth("Test"))
     .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
