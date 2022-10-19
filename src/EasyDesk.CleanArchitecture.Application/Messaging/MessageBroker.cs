@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
+using NodaTime;
 using Rebus.Bus;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;

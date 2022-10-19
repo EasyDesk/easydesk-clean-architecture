@@ -1,5 +1,6 @@
 ﻿using System.Net.Mime;
 using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.Tools.Reflection;
 using Neuroglia;

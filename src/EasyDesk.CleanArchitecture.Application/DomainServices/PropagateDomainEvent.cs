@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;

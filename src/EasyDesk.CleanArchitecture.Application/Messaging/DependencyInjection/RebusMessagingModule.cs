@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Application.Modules;

@@ -1,4 +1,5 @@
-﻿using Rebus.Handlers;
+﻿using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
+using Rebus.Handlers;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
