@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Modules;
-using EasyDesk.CleanArchitecture.Web.Swagger;
+using EasyDesk.CleanArchitecture.Web.OpenApi;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;

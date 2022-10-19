@@ -7,6 +7,7 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.Modules;
+using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Authentication;
@@ -23,7 +24,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config => config
     .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
     .AddMultitenancy()
     .AddApiVersioning()
-    .AddSwagger()
+    .AddOpenApi()
     .AddAsyncApi()
     .AddRebusMessaging("sample", options =>
     {
@@ -47,7 +48,7 @@ app.Services.UseRebus();
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
-app.UseSwaggerModule();
+app.UseOpenApiModule();
 
 app.UseAsyncApiModule();
 

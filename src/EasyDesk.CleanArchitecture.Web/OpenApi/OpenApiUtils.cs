@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace EasyDesk.CleanArchitecture.Web.Swagger;
+namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-public static class SwaggerUtils
+public static class OpenApiUtils
 {
     public static void ConfigureJwtBearerAuthentication(this SwaggerGenOptions options, string name = "Bearer")
     {
@@ -25,18 +25,18 @@ public static class SwaggerUtils
     {
         options.AddSecurityDefinition(name, securityScheme);
         options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
             {
+                new OpenApiSecurityScheme
                 {
-                    new OpenApiSecurityScheme
+                    Reference = new OpenApiReference
                     {
-                        Reference = new OpenApiReference
-                        {
-                            Id = name,
-                            Type = ReferenceType.SecurityScheme
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
+                        Id = name,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
     }
 }

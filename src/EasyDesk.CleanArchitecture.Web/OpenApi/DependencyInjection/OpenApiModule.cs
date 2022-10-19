@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
-using EasyDesk.CleanArchitecture.Web.Swagger;
+using EasyDesk.CleanArchitecture.Web.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Tools.Collections;
 using MicroElements.Swashbuckle.NodaTime;
@@ -12,13 +12,13 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace EasyDesk.CleanArchitecture.Web.Modules;
+namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 
-public class SwaggerModule : AppModule
+public class OpenApiModule : AppModule
 {
     private readonly Action<SwaggerGenOptions> _configure;
 
-    public SwaggerModule(Action<SwaggerGenOptions> configure = null)
+    public OpenApiModule(Action<SwaggerGenOptions> configure = null)
     {
         _configure = configure;
     }
@@ -102,14 +102,14 @@ public class SwaggerModule : AppModule
 
 public static class SwaggerModuleExtensions
 {
-    public static AppBuilder AddSwagger(this AppBuilder builder, Action<SwaggerGenOptions> configure = null)
+    public static AppBuilder AddOpenApi(this AppBuilder builder, Action<SwaggerGenOptions> configure = null)
     {
-        return builder.AddModule(new SwaggerModule(configure));
+        return builder.AddModule(new OpenApiModule(configure));
     }
 
-    public static bool HasSwagger(this AppDescription app) => app.HasModule<SwaggerModule>();
+    public static bool HasOpenApi(this AppDescription app) => app.HasModule<OpenApiModule>();
 
-    public static void UseSwaggerModule(this WebApplication app)
+    public static void UseOpenApiModule(this WebApplication app)
     {
         var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
 

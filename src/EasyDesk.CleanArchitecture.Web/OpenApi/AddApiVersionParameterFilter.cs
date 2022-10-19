@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace EasyDesk.CleanArchitecture.Web.Swagger;
+namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
 public class AddApiVersionParameterFilter : IOperationFilter
 {
