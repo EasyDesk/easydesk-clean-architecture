@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Web.Neuroglia;
+using EasyDesk.CleanArchitecture.Web.AsyncApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Neuroglia.AsyncApi;

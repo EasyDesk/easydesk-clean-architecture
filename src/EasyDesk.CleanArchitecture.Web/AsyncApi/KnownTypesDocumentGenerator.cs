@@ -11,7 +11,7 @@ using Neuroglia.AsyncApi.Services.Generators;
 using NJsonSchema;
 using NJsonSchema.Generation;
 
-namespace EasyDesk.CleanArchitecture.Web.Neuroglia;
+namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
 public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
 {
@@ -64,14 +64,6 @@ public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
                 if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand)))
                 {
                     ConfigureOperation(channel, messageType, OperationType.Subscribe, "Receive");
-                }
-                if (messageType.IsSubtypeOrImplementationOf(typeof(IOutgoingCommand)))
-                {
-                    ConfigureOperation(channel, messageType, OperationType.Publish, "Send");
-                }
-                if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingEvent)))
-                {
-                    ConfigureOperation(channel, messageType, OperationType.Subscribe, "Subscribe");
                 }
                 if (messageType.IsSubtypeOrImplementationOf(typeof(IOutgoingEvent)))
                 {
