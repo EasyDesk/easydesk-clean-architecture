@@ -2,12 +2,13 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.CleanArchitecture.Web.Filters;
+using EasyDesk.CleanArchitecture.Web.Modules;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
+namespace EasyDesk.CleanArchitecture.Web.Modules;
 
 public class ControllersModule : AppModule
 {

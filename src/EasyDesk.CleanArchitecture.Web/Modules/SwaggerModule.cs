@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
+namespace EasyDesk.CleanArchitecture.Web.Modules;
 
 public class SwaggerModule : AppModule
 {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
+namespace EasyDesk.CleanArchitecture.Web.Modules;
 
 public class AspNetCoreAuthorizationModule : AppModule
 {

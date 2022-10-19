@@ -8,7 +8,7 @@ using Neuroglia.AsyncApi.Configuration;
 using Neuroglia.AsyncApi.Services.FluentBuilders;
 using Neuroglia.AsyncApi.Services.Generators;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
+namespace EasyDesk.CleanArchitecture.Web.Modules;
 public class AsyncApiModule : AppModule
 {
     private readonly Action<IAsyncApiGenerationOptionsBuilder> _configure;

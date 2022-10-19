@@ -6,7 +6,7 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web;
-using EasyDesk.CleanArchitecture.Web.Startup.Modules;
+using EasyDesk.CleanArchitecture.Web.Modules;
 using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Authentication;

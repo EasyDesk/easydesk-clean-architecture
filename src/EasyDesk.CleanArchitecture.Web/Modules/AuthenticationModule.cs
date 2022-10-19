@@ -2,13 +2,13 @@
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Web.Authentication;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Startup.Modules;
+using EasyDesk.CleanArchitecture.Web.Modules;
 using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Web.Startup.Modules;
+namespace EasyDesk.CleanArchitecture.Web.Modules;
 
 public class AuthenticationModule : AppModule
 {

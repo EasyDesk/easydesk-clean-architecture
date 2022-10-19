@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Startup.Modules;
+using EasyDesk.CleanArchitecture.Web.Modules;
 using Microsoft.AspNetCore.Builder;
 using System.Reflection;
 using System.Runtime.CompilerServices;
