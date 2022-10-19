@@ -3,7 +3,7 @@
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public class EventHandlerAdapter<M> : IHandleMessages<M>
-    where M : IIncomingEvent
+    where M : IIncomingMessage
 {
     private readonly IMessageHandler<M> _innerHandler;
 

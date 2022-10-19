@@ -132,7 +132,7 @@ public class RebusMessagingModule : AppModule
         var knownMessageTypes = new AssemblyScanner()
             .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
             .NonAbstract()
-            .SubtypesOrImplementationsOf<IIncomingMessage>()
+            .SubtypesOrImplementationsOf<IMessage>()
             .FindTypes()
             .ToEquatableSet();
         return new(knownMessageTypes);

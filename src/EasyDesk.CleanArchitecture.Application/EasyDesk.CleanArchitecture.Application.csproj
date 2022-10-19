@@ -26,6 +26,10 @@
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Domain\EasyDesk.CleanArchitecture.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Messaging\Messages\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <RootFolder>..\..</RootFolder>
   </PropertyGroup>

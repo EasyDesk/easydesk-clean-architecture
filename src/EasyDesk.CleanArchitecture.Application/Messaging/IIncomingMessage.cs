@@ -1,5 +1,5 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public interface IIncomingMessage
+public interface IIncomingMessage : IMessage
 {
 }

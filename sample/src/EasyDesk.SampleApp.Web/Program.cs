@@ -17,12 +17,14 @@ using Rebus.Routing.TypeBased;
 var builder = WebApplication.CreateBuilder(args);
 
 var appDescription = builder.ConfigureForCleanArchitecture(config => config
+    //// TODO: fix .WithServiceName("EasyDesk.Sample.App")
     .AddEfCoreDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"), applyMigrations: true)
     .AddAuthentication(options => options.AddTestAuth("Test"))
     .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
     .AddMultitenancy()
     .AddApiVersioning()
     .AddSwagger()
+    .AddAsyncApi()
     .AddRebusMessaging(options =>
     {
         options.ConfigureTransport(t => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), "sample"));
@@ -46,6 +48,8 @@ app.Services.UseRebus();
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 app.UseSwaggerModule();
+
+app.UseAsyncApiModule();
 
 app.UseAuthentication();
 

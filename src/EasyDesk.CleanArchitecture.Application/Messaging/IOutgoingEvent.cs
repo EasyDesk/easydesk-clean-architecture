@@ -1,4 +1,4 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Messaging;
-public interface IOutgoingEvent
+public interface IOutgoingEvent : IOutgoingMessage
 {
 }
