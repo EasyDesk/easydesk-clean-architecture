@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
+using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
+using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Tools.Collections;
 using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Builder;
@@ -95,7 +97,7 @@ public class OpenApiModule : AppModule
     {
         app.GetModule<AuthenticationModule>().IfPresent(auth =>
         {
-            auth.Schemes.ForEach(scheme => scheme.Value.ConfigureSwagger(options));
+            auth.Schemes.ForEach(scheme => scheme.Value.ConfigureOpenApi(options));
         });
     }
 }

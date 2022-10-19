@@ -1,13 +1,12 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Web.Modules;
-using EasyDesk.CleanArchitecture.Web.Versioning;
+using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Tools.Collections;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Modules;
+namespace EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 
 public class ApiVersioningModule : AppModule
 {

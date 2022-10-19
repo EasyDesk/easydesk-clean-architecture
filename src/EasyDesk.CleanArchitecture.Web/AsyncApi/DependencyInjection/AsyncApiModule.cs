@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Web.AsyncApi;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Neuroglia.AsyncApi;
@@ -9,7 +8,7 @@ using Neuroglia.AsyncApi.Configuration;
 using Neuroglia.AsyncApi.Services.FluentBuilders;
 using Neuroglia.AsyncApi.Services.Generators;
 
-namespace EasyDesk.CleanArchitecture.Web.Modules;
+namespace EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 
 public class AsyncApiModule : AppModule
 {

@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Modules;
 using EasyDesk.CleanArchitecture.Web.OpenApi;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,7 +25,7 @@ public class TestAuthScheme : IAuthenticationScheme
         authenticationBuilder.AddScheme<TestAuthOptions, TestAuthHandler>(schemeName, _options);
     }
 
-    public void ConfigureSwagger(SwaggerGenOptions options)
+    public void ConfigureOpenApi(SwaggerGenOptions options)
     {
         options.ConfigureSecurityRequirement("Test", new OpenApiSecurityScheme
         {

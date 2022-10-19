@@ -10,5 +10,5 @@ public interface IAuthenticationScheme
 
     void AddAuthenticationHandler(string schemeName, AuthenticationBuilder authenticationBuilder);
 
-    void ConfigureSwagger(SwaggerGenOptions options);
+    void ConfigureOpenApi(SwaggerGenOptions options);
 }

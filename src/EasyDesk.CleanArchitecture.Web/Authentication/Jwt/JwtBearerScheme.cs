@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Modules;
 using EasyDesk.CleanArchitecture.Web.OpenApi;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +24,7 @@ public class JwtBearerScheme : IAuthenticationScheme
     public void AddAuthenticationHandler(string schemeName, AuthenticationBuilder authenticationBuilder) =>
         authenticationBuilder.AddScheme<JwtBearerOptions, JwtBearerHandler>(schemeName, _configureOptions);
 
-    public void ConfigureSwagger(SwaggerGenOptions options) => options.ConfigureJwtBearerAuthentication();
+    public void ConfigureOpenApi(SwaggerGenOptions options) => options.ConfigureJwtBearerAuthentication();
 }
 
 public static class JwtBearerExtensions
