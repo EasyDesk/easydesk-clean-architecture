@@ -39,22 +39,15 @@ public class OpenApiModule : AppModule
 
     private void SetupSwaggerDocs(AppDescription app, SwaggerGenOptions options)
     {
-        if (app.HasModule<ApiVersioningModule>())
-        {
-            SetupApiVersionedDocs(app, options);
-        }
-        else
-        {
-            options.SwaggerDoc("main", new OpenApiInfo
-            {
-                Title = app.Name
-            });
-        }
+        app.GetModule<ApiVersioningModule>().Match(
+            some: m => SetupApiVersionedDocs(m, app, options),
+            none: () => SetupSingleVersionDoc(app, options));
     }
 
-    private void SetupApiVersionedDocs(AppDescription app, SwaggerGenOptions options)
+    private void SetupApiVersionedDocs(ApiVersioningModule module, AppDescription app, SwaggerGenOptions options)
     {
-        VersioningUtils.GetSupportedVersions(app)
+        module.ApiVersioningInfo
+            .SupportedVersions
             .Select(version => version.ToDisplayString())
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
             {
@@ -81,7 +74,15 @@ public class OpenApiModule : AppModule
         });
     }
 
-    private static void AddNodaTimeSupport(AppDescription app, SwaggerGenOptions options)
+    private void SetupSingleVersionDoc(AppDescription app, SwaggerGenOptions options)
+    {
+        options.SwaggerDoc("main", new OpenApiInfo
+        {
+            Title = app.Name
+        });
+    }
+
+    private void AddNodaTimeSupport(AppDescription app, SwaggerGenOptions options)
     {
         var dateTimeZoneProvider = app.GetModule<TimeManagementModule>()
             .Map(m => m.DateTimeZoneProvider)

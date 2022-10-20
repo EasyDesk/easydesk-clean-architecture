@@ -17,8 +17,18 @@ public class ApiVersioningModule : AppModule
         _configure = configure;
     }
 
+    public ApiVersioningInfo ApiVersioningInfo { get; private set; }
+
+    public override void BeforeServiceConfiguration(AppDescription app)
+    {
+        var supportedVersions = ApiVersioningUtils.GetSupportedVersions(app).ToEquatableSet();
+        ApiVersioningInfo = new ApiVersioningInfo(supportedVersions);
+    }
+
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
+        services.AddSingleton(ApiVersioningInfo);
+
         services.AddApiVersioning(options =>
         {
             options.ReportApiVersions = true;
@@ -28,9 +38,9 @@ public class ApiVersioningModule : AppModule
                 new HeaderApiVersionReader("Api-Version"));
 
             options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = VersioningUtils.GetSupportedVersions(app)
+            options.DefaultApiVersion = ApiVersioningInfo.SupportedVersions
                 .MaxOption()
-                .OrElseGet(() => VersioningUtils.DefaultVersion);
+                .OrElseGet(() => ApiVersioningUtils.DefaultVersion);
 
             options.Conventions.Add(new NamespaceConvention());
 

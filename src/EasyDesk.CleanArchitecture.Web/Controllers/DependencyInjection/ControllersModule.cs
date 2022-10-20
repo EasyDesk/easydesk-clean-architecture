@@ -26,6 +26,7 @@ public class ControllersModule : AppModule
     {
         services
             .AddControllers(options => DefaultMvcConfiguration(options, app))
+            .AddApplicationPart(typeof(CleanArchitectureController).Assembly)
             .AddNewtonsoftJson(options =>
             {
                 var dateTimeZoneProvider = app.GetModule<TimeManagementModule>()
