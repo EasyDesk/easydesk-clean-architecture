@@ -3,18 +3,16 @@ using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Neuroglia.AsyncApi;
-using Neuroglia.AsyncApi.Configuration;
-using Neuroglia.AsyncApi.Services.FluentBuilders;
-using Neuroglia.AsyncApi.Services.Generators;
+using Saunter;
+using Saunter.Generation;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 
 public class AsyncApiModule : AppModule
 {
-    private readonly Action<IAsyncApiGenerationOptionsBuilder> _configure;
+    private readonly Action<AsyncApiOptions> _configure;
 
-    public AsyncApiModule(Action<IAsyncApiGenerationOptionsBuilder> configure = null)
+    public AsyncApiModule(Action<AsyncApiOptions> configure = null)
     {
         _configure = configure;
     }
@@ -26,19 +24,23 @@ public class AsyncApiModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddAsyncApiGeneration(options => _configure?.Invoke(options));
-        services.AddAsyncApiUI();
-        services.AddTransient<IAsyncApiDocumentGenerator>(p => new KnownTypesDocumentGenerator(
-            p.GetRequiredService<IAsyncApiDocumentBuilder>(),
-            p.GetRequiredService<KnownMessageTypes>(),
+        services.AddTransient<IDocumentGenerator>(p => new KnownTypesDocumentGenerator(
             app.Name,
             p.GetRequiredService<RebusMessagingOptions>().InputQueueAddress));
+        services.AddTransient<IAsyncApiDocumentProvider, KnowTypesDocumentProvider>();
+        services.AddAsyncApiSchemaGeneration(options =>
+        {
+            options.Middleware.Route = "/asyncapi/asyncapi.json";
+            options.Middleware.UiBaseRoute = "/asyncapi/";
+            options.Middleware.UiTitle = $"AsyncApi :: {app.Name}";
+            _configure?.Invoke(options);
+        });
     }
 }
 
 public static class AsyncApiModuleExtensions
 {
-    public static AppBuilder AddAsyncApi(this AppBuilder builder, Action<IAsyncApiGenerationOptionsBuilder> configure = null)
+    public static AppBuilder AddAsyncApi(this AppBuilder builder, Action<AsyncApiOptions> configure = null)
     {
         return builder.AddModule(new AsyncApiModule(configure));
     }
@@ -47,7 +49,7 @@ public static class AsyncApiModuleExtensions
 
     public static void UseAsyncApiModule(this WebApplication app)
     {
-        app.UseAsyncApiGeneration();
-        app.MapRazorPages();
+        app.MapAsyncApiDocuments();
+        app.MapAsyncApiUi();
     }
 }

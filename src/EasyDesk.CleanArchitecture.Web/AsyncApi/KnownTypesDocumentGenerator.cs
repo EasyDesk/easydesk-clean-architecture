@@ -1,37 +1,32 @@
 ﻿using System.Net.Mime;
-using EasyDesk.CleanArchitecture.Application.Messaging;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
 using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.Tools.Reflection;
-using Neuroglia;
-using Neuroglia.AsyncApi;
-using Neuroglia.AsyncApi.Configuration;
-using Neuroglia.AsyncApi.Models;
-using Neuroglia.AsyncApi.Services.FluentBuilders;
-using Neuroglia.AsyncApi.Services.Generators;
+using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
 using NJsonSchema.Generation;
+using Saunter;
+using Saunter.AsyncApiSchema.v2;
+using Saunter.AsyncApiSchema.v2.Traits;
+using Saunter.Generation;
+using Saunter.Generation.Filters;
+using Saunter.Generation.SchemaGeneration;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
-public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
+public class KnownTypesDocumentGenerator : IDocumentGenerator
 {
     public const string Version = "1.0.0";
-
-    private readonly IAsyncApiDocumentBuilder _documentBuilder;
-    private readonly KnownMessageTypes _knownMessageTypes;
     private readonly string _microserviceName;
     private readonly string _address;
     private readonly JsonSchemaGeneratorSettings _jsonSchemaGeneratorSettings;
 
     public KnownTypesDocumentGenerator(
-        IAsyncApiDocumentBuilder documentBuilder,
-        KnownMessageTypes knownMessageTypes,
         string microserviceName,
         string address)
     {
-        _documentBuilder = documentBuilder;
-        _knownMessageTypes = knownMessageTypes;
         _microserviceName = microserviceName;
         _address = address;
         _jsonSchemaGeneratorSettings = new JsonSchemaGeneratorSettings
@@ -40,68 +35,67 @@ public class KnownTypesDocumentGenerator : IAsyncApiDocumentGenerator
         };
     }
 
-    public async Task<IEnumerable<AsyncApiDocument>> GenerateAsync(params Type[] markupTypes)
+    public string ServerName => $"Rebus @ {_address}";
+
+    public AsyncApiDocument GenerateDocument(TypeInfo[] asyncApiTypes, AsyncApiOptions options, AsyncApiDocument prototype, IServiceProvider serviceProvider)
     {
-        return await GenerateAsync(markupTypes, new AsyncApiDocumentGenerationOptions
+        var asyncApiSchema = prototype.Clone();
+
+        var schemaResolver = new AsyncApiSchemaResolver(asyncApiSchema, options.SchemaOptions);
+
+        var generator = new JsonSchemaGenerator(options.SchemaOptions);
+
+        asyncApiSchema.DefaultContentType = MediaTypeNames.Application.Json;
+        asyncApiSchema.Info = new Info(_microserviceName, Version);
+
+        asyncApiSchema.Servers[ServerName] = ConfigureServer();
+
+        foreach (var messageType in asyncApiTypes)
         {
-            AutomaticallyGenerateExamples = false
-        });
-    }
-
-    public Task<IEnumerable<AsyncApiDocument>> GenerateAsync(IEnumerable<Type> markupTypes, AsyncApiDocumentGenerationOptions options)
-    {
-        return Task.FromResult(GenerateDocuments(_knownMessageTypes, options));
-    }
-
-    private IEnumerable<AsyncApiDocument> GenerateDocuments(KnownMessageTypes types, AsyncApiDocumentGenerationOptions options)
-    {
-        _documentBuilder
-            .WithId(_microserviceName)
-            .WithTitle(_microserviceName)
-            .WithVersion(Version)
-            .WithDefaultContentType(MediaTypeNames.Application.Json);
-
-        foreach (var messageType in types.Types)
-        {
-            _documentBuilder.UseChannel(messageType.Name, channel =>
+            var channel = new ChannelItem();
+            asyncApiSchema.Channels[messageType.Name] = channel;
+            channel.Servers.Add(ServerName);
+            if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand)))
             {
-                if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand)))
-                {
-                    ConfigureOperation(channel, messageType, OperationType.Subscribe, "Command");
-                }
-                if (messageType.IsSubtypeOrImplementationOf(typeof(IOutgoingEvent)))
-                {
-                    ConfigureOperation(channel, messageType, OperationType.Publish, "Event");
-                }
-            });
+                channel.Subscribe = ConfigureOperation(messageType, "Command");
+            }
+            if (messageType.IsSubtypeOrImplementationOf(typeof(IOutgoingEvent)))
+            {
+                channel.Publish = ConfigureOperation(messageType, "Event");
+            }
         }
-        _documentBuilder.UseServer($"Rebus @ {_address}", server =>
+
+        var filterContext = new DocumentFilterContext(asyncApiTypes, schemaResolver, generator);
+        foreach (var filterType in options.DocumentFilters)
         {
-            server
-                .WithUrl(new Uri("https://github.com/rebus-org/Rebus"))
-                .WithProtocol("https")
-                .WithDescription($"Use \"{_address}\" as the name of the routing destination " +
-                    "for commands directed to this service, within Rebus router.");
-        });
-        options?.DefaultConfiguration?.Invoke(_documentBuilder);
-        yield return _documentBuilder.Build();
+            var filter = (IDocumentFilter)serviceProvider.GetRequiredService(filterType);
+            filter?.Apply(asyncApiSchema, filterContext);
+        }
+
+        return asyncApiSchema;
     }
 
-    private void ConfigureOperation(
-        IChannelDefinitionBuilder builder,
+    private Operation ConfigureOperation(
         Type messageType,
-        OperationType operationType,
-        string messageClassifier)
-    {
-        builder.DefineOperation(operationType, operation =>
+        string messageClassifier) => new()
         {
-            operation
-                .WithOperationId(messageType.Name)
-                .UseMessage(message => message
-                    .WithName(messageType.Name)
-                    .WithTitle(messageType.Name.ToCamelCase().SplitCamelCase())
-                    .WithPayloadSchema(JsonSchema.FromType(messageType, _jsonSchemaGeneratorSettings)))
-                .TagWith(tag => tag.WithName(messageClassifier));
-        });
-    }
+            OperationId = messageType.Name,
+            Traits = new List<IOperationTrait>() { new OperationTrait { Summary = messageClassifier } },
+            Message = ConfigureMessage(messageType)
+        };
+
+    private static string SplitPascalCase(string pascalString) => Regex.Replace(pascalString, "(?!^)([A-Z])", " $1");
+
+    private Message ConfigureMessage(Type messageType) => new()
+    {
+        Name = messageType.Name,
+        Title = SplitPascalCase(messageType.Name),
+        Payload = JsonSchema.FromType(messageType, _jsonSchemaGeneratorSettings)
+    };
+
+    private Server ConfigureServer() => new(url: "https://github.com/rebus-org/Rebus", protocol: "https")
+    {
+        Description = $"Use \"{_address}\" as the name of the routing destination " +
+            "for commands directed to this service, within Rebus router."
+    };
 }
