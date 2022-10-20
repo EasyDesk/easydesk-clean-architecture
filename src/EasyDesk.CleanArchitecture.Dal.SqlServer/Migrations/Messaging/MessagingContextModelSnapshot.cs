@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.Migrations;
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Messaging;
 
 [DbContext(typeof(MessagingContext))]
 partial class MessagingContextModelSnapshot : ModelSnapshot
@@ -18,7 +18,7 @@ partial class MessagingContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("messaging")
-            .HasAnnotation("ProductVersion", "6.0.2")
+            .HasAnnotation("ProductVersion", "6.0.10")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);

@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Authors>Francesco Dente, Luca Deluigi</Authors>
+    <Company>EasyDesk</Company>
+    <Description>Utilities for the SqlServer data access layer of the clean architecture as seen by EasyDesk.</Description>
+    <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFrameworkCore.SqlServer.NodaTime" Version="6.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyDesk.CleanArchitecture.Dal.EfCore\EasyDesk.CleanArchitecture.Dal.EfCore.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RootFolder>..\..</RootFolder>
+  </PropertyGroup>
+
+  <Import Project="$(RootFolder)\Packaging.targets" />
+
+</Project>

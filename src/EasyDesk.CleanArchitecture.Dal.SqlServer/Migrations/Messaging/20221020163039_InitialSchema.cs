@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.Migrations;
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Messaging;
 
 public partial class InitialSchema : Migration
 {

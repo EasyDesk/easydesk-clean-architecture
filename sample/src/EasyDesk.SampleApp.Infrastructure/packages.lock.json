@@ -33,15 +33,6 @@
         "resolved": "7.2.0",
         "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
       },
-      "EntityFrameworkCore.SqlServer.NodaTime": {
-        "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "AYtHrM/NNqXb0/VN8KJ0Ga+hULu2MFJJD8xFMTz4jbRbELYVp07Y1JdfSZVRjI0UanC87fxSsfGrmJXXtEvBmA==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.SqlServer": "5.0.1",
-          "NodaTime": "3.0.1"
-        }
-      },
       "FluentValidation": {
         "type": "Transitive",
         "resolved": "10.3.6",
@@ -102,11 +93,11 @@
       },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "hoZtatDA6zL/+gMXXkG3UNsF6iWguC9OkJeYUepqyPEF2mjFajga+DxS4H/UODs7HWo9oNCnhi2Q/BE9T0lg2g==",
+        "resolved": "6.0.7",
+        "contentHash": "9BsvGSpTzxvqnxH19wLBFivK5TzWmsHZQc/1cQ4b2e+k85aIG9R4FYewQLHZdPrAxNQImXjTyW5nRI3s1rpt6A==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "6.0.2",
-          "Microsoft.EntityFrameworkCore.Analyzers": "6.0.2",
+          "Microsoft.EntityFrameworkCore.Abstractions": "6.0.7",
+          "Microsoft.EntityFrameworkCore.Analyzers": "6.0.7",
           "Microsoft.Extensions.Caching.Memory": "6.0.1",
           "Microsoft.Extensions.DependencyInjection": "6.0.0",
           "Microsoft.Extensions.Logging": "6.0.0",
@@ -116,30 +107,21 @@
       },
       "Microsoft.EntityFrameworkCore.Abstractions": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "71hgKvRpMebTp9bKZB86w3uRXQAJzTeksZ4EyO1/OKj/AoL8/8IU31kHHcIFAfX/D0uefl4rO6jWgh3OaR41pQ=="
+        "resolved": "6.0.7",
+        "contentHash": "bjU0CkTqldgpVPTSj9M+R/3EaTz+u0jMeQMIC91YdGYDbpX/tAN5UYx+Ihzk4AtP8gmhburQUgMTdnmCE9c5sA=="
       },
       "Microsoft.EntityFrameworkCore.Analyzers": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "pHUMjXPeWqyZS2OfkQsDC1Qdk30JVcPNDUxEVhOTDAJvyUN4EuBFYbnniQ9RLHbWAw8IkEwVAAo6v/ICmT4/dw=="
+        "resolved": "6.0.7",
+        "contentHash": "VAOrGma8mRspUb/9quwIr21UZVqfWOcRQqhcYNkHBUD7woenwFTBvntiC9h2Ebtvj/BrRfezqjaHpWVvPSg4dw=="
       },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "yZARjY5P+jtCpoAogk5mOfdplATHow5gQugMje6F3cZFPKtF1UtJLGRyxVsNX4hCEWbSq/W+1AbXLCMQ1jOiSw==",
+        "resolved": "6.0.7",
+        "contentHash": "0uo4fPDHutMbd9AJJEKl2q/2fYuFGA8tEBE2fQeQFaNDd+F/aUjaXc1FUD84J7Wcax8WP40rZo1E0u9A0yPPZw==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "6.0.2",
+          "Microsoft.EntityFrameworkCore": "6.0.7",
           "Microsoft.Extensions.Configuration.Abstractions": "6.0.0"
-        }
-      },
-      "Microsoft.EntityFrameworkCore.SqlServer": {
-        "type": "Transitive",
-        "resolved": "6.0.2",
-        "contentHash": "ghYelO6ipPSnW06rmj4HDhvOZX1of3tNZoDuc4RUC/yT9vdg24Fq0iamJiQSFYHskePkHvhABdrTVuyxPVGN7w==",
-        "dependencies": {
-          "Microsoft.Data.SqlClient": "2.1.4",
-          "Microsoft.EntityFrameworkCore.Relational": "6.0.2"
         }
       },
       "Microsoft.Extensions.Caching.Abstractions": {
@@ -411,6 +393,43 @@
         "dependencies": {
           "Newtonsoft.Json": "12.0.1",
           "NodaTime": "[3.0.0, 4.0.0)"
+        }
+      },
+      "Npgsql": {
+        "type": "Transitive",
+        "resolved": "6.0.7",
+        "contentHash": "HhD5q/VUJY++tCzc0eCrhtsxmUdP7NxNhUMOdYW6sqpC6NRlFLvUDf5JyRj0gOGkXe3Tn49toaisgvLqlzQ2JQ==",
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "6.0.0"
+        }
+      },
+      "Npgsql.EntityFrameworkCore.PostgreSQL": {
+        "type": "Transitive",
+        "resolved": "6.0.7",
+        "contentHash": "kqwX2V9Znw/QjLDL6SyYEHiy9toMuqMTyCJ4ebQu65FpV8pElYKpOlBbxoyr6YNgqieXEMmpnE0TIoTKsVdeLw==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "6.0.7",
+          "Microsoft.EntityFrameworkCore.Abstractions": "6.0.7",
+          "Microsoft.EntityFrameworkCore.Relational": "6.0.7",
+          "Npgsql": "6.0.7"
+        }
+      },
+      "Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime": {
+        "type": "Transitive",
+        "resolved": "6.0.7",
+        "contentHash": "TXPZW9NICndZWF73uZMGueVf6o56tHDVyXUs1dBhwkK1u6muHXclISD0LGgiiGwT5AoTFnGn9dQJEpHa1aizgw==",
+        "dependencies": {
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "6.0.7",
+          "Npgsql.NodaTime": "6.0.7"
+        }
+      },
+      "Npgsql.NodaTime": {
+        "type": "Transitive",
+        "resolved": "6.0.7",
+        "contentHash": "DZHvGPBIIeKj8RIydgyk7si+bOL09BQhFxA/Mft6QaFlYobM6yqKYjd8LxV/6Q9JnDvHmFcdUBX8ecW9albxyA==",
+        "dependencies": {
+          "NodaTime": "3.0.9",
+          "Npgsql": "6.0.7"
         }
       },
       "Rebus": {
@@ -1419,9 +1438,16 @@
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
           "EasyDesk.Tools": "[7.2.0, )",
-          "EntityFrameworkCore.SqlServer.NodaTime": "[5.0.1, )",
-          "Microsoft.EntityFrameworkCore.Relational": "[6.0.2, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[6.0.2, )"
+          "Microsoft.Data.SqlClient": "[2.1.4, )",
+          "Microsoft.EntityFrameworkCore.Relational": "[6.0.2, )"
+        }
+      },
+      "easydesk.cleanarchitecture.dal.postgresql": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL": "[6.0.7, )",
+          "Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime": "[6.0.7, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {

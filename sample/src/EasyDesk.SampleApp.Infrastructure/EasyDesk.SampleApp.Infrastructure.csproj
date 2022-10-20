@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Dal.EfCore\EasyDesk.CleanArchitecture.Dal.EfCore.csproj" />
+    <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Dal.PostgreSql\EasyDesk.CleanArchitecture.Dal.PostgreSql.csproj" />
     <ProjectReference Include="..\..\..\src\EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
   </ItemGroup>

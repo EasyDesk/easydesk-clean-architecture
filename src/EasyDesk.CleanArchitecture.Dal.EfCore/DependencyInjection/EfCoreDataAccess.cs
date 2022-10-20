@@ -21,17 +21,17 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
 {
     private readonly string _connectionString;
     private readonly bool _applyMigrations;
-    private readonly Action<DbContextOptionsBuilder> _addtionalOptions;
+    private readonly Action<DbContextConfiguration> _additionalConfiguration;
     private readonly List<Type> _registeredDbContextTypes = new();
 
     public EfCoreDataAccess(
         string connectionString,
-        bool applyMigrations = false,
-        Action<DbContextOptionsBuilder> addtionalOptions = null)
+        bool applyMigrations,
+        Action<DbContextConfiguration> configure)
     {
         _connectionString = connectionString;
         _applyMigrations = applyMigrations;
-        _addtionalOptions = addtionalOptions;
+        _additionalConfiguration = configure;
     }
 
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
@@ -76,9 +76,15 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
     {
         services.AddDbContext<C>((provider, options) =>
         {
-            ConfigureDbContextOptions(provider, options, schema);
             configure?.Invoke(provider, options);
-            _addtionalOptions?.Invoke(options);
+
+            var configuration = new DbContextConfiguration(
+                typeof(C),
+                provider.GetRequiredService<SqlConnection>(),
+                options,
+                schema);
+
+            _additionalConfiguration?.Invoke(configuration);
         });
 
         if (_registeredDbContextTypes.IsEmpty() && _applyMigrations)
@@ -89,15 +95,6 @@ public class EfCoreDataAccess<T> : IDataAccessImplementation
         }
         _registeredDbContextTypes.Add(typeof(C));
     }
-
-    private void ConfigureDbContextOptions(IServiceProvider provider, DbContextOptionsBuilder options, string schema)
-    {
-        var connection = provider.GetRequiredService<SqlConnection>();
-        options.UseSqlServer(connection, sqlServerOptions =>
-        {
-            sqlServerOptions.MigrationsHistoryTable(tableName: "__EFMigrationsHistory", schema);
-        });
-    }
 }
 
 public static class EfCoreDataAccessExtensions
@@ -105,9 +102,9 @@ public static class EfCoreDataAccessExtensions
     public static AppBuilder AddEfCoreDataAccess<T>(
         this AppBuilder builder,
         string connectionString,
-        bool applyMigrations = false,
-        Action<DbContextOptionsBuilder> addtionalOptions = null) where T : DomainContext
+        bool applyMigrations,
+        Action<DbContextConfiguration> configure) where T : DomainContext
     {
-        return builder.AddDataAccess(new EfCoreDataAccess<T>(connectionString, applyMigrations, addtionalOptions));
+        return builder.AddDataAccess(new EfCoreDataAccess<T>(connectionString, applyMigrations, configure));
     }
 }

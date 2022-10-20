@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Migrations;
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Authorization;
 
 public partial class InitialSchema : Migration
 {
@@ -16,9 +16,8 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                RoleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                PermissionName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
             },
             constraints: table =>
             {
@@ -30,26 +29,13 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                RoleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                UserId = table.Column<string>(type: "text", nullable: false)
             },
             constraints: table =>
             {
                 table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
             });
-
-        migrationBuilder.CreateIndex(
-            name: "IX_RolePermissions_TenantId",
-            schema: "auth",
-            table: "RolePermissions",
-            column: "TenantId");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_UserRoles_TenantId",
-            schema: "auth",
-            table: "UserRoles",
-            column: "TenantId");
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)

@@ -21,7 +21,7 @@ namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations
                 .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            ////SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
                 {

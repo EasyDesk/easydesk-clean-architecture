@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
+using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
@@ -21,7 +22,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 var appDescription = builder.ConfigureForCleanArchitecture(config => config
     .WithServiceName("EasyDesk.Sample.App")
-    .AddEfCoreDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"), applyMigrations: true)
+    .AddEfCoreDataAccess<SampleAppContext>(
+        builder.Configuration.RequireConnectionString("MainDb"),
+        applyMigrations: true,
+        configure: options => options.UsePostgreSql())
     .AddAuthentication(options => options.AddTestAuth("Test"))
     .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
     .AddMultitenancy()
