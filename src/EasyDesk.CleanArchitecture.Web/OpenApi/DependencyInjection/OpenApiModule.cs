@@ -33,7 +33,6 @@ public class OpenApiModule : AppModule
             SetupSwaggerDocs(app, options);
             AddNodaTimeSupport(app, options);
             AddAuthenticationSchemesSupport(app, options);
-
             _configure?.Invoke(options);
         });
     }
@@ -115,12 +114,16 @@ public static class SwaggerModuleExtensions
     {
         var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
 
-        app.UseSwagger();
+        app.UseSwagger(c =>
+        {
+            c.RouteTemplate = "/openapi/swagger/{documentname}/swagger.json";
+        });
         app.UseSwaggerUI(c =>
         {
             swaggerOptions.SwaggerGeneratorOptions.SwaggerDocs.ForEach(doc =>
             {
-                c.SwaggerEndpoint($"/swagger/{doc.Key}/swagger.json", doc.Value.Title);
+                c.SwaggerEndpoint($"/openapi/swagger/{doc.Key}/swagger.json", doc.Value.Title);
+                c.RoutePrefix = "openapi";
             });
         });
     }
