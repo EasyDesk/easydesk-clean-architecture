@@ -44,7 +44,20 @@ public class KnownTypesDocumentGenerator : IDocumentGenerator
         var schemaResolver = new AsyncApiSchemaResolver(asyncApiSchema, options.SchemaOptions);
 
         var generator = new JsonSchemaGenerator(options.SchemaOptions);
+        ConfigureDocument(asyncApiSchema, asyncApiTypes);
 
+        var filterContext = new DocumentFilterContext(asyncApiTypes, schemaResolver, generator);
+        foreach (var filterType in options.DocumentFilters)
+        {
+            var filter = (IDocumentFilter)serviceProvider.GetRequiredService(filterType);
+            filter?.Apply(asyncApiSchema, filterContext);
+        }
+
+        return asyncApiSchema;
+    }
+
+    private void ConfigureDocument(AsyncApiDocument asyncApiSchema, TypeInfo[] asyncApiTypes)
+    {
         asyncApiSchema.DefaultContentType = MediaTypeNames.Application.Json;
         asyncApiSchema.Info = new Info(_microserviceName, Version);
 
@@ -64,15 +77,6 @@ public class KnownTypesDocumentGenerator : IDocumentGenerator
                 channel.Publish = ConfigureOperation(messageType, "Event");
             }
         }
-
-        var filterContext = new DocumentFilterContext(asyncApiTypes, schemaResolver, generator);
-        foreach (var filterType in options.DocumentFilters)
-        {
-            var filter = (IDocumentFilter)serviceProvider.GetRequiredService(filterType);
-            filter?.Apply(asyncApiSchema, filterContext);
-        }
-
-        return asyncApiSchema;
     }
 
     private Operation ConfigureOperation(
