@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
-using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
@@ -21,7 +20,6 @@ public class KnownTypesDocumentGenerator : IDocumentGenerator
     public const string Version = "1.0.0";
     private readonly string _microserviceName;
     private readonly string _address;
-    private readonly JsonSchemaGeneratorSettings _jsonSchemaGeneratorSettings;
 
     public KnownTypesDocumentGenerator(
         string microserviceName,
@@ -29,22 +27,19 @@ public class KnownTypesDocumentGenerator : IDocumentGenerator
     {
         _microserviceName = microserviceName;
         _address = address;
-        _jsonSchemaGeneratorSettings = new JsonSchemaGeneratorSettings
-        {
-            SerializerSettings = JsonDefaults.DefaultSerializerSettings()
-        };
     }
 
     public string ServerName => $"Rebus @ {_address}";
 
     public AsyncApiDocument GenerateDocument(TypeInfo[] asyncApiTypes, AsyncApiOptions options, AsyncApiDocument prototype, IServiceProvider serviceProvider)
     {
+        options.SchemaOptions.DefaultReferenceTypeNullHandling = ReferenceTypeNullHandling.NotNull;
         var asyncApiSchema = prototype.Clone();
 
         var schemaResolver = new AsyncApiSchemaResolver(asyncApiSchema, options.SchemaOptions);
 
         var generator = new JsonSchemaGenerator(options.SchemaOptions);
-        ConfigureDocument(asyncApiSchema, asyncApiTypes);
+        ConfigureDocument(asyncApiSchema, asyncApiTypes, options.SchemaOptions);
 
         var filterContext = new DocumentFilterContext(asyncApiTypes, schemaResolver, generator);
         foreach (var filterType in options.DocumentFilters)
@@ -56,7 +51,7 @@ public class KnownTypesDocumentGenerator : IDocumentGenerator
         return asyncApiSchema;
     }
 
-    private void ConfigureDocument(AsyncApiDocument asyncApiSchema, TypeInfo[] asyncApiTypes)
+    private void ConfigureDocument(AsyncApiDocument asyncApiSchema, TypeInfo[] asyncApiTypes, AsyncApiSchemaOptions schemaOptions)
     {
         asyncApiSchema.DefaultContentType = MediaTypeNames.Application.Json;
         asyncApiSchema.Info = new Info(_microserviceName, Version);
@@ -70,31 +65,32 @@ public class KnownTypesDocumentGenerator : IDocumentGenerator
             channel.Servers.Add(ServerName);
             if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand)))
             {
-                channel.Subscribe = ConfigureOperation(messageType, "Command");
+                channel.Subscribe = ConfigureOperation(messageType, "Command", schemaOptions);
             }
             if (messageType.IsSubtypeOrImplementationOf(typeof(IOutgoingEvent)))
             {
-                channel.Publish = ConfigureOperation(messageType, "Event");
+                channel.Publish = ConfigureOperation(messageType, "Event", schemaOptions);
             }
         }
     }
 
     private Operation ConfigureOperation(
         Type messageType,
-        string messageClassifier) => new()
+        string messageClassifier,
+        AsyncApiSchemaOptions schemaOptions) => new()
         {
             OperationId = messageType.Name,
             Traits = new List<IOperationTrait>() { new OperationTrait { Summary = messageClassifier } },
-            Message = ConfigureMessage(messageType)
+            Message = ConfigureMessage(messageType, schemaOptions)
         };
 
     private static string SplitPascalCase(string pascalString) => Regex.Replace(pascalString, "(?!^)([A-Z])", " $1");
 
-    private Message ConfigureMessage(Type messageType) => new()
+    private Message ConfigureMessage(Type messageType, AsyncApiSchemaOptions schemaOptions) => new()
     {
         Name = messageType.Name,
         Title = SplitPascalCase(messageType.Name),
-        Payload = JsonSchema.FromType(messageType, _jsonSchemaGeneratorSettings)
+        Payload = JsonSchema.FromType(messageType, schemaOptions)
     };
 
     private Server ConfigureServer() => new(url: "https://github.com/rebus-org/Rebus", protocol: "https")
