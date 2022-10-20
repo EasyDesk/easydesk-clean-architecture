@@ -22,6 +22,7 @@ jobs:
         src/EasyDesk.CleanArchitecture.Dal.EfCore
         src/EasyDesk.CleanArchitecture.Web
         src/EasyDesk.CleanArchitecture.Testing
+        src/EasyDesk.CleanArchitecture.DependencyInjection
       OUTPUT_DIR: publish
     outputs:
       version: ${{ steps.semver.outputs.version }}
