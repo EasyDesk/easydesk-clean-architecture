@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess;
 
-public class SampleAppContext : DomainContext
+public class SampleAppContext : DomainContext<SampleAppContext>
 {
     public DbSet<PersonModel> People { get; set; }
 

@@ -1,16 +1,15 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
-public class EfCoreUnitOfWork : UnitOfWorkBase<IDbContextTransaction>
+public class EfCoreUnitOfWork : UnitOfWorkBase<DbTransaction>
 {
     private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
 
-    public EfCoreUnitOfWork(DbContext context, IDbContextTransaction transaction) : base(transaction)
+    public EfCoreUnitOfWork(DbTransaction transaction) : base(transaction)
     {
-        _registeredDbContexts.Add(context);
     }
 
     protected override async Task CommitTransaction()
@@ -26,7 +25,7 @@ public class EfCoreUnitOfWork : UnitOfWorkBase<IDbContextTransaction>
         {
             return;
         }
-        await dbContext.Database.UseTransactionAsync(Transaction.GetDbTransaction());
+        await dbContext.Database.UseTransactionAsync(Transaction);
         _registeredDbContexts.Add(dbContext);
     }
 }

@@ -17,12 +17,13 @@ using System.Data.Common;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
 public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementation
-    where T : DomainContext
+    where T : DomainContext<T>
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
     private const string MigrationsTableName = "__EFMigrationsHistory";
     private readonly EfCoreDataAccessOptions<T, TBuilder, TExtension> _options;
+    private readonly ISet<Type> _registeredDbContextTypes = new HashSet<Type>();
 
     public EfCoreDataAccess(EfCoreDataAccessOptions<T, TBuilder, TExtension> options)
     {
@@ -32,14 +33,17 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         services.AddScoped(_ => CreateDbConnection(_options.ConnectionString));
-        AddDbContext<T>(services, DomainContext.SchemaName);
-        services.AddScoped(provider => new EfCoreUnitOfWorkProvider(provider.GetRequiredService<T>()));
+        AddDbContext<T>(services, DomainContext<T>.SchemaName);
+        services.AddScoped(provider => new EfCoreUnitOfWorkProvider(provider.GetRequiredService<DbConnection>()));
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
         services.AddScoped<TransactionEnlistingOnCommandInterceptor>();
         services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
+
         if (_options.ShouldApplyMigrations)
         {
-            services.AddHostedService<MigrationsHostedService>();
+            services.AddHostedService(p => new MigrationsHostedService(
+                p.GetRequiredService<IServiceScopeFactory>(),
+                _registeredDbContextTypes));
         }
     }
 
@@ -50,7 +54,6 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
         AddDbContext<MessagingContext>(
             services,
             MessagingContext.SchemaName,
-            ConfigureAsSecondaryDbContext,
             ConfigureMigrationsAssembly);
         services.AddScoped<IOutbox, EfCoreOutbox>();
         services.AddScoped<IInbox, EfCoreInbox>();
@@ -67,19 +70,10 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
         AddDbContext<AuthorizationContext>(
             services,
             AuthorizationContext.SchemaName,
-            ConfigureAsSecondaryDbContext,
             ConfigureMigrationsAssembly);
         services.AddScoped<EfCoreAuthorizationManager>();
         services.AddScoped<IUserRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
         services.AddScoped<IUserRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
-    }
-
-    private void ConfigureAsSecondaryDbContext(
-        IServiceProvider provider,
-        DbContextOptionsBuilder options)
-    {
-        options.AddInterceptors(provider.GetRequiredService<TransactionEnlistingOnCommandInterceptor>());
-        options.AddInterceptors(provider.GetRequiredService<DbContextEnlistingOnSaveChangesInterceptor>());
     }
 
     private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)
@@ -90,31 +84,27 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
     private void AddDbContext<C>(
         IServiceCollection services,
         string schema,
-        Action<IServiceProvider, DbContextOptionsBuilder> configure = null,
-        Action<IServiceProvider, TBuilder> configureRelational = null)
+        Action<IServiceProvider, TBuilder> configure = null)
         where C : DbContext
     {
         services.AddDbContext<C>((provider, options) =>
         {
             var connection = provider.GetRequiredService<DbConnection>();
-            ConfigureDbProvider<C>(options, connection, relationalOptions =>
+            ConfigureDbProvider(options, connection, relationalOptions =>
             {
                 relationalOptions.MigrationsHistoryTable(MigrationsTableName, schema);
-                configureRelational?.Invoke(provider, relationalOptions);
+                configure?.Invoke(provider, relationalOptions);
                 _options.ApplyProviderOptions(relationalOptions);
             });
-            configure?.Invoke(provider, options);
+            options.AddInterceptors(provider.GetRequiredService<TransactionEnlistingOnCommandInterceptor>());
+            options.AddInterceptors(provider.GetRequiredService<DbContextEnlistingOnSaveChangesInterceptor>());
             _options.ApplyDbContextOptions(options);
         });
 
-        services.AddScoped<DbContext>(p => p.GetRequiredService<C>());
+        _registeredDbContextTypes.Add(typeof(C));
     }
 
-    protected abstract void ConfigureDbProvider<C>(
-        DbContextOptionsBuilder options,
-        DbConnection connection,
-        Action<TBuilder> configure)
-        where C : DbContext;
+    protected abstract void ConfigureDbProvider(DbContextOptionsBuilder options, DbConnection connection, Action<TBuilder> configure);
 }
 
 public static class EfCoreDataAccessExtensions
@@ -124,7 +114,7 @@ public static class EfCoreDataAccessExtensions
         string connectionString,
         Func<EfCoreDataAccessOptions<T, TBuilder, TExtension>, EfCoreDataAccess<T, TBuilder, TExtension>> implementation,
         Action<EfCoreDataAccessOptions<T, TBuilder, TExtension>> configure = null)
-        where T : DomainContext
+        where T : DomainContext<T>
         where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
         where TExtension : RelationalOptionsExtension, new()
     {

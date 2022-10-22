@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 
-public abstract class MultitenantDbContext : DbContext
+public abstract class MultitenantDbContext<T> : DbContext
+    where T : MultitenantDbContext<T>
 {
     private readonly ITenantProvider _tenantProvider;
 
-    public MultitenantDbContext(DbContextOptions options) : base(options)
+    public MultitenantDbContext(DbContextOptions<T> options) : base(options)
     {
         try
         {
@@ -41,10 +42,10 @@ public abstract class MultitenantDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public void ConfigureEntityWithinTenant<T>(ModelBuilder modelBuilder)
-        where T : class, IMultitenantEntity
+    public void ConfigureEntityWithinTenant<E>(ModelBuilder modelBuilder)
+        where E : class, IMultitenantEntity
     {
-        var entityBuilder = modelBuilder.Entity<T>();
+        var entityBuilder = modelBuilder.Entity<E>();
 
         entityBuilder.HasIndex(x => x.TenantId);
 

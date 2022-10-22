@@ -3,11 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 
-public abstract class DomainContext : MultitenantDbContext
+public abstract class DomainContext<T> : MultitenantDbContext<T>
+    where T : DomainContext<T>
 {
     public const string SchemaName = "domain";
 
-    protected DomainContext(DbContextOptions options) : base(options)
+    protected DomainContext(DbContextOptions<T> options) : base(options)
     {
     }
 

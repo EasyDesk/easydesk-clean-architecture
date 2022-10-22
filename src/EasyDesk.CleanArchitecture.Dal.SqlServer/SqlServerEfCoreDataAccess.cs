@@ -11,7 +11,7 @@ using Extension = Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Interna
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer;
 
 public class SqlServerEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extension>
-    where T : DomainContext
+    where T : DomainContext<T>
 {
     public SqlServerEfCoreDataAccess(EfCoreDataAccessOptions<T, Builder, Extension> options)
         : base(options)
@@ -21,7 +21,7 @@ public class SqlServerEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extensi
     protected override DbConnection CreateDbConnection(string connectionString) =>
         new SqlConnection(connectionString);
 
-    protected override void ConfigureDbProvider<C>(
+    protected override void ConfigureDbProvider(
         DbContextOptionsBuilder options,
         DbConnection connection,
         Action<Builder> configure)
@@ -40,7 +40,7 @@ public static class SqlServerExtensions
         this AppBuilder builder,
         string connectionString,
         Action<EfCoreDataAccessOptions<T, Builder, Extension>> configure)
-        where T : DomainContext
+        where T : DomainContext<T>
     {
 #pragma warning disable EF1001
         return builder.AddEfCoreDataAccess(

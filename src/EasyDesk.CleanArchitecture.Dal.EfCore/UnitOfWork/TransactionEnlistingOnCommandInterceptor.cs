@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Storage;
 using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
@@ -17,7 +16,7 @@ public class TransactionEnlistingOnCommandInterceptor : DbCommandInterceptor
     {
         _unitOfWorkProvider.CurrentTransaction.IfPresent(t =>
         {
-            result.Transaction = t.GetDbTransaction();
+            result.Transaction = t;
         });
         return result;
     }

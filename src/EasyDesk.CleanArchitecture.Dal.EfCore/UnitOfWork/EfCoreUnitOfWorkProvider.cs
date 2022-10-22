@@ -1,24 +1,29 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
+using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
 public class EfCoreUnitOfWorkProvider : UnitOfWorkProviderBase<EfCoreUnitOfWork>
 {
-    private readonly DbContext _context;
+    private readonly DbConnection _connection;
 
-    public EfCoreUnitOfWorkProvider(DbContext context)
+    public EfCoreUnitOfWorkProvider(DbConnection connection)
     {
-        _context = context;
+        _connection = connection;
     }
 
-    public Option<IDbContextTransaction> CurrentTransaction => UnitOfWork.Map(uow => uow.Transaction);
+    public Option<DbTransaction> CurrentTransaction => UnitOfWork.Map(uow => uow.Transaction);
 
     protected override async Task<EfCoreUnitOfWork> CreateUnitOfWork()
     {
-        var transaction = await _context.Database.BeginTransactionAsync();
-        var unitOfWork = new EfCoreUnitOfWork(_context, transaction);
+        if (_connection.State is ConnectionState.Closed)
+        {
+            await _connection.OpenAsync();
+        }
+        var transaction = await _connection.BeginTransactionAsync();
+        var unitOfWork = new EfCoreUnitOfWork(transaction);
         return unitOfWork;
     }
 

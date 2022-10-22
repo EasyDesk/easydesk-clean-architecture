@@ -7,22 +7,22 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 public class MigrationsHostedService : IHostedService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly IEnumerable<Type> _dbContextTypes;
 
-    public MigrationsHostedService(IServiceScopeFactory serviceScopeFactory)
+    public MigrationsHostedService(IServiceScopeFactory serviceScopeFactory, IEnumerable<Type> dbContextTypes)
     {
         _serviceScopeFactory = serviceScopeFactory;
+        _dbContextTypes = dbContextTypes;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using (var scope = _serviceScopeFactory.CreateScope())
+        using var scope = _serviceScopeFactory.CreateScope();
+        foreach (var dbContextType in _dbContextTypes)
         {
-            foreach (var dbContext in scope.ServiceProvider.GetServices<DbContext>())
-            {
-                dbContext.Database.Migrate();
-            }
+            var dbContext = (DbContext)scope.ServiceProvider.GetService(dbContextType);
+            await dbContext.Database.MigrateAsync();
         }
-        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
