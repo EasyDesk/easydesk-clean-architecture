@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyI
 using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
-using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web;
@@ -21,11 +20,11 @@ using Rebus.Routing.TypeBased;
 var builder = WebApplication.CreateBuilder(args);
 
 var appDescription = builder.ConfigureForCleanArchitecture(config => config
+    .AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"), options =>
+    {
+        options.ApplyMigrations();
+    })
     .WithServiceName("EasyDesk.Sample.App")
-    .AddEfCoreDataAccess<SampleAppContext>(
-        builder.Configuration.RequireConnectionString("MainDb"),
-        applyMigrations: true,
-        configure: options => options.UsePostgreSql())
     .AddAuthentication(options => options.AddTestAuth("Test"))
     .AddAuthorization(options => options.UseRoleBasedPermissions().WithDataAccessPermissions())
     .AddMultitenancy()

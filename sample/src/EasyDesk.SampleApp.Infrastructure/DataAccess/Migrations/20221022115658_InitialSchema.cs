@@ -16,10 +16,10 @@ public partial class InitialSchema : Migration
             schema: "domain",
             columns: table => new
             {
-                Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Married = table.Column<bool>(type: "bit", nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                Id = table.Column<Guid>(type: "uuid", nullable: false),
+                Name = table.Column<string>(type: "text", nullable: false),
+                Married = table.Column<bool>(type: "boolean", nullable: false),
+                TenantId = table.Column<string>(type: "text", nullable: true)
             },
             constraints: table =>
             {

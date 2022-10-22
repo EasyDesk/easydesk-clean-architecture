@@ -6,6 +6,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+    volumes:
+      - rabbitmqvolume:/var/lib/rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -17,12 +19,22 @@ services:
       MSSQL_PID: Developer
       SA_PASSWORD: samplepass-123
     volumes:
-      - samplesqlvolume:/var/opt/mssql
+      - sqlservervolume:/var/opt/mssql
     ports:
       - "5678:1433"
 
+  postgres:
+    image: postgres:alpine3.16
+    environment:
+      POSTGRES_USER: sample
+      POSTGRES_PASSWORD: samplepass-123
+      POSTGRES_DB: sampledb
+    volumes:
+      - postgresvolume:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
 volumes:
-  samplesqlvolume:
-    
-networks:
-  samplenet:
+  rabbitmqvolume:
+  sqlservervolume:
+  postgresvolume:
