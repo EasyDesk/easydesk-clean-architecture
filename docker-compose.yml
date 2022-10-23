@@ -12,17 +12,6 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-CU14-ubuntu-20.04
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_PID: Developer
-      SA_PASSWORD: samplepass-123
-    volumes:
-      - sqlservervolume:/var/opt/mssql
-    ports:
-      - "5678:1433"
-
   postgres:
     image: postgres:alpine3.16
     environment:
@@ -36,5 +25,4 @@ services:
 
 volumes:
   rabbitmqvolume:
-  sqlservervolume:
   postgresvolume:
