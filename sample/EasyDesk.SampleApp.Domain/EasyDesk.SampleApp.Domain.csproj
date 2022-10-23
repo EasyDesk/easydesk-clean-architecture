@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\EasyDesk.CleanArchitecture.Domain\EasyDesk.CleanArchitecture.Domain.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RootFolder>..\..</RootFolder>
+  </PropertyGroup>
+
+</Project>
