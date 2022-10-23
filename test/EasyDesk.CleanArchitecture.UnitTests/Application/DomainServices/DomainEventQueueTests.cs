@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Testing;
+using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
 using NSubstitute;
 using Xunit;
 

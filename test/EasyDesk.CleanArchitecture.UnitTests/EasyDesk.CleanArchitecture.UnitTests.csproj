@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EasyDesk.CleanArchitecture.Testing\EasyDesk.CleanArchitecture.Testing.csproj" />
+    <ProjectReference Include="..\..\src\EasyDesk.CleanArchitecture.Testing.Unit\EasyDesk.CleanArchitecture.Testing.Unit.csproj" />
     <ProjectReference Include="..\..\src\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
   </ItemGroup>
 

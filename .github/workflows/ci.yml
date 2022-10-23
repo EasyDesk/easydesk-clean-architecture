@@ -23,8 +23,9 @@ jobs:
         src/EasyDesk.CleanArchitecture.Dal.SqlServer
         src/EasyDesk.CleanArchitecture.Dal.PostgreSql
         src/EasyDesk.CleanArchitecture.Web
-        src/EasyDesk.CleanArchitecture.Testing
         src/EasyDesk.CleanArchitecture.DependencyInjection
+        src/EasyDesk.CleanArchitecture.Testing.Unit
+        src/EasyDesk.CleanArchitecture.Testing.Integration
       OUTPUT_DIR: publish
     outputs:
       version: ${{ steps.semver.outputs.version }}

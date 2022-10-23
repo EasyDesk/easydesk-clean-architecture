@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Authors>Francesco Dente, Luca Deluigi</Authors>
+    <Company>EasyDesk</Company>
+    <Description>Utilities for unit testing an application built using the clean architecture packages.</Description>
+    <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EasyDesk.Testing" Version="0.4.0" />
+    <PackageReference Include="NSubstitute" Version="4.3.0" />
+    <PackageReference Include="Shouldly" Version="4.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyDesk.CleanArchitecture.Application\EasyDesk.CleanArchitecture.Application.csproj" />
+    <ProjectReference Include="..\EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RootFolder>..\..</RootFolder>
+  </PropertyGroup>
+
+  <Import Project="$(RootFolder)\Packaging.targets" />
+
+</Project>

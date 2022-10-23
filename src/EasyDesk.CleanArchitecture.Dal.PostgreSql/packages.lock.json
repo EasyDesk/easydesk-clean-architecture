@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
+      "EasyDesk.Tools": {
+        "type": "Direct",
+        "requested": "[7.2.0, )",
+        "resolved": "7.2.0",
+        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
+      },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
         "requested": "[1.0.0, )",
@@ -59,11 +65,6 @@
           "AutoMapper": "11.0.0",
           "Microsoft.Extensions.Options": "6.0.0"
         }
-      },
-      "EasyDesk.Tools": {
-        "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
       },
       "FluentValidation": {
         "type": "Transitive",

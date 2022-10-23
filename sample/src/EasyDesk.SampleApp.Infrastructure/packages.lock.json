@@ -2,6 +2,12 @@
   "version": 1,
   "dependencies": {
     "net6.0": {
+      "EasyDesk.Tools": {
+        "type": "Direct",
+        "requested": "[7.2.0, )",
+        "resolved": "7.2.0",
+        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
+      },
       "StyleCop.Analyzers": {
         "type": "Direct",
         "requested": "[1.2.0-beta.435, )",
@@ -27,11 +33,6 @@
           "AutoMapper": "11.0.0",
           "Microsoft.Extensions.Options": "6.0.0"
         }
-      },
-      "EasyDesk.Tools": {
-        "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -1446,6 +1447,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
+          "EasyDesk.Tools": "[7.2.0, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[6.0.7, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime": "[6.0.7, )"
         }
@@ -1480,13 +1482,15 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
-          "EasyDesk.SampleApp.Domain": "[1.0.0, )"
+          "EasyDesk.SampleApp.Domain": "[1.0.0, )",
+          "EasyDesk.Tools": "[7.2.0, )"
         }
       },
       "easydesk.sampleapp.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )"
+          "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
+          "EasyDesk.Tools": "[7.2.0, )"
         }
       }
     }

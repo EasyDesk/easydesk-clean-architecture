@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
-using EasyDesk.CleanArchitecture.Testing;
+using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
 using Shouldly;
 using Xunit;
 

@@ -19,6 +19,12 @@
           "NSubstitute": "4.2.2"
         }
       },
+      "EasyDesk.Tools": {
+        "type": "Direct",
+        "requested": "[7.2.0, )",
+        "resolved": "7.2.0",
+        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
+      },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[17.0.0, )",
@@ -127,11 +133,6 @@
           "EmptyFiles": "2.3.3",
           "Microsoft.Windows.Compatibility": "5.0.0"
         }
-      },
-      "EasyDesk.Tools": {
-        "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
       },
       "EmptyFiles": {
         "type": "Transitive",
@@ -2191,7 +2192,7 @@
           "System.IdentityModel.Tokens.Jwt": "[6.15.1, )"
         }
       },
-      "easydesk.cleanarchitecture.testing": {
+      "easydesk.cleanarchitecture.testing.unit": {
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
