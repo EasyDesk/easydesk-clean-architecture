@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B4CAD0C5-8AC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{787D543E-56F2-4B79-8587-C7AE646D0D07}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA0FBFB1-B2B7-480D-8CC2-B051A0EA65DA}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{DA0FBFB1-B2B7-480D-8CC2-B051A0EA65DA}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 		Directory.Build.props = Directory.Build.props
@@ -47,9 +47,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dal", "Dal", "{00DB6729-9D3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.DependencyInjection", "src\EasyDesk.CleanArchitecture.DependencyInjection\EasyDesk.CleanArchitecture.DependencyInjection.csproj", "{03B1D919-F923-454B-8AE5-B134FD25089E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.CleanArchitecture.Dal.SqlServer", "src\EasyDesk.CleanArchitecture.Dal.SqlServer\EasyDesk.CleanArchitecture.Dal.SqlServer.csproj", "{5067CEA4-6D9B-4858-8EE7-AFB01E62A473}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Dal.SqlServer", "src\EasyDesk.CleanArchitecture.Dal.SqlServer\EasyDesk.CleanArchitecture.Dal.SqlServer.csproj", "{5067CEA4-6D9B-4858-8EE7-AFB01E62A473}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.CleanArchitecture.Dal.PostgreSql", "src\EasyDesk.CleanArchitecture.Dal.PostgreSql\EasyDesk.CleanArchitecture.Dal.PostgreSql.csproj", "{25A95564-A7A1-49D7-BD3D-257D7BED374E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.Dal.PostgreSql", "src\EasyDesk.CleanArchitecture.Dal.PostgreSql\EasyDesk.CleanArchitecture.Dal.PostgreSql.csproj", "{25A95564-A7A1-49D7-BD3D-257D7BED374E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
