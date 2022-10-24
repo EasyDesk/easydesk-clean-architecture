@@ -8,6 +8,11 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Verify received files
+*.received.txt
+*.received.json
+*.received.xml
+
 # User-specific files
 *.rsuser
 *.suo
