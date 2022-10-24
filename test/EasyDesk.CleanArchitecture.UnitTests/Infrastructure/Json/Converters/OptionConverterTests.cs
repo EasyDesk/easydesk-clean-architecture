@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Json.Converters;
+﻿using EasyDesk.CleanArchitecture.Application.Json.Converters;
 using Newtonsoft.Json;
 using Shouldly;
 using Xunit;

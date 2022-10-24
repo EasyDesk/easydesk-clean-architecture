@@ -22,8 +22,9 @@ public class GetPeopleQueryHandler : IQueryHandler<Query, Pageable<PersonSnapsho
     public Task<Result<Pageable<PersonSnapshot>>> Handle(Query query)
     {
         return Task.FromResult(Success(_context.People
-            .OrderBy(p => p.Name)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
             .ProjectTo<PersonSnapshot>(_mapper.ConfigurationProvider)
-            .ToPageable(ordering: q => q.OrderBy(p => p.Name))));
+            .ToPageable()));
     }
 }

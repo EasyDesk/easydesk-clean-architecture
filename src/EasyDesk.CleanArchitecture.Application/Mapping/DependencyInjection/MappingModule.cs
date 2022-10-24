@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using static EasyDesk.Tools.Collections.EnumerableUtils;

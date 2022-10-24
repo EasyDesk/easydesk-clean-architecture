@@ -1,11 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Json.Converters;
+﻿using EasyDesk.CleanArchitecture.Application.Json.Converters;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using NodaTime;
 using NodaTime.Serialization.JsonNet;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Json;
+namespace EasyDesk.CleanArchitecture.Application.Json;
 
 public static class JsonDefaults
 {

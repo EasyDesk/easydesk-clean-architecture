@@ -1,12 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
-using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.PropagatedEvents;
 
-[RebusAutoSubscribe]
-public record PersonCreated(Guid PersonId) : IOutgoingEvent, IIncomingEvent;
+public record PersonCreated(Guid PersonId) : IOutgoingEvent;
 
 public class PropagatePersonCreatedEvent : IDomainEventPropagator<PersonCreatedEvent>
 {

@@ -9,13 +9,14 @@ public class PersonConverter : IModelConverter<Person, PersonModel>
 {
     public Person ToDomain(PersonModel model)
     {
-        return new(model.Id, Name.From(model.Name), model.Married);
+        return new(model.Id, Name.From(model.FirstName), Name.From(model.LastName), model.DateOfBirth);
     }
 
     public void ApplyChanges(Person origin, PersonModel destination)
     {
         destination.Id = origin.Id;
-        destination.Name = origin.Name;
-        destination.Married = origin.Married;
+        destination.FirstName = origin.FirstName;
+        destination.LastName = origin.LastName;
+        destination.DateOfBirth = origin.DateOfBirth;
     }
 }

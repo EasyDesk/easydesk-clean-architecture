@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Modules;
+namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public abstract class AppModule
 {

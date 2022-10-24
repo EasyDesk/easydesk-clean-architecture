@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Modules;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Saunter;

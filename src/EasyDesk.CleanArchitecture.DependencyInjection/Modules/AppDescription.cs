@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 using System.Reflection;
 
-namespace EasyDesk.CleanArchitecture.Application.Modules;
+namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public class AppDescription
 {

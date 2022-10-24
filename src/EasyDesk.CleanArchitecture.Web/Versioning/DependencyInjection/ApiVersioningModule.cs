@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Tools.Collections;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;

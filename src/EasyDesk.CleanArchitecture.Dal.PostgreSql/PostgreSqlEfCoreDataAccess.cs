@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using System.Data.Common;

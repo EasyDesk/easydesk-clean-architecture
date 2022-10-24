@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Bson;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Json;
+namespace EasyDesk.CleanArchitecture.Application.Json;
 
 public static class JsonExtensions
 {

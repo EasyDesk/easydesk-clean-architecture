@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
-using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;

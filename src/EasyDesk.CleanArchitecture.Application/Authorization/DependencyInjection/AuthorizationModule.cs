@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Modules;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;

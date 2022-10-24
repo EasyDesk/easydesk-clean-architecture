@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Modules;
+﻿namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public class RequiredModuleMissingException : Exception
 {

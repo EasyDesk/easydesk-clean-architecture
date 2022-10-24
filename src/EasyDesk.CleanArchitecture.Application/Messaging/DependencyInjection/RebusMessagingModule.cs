@@ -1,11 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Application.Messaging.Steps;
-using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,6 +36,7 @@ public class RebusMessagingModule : AppModule
     public override void BeforeServiceConfiguration(AppDescription app)
     {
         app.RequireModule<CqrsModule>().Pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
+        app.RequireModule<JsonModule>();
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
@@ -48,7 +51,8 @@ public class RebusMessagingModule : AppModule
         {
             _options.ApplyDefaultConfiguration(configurer);
             configurer.Logging(l => l.MicrosoftExtensionsLogging(provider.GetRequiredService<ILoggerFactory>()));
-            configurer.Serialization(s => s.UseNewtonsoftJson(JsonInteroperabilityMode.PureJson));
+            var settings = provider.GetRequiredService<JsonSettingsConfigurator>().CreateSettings();
+            configurer.Serialization(s => s.UseNewtonsoftJson(settings));
             configurer.Options(o =>
             {
                 o.Decorate<IRebusTime>(_ => new NodaTimeRebusClock(provider.GetRequiredService<IClock>()));

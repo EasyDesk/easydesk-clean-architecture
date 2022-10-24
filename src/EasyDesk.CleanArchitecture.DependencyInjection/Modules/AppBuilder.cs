@@ -2,7 +2,7 @@
 using System.Reflection;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Application.Modules;
+namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public class AppBuilder
 {

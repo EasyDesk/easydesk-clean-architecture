@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 

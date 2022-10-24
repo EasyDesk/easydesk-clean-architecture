@@ -165,8 +165,16 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "11.0.1",
-        "contentHash": "pNN4l+J6LlpIvHOeNdXlwxv39NPJ2B5klz+Rd2UQZIx30Squ5oND1Yy3wEAUoKn0GPUj6Yxt9lxlYWQqfZcvKg=="
+        "resolved": "13.0.1",
+        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+      },
+      "Newtonsoft.Json.Bson": {
+        "type": "Transitive",
+        "resolved": "1.0.2",
+        "contentHash": "QYFyxhaABwmq3p/21VrZNYvCg3DaEoN/wUuw5nmfAf0X3HLjgupwhkEWdgfb9nvGAUIv3osmZoD3kKl4jxEmYQ==",
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.1"
+        }
       },
       "NodaTime": {
         "type": "Transitive",
@@ -174,6 +182,15 @@
         "contentHash": "x5IqJNff9ITRaw83P8IbdudB1tpMDbTqdeVlppBx346ywmLj2ZhE+kf7GJfkCks1piJazxDr2+0EYKc7l1K2WA==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "4.7.1"
+        }
+      },
+      "NodaTime.Serialization.JsonNet": {
+        "type": "Transitive",
+        "resolved": "3.0.0",
+        "contentHash": "buSE64oL5eHDiImMgFRF74X/URygSpklFsblyqXafjSW6lMsB7iWfGO5lu7D7Zikj9bXggnMa90a5EqgpPJEYg==",
+        "dependencies": {
+          "Newtonsoft.Json": "12.0.1",
+          "NodaTime": "[3.0.0, 4.0.0)"
         }
       },
       "Rebus": {
@@ -510,6 +527,9 @@
           "FluentValidation.DependencyInjectionExtensions": "[10.3.6, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, )",
+          "Newtonsoft.Json": "[13.0.1, )",
+          "Newtonsoft.Json.Bson": "[1.0.2, )",
+          "NodaTime.Serialization.JsonNet": "[3.0.0, )",
           "Rebus": "[6.6.2, )",
           "Rebus.Microsoft.Extensions.Logging": "[2.0.0, )",
           "Rebus.ServiceProvider": "[7.0.0, )",
@@ -520,7 +540,8 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.Tools": "[7.2.0, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )",
+          "NodaTime": "[3.1.0, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {

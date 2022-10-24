@@ -1,0 +1,11 @@
+﻿{
+  StatusCode: Created,
+  Content: {
+    Data: {
+      Id: Guid_1,
+      FirstName: Foo,
+      LastName: Bar,
+      DateOfBirth: 1996-02-02
+    }
+  }
+}

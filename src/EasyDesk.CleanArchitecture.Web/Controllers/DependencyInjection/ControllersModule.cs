@@ -1,9 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
+﻿using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.Json;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
-using EasyDesk.CleanArchitecture.Web.Modules;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,10 +28,7 @@ public class ControllersModule : AppModule
             .AddApplicationPart(typeof(CleanArchitectureController).Assembly)
             .AddNewtonsoftJson(options =>
             {
-                var dateTimeZoneProvider = app.GetModule<TimeManagementModule>()
-                    .Map(m => m.DateTimeZoneProvider)
-                    .OrElseNull();
-                options.SerializerSettings.ApplyDefaultConfiguration(dateTimeZoneProvider);
+                app.RequireModule<JsonModule>().ApplyJsonConfiguration(options.SerializerSettings, app);
             });
     }
 

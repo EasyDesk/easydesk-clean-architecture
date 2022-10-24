@@ -1,8 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
-namespace EasyDesk.CleanArchitecture.Web.Modules;
+namespace EasyDesk.CleanArchitecture.DependencyInjection;
 
 public class TimeManagementModule : AppModule
 {

@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using Microsoft.Extensions.DependencyInjection;
 

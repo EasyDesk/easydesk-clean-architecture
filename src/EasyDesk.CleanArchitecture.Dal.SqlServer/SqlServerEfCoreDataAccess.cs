@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Modules;
-using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;

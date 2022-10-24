@@ -45,6 +45,12 @@ jobs:
           warnings-as-errors: true
       - name: Unit tests
         uses: EasyDesk/action-dotnet-test@v1
+        with:
+          path: test/EasyDesk.CleanArchitecture.UnitTests
+      - name: Integration tests
+        uses: EasyDesk/action-dotnet-test@v1
+        with:
+          path: test/EasyDesk.CleanArchitecture.IntegrationTests
       - name: Pack
         uses: EasyDesk/action-dotnet-pack@v1
         with:

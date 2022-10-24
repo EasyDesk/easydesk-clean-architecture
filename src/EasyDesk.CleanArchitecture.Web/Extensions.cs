@@ -1,8 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Modules;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Modules;
 using Microsoft.AspNetCore.Builder;
@@ -36,10 +38,11 @@ public static class Extensions
     {
         var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name;
         var match = Regex.Match(callingAssemblyName, @"^(.+)\.Web$");
-        var defaultServiceName = match.Success ? match.Groups[1].Value : callingAssemblyName;
+        var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
 
-        var appBuilder = new AppBuilder(defaultServiceName)
+        var appBuilder = new AppBuilder(assemblyPrefix)
             .AddControllers(builder.Environment)
+            .AddJsonSerialization()
             .AddDomainLayer()
             .AddHttpContext()
             .AddTimeManagement()

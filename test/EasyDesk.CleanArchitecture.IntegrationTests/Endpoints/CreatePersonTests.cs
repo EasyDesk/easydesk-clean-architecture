@@ -1,0 +1,35 @@
+﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Web.Http;
+using EasyDesk.SampleApp.Web.Controllers.V_1_0;
+using Microsoft.Extensions.DependencyInjection;
+using NodaTime;
+
+namespace EasyDesk.CleanArchitecture.IntegrationTests.Endpoints;
+
+[UsesVerify]
+public class CreatePersonTests : IClassFixture<SampleApplicationFactory>
+{
+    private readonly CleanArchitectureHttpClient _httpClient;
+
+    public CreatePersonTests(SampleApplicationFactory factory)
+    {
+        _httpClient = new CleanArchitectureHttpClient(
+            factory.CreateClient(),
+            factory.Services.GetRequiredService<JsonSettingsConfigurator>());
+    }
+
+    [Fact]
+    public async Task CreatePersonShouldSucceed()
+    {
+        var response = await _httpClient.Post<CreatePersonBodyDto, PersonDto>("people", new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            new LocalDate(1996, 2, 2)));
+
+        await Verify(new
+        {
+            response.HttpResponseMessage.StatusCode,
+            response.Content
+        });
+    }
+}

@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
+﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
-using EasyDesk.CleanArchitecture.Infrastructure.Json;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NodaTime;
@@ -15,10 +15,10 @@ public class EfCoreOutbox : IOutbox
     private readonly MessagingContext _context;
     private readonly JsonSerializer _serializer;
 
-    public EfCoreOutbox(MessagingContext context)
+    public EfCoreOutbox(MessagingContext context, JsonSettingsConfigurator jsonSettingsConfigurator)
     {
         _context = context;
-        _serializer = JsonSerializer.Create(JsonDefaults.DefaultSerializerSettings());
+        _serializer = JsonSerializer.Create(jsonSettingsConfigurator.CreateSettings());
     }
 
     public void EnqueueMessageForStorage(TransportMessage message, string destinationAddress)

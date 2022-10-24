@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Json.Converters;
+namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
 public abstract class JsonConverterFactory : JsonConverter
 {
