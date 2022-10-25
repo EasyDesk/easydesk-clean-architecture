@@ -21,10 +21,14 @@ public class CreatePersonTests : IClassFixture<SampleApplicationFactory>
     [Fact]
     public async Task CreatePersonShouldSucceed()
     {
-        var response = await _httpClient.Post<CreatePersonBodyDto, PersonDto>("people", new CreatePersonBodyDto(
+        var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            new LocalDate(1996, 2, 2)));
+            DateOfBirth: new LocalDate(1996, 2, 2));
+
+        var response = await _httpClient
+            .Post("people", body)
+            .As<PersonDto>();
 
         await Verify(new
         {

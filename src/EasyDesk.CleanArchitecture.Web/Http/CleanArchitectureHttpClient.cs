@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Web.Dto;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Net.Mime;
@@ -17,22 +16,35 @@ public class CleanArchitectureHttpClient
         _settings = jsonSettingsConfigurator.CreateSettings();
     }
 
-    public async Task<CleanArchitectureHttpResponse<TResponse>> Post<TBody, TResponse>(string requestUri, TBody body)
+    public HttpRequestBuilder Get(string requestUri) =>
+        Request(requestUri, HttpMethod.Get);
+
+    public HttpRequestBuilder Post<T>(string requestUri, T body) =>
+        Request(requestUri, HttpMethod.Post, JsonContent(body));
+
+    public HttpRequestBuilder Put<T>(string requestUri, T body) =>
+        Request(requestUri, HttpMethod.Put, JsonContent(body));
+
+    public HttpRequestBuilder Delete(string requestUri) =>
+        Request(requestUri, HttpMethod.Delete);
+
+    private StringContent JsonContent<T>(T body)
     {
         var bodyAsJson = JsonConvert.SerializeObject(body, Formatting.None, _settings);
         var content = new StringContent(bodyAsJson, null, MediaTypeNames.Application.Json);
-        return await MakeRequest<TResponse>(http => http.PostAsync(requestUri, content));
+        return content;
     }
 
-    private async Task<CleanArchitectureHttpResponse<T>> MakeRequest<T>(AsyncFunc<HttpClient, HttpResponseMessage> request)
+    private HttpRequestBuilder Request(string requestUri, HttpMethod method, HttpContent content = null)
     {
-        var httpResponse = await request(_httpClient);
-        var bodyAsJson = await httpResponse.Content.ReadAsStringAsync();
-        var dto = JsonConvert.DeserializeObject<ResponseDto<T>>(bodyAsJson);
-        return new(dto, httpResponse);
+        var request = new HttpRequestMessage(method, requestUri)
+        {
+            Content = content
+        };
+        return new(_httpClient, request);
     }
 
-    public CleanArchitectureHttpClient WithDefaultHeaders(Action<HttpHeaders> configureHeaders)
+    public CleanArchitectureHttpClient WithDefaultHeaders(Action<HttpRequestHeaders> configureHeaders)
     {
         configureHeaders(_httpClient.DefaultRequestHeaders);
         return this;
