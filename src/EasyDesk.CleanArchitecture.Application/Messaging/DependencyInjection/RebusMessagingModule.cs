@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
 using EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
@@ -12,24 +11,21 @@ using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NodaTime;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
-using Rebus.Serialization;
-using Rebus.Serialization.Json;
-using Rebus.Time;
-using Rebus.Topic;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 
 public class RebusMessagingModule : AppModule
 {
+    private readonly RebusEndpoint _endpoint;
     private readonly RebusMessagingOptions _options;
 
-    public RebusMessagingModule(RebusMessagingOptions options)
+    public RebusMessagingModule(RebusEndpoint endpoint, RebusMessagingOptions options)
     {
+        _endpoint = endpoint;
         _options = options;
     }
 
@@ -41,6 +37,7 @@ public class RebusMessagingModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
+        services.AddSingleton(_endpoint);
         services.AddSingleton(_options);
 
         var knownMessageTypes = ScanForKnownMessageTypes(app);
@@ -49,15 +46,9 @@ public class RebusMessagingModule : AppModule
         ITransport originalTransport = null;
         services.AddRebus((configurer, provider) =>
         {
-            _options.ApplyDefaultConfiguration(configurer);
-            configurer.Logging(l => l.MicrosoftExtensionsLogging(provider.GetRequiredService<ILoggerFactory>()));
-            var settings = provider.GetRequiredService<JsonSettingsConfigurator>().CreateSettings();
-            configurer.Serialization(s => s.UseNewtonsoftJson(settings));
+            configurer.ConfigureStandardBehavior(_endpoint, _options, provider);
             configurer.Options(o =>
             {
-                o.Decorate<IRebusTime>(_ => new NodaTimeRebusClock(provider.GetRequiredService<IClock>()));
-                o.Decorate<ITopicNameConvention>(_ => new TopicNameConvention());
-                o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(knownMessageTypes));
                 o.WrapHandlersInsideUnitOfWork();
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
 
@@ -149,10 +140,10 @@ public static class RebusMessagingModuleExtensions
 {
     public static AppBuilder AddRebusMessaging(this AppBuilder builder, string inputQueueAddress, Action<RebusMessagingOptions> configure)
     {
-        var options = new RebusMessagingOptions(inputQueueAddress);
+        var options = new RebusMessagingOptions();
         configure(options);
 
-        return builder.AddModule(new RebusMessagingModule(options));
+        return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), options));
     }
 
     public static bool HasRebusMessaging(this AppDescription app) => app.HasModule<RebusMessagingModule>();

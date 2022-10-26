@@ -16,6 +16,10 @@
     <PackageReference Include="Testcontainers" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <RootFolder>..\..</RootFolder>
   </PropertyGroup>

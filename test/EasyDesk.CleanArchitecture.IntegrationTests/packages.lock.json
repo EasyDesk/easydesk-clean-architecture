@@ -10,9 +10,9 @@
       },
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[7.2.0, )",
-        "resolved": "7.2.0",
-        "contentHash": "lykS3zsgEviG44JeJRpXwSm0FJu7DAFjvs45G9scqQaYcDK7TmoTpyvSuBHp50CVD545Ix2gw996tNcQPX/3rA=="
+        "requested": "[7.4.0, )",
+        "resolved": "7.4.0",
+        "contentHash": "iQWy9XC2BwFpk3+PTyrDAF/EfgDCHmQ0+rOwyZN4r6xfl4dvtMbXZq8nhEl4sgGUmKLharRDDh3MZyWwcZWkyw=="
       },
       "Microsoft.AspNetCore.Mvc.Testing": {
         "type": "Direct",
@@ -2142,7 +2142,7 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": "[11.0.0, )",
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "FluentValidation": "[10.3.6, )",
           "FluentValidation.DependencyInjectionExtensions": "[10.3.6, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, )",
@@ -2161,7 +2161,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "Microsoft.Data.SqlClient": "[2.1.4, )",
           "Microsoft.EntityFrameworkCore.Relational": "[6.0.2, )"
         }
@@ -2170,7 +2170,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL": "[6.0.7, )",
           "Npgsql.EntityFrameworkCore.PostgreSQL.NodaTime": "[6.0.7, )"
         }
@@ -2178,7 +2178,7 @@
       "easydesk.cleanarchitecture.dependencyinjection": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )",
           "NodaTime": "[3.1.0, )"
         }
@@ -2186,7 +2186,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "NodaTime": "[3.1.0, )"
         }
       },
@@ -2194,7 +2194,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.7, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[6.0.2, )",
           "System.IdentityModel.Tokens.Jwt": "[6.15.1, )"
@@ -2203,8 +2203,9 @@
       "easydesk.cleanarchitecture.testing.integration": {
         "type": "Project",
         "dependencies": {
+          "EasyDesk.CleanArchitecture.Web": "[1.0.0, )",
           "EasyDesk.Testing": "[0.4.0, )",
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "Microsoft.AspNetCore.Mvc.Testing": "[6.0.10, )",
           "NSubstitute": "[4.3.0, )",
           "Shouldly": "[4.0.3, )",
@@ -2216,7 +2217,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "MicroElements.Swashbuckle.NodaTime": "[4.0.1, )",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[6.0.2, )",
           "Microsoft.AspNetCore.Mvc.Versioning": "[5.0.0, )",
@@ -2234,14 +2235,14 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.SampleApp.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )"
+          "EasyDesk.Tools": "[7.4.0, )"
         }
       },
       "easydesk.sampleapp.domain": {
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )"
+          "EasyDesk.Tools": "[7.4.0, )"
         }
       },
       "easydesk.sampleapp.infrastructure": {
@@ -2250,7 +2251,7 @@
           "EasyDesk.CleanArchitecture.Dal.PostgreSql": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
           "EasyDesk.SampleApp.Application": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )"
+          "EasyDesk.Tools": "[7.4.0, )"
         }
       },
       "easydesk.sampleapp.web": {
@@ -2259,7 +2260,7 @@
           "EasyDesk.CleanArchitecture.Web": "[1.0.0, )",
           "EasyDesk.SampleApp.Application": "[1.0.0, )",
           "EasyDesk.SampleApp.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.2.0, )",
+          "EasyDesk.Tools": "[7.4.0, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.14.0, )",
           "Rebus.RabbitMq": "[7.4.2, )"
         }

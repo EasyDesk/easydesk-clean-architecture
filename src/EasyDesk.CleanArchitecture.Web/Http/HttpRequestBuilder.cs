@@ -14,13 +14,18 @@ public class HttpRequestBuilder
         _request = request;
     }
 
+    private async Task<HttpResponseMessage> GetResponse() =>
+        await _httpClient.SendAsync(_request);
+
     public async Task<CleanArchitectureHttpResponse<T>> As<T>()
     {
-        var httpResponse = await _httpClient.SendAsync(_request);
+        var httpResponse = await GetResponse();
         var bodyAsJson = await httpResponse.Content.ReadAsStringAsync();
         var dto = JsonConvert.DeserializeObject<ResponseDto<T>>(bodyAsJson);
         return new(dto, httpResponse);
     }
 
     public Task<CleanArchitectureHttpResponse<Nothing>> AsEmpty() => As<Nothing>();
+
+    public Task IgnoringResponse() => GetResponse();
 }

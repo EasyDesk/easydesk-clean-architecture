@@ -8,39 +8,36 @@ namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public class RebusMessagingOptions
 {
-    private Action<RebusConfigurer> _configureRebus;
+    private Action<RebusEndpoint, RebusConfigurer> _configureRebus;
 
-    public RebusMessagingOptions(string inputQueueAddress)
+    public RebusMessagingOptions()
     {
-        InputQueueAddress = inputQueueAddress;
     }
 
     public OutboxOptions OutboxOptions { get; private set; } = new();
 
     public bool AutoSubscribe { get; set; } = true;
 
-    public string InputQueueAddress { get; }
-
-    public RebusMessagingOptions ConfigureRebus(Action<RebusConfigurer> configurationAction)
+    public RebusMessagingOptions ConfigureRebus(Action<RebusEndpoint, RebusConfigurer> configurationAction)
     {
         _configureRebus += configurationAction;
         return this;
     }
 
-    public RebusMessagingOptions ConfigureTransport(Action<StandardConfigurer<ITransport>> configurationAction) =>
-        ConfigureRebus(c => c.Transport(configurationAction));
+    public RebusMessagingOptions ConfigureTransport(Action<RebusEndpoint, StandardConfigurer<ITransport>> configurationAction) =>
+        ConfigureRebus((e, c) => c.Transport(t => configurationAction(e, t)));
 
     public RebusMessagingOptions ConfigureRouting(Action<StandardConfigurer<IRouter>> configurationAction) =>
-        ConfigureRebus(c => c.Routing(configurationAction));
+        ConfigureRebus((_, c) => c.Routing(configurationAction));
 
     public RebusMessagingOptions ConfigureRebusOptions(Action<OptionsConfigurer> configurationAction) =>
-        ConfigureRebus(c => c.Options(configurationAction));
+        ConfigureRebus((_, c) => c.Options(configurationAction));
 
     public RebusMessagingOptions DecorateRebusService<T>(Func<IResolutionContext, T> factory, string description = null) =>
         ConfigureRebusOptions(o => o.Decorate(factory, description));
 
-    internal void ApplyDefaultConfiguration(RebusConfigurer configurer)
+    public void ApplyDefaultConfiguration(RebusEndpoint endpoint, RebusConfigurer configurer)
     {
-        _configureRebus?.Invoke(configurer);
+        _configureRebus?.Invoke(endpoint, configurer);
     }
 }

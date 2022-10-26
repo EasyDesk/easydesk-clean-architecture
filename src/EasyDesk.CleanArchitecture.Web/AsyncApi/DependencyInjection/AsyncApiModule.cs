@@ -26,7 +26,7 @@ public class AsyncApiModule : AppModule
     {
         services.AddTransient<IDocumentGenerator>(p => new KnownTypesDocumentGenerator(
             app.Name,
-            p.GetRequiredService<RebusMessagingOptions>().InputQueueAddress));
+            p.GetRequiredService<RebusEndpoint>().InputQueueAddress));
         services.AddTransient<IAsyncApiDocumentProvider, KnowTypesDocumentProvider>();
         services.AddAsyncApiSchemaGeneration(options =>
         {

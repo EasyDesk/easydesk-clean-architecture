@@ -1,45 +1,33 @@
-﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
-using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0;
 using Microsoft.Extensions.Configuration;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<PersonController>
+public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<PersonController>, IAsyncLifetime
 {
-    private readonly PostgreSqlTestcontainer _dbContainer;
-    private readonly RabbitMqTestcontainer _rabbitMqContainer;
-
-    public SampleApplicationFactory()
-    {
-        _dbContainer = RegisterTestContainer<PostgreSqlTestcontainer>(container => container
-            .WithDatabase(new PostgreSqlTestcontainerConfiguration
-            {
-                Database = "TestSampleDb",
-                Username = "sample",
-                Password = "sample"
-            }));
-
-        _rabbitMqContainer = RegisterTestContainer<RabbitMqTestcontainer>(container => container
-            .WithMessageBroker(new RabbitMqTestcontainerConfiguration
-            {
-                Username = "guest",
-                Password = "guest"
-            }));
-    }
-
-    public string RabbitMqConnectionString => _rabbitMqContainer.ConnectionString;
-
-    public string PostgresConnectionString => _dbContainer.ConnectionString;
+    private readonly SampleAppContainersContext _containers = new();
 
     protected override void ConfigureConfiguration(IConfigurationBuilder config)
     {
         config.AddInMemoryCollection(new Dictionary<string, string>
         {
-            ["ConnectionStrings:RabbitMq"] = RabbitMqConnectionString,
-            ["ConnectionStrings:MainDb"] = PostgresConnectionString,
+            ["ConnectionStrings:RabbitMq"] = _containers.RabbitMq.ConnectionString,
+            ["ConnectionStrings:MainDb"] = _containers.Postgres.ConnectionString,
         });
+    }
+
+    public string RabbitMqConnectionString => _containers.RabbitMq.ConnectionString;
+
+    public string PostgresConnectionString => _containers.Postgres.ConnectionString;
+
+    public async Task InitializeAsync()
+    {
+        await _containers.StartAsync();
+    }
+
+    async Task IAsyncLifetime.DisposeAsync()
+    {
+        await _containers.DisposeAsync();
     }
 }

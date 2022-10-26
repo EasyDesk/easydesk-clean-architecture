@@ -1,17 +1,18 @@
-﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Containers;
+﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
+using EasyDesk.CleanArchitecture.Web.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Xunit;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
 
-public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationFactory<T>, IAsyncLifetime
+public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationFactory<T>
     where T : class
 {
-    private readonly ISet<ITestcontainersContainer> _containers = new HashSet<ITestcontainersContainer>();
-
     protected override IHost CreateHost(IHostBuilder builder)
     {
         builder.ConfigureHostConfiguration(ConfigureConfiguration);
@@ -22,21 +23,18 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     {
     }
 
-    protected TContainer RegisterTestContainer<TContainer>(Func<ITestcontainersBuilder<TContainer>, ITestcontainersBuilder<TContainer>> configureContainer)
-        where TContainer : ITestcontainersContainer
+    public CleanArchitectureHttpClient CreateCleanArchitectureClient()
     {
-        var container = configureContainer(new TestcontainersBuilder<TContainer>()).Build();
-        _containers.Add(container);
-        return container;
+        var jsonSettings = Services.GetRequiredService<JsonSettingsConfigurator>();
+        return new(CreateClient(), jsonSettings);
     }
 
-    public async Task InitializeAsync()
+    public RebusTestHelper CreateRebusHelper(string inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        await Task.WhenAll(_containers.Select(c => c.StartAsync()));
-    }
-
-    async Task IAsyncLifetime.DisposeAsync()
-    {
-        await Task.WhenAll(_containers.Select(c => c.StopAsync()));
+        var options = Services.GetRequiredService<RebusMessagingOptions>();
+        var endpoint = new RebusEndpoint(inputQueueAddress ?? Guid.NewGuid().ToString());
+        return new RebusTestHelper(
+            rebus => rebus.ConfigureStandardBehavior(endpoint, options, Services),
+            defaultTimeout);
     }
 }

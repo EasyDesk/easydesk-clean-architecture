@@ -30,7 +30,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
     config.AddRebusMessaging("sample", options =>
     {
-        options.ConfigureTransport(t => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), options.InputQueueAddress));
+        options.ConfigureTransport((e, t) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e.InputQueueAddress));
     });
 });
 
