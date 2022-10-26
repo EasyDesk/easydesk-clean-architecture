@@ -5,16 +5,16 @@ namespace EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
 public class DomainEventHandlingStep<TRequest, TResult> : IPipelineStep<TRequest, TResult>
     where TRequest : ICommand<TResult>
 {
-    private readonly DomainEventQueue _domainEventQueue;
+    private readonly IDomainEventFlusher _domainEventFlusher;
 
-    public DomainEventHandlingStep(DomainEventQueue domainEventQueue)
+    public DomainEventHandlingStep(IDomainEventFlusher domainEventFlusher)
     {
-        _domainEventQueue = domainEventQueue;
+        _domainEventFlusher = domainEventFlusher;
     }
 
     public async Task<Result<TResult>> Run(TRequest request, NextPipelineStep<TResult> next)
     {
         var response = await next();
-        return await response.FlatTapAsync(_ => _domainEventQueue.Flush());
+        return await response.FlatTapAsync(_ => _domainEventFlusher.Flush());
     }
 }

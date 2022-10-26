@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Cqrs;
 
-public class CqrsRequestDispatcher : ICqrsRequestDispatcher
+internal class CqrsRequestDispatcher : ICqrsRequestDispatcher
 {
     private static readonly ConcurrentDictionary<Type, MethodInfo> _dispatchMethodsByType = new();
     private readonly IServiceProvider _serviceProvider;
