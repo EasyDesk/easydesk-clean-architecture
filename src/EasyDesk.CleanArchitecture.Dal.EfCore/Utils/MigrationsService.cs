@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
@@ -13,7 +14,7 @@ public class MigrationsService
     {
         _serviceProvider = serviceProvider;
         _dbContextTypes = dbContextTypes;
-        _logger = 
+        _logger = serviceProvider.GetRequiredService<ILogger<MigrationsService>>();
     }
 
     public async Task MigrateDatabases()
