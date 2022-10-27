@@ -12,6 +12,7 @@ using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
@@ -43,7 +44,8 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
         {
             services.AddHostedService(p => new MigrationsHostedService(
                 p.GetRequiredService<IServiceScopeFactory>(),
-                _registeredDbContextTypes));
+                _registeredDbContextTypes,
+                p.GetRequiredService<ILogger<MigrationsHostedService>>()));
         }
     }
 
