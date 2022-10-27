@@ -19,14 +19,6 @@ public class EfCoreDataAccessOptions<T, TBuilder, TExtension>
 
     public string ConnectionString { get; }
 
-    public bool ShouldApplyMigrations { get; private set; } = false;
-
-    public EfCoreDataAccessOptions<T, TBuilder, TExtension> ApplyMigrations(bool apply = true)
-    {
-        ShouldApplyMigrations = apply;
-        return this;
-    }
-
     public EfCoreDataAccessOptions<T, TBuilder, TExtension> ConfigureDbContextOptions(Action<DbContextOptionsBuilder> configure)
     {
         _configureDbContextOptions += configure;

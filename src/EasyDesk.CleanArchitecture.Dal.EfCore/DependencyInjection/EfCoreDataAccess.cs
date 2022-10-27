@@ -9,10 +9,10 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
@@ -39,14 +39,6 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
         services.AddScoped<TransactionEnlistingOnCommandInterceptor>();
         services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
-
-        if (_options.ShouldApplyMigrations)
-        {
-            services.AddHostedService(p => new MigrationsHostedService(
-                p.GetRequiredService<IServiceScopeFactory>(),
-                _registeredDbContextTypes,
-                p.GetRequiredService<ILogger<MigrationsHostedService>>()));
-        }
     }
 
     protected abstract DbConnection CreateDbConnection(string connectionString);
@@ -124,5 +116,11 @@ public static class EfCoreDataAccessExtensions
         configure?.Invoke(options);
         var dataAccessImplementation = implementation(options);
         return builder.AddDataAccess(dataAccessImplementation);
+    }
+
+    public static async Task MigrateDatabases(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        await scope.ServiceProvider.GetRequiredService<MigrationsService>().MigrateDatabases();
     }
 }

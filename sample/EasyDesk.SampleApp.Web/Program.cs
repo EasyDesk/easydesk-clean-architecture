@@ -1,5 +1,6 @@
 using EasyDesk.CleanArchitecture.Application.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
+using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
@@ -23,10 +24,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddAsyncApi()
         .AddModule<SampleAppDomainModule>();
 
-    config.AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"), options =>
-    {
-        options.ApplyMigrations();
-    });
+    config.AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"));
 
     config.AddRebusMessaging("sample", options =>
     {
@@ -36,16 +34,11 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseHttpsRedirection();
-}
+await app.MigrateDatabases();
 
 app.Services.UseRebus();
+
+app.UseHttpsRedirection();
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
