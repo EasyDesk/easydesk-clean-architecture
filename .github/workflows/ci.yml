@@ -4,6 +4,7 @@ env:
   DOTNET_VERSION: 6.x
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - "**"
