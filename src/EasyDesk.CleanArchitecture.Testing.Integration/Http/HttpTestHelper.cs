@@ -3,14 +3,14 @@ using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 
-namespace EasyDesk.CleanArchitecture.Web.Http;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public class CleanArchitectureHttpClient
+public class HttpTestHelper
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _settings;
 
-    public CleanArchitectureHttpClient(HttpClient httpClient, JsonSettingsConfigurator jsonSettingsConfigurator)
+    public HttpTestHelper(HttpClient httpClient, JsonSettingsConfigurator jsonSettingsConfigurator)
     {
         _httpClient = httpClient;
         _settings = jsonSettingsConfigurator.CreateSettings();
@@ -41,10 +41,10 @@ public class CleanArchitectureHttpClient
         {
             Content = content
         };
-        return new(_httpClient, request);
+        return new(request, _httpClient, _settings);
     }
 
-    public CleanArchitectureHttpClient WithDefaultHeaders(Action<HttpRequestHeaders> configureHeaders)
+    public HttpTestHelper WithDefaultHeaders(Action<HttpRequestHeaders> configureHeaders)
     {
         configureHeaders(_httpClient.DefaultRequestHeaders);
         return this;

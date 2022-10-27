@@ -34,8 +34,8 @@ public class ApiVersioningModule : AppModule
             options.ReportApiVersions = true;
 
             options.ApiVersionReader = ApiVersionReader.Combine(
-                new QueryStringApiVersionReader("version"),
-                new HeaderApiVersionReader("Api-Version"));
+                new QueryStringApiVersionReader(ApiVersioningUtils.VersionQueryParam),
+                new HeaderApiVersionReader(ApiVersioningUtils.VersionHeader));
 
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.DefaultApiVersion = ApiVersioningInfo.SupportedVersions

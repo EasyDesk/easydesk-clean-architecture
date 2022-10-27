@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
-using EasyDesk.CleanArchitecture.Web.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +23,7 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     {
     }
 
-    public CleanArchitectureHttpClient CreateCleanArchitectureClient()
+    public HttpTestHelper CreateCleanArchitectureClient()
     {
         var jsonSettings = Services.GetRequiredService<JsonSettingsConfigurator>();
         return new(CreateClient(), jsonSettings);

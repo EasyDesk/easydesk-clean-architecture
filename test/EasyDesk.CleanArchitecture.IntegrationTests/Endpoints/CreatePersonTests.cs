@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Web.Http;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.SampleApp.Application.PropagatedEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0;
 using NodaTime;
@@ -11,7 +11,7 @@ public class CreatePersonTests : IClassFixture<SampleApplicationFactory>
     private const string Uri = "people";
 
     private readonly SampleApplicationFactory _factory;
-    private readonly CleanArchitectureHttpClient _httpClient;
+    private readonly HttpTestHelper _httpClient;
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
         LastName: "Bar",
@@ -28,13 +28,9 @@ public class CreatePersonTests : IClassFixture<SampleApplicationFactory>
     {
         var response = await _httpClient
             .Post(Uri, _body)
-            .As<PersonDto>();
+            .AsVerifiableResponse<PersonDto>();
 
-        await Verify(new
-        {
-            response.HttpResponseMessage.StatusCode,
-            response.Content
-        });
+        await Verify(response);
     }
 
     [Fact]
@@ -43,10 +39,8 @@ public class CreatePersonTests : IClassFixture<SampleApplicationFactory>
         await using var bus = _factory.CreateRebusHelper();
         await bus.Subscribe<PersonCreated>();
 
-        var response = await _httpClient
-            .Post(Uri, _body)
-            .As<PersonDto>();
+        var response = await _httpClient.Post(Uri, _body).AsContentOnly<PersonDto>();
 
-        await bus.WaitForMessageOrFail(new PersonCreated(response.Content.Data.Id));
+        await bus.WaitForMessageOrFail(new PersonCreated(response.Data.Id));
     }
 }

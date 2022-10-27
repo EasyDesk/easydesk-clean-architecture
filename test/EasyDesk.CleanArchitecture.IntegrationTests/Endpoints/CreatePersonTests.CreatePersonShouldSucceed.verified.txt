@@ -1,5 +1,4 @@
 ﻿{
-  StatusCode: Created,
   Content: {
     Data: {
       Id: Guid_1,
@@ -7,5 +6,18 @@
       LastName: Bar,
       DateOfBirth: 1996-02-02
     }
+  },
+  StatusCode: Created,
+  Headers: [
+    {
+      Location: [
+        http://localhost/people/1aa766d7-1a66-4154-9407-4a8ea75c613a
+      ]
+    },
+    {
+      api-supported-versions: [
+        1.0
+      ]
   }
+  ]
 }
