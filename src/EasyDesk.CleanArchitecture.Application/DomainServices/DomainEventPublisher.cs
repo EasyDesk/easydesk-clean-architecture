@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-public class DomainEventPublisher : IDomainEventPublisher
+internal class DomainEventPublisher : IDomainEventPublisher
 {
     private readonly IServiceProvider _serviceProvider;
 

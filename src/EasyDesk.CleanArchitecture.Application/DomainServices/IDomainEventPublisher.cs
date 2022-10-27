@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-public interface IDomainEventPublisher
+internal interface IDomainEventPublisher
 {
     Task<Result<Nothing>> Publish(DomainEvent domainEvent);
 }

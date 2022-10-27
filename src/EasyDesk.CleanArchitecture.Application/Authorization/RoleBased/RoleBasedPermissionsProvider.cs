@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-public class RoleBasedPermissionsProvider : IPermissionsProvider
+internal class RoleBasedPermissionsProvider : IPermissionsProvider
 {
     private readonly IUserRolesProvider _userRolesProvider;
     private readonly IRolesToPermissionsMapper _rolesToPermissionsMapper;

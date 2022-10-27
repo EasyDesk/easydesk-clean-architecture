@@ -25,7 +25,7 @@ public class StaticRolesToPermissionsBuilder
         return this;
     }
 
-    public StaticRolesToPermissionsMapper Build()
+    internal StaticRolesToPermissionsMapper Build()
     {
         var permissionsByRole = _rolePermissionPairs
             .GroupBy(pair => pair.Item1, (role, pairs) => (role, pairs.Select(p => p.Item2).ToEquatableSet()))

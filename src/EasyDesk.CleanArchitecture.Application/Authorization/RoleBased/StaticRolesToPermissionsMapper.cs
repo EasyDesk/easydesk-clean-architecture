@@ -4,7 +4,7 @@ using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-public class StaticRolesToPermissionsMapper : IRolesToPermissionsMapper
+internal class StaticRolesToPermissionsMapper : IRolesToPermissionsMapper
 {
     private readonly IImmutableDictionary<Role, IImmutableSet<Permission>> _permissionsByRole;
 

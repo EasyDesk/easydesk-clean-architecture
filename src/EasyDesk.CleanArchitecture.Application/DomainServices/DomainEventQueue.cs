@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-public class DomainEventQueue : IDomainEventNotifier
+internal class DomainEventQueue : IDomainEventNotifier, IDomainEventFlusher
 {
     private readonly Queue<DomainEvent> _eventQueue = new();
     private readonly IDomainEventPublisher _publisher;

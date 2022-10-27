@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-public class RoleBasedAuthorizer<T> : IAuthorizer<T>
+internal class RoleBasedAuthorizer<T> : IAuthorizer<T>
 {
     private readonly IPermissionsProvider _permissionsProvider;
 
