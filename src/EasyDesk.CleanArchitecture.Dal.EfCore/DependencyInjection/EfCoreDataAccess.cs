@@ -39,6 +39,8 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
         services.AddScoped<TransactionEnlistingOnCommandInterceptor>();
         services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
+
+        services.AddScoped(provider => new MigrationsService(provider, _registeredDbContextTypes));
     }
 
     protected abstract DbConnection CreateDbConnection(string connectionString);
