@@ -36,10 +36,7 @@ public class HttpRequestBuilder
     public async Task<VerifiableHttpResponse<T>> AsVerifiableResponse<T>()
     {
         var (response, content) = await AsResponseAndContent<T>();
-        return new(
-            content,
-            response.StatusCode,
-            response.Headers);
+        return new(content, response.StatusCode);
     }
 
     public async Task<ResponseDto<T>> AsContentOnly<T>()
