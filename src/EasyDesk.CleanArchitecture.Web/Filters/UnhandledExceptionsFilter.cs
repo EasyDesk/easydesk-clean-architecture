@@ -6,7 +6,7 @@ using System.Net;
 
 namespace EasyDesk.CleanArchitecture.Web.Filters;
 
-public class UnhandledExceptionsFilter : IExceptionFilter
+internal class UnhandledExceptionsFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {

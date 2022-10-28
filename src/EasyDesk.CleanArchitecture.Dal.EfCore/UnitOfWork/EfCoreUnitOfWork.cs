@@ -4,7 +4,7 @@ using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
-public class EfCoreUnitOfWork : UnitOfWorkBase<DbTransaction>
+internal class EfCoreUnitOfWork : UnitOfWorkBase<DbTransaction>
 {
     private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
 

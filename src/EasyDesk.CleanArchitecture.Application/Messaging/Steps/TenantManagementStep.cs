@@ -11,7 +11,7 @@ public class TenantManagementStep : IOutgoingStep, IIncomingStep
 
     public async Task Process(OutgoingStepContext context, Func<Task> next)
     {
-        context.GetScopedService<ITenantProvider>().TenantId.IfPresent(tenantId =>
+        context.GetService<ITenantProvider>().TenantId.IfPresent(tenantId =>
         {
             context.Load<Message>().Headers.Add(TenantIdHeader, tenantId);
         });
@@ -21,8 +21,7 @@ public class TenantManagementStep : IOutgoingStep, IIncomingStep
     public async Task Process(IncomingStepContext context, Func<Task> next)
     {
         var tenantId = context.Load<TransportMessage>().Headers.GetOption(TenantIdHeader);
-        context.GetScopedService<ITenantInitializer>().InitializeTenant(tenantId);
-
+        context.GetService<ITenantInitializer>().InitializeTenant(tenantId);
         await next();
     }
 }

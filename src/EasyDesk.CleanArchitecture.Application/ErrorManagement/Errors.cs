@@ -7,16 +7,16 @@ public static class Errors
     public static MultiError Multiple(Error primaryError, IEnumerable<Error> secondaryErrors) =>
         new(primaryError, secondaryErrors.ToEquatableSet());
 
-    public static Error Internal(Exception ex) => new InternalError(ex);
+    public static InternalError Internal(Exception ex) => new(ex);
 
-    public static Error NotFound() => new NotFoundError();
+    public static NotFoundError NotFound() => new();
 
-    public static Error UnknownUser() => new UnknownUserError();
+    public static UnknownUserError UnknownUser() => new();
 
-    public static Error Forbidden(string message = null) => new ForbiddenError(message ?? "Not authorized");
+    public static ForbiddenError Forbidden(string message = null) => new(message ?? "Not authorized");
 
-    public static Error InvalidInput(string propertyName, string errorMessage) =>
-        new InputValidationError(propertyName, errorMessage);
+    public static InputValidationError InvalidInput(string propertyName, string errorMessage) =>
+        new(propertyName, errorMessage);
 
-    public static Error Generic(string message, params object[] args) => GenericError.Create(message, args);
+    public static GenericError Generic(string message, params object[] args) => GenericError.Create(message, args);
 }

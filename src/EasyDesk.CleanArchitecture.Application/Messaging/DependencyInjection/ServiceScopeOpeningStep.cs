@@ -10,7 +10,6 @@ internal class ServiceScopeOpeningStep : IIncomingStep
     {
         using (var scope = context.Load<IServiceProvider>().CreateScope())
         {
-            context.Save(scope);
             context.Load<ITransactionContext>().SetServiceProvider(scope.ServiceProvider);
             await next();
         }

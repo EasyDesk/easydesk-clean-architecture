@@ -10,7 +10,7 @@ using Extension = Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Interna
 
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer;
 
-public class SqlServerEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extension>
+internal class SqlServerEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extension>
     where T : DomainContext<T>
 {
     public SqlServerEfCoreDataAccess(EfCoreDataAccessOptions<T, Builder, Extension> options)

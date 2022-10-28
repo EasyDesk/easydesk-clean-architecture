@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class TopicNameConvention : ITopicNameConvention
+internal class TopicNameConvention : ITopicNameConvention
 {
     public string GetTopic(Type eventType) => eventType.Name;
 }

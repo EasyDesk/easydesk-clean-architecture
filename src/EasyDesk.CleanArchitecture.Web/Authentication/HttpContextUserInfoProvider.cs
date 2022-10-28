@@ -5,7 +5,7 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication;
 
-public class HttpContextUserInfoProvider : IUserInfoProvider
+internal class HttpContextUserInfoProvider : IUserInfoProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 

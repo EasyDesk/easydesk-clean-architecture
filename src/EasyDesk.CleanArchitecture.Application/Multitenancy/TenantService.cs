@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-public class TenantService : ITenantProvider, ITenantInitializer
+internal class TenantService : ITenantProvider, ITenantInitializer
 {
     private bool _wasInitialized = false;
 

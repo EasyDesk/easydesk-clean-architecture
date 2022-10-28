@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
-public class MigrationsService
+internal class MigrationsService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IEnumerable<Type> _dbContextTypes;

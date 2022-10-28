@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
-public class OptionConverter : JsonConverterFactory
+internal class OptionConverter : JsonConverterFactory
 {
     protected override JsonConverter CreateConverter(Type objectType, JsonSerializer serializer)
     {

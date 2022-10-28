@@ -3,7 +3,7 @@ using Rebus.Handlers;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class EventHandlerAdapter<M> : IHandleMessages<M>
+internal class EventHandlerAdapter<M> : IHandleMessages<M>
     where M : IIncomingMessage
 {
     private readonly IMessageHandler<M> _innerHandler;

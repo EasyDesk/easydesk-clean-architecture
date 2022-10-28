@@ -3,7 +3,7 @@ using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
-public class TransactionEnlistingOnCommandInterceptor : DbCommandInterceptor
+internal class TransactionEnlistingOnCommandInterceptor : DbCommandInterceptor
 {
     private readonly EfCoreUnitOfWorkProvider _unitOfWorkProvider;
 

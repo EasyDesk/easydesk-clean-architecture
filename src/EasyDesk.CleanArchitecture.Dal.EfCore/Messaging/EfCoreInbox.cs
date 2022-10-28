@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
-public class EfCoreInbox : IInbox
+internal class EfCoreInbox : IInbox
 {
     private readonly MessagingContext _context;
 

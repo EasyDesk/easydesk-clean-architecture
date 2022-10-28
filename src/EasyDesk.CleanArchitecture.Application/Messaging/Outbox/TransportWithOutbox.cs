@@ -4,7 +4,7 @@ using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 
-public class TransportWithOutbox : ITransport
+internal class TransportWithOutbox : ITransport
 {
     private readonly ITransport _transport;
 

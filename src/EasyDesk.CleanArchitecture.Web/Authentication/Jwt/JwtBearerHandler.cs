@@ -26,7 +26,7 @@ public class JwtBearerOptions : TokenAuthenticationOptions
     }
 }
 
-public class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
+internal class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
 {
     private readonly JwtFacade _jwtFacade;
 

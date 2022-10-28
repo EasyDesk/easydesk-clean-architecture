@@ -4,7 +4,7 @@ using Rebus.Bus;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public sealed class MessageBroker : IEventPublisher, ICommandSender
+internal sealed class MessageBroker : IEventPublisher, ICommandSender
 {
     private readonly IBus _bus;
     private readonly IClock _clock;

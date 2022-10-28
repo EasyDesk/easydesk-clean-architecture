@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
-public class ParseableStringConverter<T> : JsonConverter<T>
+internal class ParseableStringConverter<T> : JsonConverter<T>
 {
     private readonly Func<string, T> _parser;
 

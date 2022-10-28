@@ -8,7 +8,7 @@ using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Steps;
 
-public static class RebusPipelineExtensions
+internal static class RebusPipelineExtensions
 {
     public static void AddMultitenancySupport(this OptionsConfigurer configurer)
     {
@@ -61,7 +61,4 @@ public static class RebusPipelineExtensions
                 .OnReceive(new ServiceScopeOpeningStep(), PipelineAbsolutePosition.Front);
         });
     }
-
-    public static T GetScopedService<T>(this StepContext stepContext) =>
-        stepContext.Load<ITransactionContext>().GetServiceProvider().GetRequiredService<T>();
 }

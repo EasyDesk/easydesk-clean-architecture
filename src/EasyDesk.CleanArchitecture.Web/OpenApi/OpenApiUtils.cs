@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -7,20 +6,6 @@ namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
 public static class OpenApiUtils
 {
-    public static void ConfigureJwtBearerAuthentication(this SwaggerGenOptions options, string name = "Bearer")
-    {
-        var jwtSecurityScheme = new OpenApiSecurityScheme
-        {
-            Description = "Token Authentication",
-            Name = "Authorization",
-            In = ParameterLocation.Header,
-            Type = SecuritySchemeType.Http,
-            Scheme = JwtBearerDefaults.AuthenticationScheme,
-            BearerFormat = "JWT"
-        };
-        options.ConfigureSecurityRequirement(name, jwtSecurityScheme);
-    }
-
     public static void ConfigureSecurityRequirement(this SwaggerGenOptions options, string name, OpenApiSecurityScheme securityScheme)
     {
         options.AddSecurityDefinition(name, securityScheme);

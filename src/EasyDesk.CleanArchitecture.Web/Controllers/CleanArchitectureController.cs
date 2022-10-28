@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
-public abstract partial class CleanArchitectureController : AbstractController
+public abstract class CleanArchitectureController : AbstractController
 {
     public const int DefaultPageSize = 100;
 

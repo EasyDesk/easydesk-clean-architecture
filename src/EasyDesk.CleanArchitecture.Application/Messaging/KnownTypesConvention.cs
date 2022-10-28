@@ -3,7 +3,7 @@ using Rebus.Serialization;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class KnownTypesConvention : IMessageTypeNameConvention
+internal class KnownTypesConvention : IMessageTypeNameConvention
 {
     private readonly IDictionary<string, Type> _knownTypes;
 

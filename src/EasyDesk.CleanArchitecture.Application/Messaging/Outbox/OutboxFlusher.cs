@@ -4,7 +4,7 @@ using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 
-public class OutboxFlusher
+internal class OutboxFlusher
 {
     private readonly int _batchSize;
     private readonly IUnitOfWorkProvider _unitOfWorkProvider;

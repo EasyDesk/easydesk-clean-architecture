@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 
-public class OutboxFlusherBackgroundService : BackgroundService
+internal class OutboxFlusherBackgroundService : BackgroundService
 {
     private readonly OutboxFlushRequestsChannel _requestsChannel;
     private readonly IServiceScopeFactory _serviceScopeFactory;

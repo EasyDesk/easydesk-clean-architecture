@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Mapping;
 
-public class DefaultMappingProfile : Profile
+internal class DefaultMappingProfile : Profile
 {
     public DefaultMappingProfile(params Assembly[] assemblies) : this(assemblies.AsEnumerable())
     {

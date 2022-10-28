@@ -7,7 +7,7 @@ internal class UnitOfWorkStep : IIncomingStep
 {
     public async Task Process(IncomingStepContext context, Func<Task> next)
     {
-        var unitOfWorkProvider = context.GetScopedService<IUnitOfWorkProvider>();
+        var unitOfWorkProvider = context.GetService<IUnitOfWorkProvider>();
         await unitOfWorkProvider.RunTransactionally(() => next());
     }
 }

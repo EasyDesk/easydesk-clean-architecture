@@ -8,7 +8,7 @@ using Rebus.Messages;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
-public class EfCoreOutbox : IOutbox
+internal class EfCoreOutbox : IOutbox
 {
     public static readonly Duration MessageAgingTime = Duration.FromSeconds(30);
 

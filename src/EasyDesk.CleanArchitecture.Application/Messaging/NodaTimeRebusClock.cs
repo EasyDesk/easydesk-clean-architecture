@@ -3,7 +3,7 @@ using Rebus.Time;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class NodaTimeRebusClock : IRebusTime
+internal class NodaTimeRebusClock : IRebusTime
 {
     private readonly IClock _clock;
 

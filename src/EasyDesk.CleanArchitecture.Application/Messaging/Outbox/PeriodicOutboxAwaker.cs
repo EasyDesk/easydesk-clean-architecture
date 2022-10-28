@@ -4,7 +4,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 
-public class PeriodicOutboxAwaker : BackgroundService
+internal class PeriodicOutboxAwaker : BackgroundService
 {
     private readonly Duration _period;
     private readonly OutboxFlushRequestsChannel _requestsChannel;

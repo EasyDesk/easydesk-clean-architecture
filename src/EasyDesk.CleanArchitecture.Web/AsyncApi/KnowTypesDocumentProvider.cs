@@ -5,7 +5,8 @@ using Saunter.Generation;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
-public class KnowTypesDocumentProvider : IAsyncApiDocumentProvider
+
+internal class KnowTypesDocumentProvider : IAsyncApiDocumentProvider
 {
     private readonly IDocumentGenerator _documentGenerator;
     private readonly KnownMessageTypes _knownMessageTypes;

@@ -4,7 +4,7 @@ using EasyDesk.Tools.Collections;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
-public class AggregatesTracker<TAggregate, TPersistence>
+internal class AggregatesTracker<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
     where TPersistence : class, new()
 {

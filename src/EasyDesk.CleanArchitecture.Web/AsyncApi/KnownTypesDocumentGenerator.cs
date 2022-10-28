@@ -15,7 +15,7 @@ using Saunter.Generation.SchemaGeneration;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
-public class KnownTypesDocumentGenerator : IDocumentGenerator
+internal class KnownTypesDocumentGenerator : IDocumentGenerator
 {
     public const string Version = "1.0.0";
     private readonly string _microserviceName;

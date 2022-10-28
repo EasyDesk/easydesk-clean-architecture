@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 
-public class OutboxFlushRequestsChannel
+internal class OutboxFlushRequestsChannel
 {
     private readonly Channel<Nothing> _channel;
 

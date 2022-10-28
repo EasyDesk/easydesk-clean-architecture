@@ -9,7 +9,7 @@ using Extension = Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal.
 
 namespace EasyDesk.CleanArchitecture.Dal.PostgreSql;
 
-public class PostgreSqlEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extension>
+internal class PostgreSqlEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extension>
     where T : DomainContext<T>
 {
     public PostgreSqlEfCoreDataAccess(EfCoreDataAccessOptions<T, Builder, Extension> options)

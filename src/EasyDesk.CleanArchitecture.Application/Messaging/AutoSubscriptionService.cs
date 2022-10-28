@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
-public class AutoSubscriptionService : IHostedService
+internal class AutoSubscriptionService : IHostedService
 {
     private readonly IBus _bus;
     private readonly KnownMessageTypes _knownMessageTypes;

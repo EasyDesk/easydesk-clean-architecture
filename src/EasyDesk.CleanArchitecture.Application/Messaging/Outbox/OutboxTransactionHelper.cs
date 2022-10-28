@@ -3,7 +3,7 @@ using EasyDesk.Tools.Observables;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging.Outbox;
 
-public class OutboxTransactionHelper
+internal class OutboxTransactionHelper
 {
     private readonly IOutbox _outbox;
     private readonly IUnitOfWorkProvider _unitOfWorkProvider;

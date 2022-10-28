@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-public class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesManager, IRolesToPermissionsMapper
+internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesManager, IRolesToPermissionsMapper
 {
     private readonly AuthorizationContext _context;
 

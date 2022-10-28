@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace EasyDesk.CleanArchitecture.Web.Filters;
 
-public class TenantFilter : IAsyncActionFilter
+internal class TenantFilter : IAsyncActionFilter
 {
     private readonly ITenantInitializer _tenantInitializer;
 
