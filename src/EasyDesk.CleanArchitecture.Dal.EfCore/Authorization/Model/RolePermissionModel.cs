@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 
-public class RolePermissionModel
+internal class RolePermissionModel
 {
     public string RoleId { get; set; }
 

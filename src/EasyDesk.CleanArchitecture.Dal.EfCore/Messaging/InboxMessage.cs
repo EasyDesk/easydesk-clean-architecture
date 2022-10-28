@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
-public class InboxMessage
+internal class InboxMessage
 {
     public string Id { get; set; }
 

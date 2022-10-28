@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
-public class OutboxMessage
+internal class OutboxMessage
 {
     public int Id { get; set; }
 

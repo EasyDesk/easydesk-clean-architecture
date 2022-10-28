@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
-public class MessagingContext : DbContext
+internal class MessagingContext : DbContext
 {
     public const string SchemaName = "messaging";
 

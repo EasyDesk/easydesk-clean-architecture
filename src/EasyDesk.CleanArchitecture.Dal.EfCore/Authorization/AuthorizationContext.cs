@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-public class AuthorizationContext : MultitenantDbContext<AuthorizationContext>
+internal class AuthorizationContext : MultitenantDbContext<AuthorizationContext>
 {
     public const string SchemaName = "auth";
 
