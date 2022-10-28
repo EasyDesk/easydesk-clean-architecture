@@ -1,0 +1,12 @@
+﻿{
+  IsSuccess: true,
+  IsFailure: false,
+  Value: [
+    {
+      Id: Guid_1,
+      FirstName: TestName,
+      LastName: TestSurname,
+      DateOfBirth: 1970-01-01
+    }
+  ]
+}
