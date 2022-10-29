@@ -57,8 +57,11 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         await _containers.StartAsync();
     }
 
-    async Task IAsyncLifetime.DisposeAsync()
+    async Task IAsyncLifetime.DisposeAsync() => await DisposeAsync();
+
+    public override async ValueTask DisposeAsync()
     {
+        await base.DisposeAsync();
         await _containers.DisposeAsync();
     }
 }
