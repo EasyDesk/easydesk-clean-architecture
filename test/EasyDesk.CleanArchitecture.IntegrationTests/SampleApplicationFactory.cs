@@ -17,10 +17,6 @@ public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<Pe
         });
     }
 
-    public string RabbitMqConnectionString => _containers.RabbitMq.ConnectionString;
-
-    public string PostgresConnectionString => _containers.Postgres.ConnectionString;
-
     public async Task InitializeAsync()
     {
         await _containers.StartAsync();

@@ -20,7 +20,7 @@ public class CreatePersonTests : IClassFixture<SampleApplicationFactory>
     public CreatePersonTests(SampleApplicationFactory factory)
     {
         _factory = factory;
-        _httpClient = factory.CreateCleanArchitectureClient();
+        _httpClient = factory.CreateHttpHelper();
     }
 
     [Fact]

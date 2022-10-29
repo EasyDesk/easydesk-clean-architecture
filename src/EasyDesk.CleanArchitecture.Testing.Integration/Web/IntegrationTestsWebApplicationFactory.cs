@@ -23,7 +23,7 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     {
     }
 
-    public HttpTestHelper CreateCleanArchitectureClient()
+    public HttpTestHelper CreateHttpHelper()
     {
         var jsonSettings = Services.GetRequiredService<JsonSettingsConfigurator>();
         return new(CreateClient(), jsonSettings);
