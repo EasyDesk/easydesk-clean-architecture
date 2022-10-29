@@ -1,29 +1,41 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+﻿using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
+using DotNet.Testcontainers.Containers;
+using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0;
 using Microsoft.Extensions.Configuration;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<PersonController>, IAsyncLifetime
+public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<PersonController>
 {
-    private readonly SampleAppContainersContext _containers = new();
+    private readonly PostgreSqlTestcontainer _postgres;
+    private readonly RabbitMqTestcontainer _rabbitMq;
+
+    public SampleApplicationFactory()
+    {
+        _postgres = RegisterTestContainer<PostgreSqlTestcontainer>(container => container
+            .WithDatabase(new PostgreSqlTestcontainerConfiguration
+            {
+                Database = "TestSampleDb",
+                Username = "sample",
+                Password = "sample"
+            }));
+
+        _rabbitMq = RegisterTestContainer<RabbitMqTestcontainer>(container => container
+            .WithMessageBroker(new RabbitMqTestcontainerConfiguration
+            {
+                Username = "guest",
+                Password = "guest"
+            }));
+    }
 
     protected override void ConfigureConfiguration(IConfigurationBuilder config)
     {
         config.AddInMemoryCollection(new Dictionary<string, string>
         {
-            ["ConnectionStrings:RabbitMq"] = _containers.RabbitMq.ConnectionString,
-            ["ConnectionStrings:MainDb"] = _containers.Postgres.ConnectionString,
+            ["ConnectionStrings:RabbitMq"] = _rabbitMq.ConnectionString,
+            ["ConnectionStrings:MainDb"] = _postgres.ConnectionString,
         });
-    }
-
-    public async Task InitializeAsync()
-    {
-        await _containers.StartAsync();
-    }
-
-    async Task IAsyncLifetime.DisposeAsync()
-    {
-        await _containers.DisposeAsync();
     }
 }

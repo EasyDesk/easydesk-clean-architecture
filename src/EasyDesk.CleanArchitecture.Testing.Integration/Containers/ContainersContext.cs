@@ -3,11 +3,11 @@ using DotNet.Testcontainers.Containers;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 
-public abstract class ContainersContext : IAsyncDisposable
+public class ContainersContext : IAsyncDisposable
 {
     private readonly ISet<ITestcontainersContainer> _containers = new HashSet<ITestcontainersContainer>();
 
-    protected TContainer RegisterTestContainer<TContainer>(Func<ITestcontainersBuilder<TContainer>, ITestcontainersBuilder<TContainer>> configureContainer)
+    public TContainer RegisterTestContainer<TContainer>(Func<ITestcontainersBuilder<TContainer>, ITestcontainersBuilder<TContainer>> configureContainer)
         where TContainer : ITestcontainersContainer
     {
         var container = configureContainer(new TestcontainersBuilder<TContainer>()).Build();

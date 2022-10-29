@@ -10,7 +10,7 @@ public class SampleAppUnitTestsTest
 {
     private const string TestSurname = "TestSurname";
     private const string TestName = "TestName";
-    private static readonly LocalDate _testDate = new LocalDate(1970, 1, 1);
+    private static readonly LocalDate _testDate = new(1970, 1, 1);
 
     [Fact]
     public async Task CreatePersonCommandTest()
