@@ -1,9 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rebus.Pipeline;
 using Rebus.Transport;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 
 internal class ServiceScopeOpeningStep : IIncomingStep
 {
@@ -11,6 +10,7 @@ internal class ServiceScopeOpeningStep : IIncomingStep
     {
         using (var scope = context.Load<IServiceProvider>().CreateScope())
         {
+            context.Save(scope);
             context.Load<ITransactionContext>().SetServiceProvider(scope.ServiceProvider);
             await next();
         }
