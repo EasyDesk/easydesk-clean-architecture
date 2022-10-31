@@ -20,7 +20,7 @@ public interface ICommandSender
 
 public class MessageOptions
 {
-    public Dictionary<string, string> AdditionalHeaders { get; } = new Dictionary<string, string>();
+    public Dictionary<string, string> AdditionalHeaders { get; } = new();
 
     public MessageOptions WithHeader(string key, string value)
     {

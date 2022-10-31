@@ -982,9 +982,6 @@
           "Newtonsoft.Json": "[13.0.1, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
           "NodaTime.Serialization.JsonNet": "[3.0.0, )",
-          "Rebus": "[6.6.2, )",
-          "Rebus.Microsoft.Extensions.Logging": "[2.0.0, )",
-          "Rebus.ServiceProvider": "[7.0.0, )",
           "Scrutor": "[4.0.0, )"
         }
       },
@@ -1029,6 +1026,9 @@
           "EasyDesk.Tools": "[7.4.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.7, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[6.0.2, )",
+          "Rebus": "[6.6.2, )",
+          "Rebus.Microsoft.Extensions.Logging": "[2.0.0, )",
+          "Rebus.ServiceProvider": "[7.0.0, )",
           "System.IdentityModel.Tokens.Jwt": "[6.15.1, )"
         }
       },

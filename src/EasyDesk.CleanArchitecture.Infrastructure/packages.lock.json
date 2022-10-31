@@ -37,6 +37,39 @@
           "Microsoft.SourceLink.Common": "1.0.0"
         }
       },
+      "Rebus": {
+        "type": "Direct",
+        "requested": "[6.6.2, )",
+        "resolved": "6.6.2",
+        "contentHash": "vNs2M5+1HViW1kvQt5BZNjIsIrD8GfVtikv2NUqCdISmN8tYKQeUHWsz5yfkmlyMruYoclMPVHm8FVlYLRt8Sw==",
+        "dependencies": {
+          "Microsoft.CSharp": "4.5.0",
+          "Newtonsoft.Json": "11.0.1",
+          "System.Dynamic.Runtime": "4.3.0",
+          "System.Reflection.Emit.LightWeight": "4.3.0",
+          "System.Text.Json": "5.0.0"
+        }
+      },
+      "Rebus.Microsoft.Extensions.Logging": {
+        "type": "Direct",
+        "requested": "[2.0.0, )",
+        "resolved": "2.0.0",
+        "contentHash": "fUAbaGFJQnaKPoAskrUgou0Xt5yRS2onL7E3gNAKbrAR8PpeyxtDIWXEoUe3DqWZd7UP2sPNrY7mdoL+mxmUFg==",
+        "dependencies": {
+          "microsoft.extensions.logging": "3.1.3",
+          "rebus": "6.1.0"
+        }
+      },
+      "Rebus.ServiceProvider": {
+        "type": "Direct",
+        "requested": "[7.0.0, )",
+        "resolved": "7.0.0",
+        "contentHash": "gGbp4p8D3ativ1oAonbo4r1blLNp1x7JekPiSoRpBSrw9OnJ8Ef+hbwCso74oBh+c4RUZ92XqBQi5R9r4GI8GQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Hosting.Abstractions": "[3.0.0, 7.0.0)",
+          "Rebus": "6.0.0"
+        }
+      },
       "StyleCop.Analyzers": {
         "type": "Direct",
         "requested": "[1.2.0-beta.435, )",
@@ -281,36 +314,6 @@
         "dependencies": {
           "Newtonsoft.Json": "12.0.1",
           "NodaTime": "[3.0.0, 4.0.0)"
-        }
-      },
-      "Rebus": {
-        "type": "Transitive",
-        "resolved": "6.6.2",
-        "contentHash": "vNs2M5+1HViW1kvQt5BZNjIsIrD8GfVtikv2NUqCdISmN8tYKQeUHWsz5yfkmlyMruYoclMPVHm8FVlYLRt8Sw==",
-        "dependencies": {
-          "Microsoft.CSharp": "4.5.0",
-          "Newtonsoft.Json": "11.0.1",
-          "System.Dynamic.Runtime": "4.3.0",
-          "System.Reflection.Emit.LightWeight": "4.3.0",
-          "System.Text.Json": "5.0.0"
-        }
-      },
-      "Rebus.Microsoft.Extensions.Logging": {
-        "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "fUAbaGFJQnaKPoAskrUgou0Xt5yRS2onL7E3gNAKbrAR8PpeyxtDIWXEoUe3DqWZd7UP2sPNrY7mdoL+mxmUFg==",
-        "dependencies": {
-          "microsoft.extensions.logging": "3.1.3",
-          "rebus": "6.1.0"
-        }
-      },
-      "Rebus.ServiceProvider": {
-        "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "gGbp4p8D3ativ1oAonbo4r1blLNp1x7JekPiSoRpBSrw9OnJ8Ef+hbwCso74oBh+c4RUZ92XqBQi5R9r4GI8GQ==",
-        "dependencies": {
-          "Microsoft.Extensions.Hosting.Abstractions": "[3.0.0, 7.0.0)",
-          "Rebus": "6.0.0"
         }
       },
       "Scrutor": {
@@ -625,9 +628,6 @@
           "Newtonsoft.Json": "[13.0.1, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
           "NodaTime.Serialization.JsonNet": "[3.0.0, )",
-          "Rebus": "[6.6.2, )",
-          "Rebus.Microsoft.Extensions.Logging": "[2.0.0, )",
-          "Rebus.ServiceProvider": "[7.0.0, )",
           "Scrutor": "[4.0.0, )"
         }
       },

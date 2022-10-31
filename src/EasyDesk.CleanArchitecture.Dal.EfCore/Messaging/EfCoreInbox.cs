@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.Inbox;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;

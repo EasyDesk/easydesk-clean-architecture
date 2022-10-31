@@ -1,7 +1,7 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
@@ -63,5 +63,6 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     {
         await base.DisposeAsync();
         await _containers.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }

@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using Saunter;
 using Saunter.AsyncApiSchema.v2;
 using Saunter.Generation;
