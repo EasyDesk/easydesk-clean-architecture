@@ -9,10 +9,11 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <EnablePreviewFeatures>true</EnablePreviewFeatures>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="7.4.0" />
+    <PackageReference Include="EasyDesk.Tools" Version="7.5.0" />
   </ItemGroup>
 
   <ItemGroup>

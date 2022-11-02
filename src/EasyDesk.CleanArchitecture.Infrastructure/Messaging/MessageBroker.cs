@@ -1,5 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
+using EasyDesk.CleanArchitecture.Application.Messaging;
 using NodaTime;
 using Rebus.Bus;
 
@@ -16,31 +17,15 @@ internal sealed class MessageBroker : IEventPublisher, ICommandSender
         _clock = clock;
     }
 
-    public async Task Send(IOutgoingCommand message, Action<MessageOptions> configure = null) =>
-        await UsingConfiguredHeaders(configure, headers => _bus.Send(message, headers));
+    public async Task Send<T>(T message) where T : IOutgoingCommand, IMessage =>
+        await _bus.Send(message);
 
-    public async Task SendLocal(IOutgoingCommand message, Action<MessageOptions> configure = null) =>
-        await UsingConfiguredHeaders(configure, headers => _bus.SendLocal(message, headers));
+    public async Task Defer<T>(Duration delay, T message) where T : IOutgoingCommand, IMessage =>
+        await _bus.Defer(delay.ToTimeSpan(), message);
 
-    public async Task Defer(Duration delay, IOutgoingCommand message, Action<MessageOptions> configure = null) =>
-        await UsingConfiguredHeaders(configure, headers => _bus.Defer(delay.ToTimeSpan(), message, headers));
+    public async Task Schedule<T>(Instant instant, T message) where T : IOutgoingCommand, IMessage =>
+        await Defer(instant - _clock.GetCurrentInstant(), message);
 
-    public async Task DeferLocal(Duration delay, IOutgoingCommand message, Action<MessageOptions> configure = null) =>
-        await UsingConfiguredHeaders(configure, headers => _bus.DeferLocal(delay.ToTimeSpan(), message, headers));
-
-    public async Task Schedule(Instant instant, IOutgoingCommand message, Action<MessageOptions> configure = null) =>
-        await Defer(instant - _clock.GetCurrentInstant(), message, configure);
-
-    public async Task ScheduleLocal(Instant instant, IOutgoingCommand message, Action<MessageOptions> configure = null) =>
-        await DeferLocal(instant - _clock.GetCurrentInstant(), message, configure);
-
-    public async Task Publish(IOutgoingEvent message, Action<MessageOptions> configure = null) =>
-        await UsingConfiguredHeaders(configure, headers => _bus.Publish(message, headers));
-
-    private async Task UsingConfiguredHeaders(Action<MessageOptions> configure, AsyncAction<IDictionary<string, string>> action)
-    {
-        var options = new MessageOptions();
-        configure?.Invoke(options);
-        await action(options.AdditionalHeaders);
-    }
+    public async Task Publish<T>(T message) where T : IOutgoingEvent, IMessage =>
+        await _bus.Publish(message);
 }

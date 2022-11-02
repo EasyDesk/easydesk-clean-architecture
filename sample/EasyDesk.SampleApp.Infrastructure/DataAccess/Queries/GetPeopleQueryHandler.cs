@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.SampleApp.Application.Queries;
-using static EasyDesk.SampleApp.Application.Queries.GetPeople;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Queries;
 
-public class GetPeopleQueryHandler : IQueryHandler<Query, Pageable<PersonSnapshot>>
+public class GetPeopleQueryHandler : IHandler<GetPeople, Pageable<PersonSnapshot>>
 {
     private readonly SampleAppContext _context;
     private readonly IMapper _mapper;
@@ -19,7 +18,7 @@ public class GetPeopleQueryHandler : IQueryHandler<Query, Pageable<PersonSnapsho
         _mapper = mapper;
     }
 
-    public Task<Result<Pageable<PersonSnapshot>>> Handle(Query query)
+    public Task<Result<Pageable<PersonSnapshot>>> Handle(GetPeople query)
     {
         return Task.FromResult(Success(_context.People
             .OrderBy(p => p.LastName)

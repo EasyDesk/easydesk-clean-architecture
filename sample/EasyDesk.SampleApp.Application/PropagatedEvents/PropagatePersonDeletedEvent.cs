@@ -1,13 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
-using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
+using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.PropagatedEvents;
 
-public record PersonDeleted(Guid PersonId) : IOutgoingEvent;
-
-public class PropagatePersonDeletedEvent : IDomainEventPropagator<PersonDeletedEvent>
+public record PersonDeleted(Guid PersonId) : IOutgoingEvent, IMessage, IPropagatedEvent<PersonDeleted, PersonDeletedEvent>
 {
-    public IOutgoingEvent ConvertToMessage(PersonDeletedEvent ev) =>
-        new PersonDeleted(ev.Person.Id);
+    public static PersonDeleted ToMessage(PersonDeletedEvent ev) => new(ev.Person.Id);
 }

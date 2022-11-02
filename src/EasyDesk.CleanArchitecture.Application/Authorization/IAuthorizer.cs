@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-public interface IAuthorizer<T>
+public interface IAuthorizer
 {
-    Task<bool> IsAuthorized(T request, UserInfo userInfo);
+    Task<bool> IsAuthorized<T>(T request, UserInfo userInfo);
 }

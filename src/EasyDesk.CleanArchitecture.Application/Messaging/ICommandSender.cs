@@ -1,30 +1,13 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public interface ICommandSender
 {
-    Task Send(IOutgoingCommand message, Action<MessageOptions> configure = null);
+    Task Send<T>(T message) where T : IOutgoingCommand, IMessage;
 
-    Task SendLocal(IOutgoingCommand message, Action<MessageOptions> configure = null);
+    Task Defer<T>(Duration delay, T message) where T : IOutgoingCommand, IMessage;
 
-    Task Defer(Duration delay, IOutgoingCommand message, Action<MessageOptions> configure = null);
-
-    Task DeferLocal(Duration delay, IOutgoingCommand message, Action<MessageOptions> configure = null);
-
-    Task Schedule(Instant instant, IOutgoingCommand message, Action<MessageOptions> configure = null);
-
-    Task ScheduleLocal(Instant instant, IOutgoingCommand message, Action<MessageOptions> configure = null);
-}
-
-public class MessageOptions
-{
-    public Dictionary<string, string> AdditionalHeaders { get; } = new();
-
-    public MessageOptions WithHeader(string key, string value)
-    {
-        AdditionalHeaders[key] = value;
-        return this;
-    }
+    Task Schedule<T>(Instant instant, T message) where T : IOutgoingCommand, IMessage;
 }

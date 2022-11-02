@@ -1,8 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 
 public interface IEventPublisher
 {
-    Task Publish(IOutgoingEvent message, Action<MessageOptions> configure = null);
+    Task Publish<T>(T message) where T : IOutgoingEvent, IMessage;
 }

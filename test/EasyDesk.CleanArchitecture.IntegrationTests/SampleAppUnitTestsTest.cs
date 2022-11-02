@@ -17,7 +17,7 @@ public class SampleAppUnitTestsTest
     {
         var personRepository = Substitute.For<IPersonRepository>();
         var handler = new CreatePerson.Handler(personRepository);
-        var result = await handler.Handle(new CreatePerson.Command(TestName, TestSurname, _testDate));
+        var result = await handler.Handle(new CreatePerson(TestName, TestSurname, _testDate));
         await Verify(result);
     }
 }

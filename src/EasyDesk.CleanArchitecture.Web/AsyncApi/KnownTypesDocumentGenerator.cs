@@ -1,7 +1,8 @@
 ﻿using System.Net.Mime;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
@@ -63,7 +64,7 @@ internal class KnownTypesDocumentGenerator : IDocumentGenerator
             var channel = new ChannelItem();
             asyncApiSchema.Channels[messageType.Name] = channel;
             channel.Servers.Add(ServerName);
-            if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand)))
+            if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand<>)))
             {
                 channel.Subscribe = ConfigureOperation(messageType, "Command", schemaOptions);
             }

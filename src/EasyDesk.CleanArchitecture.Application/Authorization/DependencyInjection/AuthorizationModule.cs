@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,13 +15,13 @@ public class AuthorizationModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<CqrsModule>().Pipeline.AddStep(typeof(AuthorizationStep<,>));
+        app.RequireModule<DispatchingModule>().Pipeline.AddStep(typeof(AuthorizationStep<,>));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         var options = new AuthorizationOptions(services, app);
-        services.AddScoped(typeof(IAuthorizer<>), typeof(NoAuthorizer<>));
+        services.AddScoped(typeof(IAuthorizer), typeof(NoAuthorizer));
         _configure?.Invoke(options);
     }
 }

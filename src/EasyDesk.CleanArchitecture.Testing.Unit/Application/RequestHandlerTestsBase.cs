@@ -1,13 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.Testing.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Testing.Unit.Application;
 
 public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse> : DependencyInjectionTestBase
-    where THandler : class, ICqrsRequestHandler<TRequest, TResponse>
-    where TRequest : ICqrsRequest<TResponse>
+    where THandler : class, IHandler<TRequest, TResponse>
+    where TRequest : IDispatchable<TResponse>
 {
     public RequestHandlerTestsBase()
     {

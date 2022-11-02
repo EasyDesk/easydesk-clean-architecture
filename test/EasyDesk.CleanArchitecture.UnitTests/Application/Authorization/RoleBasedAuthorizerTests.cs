@@ -29,8 +29,7 @@ public class RoleBasedAuthorizerTests
         _permissionsProvider.GetPermissionsForUser(_userInfo).Returns(Set<Permission>());
     }
 
-    private RoleBasedAuthorizer<T> CreateAuthorizer<T>() =>
-        new(_permissionsProvider);
+    private RoleBasedAuthorizer CreateAuthorizer<T>() => new(_permissionsProvider);
 
     private async Task<bool> IsAuthorized<T>() where T : new() =>
         await CreateAuthorizer<T>().IsAuthorized(new T(), _userInfo);

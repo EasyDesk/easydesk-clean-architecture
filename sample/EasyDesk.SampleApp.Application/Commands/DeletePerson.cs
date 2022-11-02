@@ -1,16 +1,14 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-public static class DeletePerson
+public record DeletePerson(Guid PersonId) : IIncomingCommand<PersonSnapshot>
 {
-    public record Command(Guid PersonId) : ICqrsRequest<PersonSnapshot>;
-
-    public class Handler : ICqrsRequestHandler<Command, PersonSnapshot>
+    public class Handler : IHandler<DeletePerson, PersonSnapshot>
     {
         private readonly IPersonRepository _personRepository;
 
@@ -19,7 +17,7 @@ public static class DeletePerson
             _personRepository = personRepository;
         }
 
-        public async Task<Result<PersonSnapshot>> Handle(Command request)
+        public async Task<Result<PersonSnapshot>> Handle(DeletePerson request)
         {
             return await _personRepository.RequireById(request.PersonId)
                 .ThenIfSuccessAsync(_personRepository.Remove)

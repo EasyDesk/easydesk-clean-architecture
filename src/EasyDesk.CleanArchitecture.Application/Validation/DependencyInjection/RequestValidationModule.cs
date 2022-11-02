@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,7 @@ public class RequestValidationModule : AppModule
 {
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<CqrsModule>().Pipeline.AddStep(typeof(ValidationStep<,>));
+        app.RequireModule<DispatchingModule>().Pipeline.AddStep(typeof(ValidationStep<,>));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

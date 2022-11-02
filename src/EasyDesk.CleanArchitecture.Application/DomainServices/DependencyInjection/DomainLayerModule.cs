@@ -14,16 +14,11 @@ public class DomainLayerModule : AppModule
         services.AddScoped<IDomainEventNotifier>(provider => provider.GetRequiredService<DomainEventQueue>());
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
-        services.AddTransient(typeof(IDomainEventHandler<>), typeof(PropagateDomainEvent<>));
-
         var applicationAssembly = app.GetLayerAssembly(CleanArchitectureLayer.Application);
         var domainAssembly = app.GetLayerAssembly(CleanArchitectureLayer.Domain);
         services.RegisterImplementationsAsTransient(
             typeof(IDomainEventHandler<>),
             s => s.FromAssemblies(applicationAssembly, domainAssembly));
-        services.RegisterImplementationsAsTransient(
-            typeof(IDomainEventPropagator<>),
-            s => s.FromAssemblies(applicationAssembly));
     }
 }
 

@@ -1,11 +1,14 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Messaging.Messages;
-using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 using EasyDesk.Tools.Collections;
@@ -16,6 +19,7 @@ using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
 using Rebus.Transport;
+using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 
@@ -32,15 +36,17 @@ public class RebusMessagingModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<CqrsModule>().Pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
+        app.RequireModule<DispatchingModule>().Pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
         app.RequireModule<JsonModule>();
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
+        var knownMessageTypes = ScanForKnownMessageTypes(app);
+        services.AddSingleton(knownMessageTypes);
+
         services.AddSingleton(_endpoint);
         services.AddSingleton(_options);
-        services.AddSingleton(ScanForKnownMessageTypes(app));
 
         ITransport originalTransport = null;
         services.AddRebus((configurer, provider) =>
@@ -48,23 +54,18 @@ public class RebusMessagingModule : AppModule
             configurer.ConfigureStandardBehavior(_endpoint, _options, provider);
             configurer.Options(o =>
             {
-                o.WrapHandlersInsideUnitOfWork();
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
-
-                if (app.IsMultitenant())
-                {
-                    o.AddMultitenancySupport();
-                }
-
                 o.UseOutbox();
-                o.UseInbox();
-                o.HandleDomainEventsAfterMessageHandlers();
                 o.OpenServiceScopeBeforeMessageHandlers();
             });
             return configurer;
         });
 
-        RegisterMessageHandlers(services, app);
+        app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
+        SetupHandlingPipeline(services, app);
+        AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
+
+        AddEventPropagators(services, knownMessageTypes);
 
         services.AddScoped<MessageBroker>();
         services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
@@ -74,30 +75,39 @@ public class RebusMessagingModule : AppModule
         {
             services.AddHostedService<AutoSubscriptionService>();
         }
-
-        app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
     }
 
-    private void RegisterMessageHandlers(IServiceCollection services, AppDescription app)
+    private static void SetupHandlingPipeline(IServiceCollection services, AppDescription app)
     {
-        new AssemblyScanner()
-            .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
-            .NonAbstract()
-            .SubtypesOrImplementationsOf(typeof(IMessageHandler<>))
-            .FindTypes()
-            .ForEach(t =>
-            {
-                var implementedInterfaces = t.GetInterfaces().Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMessageHandler<>));
-                implementedInterfaces.ForEach(i =>
-                {
-                    services.AddTransient(i, t);
-                    var messageType = i.GetGenericArguments().First();
-                    var rebusHandlerType = typeof(IHandleMessages<>).MakeGenericType(messageType);
-                    var adapterType = typeof(EventHandlerAdapter<>).MakeGenericType(messageType);
-                    services.AddTransient(rebusHandlerType, adapterType);
-                });
-            });
+        services.AddTransient(typeof(IHandleMessages<>), typeof(DispatchingMessageHandler<>));
+
+        app.RequireModule<DispatchingModule>().Pipeline
+            .AddStep(typeof(InboxStep<,>))
+            .After(typeof(UnitOfWorkStep<,>));
+    }
+
+    private void AddEventPropagators(IServiceCollection services, KnownMessageTypes knownMessageTypes)
+    {
+        var arguments = new object[] { services };
+        foreach (var messageType in knownMessageTypes.Types)
+        {
+            messageType
+                .GetInterfaces()
+                .Where(i => i.IsGenericType)
+                .Where(i => i.GetGenericTypeDefinition() == typeof(IPropagatedEvent<,>))
+                .Select(i => i.GetGenericArguments())
+                .Select(a => typeof(RebusMessagingModule)
+                    .GetMethod(nameof(RegisterPropagatorForType), BindingFlags.NonPublic | BindingFlags.Instance)
+                    .MakeGenericMethod(a))
+                .ForEach(m => m.Invoke(this, arguments));
+        }
+    }
+
+    private void RegisterPropagatorForType<M, D>(IServiceCollection services)
+        where M : IPropagatedEvent<M, D>, IOutgoingEvent, IMessage
+        where D : DomainEvent
+    {
+        services.AddTransient<IDomainEventHandler<D>, DomainEventPropagator<M, D>>();
     }
 
     private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)

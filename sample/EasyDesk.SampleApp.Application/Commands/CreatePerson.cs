@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Handlers;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -8,14 +8,12 @@ using NodaTime;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-public static class CreatePerson
-{
-    public record Command(
+public record CreatePerson(
         string FirstName,
         string LastName,
-        LocalDate DateOfBirth) : ICommand<PersonSnapshot>;
-
-    public class Validator : AbstractValidator<Command>
+        LocalDate DateOfBirth) : IIncomingCommand<PersonSnapshot>
+{
+    public class Validator : AbstractValidator<CreatePerson>
     {
         public Validator()
         {
@@ -24,7 +22,7 @@ public static class CreatePerson
         }
     }
 
-    public class Handler : ICommandHandler<Command, PersonSnapshot>
+    public class Handler : IHandler<CreatePerson, PersonSnapshot>
     {
         private readonly IPersonRepository _personRepository;
 
@@ -33,9 +31,9 @@ public static class CreatePerson
             _personRepository = personRepository;
         }
 
-        public async Task<Result<PersonSnapshot>> Handle(Command request)
+        public async Task<Result<PersonSnapshot>> Handle(CreatePerson command)
         {
-            var person = Person.Create(Name.From(request.FirstName), Name.From(request.LastName), request.DateOfBirth);
+            var person = Person.Create(Name.From(command.FirstName), Name.From(command.LastName), command.DateOfBirth);
             await _personRepository.Save(person);
             return PersonSnapshot.FromPerson(person);
         }

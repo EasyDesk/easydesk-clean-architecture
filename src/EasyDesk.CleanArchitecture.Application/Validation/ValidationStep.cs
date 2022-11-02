@@ -1,24 +1,30 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.Tools.Collections;
 using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
-public class ValidationStep<TRequest, TResult> : IPipelineStep<TRequest, TResult>
-    where TRequest : ICqrsRequest<TResult>
+public class ValidationStep<T, R> : IPipelineStep<T, R>
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ValidationStep(IEnumerable<IValidator<TRequest>> validators)
+    public ValidationStep(IServiceProvider serviceProvider)
     {
-        _validators = validators;
+        _serviceProvider = serviceProvider;
     }
 
-    public async Task<Result<TResult>> Run(TRequest request, NextPipelineStep<TResult> next)
+    public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        var context = new ValidationContext<TRequest>(request);
-        var errors = _validators
+        var validators = _serviceProvider.GetServices<IValidator<T>>().ToList();
+        if (validators.IsEmpty())
+        {
+            return await next();
+        }
+
+        var context = new ValidationContext<T>(request);
+        var errors = validators
             .Select(x => x.Validate(context))
             .SelectMany(x => x.Errors)
             .Where(x => x is not null)

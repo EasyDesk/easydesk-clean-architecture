@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-public class NoAuthorizer<T> : IAuthorizer<T>
+public class NoAuthorizer : IAuthorizer
 {
-    public Task<bool> IsAuthorized(T request, UserInfo userInfo) => Task.FromResult(true);
+    public Task<bool> IsAuthorized<T>(T request, UserInfo userInfo) => Task.FromResult(true);
 }

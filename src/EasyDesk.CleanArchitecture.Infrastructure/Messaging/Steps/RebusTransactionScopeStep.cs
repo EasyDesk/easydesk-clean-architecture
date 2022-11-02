@@ -1,10 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Operations;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 
-public class RebusTransactionScopeStep<TRequest, TResult> : IPipelineStep<TRequest, TResult>
-    where TRequest : ICqrsRequest<TResult>
+public class RebusTransactionScopeStep<T, R> : IPipelineStep<T, R>
+    where T : IReadWriteOperation
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -13,7 +13,7 @@ public class RebusTransactionScopeStep<TRequest, TResult> : IPipelineStep<TReque
         _serviceProvider = serviceProvider;
     }
 
-    public async Task<Result<TResult>> Run(TRequest request, NextPipelineStep<TResult> next)
+    public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         using var scope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(_serviceProvider);
         var response = await next();

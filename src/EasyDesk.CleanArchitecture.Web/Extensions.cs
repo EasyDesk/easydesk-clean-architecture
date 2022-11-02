@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
@@ -23,7 +23,7 @@ public static class Extensions
     ///     <item><see cref="DomainLayerModule"/></item>
     ///     <item><see cref="HttpContextModule"/></item>
     ///     <item><see cref="TimeManagementModule"/></item>
-    ///     <item><see cref="CqrsModule"/></item>
+    ///     <item><see cref="DispatchingModule"/></item>
     ///     <item><see cref="MappingModule"/></item>
     ///     <item><see cref="RequestValidationModule"/></item>
     /// </list>

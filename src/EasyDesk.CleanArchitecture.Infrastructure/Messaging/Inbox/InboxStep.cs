@@ -1,29 +1,36 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Operations;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.CleanArchitecture.Application.Messaging;
 using Rebus.Bus;
-using Rebus.Messages;
 using Rebus.Pipeline;
-using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 
-public class InboxStep : IIncomingStep
+public class InboxStep<T, R> : IPipelineStep<T, R>
+    where T : IMessage, IReadWriteOperation
 {
-    public async Task Process(IncomingStepContext context, Func<Task> next)
-    {
-        var messageId = context.Load<TransportMessage>().GetMessageId();
-        var inbox = context
-            .Load<ITransactionContext>()
-            .GetServiceProvider()
-            .GetRequiredService<IInbox>();
+    private readonly IInbox _inbox;
 
-        if (await inbox.HasBeenProcessed(messageId))
+    public InboxStep(IInbox inbox)
+    {
+        _inbox = inbox;
+    }
+
+    public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
+    {
+        // TODO: split logic between rebus and dispatching pipeline.
+        var messageContext = MessageContext.Current;
+        if (messageContext is null)
         {
-            return;
+            return await next();
         }
 
-        await next();
+        var messageId = messageContext.TransportMessage.GetMessageId();
+        if (await _inbox.HasBeenProcessed(messageId))
+        {
+            return default;
+        }
 
-        await inbox.MarkAsProcessed(messageId);
+        return await next().ThenIfSuccessAsync(_ => _inbox.MarkAsProcessed(messageId));
     }
 }

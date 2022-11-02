@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-internal class RoleBasedAuthorizer<T> : IAuthorizer<T>
+internal class RoleBasedAuthorizer : IAuthorizer
 {
     private readonly IPermissionsProvider _permissionsProvider;
 
@@ -13,9 +13,9 @@ internal class RoleBasedAuthorizer<T> : IAuthorizer<T>
         _permissionsProvider = permissionsProvider;
     }
 
-    public async Task<bool> IsAuthorized(T request, UserInfo userInfo)
+    public async Task<bool> IsAuthorized<T>(T request, UserInfo userInfo)
     {
-        var requirementAttributes = typeof(T).GetCustomAttributes<RequireAnyOfAttribute>();
+        var requirementAttributes = request.GetType().GetCustomAttributes<RequireAnyOfAttribute>();
         if (requirementAttributes.IsEmpty())
         {
             return true;

@@ -1,8 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Queries;
 
 namespace EasyDesk.SampleApp.Application.Queries;
 
-public static class GetPerson
-{
-    public record Query(Guid Id) : IQuery<PersonSnapshot>;
-}
+public record GetPerson(Guid Id) : IIncomingQuery<PersonSnapshot>;
