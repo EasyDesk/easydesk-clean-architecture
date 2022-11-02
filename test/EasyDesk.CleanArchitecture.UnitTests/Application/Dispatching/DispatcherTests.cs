@@ -5,7 +5,7 @@ using NSubstitute;
 using Shouldly;
 using Xunit;
 
-namespace EasyDesk.CleanArchitecture.UnitTests.Application.Cqrs;
+namespace EasyDesk.CleanArchitecture.UnitTests.Application.Dispatching;
 
 public class CqrsRequestDispatcherTests
 {

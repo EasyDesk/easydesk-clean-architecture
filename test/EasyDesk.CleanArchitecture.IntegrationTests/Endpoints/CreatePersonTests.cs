@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.SampleApp.Application.PropagatedEvents;
+using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0;
 using NodaTime;
 
