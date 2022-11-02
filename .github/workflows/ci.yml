@@ -59,7 +59,7 @@ jobs:
           package-version: ${{ steps.semver.outputs.version }}
           output-dir: ${{ env.OUTPUT_DIR }}
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: nuget-package
           path: ${{ env.OUTPUT_DIR }}
