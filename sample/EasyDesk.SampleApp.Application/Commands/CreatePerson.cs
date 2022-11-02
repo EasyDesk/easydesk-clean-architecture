@@ -9,9 +9,9 @@ using NodaTime;
 namespace EasyDesk.SampleApp.Application.Commands;
 
 public record CreatePerson(
-        string FirstName,
-        string LastName,
-        LocalDate DateOfBirth) : IIncomingCommand<PersonSnapshot>
+    string FirstName,
+    string LastName,
+    LocalDate DateOfBirth) : IIncomingCommand<PersonSnapshot>
 {
     public class Validator : AbstractValidator<CreatePerson>
     {
