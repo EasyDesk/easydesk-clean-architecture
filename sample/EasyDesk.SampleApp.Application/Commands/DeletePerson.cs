@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
-using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -8,7 +8,7 @@ namespace EasyDesk.SampleApp.Application.Commands;
 
 public record DeletePerson(Guid PersonId) : IIncomingCommand<PersonSnapshot>
 {
-    public class Handler : IHandler<DeletePerson, PersonSnapshot>
+    public class Handler : MappingHandler<DeletePerson, Person, PersonSnapshot>
     {
         private readonly IPersonRepository _personRepository;
 
@@ -17,11 +17,11 @@ public record DeletePerson(Guid PersonId) : IIncomingCommand<PersonSnapshot>
             _personRepository = personRepository;
         }
 
-        public async Task<Result<PersonSnapshot>> Handle(DeletePerson request)
+        protected override async Task<Result<Person>> Process(DeletePerson request)
         {
-            return await _personRepository.RequireById(request.PersonId)
-                .ThenIfSuccessAsync(_personRepository.Remove)
-                .ThenMap(PersonSnapshot.MapFrom);
+            return await _personRepository
+                .RequireById(request.PersonId)
+                .ThenIfSuccessAsync(_personRepository.Remove);
         }
     }
 }
