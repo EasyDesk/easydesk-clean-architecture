@@ -60,10 +60,10 @@ public static class QueryableUtils
         };
     }
 
-    public static Pageable<T> ToPageable<T>(this IQueryable<T> queryable, Func<IQueryable<T>, IOrderedQueryable<T>> ordering) =>
+    public static IPageable<T> ToPageable<T>(this IQueryable<T> queryable, Func<IQueryable<T>, IOrderedQueryable<T>> ordering) =>
         new QueryablePageable<T>(queryable, ordering);
 
-    private class QueryablePageable<T> : Pageable<T>
+    private class QueryablePageable<T> : IPageable<T>
     {
         private readonly IQueryable<T> _queryable;
         private readonly Func<IQueryable<T>, IOrderedQueryable<T>> _ordering;
@@ -74,12 +74,12 @@ public static class QueryableUtils
             _ordering = ordering;
         }
 
-        public override async Task<int> GetTotalCount() => await _queryable.CountAsync();
+        public async Task<int> GetTotalCount() => await _queryable.CountAsync();
 
-        public override async Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex) =>
+        public async Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex) =>
             await GetPageAsArray(pageSize, pageIndex);
 
-        public override async IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
+        public async IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
         {
             var index = 0;
             T[] page;

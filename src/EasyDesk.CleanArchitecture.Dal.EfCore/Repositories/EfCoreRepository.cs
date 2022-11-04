@@ -27,6 +27,8 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
         _eventNotifier = eventNotifier;
     }
 
+    protected virtual DbSet<TPersistence> GetDbSet(TContext context) => context.Set<TPersistence>();
+
     protected DbSet<TPersistence> DbSet => GetDbSet(_context);
 
     private IQueryable<TPersistence> InitialQuery() => Includes(DbSet);
@@ -85,8 +87,6 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
 
     private void NotifyAllEvents(TAggregate aggregate) =>
         aggregate.ConsumeAllEvents().ForEach(_eventNotifier.Notify);
-
-    protected abstract DbSet<TPersistence> GetDbSet(TContext context);
 
     protected abstract IQueryable<TPersistence> Includes(IQueryable<TPersistence> initialQuery);
 }

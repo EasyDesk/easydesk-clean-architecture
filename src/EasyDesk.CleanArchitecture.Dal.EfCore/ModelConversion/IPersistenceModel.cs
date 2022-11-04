@@ -1,7 +1,7 @@
 ﻿namespace EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 
 public interface IPersistenceModel<TDomain, TPersistence>
-    where TPersistence : class, IPersistenceModel<TDomain, TPersistence>
+    where TPersistence : IPersistenceModel<TDomain, TPersistence>
 {
     TDomain ToDomain();
 
@@ -13,7 +13,7 @@ public interface IPersistenceModel<TDomain, TPersistence>
 public static class ModelConverterExtensions
 {
     public static TPersistence ToPersistence<TDomain, TPersistence>(this TDomain aggregate)
-        where TPersistence : class, IPersistenceModel<TDomain, TPersistence>
+        where TPersistence : IPersistenceModel<TDomain, TPersistence>
     {
         var persistenceModel = TPersistence.CreateDefaultPersistenceModel();
         TPersistence.ApplyChanges(aggregate, persistenceModel);

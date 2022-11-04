@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
 internal class AggregatesTracker<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
-    where TPersistence : class, IPersistenceModel<TAggregate, TPersistence>
+    where TPersistence : IPersistenceModel<TAggregate, TPersistence>
 {
     private readonly Dictionary<TAggregate, TPersistence> _modelsMap = new();
 
