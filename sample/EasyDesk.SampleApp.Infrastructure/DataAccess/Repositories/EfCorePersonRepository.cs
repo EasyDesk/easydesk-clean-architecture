@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
-using EasyDesk.SampleApp.Infrastructure.DataAccess.ModelConverters;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Repositories;
@@ -11,7 +10,7 @@ public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, Samp
 {
     public EfCorePersonRepository(
         SampleAppContext context,
-        IDomainEventNotifier eventNotifier) : base(context, new PersonConverter(), eventNotifier)
+        IDomainEventNotifier eventNotifier) : base(context, eventNotifier)
     {
     }
 

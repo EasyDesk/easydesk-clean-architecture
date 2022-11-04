@@ -6,15 +6,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
 internal class AggregatesTracker<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
-    where TPersistence : class, new()
+    where TPersistence : class, IPersistenceModel<TAggregate, TPersistence>
 {
     private readonly Dictionary<TAggregate, TPersistence> _modelsMap = new();
-    private readonly IModelConverter<TAggregate, TPersistence> _converter;
-
-    public AggregatesTracker(IModelConverter<TAggregate, TPersistence> converter)
-    {
-        _converter = converter;
-    }
 
     public bool IsTracked(TAggregate aggregate) => _modelsMap.ContainsKey(aggregate);
 
@@ -23,12 +17,12 @@ internal class AggregatesTracker<TAggregate, TPersistence>
         if (IsTracked(aggregate))
         {
             var persistenceModel = _modelsMap[aggregate];
-            _converter.ApplyChanges(aggregate, persistenceModel);
+            TPersistence.ApplyChanges(aggregate, persistenceModel);
             return persistenceModel;
         }
         else
         {
-            var persistenceModel = _converter.ToPersistence(aggregate);
+            var persistenceModel = aggregate.ToPersistence<TAggregate, TPersistence>();
             _modelsMap.Add(aggregate, persistenceModel);
             return persistenceModel;
         }
@@ -36,7 +30,7 @@ internal class AggregatesTracker<TAggregate, TPersistence>
 
     public TAggregate TrackFromPersistenceModel(TPersistence persistenceModel)
     {
-        var aggregate = _converter.ToDomain(persistenceModel);
+        var aggregate = persistenceModel.ToDomain();
         _modelsMap.Add(aggregate, persistenceModel);
         return aggregate;
     }
@@ -44,7 +38,7 @@ internal class AggregatesTracker<TAggregate, TPersistence>
     public TAggregate ReHydrate(TAggregate aggregate)
     {
         var persistenceModel = _modelsMap[aggregate];
-        var newAggregate = _converter.ToDomain(persistenceModel);
+        var newAggregate = persistenceModel.ToDomain();
         _modelsMap.Remove(aggregate);
         _modelsMap.Add(newAggregate, persistenceModel);
         return newAggregate;

@@ -12,20 +12,18 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     IRemoveRepository<TAggregate>,
     ISaveAndHydrateRepository<TAggregate>
     where TContext : DbContext
-    where TPersistence : class, new()
+    where TPersistence : class, IPersistenceModel<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
 {
     private readonly TContext _context;
     private readonly IDomainEventNotifier _eventNotifier;
-    private readonly AggregatesTracker<TAggregate, TPersistence> _tracker;
+    private readonly AggregatesTracker<TAggregate, TPersistence> _tracker = new();
 
     public EfCoreRepository(
         TContext context,
-        IModelConverter<TAggregate, TPersistence> converter,
         IDomainEventNotifier eventNotifier)
     {
         _context = context;
-        _tracker = new(converter);
         _eventNotifier = eventNotifier;
     }
 
