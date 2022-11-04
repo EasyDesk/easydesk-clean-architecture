@@ -3,4 +3,4 @@ using EasyDesk.CleanArchitecture.Application.Pagination;
 
 namespace EasyDesk.SampleApp.Application.Queries;
 
-public record GetPeople : IIncomingQuery<Pageable<PersonSnapshot>>;
+public record GetPeople : IIncomingQuery<IPageable<PersonSnapshot>>;

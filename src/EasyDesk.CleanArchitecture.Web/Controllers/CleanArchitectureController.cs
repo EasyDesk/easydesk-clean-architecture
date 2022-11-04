@@ -15,7 +15,7 @@ public abstract class CleanArchitectureController : AbstractController
         new(() => Handle(request), It, _ => Nothing.Value, this);
 
     protected ActionResultBuilder<PageInfo<T>, IEnumerable<T>> DispatchWithPagination<T>(
-        IDispatchable<Pageable<T>> request, PaginationDto pagination)
+        IDispatchable<IPageable<T>> request, PaginationDto pagination)
     {
         var pageSize = pagination.PageSize ?? DefaultPageSize;
         var pageIndex = pagination.PageIndex ?? 0;

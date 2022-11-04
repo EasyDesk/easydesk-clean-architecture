@@ -2,20 +2,11 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Pagination;
 
-public abstract class Pageable<T>
-{
-    public abstract Task<int> GetTotalCount();
-
-    public abstract Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex);
-
-    public abstract IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize);
-}
-
 public static class Pageable
 {
-    public static Pageable<T> ToPageable<T>(this IEnumerable<T> sequence) => new EnumerablePageable<T>(sequence);
+    public static IPageable<T> ToPageable<T>(this IEnumerable<T> sequence) => new EnumerablePageable<T>(sequence);
 
-    private class EnumerablePageable<T> : Pageable<T>
+    private class EnumerablePageable<T> : IPageable<T>
     {
         private readonly IEnumerable<T> _items;
 
@@ -24,9 +15,9 @@ public static class Pageable
             _items = items;
         }
 
-        public override Task<int> GetTotalCount() => Task.FromResult(_items.Count());
+        public Task<int> GetTotalCount() => Task.FromResult(_items.Count());
 
-        public override Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex)
+        public Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex)
         {
             return Task.FromResult(_items
                 .Skip(pageIndex * pageSize)
@@ -35,7 +26,7 @@ public static class Pageable
                 .AsEnumerable());
         }
 
-        public override IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
+        public IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
         {
             return _items
                 .Chunk(pageSize)
@@ -44,7 +35,7 @@ public static class Pageable
         }
     }
 
-    public static async IAsyncEnumerable<T> GetAllItems<T>(this Pageable<T> pageable, int pageSize)
+    public static async IAsyncEnumerable<T> GetAllItems<T>(this IPageable<T> pageable, int pageSize)
     {
         await foreach (var page in pageable.GetAllPages(pageSize))
         {
@@ -55,7 +46,7 @@ public static class Pageable
         }
     }
 
-    public static async Task<PageInfo<T>> GetPageInfo<T>(this Pageable<T> pageable, int pageSize, int pageIndex)
+    public static async Task<PageInfo<T>> GetPageInfo<T>(this IPageable<T> pageable, int pageSize, int pageIndex)
     {
         var page = await pageable.GetPage(pageSize, pageIndex);
         var totalCount = await pageable.GetTotalCount();

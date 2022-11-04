@@ -6,7 +6,7 @@ using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Queries;
 
-public class GetPeopleQueryHandler : IHandler<GetPeople, Pageable<PersonSnapshot>>
+public class GetPeopleQueryHandler : SuccessHandler<GetPeople, IPageable<PersonSnapshot>>
 {
     private readonly SampleAppContext _context;
 
@@ -15,12 +15,12 @@ public class GetPeopleQueryHandler : IHandler<GetPeople, Pageable<PersonSnapshot
         _context = context;
     }
 
-    public Task<Result<Pageable<PersonSnapshot>>> Handle(GetPeople query)
+    protected override Task<IPageable<PersonSnapshot>> Process(GetPeople query)
     {
-        return Task.FromResult(Success(_context.People
+        return Task.FromResult(_context.People
             .OrderBy(p => p.LastName)
             .ThenBy(p => p.FirstName)
             .Project<PersonModel, PersonSnapshot>()
-            .ToPageable()));
+            .ToPageable());
     }
 }
