@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,10 +8,6 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers;
 public abstract class CleanArchitectureController : AbstractController
 {
     public const int DefaultPageSize = 100;
-
-    private IMapper _mapper;
-
-    protected IMapper Mapper => _mapper ??= GetService<IMapper>();
 
     private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 

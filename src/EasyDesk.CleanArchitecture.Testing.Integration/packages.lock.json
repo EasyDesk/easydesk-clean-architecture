@@ -95,23 +95,6 @@
           "xunit.abstractions": "2.0.3"
         }
       },
-      "AutoMapper": {
-        "type": "Transitive",
-        "resolved": "11.0.1",
-        "contentHash": "WIadGC1pIwbnyTubvI577p3F++Bsj9q2Q3OaAc1I0QS+JhupN1xkdrPBhI9bPIeg63zM81tZplUNYkqU1HE5jQ==",
-        "dependencies": {
-          "Microsoft.CSharp": "4.7.0"
-        }
-      },
-      "AutoMapper.Extensions.Microsoft.DependencyInjection": {
-        "type": "Transitive",
-        "resolved": "11.0.0",
-        "contentHash": "0asw5WxdCFh2OTi9Gv+oKyH9SzxwYQSnO8TV5Dd0GggovILzJW4UimP26JAcxc3yB5NnC5urooZ1BBs8ElpiBw==",
-        "dependencies": {
-          "AutoMapper": "11.0.0",
-          "Microsoft.Extensions.Options": "6.0.0"
-        }
-      },
       "Castle.Core": {
         "type": "Transitive",
         "resolved": "4.4.1",
@@ -2220,8 +2203,6 @@
       "easydesk.cleanarchitecture.application": {
         "type": "Project",
         "dependencies": {
-          "AutoMapper": "[11.0.1, )",
-          "AutoMapper.Extensions.Microsoft.DependencyInjection": "[11.0.0, )",
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
           "EasyDesk.Tools": "[7.5.0, )",

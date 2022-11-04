@@ -10,14 +10,9 @@ namespace EasyDesk.SampleApp.Web.Controllers.V_1_0;
 
 public record CreatePersonBodyDto(string FirstName, string LastName, LocalDate DateOfBirth);
 
-public record PersonDto(Guid Id, string FirstName, string LastName, LocalDate DateOfBirth)
+public record PersonDto(Guid Id, string FirstName, string LastName, LocalDate DateOfBirth) : IMappableFrom<PersonSnapshot, PersonDto>
 {
-    public class MappingFromSnapshot : DirectMapping<PersonSnapshot, PersonDto>
-    {
-        public MappingFromSnapshot() : base(src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth))
-        {
-        }
-    }
+    public static PersonDto MapFrom(PersonSnapshot src) => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth);
 }
 
 public class PersonController : CleanArchitectureController
@@ -26,7 +21,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<PersonDto>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
         return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth))
-            .Map(Mapper.Map<PersonDto>)
+            .Map(PersonDto.MapFrom)
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }
 
@@ -34,7 +29,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<PersonDto>>> DeletePerson([FromRoute] Guid id)
     {
         return await Dispatch(new DeletePerson(id))
-            .Map(Mapper.Map<PersonDto>)
+            .Map(PersonDto.MapFrom)
             .ReturnOk();
     }
 
@@ -42,7 +37,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>>>> GetPeople([FromQuery] PaginationDto pagination)
     {
         return await DispatchWithPagination(new GetPeople(), pagination)
-            .MapEachElement(Mapper.Map<PersonDto>)
+            .MapEachElement(PersonDto.MapFrom)
             .ReturnOk();
     }
 
@@ -50,7 +45,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<PersonDto>>> GetPerson([FromRoute] Guid id)
     {
         return await Dispatch(new GetPerson(id))
-            .Map(Mapper.Map<PersonDto>)
+            .Map(PersonDto.MapFrom)
             .ReturnOk();
     }
 }

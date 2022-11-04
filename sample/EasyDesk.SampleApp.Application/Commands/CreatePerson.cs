@@ -35,7 +35,7 @@ public record CreatePerson(
         {
             var person = Person.Create(Name.From(command.FirstName), Name.From(command.LastName), command.DateOfBirth);
             await _personRepository.Save(person);
-            return PersonSnapshot.FromPerson(person);
+            return PersonSnapshot.MapFrom(person);
         }
     }
 }

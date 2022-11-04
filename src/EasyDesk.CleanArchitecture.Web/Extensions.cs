@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Mapping.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -24,7 +23,6 @@ public static class Extensions
     ///     <item><see cref="HttpContextModule"/></item>
     ///     <item><see cref="TimeManagementModule"/></item>
     ///     <item><see cref="DispatchingModule"/></item>
-    ///     <item><see cref="MappingModule"/></item>
     ///     <item><see cref="RequestValidationModule"/></item>
     /// </list>
     /// </summary>
@@ -47,7 +45,6 @@ public static class Extensions
             .AddHttpContext()
             .AddTimeManagement()
             .AddMediatr()
-            .AddMapping()
             .AddRequestValidation();
 
         configure?.Invoke(appBuilder);

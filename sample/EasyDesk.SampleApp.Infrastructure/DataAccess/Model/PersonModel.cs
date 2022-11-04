@@ -1,13 +1,14 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.SampleApp.Application.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NodaTime;
+using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
-public class PersonModel : IMultitenantEntity
+public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonSnapshot>
 {
     public Guid Id { get; set; }
 
@@ -18,6 +19,9 @@ public class PersonModel : IMultitenantEntity
     public LocalDate DateOfBirth { get; set; }
 
     public string TenantId { get; set; }
+
+    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
+        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth);
 
     public class Configuration : IEntityTypeConfiguration<PersonModel>
     {
@@ -30,13 +34,6 @@ public class PersonModel : IMultitenantEntity
 
             builder.Property(x => x.LastName)
                 .IsRequired();
-        }
-    }
-
-    public class MappingToSnapshot : DirectMapping<PersonModel, PersonSnapshot>
-    {
-        public MappingToSnapshot() : base(src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth))
-        {
         }
     }
 }

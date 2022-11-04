@@ -21,7 +21,7 @@ public record DeletePerson(Guid PersonId) : IIncomingCommand<PersonSnapshot>
         {
             return await _personRepository.RequireById(request.PersonId)
                 .ThenIfSuccessAsync(_personRepository.Remove)
-                .ThenMap(PersonSnapshot.FromPerson);
+                .ThenMap(PersonSnapshot.MapFrom);
         }
     }
 }
