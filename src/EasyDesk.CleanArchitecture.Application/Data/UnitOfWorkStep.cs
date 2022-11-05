@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Operations;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Queries;
-using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
-namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public class UnitOfWorkStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
