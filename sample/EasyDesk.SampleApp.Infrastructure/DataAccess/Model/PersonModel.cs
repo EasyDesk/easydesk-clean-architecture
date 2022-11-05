@@ -26,6 +26,18 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
         src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth);
 
+    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth);
+
+    public static PersonModel CreateDefaultPersistenceModel() => new();
+
+    public static void ApplyChanges(Person origin, PersonModel destination)
+    {
+        destination.Id = origin.Id;
+        destination.FirstName = origin.FirstName;
+        destination.LastName = origin.LastName;
+        destination.DateOfBirth = origin.DateOfBirth;
+    }
+
     public class Configuration : IEntityTypeConfiguration<PersonModel>
     {
         public void Configure(EntityTypeBuilder<PersonModel> builder)
@@ -38,17 +50,5 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
             builder.Property(x => x.LastName)
                 .IsRequired();
         }
-    }
-
-    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth);
-
-    public static PersonModel CreateDefaultPersistenceModel() => new();
-
-    public static void ApplyChanges(Person origin, PersonModel destination)
-    {
-        destination.Id = origin.Id;
-        destination.FirstName = origin.FirstName;
-        destination.LastName = origin.LastName;
-        destination.DateOfBirth = origin.DateOfBirth;
     }
 }
