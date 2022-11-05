@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 
-public class RequestValidationModule : AppModule
+public class ValidationModule : AppModule
 {
     public override void BeforeServiceConfiguration(AppDescription app)
     {
@@ -20,10 +20,10 @@ public class RequestValidationModule : AppModule
 
 public static class RequestValidationModuleExtensions
 {
-    public static AppBuilder AddRequestValidation(this AppBuilder builder)
+    public static AppBuilder AddValidation(this AppBuilder builder)
     {
-        return builder.AddModule(new RequestValidationModule());
+        return builder.AddModule(new ValidationModule());
     }
 
-    public static bool HasRequestValidation(this AppDescription app) => app.HasModule<RequestValidationModule>();
+    public static bool HasRequestValidation(this AppDescription app) => app.HasModule<ValidationModule>();
 }

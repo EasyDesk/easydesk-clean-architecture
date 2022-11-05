@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Operations;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Operations;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using Rebus.Bus;
@@ -10,25 +11,25 @@ public class InboxStep<T, R> : IPipelineStep<T, R>
     where T : IMessage, IReadWriteOperation
 {
     private readonly IInbox _inbox;
+    private readonly IContextProvider _contextInfo;
 
-    public InboxStep(IInbox inbox)
+    public InboxStep(IInbox inbox, IContextProvider contextInfo)
     {
         _inbox = inbox;
+        _contextInfo = contextInfo;
     }
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        // TODO: split logic between rebus and dispatching pipeline.
-        var messageContext = MessageContext.Current;
-        if (messageContext is null)
+        if (_contextInfo.Context is not AsyncMessageContext)
         {
             return await next();
         }
 
-        var messageId = messageContext.TransportMessage.GetMessageId();
+        var messageId = MessageContext.Current.TransportMessage.GetMessageId();
         if (await _inbox.HasBeenProcessed(messageId))
         {
-            return default;
+            return default(R); // For now, this is the only available option since we cannot force message result to be nothing.
         }
 
         return await next().ThenIfSuccessAsync(_ => _inbox.MarkAsProcessed(messageId));

@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using NSubstitute;
 using Shouldly;
 using Xunit;

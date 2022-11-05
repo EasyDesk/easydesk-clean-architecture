@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+
+namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public interface IAuthorizer
 {

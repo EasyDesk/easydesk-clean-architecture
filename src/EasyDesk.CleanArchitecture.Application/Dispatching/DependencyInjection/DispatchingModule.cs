@@ -41,7 +41,7 @@ public class DispatchingModule : AppModule
 
 public static class MediatrModuleExtensions
 {
-    public static AppBuilder AddMediatr(this AppBuilder builder, Action<PipelineBuilder> configurePipeline = null)
+    public static AppBuilder AddDispatching(this AppBuilder builder, Action<PipelineBuilder> configurePipeline = null)
     {
         return builder.AddModule(new DispatchingModule(configurePipeline));
     }

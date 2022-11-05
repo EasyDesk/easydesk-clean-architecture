@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using System.Reflection;
 
@@ -7,19 +8,22 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization;
 public class AuthorizationStep<T, R> : IPipelineStep<T, R>
 {
     private readonly IAuthorizer _authorizer;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IContextProvider _contextProvider;
 
-    public AuthorizationStep(IAuthorizer authorizer, IUserInfoProvider userInfoProvider)
+    public AuthorizationStep(IAuthorizer authorizer, IContextProvider contextProvider)
     {
         _authorizer = authorizer;
-        _userInfoProvider = userInfoProvider;
+        _contextProvider = contextProvider;
     }
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return await _userInfoProvider.GetUserInfo().Match(
-            some: userInfo => HandleAuthenticatedRequest(request, userInfo, next),
-            none: () => HandleUnknownUserRequest(next));
+        return _contextProvider.Context switch
+        {
+            AuthenticatedRequestContext(var userInfo) => await HandleAuthenticatedRequest(request, userInfo, next),
+            AnonymousRequestContext => await HandleUnknownUserRequest(next),
+            _ => await next()
+        };
     }
 
     private async Task<Result<R>> HandleAuthenticatedRequest(

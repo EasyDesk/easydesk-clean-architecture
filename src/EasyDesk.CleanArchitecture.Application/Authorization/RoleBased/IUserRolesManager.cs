@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 public interface IUserRolesManager : IUserRolesProvider
 {

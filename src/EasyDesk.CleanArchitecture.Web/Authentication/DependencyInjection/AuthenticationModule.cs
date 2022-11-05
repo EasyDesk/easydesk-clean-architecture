@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +21,6 @@ public class AuthenticationModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped<IUserInfoProvider, HttpContextUserInfoProvider>();
         var authBuilder = services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = _defaultScheme;

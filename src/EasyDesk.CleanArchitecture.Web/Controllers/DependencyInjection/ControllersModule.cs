@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
@@ -37,10 +36,6 @@ public class ControllersModule : AppModule
         if (!_environment.IsDevelopment())
         {
             options.Filters.Add<UnhandledExceptionsFilter>();
-        }
-        if (app.IsMultitenant())
-        {
-            options.Filters.Add<TenantFilter>();
         }
         options.EnableEndpointRouting = false;
         _configureMvc?.Invoke(options);

@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
@@ -16,15 +17,15 @@ public class AuthorizationStepTests
     public record TestRequestWithUnknownUserAllowed : IDispatchable<Nothing>;
 
     private readonly UserInfo _userInfo = new("user");
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IContextProvider _contextProvider;
     private readonly IAuthorizer _authorizer;
     private readonly TestRequest _request = new();
     private readonly NextPipelineStep<Nothing> _next;
 
     public AuthorizationStepTests()
     {
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _userInfoProvider.GetUserInfo().Returns(None);
+        _contextProvider = Substitute.For<IContextProvider>();
+        _contextProvider.Context.Returns(new AnonymousRequestContext());
 
         _next = Substitute.For<NextPipelineStep<Nothing>>();
         _next().Returns(Ok);
@@ -52,11 +53,11 @@ public class AuthorizationStepTests
         var request = new T();
         var authorizer = Substitute.For<IAuthorizer>();
         authorizer.IsAuthorized(request, _userInfo).Returns(authorizerResult);
-        var step = new AuthorizationStep<T, Nothing>(authorizer, _userInfoProvider);
+        var step = new AuthorizationStep<T, Nothing>(authorizer, _contextProvider);
         return await step.Run(request, _next);
     }
 
-    private void Authenticate() => _userInfoProvider.GetUserInfo().Returns(_userInfo.AsSome());
+    private void Authenticate() => _contextProvider.Context.Returns(new AuthenticatedRequestContext(_userInfo));
 
     [Fact]
     public async Task ShouldAllowNonAuthenticatedUserIfRequestAllowsUnknownUser()
