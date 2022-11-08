@@ -59,7 +59,7 @@ internal class KnownTypesDocumentGenerator : IDocumentGenerator
 
         asyncApiSchema.Servers[ServerName] = ConfigureServer();
 
-        foreach (var messageType in asyncApiTypes)
+        foreach (var messageType in asyncApiTypes.OrderBy(t => t.Name))
         {
             var channel = new ChannelItem();
             asyncApiSchema.Channels[messageType.Name] = channel;
