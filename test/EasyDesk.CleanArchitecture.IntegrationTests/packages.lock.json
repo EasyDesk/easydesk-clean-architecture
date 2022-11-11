@@ -1929,7 +1929,7 @@
           "EasyDesk.Tools": "[7.5.0, )",
           "FluentValidation": "[11.3.0, )",
           "FluentValidation.DependencyInjectionExtensions": "[11.3.0, )",
-          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, )",
+          "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.0, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
