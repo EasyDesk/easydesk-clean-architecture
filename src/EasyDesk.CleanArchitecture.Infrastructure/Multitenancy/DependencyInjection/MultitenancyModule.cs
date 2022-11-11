@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjectio
 
 public class MultitenancyModule : AppModule
 {
-    private Func<IServiceProvider, ITenantProvider> _tenantProviderFactory;
+    private readonly Func<IServiceProvider, ITenantProvider> _tenantProviderFactory;
 
     public MultitenancyModule(Func<IServiceProvider, ITenantProvider> tenantProviderFactory)
     {

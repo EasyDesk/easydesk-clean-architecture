@@ -23,7 +23,7 @@ public class ControllersModule : AppModule
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         services
-            .AddControllers(options => DefaultMvcConfiguration(options, app))
+            .AddControllers(DefaultMvcConfiguration)
             .AddApplicationPart(typeof(CleanArchitectureController).Assembly)
             .AddNewtonsoftJson(options =>
             {
@@ -31,7 +31,7 @@ public class ControllersModule : AppModule
             });
     }
 
-    protected void DefaultMvcConfiguration(MvcOptions options, AppDescription app)
+    protected void DefaultMvcConfiguration(MvcOptions options)
     {
         if (!_environment.IsDevelopment())
         {

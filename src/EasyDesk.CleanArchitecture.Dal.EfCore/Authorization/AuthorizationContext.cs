@@ -1,15 +1,18 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-internal class AuthorizationContext : MultitenantDbContext<AuthorizationContext>
+internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
 {
     public const string SchemaName = "auth";
 
-    public AuthorizationContext(DbContextOptions<AuthorizationContext> options) : base(options)
+    public AuthorizationContext(ITenantProvider tenantProvider, DbContextOptions<AuthorizationContext> options) : base(options)
     {
+        this.AddMultitenancy(tenantProvider);
     }
 
     public DbSet<UserRoleModel> UserRoles { get; set; }

@@ -19,9 +19,7 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     private readonly IDomainEventNotifier _eventNotifier;
     private readonly AggregatesTracker<TAggregate, TPersistence> _tracker = new();
 
-    public EfCoreRepository(
-        TContext context,
-        IDomainEventNotifier eventNotifier)
+    public EfCoreRepository(TContext context, IDomainEventNotifier eventNotifier)
     {
         _context = context;
         _eventNotifier = eventNotifier;

@@ -106,7 +106,7 @@ public class RebusMessagingModule : AppModule
         where M : IPropagatedEvent<M, D>, IOutgoingEvent, IMessage
         where D : DomainEvent
     {
-        services.AddTransient<IDomainEventHandler<D>, DomainEventPropagator<M, D>>();
+        services.AddRebusHandler(typeof(DomainEventPropagator<M, D>));
     }
 
     private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)
