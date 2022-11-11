@@ -1568,7 +1568,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.Tools": "[7.5.0, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )",
           "NodaTime": "[3.1.5, )"
         }
       },
