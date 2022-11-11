@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net6.0": {
+    "net7.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
         "requested": "[7.5.0, )",
@@ -76,8 +76,8 @@
       },
       "Microsoft.Extensions.Logging.Abstractions": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "/HggWBbTwy8TgebGSX5DBZ24ndhzi93sHUBDvP1IxbZD7FDokYzdAr6+vbWGjw2XAfR2EJ1sfKUotpjHnFWPxA=="
+        "resolved": "7.0.0",
+        "contentHash": "kmn78+LPVMOWeITUjIlfxUPDsI0R6G0RkeAMBmQxAJ7vBJn4q2dTva7pWi65ceN5vPGjJ9q/Uae2WKgvfktJAw=="
       },
       "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
@@ -172,7 +172,7 @@
           "FluentValidation": "[11.3.0, )",
           "FluentValidation.DependencyInjectionExtensions": "[11.3.0, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, )",
-          "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[7.0.0, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
           "NodaTime.Serialization.JsonNet": "[3.0.1, )",

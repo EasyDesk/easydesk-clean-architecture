@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="MicroElements.Swashbuckle.NodaTime" Version="4.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
     <PackageReference Include="Saunter" Version="0.11.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
