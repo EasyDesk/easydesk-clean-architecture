@@ -19,15 +19,15 @@
       },
       "FluentValidation": {
         "type": "Transitive",
-        "resolved": "10.3.6",
-        "contentHash": "iMd370ZDx6ydm8t7bIFdRbSKX0e42lpvCtifUSbTSXOk5iKjmgl7HU0PXBhIWQAyIRi3gCwfMI9luj8H6K+byw=="
+        "resolved": "11.3.0",
+        "contentHash": "AlsfUkdIzSMA2v091K0gT1YjEwc7YR5pIA5yq7PnZivhoH3YETMhZbUySzsLbJKhj/E3ei6nEgtqdm00AVHXeg=="
       },
       "FluentValidation.DependencyInjectionExtensions": {
         "type": "Transitive",
-        "resolved": "10.3.6",
-        "contentHash": "yMwmbr+sHP/VLRQPTBVcgbJmtP5PGmxzNsqVX7FccDRwDB2edP8XsXWLNTZ4UwrslU1qQUD07BNQLDh7WXzpNw==",
+        "resolved": "11.3.0",
+        "contentHash": "C7gtDO79JVRtZob4K4VvabpXEEcvxH6Bh3MzS/TAjoGlOu1/m93+NrAwzjWxUmPFMq+lk7/at+zu2uM8rB1tXg==",
         "dependencies": {
-          "FluentValidation": "10.3.6",
+          "FluentValidation": "11.3.0",
           "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
         }
       },
@@ -102,25 +102,25 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.1.0",
-        "contentHash": "x5IqJNff9ITRaw83P8IbdudB1tpMDbTqdeVlppBx346ywmLj2ZhE+kf7GJfkCks1piJazxDr2+0EYKc7l1K2WA==",
+        "resolved": "3.1.5",
+        "contentHash": "z+mbQdY9mHL+JpW7WDImN9debJhqORy5jOdFnKOTeDQzwXMSEnjXE4f+UVdKnPabSLABzWz+nKz+7uUXK2Sq6Q==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "4.7.1"
         }
       },
       "NodaTime.Serialization.JsonNet": {
         "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "buSE64oL5eHDiImMgFRF74X/URygSpklFsblyqXafjSW6lMsB7iWfGO5lu7D7Zikj9bXggnMa90a5EqgpPJEYg==",
+        "resolved": "3.0.1",
+        "contentHash": "bmw+ElaOr21HZQQVYWZKgqs0QpSb/rJcJxem3Ok6YWAdenqOi0PS2hIkvlh+QJfsl2X3VJcla9Rhya/N3JnweA==",
         "dependencies": {
-          "Newtonsoft.Json": "12.0.1",
+          "Newtonsoft.Json": "13.0.1",
           "NodaTime": "[3.0.0, 4.0.0)"
         }
       },
       "Scrutor": {
         "type": "Transitive",
-        "resolved": "4.0.0",
-        "contentHash": "o7unMddoORhI//CFPhTKBw1lZ10oCMCwu2NHXn61myiRR4cIU2/LdtK9hDbDPq7Sz8qHjbuFgbLyz8U1PKXk1A==",
+        "resolved": "4.2.0",
+        "contentHash": "3A4HE/jetg7hySwrAPJY1G0mc6qo1StlF4y5JuIZOp17ULp0STnFWhIjBL+Qa/2z60y+SQ3xz3qMd9cSGS0qMg==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
           "Microsoft.Extensions.DependencyModel": "6.0.0"
@@ -169,14 +169,14 @@
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
           "EasyDesk.Tools": "[7.5.0, )",
-          "FluentValidation": "[10.3.6, )",
-          "FluentValidation.DependencyInjectionExtensions": "[10.3.6, )",
+          "FluentValidation": "[11.3.0, )",
+          "FluentValidation.DependencyInjectionExtensions": "[11.3.0, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, )",
           "Newtonsoft.Json": "[13.0.1, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
-          "NodaTime.Serialization.JsonNet": "[3.0.0, )",
-          "Scrutor": "[4.0.0, )"
+          "NodaTime.Serialization.JsonNet": "[3.0.1, )",
+          "Scrutor": "[4.2.0, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {
@@ -184,14 +184,14 @@
         "dependencies": {
           "EasyDesk.Tools": "[7.5.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[6.0.0, )",
-          "NodaTime": "[3.1.0, )"
+          "NodaTime": "[3.1.5, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
           "EasyDesk.Tools": "[7.5.0, )",
-          "NodaTime": "[3.1.0, )"
+          "NodaTime": "[3.1.5, )"
         }
       },
       "easydesk.sampleapp.domain": {

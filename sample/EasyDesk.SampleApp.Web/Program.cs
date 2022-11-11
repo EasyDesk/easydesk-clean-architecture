@@ -36,8 +36,6 @@ var app = builder.Build();
 
 await app.MigrateDatabases();
 
-app.Services.UseRebus();
-
 app.UseHttpsRedirection();
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
