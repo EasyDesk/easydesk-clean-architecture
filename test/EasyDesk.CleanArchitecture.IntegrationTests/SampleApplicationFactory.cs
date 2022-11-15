@@ -2,7 +2,7 @@
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
-using EasyDesk.SampleApp.Web.Controllers.V_1_0;
+using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 using Respawn;

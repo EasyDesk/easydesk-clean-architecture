@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration;
-using EasyDesk.SampleApp.Web.Controllers.V_1_0;
+using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 

@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+using EasyDesk.CleanArchitecture.Dal.EfCore.SoftDeletion;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,5 +14,6 @@ public class SampleAppContext : DomainContext<SampleAppContext>
     public SampleAppContext(ITenantProvider tenantProvider, DbContextOptions<SampleAppContext> options) : base(options)
     {
         this.AddMultitenancy(tenantProvider);
+        this.AddSoftDeletion();
     }
 }

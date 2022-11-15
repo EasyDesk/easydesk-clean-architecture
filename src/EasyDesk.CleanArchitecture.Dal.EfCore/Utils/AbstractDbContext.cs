@@ -20,14 +20,12 @@ public class AbstractDbContext<T> : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         _extensions
-            .Reverse()
-            .Aggregate(base.OnModelCreating, (curr, ext) => mb => ext.CreateModel(mb, () => curr(mb)))(modelBuilder);
+            .Aggregate(base.OnModelCreating, (curr, ext) => mb => ext.ConfigureModel(mb, () => curr(mb)))(modelBuilder);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await _extensions
-            .Reverse()
             .Aggregate<DbContextExtension, AsyncFunc<CancellationToken, int>>(
                 base.SaveChangesAsync,
                 (curr, ext) => ct => ext.SaveChanges(() => curr(ct)))(cancellationToken);

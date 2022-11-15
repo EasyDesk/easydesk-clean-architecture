@@ -22,6 +22,14 @@ services:
       - postgresvolume:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: sample@sample.com
+      PGADMIN_DEFAULT_PASSWORD: sample
+    ports:
+      - "8080:80"
 
 volumes:
   rabbitmqvolume:

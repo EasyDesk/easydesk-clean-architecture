@@ -13,15 +13,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-[Migration("20221024100428_AddDateOfBirth")]
-partial class AddDateOfBirth
+[Migration("20221115130211_AddSoftDelete")]
+partial class AddSoftDelete
 {
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "6.0.7")
+            .HasAnnotation("ProductVersion", "6.0.11")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -38,6 +38,9 @@ partial class AddDateOfBirth
                 b.Property<string>("FirstName")
                     .IsRequired()
                     .HasColumnType("text");
+
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
                 b.Property<string>("LastName")
                     .IsRequired()

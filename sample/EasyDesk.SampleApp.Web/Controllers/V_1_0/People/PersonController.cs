@@ -1,23 +1,27 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Web.Controllers;
+﻿using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.Queries;
 using Microsoft.AspNetCore.Mvc;
-using NodaTime;
 
-namespace EasyDesk.SampleApp.Web.Controllers.V_1_0;
+namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 
-public record CreatePersonBodyDto(string FirstName, string LastName, LocalDate DateOfBirth);
-
-public record PersonDto(Guid Id, string FirstName, string LastName, LocalDate DateOfBirth) : IMappableFrom<PersonSnapshot, PersonDto>
+public static class PersonRoutes
 {
-    public static PersonDto MapFrom(PersonSnapshot src) => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth);
+    private const string Base = "people";
+
+    public const string CreatePerson = Base;
+
+    public const string DeletePerson = Base + "/{id}";
+
+    public const string GetPeople = Base;
+
+    public const string GetPerson = Base + "/{id}";
 }
 
 public class PersonController : CleanArchitectureController
 {
-    [HttpPost("people")]
+    [HttpPost(PersonRoutes.CreatePerson)]
     public async Task<ActionResult<ResponseDto<PersonDto>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
         return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth))
@@ -25,7 +29,7 @@ public class PersonController : CleanArchitectureController
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }
 
-    [HttpDelete("people/{id}")]
+    [HttpDelete(PersonRoutes.DeletePerson)]
     public async Task<ActionResult<ResponseDto<PersonDto>>> DeletePerson([FromRoute] Guid id)
     {
         return await Dispatch(new DeletePerson(id))
@@ -33,7 +37,7 @@ public class PersonController : CleanArchitectureController
             .ReturnOk();
     }
 
-    [HttpGet("people")]
+    [HttpGet(PersonRoutes.GetPeople)]
     public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>>>> GetPeople([FromQuery] PaginationDto pagination)
     {
         return await DispatchWithPagination(new GetPeople(), pagination)
@@ -41,7 +45,7 @@ public class PersonController : CleanArchitectureController
             .ReturnOk();
     }
 
-    [HttpGet("people/{id}")]
+    [HttpGet(PersonRoutes.GetPerson)]
     public async Task<ActionResult<ResponseDto<PersonDto>>> GetPerson([FromRoute] Guid id)
     {
         return await Dispatch(new GetPerson(id))

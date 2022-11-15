@@ -45,6 +45,12 @@ public class HttpRequestBuilder
         return content;
     }
 
+    public async Task<T> AsDataOnly<T>()
+    {
+        var content = await AsContentOnly<T>();
+        return content.Data;
+    }
+
     public async Task<(HttpResponseMessage Response, ResponseDto<T> Content)> AsResponseAndContent<T>()
     {
         var response = await AsHttpResponseMessage();
@@ -55,6 +61,13 @@ public class HttpRequestBuilder
     private async Task<ResponseDto<T>> ParseContent<T>(HttpResponseMessage response)
     {
         var bodyAsJson = await response.Content.ReadAsStringAsync();
-        return JsonConvert.DeserializeObject<ResponseDto<T>>(bodyAsJson, _settings);
+        try
+        {
+            return JsonConvert.DeserializeObject<ResponseDto<T>>(bodyAsJson, _settings);
+        }
+        catch (JsonException e)
+        {
+            throw new Exception($"Failed to parse response as {typeof(T).Name}. Content was:\n\n{bodyAsJson}", e);
+        }
     }
 }

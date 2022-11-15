@@ -1,16 +1,13 @@
 ﻿using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Application.Queries;
-using EasyDesk.SampleApp.Web.Controllers.V_1_0;
+using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-[UsesVerify]
 public class CreatePersonTests : SampleIntegrationTest
 {
-    private const string Uri = "people";
-
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
         LastName: "Bar",
@@ -24,7 +21,7 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task CreatePersonShouldSucceedAsRestCall()
     {
         var response = await Http
-            .Post(Uri, _body)
+            .Post(PersonRoutes.CreatePerson, _body)
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);
@@ -47,8 +44,8 @@ public class CreatePersonTests : SampleIntegrationTest
         await using var bus = NewBus();
         await bus.Subscribe<PersonCreated>();
 
-        var response = await Http.Post(Uri, _body).AsContentOnly<PersonDto>();
+        var person = await Http.Post(PersonRoutes.CreatePerson, _body).AsDataOnly<PersonDto>();
 
-        await bus.WaitForMessageOrFail(new PersonCreated(response.Data.Id));
+        await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
 }

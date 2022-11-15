@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+using EasyDesk.CleanArchitecture.Dal.EfCore.SoftDeletion;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
@@ -11,7 +12,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
-public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonSnapshot>, IPersistenceModel<Person, PersonModel>
+public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<PersonModel, PersonSnapshot>, IPersistenceModel<Person, PersonModel>
 {
     public Guid Id { get; set; }
 
@@ -22,6 +23,8 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
     public LocalDate DateOfBirth { get; set; }
 
     public string TenantId { get; set; }
+
+    public bool IsDeleted { get; set; }
 
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
         src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth);

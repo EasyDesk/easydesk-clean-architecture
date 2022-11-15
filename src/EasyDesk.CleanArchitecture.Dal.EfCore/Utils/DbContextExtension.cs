@@ -11,7 +11,7 @@ public abstract class DbContextExtension
         Context = context;
     }
 
-    public abstract void CreateModel(ModelBuilder modelBuilder, Action next);
+    public abstract void ConfigureModel(ModelBuilder modelBuilder, Action next);
 
     public abstract Task<int> SaveChanges(AsyncFunc<int> next);
 }

@@ -9,48 +9,50 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations
+namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations;
+
+[DbContext(typeof(SampleAppContext))]
+partial class SampleAppContextModelSnapshot : ModelSnapshot
 {
-    [DbContext(typeof(SampleAppContext))]
-    partial class SampleAppContextModelSnapshot : ModelSnapshot
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasDefaultSchema("domain")
-                .HasAnnotation("ProductVersion", "6.0.7")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+        modelBuilder
+            .HasDefaultSchema("domain")
+            .HasAnnotation("ProductVersion", "6.0.11")
+            .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uuid");
 
-                    b.Property<LocalDate>("DateOfBirth")
-                        .HasColumnType("date");
+                b.Property<LocalDate>("DateOfBirth")
+                    .HasColumnType("date");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("FirstName")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("TenantId")
-                        .HasColumnType("text");
+                b.Property<string>("LastName")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.HasKey("Id");
+                b.Property<string>("TenantId")
+                    .HasColumnType("text");
 
-                    b.HasIndex("TenantId");
+                b.HasKey("Id");
 
-                    b.ToTable("People", "domain");
-                });
+                b.HasIndex("TenantId");
+
+                b.ToTable("People", "domain");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

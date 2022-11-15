@@ -6,8 +6,10 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.SoftDeletion;
 
 public class SoftDeletionExtension : DbContextExtension
 {
-    public override void CreateModel(ModelBuilder modelBuilder, Action next)
+    public override void ConfigureModel(ModelBuilder modelBuilder, Action next)
     {
+        next();
+
         var softDeletableEntities = modelBuilder.Model
             .GetEntityTypes()
             .SelectMany(e => e.ClrType.AsOption())

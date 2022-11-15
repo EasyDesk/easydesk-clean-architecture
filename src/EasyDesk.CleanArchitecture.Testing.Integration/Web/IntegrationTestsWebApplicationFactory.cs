@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,8 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
 public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationFactory<T>, IAsyncLifetime
     where T : class
 {
+    public const string DefaultTestEnvironment = "IntegrationTest";
+
     private readonly ContainersContext _containers = new();
 
     public IntegrationTestsWebApplicationFactory()
@@ -26,10 +29,17 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
 
     public HttpClient HttpClient { get; private set; }
 
+    protected virtual string Environment => DefaultTestEnvironment;
+
     protected override IHost CreateHost(IHostBuilder builder)
     {
         builder.ConfigureHostConfiguration(ConfigureConfiguration);
         return base.CreateHost(builder);
+    }
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.UseEnvironment(Environment);
     }
 
     protected virtual void ConfigureConfiguration(IConfigurationBuilder config)

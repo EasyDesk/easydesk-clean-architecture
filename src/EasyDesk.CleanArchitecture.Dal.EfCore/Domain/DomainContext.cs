@@ -12,7 +12,7 @@ public abstract class DomainContext<T> : AbstractDbContext<T>
     {
     }
 
-    protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 

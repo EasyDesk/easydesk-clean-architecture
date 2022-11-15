@@ -14,7 +14,7 @@ public class MultitenantExtension : DbContextExtension
         _tenantProvider = tenantProvider;
     }
 
-    public override void CreateModel(ModelBuilder modelBuilder, Action next)
+    public override void ConfigureModel(ModelBuilder modelBuilder, Action next)
     {
         next();
 

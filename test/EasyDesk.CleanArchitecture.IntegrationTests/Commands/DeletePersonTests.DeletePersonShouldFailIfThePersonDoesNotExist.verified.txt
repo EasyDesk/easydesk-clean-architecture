@@ -1,0 +1,14 @@
+﻿{
+  Content: {
+    Errors: [
+      {
+        Code: AggregateNotFound,
+        Detail: Domain Error: AggregateNotFound,
+        Meta: {
+          aggregateType: []
+        }
+      }
+    ]
+  },
+  StatusCode: BadRequest
+}
