@@ -1,1 +1,11 @@
-﻿
+﻿{
+  Content: {
+    Errors: [
+      {
+        Code: NotFound,
+        Detail: Unable to fine the requested resource
+      }
+    ]
+  },
+  StatusCode: NotFound
+}

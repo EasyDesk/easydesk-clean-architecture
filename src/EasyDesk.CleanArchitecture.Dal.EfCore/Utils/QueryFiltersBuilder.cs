@@ -19,6 +19,7 @@ public class QueryFiltersBuilder
     {
         foreach (var (type, filters) in _filters)
         {
+            modelBuilder.Entity(type).HasQueryFilter(CombineQueryFilters(type, filters));
         }
     }
 
