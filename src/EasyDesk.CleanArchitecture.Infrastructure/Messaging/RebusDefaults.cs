@@ -12,7 +12,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
 public static class RebusDefaults
 {
-    public static void ConfigureStandardBehavior(
+    public static RebusConfigurer ConfigureStandardBehavior(
         this RebusConfigurer configurer,
         RebusEndpoint endpoint,
         RebusMessagingOptions options,
@@ -39,6 +39,9 @@ public static class RebusDefaults
             o.Decorate<IRebusTime>(_ => new NodaTimeRebusClock(clock));
             o.Decorate<ITopicNameConvention>(_ => new TopicNameConvention());
             o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(knownMessageTypes));
+            o.LogPipeline(verbose: true);
         });
+
+        return configurer;
     }
 }

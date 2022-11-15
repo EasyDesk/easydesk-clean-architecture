@@ -4,6 +4,9 @@ using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
+using Respawn;
+using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
@@ -11,6 +14,9 @@ public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<Pe
 {
     private readonly PostgreSqlTestcontainer _postgres;
     private readonly RabbitMqTestcontainer _rabbitMq;
+
+    private DbConnection _dbConnection;
+    private Respawner _respawner;
 
     public SampleApplicationFactory()
     {
@@ -37,5 +43,28 @@ public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<Pe
             ["ConnectionStrings:RabbitMq"] = _rabbitMq.ConnectionString,
             ["ConnectionStrings:MainDb"] = _postgres.ConnectionString,
         });
+    }
+
+    public async Task ResetDatabase()
+    {
+        await _respawner.ResetAsync(_dbConnection);
+    }
+
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+        _dbConnection = new NpgsqlConnection(_postgres.ConnectionString);
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.Postgres,
+            SchemasToInclude = new[] { "domain", "messaging" }
+        });
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        await base.DisposeAsync();
+        await _dbConnection.DisposeAsync();
     }
 }

@@ -1,12 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
 using EasyDesk.CleanArchitecture.Application.Mapping;
+using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-public record DeletePerson(Guid PersonId) : IIncomingCommand<PersonSnapshot>
+public record DeletePerson(Guid PersonId) : IIncomingCommand<PersonSnapshot>, IMessage
 {
     public class Handler : MappingHandler<DeletePerson, Person, PersonSnapshot>
     {

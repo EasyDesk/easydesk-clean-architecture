@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using Rebus.Config;
 using Rebus.Pipeline;
+using Rebus.ServiceProvider;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
@@ -16,8 +17,8 @@ internal static class RebusPipelineExtensions
     {
         configurer.Decorate<IPipeline>(c =>
         {
-            return new PipelineStepConcatenator(c.Get<IPipeline>())
-                .OnReceive(new ServiceScopeOpeningStep(), PipelineAbsolutePosition.Front);
+            return new PipelineStepInjector(c.Get<IPipeline>())
+                .OnReceive(new ServiceScopeOpeningStep(), PipelineRelativePosition.After, typeof(ServiceProviderProviderStep));
         });
     }
 }

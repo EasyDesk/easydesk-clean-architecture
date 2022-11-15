@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
+using Rebus.Routing.TypeBased;
 using Xunit;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
@@ -18,6 +19,12 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     where T : class
 {
     private readonly ContainersContext _containers = new();
+
+    public IntegrationTestsWebApplicationFactory()
+    {
+    }
+
+    public HttpClient HttpClient { get; private set; }
 
     protected override IHost CreateHost(IHostBuilder builder)
     {
@@ -44,17 +51,21 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     public RebusTestHelper CreateRebusHelper(string inputQueueAddress = null, Duration? defaultTimeout = null)
     {
         var options = Services.GetRequiredService<RebusMessagingOptions>();
+        var appEndpoint = Services.GetRequiredService<RebusEndpoint>();
         var endpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
         return new RebusTestHelper(
-            rebus => rebus.ConfigureStandardBehavior(endpoint, options, Services),
+            rebus => rebus
+                .ConfigureStandardBehavior(endpoint, options, Services)
+                .Routing(r => r.TypeBased().MapFallback(appEndpoint.InputQueueAddress)),
             defaultTimeout);
     }
 
     private string GenerateNewRandomAddress() => $"rebus-test-helper-{Guid.NewGuid()}";
 
-    public async Task InitializeAsync()
+    public virtual async Task InitializeAsync()
     {
         await _containers.StartAsync();
+        HttpClient = CreateClient();
     }
 
     async Task IAsyncLifetime.DisposeAsync() => await DisposeAsync();

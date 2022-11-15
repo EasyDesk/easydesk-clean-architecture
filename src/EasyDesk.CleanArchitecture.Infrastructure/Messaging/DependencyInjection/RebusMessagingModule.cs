@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
@@ -61,7 +62,7 @@ public class RebusMessagingModule : AppModule
         });
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        SetupHandlingPipeline(services, app);
+        SetupHandlingPipeline(services, app, knownMessageTypes);
         AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
 
         AddEventPropagators(services, knownMessageTypes);
@@ -76,13 +77,28 @@ public class RebusMessagingModule : AppModule
         }
     }
 
-    private static void SetupHandlingPipeline(IServiceCollection services, AppDescription app)
+    private void SetupHandlingPipeline(IServiceCollection services, AppDescription app, KnownMessageTypes knownMessageTypes)
     {
-        services.AddTransient(typeof(IHandleMessages<>), typeof(DispatchingMessageHandler<>));
+        knownMessageTypes.Types
+            .SelectMany(t => GetDispatchableReturnTypes(t).Select(r => (MessageType: t, ReturnType: r)))
+            .ForEach(x =>
+            {
+                var interfaceType = typeof(IHandleMessages<>).MakeGenericType(x.MessageType);
+                var implementationType = typeof(DispatchingMessageHandler<,>).MakeGenericType(x.MessageType, x.ReturnType);
+                services.AddTransient(interfaceType, implementationType);
+            });
 
         app.RequireModule<DispatchingModule>().Pipeline
             .AddStep(typeof(InboxStep<,>))
             .After(typeof(UnitOfWorkStep<,>));
+    }
+
+    private IEnumerable<Type> GetDispatchableReturnTypes(Type messageType)
+    {
+        return messageType
+            .GetInterfaces()
+            .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDispatchable<>))
+            .Select(i => i.GetGenericArguments()[0]);
     }
 
     private void AddEventPropagators(IServiceCollection services, KnownMessageTypes knownMessageTypes)
