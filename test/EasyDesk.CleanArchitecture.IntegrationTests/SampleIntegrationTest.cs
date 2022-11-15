@@ -4,7 +4,7 @@ using EasyDesk.SampleApp.Web.Controllers.V_1_0;
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
 [UsesVerify]
-public abstract class SampleIntegrationTest : AbstractIntegrationTest<SampleApplicationFactory, PersonController>
+public abstract class SampleIntegrationTest : AbstractIntegrationTest<SampleApplicationFactory, PersonController>, IClassFixture<SampleApplicationFactory>
 {
     protected SampleIntegrationTest(SampleApplicationFactory factory) : base(factory)
     {

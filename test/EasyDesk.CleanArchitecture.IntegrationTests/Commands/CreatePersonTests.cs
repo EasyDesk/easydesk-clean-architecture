@@ -7,7 +7,7 @@ using NodaTime;
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 [UsesVerify]
-public class CreatePersonTests : SampleIntegrationTest, IClassFixture<SampleApplicationFactory>
+public class CreatePersonTests : SampleIntegrationTest
 {
     private const string Uri = "people";
 
