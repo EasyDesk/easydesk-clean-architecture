@@ -13,7 +13,7 @@ public class SampleAppContext : DomainContext<SampleAppContext>
 
     public SampleAppContext(ITenantProvider tenantProvider, DbContextOptions<SampleAppContext> options) : base(options)
     {
-        this.AddMultitenancy(tenantProvider);
         this.AddSoftDeletion();
+        this.AddMultitenancy(tenantProvider);
     }
 }

@@ -1,7 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.SampleApp.Application.Events;
+using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
@@ -54,8 +59,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
         var person = await CreateTestPerson();
 
-        await DeletePerson(person.Id)
-            .IgnoringResponse();
+        await DeletePerson(person.Id).IgnoringResponse();
 
         await bus.WaitForMessageOrFail(new PersonDeleted(person.Id));
     }
@@ -71,5 +75,22 @@ public class DeletePersonTests : SampleIntegrationTest
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);
+    }
+
+    [Fact]
+    public async Task DeletePersonShouldMarkPersonRecordAsDeleted()
+    {
+        var person = await CreateTestPerson();
+        await DeletePerson(person.Id).IgnoringResponse();
+
+        using var scope = Factory.Services.CreateScope();
+        var personRecord = await scope.ServiceProvider
+            .GetRequiredService<SampleAppContext>()
+            .People
+            .IgnoreQueryFilters()
+            .Where(p => p.Id == person.Id)
+            .FirstOptionAsync();
+
+        personRecord.ShouldContain(p => p.IsDeleted);
     }
 }

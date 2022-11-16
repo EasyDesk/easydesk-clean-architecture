@@ -14,7 +14,7 @@ public class MultitenantExtension : DbContextExtension
         _tenantProvider = tenantProvider;
     }
 
-    public override void ConfigureModel(ModelBuilder modelBuilder, Action next)
+    public override void ConfigureModel(ModelBuilder modelBuilder, QueryFiltersBuilder queryFilters, Action next)
     {
         next();
 
@@ -27,24 +27,24 @@ public class MultitenantExtension : DbContextExtension
         if (multitenantEntities.Any())
         {
             var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureMultitenantEntity));
-            var args = new object[] { modelBuilder };
+            var args = new object[] { modelBuilder, queryFilters };
             multitenantEntities
                 .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
                 .ForEach(m => m.Invoke(this, args));
         }
     }
 
-    public void ConfigureMultitenantEntity<E>(ModelBuilder modelBuilder)
+    public void ConfigureMultitenantEntity<E>(ModelBuilder modelBuilder, QueryFiltersBuilder queryFilters)
         where E : class, IMultitenantEntity
     {
         var entityBuilder = modelBuilder.Entity<E>();
 
         entityBuilder.HasIndex(x => x.TenantId);
 
-        entityBuilder.HasQueryFilter(x => x.TenantId == null || x.TenantId == _tenantProvider.TenantId.OrElseNull());
+        queryFilters.AddFilter<E>(x => x.TenantId == null || x.TenantId == _tenantProvider.TenantId.OrElseNull());
     }
 
-    public override async Task<int> SaveChanges(AsyncFunc<int> next)
+    public override async Task<int> SaveChanges(Func<Task<int>> next)
     {
         SetTenantIdToAddedEntities();
         return await next();

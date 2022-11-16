@@ -19,15 +19,17 @@ public class AbstractDbContext<T> : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        _extensions
-            .Aggregate(base.OnModelCreating, (curr, ext) => mb => ext.ConfigureModel(mb, () => curr(mb)))(modelBuilder);
+        var queryFiltersBuilder = new QueryFiltersBuilder();
+        _extensions.Aggregate(
+            () => base.OnModelCreating(modelBuilder),
+            (curr, ext) => () => ext.ConfigureModel(modelBuilder, queryFiltersBuilder, curr))();
+        queryFiltersBuilder.ApplyToModelBuilder(modelBuilder);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return await _extensions
-            .Aggregate<DbContextExtension, AsyncFunc<CancellationToken, int>>(
-                base.SaveChangesAsync,
-                (curr, ext) => ct => ext.SaveChanges(() => curr(ct)))(cancellationToken);
+        return await _extensions.Aggregate(
+            () => base.SaveChangesAsync(cancellationToken),
+            (curr, ext) => () => ext.SaveChanges(curr))();
     }
 }

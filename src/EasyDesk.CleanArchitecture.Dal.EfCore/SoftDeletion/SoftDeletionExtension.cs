@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.SoftDeletion;
 
 public class SoftDeletionExtension : DbContextExtension
 {
-    public override void ConfigureModel(ModelBuilder modelBuilder, Action next)
+    public override void ConfigureModel(ModelBuilder modelBuilder, QueryFiltersBuilder queryFilters, Action next)
     {
         next();
 
@@ -19,20 +19,20 @@ public class SoftDeletionExtension : DbContextExtension
         if (softDeletableEntities.Any())
         {
             var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureSoftDeletableEntity));
-            var args = new object[] { modelBuilder };
+            var args = new object[] { queryFilters };
             softDeletableEntities
                 .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
                 .ForEach(m => m.Invoke(this, args));
         }
     }
 
-    public void ConfigureSoftDeletableEntity<E>(ModelBuilder modelBuilder)
+    public void ConfigureSoftDeletableEntity<E>(QueryFiltersBuilder queryFilters)
         where E : class, ISoftDeletable
     {
-        modelBuilder.Entity<E>().HasQueryFilter(x => !x.IsDeleted);
+        queryFilters.AddFilter<E>(x => !x.IsDeleted);
     }
 
-    public override async Task<int> SaveChanges(AsyncFunc<int> next)
+    public override async Task<int> SaveChanges(Func<Task<int>> next)
     {
         Context.ChangeTracker.Entries()
             .Where(e => e.Entity is ISoftDeletable)
