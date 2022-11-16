@@ -55,7 +55,7 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     public HttpTestHelper CreateHttpHelper()
     {
         var jsonSettings = Services.GetRequiredService<JsonSettingsConfigurator>();
-        return new(CreateClient(), jsonSettings);
+        return new(HttpClient, jsonSettings);
     }
 
     public RebusTestHelper CreateRebusHelper(string inputQueueAddress = null, Duration? defaultTimeout = null)
