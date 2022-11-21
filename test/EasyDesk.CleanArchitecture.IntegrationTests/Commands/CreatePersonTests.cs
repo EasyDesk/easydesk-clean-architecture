@@ -1,6 +1,5 @@
 ﻿using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.Events;
-using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 
@@ -33,7 +32,7 @@ public class CreatePersonTests : SampleIntegrationTest
         await using var bus = NewBus();
         await bus.Subscribe<PersonCreated>();
 
-        await bus.Send<CreatePerson, PersonSnapshot>(new CreatePerson("Foo", "Bar", new LocalDate(1996, 2, 2)));
+        await bus.Send(new CreatePerson("Foo", "Bar", new LocalDate(1996, 2, 2)));
 
         await bus.WaitForMessageOrFail<PersonCreated>();
     }

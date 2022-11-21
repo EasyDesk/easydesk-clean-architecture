@@ -12,7 +12,7 @@ namespace EasyDesk.SampleApp.Application.Commands;
 public record CreatePerson(
     string FirstName,
     string LastName,
-    LocalDate DateOfBirth) : IIncomingCommand<PersonSnapshot>, IMessage
+    LocalDate DateOfBirth) : IDispatchableCommand<PersonSnapshot>, IMessage
 {
     public class Validator : AbstractValidator<CreatePerson>
     {

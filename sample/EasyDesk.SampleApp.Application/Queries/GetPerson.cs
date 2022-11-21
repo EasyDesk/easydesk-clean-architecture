@@ -2,4 +2,4 @@
 
 namespace EasyDesk.SampleApp.Application.Queries;
 
-public record GetPerson(Guid Id) : IIncomingQuery<PersonSnapshot>;
+public record GetPerson(Guid Id) : IDispatchableQuery<PersonSnapshot>;

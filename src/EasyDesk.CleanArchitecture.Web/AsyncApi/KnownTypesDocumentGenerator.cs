@@ -1,7 +1,4 @@
-﻿using System.Net.Mime;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +10,9 @@ using Saunter.AsyncApiSchema.v2.Traits;
 using Saunter.Generation;
 using Saunter.Generation.Filters;
 using Saunter.Generation.SchemaGeneration;
+using System.Net.Mime;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
@@ -64,7 +64,7 @@ internal class KnownTypesDocumentGenerator : IDocumentGenerator
             var channel = new ChannelItem();
             asyncApiSchema.Channels[messageType.Name] = channel;
             channel.Servers.Add(ServerName);
-            if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand<>)))
+            if (messageType.IsSubtypeOrImplementationOf(typeof(IIncomingCommand)))
             {
                 channel.Subscribe = ConfigureOperation(messageType, "Command", schemaOptions);
             }

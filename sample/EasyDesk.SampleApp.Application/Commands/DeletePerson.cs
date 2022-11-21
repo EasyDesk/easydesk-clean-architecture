@@ -7,7 +7,7 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-public record DeletePerson(Guid PersonId) : IIncomingCommand<PersonSnapshot>, IMessage
+public record DeletePerson(Guid PersonId) : IDispatchableCommand<PersonSnapshot>, IMessage
 {
     public class Handler : MappingHandler<DeletePerson, Person, PersonSnapshot>
     {
