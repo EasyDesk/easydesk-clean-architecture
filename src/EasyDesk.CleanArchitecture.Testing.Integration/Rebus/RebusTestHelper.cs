@@ -4,6 +4,7 @@ using NodaTime;
 using Rebus.Activation;
 using Rebus.Bus;
 using Rebus.Config;
+using System.Diagnostics;
 using System.Threading.Channels;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
@@ -90,7 +91,7 @@ public class RebusTestHelper : IAsyncDisposable
                 _deadLetter.Add(m);
             }
 
-            throw new Exception("Should never be reached");
+            throw new UnreachableException();
         }
         catch (OperationCanceledException)
         {
