@@ -55,6 +55,11 @@ public class RebusTestHelper : IAsyncDisposable
         await _bus.Send(message);
     }
 
+    public async Task Defer<T>(T message, Duration delay) where T : IMessage, ICommand
+    {
+        await _bus.Defer(delay.ToTimeSpan(), message);
+    }
+
     private async Task Handler(IMessage message)
     {
         await _messages.Writer.WriteAsync(message);
