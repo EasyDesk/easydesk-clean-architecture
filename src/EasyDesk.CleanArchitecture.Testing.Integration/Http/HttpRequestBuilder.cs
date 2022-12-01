@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Web.Dto;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -27,6 +28,9 @@ public class HttpRequestBuilder
 
     public HttpRequestBuilder WithApiVersion(ApiVersion version) =>
         Headers(h => h.Add(ApiVersioningUtils.VersionHeader, version.ToString()));
+
+    public HttpRequestBuilder Tenant(string tenantId) =>
+        Headers(h => h.Add(DefaultTenantProvider.TenantIdHttpHeader, tenantId));
 
     public async Task<HttpResponseMessage> AsHttpResponseMessage() =>
         await _httpClient.SendAsync(_request);

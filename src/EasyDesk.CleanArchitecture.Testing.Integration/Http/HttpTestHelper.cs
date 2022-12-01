@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
 using System.Net.Mime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
@@ -8,11 +7,16 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 public class HttpTestHelper
 {
     private readonly HttpClient _httpClient;
+    private readonly Action<HttpRequestBuilder> _configureRequest;
     private readonly JsonSerializerSettings _settings;
 
-    public HttpTestHelper(HttpClient httpClient, JsonSettingsConfigurator jsonSettingsConfigurator)
+    public HttpTestHelper(
+        HttpClient httpClient,
+        JsonSettingsConfigurator jsonSettingsConfigurator,
+        Action<HttpRequestBuilder> configureRequest = null)
     {
         _httpClient = httpClient;
+        _configureRequest = configureRequest;
         _settings = jsonSettingsConfigurator.CreateSettings();
     }
 
@@ -41,12 +45,8 @@ public class HttpTestHelper
         {
             Content = content
         };
-        return new(request, _httpClient, _settings);
-    }
-
-    public HttpTestHelper WithDefaultHeaders(Action<HttpRequestHeaders> configureHeaders)
-    {
-        configureHeaders(_httpClient.DefaultRequestHeaders);
-        return this;
+        var builder = new HttpRequestBuilder(request, _httpClient, _settings);
+        _configureRequest?.Invoke(builder);
+        return builder;
     }
 }

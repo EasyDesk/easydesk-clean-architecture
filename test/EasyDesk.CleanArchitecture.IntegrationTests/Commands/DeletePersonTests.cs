@@ -12,14 +12,16 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class DeletePersonTests : SampleIntegrationTest
 {
+    private const string TenantId = "test-tenant";
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
-
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
     public DeletePersonTests(SampleApplicationFactory factory) : base(factory)
     {
     }
+
+    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId);
 
     private async Task<PersonDto> CreateTestPerson()
     {

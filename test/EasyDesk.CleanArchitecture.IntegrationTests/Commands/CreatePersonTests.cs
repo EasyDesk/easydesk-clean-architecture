@@ -1,4 +1,4 @@
-﻿using EasyDesk.SampleApp.Application.Commands;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
@@ -7,6 +7,8 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class CreatePersonTests : SampleIntegrationTest
 {
+    private const string TenantId = "test-tenant";
+
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
         LastName: "Bar",
@@ -16,25 +18,17 @@ public class CreatePersonTests : SampleIntegrationTest
     {
     }
 
+    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId);
+
+    private HttpRequestBuilder CreatePerson() => Http.Post(PersonRoutes.CreatePerson, _body);
+
     [Fact]
-    public async Task CreatePersonShouldSucceedAsRestCall()
+    public async Task CreatePersonShouldSucceed()
     {
-        var response = await Http
-            .Post(PersonRoutes.CreatePerson, _body)
+        var response = await CreatePerson()
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);
-    }
-
-    [Fact]
-    public async Task CreatePersonShouldSucceedAsAsyncMessage()
-    {
-        await using var bus = NewBus();
-        await bus.Subscribe<PersonCreated>();
-
-        await bus.Send(new CreatePerson("Foo", "Bar", new LocalDate(1996, 2, 2)));
-
-        await bus.WaitForMessageOrFail<PersonCreated>();
     }
 
     [Fact]
@@ -43,7 +37,7 @@ public class CreatePersonTests : SampleIntegrationTest
         await using var bus = NewBus();
         await bus.Subscribe<PersonCreated>();
 
-        var person = await Http.Post(PersonRoutes.CreatePerson, _body).AsDataOnly<PersonDto>();
+        var person = await CreatePerson().AsDataOnly<PersonDto>();
 
         await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }

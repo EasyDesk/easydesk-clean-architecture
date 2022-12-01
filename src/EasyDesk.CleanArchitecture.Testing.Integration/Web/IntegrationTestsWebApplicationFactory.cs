@@ -52,10 +52,10 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         return _containers.RegisterTestContainer(configureContainer);
     }
 
-    public HttpTestHelper CreateHttpHelper()
+    public HttpTestHelper CreateHttpHelper(Action<HttpRequestBuilder> configure = null)
     {
         var jsonSettings = Services.GetRequiredService<JsonSettingsConfigurator>();
-        return new(HttpClient, jsonSettings);
+        return new(HttpClient, jsonSettings, configure);
     }
 
     public RebusTestHelper CreateRebusHelper(string inputQueueAddress = null, Duration? defaultTimeout = null)

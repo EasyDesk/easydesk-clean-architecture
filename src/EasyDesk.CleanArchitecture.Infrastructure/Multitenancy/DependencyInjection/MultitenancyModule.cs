@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
@@ -10,6 +11,12 @@ public class MultitenancyModule : AppModule
     public MultitenancyModule(Func<IServiceProvider, ITenantProvider> tenantProviderFactory)
     {
         _tenantProviderFactory = tenantProviderFactory;
+    }
+
+    public override void BeforeServiceConfiguration(AppDescription app)
+    {
+        app.RequireModule<DispatchingModule>().Pipeline
+            .AddStep(typeof(TenantRequirementStep<,>));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
