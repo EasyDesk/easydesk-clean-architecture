@@ -46,8 +46,8 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Install test helpers
         run: |
-          dotnet add test/EasyDesk.CleanArchitecture.UnitTests package GitHubActionsTestLogger
-          dotnet add test/EasyDesk.CleanArchitecture.IntegrationTests package GitHubActionsTestLogger
+          dotnet add test/EasyDesk.CleanArchitecture.UnitTests package GitHubActionsTestLogger --version '*'
+          dotnet add test/EasyDesk.CleanArchitecture.IntegrationTests package GitHubActionsTestLogger --version '*'
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
