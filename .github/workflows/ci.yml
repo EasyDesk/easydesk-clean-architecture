@@ -3,6 +3,10 @@ name: Continuous Integration
 env:
   DOTNET_VERSION: 7.0.100
 
+defaults:
+  run:
+    shell: bash
+
 on:
   workflow_dispatch:
   push:
@@ -40,6 +44,10 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Install test helpers
+        run: |
+          dotnet add test/EasyDesk.CleanArchitecture.UnitTests package GitHubActionsTestLogger
+          dotnet add test/EasyDesk.CleanArchitecture.IntegrationTests package GitHubActionsTestLogger
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
@@ -48,10 +56,12 @@ jobs:
         uses: EasyDesk/action-dotnet-test@v1
         with:
           path: test/EasyDesk.CleanArchitecture.UnitTests
+          test-args: --logger 'GitHubActions'
       - name: Integration tests
         uses: EasyDesk/action-dotnet-test@v1
         with:
           path: test/EasyDesk.CleanArchitecture.IntegrationTests
+          test-args: --logger 'GitHubActions'
       - name: Pack
         uses: EasyDesk/action-dotnet-pack@v1
         with:
