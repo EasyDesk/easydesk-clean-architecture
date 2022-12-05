@@ -2,13 +2,10 @@
   Content: {
     Errors: [
       {
-        Code: AggregateNotFound,
-        Detail: Domain Error: AggregateNotFound,
-        Meta: {
-          aggregateType: []
-        }
+        Code: NotFound,
+        Detail: Unable to fine the requested resource
       }
     ]
   },
-  StatusCode: BadRequest
+  StatusCode: NotFound
 }
