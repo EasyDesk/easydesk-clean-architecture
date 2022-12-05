@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
@@ -12,11 +11,10 @@ using Saunter.Generation.Filters;
 using Saunter.Generation.SchemaGeneration;
 using System.Net.Mime;
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
-internal class KnownTypesDocumentGenerator : IDocumentGenerator
+internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
 {
     public const string Version = "1.0.0";
     private readonly string _microserviceName;
@@ -85,12 +83,10 @@ internal class KnownTypesDocumentGenerator : IDocumentGenerator
             Message = ConfigureMessage(messageType, schemaOptions)
         };
 
-    private static string SplitPascalCase(string pascalString) => Regex.Replace(pascalString, "(?!^)([A-Z])", " $1");
-
     private Message ConfigureMessage(Type messageType, AsyncApiSchemaOptions schemaOptions) => new()
     {
         Name = messageType.Name,
-        Title = SplitPascalCase(messageType.Name),
+        Title = PascalCaseSplitter.Split(messageType.Name),
         Payload = JsonSchema.FromType(messageType, schemaOptions)
     };
 

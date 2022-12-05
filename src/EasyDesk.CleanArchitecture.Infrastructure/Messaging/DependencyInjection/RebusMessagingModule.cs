@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
@@ -62,7 +62,7 @@ public class RebusMessagingModule : AppModule
         });
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        SetupHandlingPipeline(services, app, knownMessageTypes);
+        SetupHandlingPipeline(services, app);
         AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
 
         AddEventPropagators(services, knownMessageTypes);
@@ -77,19 +77,12 @@ public class RebusMessagingModule : AppModule
         }
     }
 
-    private void SetupHandlingPipeline(IServiceCollection services, AppDescription app, KnownMessageTypes knownMessageTypes)
+    private void SetupHandlingPipeline(IServiceCollection services, AppDescription app)
     {
-        knownMessageTypes.Types
-            .SelectMany(t => GetDispatchableReturnTypes(t).Select(r => (MessageType: t, ReturnType: r)))
-            .ForEach(x =>
-            {
-                var interfaceType = typeof(IHandleMessages<>).MakeGenericType(x.MessageType);
-                var implementationType = typeof(DispatchingMessageHandler<,>).MakeGenericType(x.MessageType, x.ReturnType);
-                services.AddTransient(interfaceType, implementationType);
-            });
+        services.AddTransient(typeof(IHandleMessages<>), typeof(DispatchingMessageHandler<>));
 
         app.RequireModule<DispatchingModule>().Pipeline
-            .AddStep(typeof(InboxStep<,>))
+            .AddStep(typeof(InboxStep<>))
             .After(typeof(UnitOfWorkStep<,>));
     }
 
@@ -119,7 +112,7 @@ public class RebusMessagingModule : AppModule
     }
 
     private void RegisterPropagatorForType<M, D>(IServiceCollection services)
-        where M : IPropagatedEvent<M, D>, IOutgoingEvent, IMessage
+        where M : IPropagatedEvent<M, D>, IOutgoingEvent
         where D : DomainEvent
     {
         services.AddTransient<IDomainEventHandler<D>, DomainEventPropagator<M, D>>();

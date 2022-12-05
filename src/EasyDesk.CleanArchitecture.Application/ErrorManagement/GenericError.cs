@@ -5,17 +5,14 @@ using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
-public record GenericError(string Message, IImmutableDictionary<string, object> Parameters) : Error
+public partial record GenericError(string Message, IImmutableDictionary<string, object> Parameters) : Error
 {
     public static GenericError Create(string message, params object[] args)
     {
         var paramMap = new Dictionary<string, object>();
         var argsQueue = new Queue<object>(args);
 
-        var formattedMessage = Regex.Replace(
-            message,
-            @"\\?{(.+?)}",
-            match => CalculateMatchReplacement(match, paramMap, argsQueue));
+        var formattedMessage = GenericErrorParameterRegex.Instance().Replace(message, match => CalculateMatchReplacement(match, paramMap, argsQueue));
 
         return new(formattedMessage, Map(paramMap));
     }
@@ -46,4 +43,10 @@ public record GenericError(string Message, IImmutableDictionary<string, object> 
     }
 
     private static string GetGroup(Match match, int groupIndex) => match.Groups[groupIndex].Value;
+}
+
+public static partial class GenericErrorParameterRegex
+{
+    [GeneratedRegex("\\\\?{(.+?)}")]
+    public static partial Regex Instance();
 }

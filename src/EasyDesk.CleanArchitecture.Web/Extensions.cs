@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Web;
 
-public static class Extensions
+public static partial class Extensions
 {
     /// <summary>
     /// Override this method to setup additional modules to the default list:
@@ -36,7 +36,7 @@ public static class Extensions
         Action<AppBuilder> configure = null)
     {
         var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name;
-        var match = Regex.Match(callingAssemblyName, @"^(.+)\.Web$");
+        var match = WebAssemblyRegex().Match(callingAssemblyName);
         var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
 
         var appBuilder = new AppBuilder(assemblyPrefix)
@@ -56,4 +56,7 @@ public static class Extensions
 
         return appDescription;
     }
+
+    [GeneratedRegex("^(.+)\\.Web$")]
+    private static partial Regex WebAssemblyRegex();
 }

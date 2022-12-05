@@ -66,5 +66,6 @@ public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<Pe
     {
         await base.DisposeAsync();
         await _dbConnection.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }

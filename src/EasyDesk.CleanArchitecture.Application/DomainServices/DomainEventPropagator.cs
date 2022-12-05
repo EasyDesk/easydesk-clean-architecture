@@ -1,11 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
 public class DomainEventPropagator<M, D> : IDomainEventHandler<D>
-    where M : IPropagatedEvent<M, D>, IOutgoingEvent, IMessage
+    where M : IPropagatedEvent<M, D>, IOutgoingEvent
     where D : DomainEvent
 {
     private readonly IEventPublisher _publisher;

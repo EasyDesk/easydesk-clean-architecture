@@ -1,6 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
-using EasyDesk.CleanArchitecture.Application.Messaging;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.Tools.Collections;
 using NodaTime;
 using Rebus.Activation;
@@ -33,25 +31,25 @@ public class RebusTestHelper : IAsyncDisposable
         _bus = configurer.Start();
     }
 
-    public async Task Subscribe<T>() where T : IMessage, IEvent
+    public async Task Subscribe<T>() where T : IEvent
     {
         await _bus.Subscribe<T>();
         _subscriptions.Add(typeof(T));
     }
 
-    public async Task Unsubscribe<T>() where T : IMessage, IEvent
+    public async Task Unsubscribe<T>() where T : IEvent
     {
         await _bus.Unsubscribe<T>();
         _subscriptions.Remove(typeof(T));
     }
 
-    public async Task Publish<T>(T message) where T : IMessage, IEvent =>
+    public async Task Publish<T>(T message) where T : IEvent =>
         await _bus.Publish(message);
 
-    public async Task Send<T>(T message) where T : IMessage, ICommand =>
+    public async Task Send<T>(T message) where T : ICommand =>
         await _bus.Send(message);
 
-    public async Task Defer<T>(T message, Duration delay) where T : IMessage, ICommand =>
+    public async Task Defer<T>(T message, Duration delay) where T : ICommand =>
         await _bus.Defer(delay.ToTimeSpan(), message);
 
     private async Task Handler(IMessage message) =>

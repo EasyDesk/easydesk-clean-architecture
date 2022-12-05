@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Web.Versioning;
 
-public static class ApiVersioningUtils
+public static partial class ApiVersioningUtils
 {
     public const string VersionHeader = "api-version";
     public const string VersionQueryParam = "version";
@@ -25,7 +25,7 @@ public static class ApiVersioningUtils
 
     public static Option<ApiVersion> ParseVersionFromNamespace(string version)
     {
-        var match = Regex.Match(version, @"^V_(\d+)_(\d+)$");
+        var match = ApiVersionNamespaceRegex().Match(version);
         if (!match.Success)
         {
             return None;
@@ -44,11 +44,14 @@ public static class ApiVersioningUtils
         .SubtypesOrImplementationsOf<AbstractController>()
         .FindTypes()
         .SelectMany(t => t.GetControllerVersion())
-        .OrderBy(x => x)
+        .Order()
         .Distinct();
 
     public static string ToDisplayString(this ApiVersion apiVersion)
     {
         return $"v{apiVersion}";
     }
+
+    [GeneratedRegex("^V_(\\d+)_(\\d+)$")]
+    private static partial Regex ApiVersionNamespaceRegex();
 }

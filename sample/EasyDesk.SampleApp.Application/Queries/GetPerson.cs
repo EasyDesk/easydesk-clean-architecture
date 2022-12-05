@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Queries;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 
 namespace EasyDesk.SampleApp.Application.Queries;
 
-public record GetPerson(Guid Id) : IDispatchableQuery<PersonSnapshot>;
+public record GetPerson(Guid Id) : IQueryRequest<PersonSnapshot>;

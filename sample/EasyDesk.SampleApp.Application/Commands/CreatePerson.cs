@@ -1,6 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -12,7 +11,7 @@ namespace EasyDesk.SampleApp.Application.Commands;
 public record CreatePerson(
     string FirstName,
     string LastName,
-    LocalDate DateOfBirth) : IDispatchableCommand<PersonSnapshot>, IMessage
+    LocalDate DateOfBirth) : ICommandRequest<PersonSnapshot>
 {
     public class Validator : AbstractValidator<CreatePerson>
     {

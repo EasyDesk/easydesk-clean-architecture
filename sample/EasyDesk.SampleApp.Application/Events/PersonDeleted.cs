@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 

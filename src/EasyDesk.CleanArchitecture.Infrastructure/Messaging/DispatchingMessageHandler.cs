@@ -1,11 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.Messaging;
 using Rebus.Handlers;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
-internal class DispatchingMessageHandler<T, R> : IHandleMessages<T>
-    where T : IDispatchable<R>, IMessage
+internal class DispatchingMessageHandler<T> : IHandleMessages<T>
+    where T : IDispatchable<Nothing>
 {
     private readonly IDispatcher _dispatcher;
 

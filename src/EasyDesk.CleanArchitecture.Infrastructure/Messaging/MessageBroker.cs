@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using NodaTime;
 using Rebus.Bus;
@@ -17,15 +16,15 @@ internal sealed class MessageBroker : IEventPublisher, ICommandSender
         _clock = clock;
     }
 
-    public async Task Send<T>(T message) where T : IOutgoingCommand, IMessage =>
+    public async Task Send<T>(T message) where T : IOutgoingCommand =>
         await _bus.Send(message);
 
-    public async Task Defer<T>(Duration delay, T message) where T : IOutgoingCommand, IMessage =>
+    public async Task Defer<T>(Duration delay, T message) where T : IOutgoingCommand =>
         await _bus.Defer(delay.ToTimeSpan(), message);
 
-    public async Task Schedule<T>(Instant instant, T message) where T : IOutgoingCommand, IMessage =>
+    public async Task Schedule<T>(Instant instant, T message) where T : IOutgoingCommand =>
         await Defer(instant - _clock.GetCurrentInstant(), message);
 
-    public async Task Publish<T>(T message) where T : IOutgoingEvent, IMessage =>
+    public async Task Publish<T>(T message) where T : IOutgoingEvent =>
         await _bus.Publish(message);
 }

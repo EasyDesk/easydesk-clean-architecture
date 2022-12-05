@@ -30,8 +30,8 @@ public class DeletePersonTests : SampleIntegrationTest
             .AsDataOnly<PersonDto>();
     }
 
-    private HttpRequestBuilder DeletePerson(Guid id) =>
-        Http.Delete(PersonRoutes.DeletePerson.WithRouteParam("id", id));
+    private HttpRequestBuilder DeletePerson(Guid userId) =>
+        Http.Delete(PersonRoutes.DeletePerson.WithRouteParam("id", userId));
 
     [Fact]
     public async Task DeletePersonShouldSucceedIfThePersonExists()

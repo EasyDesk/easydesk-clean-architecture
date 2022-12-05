@@ -24,7 +24,7 @@ internal class GenericPipeline : IPipeline
             .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPipelineStep<,>))
             .SingleOption(() => new InvalidOperationException(
                 $"Pipeline step of type {type.Name} implements more than one {typeof(IPipelineStep<,>).Name} interface."))
-            .Filter(i => MatchesPipelineInterface<T, R>(i))
+            .Filter(MatchesPipelineInterface<T, R>)
             .FlatMap(i => GetActualStepType<T, R>(type, i))
             .Map(t => (IPipelineStep<T, R>)ActivatorUtilities.CreateInstance(_serviceProvider, t));
     }

@@ -1,9 +1,7 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Commands;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Events;
-using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
 using NodaTime;
 using Rebus.Config;
@@ -34,9 +32,9 @@ public class RabbitMqContainerFixture : IAsyncLifetime
 
 public class RebusTestHelperTests : IClassFixture<RabbitMqContainerFixture>, IAsyncLifetime
 {
-    private record Command(int Value) : ICommand, IMessage;
+    private record Command(int Value) : ICommand;
 
-    private record Event(int Value) : IEvent, IMessage;
+    private record Event(int Value) : IEvent;
 
     private const string SenderAddress = "sender";
     private const string ReceiverAddress = "receiver";
@@ -137,7 +135,7 @@ public class RebusTestHelperTests : IClassFixture<RabbitMqContainerFixture>, IAs
         await _receiver.WaitForMessageAfterDelayOrFail(command, delay, _defaultTimeout);
     }
 
-    private async void Defer<T>(T command, Duration delay, Duration? tolerance = null) where T : IMessage, ICommand
+    private async void Defer<T>(T command, Duration delay, Duration? tolerance = null) where T : ICommand
     {
         await Task.Run(async () =>
         {
