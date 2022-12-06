@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
@@ -57,6 +58,10 @@ public class RebusMessagingModule : AppModule
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
                 o.UseOutbox();
                 o.OpenServiceScopeBeforeMessageHandlers();
+                if (app.IsMultitenant())
+                {
+                    o.SetupForMultitenancy();
+                }
             });
             return configurer;
         });

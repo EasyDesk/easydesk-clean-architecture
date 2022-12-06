@@ -21,4 +21,13 @@ internal static class RebusPipelineExtensions
                 .OnReceive(new ServiceScopeOpeningStep(), PipelineRelativePosition.After, typeof(ServiceProviderProviderStep));
         });
     }
+
+    public static void SetupForMultitenancy(this OptionsConfigurer configurer)
+    {
+        configurer.Decorate<IPipeline>(c =>
+        {
+            return new PipelineStepConcatenator(c.Get<IPipeline>())
+                .OnSend(new TenantManagementStep(), PipelineAbsolutePosition.Front);
+        });
+    }
 }
