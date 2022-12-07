@@ -25,6 +25,7 @@ internal class PostgreSqlEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Exte
         DbConnection connection,
         Action<Builder> configure)
     {
+        NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
         options.UseNpgsql(connection, x =>
         {
             x.UseNodaTime();
