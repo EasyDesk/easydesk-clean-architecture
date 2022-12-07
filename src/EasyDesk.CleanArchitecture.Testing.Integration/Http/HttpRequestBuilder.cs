@@ -38,6 +38,9 @@ public class HttpRequestBuilder
     public HttpRequestBuilder Tenant(string tenantId) =>
         Headers(h => ReplaceHeader(h, MultitenancyDefaults.TenantIdHttpHeader, tenantId));
 
+    public HttpRequestBuilder NoTenant() =>
+        Headers(h => h.Remove(MultitenancyDefaults.TenantIdHttpHeader));
+
     public async Task<HttpResponseMessage> AsHttpResponseMessage() =>
         await _httpClient.SendAsync(_request);
 

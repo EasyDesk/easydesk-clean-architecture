@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
@@ -13,10 +14,6 @@ public record ErrorDto(string Code, string Detail, object Meta)
 
     public static ErrorDto FromError(Error error) => error switch
     {
-        InternalError => new(
-            Code: "Internal",
-            Detail: "Unknown internal error occurred",
-            Meta: Nothing.Value),
         NotFoundError => new(
             Code: "NotFound",
             Detail: "Unable to fine the requested resource",
@@ -37,9 +34,13 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: "InputValidationError",
             Detail: errorMessage,
             Meta: new { PropertyName = propertyName }),
-        _ => new(
+        DomainError => new(
             Code: error.GetType().Name,
             Detail: $"Domain Error: {error.GetType().Name}",
-            Meta: error)
+            Meta: error),
+        _ => new(
+            Code: "Internal",
+            Detail: "Unknown internal error occurred",
+            Meta: Nothing.Value),
     };
 }

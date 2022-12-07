@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Web.Dto;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net;
 
 namespace EasyDesk.CleanArchitecture.Web.Filters;
 
@@ -15,7 +15,7 @@ internal class UnhandledExceptionsFilter : IExceptionFilter
 
         context.Result = new ObjectResult(response)
         {
-            StatusCode = (int)HttpStatusCode.InternalServerError
+            StatusCode = StatusCodes.Status500InternalServerError
         };
     }
 }

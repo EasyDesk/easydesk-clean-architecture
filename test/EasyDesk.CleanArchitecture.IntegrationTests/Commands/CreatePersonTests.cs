@@ -55,4 +55,14 @@ public class CreatePersonTests : SampleIntegrationTest
 
         await Verify(response);
     }
+
+    [Fact]
+    public async Task CreatePersonShouldFailIfNoTenantIsSpecified()
+    {
+        var response = await CreatePerson()
+            .NoTenant()
+            .AsVerifiableResponse<PersonDto>();
+
+        await Verify(response);
+    }
 }
