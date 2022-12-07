@@ -34,7 +34,7 @@ public class AuthorizationStep<T, R> : IPipelineStep<T, R>
     }
 
     private async Task<Result<R>> HandleUnknownUserRequest(NextPipelineStep<R> next) =>
-        UnknownUserIsAllowed() ? await next() : Errors.UnknownUser();
+        UnknownUserIsAllowed() ? await next() : new UnknownUserError();
 
     private bool UnknownUserIsAllowed() => typeof(T).GetCustomAttribute<AllowUnknownUserAttribute>() is not null;
 }

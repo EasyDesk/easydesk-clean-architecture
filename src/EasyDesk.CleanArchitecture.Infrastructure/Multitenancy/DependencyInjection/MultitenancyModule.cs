@@ -6,12 +6,12 @@ namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjectio
 
 public class MultitenancyModule : AppModule
 {
-    private readonly Func<IServiceProvider, ITenantProvider> _tenantProviderFactory;
-
-    public MultitenancyModule(Func<IServiceProvider, ITenantProvider> tenantProviderFactory)
+    public MultitenancyModule(Action<MultitenancyOptions> configureOptions = null)
     {
-        _tenantProviderFactory = tenantProviderFactory;
+        configureOptions?.Invoke(Options);
     }
+
+    public MultitenancyOptions Options { get; } = new();
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
@@ -21,22 +21,29 @@ public class MultitenancyModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        if (_tenantProviderFactory is null)
+        if (Options.TenantProviderFactory is null)
         {
             services.AddScoped<ITenantProvider, DefaultTenantProvider>();
         }
         else
         {
-            services.AddScoped(_tenantProviderFactory);
+            services.AddScoped(Options.TenantProviderFactory);
         }
+
+        services.AddSingleton(Options);
     }
 }
 
 public static class MultitenancyModuleExtensions
 {
-    public static AppBuilder AddMultitenancy(this AppBuilder builder, Func<IServiceProvider, ITenantProvider> tenantProviderFactory = null)
+    public static AppBuilder AddMultitenancy(this AppBuilder builder, Action<MultitenancyOptions> configure = null)
     {
-        return builder.AddModule(new MultitenancyModule(tenantProviderFactory));
+        return builder.AddModule(new MultitenancyModule(configure));
+    }
+
+    public static AppBuilder ConfigureMultitenancy(this AppBuilder builder, Action<MultitenancyOptions> configure)
+    {
+        return builder.ConfigureModule<MultitenancyModule>(m => configure(m.Options));
     }
 
     public static bool IsMultitenant(this AppDescription app) => app.HasModule<MultitenancyModule>();

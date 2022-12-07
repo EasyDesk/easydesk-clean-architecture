@@ -1,13 +1,12 @@
-﻿using System.Collections.Immutable;
+﻿using EasyDesk.Tools.Collections;
 using System.Reflection;
-using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public class AppBuilder
 {
-    private IImmutableDictionary<Type, AppModule> _modules = Map<Type, AppModule>();
-    private IImmutableDictionary<CleanArchitectureLayer, Assembly> _layers = Map<CleanArchitectureLayer, Assembly>();
+    private readonly ModulesCollection _modules = new();
+    private readonly Dictionary<CleanArchitectureLayer, Assembly> _layers = new();
     private readonly string _assemblyPrefix;
     private string _serviceName;
 
@@ -37,23 +36,32 @@ public class AppBuilder
 
     private AppBuilder WithLayer(CleanArchitectureLayer layer, Assembly layerAssembly)
     {
-        _layers = _layers.SetItem(layer, layerAssembly);
+        _layers[layer] = layerAssembly;
         return this;
     }
 
     public AppBuilder AddModule<T>(T module) where T : AppModule
     {
-        _modules = _modules.SetItem(typeof(T), module);
+        _modules.AddModule(module);
         return this;
     }
 
     public AppBuilder RemoveModule<T>() where T : AppModule
     {
-        _modules = _modules.Remove(typeof(T));
+        _modules.RemoveModule<T>();
         return this;
     }
 
-    public AppDescription Build() => new(_serviceName, _assemblyPrefix, _modules, _layers);
+    public AppBuilder ConfigureModule<T>(Action<T> configure) where T : AppModule
+    {
+        var module = _modules
+            .GetModule<T>()
+            .OrElseThrow(() => new RequiredModuleMissingException(typeof(T)));
+        configure(module);
+        return this;
+    }
+
+    public AppDescription Build() => new(_serviceName, _assemblyPrefix, _modules, _layers.ToEquatableMap());
 }
 
 public static class AppBuilderExtensions

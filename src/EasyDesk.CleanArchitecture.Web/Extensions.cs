@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -16,7 +17,8 @@ namespace EasyDesk.CleanArchitecture.Web;
 public static partial class Extensions
 {
     /// <summary>
-    /// Override this method to setup additional modules to the default list:
+    /// Configures the <see cref="WebApplicationBuilder"/> to use the clean architecture framework.
+    /// Below the list of modules added by default using this method:
     /// <list type="bullet">
     ///     <item><see cref="ControllersModule"/></item>
     ///     <item><see cref="JsonModule"/></item>
@@ -24,8 +26,10 @@ public static partial class Extensions
     ///     <item><see cref="ContextProviderModule"/></item>
     ///     <item><see cref="TimeManagementModule"/></item>
     ///     <item><see cref="DispatchingModule"/></item>
+    ///     <item><see cref="MultitenancyModule"/></item>
     ///     <item><see cref="ValidationModule"/></item>
     /// </list>
+    /// Additional modules can be added using the configuration action passed when calling this method.
     /// </summary>
     /// <param name="builder">The <see cref="WebApplicationBuilder"/> to configure.</param>
     /// <param name="configure">Additional configuration for the <see cref="AppBuilder"/>.</param>
@@ -46,6 +50,7 @@ public static partial class Extensions
             .AddContextProvider()
             .AddTimeManagement()
             .AddDispatching()
+            .AddMultitenancy()
             .AddValidation();
 
         configure?.Invoke(appBuilder);

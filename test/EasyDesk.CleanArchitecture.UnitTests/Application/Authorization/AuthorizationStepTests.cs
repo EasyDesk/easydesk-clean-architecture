@@ -82,7 +82,7 @@ public class AuthorizationStepTests
     [Fact]
     public async Task ShouldNotAllowNonAuthenticatedUserIfTheRequestDoesNotAllowUnknownUsers()
     {
-        await ShouldNotBeAuthorized<TestRequest>(Errors.UnknownUser());
+        await ShouldNotBeAuthorized<TestRequest>(new UnknownUserError());
     }
 
     [Fact]

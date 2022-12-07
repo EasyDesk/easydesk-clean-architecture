@@ -11,8 +11,6 @@ public static class Errors
 
     public static NotFoundError NotFound() => new();
 
-    public static UnknownUserError UnknownUser() => new();
-
     public static ForbiddenError Forbidden(string message = null) => new(message ?? "Not authorized");
 
     public static InputValidationError InvalidInput(string propertyName, string errorMessage) =>
