@@ -15,6 +15,8 @@ internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
         this.AddMultitenancy(tenantProvider);
     }
 
+    public DbSet<TenantModel> Tenants { get; set; }
+
     public DbSet<UserRoleModel> UserRoles { get; set; }
 
     public DbSet<RolePermissionModel> RolePermissions { get; set; }
@@ -23,6 +25,7 @@ internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
+        modelBuilder.ApplyConfiguration(new TenantModel.Configuration());
         modelBuilder.ApplyConfiguration(new UserRoleModel.Configuration());
         modelBuilder.ApplyConfiguration(new RolePermissionModel.Configuration());
 

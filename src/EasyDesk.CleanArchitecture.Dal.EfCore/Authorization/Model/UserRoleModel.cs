@@ -32,6 +32,11 @@ internal class UserRoleModel : IMultitenantEntity
 
             builder.Property(x => x.UserId)
                 .IsRequired();
+
+            builder.HasOne<TenantModel>()
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

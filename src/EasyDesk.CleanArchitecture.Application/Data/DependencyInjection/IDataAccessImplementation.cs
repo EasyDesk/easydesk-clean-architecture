@@ -12,4 +12,6 @@ public interface IDataAccessImplementation
     void AddRoleBasedPermissionsProvider(IServiceCollection services, AppDescription app);
 
     void AddRoleManager(IServiceCollection services, AppDescription app);
+
+    void AddMultitenancy(IServiceCollection services, AppDescription app);
 }

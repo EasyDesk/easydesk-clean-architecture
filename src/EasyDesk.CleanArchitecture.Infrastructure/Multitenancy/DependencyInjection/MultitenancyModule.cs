@@ -1,8 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 
 public class MultitenancyModule : AppModule
 {
@@ -21,14 +23,12 @@ public class MultitenancyModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        if (Options.TenantProviderFactory is null)
-        {
-            services.AddScoped<ITenantProvider, DefaultTenantProvider>();
-        }
-        else
-        {
-            services.AddScoped(Options.TenantProviderFactory);
-        }
+        services.AddScoped<ContextTenantReader>();
+
+        services.AddScoped<ITenantNavigator, TenantNavigator>();
+        services.AddScoped<ITenantProvider>(p => p.GetRequiredService<ITenantNavigator>());
+
+        app.RequireModule<DataAccessModule>().Implementation.AddMultitenancy(services, app);
 
         services.AddSingleton(Options);
     }

@@ -41,7 +41,9 @@ public class MultitenantExtension : DbContextExtension
 
         entityBuilder.HasIndex(x => x.TenantId);
 
-        queryFilters.AddFilter<E>(x => x.TenantId == null || x.TenantId == _tenantProvider.TenantId.OrElseNull());
+        queryFilters.AddFilter<E>(x => x.TenantId == null
+            || x.TenantId == _tenantProvider.TenantId.OrElseNull()
+            || _tenantProvider.TenantId.IsAbsent);
     }
 
     public override async Task<int> SaveChanges(Func<Task<int>> next)

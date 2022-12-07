@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-public interface IUserRolesManager : IUserRolesProvider
+public interface IUserRolesManager
 {
     Task GrantRolesToUser(UserInfo userInfo, IEnumerable<Role> roles);
 

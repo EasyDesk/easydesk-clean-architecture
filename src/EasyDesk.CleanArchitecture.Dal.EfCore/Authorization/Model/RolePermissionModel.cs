@@ -26,6 +26,11 @@ internal class RolePermissionModel : IMultitenantEntity
             builder.Property(x => x.PermissionName)
                 .IsRequired()
                 .HasMaxLength(Permission.MaxLength);
+
+            builder.HasOne<TenantModel>()
+                .WithMany()
+                .HasForeignKey(x => x.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

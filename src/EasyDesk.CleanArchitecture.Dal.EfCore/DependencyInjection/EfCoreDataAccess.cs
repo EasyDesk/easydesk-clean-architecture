@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
@@ -63,13 +64,24 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
 
     public void AddRoleManager(IServiceCollection services, AppDescription app)
     {
+        AddAuthorizationContext(services);
+        services.AddScoped<EfCoreAuthorizationManager>();
+        services.AddScoped<IUserRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
+        services.AddScoped<IUserRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
+    }
+
+    private void AddAuthorizationContext(IServiceCollection services)
+    {
         AddDbContext<AuthorizationContext>(
             services,
             AuthorizationContext.SchemaName,
             ConfigureMigrationsAssembly);
-        services.AddScoped<EfCoreAuthorizationManager>();
-        services.AddScoped<IUserRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
-        services.AddScoped<IUserRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
+    }
+
+    public void AddMultitenancy(IServiceCollection services, AppDescription app)
+    {
+        AddAuthorizationContext(services);
+        services.AddScoped<IMultitenancyManager, EfCoreMultitenancyManager>();
     }
 
     private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)
@@ -83,6 +95,11 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
         Action<IServiceProvider, TBuilder> configure = null)
         where C : DbContext
     {
+        if (_registeredDbContextTypes.Contains(typeof(C)))
+        {
+            return;
+        }
+
         services.AddDbContext<C>((provider, options) =>
         {
             var connection = provider.GetRequiredService<DbConnection>();

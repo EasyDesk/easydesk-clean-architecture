@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +30,14 @@ public class HttpRequestBuilder
         Headers(h => h.Add(ApiVersioningUtils.VersionHeader, version.ToString()));
 
     public HttpRequestBuilder Tenant(string tenantId) =>
-        Headers(h => h.Add(DefaultTenantProvider.TenantIdHttpHeader, tenantId));
+        Headers(h =>
+        {
+            if (h.Contains(MultitenancyDefaults.TenantIdHttpHeader))
+            {
+                h.Remove(MultitenancyDefaults.TenantIdHttpHeader);
+            }
+            h.Add(MultitenancyDefaults.TenantIdHttpHeader, tenantId);
+        });
 
     public async Task<HttpResponseMessage> AsHttpResponseMessage() =>
         await _httpClient.SendAsync(_request);
