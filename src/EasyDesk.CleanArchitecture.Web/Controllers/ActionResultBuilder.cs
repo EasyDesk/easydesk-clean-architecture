@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Dto;
@@ -82,9 +83,13 @@ public class ActionResultBuilder<TResult, TDto>
         return error switch
         {
             NotFoundError => _controller.NotFound(body),
-            DomainError or InputValidationError => _controller.BadRequest(body),
-            ForbiddenError => ActionResults.Forbidden(body),
             UnknownUserError => _controller.Unauthorized(body),
+            ForbiddenError => ActionResults.Forbidden(body),
+            TenantNotFoundError
+                or MissingTenantError
+                or MultitenancyNotSupportedError => _controller.BadRequest(body),
+            DomainError
+                or InputValidationError => _controller.BadRequest(body),
             _ => ActionResults.InternalServerError(body)
         };
     }

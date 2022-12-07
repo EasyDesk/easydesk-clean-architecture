@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
@@ -26,10 +27,18 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: "Forbidden",
             Detail: $"Forbidden: {reason}",
             Meta: Nothing.Value),
-        GenericError(var message, var parameters) => new(
-            Code: "Generic",
-            Detail: message,
-            Meta: parameters),
+        TenantNotFoundError(var tenantId) => new(
+            Code: "TenantNotFound",
+            Detail: "The provided tenant doesn't exist",
+            Meta: new { TenantId = tenantId }),
+        MissingTenantError => new(
+            Code: "MissingTenantError",
+            Detail: "Missing tenant information on the given request",
+            Meta: Nothing.Value),
+        MultitenancyNotSupportedError => new(
+            Code: "MultitenancyNotSupportedError",
+            Detail: "The request did provide a tenant but multitenancy isn't supported",
+            Meta: Nothing.Value),
         InputValidationError(var propertyName, var errorMessage) => new(
             Code: "InputValidationError",
             Detail: errorMessage,
@@ -38,6 +47,10 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: error.GetType().Name,
             Detail: $"Domain Error: {error.GetType().Name}",
             Meta: error),
+        GenericError(var message, var parameters) => new(
+            Code: "Generic",
+            Detail: message,
+            Meta: parameters),
         _ => new(
             Code: "Internal",
             Detail: "Unknown internal error occurred",
