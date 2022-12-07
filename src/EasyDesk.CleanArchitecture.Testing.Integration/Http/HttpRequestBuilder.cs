@@ -26,18 +26,17 @@ public class HttpRequestBuilder
         return this;
     }
 
+    private void ReplaceHeader(HttpRequestHeaders headers, string name, string value)
+    {
+        headers.Remove(name);
+        headers.Add(name, value);
+    }
+
     public HttpRequestBuilder WithApiVersion(ApiVersion version) =>
-        Headers(h => h.Add(ApiVersioningUtils.VersionHeader, version.ToString()));
+        Headers(h => ReplaceHeader(h, ApiVersioningUtils.VersionHeader, version.ToString()));
 
     public HttpRequestBuilder Tenant(string tenantId) =>
-        Headers(h =>
-        {
-            if (h.Contains(MultitenancyDefaults.TenantIdHttpHeader))
-            {
-                h.Remove(MultitenancyDefaults.TenantIdHttpHeader);
-            }
-            h.Add(MultitenancyDefaults.TenantIdHttpHeader, tenantId);
-        });
+        Headers(h => ReplaceHeader(h, MultitenancyDefaults.TenantIdHttpHeader, tenantId));
 
     public async Task<HttpResponseMessage> AsHttpResponseMessage() =>
         await _httpClient.SendAsync(_request);
