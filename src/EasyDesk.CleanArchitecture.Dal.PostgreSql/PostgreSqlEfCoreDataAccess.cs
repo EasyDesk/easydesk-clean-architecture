@@ -17,15 +17,19 @@ internal class PostgreSqlEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Exte
     {
     }
 
-    protected override DbConnection CreateDbConnection(string connectionString) =>
-        new NpgsqlConnection(connectionString);
+    protected override DbConnection CreateDbConnection(string connectionString)
+    {
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        dataSourceBuilder.UseNodaTime();
+        var dataSource = dataSourceBuilder.Build();
+        return dataSource.CreateConnection();
+    }
 
     protected override void ConfigureDbProvider(
         DbContextOptionsBuilder options,
         DbConnection connection,
         Action<Builder> configure)
     {
-        NpgsqlConnection.GlobalTypeMapper.UseNodaTime();
         options.UseNpgsql(connection, x =>
         {
             x.UseNodaTime();
