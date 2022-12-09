@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +9,9 @@ internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
 {
     public const string SchemaName = "auth";
 
-    public AuthorizationContext(ITenantProvider tenantProvider, DbContextOptions<AuthorizationContext> options) : base(options)
+    public AuthorizationContext(ITenantProvider tenantProvider, DbContextOptions<AuthorizationContext> options)
+        : base(tenantProvider, options)
     {
-        this.AddMultitenancy(tenantProvider);
     }
 
     public DbSet<TenantModel> Tenants { get; set; }

@@ -33,7 +33,7 @@ public class DeletePersonTests : SampleIntegrationTest
     private HttpRequestBuilder DeletePerson(Guid userId) =>
         Http.Delete(PersonRoutes.DeletePerson.WithRouteParam("id", userId));
 
-    [Fact(Skip = "bugged")]
+    [Fact]
     public async Task DeletePersonShouldSucceedIfThePersonExists()
     {
         var person = await CreateTestPerson();
@@ -53,7 +53,7 @@ public class DeletePersonTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "bugged")]
+    [Fact]
     public async Task DeletePersonShouldEmitAnEvent()
     {
         await using var bus = NewBus();
@@ -79,7 +79,7 @@ public class DeletePersonTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "bugged")]
+    [Fact]
     public async Task DeletePersonShouldMarkPersonRecordAsDeleted()
     {
         var person = await CreateTestPerson();
