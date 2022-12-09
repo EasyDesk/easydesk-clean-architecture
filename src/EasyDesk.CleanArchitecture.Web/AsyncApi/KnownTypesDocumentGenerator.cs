@@ -33,6 +33,8 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
     public AsyncApiDocument GenerateDocument(TypeInfo[] asyncApiTypes, AsyncApiOptions options, AsyncApiDocument prototype, IServiceProvider serviceProvider)
     {
         options.SchemaOptions.DefaultReferenceTypeNullHandling = ReferenceTypeNullHandling.NotNull;
+        options.SchemaOptions.TypeMappers.Add(new OptionTypeMapper());
+
         var asyncApiSchema = prototype.Clone();
 
         var schemaResolver = new AsyncApiSchemaResolver(asyncApiSchema, options.SchemaOptions);

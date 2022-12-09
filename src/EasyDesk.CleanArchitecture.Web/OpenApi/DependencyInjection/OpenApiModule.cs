@@ -39,6 +39,7 @@ public class OpenApiModule : AppModule
 
     private void SetupSwaggerDocs(AppDescription app, SwaggerGenOptions options)
     {
+        options.SchemaFilter<OptionSchemaFilter>();
         app.GetModule<ApiVersioningModule>().Match(
             some: m => SetupApiVersionedDocs(m, app, options),
             none: () => SetupSingleVersionDoc(app, options));
