@@ -16,7 +16,7 @@ public class SampleAppUnitTestsTest
     public async Task CreatePersonCommandTest()
     {
         var personRepository = Substitute.For<IPersonRepository>();
-        var handler = new CreatePerson.Handler(personRepository);
+        var handler = new CreatePersonHandler(personRepository);
         var result = await handler.Handle(new CreatePerson(TestName, TestSurname, _testDate));
         await Verify(result);
     }

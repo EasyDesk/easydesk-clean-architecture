@@ -6,23 +6,22 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-public record DeletePerson(Guid PersonId) : ICommandRequest<PersonSnapshot>
+public record DeletePerson(Guid PersonId) : ICommandRequest<PersonSnapshot>;
+
+public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonSnapshot>
 {
-    public class Handler : MappingHandler<DeletePerson, Person, PersonSnapshot>
+    private readonly IPersonRepository _personRepository;
+
+    public DeletePersonHandler(IPersonRepository personRepository)
     {
-        private readonly IPersonRepository _personRepository;
+        _personRepository = personRepository;
+    }
 
-        public Handler(IPersonRepository personRepository)
-        {
-            _personRepository = personRepository;
-        }
-
-        protected override async Task<Result<Person>> Process(DeletePerson request)
-        {
-            return await _personRepository
-                .GetById(request.PersonId)
-                .ThenOrElseError(Errors.NotFound)
-                .ThenIfSuccessAsync(_personRepository.Remove);
-        }
+    protected override async Task<Result<Person>> Process(DeletePerson request)
+    {
+        return await _personRepository
+            .GetById(request.PersonId)
+            .ThenOrElseError(Errors.NotFound)
+            .ThenIfSuccessAsync(_personRepository.Remove);
     }
 }
