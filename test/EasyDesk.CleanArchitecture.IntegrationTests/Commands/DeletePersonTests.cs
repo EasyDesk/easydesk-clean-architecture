@@ -34,7 +34,7 @@ public class DeletePersonTests : SampleIntegrationTest
         Http.Delete(PersonRoutes.DeletePerson.WithRouteParam("id", userId));
 
     [Fact]
-    public async Task DeletePersonShouldSucceedIfThePersonExists()
+    public async Task ShouldSucceedIfThePersonExists()
     {
         var person = await CreateTestPerson();
 
@@ -45,7 +45,7 @@ public class DeletePersonTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task DeletePersonShouldFailIfThePersonDoesNotExist()
+    public async Task ShouldFailIfThePersonDoesNotExist()
     {
         var response = await DeletePerson(Guid.NewGuid())
             .AsVerifiableResponse<PersonDto>();
@@ -54,7 +54,7 @@ public class DeletePersonTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task DeletePersonShouldEmitAnEvent()
+    public async Task ShouldEmitAnEvent()
     {
         await using var bus = NewBus();
         await bus.Subscribe<PersonDeleted>();
@@ -67,7 +67,7 @@ public class DeletePersonTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task DeletePersonShouldMakeItImpossibleToGetTheSamePerson()
+    public async Task ShouldMakeItImpossibleToGetTheSamePerson()
     {
         var person = await CreateTestPerson();
         await DeletePerson(person.Id).IgnoringResponse();
@@ -80,7 +80,7 @@ public class DeletePersonTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task DeletePersonShouldMarkPersonRecordAsDeleted()
+    public async Task ShouldMarkPersonRecordAsDeleted()
     {
         var person = await CreateTestPerson();
         await DeletePerson(person.Id).IgnoringResponse();

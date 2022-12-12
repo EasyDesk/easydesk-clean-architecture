@@ -25,7 +25,7 @@ public class CreatePersonTests : SampleIntegrationTest
     private HttpRequestBuilder GetPerson(Guid userId) => Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", userId));
 
     [Fact]
-    public async Task CreatePersonShouldSucceed()
+    public async Task ShouldSucceed()
     {
         var response = await CreatePerson()
             .AsVerifiableResponse<PersonDto>();
@@ -34,7 +34,7 @@ public class CreatePersonTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task CreatePersonShouldEmitAnEvent()
+    public async Task ShouldEmitAnEvent()
     {
         await using var bus = NewBus();
         await bus.Subscribe<PersonCreated>();
@@ -45,7 +45,7 @@ public class CreatePersonTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task CreatePersonShouldBeMultitenant()
+    public async Task ShouldBeMultitenant()
     {
         var person = await CreatePerson().AsDataOnly<PersonDto>();
 
@@ -57,7 +57,7 @@ public class CreatePersonTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task CreatePersonShouldFailIfNoTenantIsSpecified()
+    public async Task ShouldFailIfNoTenantIsSpecified()
     {
         var response = await CreatePerson()
             .NoTenant()
