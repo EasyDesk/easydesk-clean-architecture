@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
@@ -31,10 +33,27 @@ public class OpenApiModule : AppModule
         services.AddSwaggerGen(options =>
         {
             SetupSwaggerDocs(app, options);
-            AddNodaTimeSupport(app, options);
-            AddAuthenticationSchemesSupport(app, options);
+            SetupNodaTimeSupport(app, options);
+            SetupAuthenticationSchemesSupport(app, options);
+            SetupMultitenancySupport(app, options);
+
             _configure?.Invoke(options);
         });
+    }
+
+    private static void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)
+    {
+        if (app.IsMultitenant())
+        {
+            options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Name = MultitenancyDefaults.TenantIdHttpHeader,
+                Description = "The tenant ID to be used for the request",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "multitenancy"
+            });
+        }
     }
 
     private void SetupSwaggerDocs(AppDescription app, SwaggerGenOptions options)
@@ -83,7 +102,7 @@ public class OpenApiModule : AppModule
         });
     }
 
-    private void AddNodaTimeSupport(AppDescription app, SwaggerGenOptions options)
+    private void SetupNodaTimeSupport(AppDescription app, SwaggerGenOptions options)
     {
         var dateTimeZoneProvider = app.GetModule<TimeManagementModule>()
             .Map(m => m.DateTimeZoneProvider)
@@ -94,7 +113,7 @@ public class OpenApiModule : AppModule
             dateTimeZoneProvider: dateTimeZoneProvider);
     }
 
-    private void AddAuthenticationSchemesSupport(AppDescription app, SwaggerGenOptions options)
+    private void SetupAuthenticationSchemesSupport(AppDescription app, SwaggerGenOptions options)
     {
         app.GetModule<AuthenticationModule>().IfPresent(auth =>
         {
