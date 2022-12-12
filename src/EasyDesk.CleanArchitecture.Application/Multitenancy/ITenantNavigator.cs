@@ -2,28 +2,28 @@
 
 public interface ITenantNavigator : ITenantProvider
 {
-    void MoveTo(string tenantId);
+    void MoveToTenant(TenantId id);
 
-    void MoveToNoTenant();
+    void MoveToPublic();
 
     void BackToContextTenant();
 }
 
 public static class TenantNavigatorExtensions
 {
-    public static async Task SafeMoveTo(this ITenantNavigator navigator, string tenantId, IMultitenancyManager multitenancyManager)
+    public static async Task SafeMoveTo(this ITenantNavigator navigator, TenantId id, IMultitenancyManager multitenancyManager)
     {
-        await navigator.TryMoveTo(tenantId, multitenancyManager).ThenThrowIfFailure();
+        await navigator.TryMoveTo(id, multitenancyManager).ThenThrowIfFailure();
     }
 
-    public static async Task<Result<Nothing>> TryMoveTo(this ITenantNavigator navigator, string tenantId, IMultitenancyManager multitenancyManager)
+    public static async Task<Result<Nothing>> TryMoveTo(this ITenantNavigator navigator, TenantId id, IMultitenancyManager multitenancyManager)
     {
-        if (!await multitenancyManager.TenantExists(tenantId))
+        if (!await multitenancyManager.TenantExists(id))
         {
-            return new TenantNotFoundError(tenantId);
+            return new TenantNotFoundError(id);
         }
 
-        navigator.MoveTo(tenantId);
+        navigator.MoveToTenant(id);
         return Ok;
     }
 }

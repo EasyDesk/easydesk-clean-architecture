@@ -2,9 +2,9 @@
 
 public interface IMultitenancyManager
 {
-    Task AddTenant(string tenantId);
+    Task AddTenant(TenantId tenantId);
 
-    Task RemoveTenant(string tenantId);
+    Task RemoveTenant(TenantId tenantId);
 
-    Task<bool> TenantExists(string tenantId);
+    Task<bool> TenantExists(TenantId tenantId);
 }

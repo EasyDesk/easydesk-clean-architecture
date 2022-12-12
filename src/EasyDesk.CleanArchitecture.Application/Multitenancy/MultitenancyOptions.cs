@@ -2,12 +2,8 @@
 
 public class MultitenancyOptions
 {
-    public MultitenantPolicy DefaultPolicy { get; set; } = MultitenantPolicy.AllowAll;
-}
+    public MultitenantPolicy DefaultPolicy { get; set; } = MultitenantPolicies.Public();
 
-public enum MultitenantPolicy
-{
-    AllowAll,
-    RequireTenant,
-    RequireNoTenant
+    public Func<IServiceProvider, IContextTenantReader> TenantReaderImplementation { get; set; } =
+        _ => new PublicContextTenantReader();
 }

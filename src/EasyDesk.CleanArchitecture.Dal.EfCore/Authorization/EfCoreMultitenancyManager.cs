@@ -14,7 +14,7 @@ internal class EfCoreMultitenancyManager : IMultitenancyManager
         _context = context;
     }
 
-    public async Task AddTenant(string tenantId)
+    public async Task AddTenant(TenantId tenantId)
     {
         _context.Tenants.Add(new TenantModel
         {
@@ -24,7 +24,7 @@ internal class EfCoreMultitenancyManager : IMultitenancyManager
         await _context.SaveChangesAsync();
     }
 
-    public async Task RemoveTenant(string tenantId)
+    public async Task RemoveTenant(TenantId tenantId)
     {
         var tenant = await _context.Tenants
             .Where(t => t.Id == tenantId)
@@ -35,7 +35,7 @@ internal class EfCoreMultitenancyManager : IMultitenancyManager
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> TenantExists(string tenantId)
+    public async Task<bool> TenantExists(TenantId tenantId)
     {
         return await _context.Tenants.AnyAsync(t => t.Id == tenantId);
     }

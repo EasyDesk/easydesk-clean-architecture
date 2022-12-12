@@ -1,10 +1,11 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
@@ -19,11 +20,16 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 {
     config
         .WithServiceName("EasyDesk.Sample.App")
-        .ConfigureMultitenancy(options => options.DefaultPolicy = MultitenantPolicy.RequireTenant)
         .AddApiVersioning()
         .AddOpenApi()
         .AddAsyncApi()
         .AddModule<SampleAppDomainModule>();
+
+    config.ConfigureMultitenancy(options =>
+    {
+        options.DefaultPolicy = MultitenantPolicies.RequireTenant(requireExisting: false);
+        options.UseDefaultContextTenantReader();
+    });
 
     config.AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"));
 

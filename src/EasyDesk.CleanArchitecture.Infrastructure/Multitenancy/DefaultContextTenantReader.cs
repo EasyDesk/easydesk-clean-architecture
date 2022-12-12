@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.Tools.Collections;
 using Microsoft.AspNetCore.Http;
@@ -12,12 +13,12 @@ public static class MultitenancyDefaults
     public const string TenantIdHttpQueryParam = "tenantId";
 }
 
-internal class ContextTenantReader
+internal class DefaultContextTenantReader : IContextTenantReader
 {
     private readonly IContextProvider _contextProvider;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ContextTenantReader(IContextProvider contextProvider, IHttpContextAccessor httpContextAccessor)
+    public DefaultContextTenantReader(IContextProvider contextProvider, IHttpContextAccessor httpContextAccessor)
     {
         _contextProvider = contextProvider;
         _httpContextAccessor = httpContextAccessor;
@@ -33,10 +34,15 @@ internal class ContextTenantReader
     private Option<string> GetTenantIdForRequestContext()
     {
         var request = _httpContextAccessor.HttpContext.Request;
-        return request.Headers[MultitenancyDefaults.TenantIdHttpHeader].FirstOption()
-            | request.Query[MultitenancyDefaults.TenantIdHttpQueryParam].FirstOption();
+        return ReadTenantIdFromHeaders(request) | ReadTenantIdFromQuery(request);
     }
 
+    private static Option<string> ReadTenantIdFromHeaders(HttpRequest request) =>
+        request.Headers[MultitenancyDefaults.TenantIdHttpHeader].FirstOption();
+
+    private static Option<string> ReadTenantIdFromQuery(HttpRequest request) =>
+        request.Query[MultitenancyDefaults.TenantIdHttpQueryParam].FirstOption();
+
     private Option<string> GetTenantIdForAsyncMessageContext() =>
-        MessageContext.Current.Headers.GetOption(MultitenantUtils.TenantIdHeader);
+        MessageContext.Current.Headers.GetOption(MultitenantMessagingUtils.TenantIdHeader);
 }

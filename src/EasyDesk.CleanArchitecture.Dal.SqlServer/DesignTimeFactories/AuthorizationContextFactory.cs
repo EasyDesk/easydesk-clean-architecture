@@ -9,6 +9,6 @@ internal class AuthorizationContextFactory : IDesignTimeDbContextFactory<Authori
     public AuthorizationContext CreateDbContext(string[] args)
     {
         var options = DbContextOptionsUtils.CreateDesignTimeOptions<AuthorizationContext>();
-        return new AuthorizationContext(new NoTenant(), options);
+        return new AuthorizationContext(new PublicTenantProvider(), options);
     }
 }

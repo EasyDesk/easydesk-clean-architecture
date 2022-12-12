@@ -55,8 +55,8 @@ public class AbstractDbContext<T> : DbContext
         entityBuilder.HasIndex(x => x.TenantId);
 
         queryFilters.AddFilter<E>(x => x.TenantId == null
-            || x.TenantId == _tenantProvider.TenantId.OrElseNull()
-            || _tenantProvider.TenantId.IsAbsent);
+            || x.TenantId == _tenantProvider.TenantInfo.Id.OrElseNull()
+            || _tenantProvider.TenantInfo.Id.IsAbsent);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -69,12 +69,12 @@ public class AbstractDbContext<T> : DbContext
 
     private void SetTenantIdToAddedEntities()
     {
-        _tenantProvider.TenantId.IfPresent(tenantId =>
+        _tenantProvider.TenantInfo.Id.IfPresent(tenantId =>
         {
             ChangeTracker.Entries()
                 .Where(e => e.State == EntityState.Added)
                 .Where(e => e.Entity is IMultitenantEntity)
-                .ForEach(e => e.CurrentValues[nameof(IMultitenantEntity.TenantId)] = tenantId);
+                .ForEach(e => e.CurrentValues[nameof(IMultitenantEntity.TenantId)] = tenantId.Value);
         });
     }
 }
