@@ -15,9 +15,9 @@
       },
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[7.5.0, )",
-        "resolved": "7.5.0",
-        "contentHash": "wugr0JGiwDcdBC19/rBtcP3p8Rbr7s/p7Wg79nejD2F4S/9Dt23xpYbds3KMXeNUP3tXx+iyTupVj86nE5os9Q=="
+        "requested": "[7.6.0, )",
+        "resolved": "7.6.0",
+        "contentHash": "mfakC2h8AhGNIWCqlx/pDC9swNONEfN+lmYF12wrlnMJAfgHsJHTXWikST5+6C4teJUODzv3tbrGILvZ/5wkzA=="
       },
       "Microsoft.AspNetCore.Mvc.Testing": {
         "type": "Direct",
@@ -71,16 +71,15 @@
       },
       "Testcontainers": {
         "type": "Direct",
-        "requested": "[2.2.0, )",
-        "resolved": "2.2.0",
-        "contentHash": "mqzDSr51t9g+gHUy7KYij6EQ0ixofqjq8GtO8nfIPSf/Xohdl0vgd3z/WB0AFprXXDYVpwSVXyEtYqo4EXPRpQ==",
+        "requested": "[2.3.0, )",
+        "resolved": "2.3.0",
+        "contentHash": "7RhiL9QayGN2mg++ZdBAVAo5Xn+ZFsJvj/EUyDiHXglMHmsyD6yUp7ju49MM8OohlHAxPIoGmWgmdlj6I63/+g==",
         "dependencies": {
           "Docker.DotNet": "3.125.12",
           "Docker.DotNet.X509": "3.125.12",
-          "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
-          "Microsoft.Extensions.Logging.Abstractions": "3.1.26",
+          "Microsoft.Extensions.Logging.Abstractions": "3.1.31",
           "Portable.BouncyCastle": "1.9.0",
-          "SharpZipLib": "1.4.0",
+          "SharpZipLib": "1.4.1",
           "System.Text.Json": "4.7.2"
         }
       },
@@ -207,11 +206,6 @@
         "dependencies": {
           "System.IO.Pipelines": "7.0.0"
         }
-      },
-      "Microsoft.Bcl.AsyncInterfaces": {
-        "type": "Transitive",
-        "resolved": "1.1.1",
-        "contentHash": "yuvf07qFWFqtK3P/MRkEKLhn5r2UbSpVueRziSqj0yJQIKFwG1pq9mOayK3zE5qZCTs0CbrwL9M6R8VwqyGy2w=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
@@ -853,8 +847,8 @@
       },
       "SharpZipLib": {
         "type": "Transitive",
-        "resolved": "1.4.0",
-        "contentHash": "CdkbBSPIpHD8xBlu+8kDJiqc1Tf9iV89BObnqcvEbwysXSj5h1MfaeLgeeaxPZmi7CTJO8FDofBBNxBW0Vml7A=="
+        "resolved": "1.4.1",
+        "contentHash": "X8QiHZS7+bbZy85LfpKCAL9oh0yZkiiecWhQL5F1Yn1AKFDYiOzR3UG5vI+9bDYGRGyseVdMW5sTH8mv8LXF1g=="
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
@@ -1694,7 +1688,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.5.0, )",
+          "EasyDesk.Tools": "[7.6.0, )",
           "FluentValidation": "[11.4.0, )",
           "FluentValidation.DependencyInjectionExtensions": "[11.4.0, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
@@ -1708,7 +1702,7 @@
       "easydesk.cleanarchitecture.dependencyinjection": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[7.5.0, )",
+          "EasyDesk.Tools": "[7.6.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )",
           "NodaTime": "[3.1.6, )"
         }
@@ -1716,7 +1710,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[7.5.0, )",
+          "EasyDesk.Tools": "[7.6.0, )",
           "NodaTime": "[3.1.6, )"
         }
       },
@@ -1724,7 +1718,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.5.0, )",
+          "EasyDesk.Tools": "[7.6.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.9, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.0, )",
           "Rebus": "[6.6.5, )",
@@ -1737,7 +1731,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Tools": "[7.5.0, )",
+          "EasyDesk.Tools": "[7.6.0, )",
           "MicroElements.Swashbuckle.NodaTime": "[4.0.1, )",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[7.0.0, )",
           "Microsoft.AspNetCore.Mvc.Versioning": "[5.0.0, )",

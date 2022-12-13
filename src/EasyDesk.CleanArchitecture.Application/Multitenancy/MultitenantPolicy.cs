@@ -6,29 +6,45 @@ public delegate Task<Result<TenantInfo>> MultitenantPolicy(
 
 public static class MultitenantPolicies
 {
-    private static MultitenantPolicy Pure(Func<TenantInfo, Result<TenantInfo>> f) =>
-        (id, _) => Task.FromResult(f(id));
+    public static MultitenantPolicy IgnoreAndUsePublic() =>
+        IgnoreExistence(_ => TenantInfo.Public);
 
-    public static MultitenantPolicy Public() => Pure(_ => TenantInfo.Public);
+    public static MultitenantPolicy IgnoreAndUseTenant(TenantId tenantId) =>
+        IgnoreExistence(_ => TenantInfo.Tenant(tenantId));
 
-    public static MultitenantPolicy Any(bool requireExisting = true) => (t, m) =>
-        RequireExistingTenant(t, m, requireExisting);
+    public static MultitenantPolicy IgnoreAndUseExistingTenant(TenantId tenantId) =>
+        CheckingExistence(_ => TenantInfo.Tenant(tenantId));
 
-    public static MultitenantPolicy RequireTenant(bool requireExisting = true) => (t, m) =>
-        RequireExistingTenant(t, m, requireExisting).ThenFlatTap(t => Ensure(t.IsInTenant, () => new MissingTenantError()));
+    public static MultitenantPolicy AnyTenantOrPublic() =>
+        IgnoreExistence(t => t);
+
+    public static MultitenantPolicy ExistingTenantOrPublic() =>
+        CheckingExistence(t => t);
 
     public static MultitenantPolicy RequirePublic() =>
-        Pure(t => Ensure(t.IsPublic, () => new MultitenancyNotSupportedError()).Map(_ => TenantInfo.Public));
+        IgnoreExistence(t => Ensure(t, t => t.IsPublic, t => new MultitenancyNotSupportedError()));
 
-    private static async Task<Result<TenantInfo>> RequireExistingTenant(
+    public static MultitenantPolicy RequireAnyTenant() =>
+        IgnoreExistence(t => Ensure(t, t => t.IsInTenant, t => new MissingTenantError()));
+
+    public static MultitenantPolicy RequireExistingTenant() =>
+        CheckingExistence(t => Ensure(t, t => t.IsInTenant, t => new MissingTenantError()));
+
+    private static MultitenantPolicy IgnoreExistence(Func<TenantInfo, Result<TenantInfo>> f) => (tenantInfo, _) =>
+        Task.FromResult(f(tenantInfo));
+
+    private static MultitenantPolicy CheckingExistence(Func<TenantInfo, Result<TenantInfo>> f) => (tenantInfo, m) =>
+        f(tenantInfo).FlatMapAsync(i => RequireExistingTenant(i, m));
+
+    private static Task<Result<TenantInfo>> RequireExistingTenant(
         TenantInfo tenantInfo,
-        IMultitenancyManager multitenancyManager,
-        bool requireExisting = true)
+        IMultitenancyManager multitenancyManager)
     {
-        if (requireExisting && tenantInfo.IsInTenant && !await multitenancyManager.TenantExists(tenantInfo.Id.Value))
-        {
-            return new TenantNotFoundError(tenantInfo.Id.Value);
-        }
-        return tenantInfo;
+        return Success(tenantInfo).FilterAsync(
+            info => CheckExistanceOfTenant(multitenancyManager, info),
+            info => new TenantNotFoundError(info.RequireId()));
     }
+
+    private static async Task<bool> CheckExistanceOfTenant(IMultitenancyManager multitenancyManager, TenantInfo tenantInfo) =>
+        tenantInfo.IsPublic || await multitenancyManager.TenantExists(tenantInfo.RequireId());
 }

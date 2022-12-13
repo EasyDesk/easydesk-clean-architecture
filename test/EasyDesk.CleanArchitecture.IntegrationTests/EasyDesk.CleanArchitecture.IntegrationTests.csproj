@@ -29,6 +29,10 @@
     <ProjectReference Include="..\..\src\EasyDesk.CleanArchitecture.Testing.Integration\EasyDesk.CleanArchitecture.Testing.Integration.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="EasyDesk.Tools" Version="7.6.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <RootFolder>..\..</RootFolder>
   </PropertyGroup>

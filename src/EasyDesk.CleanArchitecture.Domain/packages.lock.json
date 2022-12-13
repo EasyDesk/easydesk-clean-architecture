@@ -4,9 +4,9 @@
     "net7.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[7.5.0, )",
-        "resolved": "7.5.0",
-        "contentHash": "wugr0JGiwDcdBC19/rBtcP3p8Rbr7s/p7Wg79nejD2F4S/9Dt23xpYbds3KMXeNUP3tXx+iyTupVj86nE5os9Q=="
+        "requested": "[7.6.0, )",
+        "resolved": "7.6.0",
+        "contentHash": "mfakC2h8AhGNIWCqlx/pDC9swNONEfN+lmYF12wrlnMJAfgHsJHTXWikST5+6C4teJUODzv3tbrGILvZ/5wkzA=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",

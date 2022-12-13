@@ -10,3 +10,9 @@ public record TenantInfo(Option<TenantId> Id)
 
     public static TenantInfo Tenant(TenantId id) => new(Some(id));
 }
+
+public static class TenantInfoExtensions
+{
+    public static TenantId RequireId(this TenantInfo tenantInfo) => tenantInfo.Id
+        .OrElseThrow(() => new InvalidOperationException("Attempted to read a tenant id while in the public tenant"));
+}
