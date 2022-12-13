@@ -5,7 +5,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="EasyDesk.Tools" Version="7.6.0" />
+    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
   </ItemGroup>
 
   <PropertyGroup>
