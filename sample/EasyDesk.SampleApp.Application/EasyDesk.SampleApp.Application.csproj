@@ -5,6 +5,10 @@
     <ProjectReference Include="..\EasyDesk.SampleApp.Domain\EasyDesk.SampleApp.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
+  </ItemGroup>
+
   <PropertyGroup>
     <RootFolder>..\..</RootFolder>
   </PropertyGroup>

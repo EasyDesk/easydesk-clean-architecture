@@ -30,6 +30,10 @@
     <ProjectReference Include="..\..\src\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
+  </ItemGroup>
+
   <PropertyGroup>
     <RootFolder>..\..</RootFolder>
   </PropertyGroup>

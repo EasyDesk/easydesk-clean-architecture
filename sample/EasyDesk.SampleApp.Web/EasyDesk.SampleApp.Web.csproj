@@ -8,17 +8,21 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Rebus.RabbitMq" Version="7.4.3" />
+    <PackageReference Include="Rebus.RabbitMq" Version="7.4.4" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Infrastructure\EasyDesk.SampleApp.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
   </ItemGroup>
 
   <PropertyGroup>

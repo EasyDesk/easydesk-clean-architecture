@@ -9,15 +9,19 @@
 
   <ItemGroup>
     <PackageReference Include="EasyDesk.Testing" Version="0.4.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.1" />
     <PackageReference Include="NSubstitute" Version="4.4.0" />
     <PackageReference Include="Shouldly" Version="4.1.0" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.2" />
-    <PackageReference Include="Testcontainers" Version="2.2.0" />
+    <PackageReference Include="Testcontainers" Version="2.3.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
   </ItemGroup>
 
   <PropertyGroup>

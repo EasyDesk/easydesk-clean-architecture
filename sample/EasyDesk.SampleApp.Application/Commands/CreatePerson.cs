@@ -14,7 +14,7 @@ public record CreatePerson(
     string LastName,
     LocalDate DateOfBirth) : ICommandRequest<PersonSnapshot>, IOverrideMultitenantPolicy
 {
-    public MultitenantPolicy MultitenantPolicy => MultitenantPolicies.RequireTenant(requireExisting: false);
+    public MultitenantPolicy MultitenantPolicy => MultitenantPolicies.RequireAnyTenant();
 }
 
 public class CreatePersonValidator : AbstractValidator<CreatePerson>
