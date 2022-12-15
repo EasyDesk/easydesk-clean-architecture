@@ -16,8 +16,8 @@ public class MultitenancyModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<DispatchingModule>().Pipeline
-            .AddStep(typeof(MultitenancyManagementStep<,>));
+        app.ConfigureDispatchingPipeline(pipeline => pipeline
+            .AddStep(typeof(MultitenancyManagementStep<,>)));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

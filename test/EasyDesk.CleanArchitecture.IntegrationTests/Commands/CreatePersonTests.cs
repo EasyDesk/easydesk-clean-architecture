@@ -34,6 +34,16 @@ public class CreatePersonTests : SampleIntegrationTest
     }
 
     [Fact]
+    public async Task ShouldMakeItPossibleToReadThePersonAfterSuccessfullyCreatingOne()
+    {
+        var person = await CreatePerson().AsDataOnly<PersonDto>();
+
+        var response = await GetPerson(person.Id).AsVerifiableResponse<PersonDto>();
+
+        await Verify(response);
+    }
+
+    [Fact]
     public async Task ShouldEmitAnEvent()
     {
         await using var bus = NewBus();

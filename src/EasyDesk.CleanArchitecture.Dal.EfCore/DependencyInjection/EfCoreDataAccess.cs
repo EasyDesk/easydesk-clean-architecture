@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
@@ -32,10 +34,25 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
         _options = options;
     }
 
+    public void ConfigurePipeline(PipelineBuilder pipeline)
+    {
+        pipeline.AddStep(typeof(SaveChangesStep<,>))
+            .After(typeof(UnitOfWorkStep<,>))
+            .Before(typeof(DomainEventHandlingStep<,>));
+    }
+
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         services.AddScoped(_ => CreateDbConnection(_options.ConnectionString));
         AddDbContext<T>(services, DomainContext<T>.SchemaName);
+        services.AddScoped<SaveChangesDelegate>(provider => async () =>
+        {
+            var dbContext = provider.GetRequiredService<T>();
+            if (dbContext.ChangeTracker.HasChanges())
+            {
+                await dbContext.SaveChangesAsync();
+            }
+        });
         services.AddScoped(provider => new EfCoreUnitOfWorkProvider(provider.GetRequiredService<DbConnection>()));
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
         services.AddScoped<TransactionEnlistingOnCommandInterceptor>();

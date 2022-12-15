@@ -9,7 +9,7 @@ public class ValidationModule : AppModule
 {
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<DispatchingModule>().Pipeline.AddStep(typeof(ValidationStep<,>));
+        app.ConfigureDispatchingPipeline(pipeline => pipeline.AddStep(typeof(ValidationStep<,>)));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

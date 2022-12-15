@@ -4,38 +4,38 @@ using EasyDesk.Tools.Collections;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
-internal class AggregatesTracker<TAggregate, TPersistence>
-    where TAggregate : AggregateRoot
-    where TPersistence : IPersistenceModel<TAggregate, TPersistence>
+internal class AggregatesTracker<A, P>
+    where A : AggregateRoot
+    where P : IPersistenceModel<A, P>
 {
-    private readonly Dictionary<TAggregate, TPersistence> _modelsMap = new();
+    private readonly Dictionary<A, P> _modelsMap = new();
 
-    public bool IsTracked(TAggregate aggregate) => _modelsMap.ContainsKey(aggregate);
+    public bool IsTracked(A aggregate) => _modelsMap.ContainsKey(aggregate);
 
-    public TPersistence TrackFromAggregate(TAggregate aggregate)
+    public (P Model, bool WasTracked) TrackFromAggregate(A aggregate)
     {
         if (IsTracked(aggregate))
         {
             var persistenceModel = _modelsMap[aggregate];
-            TPersistence.ApplyChanges(aggregate, persistenceModel);
-            return persistenceModel;
+            P.ApplyChanges(aggregate, persistenceModel);
+            return (persistenceModel, true);
         }
         else
         {
-            var persistenceModel = aggregate.ToPersistence<TAggregate, TPersistence>();
+            var persistenceModel = aggregate.ToPersistence<A, P>();
             _modelsMap.Add(aggregate, persistenceModel);
-            return persistenceModel;
+            return (persistenceModel, false);
         }
     }
 
-    public TAggregate TrackFromPersistenceModel(TPersistence persistenceModel)
+    public A TrackFromPersistenceModel(P persistenceModel)
     {
         var aggregate = persistenceModel.ToDomain();
         _modelsMap.Add(aggregate, persistenceModel);
         return aggregate;
     }
 
-    public TAggregate ReHydrate(TAggregate aggregate)
+    public A ReHydrate(A aggregate)
     {
         var persistenceModel = _modelsMap[aggregate];
         var newAggregate = persistenceModel.ToDomain();
@@ -44,7 +44,7 @@ internal class AggregatesTracker<TAggregate, TPersistence>
         return newAggregate;
     }
 
-    public TPersistence GetPersistenceModel(TAggregate aggregate)
+    public P GetPersistenceModel(A aggregate)
     {
         return _modelsMap
             .GetOption(aggregate)

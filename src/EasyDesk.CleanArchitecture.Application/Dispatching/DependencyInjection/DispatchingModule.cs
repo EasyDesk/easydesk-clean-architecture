@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -22,7 +21,6 @@ public class DispatchingModule : AppModule
 
         RegisterRequestHandlers(services, app);
 
-        Pipeline.AddStep(typeof(UnitOfWorkStep<,>));
         Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
 
         var steps = Pipeline.GetOrderedSteps().ToList();
@@ -44,5 +42,11 @@ public static class MediatrModuleExtensions
     public static AppBuilder AddDispatching(this AppBuilder builder, Action<PipelineBuilder> configurePipeline = null)
     {
         return builder.AddModule(new DispatchingModule(configurePipeline));
+    }
+
+    public static AppDescription ConfigureDispatchingPipeline(this AppDescription app, Action<PipelineBuilder> configure)
+    {
+        configure(app.RequireModule<DispatchingModule>().Pipeline);
+        return app;
     }
 }

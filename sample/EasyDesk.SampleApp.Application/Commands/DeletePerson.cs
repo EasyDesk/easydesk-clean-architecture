@@ -22,6 +22,6 @@ public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonSn
         return await _personRepository
             .GetById(request.PersonId)
             .ThenOrElseError(Errors.NotFound)
-            .ThenIfSuccessAsync(_personRepository.Remove);
+            .ThenIfSuccess(_personRepository.Remove);
     }
 }

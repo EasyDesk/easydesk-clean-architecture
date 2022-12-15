@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
@@ -11,6 +12,15 @@ public class DataAccessModule : AppModule
     }
 
     public IDataAccessImplementation Implementation { get; }
+
+    public override void BeforeServiceConfiguration(AppDescription app)
+    {
+        app.ConfigureDispatchingPipeline(pipeline =>
+        {
+            pipeline.AddStep(typeof(UnitOfWorkStep<,>));
+            Implementation.ConfigurePipeline(pipeline);
+        });
+    }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {

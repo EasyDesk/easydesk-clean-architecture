@@ -35,10 +35,10 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSn
         _personRepository = personRepository;
     }
 
-    protected override async Task<Result<Person>> Process(CreatePerson command)
+    protected override Task<Result<Person>> Process(CreatePerson command)
     {
         var person = Person.Create(Name.From(command.FirstName), Name.From(command.LastName), command.DateOfBirth);
-        await _personRepository.Save(person);
-        return person;
+        _personRepository.Save(person);
+        return Task.FromResult<Result<Person>>(person);
     }
 }

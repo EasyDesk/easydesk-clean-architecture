@@ -23,8 +23,7 @@ internal class EfCoreUnitOfWorkProvider : UnitOfWorkProviderBase<EfCoreUnitOfWor
             await _connection.OpenAsync();
         }
         var transaction = await _connection.BeginTransactionAsync();
-        var unitOfWork = new EfCoreUnitOfWork(transaction);
-        return unitOfWork;
+        return new EfCoreUnitOfWork(transaction);
     }
 
     public async Task EnlistDbContextForCurrentTransaction(DbContext context, bool failIfNoTransaction = false)

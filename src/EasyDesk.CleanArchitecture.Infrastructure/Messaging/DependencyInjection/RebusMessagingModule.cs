@@ -37,7 +37,11 @@ public class RebusMessagingModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<DispatchingModule>().Pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
+        app.ConfigureDispatchingPipeline(pipeline =>
+        {
+            pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
+            pipeline.AddStep(typeof(InboxStep<>)).After(typeof(UnitOfWorkStep<,>));
+        });
         app.RequireModule<JsonModule>();
     }
 
@@ -67,7 +71,7 @@ public class RebusMessagingModule : AppModule
         });
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        SetupHandlingPipeline(services, app);
+        SetupMessageHandlers(services);
         AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
 
         AddEventPropagators(services, knownMessageTypes);
@@ -82,13 +86,9 @@ public class RebusMessagingModule : AppModule
         }
     }
 
-    private void SetupHandlingPipeline(IServiceCollection services, AppDescription app)
+    private void SetupMessageHandlers(IServiceCollection services)
     {
         services.AddTransient(typeof(IHandleMessages<>), typeof(DispatchingMessageHandler<>));
-
-        app.RequireModule<DispatchingModule>().Pipeline
-            .AddStep(typeof(InboxStep<>))
-            .After(typeof(UnitOfWorkStep<,>));
     }
 
     private IEnumerable<Type> GetDispatchableReturnTypes(Type messageType)

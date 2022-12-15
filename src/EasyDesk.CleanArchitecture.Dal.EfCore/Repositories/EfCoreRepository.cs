@@ -43,14 +43,9 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
         return persistenceModels.Select(_tracker.TrackFromPersistenceModel);
     }
 
-    public async Task Save(TAggregate aggregate) => await SaveImpl(aggregate);
-
-    public async Task<TAggregate> SaveAndHydrate(TAggregate aggregate) => await SaveImpl(aggregate, hydrateAfterSave: true);
-
-    private async Task<TAggregate> SaveImpl(TAggregate aggregate, bool hydrateAfterSave = false)
+    public void Save(TAggregate aggregate)
     {
-        var wasTracked = _tracker.IsTracked(aggregate);
-        var persistenceModel = _tracker.TrackFromAggregate(aggregate);
+        var (persistenceModel, wasTracked) = _tracker.TrackFromAggregate(aggregate);
 
         if (wasTracked)
         {
@@ -61,24 +56,43 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
             DbSet.Add(persistenceModel);
         }
 
-        await _context.SaveChangesAsync();
-
-        var newAggregate = hydrateAfterSave ? _tracker.ReHydrate(aggregate) : aggregate;
-
         if (!wasTracked)
         {
             aggregate.NotifyCreation();
         }
+
+        NotifyAllEvents(aggregate);
+    }
+
+    public async Task<TAggregate> SaveAndHydrate(TAggregate aggregate)
+    {
+        var (persistenceModel, wasTracked) = _tracker.TrackFromAggregate(aggregate);
+
+        if (wasTracked)
+        {
+            DbSet.Update(persistenceModel);
+        }
+        else
+        {
+            await DbSet.AddAsync(persistenceModel);
+        }
+
+        var newAggregate = _tracker.ReHydrate(aggregate);
+
+        if (!wasTracked)
+        {
+            newAggregate.NotifyCreation();
+        }
+
         NotifyAllEvents(newAggregate);
 
         return newAggregate;
     }
 
-    public async Task Remove(TAggregate aggregate)
+    public void Remove(TAggregate aggregate)
     {
         var persistenceModel = _tracker.GetPersistenceModel(aggregate);
         DbSet.Remove(persistenceModel);
-        await _context.SaveChangesAsync();
         aggregate.NotifyRemoval();
         NotifyAllEvents(aggregate);
     }

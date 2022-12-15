@@ -3,5 +3,5 @@
 public interface ISaveRepository<T>
     where T : AggregateRoot
 {
-    Task Save(T aggregate);
+    void Save(T aggregate);
 }

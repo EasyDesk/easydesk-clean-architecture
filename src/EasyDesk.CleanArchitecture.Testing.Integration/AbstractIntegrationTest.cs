@@ -13,7 +13,7 @@ public abstract class AbstractIntegrationTest<T, TStartup> : IAsyncLifetime
     protected AbstractIntegrationTest(T factory)
     {
         Factory = factory;
-        Http = factory.CreateHttpHelper(ConfigureRequests);
+        Http = factory.CreateHttpHelper(ConfigureHttpRequest);
     }
 
     protected T Factory { get; }
@@ -22,6 +22,11 @@ public abstract class AbstractIntegrationTest<T, TStartup> : IAsyncLifetime
 
     protected RebusTestHelper NewBus(string inputQueueAddress = null, Duration? defaultTimeout = null) =>
         Factory.CreateRebusHelper(inputQueueAddress, defaultTimeout);
+
+    private void ConfigureHttpRequest(HttpRequestBuilder req)
+    {
+        ConfigureRequests(req);
+    }
 
     protected virtual void ConfigureRequests(HttpRequestBuilder req)
     {

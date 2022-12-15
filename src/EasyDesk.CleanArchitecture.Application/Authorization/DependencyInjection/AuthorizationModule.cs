@@ -15,7 +15,7 @@ public class AuthorizationModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.RequireModule<DispatchingModule>().Pipeline.AddStep(typeof(AuthorizationStep<,>));
+        app.ConfigureDispatchingPipeline(pipeline => pipeline.AddStep(typeof(AuthorizationStep<,>)));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
