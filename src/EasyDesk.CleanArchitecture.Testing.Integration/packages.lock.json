@@ -40,6 +40,15 @@
           "Microsoft.SourceLink.Common": "1.1.1"
         }
       },
+      "NodaTime.Testing": {
+        "type": "Direct",
+        "requested": "[3.1.6, )",
+        "resolved": "3.1.6",
+        "contentHash": "wzrLIBe7SgYdvwTyWWBIOinlOJXM1Sud7Bs0tixovIgAjPtQq1W3sOE+qjVX8r0G/vVRK2u2Ob2nlWev1ZYPlg==",
+        "dependencies": {
+          "NodaTime": "3.1.6"
+        }
+      },
       "NSubstitute": {
         "type": "Direct",
         "requested": "[4.4.0, )",

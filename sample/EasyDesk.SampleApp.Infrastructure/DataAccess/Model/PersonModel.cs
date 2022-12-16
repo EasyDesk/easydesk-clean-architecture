@@ -26,10 +26,12 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
 
     public bool IsDeleted { get; set; }
 
-    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
-        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth);
+    public string CreatedBy { get; set; }
 
-    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth);
+    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
+        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy);
+
+    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy));
 
     public static PersonModel CreateDefaultPersistenceModel() => new();
 
@@ -39,6 +41,7 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
         destination.FirstName = origin.FirstName;
         destination.LastName = origin.LastName;
         destination.DateOfBirth = origin.DateOfBirth;
+        destination.CreatedBy = origin.CreatedBy;
     }
 
     public class Configuration : IEntityTypeConfiguration<PersonModel>

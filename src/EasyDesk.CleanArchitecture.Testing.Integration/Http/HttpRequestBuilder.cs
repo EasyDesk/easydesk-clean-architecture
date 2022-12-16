@@ -1,23 +1,35 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using NodaTime;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
-
 public class HttpRequestBuilder
 {
     private readonly HttpRequestMessage _request;
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _settings;
+    private readonly IClock _clock;
+    private readonly Option<JwtTokenConfiguration> _jwtConfiguration;
 
-    public HttpRequestBuilder(HttpRequestMessage request, HttpClient httpClient, JsonSerializerSettings settings)
+    public HttpRequestBuilder(
+        HttpRequestMessage request,
+        HttpClient httpClient,
+        IClock clock,
+        JsonSerializerSettings settings,
+        Option<JwtTokenConfiguration> jwtAuth)
     {
         _request = request;
         _httpClient = httpClient;
+        _clock = clock;
         _settings = settings;
+        _jwtConfiguration = jwtAuth;
     }
 
     public HttpRequestBuilder Headers(Action<HttpRequestHeaders> configureHeaders)
@@ -40,6 +52,25 @@ public class HttpRequestBuilder
 
     public HttpRequestBuilder NoTenant() =>
         Headers(h => h.Remove(MultitenancyDefaults.TenantIdHttpHeader));
+
+    public HttpRequestBuilder NoAuthentication() =>
+        Headers(h => h.Remove(HeaderNames.Authorization));
+
+    private string ForgeJwt(string userId)
+    {
+        return new JwtFacade(_clock)
+        .Create(
+            new Claim[]
+            {
+                new(ClaimTypes.NameIdentifier, userId)
+            },
+            _jwtConfiguration.OrElseThrow(() =>
+                    new InvalidOperationException(
+                        "JwtTokenConfiguration must be provided in order to forge valid JWTs.")));
+    }
+
+    public HttpRequestBuilder AuthenticateWithJwtAs(string userId) =>
+        Headers(h => ReplaceHeader(h, HeaderNames.Authorization, "Bearer " + ForgeJwt(userId)));
 
     public async Task<HttpResponseMessage> AsHttpResponseMessage() =>
         await _httpClient.SendAsync(_request);

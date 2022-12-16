@@ -8,14 +8,22 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 public static class JwtConfigurationUtils
 {
     public const string DefaultConfigurationSectionName = "JwtSettings";
+    public const string DefaultAuthoritySectionName = "Authority";
+    public const string DefaultLifetimeKeyName = "Lifetime";
+    public const string DefaultIssuerKeyName = "Issuer";
+    public const string DefaultAudienceKeyName = "Audience";
+    public const string DefaultSecretSigningKeyKeyName = "SecretKey";
+    public const string DefaultValidationAudiencesKeyName = "ValidAudiences";
+    public const string DefaultValidationIssuersKeyName = "ValidIssuers";
+    public const string DefaultValidationSectionName = "Validation";
 
     public static JwtValidationConfiguration GetJwtValidationConfiguration(
         this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
-        var validationSection = section.GetSectionAsOption("Validation");
-        var issuers = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>("ValidIssuers"));
-        var audiences = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>("ValidAudiences"));
+        var validationSection = section.GetSectionAsOption(DefaultValidationSectionName);
+        var issuers = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(DefaultValidationIssuersKeyName));
+        var audiences = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(DefaultValidationAudiencesKeyName));
 
         return builder =>
         {
@@ -29,10 +37,10 @@ public static class JwtConfigurationUtils
         this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
-        var authoritySection = section.RequireSection("Authority");
-        var lifetime = Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>("Lifetime"));
-        var issuer = authoritySection.GetValueAsOption<string>("Issuer");
-        var audience = authoritySection.GetValueAsOption<string>("Audience");
+        var authoritySection = section.RequireSection(DefaultAuthoritySectionName);
+        var lifetime = Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>(DefaultLifetimeKeyName));
+        var issuer = authoritySection.GetValueAsOption<string>(DefaultIssuerKeyName);
+        var audience = authoritySection.GetValueAsOption<string>(DefaultAudienceKeyName);
         return builder =>
         {
             builder
@@ -44,5 +52,5 @@ public static class JwtConfigurationUtils
     }
 
     private static SecurityKey GetSecretKeyFromSection(IConfigurationSection scopeSection) =>
-        KeyUtils.KeyFromString(scopeSection.RequireValue<string>("SecretKey"));
+        KeyUtils.KeyFromString(scopeSection.RequireValue<string>(DefaultSecretSigningKeyKeyName));
 }

@@ -1,3 +1,4 @@
+using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
@@ -8,10 +9,13 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Rebus.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +25,8 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
     config
         .WithServiceName("EasyDesk.Sample.App")
         .AddApiVersioning()
+        .AddAuthentication(configure => configure.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
+        .AddAuthorization()
         .AddOpenApi()
         .AddAsyncApi()
         .AddModule<SampleAppDomainModule>();

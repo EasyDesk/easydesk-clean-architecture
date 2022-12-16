@@ -1,6 +1,8 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
@@ -52,10 +54,11 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         return _containers.RegisterTestContainer(configureContainer);
     }
 
-    public HttpTestHelper CreateHttpHelper(Action<HttpRequestBuilder> configure = null)
+    public HttpTestHelper CreateHttpHelper(IClock clock, Action<HttpRequestBuilder> configure = null)
     {
         var jsonSettings = Services.GetRequiredService<JsonSettingsConfigurator>();
-        return new(HttpClient, jsonSettings, configure);
+        var configuration = Services.GetRequiredService<IConfiguration>();
+        return new(HttpClient, jsonSettings, clock, GetJwtTokenConfiguration(configuration), configure);
     }
 
     public RebusTestHelper CreateRebusHelper(string inputQueueAddress = null, Duration? defaultTimeout = null)
@@ -85,5 +88,38 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         await base.DisposeAsync();
         await _containers.DisposeAsync();
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual Option<JwtTokenConfiguration> GetJwtTokenConfiguration(IConfiguration configuration) =>
+        configuration
+            .GetSectionAsOption(JwtConfigurationUtils.DefaultConfigurationSectionName)
+            .Map(_ => DeriveFromValidation(configuration));
+
+    private JwtTokenConfiguration DeriveFromValidation(IConfiguration configuration)
+    {
+        var validationSection = configuration
+            .RequireSection(JwtConfigurationUtils.DefaultConfigurationSectionName)
+            .GetSectionAsOption(JwtConfigurationUtils.DefaultValidationSectionName);
+        var authoritySectionPrefix = $"{JwtConfigurationUtils.DefaultConfigurationSectionName}:{JwtConfigurationUtils.DefaultAuthoritySectionName}";
+        var validIssuers = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(JwtConfigurationUtils.DefaultValidationIssuersKeyName));
+        var validAudiences = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(JwtConfigurationUtils.DefaultValidationAudiencesKeyName));
+        var automaticTokenConfiguration = new Dictionary<string, string>();
+        validIssuers
+            .Filter(issuers => issuers.Any())
+            .IfPresent(issuers =>
+            {
+                automaticTokenConfiguration[$"{authoritySectionPrefix}:{JwtConfigurationUtils.DefaultIssuerKeyName}"] = issuers.First();
+            });
+        validAudiences
+            .Filter(audiences => audiences.Any())
+            .IfPresent(audiences =>
+            {
+                automaticTokenConfiguration[$"{authoritySectionPrefix}:{JwtConfigurationUtils.DefaultAudienceKeyName}"] = audiences.First();
+            });
+        automaticTokenConfiguration[$"{authoritySectionPrefix}:{JwtConfigurationUtils.DefaultLifetimeKeyName}"] = TimeSpan.FromDays(365).ToString();
+        var configurationOverride = new ConfigurationBuilder();
+        configurationOverride.AddInMemoryCollection(automaticTokenConfiguration);
+        configurationOverride.AddConfiguration(configuration);
+        return JwtConfigurationUtils.GetJwtTokenConfiguration(configurationOverride.Build(), JwtConfigurationUtils.DefaultConfigurationSectionName);
     }
 }

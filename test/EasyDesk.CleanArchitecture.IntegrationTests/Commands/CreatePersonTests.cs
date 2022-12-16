@@ -8,6 +8,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class CreatePersonTests : SampleIntegrationTest
 {
     private const string TenantId = "test-tenant";
+    private const string AdminId = "test-admin";
 
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
@@ -20,9 +21,13 @@ public class CreatePersonTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId);
 
-    private HttpRequestBuilder CreatePerson() => Http.Post(PersonRoutes.CreatePerson, _body);
+    private HttpRequestBuilder CreatePerson() => Http
+        .Post(PersonRoutes.CreatePerson, _body)
+        .AuthenticateWithJwtAs(AdminId);
 
-    private HttpRequestBuilder GetPerson(Guid userId) => Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", userId));
+    private HttpRequestBuilder GetPerson(Guid userId) => Http
+        .Get(PersonRoutes.GetPerson.WithRouteParam("id", userId))
+        .AuthenticateWithJwtAs(AdminId);
 
     [Fact]
     public async Task ShouldSucceed()
@@ -61,6 +66,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await GetPerson(person.Id)
             .Tenant("other-tenant")
+            .AuthenticateWithJwtAs(AdminId)
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);

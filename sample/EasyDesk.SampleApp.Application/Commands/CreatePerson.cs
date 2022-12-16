@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
@@ -29,15 +30,21 @@ public class CreatePersonValidator : AbstractValidator<CreatePerson>
 public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSnapshot>
 {
     private readonly IPersonRepository _personRepository;
+    private readonly IContextProvider _contextProvider;
 
-    public CreatePersonHandler(IPersonRepository personRepository)
+    public CreatePersonHandler(IPersonRepository personRepository, IContextProvider contextProvider)
     {
         _personRepository = personRepository;
+        _contextProvider = contextProvider;
     }
 
     protected override Task<Result<Person>> Process(CreatePerson command)
     {
-        var person = Person.Create(Name.From(command.FirstName), Name.From(command.LastName), command.DateOfBirth);
+        var person = Person.Create(
+            Name.From(command.FirstName),
+            Name.From(command.LastName),
+            command.DateOfBirth,
+            AdminId.From(_contextProvider.Context.RequireUserInfo().UserId));
         _personRepository.Save(person);
         return Task.FromResult<Result<Person>>(person);
     }

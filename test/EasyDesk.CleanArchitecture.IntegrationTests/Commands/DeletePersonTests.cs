@@ -15,6 +15,7 @@ public class DeletePersonTests : SampleIntegrationTest
     private const string TenantId = "test-tenant";
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
+    private const string AdminId = "test-admin";
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
     public DeletePersonTests(SampleApplicationFactory factory) : base(factory)
@@ -27,11 +28,13 @@ public class DeletePersonTests : SampleIntegrationTest
     {
         return await Http
             .Post(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
+            .AuthenticateWithJwtAs(AdminId)
             .AsDataOnly<PersonDto>();
     }
 
-    private HttpRequestBuilder DeletePerson(Guid userId) =>
-        Http.Delete(PersonRoutes.DeletePerson.WithRouteParam("id", userId));
+    private HttpRequestBuilder DeletePerson(Guid userId) => Http
+        .Delete(PersonRoutes.DeletePerson.WithRouteParam("id", userId))
+        .AuthenticateWithJwtAs(AdminId);
 
     [Fact]
     public async Task ShouldSucceedIfThePersonExists()
@@ -72,8 +75,8 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
         await DeletePerson(person.Id).IgnoringResponse();
 
-        var response = await Http
-            .Get(PersonRoutes.GetPerson.WithRouteParam("id", person.Id))
+        var response = await Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", person.Id))
+            .AuthenticateWithJwtAs(AdminId)
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);

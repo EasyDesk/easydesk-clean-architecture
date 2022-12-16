@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using NodaTime;
+using NodaTime.Testing;
 using Xunit;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration;
@@ -13,12 +14,15 @@ public abstract class AbstractIntegrationTest<T, TStartup> : IAsyncLifetime
     protected AbstractIntegrationTest(T factory)
     {
         Factory = factory;
-        Http = factory.CreateHttpHelper(ConfigureHttpRequest);
+        Clock = new FakeClock(SystemClock.Instance.GetCurrentInstant());
+        Http = factory.CreateHttpHelper(Clock, ConfigureHttpRequest);
     }
 
     protected T Factory { get; }
 
     protected HttpTestHelper Http { get; private set; }
+
+    protected FakeClock Clock { get; }
 
     protected RebusTestHelper NewBus(string inputQueueAddress = null, Duration? defaultTimeout = null) =>
         Factory.CreateRebusHelper(inputQueueAddress, defaultTimeout);
@@ -32,7 +36,11 @@ public abstract class AbstractIntegrationTest<T, TStartup> : IAsyncLifetime
     {
     }
 
-    public async Task InitializeAsync() => await OnInitialization();
+    public async Task InitializeAsync()
+    {
+        Clock.Reset(SystemClock.Instance.GetCurrentInstant());
+        await OnInitialization();
+    }
 
     protected virtual Task OnInitialization() => Task.CompletedTask;
 
