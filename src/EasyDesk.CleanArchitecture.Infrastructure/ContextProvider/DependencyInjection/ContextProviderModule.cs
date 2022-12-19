@@ -10,6 +10,7 @@ public class ContextProviderModule : AppModule
     {
         services.AddHttpContextAccessor();
         services.AddScoped<IContextProvider, BasicContextProvider>();
+        services.AddScoped<IUserInfoProvider>(p => p.GetRequiredService<IContextProvider>());
     }
 }
 

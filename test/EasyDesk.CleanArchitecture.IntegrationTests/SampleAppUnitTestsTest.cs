@@ -18,9 +18,9 @@ public class SampleAppUnitTestsTest
     public async Task CreatePersonCommandTest()
     {
         var personRepository = Substitute.For<IPersonRepository>();
-        var contextProvider = Substitute.For<IContextProvider>();
-        contextProvider.Context.ReturnsForAnyArgs(new AuthenticatedRequestContext(new UserInfo(TestCreatedBy)));
-        var handler = new CreatePersonHandler(personRepository, contextProvider);
+        var userInfoProvider = Substitute.For<IUserInfoProvider>();
+        userInfoProvider.UserInfo.ReturnsForAnyArgs(Some(new UserInfo(TestCreatedBy)));
+        var handler = new CreatePersonHandler(personRepository, userInfoProvider);
         var result = await handler.Handle(new CreatePerson(TestName, TestSurname, _testDate));
         await Verify(result);
     }

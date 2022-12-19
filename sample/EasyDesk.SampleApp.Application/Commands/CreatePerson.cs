@@ -30,9 +30,9 @@ public class CreatePersonValidator : AbstractValidator<CreatePerson>
 public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSnapshot>
 {
     private readonly IPersonRepository _personRepository;
-    private readonly IContextProvider _contextProvider;
+    private readonly IUserInfoProvider _contextProvider;
 
-    public CreatePersonHandler(IPersonRepository personRepository, IContextProvider contextProvider)
+    public CreatePersonHandler(IPersonRepository personRepository, IUserInfoProvider contextProvider)
     {
         _personRepository = personRepository;
         _contextProvider = contextProvider;
@@ -44,7 +44,7 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSn
             Name.From(command.FirstName),
             Name.From(command.LastName),
             command.DateOfBirth,
-            AdminId.From(_contextProvider.Context.RequireUserInfo().UserId));
+            AdminId.From(_contextProvider.RequireUserInfo().UserId));
         _personRepository.Save(person);
         return Task.FromResult<Result<Person>>(person);
     }

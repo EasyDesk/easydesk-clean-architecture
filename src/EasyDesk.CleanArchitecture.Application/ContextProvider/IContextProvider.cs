@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
-public interface IContextProvider
+public interface IContextProvider : IUserInfoProvider
 {
     Context Context { get; }
 }
