@@ -1,15 +1,13 @@
-﻿using System.Runtime.CompilerServices;
+﻿using EasyDesk.Testing.VerifyConfiguration;
+using System.Runtime.CompilerServices;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.VerifyConfiguration;
 
-public static class VerifySettingsInitializer
+public static class VerifySettings
 {
     [ModuleInitializer]
     public static void Init()
     {
-        VerifierSettings.AddExtraSettings(settings =>
-        {
-            settings.Converters.Add(new OptionConverter());
-        });
+        VerifySettingsInitializer.Initialize();
     }
 }

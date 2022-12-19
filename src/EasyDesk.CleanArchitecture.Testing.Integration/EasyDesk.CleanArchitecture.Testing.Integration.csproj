@@ -8,11 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Testing" Version="0.4.0" />
+    <PackageReference Include="EasyDesk.Testing" Version="0.5.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.1" />
     <PackageReference Include="NodaTime.Testing" Version="3.1.6" />
-    <PackageReference Include="NSubstitute" Version="4.4.0" />
-    <PackageReference Include="Shouldly" Version="4.1.0" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.2" />
     <PackageReference Include="Testcontainers" Version="2.3.0" />
   </ItemGroup>
@@ -23,10 +21,6 @@
 
   <ItemGroup>
     <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configuration\" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -6,7 +6,9 @@
       LastName: Bar,
       DateOfBirth: 1996-02-02,
       CreatedBy: test-admin
-    }
+    },
+    Errors: null,
+    Meta: null
   },
   StatusCode: OK
 }

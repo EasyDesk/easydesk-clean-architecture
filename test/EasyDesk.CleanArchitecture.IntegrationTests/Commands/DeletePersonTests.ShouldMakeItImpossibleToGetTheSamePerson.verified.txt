@@ -1,11 +1,14 @@
 ﻿{
   Content: {
+    Data: null,
     Errors: [
       {
         Code: NotFound,
-        Detail: Unable to fine the requested resource
+        Detail: Unable to fine the requested resource,
+        Meta: null
       }
-    ]
+    ],
+    Meta: null
   },
   StatusCode: NotFound
 }

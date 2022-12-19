@@ -7,5 +7,6 @@
     LastName: TestSurname,
     DateOfBirth: 1970-01-01,
     CreatedBy: test-admin-id
-  }
+  },
+  Error: null
 }

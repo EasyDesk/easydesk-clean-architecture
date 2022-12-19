@@ -39,9 +39,9 @@
       },
       "Rebus": {
         "type": "Direct",
-        "requested": "[6.6.5, )",
-        "resolved": "6.6.5",
-        "contentHash": "XERRDurwleU0V/dwZSow6X2WOG+Q8UGwyp5Q2bF+yR4juagnlpyBx54YWUdDGt+wboAzROMfXZWwOnCqwxwcEQ==",
+        "requested": "[6.7.0, )",
+        "resolved": "6.7.0",
+        "contentHash": "aBu38d/m0hZDWY19QHfU3q7bdeYpJvAHjWwf0iZMuL68BbheHRF/ZwjKkPtVcSpWQmJRBbw2+aeQRNi5k5H4/w==",
         "dependencies": {
           "Microsoft.CSharp": "4.5.0",
           "Newtonsoft.Json": "11.0.1",
