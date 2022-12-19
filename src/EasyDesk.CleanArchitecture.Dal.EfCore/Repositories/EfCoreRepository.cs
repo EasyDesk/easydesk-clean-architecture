@@ -9,43 +9,44 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
 public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     ISaveRepository<TAggregate>,
-    IRemoveRepository<TAggregate>,
-    ISaveAndHydrateRepository<TAggregate>
+    IRemoveRepository<TAggregate>
     where TContext : DbContext
     where TPersistence : class, IPersistenceModel<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
 {
-    private readonly TContext _context;
     private readonly IDomainEventNotifier _eventNotifier;
-    private readonly AggregatesTracker<TAggregate, TPersistence> _tracker = new();
 
     public EfCoreRepository(TContext context, IDomainEventNotifier eventNotifier)
     {
-        _context = context;
+        Context = context;
         _eventNotifier = eventNotifier;
     }
 
+    protected TContext Context { get; }
+
+    internal AggregatesTracker<TAggregate, TPersistence> Tracker { get; } = new();
+
     protected virtual DbSet<TPersistence> GetDbSet(TContext context) => context.Set<TPersistence>();
 
-    protected DbSet<TPersistence> DbSet => GetDbSet(_context);
+    protected DbSet<TPersistence> DbSet => GetDbSet(Context);
 
     private IQueryable<TPersistence> InitialQuery() => Includes(DbSet);
 
     protected async Task<Option<TAggregate>> GetSingle(QueryWrapper<TPersistence> queryWrapper)
     {
         var persistenceModel = await queryWrapper(InitialQuery()).FirstOptionAsync();
-        return persistenceModel.Map(_tracker.TrackFromPersistenceModel);
+        return persistenceModel.Map(Tracker.TrackFromPersistenceModel);
     }
 
     protected async Task<IEnumerable<TAggregate>> GetMany(QueryWrapper<TPersistence> queryWrapper)
     {
         var persistenceModels = await queryWrapper(InitialQuery()).ToListAsync();
-        return persistenceModels.Select(_tracker.TrackFromPersistenceModel);
+        return persistenceModels.Select(Tracker.TrackFromPersistenceModel);
     }
 
     public void Save(TAggregate aggregate)
     {
-        var (persistenceModel, wasTracked) = _tracker.TrackFromAggregate(aggregate);
+        var (persistenceModel, wasTracked) = Tracker.TrackFromAggregate(aggregate);
 
         if (wasTracked)
         {
@@ -61,43 +62,18 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
             aggregate.NotifyCreation();
         }
 
-        NotifyAllEvents(aggregate);
-    }
-
-    public async Task<TAggregate> SaveAndHydrate(TAggregate aggregate)
-    {
-        var (persistenceModel, wasTracked) = _tracker.TrackFromAggregate(aggregate);
-
-        if (wasTracked)
-        {
-            DbSet.Update(persistenceModel);
-        }
-        else
-        {
-            await DbSet.AddAsync(persistenceModel);
-        }
-
-        var newAggregate = _tracker.ReHydrate(aggregate);
-
-        if (!wasTracked)
-        {
-            newAggregate.NotifyCreation();
-        }
-
-        NotifyAllEvents(newAggregate);
-
-        return newAggregate;
+        NotifyEmittedEvents(aggregate);
     }
 
     public void Remove(TAggregate aggregate)
     {
-        var persistenceModel = _tracker.GetPersistenceModel(aggregate);
+        var persistenceModel = Tracker.GetPersistenceModel(aggregate);
         DbSet.Remove(persistenceModel);
         aggregate.NotifyRemoval();
-        NotifyAllEvents(aggregate);
+        NotifyEmittedEvents(aggregate);
     }
 
-    private void NotifyAllEvents(TAggregate aggregate) =>
+    internal void NotifyEmittedEvents(TAggregate aggregate) =>
         aggregate.ConsumeAllEvents().ForEach(_eventNotifier.Notify);
 
     protected abstract IQueryable<TPersistence> Includes(IQueryable<TPersistence> initialQuery);

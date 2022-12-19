@@ -1,0 +1,8 @@
+﻿{
+  Content: {
+    Data: {
+      Nickname: Rex
+    }
+  },
+  StatusCode: OK
+}

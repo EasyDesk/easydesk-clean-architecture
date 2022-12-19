@@ -1,7 +1,9 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Hydration;
 
-public interface ISaveAndHydrateRepository<T>
-    where T : AggregateRoot
+namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
+
+public interface ISaveAndHydrateRepository<T, H>
+    where T : AggregateRoot, IAggregateRootWithHydration<H>
 {
-    Task<T> SaveAndHydrate(T aggregate);
+    Task SaveAndHydrate(T aggregate);
 }

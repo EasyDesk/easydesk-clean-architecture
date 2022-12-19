@@ -10,6 +10,13 @@ public interface IPersistenceModel<TDomain, TPersistence>
     static abstract void ApplyChanges(TDomain origin, TPersistence destination);
 }
 
+public interface IPersistenceModelWithHydration<TDomain, TPersistence, THydrationData> :
+    IPersistenceModel<TDomain, TPersistence>
+    where TPersistence : IPersistenceModelWithHydration<TDomain, TPersistence, THydrationData>
+{
+    THydrationData GetHydrationData();
+}
+
 public static class ModelConverterExtensions
 {
     public static TPersistence ToPersistence<TDomain, TPersistence>(this TDomain aggregate)

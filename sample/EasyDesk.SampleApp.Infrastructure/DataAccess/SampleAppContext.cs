@@ -10,6 +10,8 @@ public class SampleAppContext : DomainContext<SampleAppContext>
 {
     public DbSet<PersonModel> People { get; set; }
 
+    public DbSet<PetModel> Pets { get; set; }
+
     public SampleAppContext(ITenantProvider tenantProvider, DbContextOptions<SampleAppContext> options) : base(tenantProvider, options)
     {
         this.AddSoftDeletion();

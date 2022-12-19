@@ -35,15 +35,6 @@ internal class AggregatesTracker<A, P>
         return aggregate;
     }
 
-    public A ReHydrate(A aggregate)
-    {
-        var persistenceModel = _modelsMap[aggregate];
-        var newAggregate = persistenceModel.ToDomain();
-        _modelsMap.Remove(aggregate);
-        _modelsMap.Add(newAggregate, persistenceModel);
-        return newAggregate;
-    }
-
     public P GetPersistenceModel(A aggregate)
     {
         return _modelsMap
