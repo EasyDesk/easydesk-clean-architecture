@@ -13,10 +13,10 @@ public class JwtFacade
         _clock = clock;
     }
 
-    public string Create(IEnumerable<Claim> claims, JwtTokenConfiguration configure) =>
+    public string Create(IEnumerable<Claim> claims, Action<JwtTokenBuilder> configure) =>
         Create(claims, out _, configure);
 
-    public string Create(IEnumerable<Claim> claims, out JwtSecurityToken token, JwtTokenConfiguration configure)
+    public string Create(IEnumerable<Claim> claims, out JwtSecurityToken token, Action<JwtTokenBuilder> configure)
     {
         var builder = new JwtTokenBuilder(_clock.GetCurrentInstant()).WithClaims(claims);
         configure(builder);
@@ -27,10 +27,10 @@ public class JwtFacade
         return handler.WriteToken(token);
     }
 
-    public Option<ClaimsPrincipal> Validate(string jwt, JwtValidationConfiguration configure) =>
+    public Option<ClaimsPrincipal> Validate(string jwt, Action<JwtValidationBuilder> configure) =>
         Validate(jwt, out _, configure);
 
-    public Option<ClaimsPrincipal> Validate(string jwt, out JwtSecurityToken token, JwtValidationConfiguration configure)
+    public Option<ClaimsPrincipal> Validate(string jwt, out JwtSecurityToken token, Action<JwtValidationBuilder> configure)
     {
         var builder = new JwtValidationBuilder(_clock);
         configure(builder);

@@ -4,7 +4,25 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
-public delegate void JwtTokenConfiguration(JwtTokenBuilder builder);
+public record JwtTokenConfiguration(
+    SigningCredentials SigningCredentials,
+    Duration Lifetime,
+    Option<string> Issuer = default,
+    Option<string> Audience = default,
+    Option<string> CompressionAlgorithm = default,
+    Option<EncryptingCredentials> EncryptingCredentials = default)
+{
+    public void ConfigureBuilder(JwtTokenBuilder builder)
+    {
+        builder
+            .WithSigningCredentials(SigningCredentials)
+            .WithLifetime(Lifetime);
+        Issuer.IfPresent(issuer => builder.WithIssuer(issuer));
+        Audience.IfPresent(audience => builder.WithAudience(audience));
+        CompressionAlgorithm.IfPresent(algorithm => builder.WithCompressionAlgorithm(algorithm));
+        EncryptingCredentials.IfPresent(credentials => builder.WithEncryptingCredentials(credentials));
+    }
+}
 
 public class JwtTokenBuilder
 {
@@ -48,10 +66,10 @@ public class JwtTokenBuilder
     public JwtTokenBuilder WithClaim(Claim claim) =>
         NextStep(() => _claims.Add(claim));
 
-    public JwtTokenBuilder WithSigningCredentials(SecurityKey key, string algorithm) =>
+    public JwtTokenBuilder WithSigningCredentials(SigningCredentials signingCredentials) =>
         NextStep(() =>
         {
-            _descriptor.SigningCredentials = new SigningCredentials(key, algorithm);
+            _descriptor.SigningCredentials = signingCredentials;
             _hasSigningCredentials = true;
         });
 
@@ -74,9 +92,6 @@ public class JwtTokenBuilder
 
     public JwtTokenBuilder WithCompressionAlgorithm(string compressionAlgorithm) =>
         NextStep(() => _descriptor.CompressionAlgorithm = compressionAlgorithm);
-
-    public JwtTokenBuilder WithAdditionalHeaderClaims(IDictionary<string, object> claims) =>
-        NextStep(() => _descriptor.AdditionalHeaderClaims = claims);
 
     private JwtTokenBuilder NextStep(Action update)
     {

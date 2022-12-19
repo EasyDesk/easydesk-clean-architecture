@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
+using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
@@ -16,21 +18,25 @@ public static class JwtConfigurationUtils
     public const string DefaultValidationAudiencesKeyName = "ValidAudiences";
     public const string DefaultValidationIssuersKeyName = "ValidIssuers";
     public const string DefaultValidationSectionName = "Validation";
+    public const string DefaultAlgorithm = SecurityAlgorithms.HmacSha256Signature;
 
     public static JwtValidationConfiguration GetJwtValidationConfiguration(
         this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
         var validationSection = section.GetSectionAsOption(DefaultValidationSectionName);
-        var issuers = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(DefaultValidationIssuersKeyName));
-        var audiences = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(DefaultValidationAudiencesKeyName));
 
-        return builder =>
-        {
-            builder.WithSignatureValidation(GetSecretKeyFromSection(section));
-            issuers.IfPresent(i => builder.WithIssuerValidation(i));
-            audiences.IfPresent(a => builder.WithAudienceValidation(a));
-        };
+        IImmutableSet<string> GetSet(string key) =>
+            validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(key)).Flatten().ToEquatableSet();
+
+        var issuers = GetSet(DefaultValidationIssuersKeyName);
+        var audiences = GetSet(DefaultValidationAudiencesKeyName);
+
+        return new JwtValidationConfiguration(
+            GetSecretKeyFromSection(section),
+            issuers,
+            audiences,
+            DecriptionKeys: Enumerable.Empty<SecurityKey>());
     }
 
     public static JwtTokenConfiguration GetJwtTokenConfiguration(
@@ -41,14 +47,14 @@ public static class JwtConfigurationUtils
         var lifetime = Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>(DefaultLifetimeKeyName));
         var issuer = authoritySection.GetValueAsOption<string>(DefaultIssuerKeyName);
         var audience = authoritySection.GetValueAsOption<string>(DefaultAudienceKeyName);
-        return builder =>
-        {
-            builder
-                .WithSigningCredentials(GetSecretKeyFromSection(section), SecurityAlgorithms.HmacSha256Signature)
-                .WithLifetime(lifetime);
-            issuer.IfPresent(i => builder.WithIssuer(i));
-            audience.IfPresent(a => builder.WithAudience(a));
-        };
+
+        return new JwtTokenConfiguration(
+            new SigningCredentials(
+                GetSecretKeyFromSection(section),
+                DefaultAlgorithm),
+            lifetime,
+            issuer,
+            audience);
     }
 
     private static SecurityKey GetSecretKeyFromSection(IConfigurationSection scopeSection) =>

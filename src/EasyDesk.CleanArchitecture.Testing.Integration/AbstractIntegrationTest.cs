@@ -14,15 +14,14 @@ public abstract class AbstractIntegrationTest<T, TStartup> : IAsyncLifetime
     protected AbstractIntegrationTest(T factory)
     {
         Factory = factory;
-        Clock = new FakeClock(SystemClock.Instance.GetCurrentInstant());
-        Http = factory.CreateHttpHelper(Clock, ConfigureHttpRequest);
+        Http = factory.CreateHttpHelper(ConfigureHttpRequest);
     }
 
     protected T Factory { get; }
 
     protected HttpTestHelper Http { get; private set; }
 
-    protected FakeClock Clock { get; }
+    protected FakeClock Clock => Factory.Clock;
 
     protected RebusTestHelper NewBus(string inputQueueAddress = null, Duration? defaultTimeout = null) =>
         Factory.CreateRebusHelper(inputQueueAddress, defaultTimeout);

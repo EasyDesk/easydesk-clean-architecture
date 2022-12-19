@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
@@ -23,11 +24,11 @@ public class CreatePersonTests : SampleIntegrationTest
 
     private HttpRequestBuilder CreatePerson() => Http
         .Post(PersonRoutes.CreatePerson, _body)
-        .AuthenticateWithJwtAs(AdminId);
+        .AuthenticateAs(AdminId);
 
     private HttpRequestBuilder GetPerson(Guid userId) => Http
         .Get(PersonRoutes.GetPerson.WithRouteParam("id", userId))
-        .AuthenticateWithJwtAs(AdminId);
+        .AuthenticateAs(AdminId);
 
     [Fact]
     public async Task ShouldSucceed()
@@ -66,7 +67,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await GetPerson(person.Id)
             .Tenant("other-tenant")
-            .AuthenticateWithJwtAs(AdminId)
+            .AuthenticateAs(AdminId)
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);

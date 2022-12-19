@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -28,13 +29,13 @@ public class DeletePersonTests : SampleIntegrationTest
     {
         return await Http
             .Post(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
-            .AuthenticateWithJwtAs(AdminId)
+            .AuthenticateAs(AdminId)
             .AsDataOnly<PersonDto>();
     }
 
     private HttpRequestBuilder DeletePerson(Guid userId) => Http
         .Delete(PersonRoutes.DeletePerson.WithRouteParam("id", userId))
-        .AuthenticateWithJwtAs(AdminId);
+        .AuthenticateAs(AdminId);
 
     [Fact]
     public async Task ShouldSucceedIfThePersonExists()
@@ -76,7 +77,7 @@ public class DeletePersonTests : SampleIntegrationTest
         await DeletePerson(person.Id).IgnoringResponse();
 
         var response = await Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", person.Id))
-            .AuthenticateWithJwtAs(AdminId)
+            .AuthenticateAs(AdminId)
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);

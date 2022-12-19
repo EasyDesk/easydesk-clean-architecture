@@ -10,12 +10,12 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
 public class JwtBearerOptions : TokenAuthenticationOptions
 {
-    public JwtValidationConfiguration ConfigureValidation { get; private set; } = x => x
-        .WithSignatureValidation(KeyUtils.RandomKey());
+    public JwtValidationConfiguration Configuration { get; private set; } =
+        JwtValidationConfiguration.FromKey(KeyUtils.RandomKey());
 
     public JwtBearerOptions ConfigureValidationParameters(JwtValidationConfiguration configure)
     {
-        ConfigureValidation = configure;
+        Configuration = configure;
         return this;
     }
 
@@ -43,6 +43,6 @@ internal class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
 
     protected override Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
     {
-        return _jwtFacade.Validate(token, Options.ConfigureValidation).Map(x => new ClaimsPrincipal(x));
+        return _jwtFacade.Validate(token, Options.Configuration.ConfigureBuilder).Map(x => new ClaimsPrincipal(x));
     }
 }
