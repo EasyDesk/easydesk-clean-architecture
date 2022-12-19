@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -11,13 +10,17 @@ public partial class AddPets : Migration
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
     {
+        migrationBuilder.CreateSequence(
+            name: "EntityFrameworkHiLoSequence",
+            schema: "domain",
+            incrementBy: 10);
+
         migrationBuilder.CreateTable(
             name: "Pets",
             schema: "domain",
             columns: table => new
             {
-                Id = table.Column<int>(type: "integer", nullable: false)
-                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                Id = table.Column<int>(type: "integer", nullable: false),
                 Nickname = table.Column<string>(type: "text", nullable: false),
                 PersonId = table.Column<Guid>(type: "uuid", nullable: false),
                 TenantId = table.Column<string>(type: "text", nullable: true)
@@ -52,6 +55,10 @@ public partial class AddPets : Migration
     {
         migrationBuilder.DropTable(
             name: "Pets",
+            schema: "domain");
+
+        migrationBuilder.DropSequence(
+            name: "EntityFrameworkHiLoSequence",
             schema: "domain");
     }
 }

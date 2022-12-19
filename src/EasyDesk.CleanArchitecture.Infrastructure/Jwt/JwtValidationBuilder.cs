@@ -1,10 +1,48 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using NodaTime;
+using System.Collections.Immutable;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
+using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
-public delegate void JwtValidationConfiguration(JwtValidationBuilder builder);
+public record JwtValidationConfiguration(
+    SecurityKey ValidationKey,
+    IImmutableSet<string> Issuers,
+    IImmutableSet<string> Audiences,
+    IEnumerable<SecurityKey> DecriptionKeys,
+    Option<Duration> ClockSkew = default,
+    bool ValidateLifetime = true)
+{
+    public static JwtValidationConfiguration FromKey(SecurityKey validationKey) => new(
+        ValidationKey: validationKey,
+        Issuers: Set<string>(),
+        Audiences: Set<string>(),
+        DecriptionKeys: Enumerable.Empty<SecurityKey>());
+
+    public void ConfigureBuilder(JwtValidationBuilder builder)
+    {
+        builder
+            .WithSignatureValidation(ValidationKey);
+        if (Issuers.Any())
+        {
+            builder.WithIssuerValidation(Issuers);
+        }
+        if (Audiences.Any())
+        {
+            builder.WithAudienceValidation(Audiences);
+        }
+        if (DecriptionKeys.Any())
+        {
+            builder.WithDecryption(DecriptionKeys);
+        }
+        if (!ValidateLifetime)
+        {
+            builder.WithoutLifetimeValidation();
+        }
+        ClockSkew.IfPresent(skew => builder.WithClockSkew(skew));
+    }
+}
 
 public class JwtValidationBuilder
 {
@@ -22,7 +60,7 @@ public class JwtValidationBuilder
             ValidateLifetime = true,
             ValidateAudience = false,
             ValidateIssuer = false,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
         };
     }
 

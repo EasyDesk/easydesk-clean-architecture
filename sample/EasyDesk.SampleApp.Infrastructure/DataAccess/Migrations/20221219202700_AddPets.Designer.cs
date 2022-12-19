@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-[Migration("20221215151104_AddPets")]
+[Migration("20221219202700_AddPets")]
 partial class AddPets
 {
     /// <inheritdoc />
@@ -27,11 +27,17 @@ partial class AddPets
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+        modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
+            .IncrementsBy(10);
+
         modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
             {
                 b.Property<Guid>("Id")
                     .ValueGeneratedOnAdd()
                     .HasColumnType("uuid");
+
+                b.Property<string>("CreatedBy")
+                    .HasColumnType("text");
 
                 b.Property<LocalDate>("DateOfBirth")
                     .HasColumnType("date");
@@ -63,7 +69,7 @@ partial class AddPets
                     .ValueGeneratedOnAdd()
                     .HasColumnType("integer");
 
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
 
                 b.Property<string>("Nickname")
                     .IsRequired()

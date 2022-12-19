@@ -17,6 +17,12 @@ public class BasicContextProvider : IContextProvider
 
     public Context Context => GetContextType();
 
+    public Option<UserInfo> UserInfo => Context switch
+    {
+        AuthenticatedRequestContext(UserInfo info) => Some(info),
+        _ => None
+    };
+
     private Context GetContextType()
     {
         var httpContext = _httpContextAccessor.HttpContext;

@@ -1,11 +1,14 @@
 ﻿{
   Content: {
+    Data: null,
     Errors: [
       {
         Code: MissingTenantError,
-        Detail: Missing tenant information on the given request
+        Detail: Missing tenant information on the given request,
+        Meta: null
       }
-    ]
+    ],
+    Meta: null
   },
   StatusCode: BadRequest
 }

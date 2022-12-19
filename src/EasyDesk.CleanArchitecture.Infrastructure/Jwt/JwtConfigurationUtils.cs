@@ -1,48 +1,62 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
+using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
 public static class JwtConfigurationUtils
 {
     public const string DefaultConfigurationSectionName = "JwtSettings";
+    public const string DefaultAuthoritySectionName = "Authority";
+    public const string DefaultLifetimeKeyName = "Lifetime";
+    public const string DefaultIssuerKeyName = "Issuer";
+    public const string DefaultAudienceKeyName = "Audience";
+    public const string DefaultSecretSigningKeyKeyName = "SecretKey";
+    public const string DefaultValidationAudiencesKeyName = "ValidAudiences";
+    public const string DefaultValidationIssuersKeyName = "ValidIssuers";
+    public const string DefaultValidationSectionName = "Validation";
+    public const string DefaultAlgorithm = SecurityAlgorithms.HmacSha256Signature;
 
     public static JwtValidationConfiguration GetJwtValidationConfiguration(
         this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
-        var validationSection = section.GetSectionAsOption("Validation");
-        var issuers = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>("ValidIssuers"));
-        var audiences = validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>("ValidAudiences"));
+        var validationSection = section.GetSectionAsOption(DefaultValidationSectionName);
 
-        return builder =>
-        {
-            builder.WithSignatureValidation(GetSecretKeyFromSection(section));
-            issuers.IfPresent(i => builder.WithIssuerValidation(i));
-            audiences.IfPresent(a => builder.WithAudienceValidation(a));
-        };
+        IImmutableSet<string> GetSet(string key) =>
+            validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(key)).Flatten().ToEquatableSet();
+
+        var issuers = GetSet(DefaultValidationIssuersKeyName);
+        var audiences = GetSet(DefaultValidationAudiencesKeyName);
+
+        return new JwtValidationConfiguration(
+            GetSecretKeyFromSection(section),
+            issuers,
+            audiences,
+            DecriptionKeys: Enumerable.Empty<SecurityKey>());
     }
 
     public static JwtTokenConfiguration GetJwtTokenConfiguration(
         this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
-        var authoritySection = section.RequireSection("Authority");
-        var lifetime = Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>("Lifetime"));
-        var issuer = authoritySection.GetValueAsOption<string>("Issuer");
-        var audience = authoritySection.GetValueAsOption<string>("Audience");
-        return builder =>
-        {
-            builder
-                .WithSigningCredentials(GetSecretKeyFromSection(section), SecurityAlgorithms.HmacSha256Signature)
-                .WithLifetime(lifetime);
-            issuer.IfPresent(i => builder.WithIssuer(i));
-            audience.IfPresent(a => builder.WithAudience(a));
-        };
+        var authoritySection = section.RequireSection(DefaultAuthoritySectionName);
+        var lifetime = Duration.FromTimeSpan(authoritySection.RequireValue<TimeSpan>(DefaultLifetimeKeyName));
+        var issuer = authoritySection.GetValueAsOption<string>(DefaultIssuerKeyName);
+        var audience = authoritySection.GetValueAsOption<string>(DefaultAudienceKeyName);
+
+        return new JwtTokenConfiguration(
+            new SigningCredentials(
+                GetSecretKeyFromSection(section),
+                DefaultAlgorithm),
+            lifetime,
+            issuer,
+            audience);
     }
 
     private static SecurityKey GetSecretKeyFromSection(IConfigurationSection scopeSection) =>
-        KeyUtils.KeyFromString(scopeSection.RequireValue<string>("SecretKey"));
+        KeyUtils.KeyFromString(scopeSection.RequireValue<string>(DefaultSecretSigningKeyKeyName));
 }

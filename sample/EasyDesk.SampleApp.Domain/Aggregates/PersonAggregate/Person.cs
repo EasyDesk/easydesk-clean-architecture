@@ -10,15 +10,17 @@ public record PersonDeletedEvent(Person Person) : DomainEvent;
 
 public class Person : AggregateRoot
 {
-    public Person(Guid id, Name firstName, Name lastName, LocalDate dateOfBirth)
+    public Person(Guid id, Name firstName, Name lastName, LocalDate dateOfBirth, AdminId createdBy)
     {
         Id = id;
         FirstName = firstName;
         LastName = lastName;
         DateOfBirth = dateOfBirth;
+        CreatedBy = createdBy;
     }
 
-    public static Person Create(Name firstName, Name lastName, LocalDate dateOfBirth) => new(Guid.NewGuid(), firstName, lastName, dateOfBirth);
+    public static Person Create(Name firstName, Name lastName, LocalDate dateOfBirth, AdminId createdBy) =>
+        new(Guid.NewGuid(), firstName, lastName, dateOfBirth, createdBy);
 
     public Guid Id { get; }
 
@@ -27,6 +29,8 @@ public class Person : AggregateRoot
     public Name LastName { get; }
 
     public LocalDate DateOfBirth { get; }
+
+    public AdminId CreatedBy { get; }
 
     protected override void OnCreation()
     {

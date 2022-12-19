@@ -376,8 +376,8 @@
       },
       "Rebus": {
         "type": "Transitive",
-        "resolved": "6.6.5",
-        "contentHash": "XERRDurwleU0V/dwZSow6X2WOG+Q8UGwyp5Q2bF+yR4juagnlpyBx54YWUdDGt+wboAzROMfXZWwOnCqwxwcEQ==",
+        "resolved": "6.7.0",
+        "contentHash": "aBu38d/m0hZDWY19QHfU3q7bdeYpJvAHjWwf0iZMuL68BbheHRF/ZwjKkPtVcSpWQmJRBbw2+aeQRNi5k5H4/w==",
         "dependencies": {
           "Microsoft.CSharp": "4.5.0",
           "Newtonsoft.Json": "11.0.1",
@@ -749,7 +749,7 @@
           "EasyDesk.Tools": "[7.6.1, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.9, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.1, )",
-          "Rebus": "[6.6.5, )",
+          "Rebus": "[6.7.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[3.0.0, )",
           "Rebus.ServiceProvider": "[8.4.0, )",
           "System.IdentityModel.Tokens.Jwt": "[6.25.1, )"

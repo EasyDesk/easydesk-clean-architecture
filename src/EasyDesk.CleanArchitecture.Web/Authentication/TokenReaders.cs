@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Tools.Collections;
+using Microsoft.Net.Http.Headers;
 using System.Net.Http.Headers;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication;
@@ -12,7 +13,7 @@ public static class TokenReaders
     public static TokenReader FromAuthorizationHeader(string scheme) => httpContext => httpContext
         .Request
         .Headers
-        .GetOption("Authorization")
+        .GetOption(HeaderNames.Authorization)
         .FlatMap(x => ParseHeader(x))
         .Filter(x => x.Scheme.Equals(scheme, StringComparison.OrdinalIgnoreCase))
         .Map(x => x.Parameter);

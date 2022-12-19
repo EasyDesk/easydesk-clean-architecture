@@ -7,15 +7,18 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 public class HttpTestHelper
 {
     private readonly HttpClient _httpClient;
+    private readonly ITestHttpAuthentication _httpAuthentication;
     private readonly Action<HttpRequestBuilder> _configureRequest;
     private readonly JsonSerializerSettings _settings;
 
     public HttpTestHelper(
         HttpClient httpClient,
         JsonSettingsConfigurator jsonSettingsConfigurator,
+        ITestHttpAuthentication httpAuthentication,
         Action<HttpRequestBuilder> configureRequest = null)
     {
         _httpClient = httpClient;
+        _httpAuthentication = httpAuthentication;
         _configureRequest = configureRequest;
         _settings = jsonSettingsConfigurator.CreateSettings();
     }
@@ -45,7 +48,7 @@ public class HttpTestHelper
         {
             Content = content
         };
-        var builder = new HttpRequestBuilder(request, _httpClient, _settings);
+        var builder = new HttpRequestBuilder(request, _httpClient, _settings, _httpAuthentication);
         _configureRequest?.Invoke(builder);
         return builder;
     }

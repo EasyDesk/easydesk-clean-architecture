@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
@@ -9,6 +10,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class CreatePersonTests : SampleIntegrationTest
 {
     private const string TenantId = "test-tenant";
+    private const string AdminId = "test-admin";
 
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
@@ -21,10 +23,18 @@ public class CreatePersonTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId);
 
+    private HttpRequestBuilder CreatePerson() => Http
+        .CreatePerson(_body)
+        .AuthenticateAs(AdminId);
+
+    private HttpRequestBuilder GetPerson(Guid userId) => Http
+        .GetPerson(userId)
+        .AuthenticateAs(AdminId);
+
     [Fact]
     public async Task ShouldSucceed()
     {
-        var response = await Http.CreatePerson(_body)
+        var response = await CreatePerson()
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);
@@ -33,9 +43,9 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldMakeItPossibleToReadThePersonAfterSuccessfullyCreatingOne()
     {
-        var person = await Http.CreatePerson(_body).AsDataOnly<PersonDto>();
+        var person = await CreatePerson().AsDataOnly<PersonDto>();
 
-        var response = await Http.GetPerson(person.Id).AsVerifiableResponse<PersonDto>();
+        var response = await GetPerson(person.Id).AsVerifiableResponse<PersonDto>();
 
         await Verify(response);
     }
@@ -46,7 +56,7 @@ public class CreatePersonTests : SampleIntegrationTest
         await using var bus = NewBus();
         await bus.Subscribe<PersonCreated>();
 
-        var person = await Http.CreatePerson(_body).AsDataOnly<PersonDto>();
+        var person = await CreatePerson().AsDataOnly<PersonDto>();
 
         await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
@@ -54,10 +64,11 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldBeMultitenant()
     {
-        var person = await Http.CreatePerson(_body).AsDataOnly<PersonDto>();
+        var person = await CreatePerson().AsDataOnly<PersonDto>();
 
-        var response = await Http.GetPerson(person.Id)
+        var response = await GetPerson(person.Id)
             .Tenant("other-tenant")
+            .AuthenticateAs(AdminId)
             .AsVerifiableResponse<PersonDto>();
 
         await Verify(response);
@@ -66,7 +77,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFailIfNoTenantIsSpecified()
     {
-        var response = await Http.CreatePerson(_body)
+        var response = await CreatePerson()
             .NoTenant()
             .AsVerifiableResponse<PersonDto>();
 

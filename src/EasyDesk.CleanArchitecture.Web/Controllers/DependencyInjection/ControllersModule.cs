@@ -33,7 +33,7 @@ public class ControllersModule : AppModule
 
     protected void DefaultMvcConfiguration(MvcOptions options)
     {
-        if (!_environment.IsDevelopment())
+        if (_environment.IsProduction())
         {
             options.Filters.Add<UnhandledExceptionsFilter>();
         }

@@ -18,8 +18,8 @@ public class JwtFacadeTests
     private readonly FakeClock _clock = new(SystemClock.Instance.GetCurrentInstant());
     private readonly SecurityKey _key = KeyUtils.KeyFromString("abcdefghijklmnopqrstuvwxyz", KeyId);
     private readonly Duration _lifetime = Duration.FromMinutes(5);
-    private readonly JwtTokenConfiguration _configureJwtToken;
-    private readonly JwtValidationConfiguration _configureDefaultValidation;
+    private readonly Action<JwtTokenBuilder> _configureJwtToken;
+    private readonly Action<JwtValidationBuilder> _configureDefaultValidation;
     private readonly JwtFacade _sut;
 
     private readonly IEnumerable<Claim> _claims = new Claim[]
@@ -34,7 +34,7 @@ public class JwtFacadeTests
     public JwtFacadeTests()
     {
         _configureJwtToken = builder => builder
-            .WithSigningCredentials(_key, Algorithm)
+            .WithSigningCredentials(new SigningCredentials(_key, Algorithm))
             .WithLifetime(_lifetime)
             .WithIssuer(Issuer)
             .WithAudience(Audience);
@@ -76,7 +76,7 @@ public class JwtFacadeTests
     {
         var jwt = _sut.Create(_claims, _configureJwtToken);
 
-        _sut.Validate(jwt, b => b.WithSignatureValidation(KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm", KeyId))).ShouldBeEmpty();
+        _sut.Validate(jwt, builder => builder.WithSignatureValidation(KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm", KeyId))).ShouldBeEmpty();
     }
 
     [Fact]

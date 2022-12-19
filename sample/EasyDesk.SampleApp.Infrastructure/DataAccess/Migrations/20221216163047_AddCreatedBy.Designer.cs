@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-[Migration("20221219194948_UseHiLoForPet")]
-partial class UseHiLoForPet
+[Migration("20221216163047_AddCreatedBy")]
+partial class AddCreatedBy
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,14 +27,14 @@ partial class UseHiLoForPet
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-        modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
-            .IncrementsBy(10);
-
         modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
             {
                 b.Property<Guid>("Id")
                     .ValueGeneratedOnAdd()
                     .HasColumnType("uuid");
+
+                b.Property<string>("CreatedBy")
+                    .HasColumnType("text");
 
                 b.Property<LocalDate>("DateOfBirth")
                     .HasColumnType("date");
@@ -58,49 +58,6 @@ partial class UseHiLoForPet
                 b.HasIndex("TenantId");
 
                 b.ToTable("People", "domain");
-            });
-
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PetModel", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
-
-                b.Property<string>("Nickname")
-                    .IsRequired()
-                    .HasColumnType("text");
-
-                b.Property<Guid>("PersonId")
-                    .HasColumnType("uuid");
-
-                b.Property<string>("TenantId")
-                    .HasColumnType("text");
-
-                b.HasKey("Id");
-
-                b.HasIndex("PersonId");
-
-                b.HasIndex("TenantId");
-
-                b.ToTable("Pets", "domain");
-            });
-
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PetModel", b =>
-            {
-                b.HasOne("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", "Person")
-                    .WithMany("Pets")
-                    .HasForeignKey("PersonId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Person");
-            });
-
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
-            {
-                b.Navigation("Pets");
             });
 #pragma warning restore 612, 618
     }

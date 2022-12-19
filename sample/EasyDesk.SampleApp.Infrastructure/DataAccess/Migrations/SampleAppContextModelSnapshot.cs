@@ -33,6 +33,9 @@ partial class SampleAppContextModelSnapshot : ModelSnapshot
                     .ValueGeneratedOnAdd()
                     .HasColumnType("uuid");
 
+                b.Property<string>("CreatedBy")
+                    .HasColumnType("text");
+
                 b.Property<LocalDate>("DateOfBirth")
                     .HasColumnType("date");
 
