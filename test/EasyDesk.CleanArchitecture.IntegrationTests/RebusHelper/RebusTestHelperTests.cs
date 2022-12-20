@@ -12,6 +12,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.RebusHelper;
 public class RabbitMqContainerFixture : IAsyncLifetime
 {
     public RabbitMqTestcontainer RabbitMq { get; } = new TestcontainersBuilder<RabbitMqTestcontainer>()
+        .WithName($"{nameof(RabbitMqContainerFixture)}-rebus-helper-tests-rabbitmq")
         .WithMessageBroker(new RabbitMqTestcontainerConfiguration
         {
             Username = "admin",

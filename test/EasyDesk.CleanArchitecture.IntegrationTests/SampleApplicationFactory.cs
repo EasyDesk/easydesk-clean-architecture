@@ -21,7 +21,7 @@ public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<Pe
     public SampleApplicationFactory()
     {
         _postgres = RegisterTestContainer<PostgreSqlTestcontainer>(container => container
-            .WithName("integration-tests-postgres")
+            .WithName($"{nameof(SampleApplicationFactory)}-integration-tests-postgres")
             .WithDatabase(new PostgreSqlTestcontainerConfiguration
             {
                 Database = "TestSampleDb",
@@ -30,7 +30,7 @@ public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<Pe
             }));
 
         _rabbitMq = RegisterTestContainer<RabbitMqTestcontainer>(container => container
-            .WithName("integration-tests-rabbitmq")
+            .WithName($"{nameof(SampleApplicationFactory)}-integration-tests-rabbitmq")
             .WithMessageBroker(new RabbitMqTestcontainerConfiguration
             {
                 Username = "guest",
