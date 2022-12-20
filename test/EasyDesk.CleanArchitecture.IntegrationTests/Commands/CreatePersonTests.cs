@@ -20,15 +20,13 @@ public class CreatePersonTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId);
+    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId).AuthenticateAs(AdminId);
 
     private HttpRequestBuilder CreatePerson() => Http
-        .CreatePerson(_body)
-        .AuthenticateAs(AdminId);
+        .CreatePerson(_body);
 
     private HttpRequestBuilder GetPerson(Guid userId) => Http
-        .GetPerson(userId)
-        .AuthenticateAs(AdminId);
+        .GetPerson(userId);
 
     [Fact]
     public async Task ShouldSucceed()
@@ -78,6 +76,16 @@ public class CreatePersonTests : SampleIntegrationTest
     {
         var response = await CreatePerson()
             .NoTenant()
+            .AsVerifiableErrorResponse<PersonDto>();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldFailIfAnonymous()
+    {
+        var response = await CreatePerson()
+            .NoAuthentication()
             .AsVerifiableErrorResponse<PersonDto>();
 
         await Verify(response);

@@ -16,7 +16,7 @@ public class CreatePetTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId);
+    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId).AuthenticateAs(AdminId);
 
     [Fact]
     public async Task ShouldSucceed()
@@ -27,11 +27,9 @@ public class CreatePetTests : SampleIntegrationTest
             DateOfBirth: new LocalDate(1995, 10, 12));
 
         var person = await Http.CreatePerson(body)
-            .AuthenticateAs(AdminId)
             .AsDataOnly<PersonDto>();
 
         var response = await Http.CreatePet(person.Id, new(Nickname))
-            .AuthenticateAs(AdminId)
             .AsVerifiableResponse<PetDto>();
 
         var settings = new VerifySettings();

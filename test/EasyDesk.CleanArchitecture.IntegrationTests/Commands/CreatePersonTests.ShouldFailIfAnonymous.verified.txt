@@ -1,0 +1,14 @@
+﻿{
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: UnknownUser,
+        Detail: Missing authentication information on the given request,
+        Meta: null
+      }
+    ],
+    Meta: null
+  },
+  StatusCode: Unauthorized
+}
