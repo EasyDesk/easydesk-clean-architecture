@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -52,7 +51,7 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfThePersonDoesNotExist()
     {
         var response = await DeletePerson(Guid.NewGuid())
-            .AsVerifiableResponse<PersonDto>();
+            .AsVerifiableErrorResponse<PersonDto>();
 
         await Verify(response);
     }
@@ -78,7 +77,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
         var response = await Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", person.Id))
             .AuthenticateAs(AdminId)
-            .AsVerifiableResponse<PersonDto>();
+            .AsVerifiableErrorResponse<PersonDto>();
 
         await Verify(response);
     }

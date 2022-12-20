@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.SampleApp.Application.Events;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
@@ -69,7 +68,7 @@ public class CreatePersonTests : SampleIntegrationTest
         var response = await GetPerson(person.Id)
             .Tenant("other-tenant")
             .AuthenticateAs(AdminId)
-            .AsVerifiableResponse<PersonDto>();
+            .AsVerifiableErrorResponse<PersonDto>();
 
         await Verify(response);
     }
@@ -79,7 +78,7 @@ public class CreatePersonTests : SampleIntegrationTest
     {
         var response = await CreatePerson()
             .NoTenant()
-            .AsVerifiableResponse<PersonDto>();
+            .AsVerifiableErrorResponse<PersonDto>();
 
         await Verify(response);
     }

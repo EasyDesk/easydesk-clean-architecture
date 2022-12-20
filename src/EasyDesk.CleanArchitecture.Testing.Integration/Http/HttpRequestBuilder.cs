@@ -54,6 +54,9 @@ public class HttpRequestBuilder
         return this;
     }
 
+    public HttpRequestBuilder AuthenticateAs(string userId) =>
+        Authenticate(new Claim[] { new Claim(ClaimTypes.NameIdentifier, userId) });
+
     public async Task<HttpResponseMessage> AsHttpResponseMessage() =>
         await _httpClient.SendAsync(_request);
 
@@ -62,6 +65,12 @@ public class HttpRequestBuilder
     public async Task<VerifiableHttpResponse<T>> AsVerifiableResponse<T>()
     {
         var (response, content) = await AsResponseAndContent<T>();
+        return new(content, response.StatusCode);
+    }
+
+    public async Task<VerifiableHttpResponse<T>> AsVerifiableErrorResponse<T>()
+    {
+        var (response, content) = await AsResponseAndContent<T>(expectSuccess: false);
         return new(content, response.StatusCode);
     }
 
@@ -77,10 +86,10 @@ public class HttpRequestBuilder
         return content.Data;
     }
 
-    public async Task<(HttpResponseMessage Response, ResponseDto<T> Content)> AsResponseAndContent<T>()
+    public async Task<(HttpResponseMessage Response, ResponseDto<T> Content)> AsResponseAndContent<T>(bool expectSuccess = true)
     {
         var response = await AsHttpResponseMessage();
-        if (!response.IsSuccessStatusCode && response.Content is null)
+        if (expectSuccess && (!response.IsSuccessStatusCode || response.Content is null))
         {
             throw await HttpRequestUnexpectedFailureException.Create(response);
         }

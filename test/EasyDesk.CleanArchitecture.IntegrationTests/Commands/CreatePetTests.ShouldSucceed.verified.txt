@@ -2,7 +2,9 @@
   Content: {
     Data: {
       Nickname: Rex
-    }
+    },
+    Errors: null,
+    Meta: null
   },
   StatusCode: OK
 }

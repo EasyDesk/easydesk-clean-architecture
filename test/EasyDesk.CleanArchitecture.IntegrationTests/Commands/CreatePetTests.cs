@@ -9,6 +9,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class CreatePetTests : SampleIntegrationTest
 {
     private const string TenantId = "test-tenant";
+    private const string AdminId = "dog-friendly-admin";
     private const string Nickname = "Rex";
 
     public CreatePetTests(SampleApplicationFactory factory) : base(factory)
@@ -25,9 +26,12 @@ public class CreatePetTests : SampleIntegrationTest
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12));
 
-        var person = await Http.CreatePerson(body).AsDataOnly<PersonDto>();
+        var person = await Http.CreatePerson(body)
+            .AuthenticateAs(AdminId)
+            .AsDataOnly<PersonDto>();
 
         var response = await Http.CreatePet(person.Id, new(Nickname))
+            .AuthenticateAs(AdminId)
             .AsVerifiableResponse<PetDto>();
 
         var settings = new VerifySettings();
