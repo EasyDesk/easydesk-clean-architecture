@@ -12,7 +12,8 @@ public class SampleAppContext : DomainContext<SampleAppContext>
 
     public DbSet<PetModel> Pets { get; set; }
 
-    public SampleAppContext(ITenantProvider tenantProvider, DbContextOptions<SampleAppContext> options) : base(tenantProvider, options)
+    public SampleAppContext(ITenantProvider tenantProvider, DbContextOptions<SampleAppContext> options)
+        : base(tenantProvider, options)
     {
         this.AddSoftDeletion();
     }

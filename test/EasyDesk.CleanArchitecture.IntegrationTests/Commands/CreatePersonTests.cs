@@ -1,7 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.SampleApp.Application.Events;
+using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
@@ -87,6 +88,17 @@ public class CreatePersonTests : SampleIntegrationTest
         var response = await CreatePerson()
             .NoAuthentication()
             .AsVerifiableErrorResponse<PersonDto>();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldAlsoSendACommandToCreateThePersonsBestFriend()
+    {
+        var person = await CreatePerson().AsDataOnly<PersonDto>();
+        await Task.Delay(2000);
+
+        var response = await Http.GetOwnedPets(person.Id).AsVerifiableResponse<IEnumerable<PetDto>>();
 
         await Verify(response);
     }

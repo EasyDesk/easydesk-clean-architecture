@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -19,6 +20,11 @@ public static class RebusDefaults
         IServiceProvider serviceProvider)
     {
         options.ApplyDefaultConfiguration(endpoint, configurer);
+
+        configurer.Routing(r =>
+        {
+            r.Register(_ => new OutgoingCommandRouter(endpoint));
+        });
 
         configurer.Logging(l =>
         {

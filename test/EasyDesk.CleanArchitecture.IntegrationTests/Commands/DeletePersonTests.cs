@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.SampleApp.Application.Events;
+using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.EntityFrameworkCore;

@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using Rebus.Config;
 using Rebus.Injection;
-using Rebus.Routing;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
@@ -26,9 +25,6 @@ public class RebusMessagingOptions
 
     public RebusMessagingOptions ConfigureTransport(Action<RebusEndpoint, StandardConfigurer<ITransport>> configurationAction) =>
         ConfigureRebus((e, c) => c.Transport(t => configurationAction(e, t)));
-
-    public RebusMessagingOptions ConfigureRouting(Action<RebusEndpoint, StandardConfigurer<IRouter>> configurationAction) =>
-        ConfigureRebus((e, c) => c.Routing(r => configurationAction(e, r)));
 
     public RebusMessagingOptions ConfigureRebusOptions(Action<OptionsConfigurer> configurationAction) =>
         ConfigureRebus((_, c) => c.Options(configurationAction));

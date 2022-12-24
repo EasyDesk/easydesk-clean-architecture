@@ -41,6 +41,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
     config.AddRebusMessaging("sample", options =>
     {
+        options.OutboxOptions.PeriodicTaskEnabled = false;
         options.ConfigureTransport((e, t) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e.InputQueueAddress));
     });
 });

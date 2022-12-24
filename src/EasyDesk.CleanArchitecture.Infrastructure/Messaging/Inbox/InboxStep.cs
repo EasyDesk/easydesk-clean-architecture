@@ -11,17 +11,17 @@ public class InboxStep<T> : IPipelineStep<T, Nothing>
     where T : IReadWriteOperation, IIncomingMessage
 {
     private readonly IInbox _inbox;
-    private readonly IContextProvider _contextInfo;
+    private readonly IContextProvider _contextProvider;
 
-    public InboxStep(IInbox inbox, IContextProvider contextInfo)
+    public InboxStep(IInbox inbox, IContextProvider contextProvider)
     {
         _inbox = inbox;
-        _contextInfo = contextInfo;
+        _contextProvider = contextProvider;
     }
 
     public async Task<Result<Nothing>> Run(T request, NextPipelineStep<Nothing> next)
     {
-        if (_contextInfo.Context is not AsyncMessageContext)
+        if (_contextProvider.Context is not AsyncMessageContext)
         {
             return await next();
         }
@@ -32,6 +32,8 @@ public class InboxStep<T> : IPipelineStep<T, Nothing>
             return Ok;
         }
 
-        return await next().ThenIfSuccessAsync(_ => _inbox.MarkAsProcessed(messageId));
+        var result = await next();
+
+        return await result.IfSuccessAsync(_ => _inbox.MarkAsProcessed(messageId));
     }
 }

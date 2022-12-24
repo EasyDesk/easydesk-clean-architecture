@@ -10,9 +10,9 @@
       },
       "EasyDesk.Testing": {
         "type": "Direct",
-        "requested": "[0.5.1, )",
-        "resolved": "0.5.1",
-        "contentHash": "BehnuYWV4L2GRkg2368bKW17R+Vjs3luELxmuDb9EL9nKLLZs8+Yxl11IedUM5I5u2CeutHsvZHheM9GuSS0OA==",
+        "requested": "[0.6.1, )",
+        "resolved": "0.6.1",
+        "contentHash": "MsNzucXZnkaDj6WMnU0to6slH+Psm//TqFQdDMkcFUHAk8WZDBeLJpLQDxdOFTkmVOewFj8YNL2/S7UvNzgQtg==",
         "dependencies": {
           "EasyDesk.Tools": "7.6.1",
           "Microsoft.Extensions.DependencyInjection": "7.0.0",
@@ -1610,7 +1610,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Testing": "[0.5.1, )",
+          "EasyDesk.Testing": "[0.6.1, )",
           "EasyDesk.Tools": "[7.6.1, )"
         }
       },

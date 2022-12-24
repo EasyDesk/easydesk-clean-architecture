@@ -1,10 +1,11 @@
 ﻿{
   Content: {
     Data: {
+      Id: {Scrubbed},
       Nickname: Rex
     },
-    Errors: null,
-    Meta: null
+    Errors: [],
+    Meta: {}
   },
   StatusCode: OK
 }

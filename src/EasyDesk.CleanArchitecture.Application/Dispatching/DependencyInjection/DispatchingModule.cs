@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
@@ -24,6 +25,9 @@ public class DispatchingModule : AppModule
         Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
 
         var steps = Pipeline.GetOrderedSteps().ToList();
+        Console.WriteLine("_______________________________________________________________________________");
+        steps.Concat(steps.AsEnumerable().Reverse()).ForEach(s => Console.WriteLine(s.Name));
+        Console.WriteLine("_______________________________________________________________________________");
         services.AddScoped<IPipeline>(p => new GenericPipeline(p, steps));
     }
 

@@ -5,10 +5,10 @@
       {
         Code: NotFound,
         Detail: Unable to fine the requested resource,
-        Meta: null
+        Meta: {}
       }
     ],
-    Meta: null
+    Meta: {}
   },
   StatusCode: NotFound
 }

@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
-namespace EasyDesk.SampleApp.Application.Events;
+namespace EasyDesk.SampleApp.Application.OutgoingEvents;
 
 public record PersonDeleted(Guid PersonId) : IOutgoingEvent, IMessage, IPropagatedEvent<PersonDeleted, PersonDeletedEvent>
 {

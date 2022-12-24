@@ -17,7 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using NodaTime.Testing;
-using Rebus.Routing.TypeBased;
+using Rebus.Routing;
 using Xunit;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
@@ -75,12 +75,12 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
     public RebusTestHelper CreateRebusHelper(string inputQueueAddress = null, Duration? defaultTimeout = null)
     {
         var options = Services.GetRequiredService<RebusMessagingOptions>();
-        var appEndpoint = Services.GetRequiredService<RebusEndpoint>();
-        var endpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
+        var serviceEndpoint = Services.GetRequiredService<RebusEndpoint>();
+        var helperEndpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
         return new RebusTestHelper(
             rebus => rebus
-                .ConfigureStandardBehavior(endpoint, options, Services)
-                .Routing(r => r.TypeBased().MapFallback(appEndpoint.InputQueueAddress)),
+                .ConfigureStandardBehavior(helperEndpoint, options, Services)
+                .Routing(r => r.Decorate(c => new TestRouterWrapper(c.Get<IRouter>(), serviceEndpoint))),
             defaultTimeout);
     }
 

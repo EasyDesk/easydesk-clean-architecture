@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +17,12 @@ public class MultitenancyModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.ConfigureDispatchingPipeline(pipeline => pipeline
-            .AddStep(typeof(MultitenancyManagementStep<,>)));
+        app.ConfigureDispatchingPipeline(pipeline =>
+        {
+            pipeline
+                .AddStep(typeof(MultitenancyManagementStep<,>))
+                .After(typeof(UnitOfWorkStep<,>));
+        });
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

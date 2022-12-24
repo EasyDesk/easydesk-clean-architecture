@@ -32,8 +32,6 @@ public class CreatePetTests : SampleIntegrationTest
         var response = await Http.CreatePet(person.Id, new(Nickname))
             .AsVerifiableResponse<PetDto>();
 
-        var settings = new VerifySettings();
-        settings.IgnoreMember<PetDto>(p => p.Id);
-        await Verify(response, settings);
+        await Verify(response);
     }
 }

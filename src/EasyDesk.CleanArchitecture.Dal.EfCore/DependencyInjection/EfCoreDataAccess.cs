@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
@@ -36,9 +35,10 @@ public abstract class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImp
 
     public void ConfigurePipeline(PipelineBuilder pipeline)
     {
-        pipeline.AddStep(typeof(SaveChangesStep<,>))
+        pipeline
+            .AddStep(typeof(SaveChangesStep<,>))
             .After(typeof(UnitOfWorkStep<,>))
-            .Before(typeof(DomainEventHandlingStep<,>));
+            .After(typeof(InboxStep<>));
     }
 
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)

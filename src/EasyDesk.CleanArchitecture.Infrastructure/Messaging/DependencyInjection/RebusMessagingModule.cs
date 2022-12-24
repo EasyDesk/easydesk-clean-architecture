@@ -39,8 +39,10 @@ public class RebusMessagingModule : AppModule
     {
         app.ConfigureDispatchingPipeline(pipeline =>
         {
-            pipeline.AddStep(typeof(RebusTransactionScopeStep<,>));
-            pipeline.AddStep(typeof(InboxStep<>)).After(typeof(UnitOfWorkStep<,>));
+            pipeline.AddStep(typeof(RebusServiceProviderStep<,>));
+            pipeline
+                .AddStep(typeof(InboxStep<>))
+                .After(typeof(UnitOfWorkStep<,>));
         });
         app.RequireModule<JsonModule>();
     }
@@ -61,7 +63,6 @@ public class RebusMessagingModule : AppModule
             {
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
                 o.UseOutbox();
-                o.OpenServiceScopeBeforeMessageHandlers();
                 if (app.IsMultitenant())
                 {
                     o.SetupForMultitenancy();
@@ -71,7 +72,7 @@ public class RebusMessagingModule : AppModule
         });
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        SetupMessageHandlers(services);
+        SetupMessageHandlers(services, knownMessageTypes);
         AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
 
         AddEventPropagators(services, knownMessageTypes);
@@ -86,9 +87,16 @@ public class RebusMessagingModule : AppModule
         }
     }
 
-    private void SetupMessageHandlers(IServiceCollection services)
+    private void SetupMessageHandlers(IServiceCollection services, KnownMessageTypes knownMessageTypes)
     {
-        services.AddTransient(typeof(IHandleMessages<>), typeof(DispatchingMessageHandler<>));
+        knownMessageTypes.Types
+            .Where(x => x.IsSubtypeOrImplementationOf(typeof(IIncomingMessage)))
+            .ForEach(t =>
+            {
+                var interfaceType = typeof(IHandleMessages<>).MakeGenericType(t);
+                var implementationType = typeof(DispatchingMessageHandler<>).MakeGenericType(t);
+                services.AddTransient(interfaceType, implementationType);
+            });
     }
 
     private IEnumerable<Type> GetDispatchableReturnTypes(Type messageType)
@@ -126,10 +134,14 @@ public class RebusMessagingModule : AppModule
     private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)
     {
         services.AddScoped<OutboxTransactionHelper>();
-        services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
-            _options.OutboxOptions.FlushingPeriod,
-            provider.GetRequiredService<OutboxFlushRequestsChannel>(),
-            provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
+
+        if (_options.OutboxOptions.PeriodicTaskEnabled)
+        {
+            services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
+                _options.OutboxOptions.FlushingPeriod,
+                provider.GetRequiredService<OutboxFlushRequestsChannel>(),
+                provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
+        }
 
         services.AddHostedService<OutboxFlusherBackgroundService>();
         services.AddSingleton<OutboxFlushRequestsChannel>();

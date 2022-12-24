@@ -5,10 +5,10 @@
       {
         Code: UnknownUser,
         Detail: Missing authentication information on the given request,
-        Meta: null
+        Meta: {}
       }
     ],
-    Meta: null
+    Meta: {}
   },
   StatusCode: Unauthorized
 }

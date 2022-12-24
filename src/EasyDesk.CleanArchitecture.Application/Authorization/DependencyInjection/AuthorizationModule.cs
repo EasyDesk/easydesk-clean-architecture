@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +17,13 @@ public class AuthorizationModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        app.ConfigureDispatchingPipeline(pipeline => pipeline.AddStep(typeof(AuthorizationStep<,>)));
+        app.ConfigureDispatchingPipeline(pipeline =>
+        {
+            pipeline
+                .AddStep(typeof(AuthorizationStep<,>))
+                .After(typeof(UnitOfWorkStep<,>))
+                .After(typeof(MultitenancyManagementStep<,>));
+        });
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

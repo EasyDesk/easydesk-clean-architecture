@@ -1,4 +1,5 @@
-﻿using EasyDesk.Testing.VerifyConfiguration;
+﻿using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
+using EasyDesk.Testing.VerifyConfiguration;
 using System.Runtime.CompilerServices;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.VerifyConfiguration;
@@ -9,5 +10,7 @@ public static class VerifySettings
     public static void Init()
     {
         VerifySettingsInitializer.Initialize();
+
+        VerifierSettings.ScrubMember<PetDto>(p => p.Id);
     }
 }

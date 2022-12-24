@@ -9,13 +9,15 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 public class BasicContextProvider : IContextProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly Lazy<Context> _context;
 
     public BasicContextProvider(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
+        _context = new(GetContextType);
     }
 
-    public Context Context => GetContextType();
+    public Context Context => _context.Value;
 
     public Option<UserInfo> UserInfo => Context switch
     {
