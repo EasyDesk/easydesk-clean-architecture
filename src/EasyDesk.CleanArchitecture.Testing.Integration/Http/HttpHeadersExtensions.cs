@@ -9,4 +9,10 @@ public static class HttpHeadersExtensions
         headers.Remove(name);
         headers.Add(name, value);
     }
+
+    public static void Replace(this HttpRequestHeaders headers, string name, IEnumerable<string> value)
+    {
+        headers.Remove(name);
+        headers.Add(name, value);
+    }
 }

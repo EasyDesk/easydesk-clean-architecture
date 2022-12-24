@@ -1,18 +1,15 @@
 ﻿{
-  Content: {
-    Data: [
-      {
-        Id: {Scrubbed},
-        Nickname: Foo's best buddy
-      }
-    ],
-    Errors: [],
-    Meta: {
-      pageCount: [],
-      pageIndex: [],
-      pageSize: [],
-      totalCount: []
+  Data: [
+    {
+      Id: {Scrubbed},
+      Nickname: Foo's best buddy
     }
-  },
-  StatusCode: OK
+  ],
+  Errors: [],
+  Meta: {
+    pageCount: [],
+    pageIndex: [],
+    pageSize: [],
+    totalCount: []
+  }
 }

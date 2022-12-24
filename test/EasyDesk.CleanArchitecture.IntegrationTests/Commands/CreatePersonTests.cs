@@ -93,12 +93,31 @@ public class CreatePersonTests : SampleIntegrationTest
     }
 
     [Fact]
+    public async Task ShouldSucceedWithManyWriteRequests()
+    {
+        for (var i = 0; i < 50; i++)
+        {
+            await CreatePerson()
+                .AsVerifiableResponse<PersonDto>();
+        }
+    }
+
+    [Fact]
+    public async Task ShouldSucceedWithManyReadRequests()
+    {
+        for (var i = 0; i < 150; i++)
+        {
+            await Http.GetPeople()
+                .AsVerifiableResponse<IEnumerable<PersonDto>>();
+        }
+    }
+
+    [Fact]
     public async Task ShouldAlsoSendACommandToCreateThePersonsBestFriend()
     {
         var person = await CreatePerson().AsDataOnly<PersonDto>();
-        await Task.Delay(2000);
 
-        var response = await Http.GetOwnedPets(person.Id).AsVerifiableResponse<IEnumerable<PetDto>>();
+        var response = await Http.GetOwnedPets(person.Id).PollUntil<IEnumerable<PetDto>>(r => r.Data.Any());
 
         await Verify(response);
     }
