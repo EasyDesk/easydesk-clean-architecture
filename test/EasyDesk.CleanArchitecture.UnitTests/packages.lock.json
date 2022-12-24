@@ -1610,7 +1610,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Testing": "[0.6.1, )",
+          "EasyDesk.Testing": "[0.5.1, )",
           "EasyDesk.Tools": "[7.6.1, )"
         }
       },
