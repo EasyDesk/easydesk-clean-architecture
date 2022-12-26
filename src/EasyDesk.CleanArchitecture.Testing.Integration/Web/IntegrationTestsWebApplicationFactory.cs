@@ -7,6 +7,8 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
+using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.Tools.Collections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using NodaTime.Testing;
@@ -101,13 +104,34 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         GC.SuppressFinalize(this);
     }
 
-    protected virtual ITestHttpAuthentication GetAuthenticationConfiguration() =>
-        DeriveFromValidation(Services
-            .GetRequiredService<IConfiguration>() // TODO: Take the original JwtValidationConfiguration without loading a new one
-            .GetJwtValidationConfiguration()); // .OrElseGet(() => ITestHttpAuthentication.NoAuthentication);
-
-    private ITestHttpAuthentication DeriveFromValidation(JwtValidationConfiguration jwtValidationConfiguration)
+    protected virtual ITestHttpAuthentication GetAuthenticationConfiguration()
     {
+        return Services
+            .GetService<AuthenticationModuleOptions>()
+            .AsOption()
+            .FlatMap(options => GetDefaultAuthenticationConfiguration(options, Services))
+            .OrElseGet(() => ITestHttpAuthentication.NoAuthentication);
+    }
+
+    private Option<ITestHttpAuthentication> GetDefaultAuthenticationConfiguration(AuthenticationModuleOptions options, IServiceProvider serviceProvider)
+    {
+        if (options.Schemes.IsEmpty())
+        {
+            return None;
+        }
+        var schemeName = options.DefaultScheme;
+        var provider = options.Schemes[schemeName];
+        return provider switch
+        {
+            JwtAuthenticationProvider => Some(GetJwtAuthenticationConfiguration(serviceProvider, schemeName)),
+            _ => None
+        };
+    }
+
+    private ITestHttpAuthentication GetJwtAuthenticationConfiguration(IServiceProvider serviceProvider, string schemeName)
+    {
+        var jwtBearerOptions = serviceProvider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(schemeName);
+        var jwtValidationConfiguration = jwtBearerOptions.Configuration;
         var jwtConfiguration = new JwtTokenConfiguration(
                 new SigningCredentials(jwtValidationConfiguration.ValidationKey, JwtConfigurationUtils.DefaultAlgorithm),
                 Duration.FromDays(365),

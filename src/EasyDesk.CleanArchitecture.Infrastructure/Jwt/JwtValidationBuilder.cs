@@ -10,7 +10,7 @@ public record JwtValidationConfiguration(
     SecurityKey ValidationKey,
     IImmutableSet<string> Issuers,
     IImmutableSet<string> Audiences,
-    IEnumerable<SecurityKey> DecriptionKeys,
+    IEnumerable<SecurityKey> DecryptionKeys,
     Option<Duration> ClockSkew = default,
     bool ValidateLifetime = true)
 {
@@ -18,7 +18,7 @@ public record JwtValidationConfiguration(
         ValidationKey: validationKey,
         Issuers: Set<string>(),
         Audiences: Set<string>(),
-        DecriptionKeys: Enumerable.Empty<SecurityKey>());
+        DecryptionKeys: Enumerable.Empty<SecurityKey>());
 
     public void ConfigureBuilder(JwtValidationBuilder builder)
     {
@@ -32,9 +32,9 @@ public record JwtValidationConfiguration(
         {
             builder.WithAudienceValidation(Audiences);
         }
-        if (DecriptionKeys.Any())
+        if (DecryptionKeys.Any())
         {
-            builder.WithDecryption(DecriptionKeys);
+            builder.WithDecryption(DecryptionKeys);
         }
         if (!ValidateLifetime)
         {

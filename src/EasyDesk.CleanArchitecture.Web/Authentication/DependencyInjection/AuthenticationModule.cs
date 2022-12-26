@@ -9,24 +9,24 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 
 public class AuthenticationModule : AppModule
 {
-    private readonly string _defaultScheme;
-
-    public AuthenticationModule(string defaultScheme, IImmutableDictionary<string, IAuthenticationScheme> schemes)
+    public AuthenticationModule(AuthenticationModuleOptions options)
     {
-        _defaultScheme = defaultScheme;
-        Schemes = schemes;
+        Options = options;
     }
 
-    public IImmutableDictionary<string, IAuthenticationScheme> Schemes { get; }
+    public AuthenticationModuleOptions Options { get; }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
+        services.AddSingleton(Options);
+
         var authBuilder = services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = _defaultScheme;
-            options.DefaultChallengeScheme = _defaultScheme;
+            options.DefaultAuthenticateScheme = Options.DefaultScheme;
+            options.DefaultChallengeScheme = Options.DefaultScheme;
         });
-        Schemes.ForEach(scheme =>
+
+        Options.Schemes.ForEach(scheme =>
         {
             scheme.Value.AddUtilityServices(services);
             scheme.Value.AddAuthenticationHandler(scheme.Key, authBuilder);
@@ -44,7 +44,7 @@ public static class AuthenticationModuleExtensions
         {
             throw new Exception("No authentication scheme was specified");
         }
-        return builder.AddModule(new AuthenticationModule(authOptions.DefaultScheme, authOptions.Schemes));
+        return builder.AddModule(new AuthenticationModule(authOptions));
     }
 
     public static bool HasAuthentication(this AppDescription app) => app.HasModule<AuthenticationModule>();
@@ -54,15 +54,15 @@ public class AuthenticationModuleOptions
 {
     public string DefaultScheme { get; private set; }
 
-    public IImmutableDictionary<string, IAuthenticationScheme> Schemes { get; private set; } = Map<string, IAuthenticationScheme>();
+    public IImmutableDictionary<string, IAuthenticationProvider> Schemes { get; private set; } = Map<string, IAuthenticationProvider>();
 
-    public AuthenticationModuleOptions AddScheme(string name, IAuthenticationScheme scheme)
+    public AuthenticationModuleOptions AddScheme(string name, IAuthenticationProvider provider)
     {
         if (Schemes.IsEmpty())
         {
             DefaultScheme = name;
         }
-        Schemes = Schemes.Add(name, scheme);
+        Schemes = Schemes.Add(name, provider);
         return this;
     }
 }

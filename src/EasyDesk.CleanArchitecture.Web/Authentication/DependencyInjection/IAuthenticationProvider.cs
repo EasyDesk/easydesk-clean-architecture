@@ -4,11 +4,11 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 
-public interface IAuthenticationScheme
+public interface IAuthenticationProvider
 {
     void AddUtilityServices(IServiceCollection services);
 
     void AddAuthenticationHandler(string schemeName, AuthenticationBuilder authenticationBuilder);
 
-    void ConfigureOpenApi(SwaggerGenOptions options);
+    void ConfigureOpenApi(string schemeName, SwaggerGenOptions options);
 }

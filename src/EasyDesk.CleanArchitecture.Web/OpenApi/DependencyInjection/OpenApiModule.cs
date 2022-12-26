@@ -117,7 +117,7 @@ public class OpenApiModule : AppModule
     {
         app.GetModule<AuthenticationModule>().IfPresent(auth =>
         {
-            auth.Schemes.ForEach(scheme => scheme.Value.ConfigureOpenApi(options));
+            auth.Options.Schemes.ForEach(scheme => scheme.Value.ConfigureOpenApi(scheme.Key, options));
         });
     }
 }

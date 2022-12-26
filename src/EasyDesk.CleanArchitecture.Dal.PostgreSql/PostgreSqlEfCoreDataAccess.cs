@@ -21,7 +21,6 @@ internal class PostgreSqlEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Exte
     {
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         dataSourceBuilder.UseNodaTime();
-        ////dataSourceBuilder.ConnectionStringBuilder.Enlist = false;
         return dataSourceBuilder.Build().CreateConnection();
     }
 
