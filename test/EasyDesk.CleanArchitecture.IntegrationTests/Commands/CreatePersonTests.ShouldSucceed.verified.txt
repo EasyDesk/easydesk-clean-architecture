@@ -1,4 +1,5 @@
 ﻿{
+  StatusCode: Created,
   Content: {
     Data: {
       Id: Guid_1,
@@ -9,6 +10,5 @@
     },
     Errors: [],
     Meta: {}
-  },
-  StatusCode: Created
+  }
 }

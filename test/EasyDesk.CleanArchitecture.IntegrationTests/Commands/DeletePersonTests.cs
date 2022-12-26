@@ -29,7 +29,8 @@ public class DeletePersonTests : SampleIntegrationTest
         return await Http
             .Post(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
             .AuthenticateAs(AdminId)
-            .AsDataOnly<PersonDto>();
+            .Send()
+            .AsData<PersonDto>();
     }
 
     private HttpRequestBuilder DeletePerson(Guid userId) => Http
@@ -42,7 +43,8 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
 
         var response = await DeletePerson(person.Id)
-            .AsVerifiableResponse<PersonDto>();
+            .Send()
+            .AsVerifiable<PersonDto>();
 
         await Verify(response);
     }
@@ -51,7 +53,8 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfThePersonDoesNotExist()
     {
         var response = await DeletePerson(Guid.NewGuid())
-            .AsVerifiableErrorResponse<PersonDto>();
+            .Send()
+            .AsVerifiable<PersonDto>();
 
         await Verify(response);
     }
@@ -64,7 +67,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
         var person = await CreateTestPerson();
 
-        await DeletePerson(person.Id).IgnoringResponse();
+        await DeletePerson(person.Id).Send().EnsureSuccess();
 
         await bus.WaitForMessageOrFail(new PersonDeleted(person.Id));
     }
@@ -73,11 +76,12 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMakeItImpossibleToGetTheSamePerson()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).IgnoringResponse();
+        await DeletePerson(person.Id).Send().EnsureSuccess();
 
         var response = await Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", person.Id))
             .AuthenticateAs(AdminId)
-            .AsVerifiableErrorResponse<PersonDto>();
+            .Send()
+            .AsVerifiable<PersonDto>();
 
         await Verify(response);
     }
@@ -86,7 +90,7 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMarkPersonRecordAsDeleted()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).IgnoringResponse();
+        await DeletePerson(person.Id).Send().EnsureSuccess();
 
         using var scope = Factory.Services.CreateScope();
         var personRecord = await scope.ServiceProvider

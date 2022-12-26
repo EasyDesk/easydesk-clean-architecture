@@ -1,4 +1,5 @@
 ﻿{
+  StatusCode: Unauthorized,
   Content: {
     Data: null,
     Errors: [
@@ -9,6 +10,5 @@
       }
     ],
     Meta: {}
-  },
-  StatusCode: Unauthorized
+  }
 }
