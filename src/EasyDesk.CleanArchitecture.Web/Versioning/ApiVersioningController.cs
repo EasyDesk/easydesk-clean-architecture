@@ -17,7 +17,7 @@ public class ApiVersioningController : AbstractController
     public IActionResult GetApiVersions()
     {
         var versionDtos = CreateVersionDtosList(_apiVersioningInfo);
-        var responseDto = ResponseDto<IEnumerable<ApiVersionDto>>.FromData(versionDtos);
+        var responseDto = ResponseDto<IEnumerable<ApiVersionDto>, Nothing>.FromData(versionDtos, Nothing.Value);
         return Ok(responseDto);
     }
 

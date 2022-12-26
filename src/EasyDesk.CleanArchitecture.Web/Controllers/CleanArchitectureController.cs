@@ -11,10 +11,10 @@ public abstract class CleanArchitectureController : AbstractController
 
     private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 
-    protected ActionResultBuilder<T, T> Dispatch<T>(IDispatchable<T> request) =>
+    protected ActionResultBuilder<T, T, Nothing> Dispatch<T>(IDispatchable<T> request) =>
         new(() => Handle(request), It, _ => Nothing.Value, this);
 
-    protected ActionResultBuilder<PageInfo<T>, IEnumerable<T>> DispatchWithPagination<T>(
+    protected ActionResultBuilder<PageInfo<T>, IEnumerable<T>, PaginationMetaDto> DispatchWithPagination<T>(
         IDispatchable<IPageable<T>> request, PaginationDto pagination)
     {
         var pageSize = pagination.PageSize ?? DefaultPageSize;

@@ -18,7 +18,7 @@ public static class PetsRoutes
 public class PetController : CleanArchitectureController
 {
     [HttpPost(PetsRoutes.CreatePet)]
-    public async Task<ActionResult<ResponseDto<PetDto>>> CreatePet(
+    public async Task<ActionResult<ResponseDto<PetDto, Nothing>>> CreatePet(
         [FromRoute] Guid personId,
         [FromBody] CreatePetBodyDto body)
     {
@@ -28,7 +28,7 @@ public class PetController : CleanArchitectureController
     }
 
     [HttpGet(PetsRoutes.GetOwnedPets)]
-    public async Task<ActionResult<ResponseDto<IEnumerable<PetDto>>>> GetPets(
+    public async Task<ActionResult<ResponseDto<IEnumerable<PetDto>, PaginationMetaDto>>> GetPets(
         [FromRoute] Guid personId,
         [FromQuery] PaginationDto pagination)
     {

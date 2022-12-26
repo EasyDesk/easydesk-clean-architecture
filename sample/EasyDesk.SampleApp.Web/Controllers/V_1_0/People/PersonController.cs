@@ -22,7 +22,7 @@ public static class PersonRoutes
 public class PersonController : CleanArchitectureController
 {
     [HttpPost(PersonRoutes.CreatePerson)]
-    public async Task<ActionResult<ResponseDto<PersonDto>>> CreatePerson([FromBody] CreatePersonBodyDto body)
+    public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
         return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth))
             .Map(PersonDto.MapFrom)
@@ -30,7 +30,7 @@ public class PersonController : CleanArchitectureController
     }
 
     [HttpDelete(PersonRoutes.DeletePerson)]
-    public async Task<ActionResult<ResponseDto<PersonDto>>> DeletePerson([FromRoute] Guid id)
+    public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> DeletePerson([FromRoute] Guid id)
     {
         return await Dispatch(new DeletePerson(id))
             .Map(PersonDto.MapFrom)
@@ -38,7 +38,7 @@ public class PersonController : CleanArchitectureController
     }
 
     [HttpGet(PersonRoutes.GetPeople)]
-    public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>>>> GetPeople([FromQuery] PaginationDto pagination)
+    public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>, PaginationMetaDto>>> GetPeople([FromQuery] PaginationDto pagination)
     {
         return await DispatchWithPagination(new GetPeople(), pagination)
             .MapEachElement(PersonDto.MapFrom)
@@ -46,7 +46,7 @@ public class PersonController : CleanArchitectureController
     }
 
     [HttpGet(PersonRoutes.GetPerson)]
-    public async Task<ActionResult<ResponseDto<PersonDto>>> GetPerson([FromRoute] Guid id)
+    public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> GetPerson([FromRoute] Guid id)
     {
         return await Dispatch(new GetPerson(id))
             .Map(PersonDto.MapFrom)
