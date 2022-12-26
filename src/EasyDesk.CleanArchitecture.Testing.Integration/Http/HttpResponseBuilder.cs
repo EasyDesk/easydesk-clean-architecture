@@ -25,15 +25,17 @@ public class HttpResponseBuilder
         return (await ParseContent<T>(_httpResponseMessage)).Data;
     }
 
+    public bool IsSuccess => _httpResponseMessage.IsSuccessStatusCode && _httpResponseMessage.Content is not null;
+
     public async Task EnsureSuccess()
     {
-        if (!_httpResponseMessage.IsSuccessStatusCode || _httpResponseMessage.Content is null)
+        if (!IsSuccess)
         {
             throw await HttpRequestUnexpectedFailureException.Create(_httpResponseMessage);
         }
     }
 
-    public async Task<bool> Check<T>(Func<T, bool> condition) => condition(await AsData<T>());
+    public async Task<bool> Check<T>(Func<T, bool> condition) => IsSuccess && condition(await AsData<T>());
 
     private async Task<ResponseDto<T>> ParseContent<T>(HttpResponseMessage response)
     {
