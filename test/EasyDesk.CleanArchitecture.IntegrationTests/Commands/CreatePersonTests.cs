@@ -99,25 +99,34 @@ public class CreatePersonTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    /* TODO: uncomment
     [Fact]
     public async Task ShouldSucceedWithManyWriteRequests()
     {
-        for (var i = 0; i < 50; i++)
+        for (var i = 0; i < 150; i++)
         {
-            await CreatePerson().Send().EnsureSuccess();
+            await CreatePerson().Build().Send().EnsureSuccess();
+        }
+    }
+
+    [Fact]
+    public async Task ShouldSucceedWithManyPaginatedReadRequests()
+    {
+        await CreatePerson().Build().Send().EnsureSuccess();
+        for (var i = 0; i < 150; i++)
+        {
+            await Http.GetPeople().Build().Send().EnsureSuccess();
         }
     }
 
     [Fact]
     public async Task ShouldSucceedWithManyReadRequests()
     {
+        var person = await CreatePerson().Build().Send().AsData<PersonDto>();
         for (var i = 0; i < 150; i++)
         {
-            await Http.GetPeople().Send().EnsureSuccess();
+            await Http.GetPerson(person.Id).Build().Send().EnsureSuccess();
         }
     }
-    */
 
     [Fact]
     public async Task ShouldAlsoSendACommandToCreateThePersonsBestFriend()
