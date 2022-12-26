@@ -3,6 +3,6 @@ using System.Net;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public record VerifiableHttpResponse<T>(
+public record VerifiableHttpResponse<T, M>(
     HttpStatusCode StatusCode,
-    ResponseDto<T> Content);
+    ResponseDto<T, M> Content);

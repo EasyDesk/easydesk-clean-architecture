@@ -26,11 +26,11 @@ public class CreatePetTests : SampleIntegrationTest
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12));
 
-        var person = await Http.CreatePerson(body)
+        var person = await Http.CreatePerson(body).Build()
             .Send()
             .AsData<PersonDto>();
 
-        var response = await Http.CreatePet(person.Id, new(Nickname))
+        var response = await Http.CreatePet(person.Id, new(Nickname)).Build()
             .Send()
             .AsVerifiable<PetDto>();
 

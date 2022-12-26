@@ -29,6 +29,7 @@ public class DeletePersonTests : SampleIntegrationTest
         return await Http
             .Post(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
             .AuthenticateAs(AdminId)
+            .Build()
             .Send()
             .AsData<PersonDto>();
     }
@@ -43,6 +44,7 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
 
         var response = await DeletePerson(person.Id)
+            .Build()
             .Send()
             .AsVerifiable<PersonDto>();
 
@@ -53,6 +55,7 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfThePersonDoesNotExist()
     {
         var response = await DeletePerson(Guid.NewGuid())
+            .Build()
             .Send()
             .AsVerifiable<PersonDto>();
 
@@ -67,7 +70,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
         var person = await CreateTestPerson();
 
-        await DeletePerson(person.Id).Send().EnsureSuccess();
+        await DeletePerson(person.Id).Build().Send().EnsureSuccess();
 
         await bus.WaitForMessageOrFail(new PersonDeleted(person.Id));
     }
@@ -76,10 +79,11 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMakeItImpossibleToGetTheSamePerson()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).Send().EnsureSuccess();
+        await DeletePerson(person.Id).Build().Send().EnsureSuccess();
 
         var response = await Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", person.Id))
             .AuthenticateAs(AdminId)
+            .Build()
             .Send()
             .AsVerifiable<PersonDto>();
 
@@ -90,7 +94,7 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMarkPersonRecordAsDeleted()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).Send().EnsureSuccess();
+        await DeletePerson(person.Id).Build().Send().EnsureSuccess();
 
         using var scope = Factory.Services.CreateScope();
         var personRecord = await scope.ServiceProvider

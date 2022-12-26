@@ -3,26 +3,26 @@ using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public class HttpResponseBuilder
+public class HttpResponseWrapper
 {
     private readonly HttpResponseMessage _httpResponseMessage;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-    public HttpResponseBuilder(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+    public HttpResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
     {
         _httpResponseMessage = httpResponseMessage;
         _jsonSerializerSettings = jsonSerializerSettings;
     }
 
-    public async Task<VerifiableHttpResponse<T>> AsVerifiable<T>() =>
+    public async Task<VerifiableHttpResponse<T, Nothing>> AsVerifiable<T>() =>
         new(
             _httpResponseMessage.StatusCode,
-            await ParseContent<T>(_httpResponseMessage));
+            await ParseContent<T>());
 
     public async Task<T> AsData<T>()
     {
         await EnsureSuccess();
-        return (await ParseContent<T>(_httpResponseMessage)).Data;
+        return (await ParseContent<T>()).Data.Value;
     }
 
     public bool IsSuccess => _httpResponseMessage.IsSuccessStatusCode && _httpResponseMessage.Content is not null;
@@ -37,12 +37,12 @@ public class HttpResponseBuilder
 
     public async Task<bool> Check<T>(Func<T, bool> condition) => IsSuccess && condition(await AsData<T>());
 
-    private async Task<ResponseDto<T>> ParseContent<T>(HttpResponseMessage response)
+    private async Task<ResponseDto<T, Nothing>> ParseContent<T>()
     {
-        var bodyAsJson = await response.Content.ReadAsStringAsync();
+        var bodyAsJson = await _httpResponseMessage.Content.ReadAsStringAsync();
         try
         {
-            return JsonConvert.DeserializeObject<ResponseDto<T>>(bodyAsJson, _jsonSerializerSettings);
+            return JsonConvert.DeserializeObject<ResponseDto<T, Nothing>>(bodyAsJson, _jsonSerializerSettings);
         }
         catch (JsonException e)
         {
@@ -51,14 +51,14 @@ public class HttpResponseBuilder
     }
 }
 
-public static class HttpResponseBuilderExtensions
+public static partial class HttpResponseBuilderExtensions
 {
-    public static async Task<VerifiableHttpResponse<T>> AsVerifiable<T>(this Task<HttpResponseBuilder> builder) =>
+    public static async Task<VerifiableHttpResponse<T, Nothing>> AsVerifiable<T>(this Task<HttpResponseWrapper> builder) =>
         await (await builder).AsVerifiable<T>();
 
-    public static async Task<T> AsData<T>(this Task<HttpResponseBuilder> builder) =>
+    public static async Task<T> AsData<T>(this Task<HttpResponseWrapper> builder) =>
         await (await builder).AsData<T>();
 
-    public static async Task EnsureSuccess(this Task<HttpResponseBuilder> builder) =>
+    public static async Task EnsureSuccess(this Task<HttpResponseWrapper> builder) =>
         await (await builder).EnsureSuccess();
 }
