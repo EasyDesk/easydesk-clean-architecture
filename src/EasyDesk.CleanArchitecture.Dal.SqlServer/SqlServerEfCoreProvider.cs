@@ -10,21 +10,18 @@ using Extension = Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Interna
 
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer;
 
-internal class SqlServerEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extension>
-    where T : DomainContext<T>
+internal class SqlServerEfCoreProvider : IEfCoreProvider<Builder, Extension>
 {
-    public SqlServerEfCoreDataAccess(EfCoreDataAccessOptions<T, Builder, Extension> options)
-        : base(options)
+    private readonly string _connectionString;
+
+    public SqlServerEfCoreProvider(string connectionString)
     {
+        _connectionString = connectionString;
     }
 
-    protected override DbConnection CreateDbConnection(string connectionString) =>
-        new SqlConnection(connectionString);
+    public DbConnection NewConnection() => new SqlConnection(_connectionString);
 
-    protected override void ConfigureDbProvider(
-        DbContextOptionsBuilder options,
-        DbConnection connection,
-        Action<Builder> configure)
+    public void ConfigureDbProvider(DbContextOptionsBuilder options, DbConnection connection, Action<Builder> configure)
     {
         options.UseSqlServer(connection, x =>
         {
@@ -39,13 +36,12 @@ public static class SqlServerExtensions
     public static AppBuilder AddSqlServerDataAccess<T>(
         this AppBuilder builder,
         string connectionString,
-        Action<EfCoreDataAccessOptions<T, Builder, Extension>> configure = null)
+        Action<EfCoreDataAccessOptions<Builder, Extension>> configure = null)
         where T : DomainContext<T>
     {
 #pragma warning disable EF1001
-        return builder.AddEfCoreDataAccess(
-            connectionString,
-            options => new SqlServerEfCoreDataAccess<T>(options),
+        return builder.AddEfCoreDataAccess<T, Builder, Extension>(
+            new SqlServerEfCoreProvider(connectionString),
             configure);
 #pragma warning restore EF1001
     }

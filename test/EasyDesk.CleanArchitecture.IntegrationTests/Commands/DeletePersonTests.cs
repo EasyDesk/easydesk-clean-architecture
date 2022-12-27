@@ -23,20 +23,18 @@ public class DeletePersonTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId);
+    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId).AuthenticateAs(AdminId);
 
     private async Task<PersonDto> CreateTestPerson()
     {
         return await Http
             .Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
-            .AuthenticateAs(AdminId)
             .Send()
             .AsData();
     }
 
     private HttpSingleRequestExecutor<PersonDto> DeletePerson(Guid userId) => Http
-        .Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam("id", userId))
-        .AuthenticateAs(AdminId);
+        .Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam("id", userId));
 
     [Fact]
     public async Task ShouldSucceedIfThePersonExists()
@@ -83,7 +81,8 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        var response = await Http.GetPerson(person.Id)
+        var response = await Http
+            .GetPerson(person.Id)
             .Send()
             .AsVerifiable();
 
@@ -94,7 +93,9 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMarkPersonRecordAsDeleted()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).Send().EnsureSuccess();
+        await DeletePerson(person.Id)
+            .Send()
+            .EnsureSuccess();
 
         using var scope = Factory.Services.CreateScope();
         var personRecord = await scope.ServiceProvider
