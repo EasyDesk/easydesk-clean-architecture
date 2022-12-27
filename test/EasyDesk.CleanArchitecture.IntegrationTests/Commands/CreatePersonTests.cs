@@ -141,11 +141,12 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task CreateManyPeople()
     {
-        var list = new List<CreatePersonBodyDto>();
-        for (int i = 0; i < 5; i++)
+        foreach (var i in Enumerable.Range(0, 150))
         {
-            var body = new CreatePersonBodyDto($"test-name-{i}", $"test-last-name-{i}", LocalDate.FromDateTime(DateTime.UnixEpoch.AddDays(i)));
-            list.Add(body);
+            var body = new CreatePersonBodyDto(
+                $"test-name-{i}",
+                $"test-last-name-{i}",
+                new LocalDate(1992, 3, 12).PlusDays(i));
             await Http.CreatePerson(body).Build().Send();
         }
 

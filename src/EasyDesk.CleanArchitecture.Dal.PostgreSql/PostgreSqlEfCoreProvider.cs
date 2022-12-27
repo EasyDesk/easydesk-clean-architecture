@@ -9,25 +9,20 @@ using Extension = Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure.Internal.
 
 namespace EasyDesk.CleanArchitecture.Dal.PostgreSql;
 
-internal class PostgreSqlEfCoreDataAccess<T> : EfCoreDataAccess<T, Builder, Extension>
-    where T : DomainContext<T>
+internal class PostgreSqlEfCoreProvider : IEfCoreProvider<Builder, Extension>
 {
-    public PostgreSqlEfCoreDataAccess(EfCoreDataAccessOptions<T, Builder, Extension> options)
-        : base(options)
-    {
-    }
+    private readonly NpgsqlDataSource _dataSource;
 
-    protected override DbConnection CreateDbConnection(string connectionString)
+    public PostgreSqlEfCoreProvider(string connectionString)
     {
         var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
         dataSourceBuilder.UseNodaTime();
-        return dataSourceBuilder.Build().CreateConnection();
+        _dataSource = dataSourceBuilder.Build();
     }
 
-    protected override void ConfigureDbProvider(
-        DbContextOptionsBuilder options,
-        DbConnection connection,
-        Action<Builder> configure)
+    public DbConnection NewConnection() => _dataSource.CreateConnection();
+
+    public void ConfigureDbProvider(DbContextOptionsBuilder options, DbConnection connection, Action<Builder> configure)
     {
         options.UseNpgsql(connection, x =>
         {
@@ -42,13 +37,12 @@ public static class SqlServerExtensions
     public static AppBuilder AddPostgreSqlDataAccess<T>(
         this AppBuilder builder,
         string connectionString,
-        Action<EfCoreDataAccessOptions<T, Builder, Extension>> configure = null)
+        Action<EfCoreDataAccessOptions<Builder, Extension>> configure = null)
         where T : DomainContext<T>
     {
 #pragma warning disable EF1001
-        return builder.AddEfCoreDataAccess(
-            connectionString,
-            options => new PostgreSqlEfCoreDataAccess<T>(options),
+        return builder.AddEfCoreDataAccess<T, Builder, Extension>(
+            new PostgreSqlEfCoreProvider(connectionString),
             configure);
 #pragma warning restore EF1001
     }

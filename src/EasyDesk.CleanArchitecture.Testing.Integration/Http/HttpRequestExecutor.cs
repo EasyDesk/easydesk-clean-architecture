@@ -66,13 +66,15 @@ public class HttpRequestExecutor
         {
             page
         };
-        for (int i = pageIndex + 1; i < pageCount; i++)
+        for (var i = pageIndex + 1; i < pageCount; i++)
         {
             var req = await _request.Clone();
             var query = HttpUtility.ParseQueryString(req.RequestUri.Query);
             query[nameof(pageIndex)] = i.ToString();
-            var uriBuilder = new UriBuilder(req.RequestUri);
-            uriBuilder.Query = query.ToString();
+            var uriBuilder = new UriBuilder(req.RequestUri)
+            {
+                Query = query.ToString()
+            };
             req.RequestUri = uriBuilder.Uri;
             var pageResponse = WrapPaginated(await _httpClient.SendAsync(req));
             await pageResponse.EnsureSuccess();
