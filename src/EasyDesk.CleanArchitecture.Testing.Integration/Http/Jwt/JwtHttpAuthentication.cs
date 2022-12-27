@@ -16,11 +16,11 @@ public class JwtHttpAuthentication : ITestHttpAuthentication
         _jwtTokenConfiguration = jwtTokenConfiguration;
     }
 
-    public void ConfigureAuthentication(HttpRequestBuilder builder, IEnumerable<Claim> identity) =>
-        builder.Headers(h => h.Replace(HeaderNames.Authorization, $"{JwtBearerDefaults.AuthenticationScheme} {ForgeJwt(identity)}"));
+    public void ConfigureAuthentication(HttpRequestMessage message, IEnumerable<Claim> identity) =>
+        message.Headers.Replace(HeaderNames.Authorization, $"{JwtBearerDefaults.AuthenticationScheme} {ForgeJwt(identity)}");
 
-    public void RemoveAuthentication(HttpRequestBuilder builder) =>
-        builder.Headers(h => h.Remove(HeaderNames.Authorization));
+    public void RemoveAuthentication(HttpRequestMessage message) =>
+        message.Headers.Remove(HeaderNames.Authorization);
 
     private string ForgeJwt(IEnumerable<Claim> identity) =>
         _jwtFacade.Create(identity, _jwtTokenConfiguration.ConfigureBuilder);

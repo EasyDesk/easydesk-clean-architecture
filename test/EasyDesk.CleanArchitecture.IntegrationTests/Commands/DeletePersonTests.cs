@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
@@ -29,9 +30,9 @@ public class DeletePersonTests : SampleIntegrationTest
         return await Http
             .Post(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
             .AuthenticateAs(AdminId)
-            .Build()
+            .Single<PersonDto>()
             .Send()
-            .AsData<PersonDto>();
+            .AsData();
     }
 
     private HttpRequestBuilder DeletePerson(Guid userId) => Http
@@ -44,9 +45,9 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
 
         var response = await DeletePerson(person.Id)
-            .Build()
+            .Single<PersonDto>()
             .Send()
-            .AsVerifiable<PersonDto>();
+            .AsVerifiable();
 
         await Verify(response);
     }
@@ -55,9 +56,9 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfThePersonDoesNotExist()
     {
         var response = await DeletePerson(Guid.NewGuid())
-            .Build()
+            .Single<PersonDto>()
             .Send()
-            .AsVerifiable<PersonDto>();
+            .AsVerifiable();
 
         await Verify(response);
     }
@@ -70,7 +71,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
         var person = await CreateTestPerson();
 
-        await DeletePerson(person.Id).Build().Send().EnsureSuccess();
+        await DeletePerson(person.Id).Single<PersonDto>().Send().EnsureSuccess();
 
         await bus.WaitForMessageOrFail(new PersonDeleted(person.Id));
     }
@@ -79,13 +80,12 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMakeItImpossibleToGetTheSamePerson()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).Build().Send().EnsureSuccess();
+        await DeletePerson(person.Id).Single<PersonDto>().Send().EnsureSuccess();
 
-        var response = await Http.Get(PersonRoutes.GetPerson.WithRouteParam("id", person.Id))
-            .AuthenticateAs(AdminId)
-            .Build()
+        var response = await Http.GetPerson(person.Id)
+            .Single<PersonDto>()
             .Send()
-            .AsVerifiable<PersonDto>();
+            .AsVerifiable();
 
         await Verify(response);
     }
@@ -94,7 +94,7 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMarkPersonRecordAsDeleted()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).Build().Send().EnsureSuccess();
+        await DeletePerson(person.Id).Single<PersonDto>().Send().EnsureSuccess();
 
         using var scope = Factory.Services.CreateScope();
         var personRecord = await scope.ServiceProvider

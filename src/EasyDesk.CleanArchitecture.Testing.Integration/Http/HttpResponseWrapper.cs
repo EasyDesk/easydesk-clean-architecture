@@ -3,62 +3,96 @@ using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public class HttpResponseWrapper
+public class HttpResponseWrapper<T> : HttpResponseWrapper<T, Nothing>
 {
-    private readonly HttpResponseMessage _httpResponseMessage;
+    public HttpResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+        : base(httpResponseMessage, jsonSerializerSettings)
+    {
+    }
+
+    public HttpResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+        : base(httpResponseMessage, jsonSerializerSettings)
+    {
+    }
+}
+
+public class HttpPaginatedResponseWrapper<T> : HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>
+{
+    public HttpPaginatedResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+        : base(httpResponseMessage, jsonSerializerSettings)
+    {
+    }
+
+    public HttpPaginatedResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+        : base(httpResponseMessage, jsonSerializerSettings)
+    {
+    }
+
+    public async Task<(int, int)> PageIndexAndCount()
+    {
+        var m = await AsMetadata();
+        return (m.PageIndex, m.PageCount);
+    }
+}
+
+public class HttpResponseWrapper<T, M>
+{
+    private readonly AsyncFunc<HttpResponseMessage> _httpResponseMessage;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
+    private Option<HttpResponseMessage> _cache = None;
 
     public HttpResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+        : this(() => Task.FromResult(httpResponseMessage), jsonSerializerSettings)
+    {
+    }
+
+    public HttpResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
     {
         _httpResponseMessage = httpResponseMessage;
         _jsonSerializerSettings = jsonSerializerSettings;
     }
 
-    public async Task<VerifiableHttpResponse<T, Nothing>> AsVerifiable<T>() =>
-        new(
-            _httpResponseMessage.StatusCode,
-            await ParseContent<T>());
+    private async Task<HttpResponseMessage> GetResponseOrCache() => (_cache || (_cache = Some(await _httpResponseMessage()))).Value;
 
-    public async Task<T> AsData<T>()
-    {
-        await EnsureSuccess();
-        return (await ParseContent<T>()).Data.Value;
-    }
+    public Task<HttpResponseMessage> Response => GetResponseOrCache();
 
-    public bool IsSuccess => _httpResponseMessage.IsSuccessStatusCode && _httpResponseMessage.Content is not null;
+    public Task<bool> IsSuccess => Response.Map(r => r.IsSuccessStatusCode && r.Content is not null);
 
     public async Task EnsureSuccess()
     {
-        if (!IsSuccess)
+        if (!await IsSuccess)
         {
-            throw await HttpRequestUnexpectedFailureException.Create(_httpResponseMessage);
+            throw await HttpRequestUnexpectedFailureException.Create(await Response);
         }
     }
 
-    public async Task<bool> Check<T>(Func<T, bool> condition) => IsSuccess && condition(await AsData<T>());
-
-    private async Task<ResponseDto<T, Nothing>> ParseContent<T>()
+    private async Task<ResponseDto<T, M>> ParseContent()
     {
-        var bodyAsJson = await _httpResponseMessage.Content.ReadAsStringAsync();
+        var bodyAsJson = await (await Response).Content.ReadAsStringAsync();
         try
         {
-            return JsonConvert.DeserializeObject<ResponseDto<T, Nothing>>(bodyAsJson, _jsonSerializerSettings);
+            return JsonConvert.DeserializeObject<ResponseDto<T, M>>(bodyAsJson, _jsonSerializerSettings);
         }
         catch (JsonException e)
         {
             throw new Exception($"Failed to parse response as {typeof(T).Name}. Content was:\n\n{bodyAsJson}", e);
         }
     }
-}
 
-public static partial class HttpResponseBuilderExtensions
-{
-    public static async Task<VerifiableHttpResponse<T, Nothing>> AsVerifiable<T>(this Task<HttpResponseWrapper> builder) =>
-        await (await builder).AsVerifiable<T>();
+    public Task<VerifiableHttpResponse<T, M>> AsVerifiable() =>
+        Response.FlatMap(async r => new VerifiableHttpResponse<T, M>(r.StatusCode, await ParseContent()));
 
-    public static async Task<T> AsData<T>(this Task<HttpResponseWrapper> builder) =>
-        await (await builder).AsData<T>();
+    public async Task<T> AsData()
+    {
+        await EnsureSuccess();
+        return (await ParseContent()).Data.Value;
+    }
 
-    public static async Task EnsureSuccess(this Task<HttpResponseWrapper> builder) =>
-        await (await builder).EnsureSuccess();
+    public async Task<M> AsMetadata()
+    {
+        await EnsureSuccess();
+        return (await ParseContent()).Meta;
+    }
+
+    public async Task<bool> Check(Func<T, bool> condition) => await IsSuccess && condition(await AsData());
 }

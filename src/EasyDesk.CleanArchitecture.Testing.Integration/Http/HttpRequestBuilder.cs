@@ -46,15 +46,23 @@ public class HttpRequestBuilder
 
     public HttpRequestBuilder Authenticate(IEnumerable<Claim> identity)
     {
-        _testHttpAuthentication.ConfigureAuthentication(this, identity);
+        _testHttpAuthentication.ConfigureAuthentication(_request, identity);
         return this;
     }
 
     public HttpRequestBuilder NoAuthentication()
     {
-        _testHttpAuthentication.RemoveAuthentication(this);
+        _testHttpAuthentication.RemoveAuthentication(_request);
         return this;
     }
 
-    public HttpRequestExecutor Build() => new(_httpClient, _request, _settings);
+    public HttpSingleRequestExecutor<T> Single<T>()
+    {
+        return new(_httpClient, _request, _settings);
+    }
+
+    public HttpPaginatedRequestExecutor<T> Paginated<T>()
+    {
+        return new(_httpClient, _request, _settings);
+    }
 }
