@@ -5,9 +5,9 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Api;
 
 public static class PetEndpoints
 {
-    public static HttpRequestBuilder CreatePet(this HttpTestHelper http, Guid personId, CreatePetBodyDto body) =>
-        http.Post(PetsRoutes.CreatePet.WithRouteParam(nameof(personId), personId), body);
+    public static HttpSingleRequestExecutor<PetDto> CreatePet(this HttpTestHelper http, Guid personId, CreatePetBodyDto body) =>
+        http.Post<CreatePetBodyDto, PetDto>(PetsRoutes.CreatePet.WithRouteParam(nameof(personId), personId), body);
 
-    public static HttpRequestBuilder GetOwnedPets(this HttpTestHelper http, Guid personId) =>
-        http.Get(PetsRoutes.GetOwnedPets.WithRouteParam(nameof(personId), personId));
+    public static HttpPaginatedRequestExecutor<PetDto> GetOwnedPets(this HttpTestHelper http, Guid personId) =>
+        http.GetPaginated<PetDto>(PetsRoutes.GetOwnedPets.WithRouteParam(nameof(personId), personId));
 }

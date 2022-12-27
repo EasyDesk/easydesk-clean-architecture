@@ -5,15 +5,15 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Api;
 
 public static class PersonEndpoints
 {
-    public static HttpRequestBuilder CreatePerson(this HttpTestHelper http, CreatePersonBodyDto body) =>
-        http.Post(PersonRoutes.CreatePerson, body);
+    public static HttpSingleRequestExecutor<PersonDto> CreatePerson(this HttpTestHelper http, CreatePersonBodyDto body) =>
+        http.Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, body);
 
-    public static HttpRequestBuilder DeletePerson(this HttpTestHelper http, Guid id) =>
-        http.Delete(PersonRoutes.DeletePerson.WithRouteParam(nameof(id), id));
+    public static HttpSingleRequestExecutor<PersonDto> DeletePerson(this HttpTestHelper http, Guid id) =>
+        http.Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam(nameof(id), id));
 
-    public static HttpRequestBuilder GetPerson(this HttpTestHelper http, Guid id) =>
-        http.Get(PersonRoutes.GetPerson.WithRouteParam(nameof(id), id));
+    public static HttpSingleRequestExecutor<PersonDto> GetPerson(this HttpTestHelper http, Guid id) =>
+        http.Get<PersonDto>(PersonRoutes.GetPerson.WithRouteParam(nameof(id), id));
 
-    public static HttpRequestBuilder GetPeople(this HttpTestHelper http) =>
-        http.Get(PersonRoutes.GetPeople);
+    public static HttpPaginatedRequestExecutor<PersonDto> GetPeople(this HttpTestHelper http) =>
+        http.GetPaginated<PersonDto>(PersonRoutes.GetPeople);
 }

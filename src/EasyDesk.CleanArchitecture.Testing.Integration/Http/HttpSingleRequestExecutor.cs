@@ -3,7 +3,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public class HttpSingleRequestExecutor<T>
+public class HttpSingleRequestExecutor<T> : HttpRequestBuilder<T, HttpSingleRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
     private readonly HttpRequestMessage _request;
@@ -12,7 +12,12 @@ public class HttpSingleRequestExecutor<T>
     private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(5);
     private static readonly Duration _defaultRequestInterval = Duration.FromMilliseconds(200);
 
-    public HttpSingleRequestExecutor(HttpClient httpClient, HttpRequestMessage httpRequestMessage, JsonSerializerSettings serializerSettings)
+    public HttpSingleRequestExecutor(
+        HttpRequestMessage httpRequestMessage,
+        HttpClient httpClient,
+        JsonSerializerSettings serializerSettings,
+        ITestHttpAuthentication testHttpAuthentication)
+        : base(httpRequestMessage, testHttpAuthentication)
     {
         _httpClient = httpClient;
         _request = httpRequestMessage;

@@ -23,17 +23,20 @@ public class HttpTestHelper
         _settings = jsonSettingsConfigurator.CreateSettings();
     }
 
-    public HttpRequestBuilder Get(string requestUri) =>
-        Request(requestUri, HttpMethod.Get);
+    public HttpSingleRequestExecutor<R> Get<R>(string requestUri) =>
+        Request<R>(requestUri, HttpMethod.Get);
 
-    public HttpRequestBuilder Post<T>(string requestUri, T body) =>
-        Request(requestUri, HttpMethod.Post, JsonContent(body));
+    public HttpPaginatedRequestExecutor<R> GetPaginated<R>(string requestUri) =>
+        RequestPaginated<R>(requestUri, HttpMethod.Get);
 
-    public HttpRequestBuilder Put<T>(string requestUri, T body) =>
-        Request(requestUri, HttpMethod.Put, JsonContent(body));
+    public HttpSingleRequestExecutor<R> Post<T, R>(string requestUri, T body) =>
+        Request<R>(requestUri, HttpMethod.Post, JsonContent(body));
 
-    public HttpRequestBuilder Delete(string requestUri) =>
-        Request(requestUri, HttpMethod.Delete);
+    public HttpSingleRequestExecutor<R> Put<T, R>(string requestUri, T body) =>
+        Request<R>(requestUri, HttpMethod.Put, JsonContent(body));
+
+    public HttpSingleRequestExecutor<R> Delete<R>(string requestUri) =>
+        Request<R>(requestUri, HttpMethod.Delete);
 
     private StringContent JsonContent<T>(T body)
     {
@@ -42,13 +45,24 @@ public class HttpTestHelper
         return content;
     }
 
-    private HttpRequestBuilder Request(string requestUri, HttpMethod method, HttpContent content = null)
+    private HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, HttpContent content = null)
     {
         var request = new HttpRequestMessage(method, requestUri)
         {
             Content = content
         };
-        var builder = new HttpRequestBuilder(request, _httpClient, _settings, _httpAuthentication);
+        var builder = new HttpSingleRequestExecutor<R>(request, _httpClient, _settings, _httpAuthentication);
+        _configureRequest?.Invoke(builder);
+        return builder;
+    }
+
+    private HttpPaginatedRequestExecutor<R> RequestPaginated<R>(string requestUri, HttpMethod method, HttpContent content = null)
+    {
+        var request = new HttpRequestMessage(method, requestUri)
+        {
+            Content = content
+        };
+        var builder = new HttpPaginatedRequestExecutor<R>(request, _httpClient, _settings, _httpAuthentication);
         _configureRequest?.Invoke(builder);
         return builder;
     }

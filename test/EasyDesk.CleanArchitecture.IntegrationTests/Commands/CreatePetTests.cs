@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
-using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
@@ -26,11 +25,13 @@ public class CreatePetTests : SampleIntegrationTest
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12));
 
-        var person = await Http.CreatePerson(body).Single<PersonDto>()
+        var person = await Http
+            .CreatePerson(body)
             .Send()
             .AsData();
 
-        var response = await Http.CreatePet(person.Id, new(Nickname)).Single<PetDto>()
+        var response = await Http
+            .CreatePet(person.Id, new(Nickname))
             .Send()
             .AsVerifiable();
 

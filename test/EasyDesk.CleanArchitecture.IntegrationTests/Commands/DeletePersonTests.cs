@@ -28,15 +28,14 @@ public class DeletePersonTests : SampleIntegrationTest
     private async Task<PersonDto> CreateTestPerson()
     {
         return await Http
-            .Post(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
+            .Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
             .AuthenticateAs(AdminId)
-            .Single<PersonDto>()
             .Send()
             .AsData();
     }
 
-    private HttpRequestBuilder DeletePerson(Guid userId) => Http
-        .Delete(PersonRoutes.DeletePerson.WithRouteParam("id", userId))
+    private HttpSingleRequestExecutor<PersonDto> DeletePerson(Guid userId) => Http
+        .Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam("id", userId))
         .AuthenticateAs(AdminId);
 
     [Fact]
@@ -45,7 +44,6 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
 
         var response = await DeletePerson(person.Id)
-            .Single<PersonDto>()
             .Send()
             .AsVerifiable();
 
@@ -56,7 +54,6 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfThePersonDoesNotExist()
     {
         var response = await DeletePerson(Guid.NewGuid())
-            .Single<PersonDto>()
             .Send()
             .AsVerifiable();
 
@@ -71,7 +68,9 @@ public class DeletePersonTests : SampleIntegrationTest
 
         var person = await CreateTestPerson();
 
-        await DeletePerson(person.Id).Single<PersonDto>().Send().EnsureSuccess();
+        await DeletePerson(person.Id)
+            .Send()
+            .EnsureSuccess();
 
         await bus.WaitForMessageOrFail(new PersonDeleted(person.Id));
     }
@@ -80,10 +79,11 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMakeItImpossibleToGetTheSamePerson()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).Single<PersonDto>().Send().EnsureSuccess();
+        await DeletePerson(person.Id)
+            .Send()
+            .EnsureSuccess();
 
         var response = await Http.GetPerson(person.Id)
-            .Single<PersonDto>()
             .Send()
             .AsVerifiable();
 
@@ -94,7 +94,7 @@ public class DeletePersonTests : SampleIntegrationTest
     public async Task ShouldMarkPersonRecordAsDeleted()
     {
         var person = await CreateTestPerson();
-        await DeletePerson(person.Id).Single<PersonDto>().Send().EnsureSuccess();
+        await DeletePerson(person.Id).Send().EnsureSuccess();
 
         using var scope = Factory.Services.CreateScope();
         var personRecord = await scope.ServiceProvider

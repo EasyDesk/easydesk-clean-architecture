@@ -1,68 +1,69 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public class HttpRequestBuilder
+public abstract class HttpRequestBuilder
+{
+    public abstract HttpRequestBuilder Headers(Action<HttpRequestHeaders> configureHeaders);
+
+    public abstract HttpRequestBuilder WithApiVersion(ApiVersion version);
+
+    public abstract HttpRequestBuilder Tenant(string tenantId);
+
+    public abstract HttpRequestBuilder NoTenant();
+
+    public abstract HttpRequestBuilder AuthenticateAs(string userId);
+
+    public abstract HttpRequestBuilder Authenticate(IEnumerable<Claim> identity);
+
+    public abstract HttpRequestBuilder NoAuthentication();
+}
+
+public abstract class HttpRequestBuilder<T, E> : HttpRequestBuilder
+    where E : HttpRequestBuilder<T, E>
 {
     private readonly HttpRequestMessage _request;
-    private readonly HttpClient _httpClient;
     private readonly ITestHttpAuthentication _testHttpAuthentication;
-    private readonly JsonSerializerSettings _settings;
 
     public HttpRequestBuilder(
         HttpRequestMessage request,
-        HttpClient httpClient,
-        JsonSerializerSettings settings,
         ITestHttpAuthentication testHttpAuthentication)
     {
         _request = request;
-        _httpClient = httpClient;
-        _settings = settings;
         _testHttpAuthentication = testHttpAuthentication;
     }
 
-    public HttpRequestBuilder Headers(Action<HttpRequestHeaders> configureHeaders)
-    {
-        configureHeaders(_request.Headers);
-        return this;
-    }
-
-    public HttpRequestBuilder WithApiVersion(ApiVersion version) =>
+    public override E WithApiVersion(ApiVersion version) =>
         Headers(h => h.Replace(ApiVersioningUtils.VersionHeader, version.ToString()));
 
-    public HttpRequestBuilder Tenant(string tenantId) =>
+    public override E Tenant(string tenantId) =>
         Headers(h => h.Replace(MultitenancyDefaults.TenantIdHttpHeader, tenantId));
 
-    public HttpRequestBuilder NoTenant() =>
+    public override E NoTenant() =>
         Headers(h => h.Remove(MultitenancyDefaults.TenantIdHttpHeader));
 
-    public HttpRequestBuilder AuthenticateAs(string userId) =>
+    public override E AuthenticateAs(string userId) =>
         Authenticate(new Claim[] { new Claim(ClaimTypes.NameIdentifier, userId) });
 
-    public HttpRequestBuilder Authenticate(IEnumerable<Claim> identity)
+    public override E Headers(Action<HttpRequestHeaders> configureHeaders)
+    {
+        configureHeaders(_request.Headers);
+        return (E)this;
+    }
+
+    public override E Authenticate(IEnumerable<Claim> identity)
     {
         _testHttpAuthentication.ConfigureAuthentication(_request, identity);
-        return this;
+        return (E)this;
     }
 
-    public HttpRequestBuilder NoAuthentication()
+    public override E NoAuthentication()
     {
         _testHttpAuthentication.RemoveAuthentication(_request);
-        return this;
-    }
-
-    public HttpSingleRequestExecutor<T> Single<T>()
-    {
-        return new(_httpClient, _request, _settings);
-    }
-
-    public HttpPaginatedRequestExecutor<T> Paginated<T>()
-    {
-        return new(_httpClient, _request, _settings);
+        return (E)this;
     }
 }

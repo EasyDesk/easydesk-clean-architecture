@@ -4,13 +4,18 @@ using System.Web;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public class HttpPaginatedRequestExecutor<T>
+public class HttpPaginatedRequestExecutor<T> : HttpRequestBuilder<T, HttpPaginatedRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
     private readonly HttpRequestMessage _request;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-    public HttpPaginatedRequestExecutor(HttpClient httpClient, HttpRequestMessage httpRequestMessage, JsonSerializerSettings jsonSerializerSettings)
+    public HttpPaginatedRequestExecutor(
+        HttpRequestMessage httpRequestMessage,
+        HttpClient httpClient,
+        JsonSerializerSettings jsonSerializerSettings,
+        ITestHttpAuthentication testHttpAuthentication)
+        : base(httpRequestMessage, testHttpAuthentication)
     {
         _httpClient = httpClient;
         _request = httpRequestMessage;
