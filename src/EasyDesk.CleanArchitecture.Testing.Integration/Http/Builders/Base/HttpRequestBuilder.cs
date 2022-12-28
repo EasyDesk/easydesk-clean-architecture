@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public abstract class HttpRequestBuilder
 {
@@ -26,14 +26,15 @@ public abstract class HttpRequestBuilder
 public abstract class HttpRequestBuilder<T, E> : HttpRequestBuilder
     where E : HttpRequestBuilder<T, E>
 {
-    private readonly HttpRequestMessage _request;
     private readonly ITestHttpAuthentication _testHttpAuthentication;
+
+    protected HttpRequestMessage Request { get; }
 
     public HttpRequestBuilder(
         HttpRequestMessage request,
         ITestHttpAuthentication testHttpAuthentication)
     {
-        _request = request;
+        Request = request;
         _testHttpAuthentication = testHttpAuthentication;
     }
 
@@ -51,19 +52,19 @@ public abstract class HttpRequestBuilder<T, E> : HttpRequestBuilder
 
     public override E Headers(Action<HttpRequestHeaders> configureHeaders)
     {
-        configureHeaders(_request.Headers);
+        configureHeaders(Request.Headers);
         return (E)this;
     }
 
     public override E Authenticate(IEnumerable<Claim> identity)
     {
-        _testHttpAuthentication.ConfigureAuthentication(_request, identity);
+        _testHttpAuthentication.ConfigureAuthentication(Request, identity);
         return (E)this;
     }
 
     public override E NoAuthentication()
     {
-        _testHttpAuthentication.RemoveAuthentication(_request);
+        _testHttpAuthentication.RemoveAuthentication(Request);
         return (E)this;
     }
 }

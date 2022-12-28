@@ -1,4 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using Newtonsoft.Json;
 using System.Net.Mime;
 
@@ -51,7 +54,7 @@ public class HttpTestHelper
         {
             Content = content
         };
-        var builder = new HttpSingleRequestExecutor<R>(request, _httpClient, _settings, _httpAuthentication);
+        var builder = new HttpSingleRequestExecutor<R>(request, _httpAuthentication, _httpClient, _settings);
         _configureRequest?.Invoke(builder);
         return builder;
     }

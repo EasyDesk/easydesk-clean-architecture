@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
 using System.Security.Claims;

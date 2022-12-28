@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;

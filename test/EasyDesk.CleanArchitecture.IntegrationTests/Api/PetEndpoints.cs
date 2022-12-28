@@ -1,4 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Api;

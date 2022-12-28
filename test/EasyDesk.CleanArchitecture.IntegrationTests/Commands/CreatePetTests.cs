@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 

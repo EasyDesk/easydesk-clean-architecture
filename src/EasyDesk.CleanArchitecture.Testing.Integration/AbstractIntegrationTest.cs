@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using NodaTime;

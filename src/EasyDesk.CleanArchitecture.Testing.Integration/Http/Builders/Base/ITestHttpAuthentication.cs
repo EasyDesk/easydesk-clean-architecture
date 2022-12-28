@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public interface ITestHttpAuthentication
 {

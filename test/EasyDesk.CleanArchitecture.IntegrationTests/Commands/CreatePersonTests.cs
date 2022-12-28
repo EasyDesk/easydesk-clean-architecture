@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
@@ -126,7 +127,7 @@ public class CreatePersonTests : SampleIntegrationTest
         {
             await Http
                 .GetPeople()
-                .CollectEveryPage()
+                .Send()
                 .EnsureSuccess();
         }
     }
@@ -146,17 +147,18 @@ public class CreatePersonTests : SampleIntegrationTest
         }
     }
 
-    /* TODO: add polling to pagination
     [Fact]
     public async Task ShouldAlsoSendACommandToCreateThePersonsBestFriend()
     {
-        var person = await CreatePerson().Single<PersonDto>().Send().AsData();
+        var person = await CreatePerson().Send().AsData();
 
-        var response = await Http.GetOwnedPets(person.Id).Paginated<PetDto>().PollUntil<IEnumerable<PetDto>>(r => r.Any());
+        var response = await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .AsVerifiableEnumerable();
 
         await Verify(response);
     }
-    */
 
     [Fact]
     public async Task CreateManyPeople()
@@ -172,8 +174,8 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await Http
             .GetPeople()
-            .CollectEveryPage()
-            .AsVerifiable();
+            .Send()
+            .AsVerifiableEnumerable();
 
         await Verify(response);
     }

@@ -1,45 +1,12 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Dto;
 using Newtonsoft.Json;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
-public class HttpResponseWrapper<T> : HttpResponseWrapper<T, Nothing>
-{
-    public HttpResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
-        : base(httpResponseMessage, jsonSerializerSettings)
-    {
-    }
-
-    public HttpResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
-        : base(httpResponseMessage, jsonSerializerSettings)
-    {
-    }
-}
-
-public class HttpPaginatedResponseWrapper<T> : HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>
-{
-    public HttpPaginatedResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
-        : base(httpResponseMessage, jsonSerializerSettings)
-    {
-    }
-
-    public HttpPaginatedResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
-        : base(httpResponseMessage, jsonSerializerSettings)
-    {
-    }
-
-    public async Task<(int, int)> PageIndexAndCount()
-    {
-        var m = await AsMetadata();
-        return (m.PageIndex, m.PageCount);
-    }
-}
-
-public class HttpResponseWrapper<T, M>
+public class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
 {
     private readonly AsyncFunc<HttpResponseMessage> _httpResponseMessage;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
-    private Option<HttpResponseMessage> _cache = None;
 
     public HttpResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
         : this(() => Task.FromResult(httpResponseMessage), jsonSerializerSettings)
@@ -52,9 +19,7 @@ public class HttpResponseWrapper<T, M>
         _jsonSerializerSettings = jsonSerializerSettings;
     }
 
-    private async Task<HttpResponseMessage> GetResponseOrCache() => (_cache || (_cache = Some(await _httpResponseMessage()))).Value;
-
-    public Task<HttpResponseMessage> Response => GetResponseOrCache();
+    protected override async Task<HttpResponseMessage> Fetch() => await _httpResponseMessage();
 
     public Task<bool> IsSuccess => Response.Map(r => r.IsSuccessStatusCode && r.Content is not null);
 
