@@ -26,8 +26,8 @@ public class HttpSingleRequestExecutor<T> : HttpRequestExecutor<HttpSingleRespon
     public HttpSingleResponseWrapper<T> PollWhile(Func<T, bool> predicate, Duration? interval, Duration? timeout = null) =>
         PollWhile(async httpRM => predicate(await httpRM.AsData()), interval, timeout);
 
-    protected override Task<HttpResponseMessage> Send(CancellationToken cancellationToken) =>
-        _httpClient.SendAsync(CreateRequest(), cancellationToken);
+    protected override Task<HttpResponseMessage> MakeRequest() =>
+        _httpClient.SendAsync(CreateRequest());
 
     protected override HttpSingleResponseWrapper<T> Wrap(AsyncFunc<HttpResponseMessage> request) =>
         new(request, _jsonSerializerSettings);

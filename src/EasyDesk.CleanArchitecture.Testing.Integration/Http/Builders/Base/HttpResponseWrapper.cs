@@ -3,20 +3,18 @@ using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
-public abstract class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
+public class HttpResponseWrapper<T, M>
 {
     private readonly JsonSerializerSettings _jsonSerializerSettings;
-
-    public HttpResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
-        : this(() => Task.FromResult(httpResponseMessage), jsonSerializerSettings)
-    {
-    }
+    private readonly AsyncCache<HttpResponseMessage> _response;
 
     public HttpResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
-        : base(httpResponseMessage)
     {
         _jsonSerializerSettings = jsonSerializerSettings;
+        _response = new(httpResponseMessage);
     }
+
+    private async Task<HttpResponseMessage> GetResponse() => await _response.Get();
 
     public Task<bool> IsSuccess() => GetResponse().Map(r => r.IsSuccessStatusCode && r.Content is not null);
 

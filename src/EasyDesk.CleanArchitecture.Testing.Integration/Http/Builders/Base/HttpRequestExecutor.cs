@@ -14,11 +14,7 @@ public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequest
     {
     }
 
-    protected abstract Task<I> Send(CancellationToken cancellationToken);
-
-    public W Send() => Wrap(() => Send(CancellationToken.None));
-
-    protected abstract W Wrap(AsyncFunc<I> request);
+    public W Send() => Wrap(MakeRequest);
 
     public W PollWhile(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         Wrap(async () =>
@@ -27,14 +23,14 @@ public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequest
             var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
             var attempts = 1;
             var actualInterval = (interval ?? _defaultRequestInterval).ToTimeSpan();
-            var message = await Send(cts.Token);
+            var message = await MakeRequest();
             while (await predicate(Wrap(() => Task.FromResult(message))))
             {
                 if (cts.IsCancellationRequested)
                 {
                     throw new PollingFailedException(attempts, actualTimeout);
                 }
-                attempts++;
+
                 try
                 {
                     await Task.Delay(actualInterval, cts.Token);
@@ -43,11 +39,17 @@ public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequest
                 {
                     throw new PollingFailedException(attempts, actualTimeout);
                 }
-                message = await Send(cts.Token);
+
+                attempts++;
+                message = await MakeRequest();
             }
             return message;
         });
 
     public W PollUntil(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         PollWhile(async httpRM => !await predicate(httpRM), interval, timeout);
+
+    protected abstract Task<I> MakeRequest();
+
+    protected abstract W Wrap(AsyncFunc<I> request);
 }

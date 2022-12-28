@@ -2,11 +2,13 @@
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
-public class HttpPaginatedResponsesWrapper<T> : ResponseCache<IEnumerable<HttpPaginatedResponseWrapper<T>>>
+public class HttpPageSequenceWrapper<T>
 {
-    public HttpPaginatedResponsesWrapper(AsyncFunc<IEnumerable<HttpPaginatedResponseWrapper<T>>> responses)
-        : base(responses)
+    private readonly AsyncCache<IEnumerable<HttpPageResponseWrapper<T>>> _response;
+
+    public HttpPageSequenceWrapper(AsyncFunc<IEnumerable<HttpPageResponseWrapper<T>>> responses)
     {
+        _response = new(responses);
     }
 
     public async Task<IEnumerable<T>> AsVerifiableEnumerable()
@@ -26,4 +28,6 @@ public class HttpPaginatedResponsesWrapper<T> : ResponseCache<IEnumerable<HttpPa
             await response.EnsureSuccess();
         }
     }
+
+    private async Task<IEnumerable<HttpPageResponseWrapper<T>>> GetResponse() => await _response.Get();
 }

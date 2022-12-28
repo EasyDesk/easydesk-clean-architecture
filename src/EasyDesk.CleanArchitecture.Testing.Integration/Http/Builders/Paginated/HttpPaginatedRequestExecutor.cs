@@ -3,13 +3,12 @@ using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools.Collections;
 using Newtonsoft.Json;
 using NodaTime;
-using System.Runtime.CompilerServices;
 using System.Web;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
 public class HttpPaginatedRequestExecutor<T> :
-    HttpRequestExecutor<HttpPaginatedResponsesWrapper<T>, IEnumerable<HttpPaginatedResponseWrapper<T>>>
+    HttpRequestExecutor<HttpPageSequenceWrapper<T>, IEnumerable<HttpPageResponseWrapper<T>>>
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
@@ -25,17 +24,19 @@ public class HttpPaginatedRequestExecutor<T> :
         _jsonSerializerSettings = jsonSerializerSettings;
     }
 
-    public HttpPaginatedResponsesWrapper<T> PollUntil(Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
+    public HttpPageSequenceWrapper<T> PollUntil(Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         PollUntil(async httpRM => predicate(await httpRM.AsVerifiableEnumerable()), interval, timeout);
 
-    public HttpPaginatedResponsesWrapper<T> PollWhile(Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
+    public HttpPageSequenceWrapper<T> PollWhile(Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         PollWhile(async httpRM => predicate(await httpRM.AsVerifiableEnumerable()), interval, timeout);
 
-    private HttpPaginatedResponseWrapper<T> Wrap(AsyncFunc<HttpResponseMessage> message) =>
+    private HttpPageResponseWrapper<T> WrapSinglePage(AsyncFunc<HttpResponseMessage> message) =>
         new(message, _jsonSerializerSettings);
 
-    private async IAsyncEnumerable<HttpPaginatedResponseWrapper<T>> CollectPagesSequentially(
-        [EnumeratorCancellation] CancellationToken requestToken)
+    protected override Task<IEnumerable<HttpPageResponseWrapper<T>>> MakeRequest() =>
+        EnumeratePages().ToEnumerableAsync();
+
+    private async IAsyncEnumerable<HttpPageResponseWrapper<T>> EnumeratePages()
     {
         var hasNextPage = true;
         var pageIndex = 0;
@@ -43,8 +44,8 @@ public class HttpPaginatedRequestExecutor<T> :
         {
             var request = CreateRequest();
             SetPageIndex(request, pageIndex);
-            var page = Wrap(() => _httpClient.SendAsync(request, requestToken));
-            var (_, pageCount) = await page.PageIndexAndCount();
+            var page = WrapSinglePage(() => _httpClient.SendAsync(request));
+            var pageCount = await page.PageCount();
             await page.EnsureSuccess();
             yield return page;
             pageIndex++;
@@ -65,9 +66,6 @@ public class HttpPaginatedRequestExecutor<T> :
         req.RequestUri = uriBuilder.Uri;
     }
 
-    protected override Task<IEnumerable<HttpPaginatedResponseWrapper<T>>> Send(CancellationToken cancellationToken) =>
-        CollectPagesSequentially(cancellationToken).ToEnumerableAsync();
-
-    protected override HttpPaginatedResponsesWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpPaginatedResponseWrapper<T>>> request) =>
+    protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpPageResponseWrapper<T>>> request) =>
         new(request);
 }
