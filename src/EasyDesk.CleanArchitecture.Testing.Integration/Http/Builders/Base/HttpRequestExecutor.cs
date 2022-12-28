@@ -4,7 +4,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequestExecutor<W, I>>
 {
-    private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(5);
+    private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(7);
     private static readonly Duration _defaultRequestInterval = Duration.FromMilliseconds(200);
 
     public HttpRequestExecutor(
@@ -14,7 +14,11 @@ public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequest
     {
     }
 
-    public W Send() => Wrap(MakeRequest);
+    protected abstract Task<I> MakeRequest(CancellationToken timeoutToken);
+
+    protected abstract W Wrap(AsyncFunc<I> request);
+
+    public W Send() => Wrap(() => MakeRequest(CancellationToken.None));
 
     public W PollWhile(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         Wrap(async () =>
@@ -23,7 +27,7 @@ public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequest
             var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
             var attempts = 1;
             var actualInterval = (interval ?? _defaultRequestInterval).ToTimeSpan();
-            var message = await MakeRequest();
+            var message = await MakeRequest(cts.Token);
             while (await predicate(Wrap(() => Task.FromResult(message))))
             {
                 if (cts.IsCancellationRequested)
@@ -41,15 +45,11 @@ public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequest
                 }
 
                 attempts++;
-                message = await MakeRequest();
+                message = await MakeRequest(cts.Token);
             }
             return message;
         });
 
     public W PollUntil(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
-        PollWhile(async httpRM => !await predicate(httpRM), interval, timeout);
-
-    protected abstract Task<I> MakeRequest();
-
-    protected abstract W Wrap(AsyncFunc<I> request);
+        PollWhile(async wrapped => !await predicate(wrapped), interval, timeout);
 }
