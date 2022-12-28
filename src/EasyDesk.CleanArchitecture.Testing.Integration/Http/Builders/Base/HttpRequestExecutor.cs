@@ -2,8 +2,8 @@
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
-public abstract class HttpRequestExecutor<T, W, I>
-    : HttpRequestBuilder<T, HttpRequestExecutor<T, W, I>>
+public abstract class HttpRequestExecutor<W, I>
+    : HttpRequestBuilder<HttpRequestExecutor<W, I>>
 {
     private readonly IClock _clock = SystemClock.Instance;
     private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(5);

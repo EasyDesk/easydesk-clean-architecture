@@ -5,7 +5,7 @@ using NodaTime;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 
 public class HttpSingleRequestExecutor<T>
-    : HttpRequestExecutor<T, HttpSingleResponseWrapper<T>, HttpResponseMessage>
+    : HttpRequestExecutor<HttpSingleResponseWrapper<T>, HttpResponseMessage>
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;

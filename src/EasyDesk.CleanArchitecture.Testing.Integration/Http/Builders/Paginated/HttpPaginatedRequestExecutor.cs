@@ -3,12 +3,13 @@ using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools.Collections;
 using Newtonsoft.Json;
 using NodaTime;
+using System.Runtime.CompilerServices;
 using System.Web;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
 public class HttpPaginatedRequestExecutor<T>
-    : HttpRequestExecutor<T, HttpPaginatedResponsesWrapper<T>, IEnumerable<HttpPaginatedResponseWrapper<T>>>
+    : HttpRequestExecutor<HttpPaginatedResponsesWrapper<T>, IEnumerable<HttpPaginatedResponseWrapper<T>>>
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
@@ -33,17 +34,18 @@ public class HttpPaginatedRequestExecutor<T>
     private HttpPaginatedResponseWrapper<T> Wrap(AsyncFunc<HttpResponseMessage> message) =>
         new(message, _jsonSerializerSettings);
 
-    private async IAsyncEnumerable<HttpPaginatedResponseWrapper<T>> CollectPagesSequentially(HttpRequestMessage request)
+    private async IAsyncEnumerable<HttpPaginatedResponseWrapper<T>> CollectPagesSequentially(
+        HttpRequestMessage request,
+        [EnumeratorCancellation] CancellationToken requestToken)
     {
-        // TODO: take and use a CancellationToken
-        var page = Wrap(() => _httpClient.SendAsync(request));
+        var page = Wrap(() => _httpClient.SendAsync(request, requestToken));
         var (pageIndex, pageCount) = await page.PageIndexAndCount();
         yield return page;
         for (var i = pageIndex + 1; i < pageCount; i++)
         {
             var req = await request.Clone();
             SetPage(req, i);
-            page = Wrap(() => _httpClient.SendAsync(req));
+            page = Wrap(() => _httpClient.SendAsync(req, requestToken));
             await page.EnsureSuccess();
             yield return page;
         }
@@ -60,7 +62,7 @@ public class HttpPaginatedRequestExecutor<T>
     }
 
     protected override Task<IEnumerable<HttpPaginatedResponseWrapper<T>>> Send(HttpRequestMessage request, CancellationToken cancellationToken) =>
-        CollectPagesSequentially(request)
+        CollectPagesSequentially(request, cancellationToken)
         .ToEnumerableAsync();
 
     protected override HttpPaginatedResponsesWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpPaginatedResponseWrapper<T>>> request) =>
