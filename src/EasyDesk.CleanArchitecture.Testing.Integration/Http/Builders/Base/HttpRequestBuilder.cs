@@ -27,13 +27,14 @@ public abstract class HttpRequestBuilder<B> : HttpRequestBuilder
     where B : HttpRequestBuilder<B>
 {
     private readonly ITestHttpAuthentication _testHttpAuthentication;
-    private readonly HttpRequestMessage _request;
+    private readonly Func<HttpRequestMessage> _requestFactory;
+    private Action<HttpRequestMessage> _configureRequest;
 
     public HttpRequestBuilder(
-        HttpRequestMessage request,
+        Func<HttpRequestMessage> requestFactory,
         ITestHttpAuthentication testHttpAuthentication)
     {
-        _request = request;
+        _requestFactory = requestFactory;
         _testHttpAuthentication = testHttpAuthentication;
     }
 
@@ -49,23 +50,24 @@ public abstract class HttpRequestBuilder<B> : HttpRequestBuilder
     public override B AuthenticateAs(string userId) =>
         Authenticate(new Claim[] { new Claim(ClaimTypes.NameIdentifier, userId) });
 
-    public override B Headers(Action<HttpRequestHeaders> configureHeaders)
+    public override B Headers(Action<HttpRequestHeaders> configureHeaders) =>
+        ConfigureRequest(r => configureHeaders(r.Headers));
+
+    public override B Authenticate(IEnumerable<Claim> identity) =>
+        ConfigureRequest(r => _testHttpAuthentication.ConfigureAuthentication(r, identity));
+
+    public override B NoAuthentication() => ConfigureRequest(_testHttpAuthentication.RemoveAuthentication);
+
+    private B ConfigureRequest(Action<HttpRequestMessage> configure)
     {
-        configureHeaders(_request.Headers);
+        _configureRequest += configure;
         return (B)this;
     }
 
-    public override B Authenticate(IEnumerable<Claim> identity)
+    protected HttpRequestMessage CreateRequest()
     {
-        _testHttpAuthentication.ConfigureAuthentication(_request, identity);
-        return (B)this;
+        var request = _requestFactory();
+        _configureRequest?.Invoke(request);
+        return request;
     }
-
-    public override B NoAuthentication()
-    {
-        _testHttpAuthentication.RemoveAuthentication(_request);
-        return (B)this;
-    }
-
-    public Task<HttpRequestMessage> Request => _request.Clone();
 }

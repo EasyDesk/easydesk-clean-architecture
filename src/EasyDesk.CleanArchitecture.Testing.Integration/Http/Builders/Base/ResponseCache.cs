@@ -10,7 +10,5 @@ public abstract class ResponseCache<T>
         _fetch = fetch;
     }
 
-    protected async Task<T> GetResponseOrCache() => (_cache || (_cache = Some(await _fetch()))).Value;
-
-    public Task<T> Response => GetResponseOrCache();
+    public async Task<T> GetResponse() => (_cache || (_cache = Some(await _fetch()))).Value;
 }

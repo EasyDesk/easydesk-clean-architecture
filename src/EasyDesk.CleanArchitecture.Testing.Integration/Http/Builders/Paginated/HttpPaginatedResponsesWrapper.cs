@@ -12,7 +12,7 @@ public class HttpPaginatedResponsesWrapper<T> : ResponseCache<IEnumerable<HttpPa
     public async Task<IEnumerable<T>> AsVerifiableEnumerable()
     {
         var result = new List<T>();
-        foreach (var response in await Response)
+        foreach (var response in await GetResponse())
         {
             result.AddRange(await response.AsData());
         }
@@ -21,7 +21,7 @@ public class HttpPaginatedResponsesWrapper<T> : ResponseCache<IEnumerable<HttpPa
 
     public async Task EnsureSuccess()
     {
-        foreach (var response in await Response)
+        foreach (var response in await GetResponse())
         {
             await response.EnsureSuccess();
         }

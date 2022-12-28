@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
-public class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
+public abstract class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
 {
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
@@ -18,19 +18,19 @@ public class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
         _jsonSerializerSettings = jsonSerializerSettings;
     }
 
-    public Task<bool> IsSuccess => Response.Map(r => r.IsSuccessStatusCode && r.Content is not null);
+    public Task<bool> IsSuccess() => GetResponse().Map(r => r.IsSuccessStatusCode && r.Content is not null);
 
     public async Task EnsureSuccess()
     {
-        if (!await IsSuccess)
+        if (!await IsSuccess())
         {
-            throw await HttpRequestUnexpectedFailureException.Create(await Response);
+            throw await HttpRequestUnexpectedFailureException.Create(await GetResponse());
         }
     }
 
     private async Task<ResponseDto<T, M>> ParseContent()
     {
-        var bodyAsJson = await (await Response).Content.ReadAsStringAsync();
+        var bodyAsJson = await (await GetResponse()).Content.ReadAsStringAsync();
         try
         {
             return JsonConvert.DeserializeObject<ResponseDto<T, M>>(bodyAsJson, _jsonSerializerSettings);
@@ -42,7 +42,7 @@ public class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
     }
 
     public Task<VerifiableHttpResponse<T, M>> AsVerifiable() =>
-        Response.FlatMap(async r => new VerifiableHttpResponse<T, M>(r.StatusCode, await ParseContent()));
+        GetResponse().FlatMap(async r => new VerifiableHttpResponse<T, M>(r.StatusCode, await ParseContent()));
 
     public async Task<T> AsData()
     {
@@ -56,5 +56,5 @@ public class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
         return (await ParseContent()).Meta;
     }
 
-    public async Task<bool> Check(Func<T, bool> condition) => await IsSuccess && condition(await AsData());
+    public async Task<bool> Check(Func<T, bool> condition) => await IsSuccess() && condition(await AsData());
 }

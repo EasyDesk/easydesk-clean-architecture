@@ -50,7 +50,7 @@ public class HttpTestHelper
 
     private HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, HttpContent content = null)
     {
-        var request = new HttpRequestMessage(method, requestUri)
+        var request = () => new HttpRequestMessage(method, requestUri)
         {
             Content = content
         };
@@ -61,7 +61,7 @@ public class HttpTestHelper
 
     private HttpPaginatedRequestExecutor<R> RequestPaginated<R>(string requestUri, HttpMethod method, HttpContent content = null)
     {
-        var request = new HttpRequestMessage(method, requestUri)
+        var request = () => new HttpRequestMessage(method, requestUri)
         {
             Content = content
         };
