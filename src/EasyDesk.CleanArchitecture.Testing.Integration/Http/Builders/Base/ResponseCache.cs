@@ -3,10 +3,14 @@
 public abstract class ResponseCache<T>
 {
     private Option<T> _cache = None;
+    private readonly AsyncFunc<T> _fetch;
 
-    protected abstract Task<T> Fetch();
+    public ResponseCache(AsyncFunc<T> fetch)
+    {
+        _fetch = fetch;
+    }
 
-    protected async Task<T> GetResponseOrCache() => (_cache || (_cache = Some(await Fetch()))).Value;
+    protected async Task<T> GetResponseOrCache() => (_cache || (_cache = Some(await _fetch()))).Value;
 
     public Task<T> Response => GetResponseOrCache();
 }

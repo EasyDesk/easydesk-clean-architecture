@@ -5,7 +5,6 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
 {
-    private readonly AsyncFunc<HttpResponseMessage> _httpResponseMessage;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
     public HttpResponseWrapper(HttpResponseMessage httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
@@ -14,12 +13,10 @@ public class HttpResponseWrapper<T, M> : ResponseCache<HttpResponseMessage>
     }
 
     public HttpResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+        : base(httpResponseMessage)
     {
-        _httpResponseMessage = httpResponseMessage;
         _jsonSerializerSettings = jsonSerializerSettings;
     }
-
-    protected override async Task<HttpResponseMessage> Fetch() => await _httpResponseMessage();
 
     public Task<bool> IsSuccess => Response.Map(r => r.IsSuccessStatusCode && r.Content is not null);
 

@@ -4,14 +4,10 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated
 
 public class HttpPaginatedResponsesWrapper<T> : ResponseCache<IEnumerable<HttpPaginatedResponseWrapper<T>>>
 {
-    private readonly AsyncFunc<IEnumerable<HttpPaginatedResponseWrapper<T>>> _responses;
-
     public HttpPaginatedResponsesWrapper(AsyncFunc<IEnumerable<HttpPaginatedResponseWrapper<T>>> responses)
+        : base(responses)
     {
-        _responses = responses;
     }
-
-    protected override async Task<IEnumerable<HttpPaginatedResponseWrapper<T>>> Fetch() => await _responses();
 
     public async Task<IEnumerable<T>> AsVerifiableEnumerable()
     {

@@ -28,10 +28,9 @@ public abstract class HttpRequestExecutor<W, I>
             var polls = 1;
             async Task<I> Poll(bool clone)
             {
-                var request = clone ? await Request.Clone() : Request;
                 var cts = new CancellationTokenSource();
                 cts.CancelAfter(actualTimeout.ToTimeSpan());
-                return await Send(request, cts.Token);
+                return await Send(await Request, cts.Token);
             }
             var lastPollTime = startPollTime;
             var message = await Poll(clone: false);
@@ -52,8 +51,8 @@ public abstract class HttpRequestExecutor<W, I>
             return message;
         });
 
-    public W Send() => Wrap(() => Send(Request, CancellationToken.None));
+    public W Send() => Wrap(async () => await Send(await Request, CancellationToken.None));
 
     public W PollUntil(AsyncFunc<W, bool> predicate, Option<Duration> timeout = default) =>
-        PollWhile(async httpRM => !await predicate(httpRM), timeout);
+        PollWhile(async w => !await predicate(w), timeout);
 }

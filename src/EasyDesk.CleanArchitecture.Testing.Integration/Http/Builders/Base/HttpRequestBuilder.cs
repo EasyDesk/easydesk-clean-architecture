@@ -27,14 +27,13 @@ public abstract class HttpRequestBuilder<B> : HttpRequestBuilder
     where B : HttpRequestBuilder<B>
 {
     private readonly ITestHttpAuthentication _testHttpAuthentication;
-
-    protected HttpRequestMessage Request { get; }
+    private readonly HttpRequestMessage _request;
 
     public HttpRequestBuilder(
         HttpRequestMessage request,
         ITestHttpAuthentication testHttpAuthentication)
     {
-        Request = request;
+        _request = request;
         _testHttpAuthentication = testHttpAuthentication;
     }
 
@@ -52,19 +51,21 @@ public abstract class HttpRequestBuilder<B> : HttpRequestBuilder
 
     public override B Headers(Action<HttpRequestHeaders> configureHeaders)
     {
-        configureHeaders(Request.Headers);
+        configureHeaders(_request.Headers);
         return (B)this;
     }
 
     public override B Authenticate(IEnumerable<Claim> identity)
     {
-        _testHttpAuthentication.ConfigureAuthentication(Request, identity);
+        _testHttpAuthentication.ConfigureAuthentication(_request, identity);
         return (B)this;
     }
 
     public override B NoAuthentication()
     {
-        _testHttpAuthentication.RemoveAuthentication(Request);
+        _testHttpAuthentication.RemoveAuthentication(_request);
         return (B)this;
     }
+
+    public Task<HttpRequestMessage> Request => _request.Clone();
 }
