@@ -28,7 +28,7 @@ public record TenantId
 
     private static bool IsValidTenantId(string value)
     {
-        return !string.IsNullOrEmpty(value)
+        return !string.IsNullOrWhiteSpace(value)
             && value.Length <= MaxLength
             && TenantIdRegex.Instance().IsMatch(value);
     }

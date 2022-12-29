@@ -24,35 +24,26 @@ internal class SagaHandler<T, R, TController, TId, TState> : IHandler<T, R>
     public async Task<Result<R>> Handle(T request)
     {
         var sagaId = _configuration.GetSagaId(request);
-        var reference = await GetSagaReference(sagaId);
-        return await reference.MatchAsync(
-            some: r => HandleSaga(request, r),
+        var existingSaga = await _sagaManager.Find<TId, TState>(sagaId);
+        var saga = existingSaga || GetNewSagaIfPossible(sagaId);
+        return await saga.MatchAsync(
+            some: s => HandleSaga(request, s.Reference, s.State),
             none: () => Task.FromResult(Failure<R>(Errors.Generic("Unable to start saga with request of type {requestType}", typeof(T).Name))));
     }
 
-    private async Task<Option<ISagaReference<TId, TState>>> GetSagaReference(TId sagaId)
+    private async Task<Result<R>> HandleSaga(T request, ISagaReference<TState> sagaReference, TState state)
     {
-        var existingSagaReference = await _sagaManager.Find<TId, TState>(sagaId);
-        return existingSagaReference || CreateNewSagaReferenceIfPossible(sagaId);
-    }
-
-    private Option<ISagaReference<TId, TState>> CreateNewSagaReferenceIfPossible(TId sagaId)
-    {
-        if (!_configuration.CanStartSaga)
-        {
-            return None;
-        }
-        return Some(_sagaManager.CreateNew(sagaId, _controller.GetInitialState()));
-    }
-
-    private async Task<Result<R>> HandleSaga(T request, ISagaReference<TId, TState> sagaReference)
-    {
-        var context = new SagaContext<TState>(sagaReference.State);
+        var context = new SagaContext<TState>(state);
         return await _configuration.GetHandler(_controller)(request, context)
             .ThenIfSuccessAsync(_ => HandleSagaState(sagaReference, context));
     }
 
-    private static async Task HandleSagaState(ISagaReference<TId, TState> sagaReference, SagaContext<TState> context)
+    private Option<(ISagaReference<TState> Reference, TState State)> GetNewSagaIfPossible(TId sagaId) =>
+        _configuration.CanStartSaga
+            ? Some((_sagaManager.CreateNew<TId, TState>(sagaId), _controller.GetInitialState()))
+            : None;
+
+    private static async Task HandleSagaState(ISagaReference<TState> sagaReference, SagaContext<TState> context)
     {
         if (context.IsComplete)
         {
@@ -60,7 +51,7 @@ internal class SagaHandler<T, R, TController, TId, TState> : IHandler<T, R>
         }
         else
         {
-            await sagaReference.SaveState();
+            await sagaReference.Save(context.State);
         }
     }
 }

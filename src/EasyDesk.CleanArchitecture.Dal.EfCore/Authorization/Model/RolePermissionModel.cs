@@ -17,7 +17,7 @@ internal class RolePermissionModel : IMultitenantEntity
     {
         public void Configure(EntityTypeBuilder<RolePermissionModel> builder)
         {
-            builder.HasKey(x => new { x.RoleId, x.PermissionName });
+            builder.HasKey(x => new { x.RoleId, x.PermissionName, x.TenantId });
 
             builder.Property(x => x.RoleId)
                 .IsRequired()

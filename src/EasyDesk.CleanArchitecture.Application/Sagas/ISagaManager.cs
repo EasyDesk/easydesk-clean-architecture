@@ -2,7 +2,7 @@
 
 public interface ISagaManager
 {
-    Task<Option<ISagaReference<TId, TState>>> Find<TId, TState>(TId id);
+    Task<Option<(ISagaReference<TState> Reference, TState State)>> Find<TId, TState>(TId id);
 
-    ISagaReference<TId, TState> CreateNew<TId, TState>(TId id, TState initialState);
+    ISagaReference<TState> CreateNew<TId, TState>(TId id);
 }

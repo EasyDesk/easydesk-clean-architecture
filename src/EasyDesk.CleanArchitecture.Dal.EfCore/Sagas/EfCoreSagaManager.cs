@@ -1,0 +1,75 @@
+﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Sagas;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.Tools.Collections;
+using Newtonsoft.Json;
+
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
+
+internal class EfCoreSagaManager : ISagaManager
+{
+    private readonly SagasContext _context;
+    private readonly JsonSerializer _serializer;
+
+    public EfCoreSagaManager(SagasContext context, JsonSettingsConfigurator jsonConfigurator)
+    {
+        _context = context;
+        _serializer = JsonSerializer.Create(jsonConfigurator.CreateSettings());
+    }
+
+    public async Task<Option<(ISagaReference<TState> Reference, TState State)>> Find<TId, TState>(TId id)
+    {
+        return await _context.Sagas
+            .Where(s => s.Id == GetSagaIdAsString(id) && s.Type == GetSagaTypeAsString<TState>())
+            .FirstOptionAsync()
+            .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), _serializer.DeserializeFromBsonBytes<TState>(m.State)));
+    }
+
+    public ISagaReference<TState> CreateNew<TId, TState>(TId id)
+    {
+        var sagaModel = new SagaModel
+        {
+            Id = GetSagaIdAsString(id),
+            Type = GetSagaTypeAsString<TState>(),
+            Version = 1
+        };
+        _context.Sagas.Add(sagaModel);
+        return CreateReferenceFromSagaModel<TState>(sagaModel);
+    }
+
+    private string GetSagaIdAsString<TId>(TId id) => id.ToString();
+
+    private string GetSagaTypeAsString<TState>() => typeof(TState).Name;
+
+    private ISagaReference<TState> CreateReferenceFromSagaModel<TState>(SagaModel sagaModel) =>
+        new EfCoreSagaReference<TState>(sagaModel, _context, _serializer);
+}
+
+internal class EfCoreSagaReference<TState> : ISagaReference<TState>
+{
+    private readonly SagaModel _sagaModel;
+    private readonly SagasContext _context;
+    private readonly JsonSerializer _serializer;
+
+    public EfCoreSagaReference(SagaModel sagaModel, SagasContext context, JsonSerializer serializer)
+    {
+        _sagaModel = sagaModel;
+        _context = context;
+        _serializer = serializer;
+    }
+
+    public async Task Save(TState state)
+    {
+        _sagaModel.State = _serializer.SerializeToBsonBytes(state);
+        _sagaModel.Version++;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task Delete()
+    {
+        _context.Sagas.Remove(_sagaModel);
+
+        await _context.SaveChangesAsync();
+    }
+}

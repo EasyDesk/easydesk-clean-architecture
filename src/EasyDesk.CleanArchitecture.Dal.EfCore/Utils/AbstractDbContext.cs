@@ -8,6 +8,8 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 public class AbstractDbContext<T> : DbContext
     where T : AbstractDbContext<T>
 {
+    public const string PublicTenantName = "";
+
     private readonly IList<DbContextExtension> _extensions = new List<DbContextExtension>();
     private readonly ITenantProvider _tenantProvider;
 
@@ -53,10 +55,11 @@ public class AbstractDbContext<T> : DbContext
         var entityBuilder = modelBuilder.Entity<E>();
 
         entityBuilder.HasIndex(x => x.TenantId);
+        entityBuilder.Property(x => x.TenantId).IsRequired();
 
-        queryFilters.AddFilter<E>(x => x.TenantId == null
-            || x.TenantId == _tenantProvider.TenantInfo.Id.OrElseNull()
-            || _tenantProvider.TenantInfo.Id.IsAbsent);
+        queryFilters.AddFilter<E>(x => x.TenantId == PublicTenantName
+            || x.TenantId == GetCurrentTenantAsString()
+            || _tenantProvider.TenantInfo.IsPublic);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -69,12 +72,12 @@ public class AbstractDbContext<T> : DbContext
 
     private void SetTenantIdToAddedEntities()
     {
-        _tenantProvider.TenantInfo.Id.IfPresent(tenantId =>
-        {
-            ChangeTracker.Entries()
-                .Where(e => e.State == EntityState.Added)
-                .Where(e => e.Entity is IMultitenantEntity)
-                .ForEach(e => e.CurrentValues[nameof(IMultitenantEntity.TenantId)] = tenantId.Value);
-        });
+        var tenantIdString = GetCurrentTenantAsString();
+        ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Added)
+            .Where(e => e.Entity is IMultitenantEntity)
+            .ForEach(e => e.CurrentValues[nameof(IMultitenantEntity.TenantId)] = tenantIdString);
     }
+
+    private string GetCurrentTenantAsString() => _tenantProvider.TenantInfo.Id.Map(t => t.Value).OrElse(PublicTenantName);
 }

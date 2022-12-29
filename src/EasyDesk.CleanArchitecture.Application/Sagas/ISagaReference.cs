@@ -1,12 +1,8 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public interface ISagaReference<TId, TState>
+public interface ISagaReference<TState>
 {
-    TId Id { get; }
-
-    TState State { get; set; }
-
-    Task SaveState();
+    Task Save(TState state);
 
     Task Delete();
 }

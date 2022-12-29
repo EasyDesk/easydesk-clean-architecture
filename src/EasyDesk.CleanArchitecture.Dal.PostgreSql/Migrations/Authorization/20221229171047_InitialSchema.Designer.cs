@@ -2,38 +2,41 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Authorization;
 
 [DbContext(typeof(AuthorizationContext))]
-partial class AuthorizationContextModelSnapshot : ModelSnapshot
+[Migration("20221229171047_InitialSchema")]
+partial class InitialSchema
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("auth")
             .HasAnnotation("ProductVersion", "7.0.1")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128);
+            .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
             {
                 b.Property<string>("RoleId")
                     .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    .HasColumnType("character varying(100)");
 
                 b.Property<string>("PermissionName")
                     .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    .HasColumnType("character varying(100)");
 
                 b.Property<string>("TenantId")
-                    .HasColumnType("nvarchar(450)");
+                    .HasColumnType("text");
 
                 b.HasKey("RoleId", "PermissionName", "TenantId");
 
@@ -45,7 +48,7 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", b =>
             {
                 b.Property<string>("Id")
-                    .HasColumnType("nvarchar(450)");
+                    .HasColumnType("text");
 
                 b.HasKey("Id");
 
@@ -55,14 +58,14 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.UserRoleModel", b =>
             {
                 b.Property<string>("UserId")
-                    .HasColumnType("nvarchar(450)");
+                    .HasColumnType("text");
 
                 b.Property<string>("RoleId")
                     .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    .HasColumnType("character varying(100)");
 
                 b.Property<string>("TenantId")
-                    .HasColumnType("nvarchar(450)");
+                    .HasColumnType("text");
 
                 b.HasKey("UserId", "RoleId", "TenantId");
 

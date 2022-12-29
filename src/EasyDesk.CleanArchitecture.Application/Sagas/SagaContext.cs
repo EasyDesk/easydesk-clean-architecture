@@ -22,6 +22,4 @@ public class SagaContext<TState>
         IsComplete = true;
         return this;
     }
-
-    internal (TState NewState, bool IsComplete) GetSagaState() => (State, IsComplete);
 }

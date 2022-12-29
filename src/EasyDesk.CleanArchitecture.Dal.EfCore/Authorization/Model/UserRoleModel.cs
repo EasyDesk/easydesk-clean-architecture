@@ -24,7 +24,7 @@ internal class UserRoleModel : IMultitenantEntity
     {
         public void Configure(EntityTypeBuilder<UserRoleModel> builder)
         {
-            builder.HasKey(x => new { x.UserId, x.RoleId });
+            builder.HasKey(x => new { x.UserId, x.RoleId, x.TenantId });
 
             builder.Property(x => x.RoleId)
                 .IsRequired()

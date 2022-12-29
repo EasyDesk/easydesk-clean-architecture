@@ -4,8 +4,10 @@
 
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
 
+/// <inheritdoc />
 public partial class InitialSchema : Migration
 {
+    /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.EnsureSchema(
@@ -30,11 +32,11 @@ public partial class InitialSchema : Migration
             {
                 RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                 PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionName });
+                table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionName, x.TenantId });
                 table.ForeignKey(
                     name: "FK_RolePermissions_Tenants_TenantId",
                     column: x => x.TenantId,
@@ -51,11 +53,11 @@ public partial class InitialSchema : Migration
             {
                 RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                 UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
+                table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId, x.TenantId });
                 table.ForeignKey(
                     name: "FK_UserRoles_Tenants_TenantId",
                     column: x => x.TenantId,
@@ -78,6 +80,7 @@ public partial class InitialSchema : Migration
             column: "TenantId");
     }
 
+    /// <inheritdoc />
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
