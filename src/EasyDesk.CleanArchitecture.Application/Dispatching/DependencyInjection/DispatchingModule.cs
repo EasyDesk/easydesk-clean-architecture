@@ -41,7 +41,7 @@ public class DispatchingModule : AppModule
     }
 }
 
-public static class MediatrModuleExtensions
+public static class DispatchingModuleExtensions
 {
     public static AppBuilder AddDispatching(this AppBuilder builder, Action<PipelineBuilder> configurePipeline = null)
     {
