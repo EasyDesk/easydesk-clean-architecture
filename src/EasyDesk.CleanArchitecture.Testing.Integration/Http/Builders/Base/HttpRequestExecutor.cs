@@ -2,15 +2,17 @@
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
-public abstract class HttpRequestExecutor<W, I> : HttpRequestBuilder<HttpRequestExecutor<W, I>>
+public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
+    where E : HttpRequestExecutor<W, I, E>
 {
     private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(7);
     private static readonly Duration _defaultRequestInterval = Duration.FromMilliseconds(200);
 
     public HttpRequestExecutor(
-        Func<HttpRequestMessage> request,
+        string endpoint,
+        HttpMethod method,
         ITestHttpAuthentication testHttpAuthentication)
-        : base(request, testHttpAuthentication)
+        : base(endpoint, method, testHttpAuthentication)
     {
     }
 

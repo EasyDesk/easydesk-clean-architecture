@@ -50,22 +50,16 @@ public class HttpTestHelper
 
     private HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, HttpContent content = null)
     {
-        var request = () => new HttpRequestMessage(method, requestUri)
-        {
-            Content = content
-        };
-        var builder = new HttpSingleRequestExecutor<R>(request, _httpAuthentication, _httpClient, _settings);
+        var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _settings)
+            .WithContent(content);
         _configureRequest?.Invoke(builder);
         return builder;
     }
 
     private HttpPaginatedRequestExecutor<R> RequestPaginated<R>(string requestUri, HttpMethod method, HttpContent content = null)
     {
-        var request = () => new HttpRequestMessage(method, requestUri)
-        {
-            Content = content
-        };
-        var builder = new HttpPaginatedRequestExecutor<R>(request, _httpClient, _settings, _httpAuthentication);
+        var builder = new HttpPaginatedRequestExecutor<R>(requestUri, method, _httpClient, _settings, _httpAuthentication)
+            .WithContent(content);
         _configureRequest?.Invoke(builder);
         return builder;
     }

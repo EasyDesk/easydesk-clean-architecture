@@ -4,22 +4,22 @@ using EasyDesk.Tools.Collections;
 using Newtonsoft.Json;
 using NodaTime;
 using System.Runtime.CompilerServices;
-using System.Web;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
 public class HttpPaginatedRequestExecutor<T> :
-    HttpRequestExecutor<HttpPageSequenceWrapper<T>, IEnumerable<HttpPageResponseWrapper<T>>>
+    HttpRequestExecutor<HttpPageSequenceWrapper<T>, IEnumerable<HttpPageResponseWrapper<T>>, HttpPaginatedRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
     public HttpPaginatedRequestExecutor(
-        Func<HttpRequestMessage> requestFactory,
+        string endpoint,
+        HttpMethod method,
         HttpClient httpClient,
         JsonSerializerSettings jsonSerializerSettings,
         ITestHttpAuthentication testHttpAuthentication)
-        : base(requestFactory, testHttpAuthentication)
+        : base(endpoint, method, testHttpAuthentication)
     {
         _httpClient = httpClient;
         _jsonSerializerSettings = jsonSerializerSettings;
@@ -44,8 +44,8 @@ public class HttpPaginatedRequestExecutor<T> :
         do
         {
             timeoutToken.ThrowIfCancellationRequested();
+            SetPageIndex(pageIndex);
             var request = CreateRequest();
-            SetPageIndex(request, pageIndex);
             var page = WrapSinglePage(() => _httpClient.SendAsync(request));
             var pageCount = await page.PageCount();
             await page.EnsureSuccess();
@@ -57,17 +57,8 @@ public class HttpPaginatedRequestExecutor<T> :
         while (hasNextPage);
     }
 
-    private void SetPageIndex(HttpRequestMessage req, int pageIndex)
-    {
-        var absoluteUri = new Uri(_httpClient.BaseAddress, req.RequestUri);
-        var query = HttpUtility.ParseQueryString(absoluteUri.Query);
-        query[nameof(PaginationDto.PageIndex)] = pageIndex.ToString();
-        var uriBuilder = new UriBuilder(absoluteUri)
-        {
-            Query = query.ToString()
-        };
-        req.RequestUri = uriBuilder.Uri;
-    }
+    private void SetPageIndex(int pageIndex) =>
+        WithQuery(nameof(PaginationDto.PageIndex), pageIndex.ToString());
 
     protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpPageResponseWrapper<T>>> request) =>
         new(request);

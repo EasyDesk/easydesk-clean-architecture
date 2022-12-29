@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
@@ -21,21 +23,33 @@ public abstract class HttpRequestBuilder
     public abstract HttpRequestBuilder Authenticate(IEnumerable<Claim> identity);
 
     public abstract HttpRequestBuilder NoAuthentication();
+
+    public abstract HttpRequestBuilder WithContent(HttpContent content);
+
+    public abstract HttpRequestBuilder WithQuery(string key, string value);
+
+    public abstract HttpRequestBuilder WithoutQuery(string key);
 }
 
-public abstract class HttpRequestBuilder<B> : HttpRequestBuilder
+public class HttpRequestBuilder<B> : HttpRequestBuilder
     where B : HttpRequestBuilder<B>
 {
+    private readonly string _endpoint;
+    private readonly HttpMethod _method;
     private readonly ITestHttpAuthentication _testHttpAuthentication;
-    private readonly Func<HttpRequestMessage> _requestFactory;
     private Action<HttpRequestMessage> _configureRequest;
+    private readonly Dictionary<string, StringValues> _queryParameters;
 
     public HttpRequestBuilder(
-        Func<HttpRequestMessage> requestFactory,
+        string endpoint,
+        HttpMethod method,
         ITestHttpAuthentication testHttpAuthentication)
     {
-        _requestFactory = requestFactory;
+        _endpoint = endpoint;
+        _method = method;
         _testHttpAuthentication = testHttpAuthentication;
+        _queryParameters = QueryHelpers.ParseQuery(
+            endpoint);
     }
 
     public override B WithApiVersion(ApiVersion version) =>
@@ -58,15 +72,30 @@ public abstract class HttpRequestBuilder<B> : HttpRequestBuilder
 
     public override B NoAuthentication() => ConfigureRequest(_testHttpAuthentication.RemoveAuthentication);
 
+    public override B WithContent(HttpContent content) => ConfigureRequest(r => r.Content = content);
+
+    public override HttpRequestBuilder WithQuery(string key, string value) =>
+        ConfigureQuery(q => q[key] = value);
+
+    public override HttpRequestBuilder WithoutQuery(string key) =>
+        ConfigureQuery(q => q.Remove(key));
+
     private B ConfigureRequest(Action<HttpRequestMessage> configure)
     {
         _configureRequest += configure;
         return (B)this;
     }
 
+    private B ConfigureQuery(Action<Dictionary<string, StringValues>> configure)
+    {
+        configure(_queryParameters);
+        return (B)this;
+    }
+
     protected HttpRequestMessage CreateRequest()
     {
-        var request = _requestFactory();
+        var uri = QueryHelpers.AddQueryString(_endpoint, _queryParameters);
+        var request = new HttpRequestMessage(_method, uri);
         _configureRequest?.Invoke(request);
         return request;
     }

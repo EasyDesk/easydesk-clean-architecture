@@ -4,17 +4,19 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 
-public class HttpSingleRequestExecutor<T> : HttpRequestExecutor<HttpSingleResponseWrapper<T>, HttpResponseMessage>
+public class HttpSingleRequestExecutor<T>
+    : HttpRequestExecutor<HttpSingleResponseWrapper<T>, HttpResponseMessage, HttpSingleRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
 
     public HttpSingleRequestExecutor(
-        Func<HttpRequestMessage> requestFactory,
+        string endpoint,
+        HttpMethod method,
         ITestHttpAuthentication testHttpAuthentication,
         HttpClient httpClient,
         JsonSerializerSettings jsonSerializerSettings)
-        : base(requestFactory, testHttpAuthentication)
+        : base(endpoint, method, testHttpAuthentication)
     {
         _httpClient = httpClient;
         _jsonSerializerSettings = jsonSerializerSettings;
