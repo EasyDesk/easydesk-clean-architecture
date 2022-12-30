@@ -3,9 +3,11 @@ using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Application.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -93,6 +95,12 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     {
         AddAuthorizationContext(services);
         services.AddScoped<IMultitenancyManager, EfCoreMultitenancyManager>();
+    }
+
+    public void AddSagas(IServiceCollection services, AppDescription app)
+    {
+        AddDbContext<SagasContext>(SagasContext.SchemaName, services, ConfigureMigrationsAssembly);
+        services.AddScoped<ISagaManager, EfCoreSagaManager>();
     }
 
     private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)

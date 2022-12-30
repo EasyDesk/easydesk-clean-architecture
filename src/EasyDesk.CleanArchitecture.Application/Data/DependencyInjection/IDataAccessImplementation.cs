@@ -17,4 +17,6 @@ public interface IDataAccessImplementation
     void AddRoleManager(IServiceCollection services, AppDescription app);
 
     void AddMultitenancy(IServiceCollection services, AppDescription app);
+
+    void AddSagas(IServiceCollection services, AppDescription app);
 }

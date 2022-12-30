@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Reflection;
@@ -23,6 +24,8 @@ public class SagasModule : AppModule
                 .GetMethod(nameof(ConfigureSaga), BindingFlags.NonPublic | BindingFlags.Instance)
                 .MakeGenericMethod(i.GetGenericArguments()))
             .ForEach(m => m.Invoke(this, configureSagaArgs));
+
+        app.RequireModule<DataAccessModule>().Implementation.AddSagas(services, app);
     }
 
     private void ConfigureSaga<TController, TId, TState>(IServiceCollection services)
