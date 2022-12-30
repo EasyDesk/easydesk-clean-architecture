@@ -1,3 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public delegate Task<Result<R>> SagaHandlerDelegate<T, R, TState>(T request, SagaContext<TState> context);
+public delegate Task<Result<R>> SagaHandlerDelegate<T, R, TId, TState>(T request, SagaContext<TId, TState> context);

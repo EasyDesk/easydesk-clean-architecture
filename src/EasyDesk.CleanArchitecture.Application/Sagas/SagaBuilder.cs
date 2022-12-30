@@ -2,25 +2,75 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public interface ISagaBuilder<TController, TId, TState>
+public class SagaBuilder<TController, TId, TState>
     where TController : ISagaController<TController, TId, TState>
 {
-    public ISagaBuilder<TController, TId, TState> Handle<T>(Func<T, TId> property, Func<TController, SagaHandlerDelegate<T, Nothing, TState>> handler)
-        where T : IDispatchable<Nothing> =>
-        Handle<T, Nothing>(property, handler);
+    private readonly ISagaConfigurationSink<TController, TId, TState> _sink;
 
-    public ISagaBuilder<TController, TId, TState> Handle<T, R>(Func<T, TId> property, Func<TController, SagaHandlerDelegate<T, R, TState>> handler)
-        where T : IDispatchable<R> =>
-        For<T, R>(new(property, handler, canStartSaga: false));
+    internal SagaBuilder(ISagaConfigurationSink<TController, TId, TState> sink)
+    {
+        _sink = sink;
+    }
 
-    public ISagaBuilder<TController, TId, TState> StartWith<T>(Func<T, TId> property, Func<TController, SagaHandlerDelegate<T, Nothing, TState>> handler)
-        where T : IDispatchable<Nothing> =>
-        StartWith<T, Nothing>(property, handler);
+    public SagaCorrelationSelector<T, R, TController, TId, TState> On<T, R>() where T : IDispatchable<R> =>
+        new(_sink);
 
-    public ISagaBuilder<TController, TId, TState> StartWith<T, R>(Func<T, TId> property, Func<TController, SagaHandlerDelegate<T, R, TState>> handler)
-        where T : IDispatchable<R> =>
-        For<T, R>(new(property, handler, canStartSaga: true));
+    public SagaCorrelationSelector<T, Nothing, TController, TId, TState> On<T>() where T : IDispatchable<Nothing> =>
+        On<T, Nothing>();
+}
 
-    ISagaBuilder<TController, TId, TState> For<T, R>(SagaRequestConfiguration<T, R, TController, TId, TState> configuration)
+public class SagaCorrelationSelector<T, R, TController, TId, TState>
+    where T : IDispatchable<R>
+    where TController : ISagaController<TController, TId, TState>
+{
+    private readonly ISagaConfigurationSink<TController, TId, TState> _sink;
+
+    internal SagaCorrelationSelector(ISagaConfigurationSink<TController, TId, TState> sink)
+    {
+        _sink = sink;
+    }
+
+    public SagaHandlerSelector<T, R, TController, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) =>
+        new(_sink, correlationProperty);
+}
+
+public class SagaHandlerSelector<T, R, TController, TId, TState>
+    where T : IDispatchable<R>
+    where TController : ISagaController<TController, TId, TState>
+{
+    private readonly ISagaConfigurationSink<TController, TId, TState> _sink;
+    private readonly Func<T, TId> _correlationProperty;
+    private Func<TController, TId, T, Option<TState>> _initializer = (_, _, _) => None;
+
+    internal SagaHandlerSelector(
+        ISagaConfigurationSink<TController, TId, TState> sink,
+        Func<T, TId> correlationProperty)
+    {
+        _sink = sink;
+        _correlationProperty = correlationProperty;
+    }
+
+    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<TController, TId, T, TState> initialState)
+    {
+        _initializer = (c, i, r) => Some(initialState(c, i, r));
+        return this;
+    }
+
+    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<TId, T, TState> initialState) =>
+        InitializeWith((_, i, r) => initialState(i, r));
+
+    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<T, TState> initialState) =>
+        InitializeWith((_, _, r) => initialState(r));
+
+    public void HandleWith(Func<TController, SagaHandlerDelegate<T, R, TId, TState>> handlerFactory)
+    {
+        _sink.RegisterConfiguration<T, R>(new(_correlationProperty, handlerFactory, _initializer));
+    }
+}
+
+internal interface ISagaConfigurationSink<TController, TId, TState>
+    where TController : ISagaController<TController, TId, TState>
+{
+    void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TController, TId, TState> configuration)
         where T : IDispatchable<R>;
 }

@@ -1,23 +1,26 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public class SagaContext<TState>
+public class SagaContext<TId, TState>
 {
-    public SagaContext(TState state)
+    public SagaContext(TId id, TState state)
     {
+        Id = id;
         State = state;
     }
+
+    public TId Id { get; }
 
     public TState State { get; private set; }
 
     public bool IsComplete { get; private set; } = false;
 
-    public SagaContext<TState> MutateState(Func<TState, TState> update)
+    public SagaContext<TId, TState> MutateState(Func<TState, TState> update)
     {
         State = update(State);
         return this;
     }
 
-    public SagaContext<TState> CompleteSaga()
+    public SagaContext<TId, TState> CompleteSaga()
     {
         IsComplete = true;
         return this;

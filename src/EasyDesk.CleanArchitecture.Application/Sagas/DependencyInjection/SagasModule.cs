@@ -31,26 +31,26 @@ public class SagasModule : AppModule
     private void ConfigureSaga<TController, TId, TState>(IServiceCollection services)
         where TController : class, ISagaController<TController, TId, TState>
     {
-        var sagaBuilder = new SagaBuilder<TController, TId, TState>(services);
+        var sink = new SagaConfigurationSink<TController, TId, TState>(services);
+        var sagaBuilder = new SagaBuilder<TController, TId, TState>(sink);
         TController.ConfigureSaga(sagaBuilder);
         services.AddTransient<TController>();
     }
 
-    private class SagaBuilder<TController, TId, TState> : ISagaBuilder<TController, TId, TState>
-        where TController : class, ISagaController<TController, TId, TState>
+    private class SagaConfigurationSink<TController, TId, TState> : ISagaConfigurationSink<TController, TId, TState>
+        where TController : ISagaController<TController, TId, TState>
     {
         private readonly IServiceCollection _services;
 
-        public SagaBuilder(IServiceCollection services)
+        public SagaConfigurationSink(IServiceCollection services)
         {
             _services = services;
         }
 
-        public ISagaBuilder<TController, TId, TState> For<T, R>(SagaRequestConfiguration<T, R, TController, TId, TState> configuration) where T : IDispatchable<R>
+        public void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TController, TId, TState> configuration) where T : IDispatchable<R>
         {
             _services.AddSingleton(configuration);
             _services.AddTransient<IHandler<T, R>, SagaHandler<T, R, TController, TId, TState>>();
-            return this;
         }
     }
 }

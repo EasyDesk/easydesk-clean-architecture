@@ -25,25 +25,27 @@ internal class SagaHandler<T, R, TController, TId, TState> : IHandler<T, R>
     {
         var sagaId = _configuration.GetSagaId(request);
         var existingSaga = await _sagaManager.Find<TId, TState>(sagaId);
-        var saga = existingSaga || GetNewSagaIfPossible(sagaId);
+        var saga = existingSaga || GetNewSagaIfPossible(sagaId, request);
         return await saga.MatchAsync(
-            some: s => HandleSaga(request, s.Reference, s.State),
+            some: s => HandleSaga(request, sagaId, s.State, s.Reference),
             none: () => Task.FromResult(Failure<R>(Errors.Generic("Unable to start saga with request of type {requestType}", typeof(T).Name))));
     }
 
-    private async Task<Result<R>> HandleSaga(T request, ISagaReference<TState> sagaReference, TState state)
+    private async Task<Result<R>> HandleSaga(T request, TId id, TState state, ISagaReference<TState> sagaReference)
     {
-        var context = new SagaContext<TState>(state);
+        var context = new SagaContext<TId, TState>(id, state);
         return await _configuration.GetHandler(_controller)(request, context)
             .ThenIfSuccessAsync(_ => HandleSagaState(sagaReference, context));
     }
 
-    private Option<(ISagaReference<TState> Reference, TState State)> GetNewSagaIfPossible(TId sagaId) =>
-        _configuration.CanStartSaga
-            ? Some((_sagaManager.CreateNew<TId, TState>(sagaId), _controller.GetInitialState()))
-            : None;
+    private Option<(ISagaReference<TState> Reference, TState State)> GetNewSagaIfPossible(TId sagaId, T request)
+    {
+        return _configuration
+            .InitializeSaga(_controller, sagaId, request)
+            .Map(state => (_sagaManager.CreateNew<TId, TState>(sagaId), state));
+    }
 
-    private static async Task HandleSagaState(ISagaReference<TState> sagaReference, SagaContext<TState> context)
+    private static async Task HandleSagaState(ISagaReference<TState> sagaReference, SagaContext<TId, TState> context)
     {
         if (context.IsComplete)
         {
