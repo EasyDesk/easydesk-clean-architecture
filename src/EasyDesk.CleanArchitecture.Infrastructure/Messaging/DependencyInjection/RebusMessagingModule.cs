@@ -7,6 +7,7 @@ using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
@@ -162,6 +163,7 @@ public class RebusMessagingModule : AppModule
     {
         var knownMessageTypes = new AssemblyScanner()
             .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
+            .FromAssembliesContaining(typeof(SagasModule))
             .NonAbstract()
             .SubtypesOrImplementationsOf<IMessage>()
             .FindTypes()
