@@ -38,7 +38,7 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     private readonly HttpMethod _method;
     private readonly ITestHttpAuthentication _testHttpAuthentication;
     private Action<HttpRequestMessage> _configureRequest;
-    private readonly Dictionary<string, StringValues> _queryParameters;
+    private readonly Dictionary<string, StringValues> _queryParameters = new();
 
     public HttpRequestBuilder(
         string endpoint,
@@ -48,8 +48,6 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         _endpoint = endpoint;
         _method = method;
         _testHttpAuthentication = testHttpAuthentication;
-        _queryParameters = QueryHelpers.ParseQuery(
-            endpoint);
     }
 
     public override B WithApiVersion(ApiVersion version) =>
