@@ -50,11 +50,8 @@ public class SagaHandlerSelector<T, R, TController, TId, TState>
         _correlationProperty = correlationProperty;
     }
 
-    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<TController, TId, T, TState> initialState)
-    {
-        _initializer = (c, i, r) => Task.FromResult(Some(initialState(c, i, r)));
-        return this;
-    }
+    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<TController, TId, T, TState> initialState) =>
+        InitializeWith((c, i, r) => Task.FromResult(initialState(c, i, r)));
 
     public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<TId, T, TState> initialState) =>
         InitializeWith((_, i, r) => initialState(i, r));
