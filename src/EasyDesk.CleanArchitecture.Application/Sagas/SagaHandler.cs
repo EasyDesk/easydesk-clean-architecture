@@ -25,7 +25,7 @@ internal class SagaHandler<T, R, TController, TId, TState> : IHandler<T, R>
     {
         var sagaId = _configuration.GetSagaId(request);
         var existingSaga = await _sagaManager.Find<TId, TState>(sagaId);
-        var saga = existingSaga || GetNewSagaIfPossible(sagaId, request);
+        var saga = existingSaga || await GetNewSagaIfPossible(sagaId, request);
         return await saga.MatchAsync(
             some: s => HandleSaga(request, sagaId, s.State, s.Reference),
             none: () => Task.FromResult(Failure<R>(Errors.Generic("Unable to start saga with request of type {requestType}", typeof(T).Name))));
@@ -38,11 +38,11 @@ internal class SagaHandler<T, R, TController, TId, TState> : IHandler<T, R>
             .ThenIfSuccessAsync(_ => HandleSagaState(sagaReference, context));
     }
 
-    private Option<(ISagaReference<TState> Reference, TState State)> GetNewSagaIfPossible(TId sagaId, T request)
+    private async Task<Option<(ISagaReference<TState> Reference, TState State)>> GetNewSagaIfPossible(TId sagaId, T request)
     {
-        return _configuration
-            .InitializeSaga(_controller, sagaId, request)
-            .Map(state => (_sagaManager.CreateNew<TId, TState>(sagaId), state));
+        var state = await _configuration
+            .InitializeSaga(_controller, sagaId, request);
+        return state.Map(s => (_sagaManager.CreateNew<TId, TState>(sagaId), s));
     }
 
     private static async Task HandleSagaState(ISagaReference<TState> sagaReference, SagaContext<TId, TState> context)
