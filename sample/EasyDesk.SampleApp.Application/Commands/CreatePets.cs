@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Sagas.BulkOperations;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
+using EasyDesk.Tools.Collections;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
@@ -21,17 +22,19 @@ public class BulkCreatePets : AbstractSequentialBulkOperation<BulkCreatePets, Cr
         _petRepository = petRepository;
     }
 
-    protected override async Task<Option<IEnumerable<CreatePet>>> ComputeBatch(CreatePetsBatch command, IEnumerable<CreatePet> state)
+    protected override async Task<IEnumerable<CreatePet>> HandleBatch(CreatePetsBatch command, IEnumerable<CreatePet> remainingWork)
     {
-        var createPetCommand = state.First();
+        var createPetCommand = remainingWork.First();
         var pet = Pet.Create(Name.From(createPetCommand.Nickname), createPetCommand.PersonId);
         await _petRepository.SaveAndHydrate(pet);
-        var remaining = state.Skip(1);
-        return remaining.Any() ? Some(remaining) : None;
+        return remainingWork.Skip(1);
     }
 
     protected override CreatePetsBatch CreateCommand(Guid operationId) => new(operationId);
 
-    protected override Task<(CreatePetsResult, Option<IEnumerable<CreatePet>>)> Prepare(CreatePets command) =>
-        Task.FromResult((new CreatePetsResult(command.Pets.Count()), command.Pets.Any() ? Some(command.Pets) : None));
+    protected override Task<(CreatePetsResult, IEnumerable<CreatePet>)> Prepare(CreatePets command) =>
+        Task.FromResult((new CreatePetsResult(command.Pets.Count()), command.Pets));
+
+    protected override Task<bool> IsComplete(IEnumerable<CreatePet> remainingWork) =>
+        Task.FromResult(remainingWork.IsEmpty());
 }

@@ -59,7 +59,7 @@ public class CreatePetTests : SampleIntegrationTest
 
         await Http
             .GetOwnedPets(person.Id)
-            .PollUntil(pets => pets.Count() >= 1)
+            .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
         var response = await Http
@@ -71,7 +71,7 @@ public class CreatePetTests : SampleIntegrationTest
 
         var pets = await Http
             .GetOwnedPets(person.Id)
-            .PollUntil(pets => pets.Count() == BulkQuantity + 1)
+            .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: Duration.FromSeconds(15))
             .AsVerifiableEnumerable();
 
         await Verify(pets);

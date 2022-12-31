@@ -50,7 +50,6 @@ public class HttpPaginatedRequestExecutor<T> :
             var pageCount = await page.PageCount();
             await page.EnsureSuccess();
             yield return page;
-            await Task.Delay(100, timeoutToken);
             pageIndex++;
             hasNextPage = pageIndex < pageCount;
         }
