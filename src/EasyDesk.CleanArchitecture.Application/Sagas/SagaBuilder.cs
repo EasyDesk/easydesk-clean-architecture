@@ -60,6 +60,15 @@ public class SagaHandlerSelector<T, R, TId, TState>
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<T, TState> initialState) =>
         InitializeWith((_, _, r) => initialState(r));
 
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TId, T, TState> initialState) =>
+        InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
+
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, T, TState> initialState) =>
+        InitializeWith<H>((h, _, r) => initialState(h, r));
+
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TState> initialState) =>
+        InitializeWith<H>((h, _, _) => initialState(h));
+
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<IServiceProvider, TId, T, TState> initialState) =>
         InitializeWith((p, i, r) => Task.FromResult(initialState(p, i, r)));
 
@@ -68,6 +77,15 @@ public class SagaHandlerSelector<T, R, TId, TState>
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<T, TState> initialState) =>
         InitializeWith((_, _, r) => initialState(r));
+
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TId, T, TState> initialState) =>
+        InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
+
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, T, TState> initialState) =>
+        InitializeWith<H>((h, _, r) => initialState(h, r));
+
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TState> initialState) =>
+        InitializeWith<H>((h, _, _) => initialState(h));
 
     public void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler)
     {
