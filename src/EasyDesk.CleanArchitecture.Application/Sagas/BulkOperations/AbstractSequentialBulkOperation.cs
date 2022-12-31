@@ -39,9 +39,11 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
         if (await IsComplete(context.State.RemainingWork))
         {
             context.CompleteSaga();
-            return context.State.Result;
         }
-        await _commandSender.Send(CreateCommand(context.Id));
+        else
+        {
+            await _commandSender.Send(CreateCommand(context.Id));
+        }
         return context.State.Result;
     }
 
