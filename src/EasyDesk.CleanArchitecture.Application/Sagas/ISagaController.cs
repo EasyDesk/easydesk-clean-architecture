@@ -1,7 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public interface ISagaController<TController, TId, TState>
-    where TController : ISagaController<TController, TId, TState>
+public interface ISagaController<TId, TState>
 {
-    static abstract void ConfigureSaga(SagaBuilder<TController, TId, TState> saga);
+    static abstract void ConfigureSaga(SagaBuilder<TId, TState> saga);
 }

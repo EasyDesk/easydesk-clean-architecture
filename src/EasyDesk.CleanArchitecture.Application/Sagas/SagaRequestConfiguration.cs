@@ -1,27 +1,29 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 
-public class SagaRequestConfiguration<T, R, TController, TId, TState>
-    where TController : ISagaController<TController, TId, TState>
+namespace EasyDesk.CleanArchitecture.Application.Sagas;
+
+public class SagaRequestConfiguration<T, R, TId, TState>
+    where T : IDispatchable<R>
 {
     private readonly Func<T, TId> _sagaIdProperty;
-    private readonly Func<TController, SagaHandlerDelegate<T, R, TId, TState>> _handlerFactory;
-    private readonly AsyncFunc<TController, TId, T, Option<TState>> _sagaInitializer;
+    private readonly AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> _handler;
+    private readonly AsyncFunc<IServiceProvider, TId, T, Option<TState>> _sagaInitializer;
 
     public SagaRequestConfiguration(
         Func<T, TId> sagaIdProperty,
-        Func<TController, SagaHandlerDelegate<T, R, TId, TState>> handlerFactory,
-        AsyncFunc<TController, TId, T, Option<TState>> sagaInitializer)
+        AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler,
+        AsyncFunc<IServiceProvider, TId, T, Option<TState>> sagaInitializer)
     {
         _sagaIdProperty = sagaIdProperty;
-        _handlerFactory = handlerFactory;
+        _handler = handler;
         _sagaInitializer = sagaInitializer;
     }
 
     public TId GetSagaId(T request) => _sagaIdProperty(request);
 
-    public SagaHandlerDelegate<T, R, TId, TState> GetHandler(TController controller) =>
-        _handlerFactory(controller);
+    public Task<Result<R>> HandleStep(IServiceProvider provider, T request, SagaContext<TId, TState> context) =>
+        _handler(provider, request, context);
 
-    public Task<Option<TState>> InitializeSaga(TController controller, TId sagaId, T request) =>
-        _sagaInitializer(controller, sagaId, request);
+    public Task<Option<TState>> InitializeSaga(IServiceProvider provider, TId sagaId, T request) =>
+        _sagaInitializer(provider, sagaId, request);
 }

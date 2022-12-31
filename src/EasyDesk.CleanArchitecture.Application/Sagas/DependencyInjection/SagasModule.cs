@@ -15,30 +15,29 @@ public class SagasModule : AppModule
         var configureSagaArgs = new[] { services };
         new AssemblyScanner()
             .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
-            .SubtypesOrImplementationsOf(typeof(ISagaController<,,>))
+            .SubtypesOrImplementationsOf(typeof(ISagaController<,>))
             .NonAbstract()
             .FindTypes()
-            .SelectMany(c => c.GetInterfaces())
-            .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaController<,,>))
-            .Select(i => GetType()
-                .GetMethod(nameof(ConfigureSaga), BindingFlags.NonPublic | BindingFlags.Instance)
-                .MakeGenericMethod(i.GetGenericArguments()))
+            .SelectMany(c => c.GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaController<,>))
+                .Select(i => GetType()
+                    .GetMethod(nameof(ConfigureSaga), BindingFlags.NonPublic | BindingFlags.Instance)
+                    .MakeGenericMethod(i.GetGenericArguments().Append(c).ToArray())))
             .ForEach(m => m.Invoke(this, configureSagaArgs));
 
         app.RequireModule<DataAccessModule>().Implementation.AddSagas(services, app);
     }
 
-    private void ConfigureSaga<TController, TId, TState>(IServiceCollection services)
-        where TController : class, ISagaController<TController, TId, TState>
+    private void ConfigureSaga<TId, TState, TController>(IServiceCollection services)
+        where TController : class, ISagaController<TId, TState>
     {
-        var sink = new SagaConfigurationSink<TController, TId, TState>(services);
-        var sagaBuilder = new SagaBuilder<TController, TId, TState>(sink);
+        var sink = new SagaConfigurationSink<TId, TState>(services);
+        var sagaBuilder = new SagaBuilder<TId, TState>(sink);
         TController.ConfigureSaga(sagaBuilder);
         services.AddTransient<TController>();
     }
 
-    private class SagaConfigurationSink<TController, TId, TState> : ISagaConfigurationSink<TController, TId, TState>
-        where TController : ISagaController<TController, TId, TState>
+    private class SagaConfigurationSink<TId, TState> : ISagaConfigurationSink<TId, TState>
     {
         private readonly IServiceCollection _services;
 
@@ -47,10 +46,10 @@ public class SagasModule : AppModule
             _services = services;
         }
 
-        public void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TController, TId, TState> configuration) where T : IDispatchable<R>
+        public void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration) where T : IDispatchable<R>
         {
             _services.AddSingleton(configuration);
-            _services.AddTransient<IHandler<T, R>, SagaHandler<T, R, TController, TId, TState>>();
+            _services.AddTransient<IHandler<T, R>, SagaHandler<T, R, TId, TState>>();
         }
     }
 }

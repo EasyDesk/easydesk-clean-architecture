@@ -3,21 +3,20 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-internal class SagaHandler<T, R, TController, TId, TState> : IHandler<T, R>
+internal class SagaHandler<T, R, TId, TState> : IHandler<T, R>
     where T : IDispatchable<R>
-    where TController : ISagaController<TController, TId, TState>
 {
     private readonly ISagaManager _sagaManager;
-    private readonly TController _controller;
-    private readonly SagaRequestConfiguration<T, R, TController, TId, TState> _configuration;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly SagaRequestConfiguration<T, R, TId, TState> _configuration;
 
     public SagaHandler(
         ISagaManager sagaManager,
-        TController controller,
-        SagaRequestConfiguration<T, R, TController, TId, TState> configuration)
+        IServiceProvider serviceProvider,
+        SagaRequestConfiguration<T, R, TId, TState> configuration)
     {
         _sagaManager = sagaManager;
-        _controller = controller;
+        _serviceProvider = serviceProvider;
         _configuration = configuration;
     }
 
@@ -34,14 +33,15 @@ internal class SagaHandler<T, R, TController, TId, TState> : IHandler<T, R>
     private async Task<Result<R>> HandleSaga(T request, TId id, TState state, ISagaReference<TState> sagaReference)
     {
         var context = new SagaContext<TId, TState>(id, state);
-        return await _configuration.GetHandler(_controller)(request, context)
+        return await _configuration
+            .HandleStep(_serviceProvider, request, context)
             .ThenIfSuccessAsync(_ => HandleSagaState(sagaReference, context));
     }
 
     private async Task<Option<(ISagaReference<TState> Reference, TState State)>> GetNewSagaIfPossible(TId sagaId, T request)
     {
         var state = await _configuration
-            .InitializeSaga(_controller, sagaId, request);
+            .InitializeSaga(_serviceProvider, sagaId, request);
         return state.Map(s => (_sagaManager.CreateNew<TId, TState>(sagaId), s));
     }
 
