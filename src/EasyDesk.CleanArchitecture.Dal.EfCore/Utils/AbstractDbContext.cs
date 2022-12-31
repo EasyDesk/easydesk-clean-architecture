@@ -55,7 +55,7 @@ public class AbstractDbContext<T> : DbContext
         var entityBuilder = modelBuilder.Entity<E>();
 
         entityBuilder.HasIndex(x => x.TenantId);
-        entityBuilder.Property(x => x.TenantId).IsRequired();
+        entityBuilder.Property(x => x.TenantId).IsRequired().HasDefaultValue(PublicTenantName);
 
         queryFilters.AddFilter<E>(x => x.TenantId == PublicTenantName
             || x.TenantId == GetCurrentTenantAsString()
