@@ -10,6 +10,9 @@ public static class PetEndpoints
     public static HttpSingleRequestExecutor<PetDto> CreatePet(this HttpTestHelper http, Guid personId, CreatePetBodyDto body) =>
         http.Post<CreatePetBodyDto, PetDto>(PetsRoutes.CreatePet.WithRouteParam(nameof(personId), personId), body);
 
+    public static HttpSingleRequestExecutor<CreatePetsDto> CreatePets(this HttpTestHelper http, Guid personId, CreatePetsBodyDto body) =>
+        http.Post<CreatePetsBodyDto, CreatePetsDto>(PetsRoutes.CreatePets.WithRouteParam(nameof(personId), personId), body);
+
     public static HttpPaginatedRequestExecutor<PetDto> GetOwnedPets(this HttpTestHelper http, Guid personId) =>
         http.GetPaginated<PetDto>(PetsRoutes.GetOwnedPets.WithRouteParam(nameof(personId), personId));
 }

@@ -1,6 +1,7 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -29,6 +30,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddAuthorization()
         .AddOpenApi()
         .AddAsyncApi()
+        .AddSagas()
         .AddModule<SampleAppDomainModule>();
 
     config.ConfigureMultitenancy(options =>

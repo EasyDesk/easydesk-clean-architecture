@@ -12,6 +12,8 @@ public static class PetsRoutes
 
     public const string CreatePet = Base;
 
+    public const string CreatePets = "bulk/" + Base;
+
     public const string GetOwnedPets = Base;
 }
 
@@ -22,8 +24,18 @@ public class PetController : CleanArchitectureController
         [FromRoute] Guid personId,
         [FromBody] CreatePetBodyDto body)
     {
-        return await Dispatch(new CreatePet(body.Nickname, personId))
+        return await Dispatch<PetSnapshot>(new CreatePet(body.Nickname, personId))
             .Map(PetDto.FromPetSnapshot)
+            .ReturnOk();
+    }
+
+    [HttpPost(PetsRoutes.CreatePets)]
+    public async Task<ActionResult<ResponseDto<CreatePetsDto, Nothing>>> CreatePets(
+        [FromRoute] Guid personId,
+        [FromBody] CreatePetsBodyDto body)
+    {
+        return await Dispatch(new CreatePets(body.Pets.Select(x => new CreatePet(x.Nickname, personId))))
+            .Map(CreatePetsDto.FromCreatePetsResult)
             .ReturnOk();
     }
 
