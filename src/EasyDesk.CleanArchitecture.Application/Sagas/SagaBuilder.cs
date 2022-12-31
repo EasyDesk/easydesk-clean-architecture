@@ -40,7 +40,7 @@ public class SagaHandlerSelector<T, R, TController, TId, TState>
 {
     private readonly ISagaConfigurationSink<TController, TId, TState> _sink;
     private readonly Func<T, TId> _correlationProperty;
-    private Func<TController, TId, T, Option<TState>> _initializer = (_, _, _) => None;
+    private AsyncFunc<TController, TId, T, Option<TState>> _initializer = (_, _, _) => Task.FromResult<Option<TState>>(None);
 
     internal SagaHandlerSelector(
         ISagaConfigurationSink<TController, TId, TState> sink,
@@ -52,7 +52,7 @@ public class SagaHandlerSelector<T, R, TController, TId, TState>
 
     public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<TController, TId, T, TState> initialState)
     {
-        _initializer = (c, i, r) => Some(initialState(c, i, r));
+        _initializer = (c, i, r) => Task.FromResult(Some(initialState(c, i, r)));
         return this;
     }
 
@@ -60,6 +60,18 @@ public class SagaHandlerSelector<T, R, TController, TId, TState>
         InitializeWith((_, i, r) => initialState(i, r));
 
     public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(Func<T, TState> initialState) =>
+        InitializeWith((_, _, r) => initialState(r));
+
+    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(AsyncFunc<TController, TId, T, TState> initialState)
+    {
+        _initializer = async (c, i, r) => Some(await initialState(c, i, r));
+        return this;
+    }
+
+    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(AsyncFunc<TId, T, TState> initialState) =>
+        InitializeWith((_, i, r) => initialState(i, r));
+
+    public SagaHandlerSelector<T, R, TController, TId, TState> InitializeWith(AsyncFunc<T, TState> initialState) =>
         InitializeWith((_, _, r) => initialState(r));
 
     public void HandleWith(Func<TController, SagaHandlerDelegate<T, R, TId, TState>> handlerFactory)

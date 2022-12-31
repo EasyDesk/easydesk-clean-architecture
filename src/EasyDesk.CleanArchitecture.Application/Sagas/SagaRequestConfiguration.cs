@@ -5,12 +5,12 @@ public class SagaRequestConfiguration<T, R, TController, TId, TState>
 {
     private readonly Func<T, TId> _sagaIdProperty;
     private readonly Func<TController, SagaHandlerDelegate<T, R, TId, TState>> _handlerFactory;
-    private readonly Func<TController, TId, T, Option<TState>> _sagaInitializer;
+    private readonly AsyncFunc<TController, TId, T, Option<TState>> _sagaInitializer;
 
     public SagaRequestConfiguration(
         Func<T, TId> sagaIdProperty,
         Func<TController, SagaHandlerDelegate<T, R, TId, TState>> handlerFactory,
-        Func<TController, TId, T, Option<TState>> sagaInitializer)
+        AsyncFunc<TController, TId, T, Option<TState>> sagaInitializer)
     {
         _sagaIdProperty = sagaIdProperty;
         _handlerFactory = handlerFactory;
@@ -22,6 +22,6 @@ public class SagaRequestConfiguration<T, R, TController, TId, TState>
     public SagaHandlerDelegate<T, R, TId, TState> GetHandler(TController controller) =>
         _handlerFactory(controller);
 
-    public Option<TState> InitializeSaga(TController controller, TId sagaId, T request) =>
+    public Task<Option<TState>> InitializeSaga(TController controller, TId sagaId, T request) =>
         _sagaInitializer(controller, sagaId, request);
 }
