@@ -50,6 +50,10 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         return base.CreateHost(builder);
     }
 
+    protected virtual void ConfigureConfiguration(IConfigurationBuilder config)
+    {
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment(Environment);
@@ -57,10 +61,11 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         {
             services.RemoveAll<IClock>();
             services.AddSingleton<IClock>(Clock);
+            OverrideServices(services);
         });
     }
 
-    protected virtual void ConfigureConfiguration(IConfigurationBuilder config)
+    protected virtual void OverrideServices(IServiceCollection services)
     {
     }
 
@@ -82,9 +87,11 @@ public abstract class IntegrationTestsWebApplicationFactory<T> : WebApplicationF
         var serviceEndpoint = Services.GetRequiredService<RebusEndpoint>();
         var helperEndpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
         return new RebusTestHelper(
-            rebus => rebus
-                .ConfigureStandardBehavior(helperEndpoint, options, Services)
-                .Routing(r => r.Decorate(c => new TestRouterWrapper(c.Get<IRouter>(), serviceEndpoint))),
+            rebus =>
+            {
+                options.Apply(Services, helperEndpoint, rebus);
+                rebus.Routing(r => r.Decorate(c => new TestRouterWrapper(c.Get<IRouter>(), serviceEndpoint)));
+            },
             defaultTimeout);
     }
 

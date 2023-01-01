@@ -8,13 +8,13 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 internal class AutoSubscriptionService : IHostedService
 {
     private readonly IBus _bus;
-    private readonly KnownMessageTypes _knownMessageTypes;
+    private readonly RebusMessagingOptions _options;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public AutoSubscriptionService(IBus bus, KnownMessageTypes knownMessageTypes, IServiceScopeFactory serviceScopeFactory)
+    public AutoSubscriptionService(IBus bus, RebusMessagingOptions options, IServiceScopeFactory serviceScopeFactory)
     {
         _bus = bus;
-        _knownMessageTypes = knownMessageTypes;
+        _options = options;
         _serviceScopeFactory = serviceScopeFactory;
     }
 
@@ -22,7 +22,7 @@ internal class AutoSubscriptionService : IHostedService
     {
         using var serviceScope = _serviceScopeFactory.CreateScope();
         using var scope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(serviceScope.ServiceProvider);
-        foreach (var messageType in _knownMessageTypes.Types.Where(ShouldAutoSubscribe))
+        foreach (var messageType in _options.KnownMessageTypes.Where(ShouldAutoSubscribe))
         {
             await _bus.Subscribe(messageType);
         }

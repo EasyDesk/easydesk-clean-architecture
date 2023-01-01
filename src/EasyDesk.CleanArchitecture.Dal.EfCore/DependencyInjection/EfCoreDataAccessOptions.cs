@@ -11,7 +11,8 @@ public class EfCoreDataAccessOptions<TBuilder, TExtension>
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
-    private const string MigrationsTableName = "__EFMigrationsHistory";
+    private const string MigrationsTableSuffix = "EFMigrationsHistory";
+    private const string MigrationsSchema = "ef";
 
     private readonly IEfCoreProvider<TBuilder, TExtension> _provider;
     private Action<DbContextOptionsBuilder> _configureDbContextOptions;
@@ -44,7 +45,6 @@ public class EfCoreDataAccessOptions<TBuilder, TExtension>
     }
 
     internal void RegisterDbContext<C>(
-        string schema,
         IServiceCollection services,
         Action<IServiceProvider, TBuilder> configure = null)
         where C : DbContext
@@ -54,7 +54,7 @@ public class EfCoreDataAccessOptions<TBuilder, TExtension>
             var connection = provider.GetRequiredService<DbConnection>();
             _provider.ConfigureDbProvider(options, connection, relationalOptions =>
             {
-                relationalOptions.MigrationsHistoryTable(MigrationsTableName, schema);
+                relationalOptions.MigrationsHistoryTable($"{typeof(C).Name}_{MigrationsTableSuffix}", MigrationsSchema);
                 _configureProviderOptions?.Invoke(relationalOptions);
                 configure?.Invoke(provider, relationalOptions);
             });

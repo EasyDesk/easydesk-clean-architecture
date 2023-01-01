@@ -1,10 +1,16 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using Rebus.Persistence.InMem;
+using Rebus.Subscriptions;
+using Rebus.Transport.InMem;
 using Respawn;
 using System.Data.Common;
 
@@ -13,7 +19,8 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests;
 public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<PersonController>
 {
     private readonly PostgreSqlTestcontainer _postgres;
-    private readonly RabbitMqTestcontainer _rabbitMq;
+    private readonly InMemNetwork _network = new();
+    private readonly InMemorySubscriberStore _subscriberStore = new();
 
     private DbConnection _dbConnection;
     private Respawner _respawner;
@@ -28,28 +35,31 @@ public class SampleApplicationFactory : IntegrationTestsWebApplicationFactory<Pe
                 Username = "sample",
                 Password = "sample"
             }));
-
-        _rabbitMq = RegisterTestContainer<RabbitMqTestcontainer>(container => container
-            .WithName($"{nameof(SampleApplicationFactory)}-integration-tests-rabbitmq")
-            .WithMessageBroker(new RabbitMqTestcontainerConfiguration
-            {
-                Username = "guest",
-                Password = "guest"
-            }));
     }
 
     protected override void ConfigureConfiguration(IConfigurationBuilder config)
     {
         config.AddInMemoryCollection(new Dictionary<string, string>
         {
-            ["ConnectionStrings:RabbitMq"] = _rabbitMq.ConnectionString,
             ["ConnectionStrings:MainDb"] = _postgres.ConnectionString,
         });
     }
 
-    public async Task ResetDatabase()
+    protected override void OverrideServices(IServiceCollection services)
+    {
+        services.RemoveAll<RebusTransportConfiguration>();
+        services.AddSingleton<RebusTransportConfiguration>((t, e) =>
+        {
+            t.UseInMemoryTransport(_network, e);
+            t.OtherService<ISubscriptionStorage>().StoreInMemory(_subscriberStore);
+        });
+    }
+
+    public async Task ResetPersistedData()
     {
         await _respawner.ResetAsync(_dbConnection);
+        _network.Reset();
+        _subscriberStore.Reset();
     }
 
     public override async Task InitializeAsync()

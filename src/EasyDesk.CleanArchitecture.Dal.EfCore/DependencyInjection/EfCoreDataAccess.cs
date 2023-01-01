@@ -44,7 +44,7 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         _options.RegisterUtilityServices(services);
-        AddDbContext<T>(DomainContext<T>.SchemaName, services);
+        AddDbContext<T>(services);
         services.AddScoped<SaveChangesDelegate>(provider => async () =>
         {
             var dbContext = provider.GetRequiredService<T>();
@@ -62,7 +62,6 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
     {
         AddDbContext<MessagingContext>(
-            MessagingContext.SchemaName,
             services,
             ConfigureMigrationsAssembly);
         services.AddScoped<IOutbox, EfCoreOutbox>();
@@ -86,7 +85,6 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     private void AddAuthorizationContext(IServiceCollection services)
     {
         AddDbContext<AuthorizationContext>(
-            AuthorizationContext.SchemaName,
             services,
             ConfigureMigrationsAssembly);
     }
@@ -99,7 +97,7 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
 
     public void AddSagas(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<SagasContext>(SagasContext.SchemaName, services, ConfigureMigrationsAssembly);
+        AddDbContext<SagasContext>(services, ConfigureMigrationsAssembly);
         services.AddScoped<ISagaManager, EfCoreSagaManager>();
     }
 
@@ -109,7 +107,6 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     }
 
     private void AddDbContext<C>(
-        string schema,
         IServiceCollection services,
         Action<IServiceProvider, TBuilder> configure = null)
         where C : DbContext
@@ -119,7 +116,7 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
             return;
         }
 
-        _options.RegisterDbContext<C>(schema, services, configure);
+        _options.RegisterDbContext<C>(services, configure);
         _registeredDbContextTypes.Add(typeof(C));
     }
 }

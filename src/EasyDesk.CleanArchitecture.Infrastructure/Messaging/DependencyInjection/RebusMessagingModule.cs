@@ -28,12 +28,14 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjectio
 public class RebusMessagingModule : AppModule
 {
     private readonly RebusEndpoint _endpoint;
-    private readonly RebusMessagingOptions _options;
+    private readonly RebusTransportConfiguration _transport;
+    private readonly Action<RebusMessagingOptions> _configure;
 
-    public RebusMessagingModule(RebusEndpoint endpoint, RebusMessagingOptions options)
+    public RebusMessagingModule(RebusEndpoint endpoint, RebusTransportConfiguration transport, Action<RebusMessagingOptions> configure = null)
     {
         _endpoint = endpoint;
-        _options = options;
+        _transport = transport;
+        _configure = configure;
     }
 
     public override void BeforeServiceConfiguration(AppDescription app)
@@ -50,16 +52,22 @@ public class RebusMessagingModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        var knownMessageTypes = ScanForKnownMessageTypes(app);
-        services.AddSingleton(knownMessageTypes);
+        var options = new RebusMessagingOptions();
+
+        options.AddKnownMessageTypesFromAssemblies(
+            app.GetLayerAssembly(CleanArchitectureLayer.Application),
+            typeof(SagasModule).Assembly);
+
+        _configure?.Invoke(options);
 
         services.AddSingleton(_endpoint);
-        services.AddSingleton(_options);
+        services.AddSingleton(options);
+        services.AddSingleton(_transport);
 
         ITransport originalTransport = null;
         services.AddRebus((configurer, provider) =>
         {
-            configurer.ConfigureStandardBehavior(_endpoint, _options, provider);
+            options.Apply(provider, _endpoint, configurer);
             configurer.Options(o =>
             {
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
@@ -73,24 +81,24 @@ public class RebusMessagingModule : AppModule
         });
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        SetupMessageHandlers(services, knownMessageTypes);
-        AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true));
+        SetupMessageHandlers(services, options.KnownMessageTypes);
+        AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true), options.OutboxOptions);
 
-        AddEventPropagators(services, knownMessageTypes);
+        AddEventPropagators(services, options.KnownMessageTypes);
 
         services.AddScoped<MessageBroker>();
         services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
         services.AddScoped<ICommandSender>(provider => provider.GetRequiredService<MessageBroker>());
 
-        if (_options.AutoSubscribe)
+        if (options.AutoSubscribe)
         {
             services.AddHostedService<AutoSubscriptionService>();
         }
     }
 
-    private void SetupMessageHandlers(IServiceCollection services, KnownMessageTypes knownMessageTypes)
+    private void SetupMessageHandlers(IServiceCollection services, IEnumerable<Type> knownMessageTypes)
     {
-        knownMessageTypes.Types
+        knownMessageTypes
             .Where(x => x.IsSubtypeOrImplementationOf(typeof(IIncomingMessage)))
             .ForEach(t =>
             {
@@ -108,10 +116,10 @@ public class RebusMessagingModule : AppModule
             .Select(i => i.GetGenericArguments()[0]);
     }
 
-    private void AddEventPropagators(IServiceCollection services, KnownMessageTypes knownMessageTypes)
+    private void AddEventPropagators(IServiceCollection services, IEnumerable<Type> knownMessageTypes)
     {
         var arguments = new object[] { services };
-        foreach (var messageType in knownMessageTypes.Types)
+        foreach (var messageType in knownMessageTypes)
         {
             messageType
                 .GetInterfaces()
@@ -132,14 +140,14 @@ public class RebusMessagingModule : AppModule
         services.AddTransient<IDomainEventHandler<D>, DomainEventPropagator<M, D>>();
     }
 
-    private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)
+    private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport, OutboxOptions options)
     {
         services.AddScoped<OutboxTransactionHelper>();
 
-        if (_options.OutboxOptions.PeriodicTaskEnabled)
+        if (options.PeriodicTaskEnabled)
         {
             services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
-                _options.OutboxOptions.FlushingPeriod,
+                options.FlushingPeriod,
                 provider.GetRequiredService<OutboxFlushRequestsChannel>(),
                 provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
         }
@@ -152,34 +160,19 @@ public class RebusMessagingModule : AppModule
             _ = provider.GetRequiredService<IBus>();
 
             return new OutboxFlusher(
-                _options.OutboxOptions.FlushingBatchSize,
+                options.FlushingBatchSize,
                 provider.GetRequiredService<IUnitOfWorkProvider>(),
                 provider.GetRequiredService<IOutbox>(),
                 originalTransport.Value);
         });
     }
-
-    private KnownMessageTypes ScanForKnownMessageTypes(AppDescription app)
-    {
-        var knownMessageTypes = new AssemblyScanner()
-            .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Application))
-            .FromAssembliesContaining(typeof(SagasModule))
-            .NonAbstract()
-            .SubtypesOrImplementationsOf<IMessage>()
-            .FindTypes()
-            .ToEquatableSet();
-        return new(knownMessageTypes);
-    }
 }
 
 public static class RebusMessagingModuleExtensions
 {
-    public static AppBuilder AddRebusMessaging(this AppBuilder builder, string inputQueueAddress, Action<RebusMessagingOptions> configure)
+    public static AppBuilder AddRebusMessaging(this AppBuilder builder, string inputQueueAddress, RebusTransportConfiguration transport, Action<RebusMessagingOptions> configure = null)
     {
-        var options = new RebusMessagingOptions();
-        configure(options);
-
-        return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), options));
+        return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), transport, configure));
     }
 
     public static bool HasRebusMessaging(this AppDescription app) => app.HasModule<RebusMessagingModule>();

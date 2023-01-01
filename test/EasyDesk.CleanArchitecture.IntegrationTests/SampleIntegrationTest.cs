@@ -12,5 +12,5 @@ public abstract class SampleIntegrationTest :
     {
     }
 
-    protected override async Task OnDisposal() => await Factory.ResetDatabase();
+    protected override async Task OnDisposal() => await Factory.ResetPersistedData();
 }

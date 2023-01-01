@@ -27,7 +27,7 @@ public class AsyncApiModule : AppModule
         services.AddTransient<IDocumentGenerator>(p => new KnownTypesDocumentGenerator(
             app.Name,
             p.GetRequiredService<RebusEndpoint>().InputQueueAddress));
-        services.AddTransient<IAsyncApiDocumentProvider, KnowTypesDocumentProvider>();
+        services.AddTransient<IAsyncApiDocumentProvider, KnownTypesDocumentProvider>();
         services.AddAsyncApiSchemaGeneration(options =>
         {
             options.Middleware.Route = "/asyncapi/asyncapi.json";

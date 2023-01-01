@@ -6,22 +6,22 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
-internal class KnowTypesDocumentProvider : IAsyncApiDocumentProvider
+internal class KnownTypesDocumentProvider : IAsyncApiDocumentProvider
 {
     private readonly IDocumentGenerator _documentGenerator;
-    private readonly KnownMessageTypes _knownMessageTypes;
+    private readonly RebusMessagingOptions _options;
     private readonly IServiceProvider _serviceProvider;
 
-    public KnowTypesDocumentProvider(
+    public KnownTypesDocumentProvider(
         IDocumentGenerator documentGenerator,
-        KnownMessageTypes knownMessageTypes,
+        RebusMessagingOptions options,
         IServiceProvider serviceProvider)
     {
         _documentGenerator = documentGenerator;
-        _knownMessageTypes = knownMessageTypes;
+        _options = options;
         _serviceProvider = serviceProvider;
     }
 
     public AsyncApiDocument GetDocument(AsyncApiOptions options, AsyncApiDocument prototype) =>
-        _documentGenerator.GenerateDocument(_knownMessageTypes.Types.Select(t => t.GetTypeInfo()).ToArray(), options, prototype, _serviceProvider);
+        _documentGenerator.GenerateDocument(_options.KnownMessageTypes.Select(t => t.GetTypeInfo()).ToArray(), options, prototype, _serviceProvider);
 }

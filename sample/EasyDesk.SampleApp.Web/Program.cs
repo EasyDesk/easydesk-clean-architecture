@@ -41,11 +41,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
     config.AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"));
 
-    config.AddRebusMessaging("sample", options =>
-    {
-        options.OutboxOptions.PeriodicTaskEnabled = false;
-        options.ConfigureTransport((e, t) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e.InputQueueAddress));
-    });
+    config.AddRebusMessaging("sample", (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e));
 });
 
 var app = builder.Build();
