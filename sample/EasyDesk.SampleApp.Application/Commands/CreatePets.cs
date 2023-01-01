@@ -35,6 +35,6 @@ public class BulkCreatePets : AbstractSequentialBulkOperation<BulkCreatePets, Cr
     protected override Task<(CreatePetsResult, IEnumerable<CreatePet>)> Prepare(CreatePets command) =>
         Task.FromResult((new CreatePetsResult(command.Pets.Count()), command.Pets));
 
-    protected override Task<bool> IsComplete(IEnumerable<CreatePet> remainingWork) =>
-        Task.FromResult(remainingWork.IsEmpty());
+    protected override bool IsComplete(IEnumerable<CreatePet> remainingWork) =>
+        remainingWork.IsEmpty();
 }

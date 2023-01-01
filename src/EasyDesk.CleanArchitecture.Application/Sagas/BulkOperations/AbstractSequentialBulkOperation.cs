@@ -36,7 +36,7 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
 
     private async Task<Result<TResult>> RequestNextBatchComputation(SagaContext<Guid, BulkOperationState<TResult, TWork>> context)
     {
-        if (await IsComplete(context.State.RemainingWork))
+        if (IsComplete(context.State.RemainingWork))
         {
             context.CompleteSaga();
         }
@@ -63,7 +63,7 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
             .HandleWith<TSelf>((c, b, s) => c.Handle(b, s));
     }
 
-    protected abstract Task<bool> IsComplete(TWork remainingWork);
+    protected abstract bool IsComplete(TWork remainingWork);
 
     protected abstract Task<(TResult, TWork)> Prepare(TStartCommand command);
 
