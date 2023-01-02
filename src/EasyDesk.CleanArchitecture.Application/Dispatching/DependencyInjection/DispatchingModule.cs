@@ -25,9 +25,11 @@ public class DispatchingModule : AppModule
         Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
 
         var steps = Pipeline.GetOrderedSteps().ToList();
-        Console.WriteLine("_______________________________________________________________________________");
-        steps.Concat(steps.AsEnumerable().Reverse()).ForEach(s => Console.WriteLine(s.Name));
-        Console.WriteLine("_______________________________________________________________________________");
+        var pipelineDesc = "------------------------------------------------------------------------------\nRequest pipeline\n------------------------------------------------------------------------------\n";
+        var stepsEnumerable = steps.Select((s, i) => $"{i + 1}. {s.FullName}");
+        pipelineDesc += stepsEnumerable.Append("-------- Handler --------").Concat(stepsEnumerable.Reverse()).ConcatStrings("\n", "\n", "\n");
+        pipelineDesc += "\n------------------------------------------------------------------------------";
+        Console.WriteLine(pipelineDesc);
         services.AddScoped<IPipeline>(p => new GenericPipeline(p, steps));
     }
 
