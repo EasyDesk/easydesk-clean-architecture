@@ -1,7 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Pagination;
-using EasyDesk.Tools.Collections;
+﻿using EasyDesk.Tools.Collections;
 
-namespace System.Linq;
+namespace EasyDesk.CleanArchitecture.Application.Pagination;
 
 public static class Pageable
 {

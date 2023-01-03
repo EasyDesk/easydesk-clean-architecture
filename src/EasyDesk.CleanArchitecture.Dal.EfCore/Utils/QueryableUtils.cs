@@ -1,11 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Pagination;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Tools.Collections;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
-namespace System.Linq;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
 public static class QueryableUtils
 {
