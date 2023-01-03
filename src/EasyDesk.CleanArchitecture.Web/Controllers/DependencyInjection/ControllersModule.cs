@@ -9,15 +9,31 @@ using Microsoft.Extensions.Hosting;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 
+public class ControllersModuleOptions
+{
+    public const int DefaultDefaultPageSize = 100;
+    public const int DefaultMaxPageSize = 100;
+    private Action<MvcOptions> _configureMvc;
+
+    public int DefaultPageSize { get; set; } = DefaultDefaultPageSize;
+
+    public int MaxPageSize { get; set; } = DefaultMaxPageSize;
+
+    public void ConfigureMvc(Action<MvcOptions> configureMvc) => _configureMvc += configureMvc;
+
+    internal void ApplyMvcConfiguration(MvcOptions options) => _configureMvc?.Invoke(options);
+}
+
 public class ControllersModule : AppModule
 {
     private readonly IWebHostEnvironment _environment;
-    private readonly Action<MvcOptions> _configureMvc;
 
-    public ControllersModule(IWebHostEnvironment environment, Action<MvcOptions> configureMvc = null)
+    public ControllersModuleOptions Options { get; } = new();
+
+    public ControllersModule(IWebHostEnvironment environment, Action<ControllersModuleOptions> configure = null)
     {
         _environment = environment;
-        _configureMvc = configureMvc;
+        configure?.Invoke(Options);
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
@@ -29,6 +45,8 @@ public class ControllersModule : AppModule
             {
                 app.RequireModule<JsonModule>().ApplyJsonConfiguration(options.SerializerSettings, app);
             });
+
+        services.AddSingleton(new PaginationService(Options.DefaultPageSize, Options.MaxPageSize));
     }
 
     protected void DefaultMvcConfiguration(MvcOptions options)
@@ -38,14 +56,14 @@ public class ControllersModule : AppModule
             options.Filters.Add<UnhandledExceptionsFilter>();
         }
         options.EnableEndpointRouting = false;
-        _configureMvc?.Invoke(options);
+        Options.ApplyMvcConfiguration(options);
     }
 }
 
 public static class ControllersModuleExtension
 {
-    public static AppBuilder AddControllers(this AppBuilder builder, IWebHostEnvironment environment, Action<MvcOptions> configureMvc = null)
+    public static AppBuilder AddControllers(this AppBuilder builder, IWebHostEnvironment environment, Action<ControllersModuleOptions> configure = null)
     {
-        return builder.AddModule(new ControllersModule(environment, configureMvc));
+        return builder.AddModule(new ControllersModule(environment, configure));
     }
 }

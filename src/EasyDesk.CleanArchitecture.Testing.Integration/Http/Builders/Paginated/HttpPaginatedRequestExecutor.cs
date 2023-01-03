@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
-using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools.Collections;
 using Newtonsoft.Json;
 using NodaTime;
@@ -40,24 +39,26 @@ public class HttpPaginatedRequestExecutor<T> :
     private async IAsyncEnumerable<HttpPageResponseWrapper<T>> EnumeratePages([EnumeratorCancellation] CancellationToken timeoutToken)
     {
         var hasNextPage = true;
-        var pageIndex = 0;
         do
         {
             timeoutToken.ThrowIfCancellationRequested();
-            SetPageIndex(pageIndex);
             var request = CreateRequest();
             var page = WrapSinglePage(() => _httpClient.SendAsync(request));
-            var pageCount = await page.PageCount();
+            var paginationMetadata = await page.AsMetadata();
+            var pageCount = paginationMetadata.PageCount;
+            var pageSize = paginationMetadata.PageSize;
+            var pageIndex = paginationMetadata.PageIndex;
             await page.EnsureSuccess();
-            yield return page;
-            pageIndex++;
-            hasNextPage = pageIndex < pageCount;
+            hasNextPage = false;
+            if (pageCount > 0 && pageSize > 0)
+            {
+                yield return page;
+                hasNextPage = pageIndex < pageCount;
+                this.SetPageIndex(pageIndex + 1);
+            }
         }
         while (hasNextPage);
     }
-
-    private void SetPageIndex(int pageIndex) =>
-        WithQuery(nameof(PaginationDto.PageIndex), pageIndex.ToString());
 
     protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpPageResponseWrapper<T>>> request) =>
         new(request);

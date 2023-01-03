@@ -10,10 +10,4 @@ public class HttpPageResponseWrapper<T> : HttpResponseWrapper<IEnumerable<T>, Pa
         : base(httpResponseMessage, jsonSerializerSettings)
     {
     }
-
-    public async Task<int> PageCount()
-    {
-        var meta = await AsMetadata();
-        return meta.PageCount;
-    }
 }

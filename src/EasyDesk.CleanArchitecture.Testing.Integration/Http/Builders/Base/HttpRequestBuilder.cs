@@ -72,10 +72,10 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
 
     public override B WithContent(HttpContent content) => ConfigureRequest(r => r.Content = content);
 
-    public override HttpRequestBuilder WithQuery(string key, string value) =>
+    public override B WithQuery(string key, string value) =>
         ConfigureQuery(q => q[key] = value);
 
-    public override HttpRequestBuilder WithoutQuery(string key) =>
+    public override B WithoutQuery(string key) =>
         ConfigureQuery(q => q.Remove(key));
 
     private B ConfigureRequest(Action<HttpRequestMessage> configure)

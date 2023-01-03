@@ -16,6 +16,6 @@ public record PaginationMetaDto(
 
     public static PaginationMetaDto FromResult<T>(Result<PageInfo<T>> result, int pageSize, int pageIndex) =>
         result.Match(
-            success: t => FromPageInfo(t, pageSize, pageIndex),
+            success: t => FromPageInfo(t, t.PageSize, t.PageIndex),
             failure: _ => FromFailure(pageSize, pageIndex));
 }

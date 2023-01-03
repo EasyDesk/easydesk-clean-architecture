@@ -7,8 +7,6 @@ namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
 public abstract class CleanArchitectureController : AbstractController
 {
-    public const int DefaultPageSize = 100;
-
     private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 
     protected ActionResultBuilder<T, T, Nothing> Dispatch<T>(IDispatchable<T> request) =>
@@ -17,8 +15,9 @@ public abstract class CleanArchitectureController : AbstractController
     protected ActionResultBuilder<PageInfo<T>, IEnumerable<T>, PaginationMetaDto> DispatchWithPagination<T>(
         IDispatchable<IPageable<T>> request, PaginationDto pagination)
     {
-        var pageSize = pagination.PageSize ?? DefaultPageSize;
-        var pageIndex = pagination.PageIndex ?? 0;
+        var paginationService = GetService<PaginationService>();
+        var pageSize = paginationService.GetPageSize(pagination.PageSize.AsOption());
+        var pageIndex = paginationService.GetPageIndex(pagination.PageIndex.AsOption());
         return new(
             () => Handle(request).ThenMapAsync(pageable => pageable.GetPageInfo(pageSize, pageIndex)),
             pageInfo => pageInfo.Page,

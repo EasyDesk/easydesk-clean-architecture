@@ -1,0 +1,16 @@
+﻿{
+  StatusCode: OK,
+  Content: {
+    Data: [
+      {
+        Id: Guid_1,
+        FirstName: Foo0000,
+        LastName: Bar0000,
+        DateOfBirth: 2000-01-01,
+        CreatedBy: test-admin-a
+      }
+    ],
+    Errors: [],
+    Meta: {}
+  }
+}

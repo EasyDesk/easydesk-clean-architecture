@@ -12,6 +12,7 @@ using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
+using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
@@ -42,6 +43,13 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
     config.AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"));
 
     config.AddRebusMessaging("sample", (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e));
+
+    config.ConfigureModule<ControllersModule>(m =>
+    {
+        var section = builder.Configuration.RequireSection("Pagination");
+        section.GetValueAsOption<int>("DefaultPageSize").IfPresent(s => m.Options.DefaultPageSize = s);
+        section.GetValueAsOption<int>("MaxPageSize").IfPresent(s => m.Options.MaxPageSize = s);
+    });
 });
 
 var app = builder.Build();

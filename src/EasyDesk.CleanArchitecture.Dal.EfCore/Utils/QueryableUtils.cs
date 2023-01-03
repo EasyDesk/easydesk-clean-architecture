@@ -93,8 +93,20 @@ public static class QueryableUtils
 
         private async Task<T[]> GetPageAsArray(int pageSize, int pageIndex)
         {
-            return await _queryable
-                .Skip(pageIndex * pageSize)
+            IQueryable<T> SafeSkip()
+            {
+                int skip;
+                if (pageIndex > int.MaxValue / pageSize)
+                {
+                    skip = int.MaxValue;
+                }
+                else
+                {
+                    skip = pageIndex * pageSize;
+                }
+                return _queryable.Skip(skip);
+            }
+            return await (pageIndex > 0 ? SafeSkip() : _queryable)
                 .Take(pageSize)
                 .ToArrayAsync();
         }
