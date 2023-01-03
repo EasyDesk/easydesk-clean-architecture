@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+namespace System.Linq;
 
 public static class QueryableUtils
 {
@@ -60,18 +60,16 @@ public static class QueryableUtils
         };
     }
 
-    public static IPageable<T> ToPageable<T>(this IQueryable<T> queryable, Func<IQueryable<T>, IOrderedQueryable<T>> ordering) =>
-        new QueryablePageable<T>(queryable, ordering);
+    public static IPageable<T> ToPageable<T>(this IQueryable<T> queryable) =>
+        new QueryablePageable<T>(queryable);
 
     private class QueryablePageable<T> : IPageable<T>
     {
         private readonly IQueryable<T> _queryable;
-        private readonly Func<IQueryable<T>, IOrderedQueryable<T>> _ordering;
 
-        public QueryablePageable(IQueryable<T> queryable, Func<IQueryable<T>, IOrderedQueryable<T>> ordering)
+        public QueryablePageable(IQueryable<T> queryable)
         {
             _queryable = queryable;
-            _ordering = ordering;
         }
 
         public async Task<int> GetTotalCount() => await _queryable.CountAsync();
@@ -96,7 +94,7 @@ public static class QueryableUtils
 
         private async Task<T[]> GetPageAsArray(int pageSize, int pageIndex)
         {
-            return await _ordering(_queryable)
+            return await _queryable
                 .Skip(pageIndex * pageSize)
                 .Take(pageSize)
                 .ToArrayAsync();

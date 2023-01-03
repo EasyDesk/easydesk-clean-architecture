@@ -1,10 +1,11 @@
-﻿using EasyDesk.Tools.Collections;
+﻿using EasyDesk.CleanArchitecture.Application.Pagination;
+using EasyDesk.Tools.Collections;
 
-namespace EasyDesk.CleanArchitecture.Application.Pagination;
+namespace System.Linq;
 
 public static class Pageable
 {
-    public static IPageable<T> ToPageable<T>(this IEnumerable<T> sequence) => new EnumerablePageable<T>(sequence);
+    public static IPageable<T> FromEnumerable<T>(IEnumerable<T> sequence) => new EnumerablePageable<T>(sequence);
 
     private class EnumerablePageable<T> : IPageable<T>
     {
