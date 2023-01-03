@@ -21,7 +21,7 @@ public class DeletePersonTests : SampleIntegrationTest
     private const string AdminId = "test-admin";
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
-    public DeletePersonTests(SampleApplicationFactory factory) : base(factory)
+    public DeletePersonTests(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 
@@ -99,7 +99,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        using var scope = Factory.Services.CreateScope();
+        using var scope = WebService.Services.CreateScope();
         var personRecord = await scope.ServiceProvider
             .GetRequiredService<SampleAppContext>()
             .People

@@ -1,15 +1,18 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.Tools.Collections;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rebus.Activation;
 using Rebus.Bus;
 using Rebus.Config;
+using Rebus.Routing;
 using System.Diagnostics;
 using System.Threading.Channels;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
-public class RebusTestHelper : IAsyncDisposable
+public class RebusTestBus : ITestBus
 {
     private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
 
@@ -19,7 +22,7 @@ public class RebusTestHelper : IAsyncDisposable
     private readonly IList<IMessage> _deadLetter = new List<IMessage>();
     private readonly Duration _timeout;
 
-    public RebusTestHelper(Action<RebusConfigurer> configureRebus, Duration? timeout = null)
+    public RebusTestBus(Action<RebusConfigurer> configureRebus, Duration? timeout = null)
     {
         _timeout = timeout ?? _defaultTimeout;
 
@@ -55,45 +58,7 @@ public class RebusTestHelper : IAsyncDisposable
     private async Task Handler(IMessage message) =>
         await _messages.Writer.WriteAsync(message);
 
-    public async Task<T> WaitForMessageAfterDelayOrFail<T>(T message, Duration delay, Duration? timeout = null) =>
-        await WaitForMessageAfterDelayOrFail<T>(m => m.Equals(message), delay, timeout);
-
-    public async Task<T> WaitForMessageAfterDelayOrFail<T>(Duration delay, Duration? timeout = null) =>
-        await WaitForMessageAfterDelayOrFail<T>(_ => true, delay, timeout);
-
-    public async Task<T> WaitForMessageAfterDelayOrFail<T>(Func<T, bool> predicate, Duration delay, Duration? timeout = null)
-    {
-        await FailIfMessageIsReceivedWithin(predicate, delay);
-        return await WaitForMessageOrFail(predicate, timeout);
-    }
-
-    public async Task FailIfMessageIsReceivedWithin<T>(T message, Duration? timeout = null) =>
-        await FailIfMessageIsReceivedWithin<T>(m => m.Equals(message), timeout);
-
-    public async Task FailIfMessageIsReceivedWithin<T>(Duration? timeout = null) =>
-        await FailIfMessageIsReceivedWithin<T>(_ => true, timeout);
-
-    public async Task FailIfMessageIsReceivedWithin<T>(Func<T, bool> predicate, Duration? timeout = null)
-    {
-        try
-        {
-            await WaitForMessageOrFail(predicate, timeout);
-        }
-        catch (MessageNotReceivedWithinTimeoutException)
-        {
-            return;
-        }
-
-        throw new UnexpectedMessageReceivedException(timeout ?? _defaultTimeout, typeof(T));
-    }
-
-    public async Task<T> WaitForMessageOrFail<T>(T message, Duration? timeout = null) =>
-        await WaitForMessageOrFail<T>(x => x.Equals(message), timeout);
-
-    public async Task<T> WaitForMessageOrFail<T>(Duration? timeout = null) =>
-        await WaitForMessageOrFail<T>(_ => true, timeout);
-
-    public async Task<T> WaitForMessageOrFail<T>(Func<T, bool> predicate, Duration? timeout = null)
+    public async Task<T> WaitForMessageOrFail<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
     {
         var (m, deadLetterIndex) = await WaitForMessage(predicate, timeout);
         deadLetterIndex.IfPresent(_deadLetter.RemoveAt);
@@ -141,4 +106,20 @@ public class RebusTestHelper : IAsyncDisposable
         _bus.Dispose();
         GC.SuppressFinalize(this);
     }
+
+    public static RebusTestBus CreateFromServices(IServiceProvider serviceProvider, string inputQueueAddress = null, Duration? defaultTimeout = null)
+    {
+        var options = serviceProvider.GetRequiredService<RebusMessagingOptions>();
+        var serviceEndpoint = serviceProvider.GetRequiredService<RebusEndpoint>();
+        var helperEndpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
+        return new RebusTestBus(
+            rebus =>
+            {
+                options.Apply(serviceProvider, helperEndpoint, rebus);
+                rebus.Routing(r => r.Decorate(c => new TestRouterWrapper(c.Get<IRouter>(), serviceEndpoint)));
+            },
+            defaultTimeout);
+    }
+
+    private static string GenerateNewRandomAddress() => $"rebus-test-helper-{Guid.NewGuid()}";
 }

@@ -17,7 +17,7 @@ public class CreatePersonTests : SampleIntegrationTest
         LastName: "Bar",
         DateOfBirth: new LocalDate(1996, 2, 2));
 
-    public CreatePersonTests(SampleApplicationFactory factory) : base(factory)
+    public CreatePersonTests(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 

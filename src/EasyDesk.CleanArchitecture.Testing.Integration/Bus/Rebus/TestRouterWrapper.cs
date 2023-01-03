@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using Rebus.Messages;
 using Rebus.Routing;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
 internal class TestRouterWrapper : IRouter
 {

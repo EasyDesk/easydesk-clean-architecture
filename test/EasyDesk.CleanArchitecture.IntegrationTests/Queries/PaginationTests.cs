@@ -12,7 +12,7 @@ public class PaginationTests : SampleIntegrationTest
     private const string AdminId = "test-admin-a";
     private const int InitialPopulationSize = 300;
 
-    public PaginationTests(SampleApplicationFactory factory) : base(factory)
+    public PaginationTests(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 

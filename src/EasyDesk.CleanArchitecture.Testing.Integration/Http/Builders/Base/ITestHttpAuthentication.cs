@@ -7,8 +7,6 @@ public interface ITestHttpAuthentication
     void ConfigureAuthentication(HttpRequestMessage message, IEnumerable<Claim> identity);
 
     void RemoveAuthentication(HttpRequestMessage message);
-
-    public static ITestHttpAuthentication NoAuthentication => new NoAuthentication();
 }
 
 internal class NoAuthentication : ITestHttpAuthentication

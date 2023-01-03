@@ -2,7 +2,8 @@
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
-using EasyDesk.CleanArchitecture.Testing.Integration.Rebus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using NodaTime;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
@@ -31,7 +32,7 @@ public class RabbitMqContainerFixture : IAsyncLifetime
     }
 }
 
-public class RebusTestHelperTests : IClassFixture<RabbitMqContainerFixture>, IAsyncLifetime
+public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsyncLifetime
 {
     private record Command(int Value) : ICommand;
 
@@ -44,19 +45,19 @@ public class RebusTestHelperTests : IClassFixture<RabbitMqContainerFixture>, IAs
     private static readonly Duration _computationSlack = Duration.FromMilliseconds(500);
 
     private readonly string _rabbitMqConnection;
-    private readonly RebusTestHelper _sender;
-    private readonly RebusTestHelper _receiver;
+    private readonly ITestBus _sender;
+    private readonly ITestBus _receiver;
 
-    public RebusTestHelperTests(RabbitMqContainerFixture rabbitMqContainerFixture)
+    public RebusTestBusTests(RabbitMqContainerFixture rabbitMqContainerFixture)
     {
         _rabbitMqConnection = rabbitMqContainerFixture.RabbitMq.ConnectionString;
         _sender = CreateBus(SenderAddress);
         _receiver = CreateBus(ReceiverAddress);
     }
 
-    private RebusTestHelper CreateBus(string endpoint)
+    private RebusTestBus CreateBus(string endpoint)
     {
-        return new RebusTestHelper(rebus => rebus
+        return new RebusTestBus(rebus => rebus
             .Transport(t => t.UseRabbitMq(_rabbitMqConnection, endpoint))
             .Routing(r => r.TypeBased().MapFallback(ReceiverAddress)));
     }

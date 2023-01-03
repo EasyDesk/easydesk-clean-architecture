@@ -14,7 +14,7 @@ public class CreatePetTests : SampleIntegrationTest
     private const string AdminId = "dog-friendly-admin";
     private const string Nickname = "Rex";
 
-    public CreatePetTests(SampleApplicationFactory factory) : base(factory)
+    public CreatePetTests(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 

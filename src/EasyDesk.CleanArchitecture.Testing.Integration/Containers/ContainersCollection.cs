@@ -3,7 +3,7 @@ using DotNet.Testcontainers.Containers;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 
-public class ContainersContext : IAsyncDisposable
+public class ContainersCollection : IAsyncDisposable
 {
     private readonly ISet<ITestcontainersContainer> _containers = new HashSet<ITestcontainersContainer>();
 
@@ -15,12 +15,12 @@ public class ContainersContext : IAsyncDisposable
         return container;
     }
 
-    public async Task StartAsync()
+    public async Task StartAll()
     {
         await ForEachContainer(async c => await c.StartAsync());
     }
 
-    public async Task StopAsync()
+    public async Task StopAll()
     {
         await ForEachContainer(async c => await c.StopAsync());
     }

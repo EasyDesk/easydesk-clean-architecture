@@ -46,9 +46,9 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
     config.ConfigureModule<ControllersModule>(m =>
     {
-        var section = builder.Configuration.RequireSection("Pagination");
-        section.GetValueAsOption<int>("DefaultPageSize").IfPresent(s => m.Options.DefaultPageSize = s);
-        section.GetValueAsOption<int>("MaxPageSize").IfPresent(s => m.Options.MaxPageSize = s);
+        var section = builder.Configuration.GetSectionAsOption("Pagination");
+        section.FlatMap(s => s.GetValueAsOption<int>("DefaultPageSize")).IfPresent(s => m.Options.DefaultPageSize = s);
+        section.FlatMap(s => s.GetValueAsOption<int>("MaxPageSize")).IfPresent(s => m.Options.MaxPageSize = s);
     });
 });
 
