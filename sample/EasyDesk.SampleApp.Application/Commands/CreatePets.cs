@@ -15,6 +15,7 @@ public record CreatePetsBatch(Guid OperationId) : AbstractBulkOperationCommand(O
 
 public class BulkCreatePets : AbstractSequentialBulkOperation<BulkCreatePets, CreatePets, CreatePetsResult, IEnumerable<CreatePet>, CreatePetsBatch>
 {
+    private const int BatchSize = 3;
     private readonly IPetRepository _petRepository;
 
     public BulkCreatePets(ICommandSender commandSender, IPetRepository petRepository) : base(commandSender)
@@ -24,10 +25,12 @@ public class BulkCreatePets : AbstractSequentialBulkOperation<BulkCreatePets, Cr
 
     protected override async Task<IEnumerable<CreatePet>> HandleBatch(CreatePetsBatch command, IEnumerable<CreatePet> remainingWork)
     {
-        var createPetCommand = remainingWork.First();
-        var pet = Pet.Create(Name.From(createPetCommand.Nickname), createPetCommand.PersonId);
-        await _petRepository.SaveAndHydrate(pet);
-        return remainingWork.Skip(1);
+        foreach (var createPetCommand in remainingWork.Take(BatchSize))
+        {
+            var pet = Pet.Create(Name.From(createPetCommand.Nickname), createPetCommand.PersonId);
+            await _petRepository.SaveAndHydrate(pet);
+        }
+        return remainingWork.Skip(BatchSize);
     }
 
     protected override CreatePetsBatch CreateCommand(Guid operationId) => new(operationId);

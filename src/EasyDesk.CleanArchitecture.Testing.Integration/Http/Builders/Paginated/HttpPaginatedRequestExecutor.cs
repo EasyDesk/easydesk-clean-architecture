@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools.Collections;
 using Newtonsoft.Json;
 using NodaTime;
@@ -39,6 +40,7 @@ public class HttpPaginatedRequestExecutor<T> :
     private async IAsyncEnumerable<HttpPageResponseWrapper<T>> EnumeratePages([EnumeratorCancellation] CancellationToken timeoutToken)
     {
         var hasNextPage = true;
+        var initialPage = Query.GetOption(nameof(PaginationDto.PageIndex));
         do
         {
             timeoutToken.ThrowIfCancellationRequested();
@@ -58,6 +60,7 @@ public class HttpPaginatedRequestExecutor<T> :
             }
         }
         while (hasNextPage);
+        initialPage.Match(some: i => this.SetPageIndex(i), none: () => this.RemovePageIndex());
     }
 
     protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpPageResponseWrapper<T>>> request) =>
