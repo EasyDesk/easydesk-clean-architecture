@@ -55,6 +55,7 @@ public class ControllersModule : AppModule
         {
             options.Filters.Add<UnhandledExceptionsFilter>();
         }
+        options.Filters.Add<BadRequestFilter>();
         options.EnableEndpointRouting = false;
         Options.ApplyMvcConfiguration(options);
     }

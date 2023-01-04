@@ -1,0 +1,23 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InputValidationError,
+        Detail: The value 'foo' is not valid.,
+        Meta: {
+          propertyName: PageSize
+        }
+      },
+      {
+        Code: InputValidationError,
+        Detail: The value 'bar' is not valid.,
+        Meta: {
+          propertyName: PageIndex
+        }
+      }
+    ],
+    Meta: {}
+  }
+}

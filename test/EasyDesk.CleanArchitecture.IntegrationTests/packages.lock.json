@@ -161,14 +161,15 @@
       },
       "EasyDesk.Testing": {
         "type": "Transitive",
-        "resolved": "0.6.1",
-        "contentHash": "MsNzucXZnkaDj6WMnU0to6slH+Psm//TqFQdDMkcFUHAk8WZDBeLJpLQDxdOFTkmVOewFj8YNL2/S7UvNzgQtg==",
+        "resolved": "0.6.2",
+        "contentHash": "1c+7ItsbN2CkDs1/n2Jxpp4EioZyzmQ5uKRNnzYFpeavs1srZj2cHedLEpR/JVgmC8jWDD9l1gLuMfYz6+22EQ==",
         "dependencies": {
           "EasyDesk.Tools": "7.6.1",
           "Microsoft.Extensions.DependencyInjection": "7.0.0",
           "NSubstitute": "4.4.0",
           "Shouldly": "4.1.0",
-          "Verify": "19.5.0"
+          "Verify": "19.5.0",
+          "Verify.NewtonsoftJson": "1.0.0"
         }
       },
       "EmptyFiles": {
@@ -2036,6 +2037,16 @@
           "SimpleInfoName": "2.0.0"
         }
       },
+      "Verify.NewtonsoftJson": {
+        "type": "Transitive",
+        "resolved": "1.0.0",
+        "contentHash": "rirjFZ3ywYcBsqRiDS30ZthYdpTVQb4dluVKoWemZUTRux1aF/7T5vAkWqo48r9+OQiJKPhWYOVj4znqAEwQZw==",
+        "dependencies": {
+          "Argon": "0.1.0",
+          "Newtonsoft.Json": "13.0.2",
+          "Verify": "19.5.0"
+        }
+      },
       "xunit.abstractions": {
         "type": "Transitive",
         "resolved": "2.0.3",
@@ -2147,7 +2158,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Web": "[1.0.0, )",
-          "EasyDesk.Testing": "[0.6.1, )",
+          "EasyDesk.Testing": "[0.6.2, )",
           "EasyDesk.Tools": "[7.6.1, )",
           "Microsoft.AspNetCore.Mvc.Testing": "[7.0.1, )",
           "NodaTime.Testing": "[3.1.6, )",
