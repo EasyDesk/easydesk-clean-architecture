@@ -841,15 +841,6 @@
           "NJsonSchema": "10.7.2"
         }
       },
-      "Scrutor": {
-        "type": "Transitive",
-        "resolved": "4.2.0",
-        "contentHash": "3A4HE/jetg7hySwrAPJY1G0mc6qo1StlF4y5JuIZOp17ULp0STnFWhIjBL+Qa/2z60y+SQ3xz3qMd9cSGS0qMg==",
-        "dependencies": {
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "6.0.0",
-          "Microsoft.Extensions.DependencyModel": "6.0.0"
-        }
-      },
       "SharpZipLib": {
         "type": "Transitive",
         "resolved": "1.4.1",
@@ -1736,8 +1727,7 @@
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.0, )",
           "Newtonsoft.Json": "[13.0.2, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
-          "NodaTime.Serialization.JsonNet": "[3.0.1, )",
-          "Scrutor": "[4.2.0, )"
+          "NodaTime.Serialization.JsonNet": "[3.0.1, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {
