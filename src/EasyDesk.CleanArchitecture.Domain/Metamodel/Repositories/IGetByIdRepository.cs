@@ -6,6 +6,8 @@ public interface IGetByIdRepository<T, TId>
     where T : AggregateRoot
 {
     Task<Option<T>> GetById(TId id);
+
+    Task<bool> Exists(TId id);
 }
 
 public static class GetByIdRepositoryExtensions
