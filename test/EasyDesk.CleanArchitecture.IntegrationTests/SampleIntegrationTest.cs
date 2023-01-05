@@ -3,7 +3,7 @@
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
 [UsesVerify]
-[Collection(nameof(SharedSampleApplicationFixture))]
+[Collection(nameof(SampleApplicationTestCollection))]
 public abstract class SampleIntegrationTest : WebServiceIntegrationTest<SampleAppTestsFixture>
 {
     protected SampleIntegrationTest(SampleAppTestsFixture factory) : base(factory)

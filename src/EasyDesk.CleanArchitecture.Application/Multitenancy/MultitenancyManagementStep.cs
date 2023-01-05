@@ -39,7 +39,7 @@ public class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
 
     private MultitenantPolicy GetPolicyForRequest(T request) => request switch
     {
-        IOverrideMultitenantPolicy p => p.MultitenantPolicy,
+        IOverrideMultitenantPolicy p => p.GetMultitenantPolicy(),
         _ => _defaultPolicy
     };
 }

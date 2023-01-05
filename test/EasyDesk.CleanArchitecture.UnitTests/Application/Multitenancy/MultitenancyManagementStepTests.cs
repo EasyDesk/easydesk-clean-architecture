@@ -12,7 +12,10 @@ public class MultitenancyManagementStepTests
 {
     private record DefaultPolicyRequest;
 
-    private record OverriddenPolicyRequest(MultitenantPolicy MultitenantPolicy) : IOverrideMultitenantPolicy;
+    private record OverriddenPolicyRequest(MultitenantPolicy MultitenantPolicy) : IOverrideMultitenantPolicy
+    {
+        public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicy;
+    }
 
     private const string InvalidTenantId = "###invalid###";
     private static readonly TenantId _tenantId = TenantId.Create("test-tenant");

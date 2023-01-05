@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
+using System.Collections.Immutable;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 
@@ -97,4 +98,6 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         _configureRequest?.Invoke(request);
         return request;
     }
+
+    protected IImmutableDictionary<string, StringValues> Query => _queryParameters.ToImmutableDictionary();
 }

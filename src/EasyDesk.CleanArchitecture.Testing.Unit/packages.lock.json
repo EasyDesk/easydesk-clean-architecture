@@ -4,15 +4,16 @@
     "net7.0": {
       "EasyDesk.Testing": {
         "type": "Direct",
-        "requested": "[0.6.1, )",
-        "resolved": "0.6.1",
-        "contentHash": "MsNzucXZnkaDj6WMnU0to6slH+Psm//TqFQdDMkcFUHAk8WZDBeLJpLQDxdOFTkmVOewFj8YNL2/S7UvNzgQtg==",
+        "requested": "[0.6.2, )",
+        "resolved": "0.6.2",
+        "contentHash": "1c+7ItsbN2CkDs1/n2Jxpp4EioZyzmQ5uKRNnzYFpeavs1srZj2cHedLEpR/JVgmC8jWDD9l1gLuMfYz6+22EQ==",
         "dependencies": {
           "EasyDesk.Tools": "7.6.1",
           "Microsoft.Extensions.DependencyInjection": "7.0.0",
           "NSubstitute": "4.4.0",
           "Shouldly": "4.1.0",
-          "Verify": "19.5.0"
+          "Verify": "19.5.0",
+          "Verify.NewtonsoftJson": "1.0.0"
         }
       },
       "EasyDesk.Tools": {
@@ -697,6 +698,16 @@
           "DiffEngine": "11.0.0",
           "EmptyFiles": "4.1.0",
           "SimpleInfoName": "2.0.0"
+        }
+      },
+      "Verify.NewtonsoftJson": {
+        "type": "Transitive",
+        "resolved": "1.0.0",
+        "contentHash": "rirjFZ3ywYcBsqRiDS30ZthYdpTVQb4dluVKoWemZUTRux1aF/7T5vAkWqo48r9+OQiJKPhWYOVj4znqAEwQZw==",
+        "dependencies": {
+          "Argon": "0.1.0",
+          "Newtonsoft.Json": "13.0.2",
+          "Verify": "19.5.0"
         }
       },
       "easydesk.cleanarchitecture.application": {

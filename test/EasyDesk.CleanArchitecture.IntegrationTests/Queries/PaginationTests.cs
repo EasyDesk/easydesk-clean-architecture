@@ -97,4 +97,17 @@ public class PaginationTests : SampleIntegrationTest
 
         await Verify(response);
     }
+
+    [Fact]
+    public async Task HttpRequestBuilder_ShouldNotWorkWithInvalidInput()
+    {
+        var response = await Http
+        .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)
+        .SetPageSize("foo")
+        .SetPageIndex("bar")
+        .Send()
+        .AsVerifiable();
+
+        await Verify(response);
+    }
 }

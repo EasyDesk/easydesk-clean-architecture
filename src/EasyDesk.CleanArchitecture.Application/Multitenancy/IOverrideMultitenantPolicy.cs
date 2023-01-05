@@ -2,5 +2,5 @@
 
 public interface IOverrideMultitenantPolicy
 {
-    MultitenantPolicy MultitenantPolicy { get; }
+    MultitenantPolicy GetMultitenantPolicy();
 }
