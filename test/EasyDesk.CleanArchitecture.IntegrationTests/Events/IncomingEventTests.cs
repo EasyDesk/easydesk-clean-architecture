@@ -42,11 +42,14 @@ public class IncomingEventTests : SampleIntegrationTest
             LastName: "BarFrient",
             DateOfBirth: new LocalDate(1995, 10, 13)))
         .Send().AsData();
+
+        await Http.GetOwnedPets(_recipient.Id).PollUntil(pets => pets.Any()).EnsureSuccess();
     }
 
     [Fact]
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
+
         var bus = NewBus("pet-freedom-service");
         await bus.Publish(new PetFreedomDayEvent(TenantId));
 
