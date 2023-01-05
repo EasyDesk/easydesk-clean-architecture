@@ -17,7 +17,12 @@ public class Pet : AggregateRoot, IAggregateRootWithHydration<int>
 
     public Name Nickname { get; }
 
-    public Guid PersonId { get; }
+    public Guid PersonId { get; private set; }
+
+    public void ChangeOwner(Guid newOwnerId)
+    {
+        PersonId = newOwnerId;
+    }
 
     public static Pet Create(Name nickname, Guid personId) =>
         new(id: 0, nickname, personId);

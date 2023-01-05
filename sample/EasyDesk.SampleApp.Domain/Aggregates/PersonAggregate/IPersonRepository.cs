@@ -7,4 +7,5 @@ public interface IPersonRepository :
     ISaveRepository<Person>,
     IRemoveRepository<Person>
 {
+    Task<bool> Exists(Guid id);
 }
