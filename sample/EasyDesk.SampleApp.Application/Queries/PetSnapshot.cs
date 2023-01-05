@@ -7,5 +7,5 @@ public record PetSnapshot(int Id, string Nickname, Guid PersonId)
     public static PetSnapshot FromPet(Pet pet) => new(
         Id: pet.Id,
         Nickname: pet.Nickname,
-        PersonId: pet.PersonId);
+        PersonId: pet.OwnerId);
 }

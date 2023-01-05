@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.SampleApp.Application.IncomingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
+using EasyDesk.Tools.Collections;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Events;
@@ -44,13 +45,11 @@ public class IncomingEventTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task PetDonatedIncomingEvent_ShouldSucceed()
+    public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
-        var bus = NewBus("pet-donation-service");
-        await bus.Publish(new PetDonated(TenantId, _donator.Id, _recipient.Id, _pet.Id));
+        var bus = NewBus("pet-freedom-service");
+        await bus.Publish(new PetFreedomDayEvent(TenantId));
 
-        var newPet = Http.GetOwnedPets(_recipient.Id).PollUntil(pets => pets.Count() >= 2).AsVerifiableEnumerable();
-
-        await Verify(newPet);
+        await Http.GetOwnedPets(_recipient.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }
 }

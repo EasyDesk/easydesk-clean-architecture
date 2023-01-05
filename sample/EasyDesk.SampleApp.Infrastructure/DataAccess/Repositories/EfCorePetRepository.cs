@@ -17,5 +17,7 @@ public class EfCorePetRepository : EfCoreRepositoryWithHydration<Pet, PetModel, 
 
     public Task<Option<Pet>> GetById(int id) => GetSingle(q => q.Where(p => p.Id == id));
 
+    public Task RemoveAll() => DbSet.ExecuteDeleteAsync();
+
     protected override IQueryable<PetModel> Includes(IQueryable<PetModel> initialQuery) => initialQuery;
 }

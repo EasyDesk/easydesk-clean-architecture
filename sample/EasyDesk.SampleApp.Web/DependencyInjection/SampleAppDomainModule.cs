@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
-using EasyDesk.SampleApp.Domain.Services;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Repositories;
 
 namespace EasyDesk.SampleApp.Web.DependencyInjection;
@@ -12,6 +11,5 @@ public class SampleAppDomainModule : AppModule
     {
         services.AddScoped<IPersonRepository, EfCorePersonRepository>();
         services.AddScoped<IPetRepository, EfCorePetRepository>();
-        services.AddScoped<PetTransferService>();
     }
 }

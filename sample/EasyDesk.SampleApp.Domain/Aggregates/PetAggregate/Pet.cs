@@ -6,22 +6,22 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 public class Pet : AggregateRoot, IAggregateRootWithHydration<int>
 {
-    public Pet(int id, Name nickname, Guid personId)
+    public Pet(int id, Name nickname, Guid ownerId)
     {
         Id = id;
         Nickname = nickname;
-        PersonId = personId;
+        OwnerId = ownerId;
     }
 
     public int Id { get; private set; }
 
     public Name Nickname { get; }
 
-    public Guid PersonId { get; private set; }
+    public Guid OwnerId { get; private set; }
 
     public void ChangeOwner(Guid newOwnerId)
     {
-        PersonId = newOwnerId;
+        OwnerId = newOwnerId;
     }
 
     public static Pet Create(Name nickname, Guid personId) =>

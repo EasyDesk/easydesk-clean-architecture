@@ -35,7 +35,7 @@ public class PetModel : IPersistenceModelWithHydration<Pet, PetModel, int>, IMul
     {
         destination.Id = origin.Id;
         destination.Nickname = origin.Nickname;
-        destination.PersonId = origin.PersonId;
+        destination.PersonId = origin.OwnerId;
     }
 
     public class Configuration : IEntityTypeConfiguration<PetModel>
