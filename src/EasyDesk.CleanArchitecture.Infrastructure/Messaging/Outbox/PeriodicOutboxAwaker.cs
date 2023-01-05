@@ -24,12 +24,15 @@ internal class PeriodicOutboxAwaker : BackgroundService
             try
             {
                 _requestsChannel.RequestNewFlush();
-                await Task.Delay(_period.ToTimeSpan());
+                await Task.Delay(_period.ToTimeSpan(), stoppingToken);
+            }
+            catch (TaskCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Unexpected error while requesting a new outbox flush");
-                throw;
             }
         }
     }
