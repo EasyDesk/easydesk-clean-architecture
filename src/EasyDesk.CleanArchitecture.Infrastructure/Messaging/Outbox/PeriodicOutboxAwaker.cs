@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
-internal class PeriodicOutboxAwaker : BackgroundService
+internal class PeriodicOutboxAwaker : PausableBackgroundService
 {
     private readonly Duration _period;
     private readonly OutboxFlushRequestsChannel _requestsChannel;
@@ -17,7 +17,7 @@ internal class PeriodicOutboxAwaker : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteUntilPausedAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -28,7 +28,6 @@ internal class PeriodicOutboxAwaker : BackgroundService
             }
             catch (TaskCanceledException)
             {
-                throw;
             }
             catch (Exception ex)
             {

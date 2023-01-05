@@ -3,6 +3,7 @@ using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration;
+using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.Extensions.Configuration;
@@ -58,6 +59,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
                     t.UseInMemoryTransport(_network, e);
                     t.OtherService<ISubscriptionStorage>().StoreInMemory(_subscriberStore);
                 });
+                services.AddHostedService<RebusResettingTask>();
             });
     }
 

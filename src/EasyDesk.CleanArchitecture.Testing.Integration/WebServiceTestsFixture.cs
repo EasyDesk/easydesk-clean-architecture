@@ -1,9 +1,11 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Testing;
 using Xunit;
@@ -57,10 +59,26 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
         await OnInitialization();
     }
 
-    public async Task ResetAsync()
+    public async Task ResetAsync(CancellationToken cancellationToken)
     {
+        var hostedServicesToStop = WebService
+            .Services
+            .GetServices<IHostedService>()
+            .SelectMany(h => h is IPausableHostedService p ? Some(p) : None)
+            .ToList();
+
+        foreach (var hostedService in hostedServicesToStop)
+        {
+            await hostedService.Pause(cancellationToken);
+        }
+
         await OnReset();
         Clock.Reset(SystemClock.Instance.GetCurrentInstant());
+
+        foreach (var hostedService in hostedServicesToStop)
+        {
+            await hostedService.Resume(cancellationToken);
+        }
     }
 
     public async Task DisposeAsync()

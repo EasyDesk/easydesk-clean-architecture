@@ -17,5 +17,6 @@ internal class OutboxFlushRequestsChannel
 
     public void RequestNewFlush() => _channel.Writer.TryWrite(Nothing.Value);
 
-    public IAsyncEnumerable<Nothing> GetAllFlushRequests() => _channel.Reader.ReadAllAsync();
+    public IAsyncEnumerable<Nothing> GetAllFlushRequests(CancellationToken cancellationToken) =>
+        _channel.Reader.ReadAllAsync(cancellationToken);
 }
