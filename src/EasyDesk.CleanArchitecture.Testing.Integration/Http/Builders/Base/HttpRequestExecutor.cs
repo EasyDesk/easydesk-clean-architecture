@@ -41,7 +41,7 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
                 {
                     await Task.Delay(actualInterval, cts.Token);
                 }
-                catch (TaskCanceledException)
+                catch (OperationCanceledException)
                 {
                     throw new PollingFailedException(attempts, actualTimeout);
                 }

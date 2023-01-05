@@ -41,8 +41,9 @@ public class IncomingEventTests : SampleIntegrationTest
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
         var bus = NewBus("pet-freedom-service");
+        await bus.Subscribe<PetFreedomDayEvent>();
         await bus.Publish(new PetFreedomDayEvent(TenantId));
-
+        await bus.WaitForMessageOrFail<PetFreedomDayEvent>();
         await Http.GetOwnedPets(_person.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }
 }

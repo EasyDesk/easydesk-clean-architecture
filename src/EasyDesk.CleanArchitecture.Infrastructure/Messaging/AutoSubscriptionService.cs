@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+using EasyDesk.Tools.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rebus.Bus;
-using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
@@ -31,10 +32,7 @@ internal class AutoSubscriptionService : IHostedService
 
     private bool ShouldAutoSubscribe(Type type)
     {
-        var autoSubscribeAttribute = type
-            .GetTypeInfo()
-            .GetCustomAttribute<RebusAutoSubscribeAttribute>();
-        return autoSubscribeAttribute is not null;
+        return type.IsSubtypeOrImplementationOf(typeof(IIncomingEvent));
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
