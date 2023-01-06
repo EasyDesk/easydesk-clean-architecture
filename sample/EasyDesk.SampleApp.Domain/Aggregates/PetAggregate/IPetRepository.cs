@@ -7,4 +7,5 @@ public interface IPetRepository :
     ISaveAndHydrateRepository<Pet, int>,
     IRemoveRepository<Pet>
 {
+    Task RemoveAll();
 }
