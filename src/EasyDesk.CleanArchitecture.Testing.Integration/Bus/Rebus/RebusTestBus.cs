@@ -103,6 +103,7 @@ public class RebusTestBus : ITestBus
         {
             await _bus.Unsubscribe(sub);
         }
+        _subscriptions.Clear();
         _bus.Dispose();
         GC.SuppressFinalize(this);
     }

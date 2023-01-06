@@ -58,7 +58,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldEmitAnEvent()
     {
-        await using var bus = NewBus();
+        var bus = NewBus();
         await bus.Subscribe<PersonCreated>();
 
         var person = await CreatePerson()

@@ -63,7 +63,7 @@ public class DeletePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldEmitAnEvent()
     {
-        await using var bus = NewBus();
+        var bus = NewBus();
         await bus.Subscribe<PersonDeleted>();
 
         var person = await CreateTestPerson();
