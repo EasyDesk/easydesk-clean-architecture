@@ -28,7 +28,6 @@ public static class RebusFixtureExtensions
             .OnReset(_ =>
             {
                 network.Reset();
-                subscriberStore.Reset();
             });
     }
 }
