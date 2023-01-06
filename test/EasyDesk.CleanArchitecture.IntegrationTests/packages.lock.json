@@ -44,15 +44,6 @@
           "Microsoft.TestPlatform.TestHost": "17.4.1"
         }
       },
-      "Respawn": {
-        "type": "Direct",
-        "requested": "[6.0.0, )",
-        "resolved": "6.0.0",
-        "contentHash": "seaUK/UvZFPtcE0rGS+x5ZM9UVjvfCo2K4NlaAwdFQinJD+O9y2FKj9bQ9y8pz14AuOkx8fjnWYU93Zy463lEQ==",
-        "dependencies": {
-          "Microsoft.Data.SqlClient": "4.0.0"
-        }
-      },
       "StyleCop.Analyzers": {
         "type": "Direct",
         "requested": "[1.2.0-beta.435, )",
@@ -963,6 +954,14 @@
           "Microsoft.Extensions.DependencyInjection": "[3.0.0, 8.0.0)",
           "Microsoft.Extensions.Hosting.Abstractions": "[3.0.0, 8.0.0)",
           "Rebus": "6.0.0"
+        }
+      },
+      "Respawn": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "seaUK/UvZFPtcE0rGS+x5ZM9UVjvfCo2K4NlaAwdFQinJD+O9y2FKj9bQ9y8pz14AuOkx8fjnWYU93Zy463lEQ==",
+        "dependencies": {
+          "Microsoft.Data.SqlClient": "4.0.0"
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
@@ -2162,6 +2161,7 @@
           "EasyDesk.Tools": "[7.6.1, )",
           "Microsoft.AspNetCore.Mvc.Testing": "[7.0.1, )",
           "NodaTime.Testing": "[3.1.6, )",
+          "Respawn": "[6.0.0, )",
           "Testcontainers": "[2.3.0, )",
           "xunit.extensibility.core": "[2.4.2, )"
         }

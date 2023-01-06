@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
@@ -52,10 +53,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected virtual Task OnInitialization() => Task.CompletedTask;
 
-    public async Task DisposeAsync()
-    {
-        await OnDisposal();
-    }
+    public async Task DisposeAsync() => await OnDisposal();
 
     protected virtual Task OnDisposal() => Task.CompletedTask;
 }

@@ -7,12 +7,18 @@ public class ContainersCollection : IAsyncDisposable
 {
     private readonly ISet<ITestcontainersContainer> _containers = new HashSet<ITestcontainersContainer>();
 
-    public TContainer RegisterTestContainer<TContainer>(Func<ITestcontainersBuilder<TContainer>, ITestcontainersBuilder<TContainer>> configureContainer)
-        where TContainer : ITestcontainersContainer
+    public T RegisterTestContainer<T>(T container)
+        where T : ITestcontainersContainer
     {
-        var container = configureContainer(new TestcontainersBuilder<TContainer>()).Build();
         _containers.Add(container);
         return container;
+    }
+
+    public T RegisterTestContainer<T>(Func<ITestcontainersBuilder<T>, ITestcontainersBuilder<T>> configureContainer)
+        where T : ITestcontainersContainer
+    {
+        var container = configureContainer(new TestcontainersBuilder<T>()).Build();
+        return RegisterTestContainer(container);
     }
 
     public async Task StartAll()

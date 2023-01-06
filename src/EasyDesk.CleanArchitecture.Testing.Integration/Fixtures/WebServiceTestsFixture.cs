@@ -1,8 +1,7 @@
-﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Containers;
-using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.Tools.Observables;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -10,53 +9,45 @@ using NodaTime;
 using NodaTime.Testing;
 using Xunit;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 
 public abstract class WebServiceTestsFixture : IAsyncLifetime
 {
     public const string DefaultTestEnvironment = "IntegrationTest";
 
+    private readonly TestWebServiceBuilder _webServiceBuilder;
     private readonly ContainersCollection _containers = new();
+    private readonly SimpleAsyncEvent<ITestWebService> _onInitialization = new();
+    private readonly SimpleAsyncEvent<ITestWebService> _onReset = new();
+    private readonly SimpleAsyncEvent<ITestWebService> _onDisposal = new();
 
-    public WebServiceTestsFixture()
+    public WebServiceTestsFixture(Type entryPointMarker)
     {
-    }
-
-    public ITestWebService WebService { get; private set; }
-
-    public FakeClock Clock { get; } = new(SystemClock.Instance.GetCurrentInstant());
-
-    protected abstract Type WebServiceEntryPointMarker { get; }
-
-    protected virtual void ConfigureWebService(TestWebServiceBuilder builder)
-    {
-    }
-
-    private ITestWebService StartNewServiceInstance()
-    {
-        var builder = new TestWebServiceBuilder(WebServiceEntryPointMarker)
+        _webServiceBuilder = new TestWebServiceBuilder(entryPointMarker)
             .WithEnvironment(DefaultTestEnvironment)
             .WithServices(services =>
             {
                 services.RemoveAll<IClock>();
                 services.AddSingleton<IClock>(Clock);
             });
-
-        ConfigureWebService(builder);
-        return builder.Build();
     }
 
-    protected TContainer RegisterTestContainer<TContainer>(Func<ITestcontainersBuilder<TContainer>, ITestcontainersBuilder<TContainer>> configureContainer)
-        where TContainer : ITestcontainersContainer
-    {
-        return _containers.RegisterTestContainer(configureContainer);
-    }
+    public ITestWebService WebService { get; private set; }
+
+    public FakeClock Clock { get; } = new(SystemClock.Instance.GetCurrentInstant());
+
+    protected abstract void ConfigureFixture(WebServiceTestsFixtureBuilder builder);
+
+    private ITestWebService StartService() => _webServiceBuilder.Build();
 
     public async Task InitializeAsync()
     {
+        var builder = new WebServiceTestsFixtureBuilder(_webServiceBuilder, _containers, _onInitialization, _onReset, _onDisposal);
+        ConfigureFixture(builder);
+
         await _containers.StartAll();
-        WebService = StartNewServiceInstance();
-        await OnInitialization();
+        WebService = StartService();
+        await _onInitialization.Emit(WebService);
     }
 
     public async Task ResetAsync(CancellationToken cancellationToken)
@@ -72,7 +63,7 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
             await hostedService.Pause(cancellationToken);
         }
 
-        await OnReset();
+        await _onReset.Emit(WebService);
         Clock.Reset(SystemClock.Instance.GetCurrentInstant());
 
         foreach (var hostedService in hostedServicesToStop)
@@ -83,14 +74,8 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        await _onDisposal.Emit(WebService);
         await WebService.DisposeAsync();
         await _containers.DisposeAsync();
-        await OnDisposal();
     }
-
-    protected virtual Task OnInitialization() => Task.CompletedTask;
-
-    protected virtual Task OnReset() => Task.CompletedTask;
-
-    protected virtual Task OnDisposal() => Task.CompletedTask;
 }
