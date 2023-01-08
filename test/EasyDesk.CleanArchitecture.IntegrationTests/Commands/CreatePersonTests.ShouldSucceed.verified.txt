@@ -5,7 +5,7 @@
       Id: Guid_1,
       FirstName: Foo,
       LastName: Bar,
-      DateOfBirth: 1996-02-02,
+      DateOfBirth: LocalDate_1,
       CreatedBy: test-admin
     },
     Errors: [],

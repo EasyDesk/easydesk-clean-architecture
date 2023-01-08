@@ -6,7 +6,7 @@
         Id: Guid_1,
         FirstName: Foo0000,
         LastName: Bar0000,
-        DateOfBirth: 2000-01-01,
+        DateOfBirth: LocalDate_1,
         CreatedBy: test-admin-a
       }
     ],
