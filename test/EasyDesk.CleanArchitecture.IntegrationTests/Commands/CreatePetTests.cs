@@ -1,5 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
 using NodaTime;
@@ -10,7 +13,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class CreatePetTests : SampleIntegrationTest
 {
     private const int BulkQuantity = 200;
-    private const string TenantId = "test-tenant";
+    private const string Tenant = "test-tenant";
     private const string AdminId = "dog-friendly-admin";
     private const string Nickname = "Rex";
 
@@ -18,7 +21,16 @@ public class CreatePetTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req.Tenant(TenantId).AuthenticateAs(AdminId);
+    protected override void ConfigureRequests(HttpRequestBuilder req) => req
+        .Tenant(Tenant)
+        .AuthenticateAs(AdminId);
+
+    protected override async Task OnInitialization()
+    {
+        var bus = NewBus();
+        await bus.Send(new CreateTenant(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+    }
 
     [Fact]
     public async Task ShouldSucceed()

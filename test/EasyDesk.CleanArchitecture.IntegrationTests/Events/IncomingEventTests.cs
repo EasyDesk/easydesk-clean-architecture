@@ -1,5 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.IncomingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using EasyDesk.Tools.Collections;
@@ -9,7 +12,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Events;
 
 public class IncomingEventTests : SampleIntegrationTest
 {
-    private const string TenantId = "a-tenant";
+    private const string Tenant = "a-tenant";
     private PersonDto _person;
 
     public IncomingEventTests(SampleAppTestsFixture factory) : base(factory)
@@ -18,11 +21,15 @@ public class IncomingEventTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req)
     {
-        req.Tenant(TenantId).AuthenticateAs("an-admin");
+        req.Tenant(Tenant).AuthenticateAs("an-admin");
     }
 
     protected override async Task OnInitialization()
     {
+        var bus = NewBus();
+        await bus.Send(new CreateTenant(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+
         _person = await Http.CreatePerson(new(
             FirstName: "Foo",
             LastName: "Bar",
@@ -41,7 +48,7 @@ public class IncomingEventTests : SampleIntegrationTest
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
         var bus = NewBus("pet-freedom-service");
-        await bus.Publish(new PetFreedomDayEvent(TenantId));
+        await bus.Publish(new PetFreedomDayEvent(Tenant));
         await Http.GetOwnedPets(_person.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }
 }

@@ -36,7 +36,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
     config.ConfigureMultitenancy(options =>
     {
-        options.DefaultPolicy = MultitenantPolicies.RequireAnyTenant();
+        options.DefaultPolicy = MultitenantPolicies.RequireExistingTenant();
         options.UseDefaultContextTenantReader();
     });
 

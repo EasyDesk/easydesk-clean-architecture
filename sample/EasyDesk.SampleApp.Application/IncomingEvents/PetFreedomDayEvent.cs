@@ -7,7 +7,7 @@ namespace EasyDesk.SampleApp.Application.IncomingEvents;
 
 public record PetFreedomDayEvent(string Tenant) : IIncomingEvent, IOverrideMultitenantPolicy
 {
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.IgnoreAndUseTenant(TenantId.Create(Tenant));
+    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.IgnoreAndUseExistingTenant(TenantId.Create(Tenant));
 }
 
 public class PetFreedomDayEventHandler : IHandler<PetFreedomDayEvent>

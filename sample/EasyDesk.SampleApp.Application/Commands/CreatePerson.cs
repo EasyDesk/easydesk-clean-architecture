@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -13,10 +12,7 @@ namespace EasyDesk.SampleApp.Application.Commands;
 public record CreatePerson(
     string FirstName,
     string LastName,
-    LocalDate DateOfBirth) : ICommandRequest<PersonSnapshot>, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.RequireAnyTenant();
-}
+    LocalDate DateOfBirth) : ICommandRequest<PersonSnapshot>;
 
 public class CreatePersonValidator : AbstractValidator<CreatePerson>
 {

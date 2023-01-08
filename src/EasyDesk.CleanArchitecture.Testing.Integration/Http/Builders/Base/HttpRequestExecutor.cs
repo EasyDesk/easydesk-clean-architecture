@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Commons.Polling;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
@@ -23,35 +24,21 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
     public W Send() => Wrap(() => MakeRequest(CancellationToken.None));
 
     public W PollWhile(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
+        PollWrapper((p, cond) => p.PollWhile(cond), predicate, interval, timeout);
+
+    public W PollUntil(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
+        PollWrapper((p, cond) => p.PollUntil(cond), predicate, interval, timeout);
+
+    private W PollWrapper(
+        AsyncFunc<Polling<I>, AsyncFunc<I, bool>, I> pollingType,
+        AsyncFunc<W, bool> predicate,
+        Duration? interval = null,
+        Duration? timeout = null) =>
         Wrap(async () =>
         {
             var actualTimeout = timeout ?? _defaultPollTimeout;
-            var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
-            var attempts = 1;
-            var actualInterval = (interval ?? _defaultRequestInterval).ToTimeSpan();
-            var message = await MakeRequest(cts.Token);
-            while (await predicate(Wrap(() => Task.FromResult(message))))
-            {
-                if (cts.IsCancellationRequested)
-                {
-                    throw new PollingFailedException(attempts, actualTimeout);
-                }
-
-                try
-                {
-                    await Task.Delay(actualInterval, cts.Token);
-                }
-                catch (OperationCanceledException)
-                {
-                    throw new PollingFailedException(attempts, actualTimeout);
-                }
-
-                attempts++;
-                message = await MakeRequest(cts.Token);
-            }
-            return message;
+            var actualInterval = interval ?? _defaultRequestInterval;
+            var polling = new Polling<I>(token => MakeRequest(token), actualTimeout, actualInterval);
+            return await pollingType(polling, i => predicate(Wrap(() => Task.FromResult(i))));
         });
-
-    public W PollUntil(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
-        PollWhile(async wrapped => !await predicate(wrapped), interval, timeout);
 }

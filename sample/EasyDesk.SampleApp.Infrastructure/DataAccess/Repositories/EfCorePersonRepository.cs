@@ -21,4 +21,6 @@ public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, Samp
     public Task<Option<Person>> GetById(Guid id) => GetSingle(q => q.Where(p => p.Id == id));
 
     public Task<bool> Exists(Guid id) => DbSet.AnyAsync(p => p.Id == id);
+
+    public Task RemoveAll() => DbSet.ExecuteDeleteAsync();
 }
