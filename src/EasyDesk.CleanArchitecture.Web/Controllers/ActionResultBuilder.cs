@@ -88,7 +88,8 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
                 or MissingTenantError
                 or MultitenancyNotSupportedError => _controller.BadRequest(body),
             DomainError
-                or InputValidationError => _controller.BadRequest(body),
+                or InputValidationError
+                or GenericError => _controller.BadRequest(body),
             _ => ActionResults.InternalServerError(body)
         };
     }
