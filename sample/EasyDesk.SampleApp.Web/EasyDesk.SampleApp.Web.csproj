@@ -12,7 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Rebus.RabbitMq" Version="7.4.4" />
+    <PackageReference Include="Rebus.RabbitMq" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,8 +7,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
 internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
 {
-    public const string SchemaName = "auth";
-
     public AuthorizationContext(ITenantProvider tenantProvider, DbContextOptions<AuthorizationContext> options)
         : base(tenantProvider, options)
     {
@@ -22,7 +20,7 @@ internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema(SchemaName);
+        modelBuilder.HasDefaultSchema(AuthorizationModel.SchemaName);
 
         modelBuilder.ApplyConfiguration(new TenantModel.Configuration());
         modelBuilder.ApplyConfiguration(new UserRoleModel.Configuration());

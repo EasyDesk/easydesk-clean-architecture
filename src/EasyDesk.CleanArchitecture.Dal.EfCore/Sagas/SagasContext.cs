@@ -6,8 +6,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 
 internal class SagasContext : AbstractDbContext<SagasContext>
 {
-    public const string SchemaName = "sagas";
-
     public SagasContext(ITenantProvider tenantProvider, DbContextOptions<SagasContext> options) : base(tenantProvider, options)
     {
     }
@@ -16,7 +14,7 @@ internal class SagasContext : AbstractDbContext<SagasContext>
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema(SchemaName);
+        modelBuilder.HasDefaultSchema(SagaManagerModel.SchemaName);
 
         modelBuilder.ApplyConfiguration(new SagaModel.Configuration());
 
