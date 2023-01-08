@@ -10,16 +10,17 @@
       },
       "EasyDesk.Testing": {
         "type": "Direct",
-        "requested": "[0.6.2, )",
-        "resolved": "0.6.2",
-        "contentHash": "1c+7ItsbN2CkDs1/n2Jxpp4EioZyzmQ5uKRNnzYFpeavs1srZj2cHedLEpR/JVgmC8jWDD9l1gLuMfYz6+22EQ==",
+        "requested": "[0.7.0, )",
+        "resolved": "0.7.0",
+        "contentHash": "1CBPIhlEcINkYGXmJMdhdzxjVxE+lkvUsqM2hQmRjkKk5GuTI/VSCIZNbU236T4WoNrolRxCyNRMpb2BhqkFjA==",
         "dependencies": {
           "EasyDesk.Tools": "7.6.1",
           "Microsoft.Extensions.DependencyInjection": "7.0.0",
           "NSubstitute": "4.4.0",
           "Shouldly": "4.1.0",
           "Verify": "19.5.0",
-          "Verify.NewtonsoftJson": "1.0.0"
+          "Verify.NewtonsoftJson": "1.0.0",
+          "Verify.NodaTime": "2.0.1"
         }
       },
       "EasyDesk.Tools": {
@@ -86,6 +87,15 @@
         "type": "Transitive",
         "resolved": "0.1.0",
         "contentHash": "TYJwenjm6RTjs3hEphb4mL3h4jdSMWSvoRkuNRGXXD6ZcuMNWOR4UTzf6OGF+ReTYsE2c1Q3brLSD3cfIPjfdw=="
+      },
+      "Argon.NodaTime": {
+        "type": "Transitive",
+        "resolved": "0.1.0",
+        "contentHash": "h0HwBGac7pdSrgs3f8jz2qEgbKtivU78JutV7hqcFU0Npe3wtn2cj8pTjjODyz1d0lijlNAblpJAkQ5YDT1Fuw==",
+        "dependencies": {
+          "Argon": "0.1.0",
+          "NodaTime": "3.1.3"
+        }
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -1473,6 +1483,16 @@
           "Verify": "19.5.0"
         }
       },
+      "Verify.NodaTime": {
+        "type": "Transitive",
+        "resolved": "2.0.1",
+        "contentHash": "AuLMXkmEiDjmeYmE2TTvBDjvuoli1+duMFaEJODwVmvg1+XmCeWAVJKC3veAmMVPgoU/S7RWyGStpP6Y9hoF3Q==",
+        "dependencies": {
+          "Argon.NodaTime": "0.1.0",
+          "NodaTime": "3.1.6",
+          "Verify": "19.5.0"
+        }
+      },
       "xunit.abstractions": {
         "type": "Transitive",
         "resolved": "2.0.3",
@@ -1566,7 +1586,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Testing": "[0.6.2, )",
+          "EasyDesk.Testing": "[0.7.0, )",
           "EasyDesk.Tools": "[7.6.1, )"
         }
       },
