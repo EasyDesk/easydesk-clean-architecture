@@ -31,8 +31,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .AddInMemoryRebus()
             .AddResettableSqlDatabase(container, "ConnectionStrings:MainDb", new RespawnerOptions
             {
-                DbAdapter = DbAdapter.Postgres,
-                SchemasToInclude = new[] { "domain", "messaging" }
+                DbAdapter = DbAdapter.Postgres
             });
     }
 }

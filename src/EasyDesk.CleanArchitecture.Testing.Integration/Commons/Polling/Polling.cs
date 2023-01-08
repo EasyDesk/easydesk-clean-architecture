@@ -48,8 +48,14 @@ public class Polling<T>
         return pollResult;
     }
 
+    public Task<T> PollWhile(Func<T, bool> predicate) =>
+        PollWhile(t => Task.FromResult(predicate(t)));
+
     public Task<T> PollUntil(AsyncFunc<T, bool> cond) =>
         PollWhile(async r => !await cond(r));
+
+    public Task<T> PollUntil(Func<T, bool> cond) =>
+        PollUntil(r => Task.FromResult(cond(r)));
 
     public class PollingFailedException : Exception
     {

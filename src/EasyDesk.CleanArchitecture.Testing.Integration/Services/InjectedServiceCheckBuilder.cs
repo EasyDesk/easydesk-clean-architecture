@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Services;
 
 public class InjectedServiceCheckBuilder<TService>
 {
-    private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(7);
+    private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(10);
     private static readonly Duration _defaultQueryInterval = Duration.FromMilliseconds(200);
     private readonly IServiceProvider _serviceProvider;
 
@@ -31,6 +31,6 @@ public class InjectedServiceCheckBuilder<TService>
             },
             timeout ?? _defaultPollTimeout,
             interval ?? _defaultQueryInterval);
-        await polling.PollWhile(b => Task.FromResult(!b));
+        await polling.PollUntil(It);
     }
 }
