@@ -1,6 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
+using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 
@@ -8,7 +11,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class PaginationTests : SampleIntegrationTest
 {
-    private const string TenantId = "test-tenant-a";
+    private const string Tenant = "test-tenant-a";
     private const string AdminId = "test-admin-a";
     private const int InitialPopulationSize = 300;
 
@@ -16,8 +19,21 @@ public class PaginationTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) =>
-        req.Tenant(TenantId).AuthenticateAs(AdminId);
+    protected override void ConfigureRequests(HttpRequestBuilder req) => req
+        .Tenant(Tenant)
+        .AuthenticateAs(AdminId);
+
+    protected override async Task OnInitialization()
+    {
+        var bus = NewBus();
+        await bus.Send(new CreateTenant(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+
+        foreach (var i in Enumerable.Range(0, InitialPopulationSize))
+        {
+            await CreatePerson(i).Send().EnsureSuccess();
+        }
+    }
 
     private HttpSingleRequestExecutor<PersonDto> CreatePerson(int index) => Http
         .CreatePerson(
@@ -29,14 +45,6 @@ public class PaginationTests : SampleIntegrationTest
     private HttpSingleRequestExecutor<IEnumerable<PersonDto>> GetPeople(int pageSize) => Http
         .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)
         .SetPageSize(pageSize);
-
-    protected override async Task OnInitialization()
-    {
-        foreach (var i in Enumerable.Range(0, InitialPopulationSize))
-        {
-            await CreatePerson(i).Send().EnsureSuccess();
-        }
-    }
 
     [Fact]
     public async Task DefaultPageSize_ShouldBeConfigurable()
