@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{DA0FBFB1
 		Directory.Build.props = Directory.Build.props
 		global.json = global.json
 		Linter.targets = Linter.targets
+		migrate.sh = migrate.sh
 		Packaging.targets = Packaging.targets
 	EndProjectSection
 EndProject
