@@ -65,7 +65,6 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     public async Task InitializeAsync()
     {
         Http = CreateHttpTestHelper();
-        await Fixture.ResetAsync(new CancellationTokenSource().Token);
         await OnInitialization();
     }
 
@@ -73,6 +72,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        await Fixture.ResetAsync(CancellationToken.None);
         await OnDisposal();
         foreach (var action in _disposeActions)
         {

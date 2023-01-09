@@ -40,8 +40,10 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
                 },
                 connectionString =>
                 {
-                    var csb = new NpgsqlConnectionStringBuilder(connectionString);
-                    csb.IncludeErrorDetail = true;
+                    var csb = new NpgsqlConnectionStringBuilder(connectionString)
+                    {
+                        IncludeErrorDetail = true
+                    };
                     return csb.ConnectionString;
                 });
     }

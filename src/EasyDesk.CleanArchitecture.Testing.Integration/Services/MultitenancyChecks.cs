@@ -5,9 +5,6 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Services;
 
 public static class MultitenancyChecks
 {
-    public static async Task WaitUntilTenantExists(this ITestWebService webService, TenantId tenantId)
-    {
-        var tenantChecker = new InjectedServiceCheckBuilder<IMultitenancyManager>(webService.Services);
-        await tenantChecker.WaitUntil(m => m.TenantExists(tenantId));
-    }
+    public static Task WaitUntilTenantExists(this ITestWebService webService, TenantId tenantId) =>
+        InjectedServiceCheckFactory<IMultitenancyManager>.SingleScopeUntil(webService.Services, m => m.TenantExists(tenantId));
 }

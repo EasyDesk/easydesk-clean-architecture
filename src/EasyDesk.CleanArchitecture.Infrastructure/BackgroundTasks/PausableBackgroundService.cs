@@ -13,32 +13,29 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            _isPaused = false;
-            _pause = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-
             try
             {
-                _executingTask = ExecuteUntilPausedAsync(_pause.Token);
+                lock (this)
+                {
+                    _isPaused = false;
+                    _pause = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+                    _executingTask = ExecuteUntilPausedAsync(_pause.Token);
+                }
                 await _executingTask;
             }
-            catch
+            catch (OperationCanceledException)
             {
-                _executingTask = Task.CompletedTask;
                 if (stoppingToken.IsCancellationRequested)
                 {
                     throw;
                 }
             }
-
-            _isPaused = true;
-            _resume = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
-
-            await WaitUntilResumed(_resume.Token);
-
-            if (stoppingToken.IsCancellationRequested)
+            lock (this)
             {
-                return;
+                _isPaused = true;
+                _resume = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
             }
+            await WaitUntilResumed(_resume.Token);
         }
     }
 
@@ -48,7 +45,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
         {
             await Task.Delay(Timeout.Infinite, resumeToken);
         }
-        catch (TaskCanceledException)
+        catch (OperationCanceledException)
         {
         }
     }
@@ -57,15 +54,21 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
 
     public async Task Pause(CancellationToken cancellationToken)
     {
-        if (_isPaused)
+        Task executingTask;
+        lock (this)
         {
-            return;
-        }
+            if (_isPaused)
+            {
+                return;
+            }
 
-        _pause.Cancel();
+            _pause.Cancel();
+
+            executingTask = _executingTask;
+        }
         try
         {
-            await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
+            await Task.WhenAny(executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
         }
         catch
         {
@@ -74,9 +77,12 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
 
     public Task Resume(CancellationToken cancellationToken)
     {
-        if (_isPaused)
+        lock (this)
         {
-            _resume.Cancel();
+            if (_isPaused)
+            {
+                _resume.Cancel();
+            }
         }
         return Task.CompletedTask;
     }

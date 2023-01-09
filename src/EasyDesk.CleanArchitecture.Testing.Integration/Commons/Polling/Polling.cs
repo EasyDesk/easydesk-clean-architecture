@@ -57,6 +57,9 @@ public class Polling<T>
     public Task<T> PollUntil(Func<T, bool> cond) =>
         PollUntil(r => Task.FromResult(cond(r)));
 
+    public Polling<R> Map<R>(Func<T, R> mapper) =>
+        new(async token => mapper(await _poller(token)), _timeout, _interval);
+
     public class PollingFailedException : Exception
     {
         public PollingFailedException(int attempts, Duration timeout)
