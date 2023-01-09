@@ -71,19 +71,70 @@ public class AbstractDbContext<T> : DbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        SetTenantIdToAddedEntities();
         return await _extensions.Aggregate(
             () => base.SaveChangesAsync(cancellationToken),
             (curr, ext) => () => ext.SaveChanges(curr))();
     }
 
-    private void SetTenantIdToAddedEntities()
+    private void SetTenantIdToAddedEntity(object entity)
     {
-        var tenantIdString = GetCurrentTenantAsString();
-        ChangeTracker.Entries()
-            .Where(e => e.State == EntityState.Added)
-            .Where(e => e.Entity is IMultitenantEntity)
-            .ForEach(e => e.CurrentValues[nameof(IMultitenantEntity.TenantId)] = tenantIdString);
+        if (entity is IMultitenantEntity e)
+        {
+            e.TenantId = GetCurrentTenantAsString();
+        }
+    }
+
+    private void SetTenantIdToAddedEntities(IEnumerable<object> entities)
+    {
+        entities.ForEach(SetTenantIdToAddedEntity);
+    }
+
+    public override EntityEntry Add(object entity)
+    {
+        SetTenantIdToAddedEntity(entity);
+        return base.Add(entity);
+    }
+
+    public override EntityEntry<TEntity> Add<TEntity>(TEntity entity)
+    {
+        SetTenantIdToAddedEntity(entity);
+        return base.Add(entity);
+    }
+
+    public override ValueTask<EntityEntry> AddAsync(object entity, CancellationToken cancellationToken = default)
+    {
+        SetTenantIdToAddedEntity(entity);
+        return base.AddAsync(entity, cancellationToken);
+    }
+
+    public override ValueTask<EntityEntry<TEntity>> AddAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
+    {
+        SetTenantIdToAddedEntity(entity);
+        return base.AddAsync(entity, cancellationToken);
+    }
+
+    public override void AddRange(IEnumerable<object> entities)
+    {
+        SetTenantIdToAddedEntities(entities);
+        base.AddRange(entities);
+    }
+
+    public override void AddRange(params object[] entities)
+    {
+        SetTenantIdToAddedEntities(entities);
+        base.AddRange(entities);
+    }
+
+    public override Task AddRangeAsync(IEnumerable<object> entities, CancellationToken cancellationToken = default)
+    {
+        SetTenantIdToAddedEntities(entities);
+        return base.AddRangeAsync(entities, cancellationToken);
+    }
+
+    public override Task AddRangeAsync(params object[] entities)
+    {
+        SetTenantIdToAddedEntities(entities);
+        return base.AddRangeAsync(entities);
     }
 
     private string GetCurrentTenantAsString() => _tenantProvider.TenantInfo.Id.Map(t => t.Value).OrElse(PublicTenantName);
