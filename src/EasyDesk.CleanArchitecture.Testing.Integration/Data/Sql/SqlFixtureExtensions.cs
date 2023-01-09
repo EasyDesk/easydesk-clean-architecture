@@ -14,7 +14,8 @@ public static class SqlFixtureExtensions
         this WebServiceTestsFixtureBuilder builder,
         T container,
         string connectionStringName,
-        RespawnerOptions respawnerOptions)
+        RespawnerOptions respawnerOptions,
+        Func<string, string> editDbConnectionString = null)
         where T : TestcontainerDatabase
     {
         Respawner respawner = null;
@@ -24,7 +25,8 @@ public static class SqlFixtureExtensions
             {
                 config.AddInMemoryCollection(new Dictionary<string, string>
                 {
-                    [connectionStringName] = container.ConnectionString,
+                    [connectionStringName] =
+                        editDbConnectionString?.Invoke(container.ConnectionString) ?? container.ConnectionString,
                 });
             }))
             .OnInitialization(ws => UsingDbConnection(ws, async connection =>

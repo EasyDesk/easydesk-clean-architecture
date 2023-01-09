@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+using Npgsql;
 using Respawn;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
@@ -29,9 +30,18 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
 
         builder
             .AddInMemoryRebus()
-            .AddResettableSqlDatabase(container, "ConnectionStrings:MainDb", new RespawnerOptions
-            {
-                DbAdapter = DbAdapter.Postgres
-            });
+            .AddResettableSqlDatabase(
+                container,
+                "ConnectionStrings:MainDb",
+                new RespawnerOptions
+                {
+                    DbAdapter = DbAdapter.Postgres
+                },
+                connectionString =>
+                {
+                    var csb = new NpgsqlConnectionStringBuilder(connectionString);
+                    csb.IncludeErrorDetail = true;
+                    return csb.ConnectionString;
+                });
     }
 }
