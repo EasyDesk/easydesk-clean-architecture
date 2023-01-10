@@ -40,7 +40,7 @@ public class PetController : CleanArchitectureController
     }
 
     [HttpGet(PetsRoutes.GetOwnedPets)]
-    public async Task<ActionResult<ResponseDto<IEnumerable<PetDto>, PaginationMetaDto>>> GetPets(
+    public async Task<ActionResult<ResponseDto<IEnumerable<PetDto>, PaginationMetaDto>>> GetOwnedPets(
         [FromRoute] Guid personId,
         [FromQuery] PaginationDto pagination)
     {
