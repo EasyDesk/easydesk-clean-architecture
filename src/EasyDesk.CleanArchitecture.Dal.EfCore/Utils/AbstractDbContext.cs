@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.Tools.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
@@ -54,7 +55,6 @@ public class AbstractDbContext<T> : DbContext
         where E : class, IMultitenantEntity
     {
         var entityBuilder = modelBuilder.Entity<E>();
-
         var tenantIdProperty = entityBuilder.Metadata.GetProperty(nameof(IMultitenantEntity.TenantId));
         if (!tenantIdProperty.IsIndex())
         {
@@ -62,7 +62,9 @@ public class AbstractDbContext<T> : DbContext
         }
         entityBuilder.Property(x => x.TenantId)
                  .IsRequired()
-                 .HasMaxLength(TenantId.MaxLength);
+                 .HasMaxLength(TenantId.MaxLength)
+                 .ValueGeneratedOnAdd()
+                 .HasValueGenerator<TenantIdGenerator>();
 
         queryFilters.AddFilter<E>(x => x.TenantId == PublicTenantName
             || x.TenantId == GetCurrentTenantAsString()
@@ -76,66 +78,14 @@ public class AbstractDbContext<T> : DbContext
             (curr, ext) => () => ext.SaveChanges(curr))();
     }
 
-    private void SetTenantIdToAddedEntity(object entity)
-    {
-        if (entity is IMultitenantEntity e)
-        {
-            e.TenantId = GetCurrentTenantAsString();
-        }
-    }
+    private string GetCurrentTenantAsString() =>
+        _tenantProvider.TenantInfo.Id.Map(t => t.Value).OrElse(PublicTenantName);
 
-    private void SetTenantIdToAddedEntities(IEnumerable<object> entities)
+    public class TenantIdGenerator : ValueGenerator
     {
-        entities.ForEach(SetTenantIdToAddedEntity);
-    }
+        public override bool GeneratesTemporaryValues => false;
 
-    public override EntityEntry Add(object entity)
-    {
-        SetTenantIdToAddedEntity(entity);
-        return base.Add(entity);
+        protected override object NextValue(EntityEntry entry) =>
+            (entry.Context as T).GetCurrentTenantAsString();
     }
-
-    public override EntityEntry<TEntity> Add<TEntity>(TEntity entity)
-    {
-        SetTenantIdToAddedEntity(entity);
-        return base.Add(entity);
-    }
-
-    public override ValueTask<EntityEntry> AddAsync(object entity, CancellationToken cancellationToken = default)
-    {
-        SetTenantIdToAddedEntity(entity);
-        return base.AddAsync(entity, cancellationToken);
-    }
-
-    public override ValueTask<EntityEntry<TEntity>> AddAsync<TEntity>(TEntity entity, CancellationToken cancellationToken = default)
-    {
-        SetTenantIdToAddedEntity(entity);
-        return base.AddAsync(entity, cancellationToken);
-    }
-
-    public override void AddRange(IEnumerable<object> entities)
-    {
-        SetTenantIdToAddedEntities(entities);
-        base.AddRange(entities);
-    }
-
-    public override void AddRange(params object[] entities)
-    {
-        SetTenantIdToAddedEntities(entities);
-        base.AddRange(entities);
-    }
-
-    public override Task AddRangeAsync(IEnumerable<object> entities, CancellationToken cancellationToken = default)
-    {
-        SetTenantIdToAddedEntities(entities);
-        return base.AddRangeAsync(entities, cancellationToken);
-    }
-
-    public override Task AddRangeAsync(params object[] entities)
-    {
-        SetTenantIdToAddedEntities(entities);
-        return base.AddRangeAsync(entities);
-    }
-
-    private string GetCurrentTenantAsString() => _tenantProvider.TenantInfo.Id.Map(t => t.Value).OrElse(PublicTenantName);
 }

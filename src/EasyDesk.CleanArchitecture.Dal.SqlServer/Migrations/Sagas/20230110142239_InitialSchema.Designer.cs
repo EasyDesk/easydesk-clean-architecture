@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Sagas;
 
 [DbContext(typeof(SagasContext))]
-[Migration("20221229170616_InitialSchema")]
+[Migration("20230110142239_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -34,7 +34,9 @@ partial class InitialSchema
                     .HasColumnType("nvarchar(450)");
 
                 b.Property<string>("TenantId")
-                    .HasColumnType("nvarchar(450)");
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
                 b.Property<byte[]>("State")
                     .IsRequired()

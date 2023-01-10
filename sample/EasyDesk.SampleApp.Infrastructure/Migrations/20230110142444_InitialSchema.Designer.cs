@@ -10,11 +10,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Migrations;
+namespace EasyDesk.SampleApp.Infrastructure.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-[Migration("20221219202700_AddPets")]
-partial class AddPets
+[Migration("20230110142444_InitialSchema")]
+partial class InitialSchema
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,7 +54,10 @@ partial class AddPets
                     .HasColumnType("text");
 
                 b.Property<string>("TenantId")
-                    .HasColumnType("text");
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("character varying(256)");
 
                 b.HasKey("Id");
 
@@ -79,7 +82,10 @@ partial class AddPets
                     .HasColumnType("uuid");
 
                 b.Property<string>("TenantId")
-                    .HasColumnType("text");
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("character varying(256)");
 
                 b.HasKey("Id");
 

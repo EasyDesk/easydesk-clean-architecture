@@ -20,7 +20,7 @@ public partial class InitialSchema : Migration
             {
                 Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                 Type = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                 State = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                 Version = table.Column<int>(type: "int", nullable: false)
             },

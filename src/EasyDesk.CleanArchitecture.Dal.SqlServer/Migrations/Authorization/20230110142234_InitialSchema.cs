@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
 
 /// <inheritdoc />
 public partial class InitialSchema : Migration
@@ -18,7 +18,7 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                Id = table.Column<string>(type: "text", nullable: false)
+                Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
             },
             constraints: table =>
             {
@@ -30,9 +30,9 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                RoleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                PermissionName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                TenantId = table.Column<string>(type: "text", nullable: false)
+                RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {
@@ -51,9 +51,9 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                RoleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                UserId = table.Column<string>(type: "text", nullable: false),
-                TenantId = table.Column<string>(type: "text", nullable: false)
+                RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {

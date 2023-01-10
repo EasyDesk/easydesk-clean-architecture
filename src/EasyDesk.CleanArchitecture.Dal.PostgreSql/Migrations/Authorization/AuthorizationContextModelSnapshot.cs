@@ -33,6 +33,7 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                     .HasColumnType("character varying(100)");
 
                 b.Property<string>("TenantId")
+                    .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
                     .HasColumnType("character varying(256)");
 
@@ -63,6 +64,7 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                     .HasColumnType("character varying(100)");
 
                 b.Property<string>("TenantId")
+                    .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
                     .HasColumnType("character varying(256)");
 

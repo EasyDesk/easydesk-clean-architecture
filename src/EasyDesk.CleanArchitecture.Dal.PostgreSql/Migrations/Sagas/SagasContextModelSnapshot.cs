@@ -31,6 +31,7 @@ partial class SagasContextModelSnapshot : ModelSnapshot
                     .HasColumnType("text");
 
                 b.Property<string>("TenantId")
+                    .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
                     .HasColumnType("character varying(256)");
 
