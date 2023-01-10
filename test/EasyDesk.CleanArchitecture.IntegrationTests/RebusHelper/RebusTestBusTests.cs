@@ -4,6 +4,7 @@ using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using NodaTime;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
@@ -13,7 +14,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.RebusHelper;
 public class RabbitMqContainerFixture : IAsyncLifetime
 {
     public RabbitMqTestcontainer RabbitMq { get; } = new TestcontainersBuilder<RabbitMqTestcontainer>()
-        .WithName($"{nameof(RabbitMqContainerFixture)}-rebus-helper-tests-rabbitmq")
+        .WithUniqueName("rebus-helper-tests-rabbitmq")
         .WithMessageBroker(new RabbitMqTestcontainerConfiguration
         {
             Username = "admin",
