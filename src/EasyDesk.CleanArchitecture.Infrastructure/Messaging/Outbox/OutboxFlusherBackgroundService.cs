@@ -22,12 +22,12 @@ internal class OutboxFlusherBackgroundService : PausableBackgroundService
 
     protected override async Task ExecuteUntilPausedAsync(CancellationToken stoppingToken)
     {
-        await foreach (var request in _requestsChannel.GetAllFlushRequests(stoppingToken))
+        await foreach (var transport in _requestsChannel.GetAllFlushRequests(stoppingToken))
         {
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
-                await scope.ServiceProvider.GetRequiredService<OutboxFlusher>().Flush();
+                await scope.ServiceProvider.GetRequiredService<OutboxFlusher>().Flush(transport);
                 _logger.LogDebug("Correctly flushed outbox");
             }
             catch (Exception ex)

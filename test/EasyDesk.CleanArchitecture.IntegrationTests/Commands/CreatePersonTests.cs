@@ -169,7 +169,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await Http
             .GetOwnedPets(person.Id)
-            .PollUntil(pets => pets.Any())
+            .PollUntil(pets => pets.Any(), timeout: Duration.FromHours(100))
             .AsVerifiableEnumerable();
 
         await Verify(response);

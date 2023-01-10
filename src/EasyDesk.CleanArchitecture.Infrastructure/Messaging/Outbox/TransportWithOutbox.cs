@@ -22,7 +22,7 @@ internal class TransportWithOutbox : ITransport
         outbox.EnqueueMessageForStorage(message, destinationAddress);
 
         var helper = serviceProvider.GetRequiredService<OutboxTransactionHelper>();
-        helper.EnsureCommitHooksAreRegistered();
+        helper.EnsureCommitHooksAreRegistered(_transport);
 
         return Task.CompletedTask;
     }

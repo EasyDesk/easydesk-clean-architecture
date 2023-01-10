@@ -20,11 +20,11 @@ internal class BadRequestFilter : IResultFilter
             context.Result = new BadRequestObjectResult(
                 ResponseDto<Nothing, Nothing>.FromErrors(
                     errorsSource.Errors
-                    .Select(errorSource =>
-                        new InputValidationError(
-                            errorSource.Key,
-                            errorSource.Value.ConcatStrings("\n")))
-                    .Select(ErrorDto.FromError),
+                        .Select(errorSource =>
+                            new InputValidationError(
+                                errorSource.Key,
+                                errorSource.Value.ConcatStrings("\n")))
+                        .Select(ErrorDto.FromError),
                     Nothing.Value));
         }
     }

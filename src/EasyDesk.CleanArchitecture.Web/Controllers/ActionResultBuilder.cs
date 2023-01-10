@@ -110,6 +110,6 @@ public static class ActionResultBuilderExtensions
         this ActionResultBuilder<TResult, IEnumerable<TDto>, TMeta> builder,
         Func<TDto, TNewDto> mapper)
     {
-        return builder.Map(ts => ts.Select(mapper));
+        return builder.Map(ts => ts.Select(mapper).ToList().AsEnumerable());
     }
 }

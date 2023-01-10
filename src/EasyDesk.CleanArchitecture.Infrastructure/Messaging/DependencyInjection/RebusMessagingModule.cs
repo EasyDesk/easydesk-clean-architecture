@@ -16,10 +16,9 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Rebus.Bus;
-using Rebus.Config;
 using Rebus.Handlers;
+using Rebus.Pipeline;
+using Rebus.ServiceProvider;
 using Rebus.Transport;
 using System.Reflection;
 
@@ -65,35 +64,55 @@ public class RebusMessagingModule : AppModule
         services.AddSingleton(_transport);
 
         ITransport originalTransport = null;
-        services.AddRebus((configurer, provider) =>
+        services.AddSingleton(provider => new RebusLifetimeManager(provider, options, configurer =>
         {
+            configurer.Options(o =>
+            {
+                o.Decorate<IPipeline>(context =>
+                {
+                    var serviceProviderProviderStep = new ServiceProviderProviderStep(provider, context);
+                    return new PipelineStepConcatenator(context.Get<IPipeline>())
+                        .OnReceive(serviceProviderProviderStep, PipelineAbsolutePosition.Front)
+                        .OnSend(serviceProviderProviderStep, PipelineAbsolutePosition.Front);
+                });
+            });
             options.Apply(provider, _endpoint, configurer);
             configurer.Options(o =>
             {
-                o.Decorate(c => originalTransport = c.Get<ITransport>());
+                o.Decorate(c =>
+                {
+                    lock (this)
+                    {
+                        originalTransport = c.Get<ITransport>();
+                        return originalTransport;
+                    }
+                });
                 o.UseOutbox();
                 if (app.IsMultitenant())
                 {
                     o.SetupForMultitenancy();
                 }
             });
-            return configurer;
+        }));
+        services.AddHostedService(provider => provider.GetRequiredService<RebusLifetimeManager>());
+        services.AddTransient(provider => provider.GetRequiredService<RebusLifetimeManager>().Bus);
+        services.AddSingleton<RebusTransportProvider>(() =>
+        {
+            lock (this)
+            {
+                return originalTransport;
+            }
         });
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
         SetupMessageHandlers(services, options.KnownMessageTypes);
-        AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true), options.OutboxOptions);
+        AddOutboxServices(services, options.OutboxOptions);
 
         AddEventPropagators(services, options.KnownMessageTypes);
 
         services.AddScoped<MessageBroker>();
         services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
         services.AddScoped<ICommandSender>(provider => provider.GetRequiredService<MessageBroker>());
-
-        if (options.AutoSubscribe)
-        {
-            services.AddHostedService<AutoSubscriptionService>();
-        }
     }
 
     private void SetupMessageHandlers(IServiceCollection services, IEnumerable<Type> knownMessageTypes)
@@ -140,31 +159,17 @@ public class RebusMessagingModule : AppModule
         services.AddTransient<IDomainEventHandler<D>, DomainEventPropagator<M, D>>();
     }
 
-    private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport, OutboxOptions options)
+    private void AddOutboxServices(IServiceCollection services, OutboxOptions options)
     {
-        services.AddScoped<OutboxTransactionHelper>();
-
         if (options.PeriodicTaskEnabled)
         {
-            services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
-                options.FlushingPeriod,
-                provider.GetRequiredService<OutboxFlushRequestsChannel>(),
-                provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
+            services.AddHostedService<PeriodicOutboxAwaker>();
         }
 
+        services.AddScoped<OutboxTransactionHelper>();
         services.AddHostedService<OutboxFlusherBackgroundService>();
         services.AddSingleton<OutboxFlushRequestsChannel>();
-        services.AddScoped(provider =>
-        {
-            // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
-            _ = provider.GetRequiredService<IBus>();
-
-            return new OutboxFlusher(
-                options.FlushingBatchSize,
-                provider.GetRequiredService<IUnitOfWorkProvider>(),
-                provider.GetRequiredService<IOutbox>(),
-                originalTransport.Value);
-        });
+        services.AddScoped<OutboxFlusher>();
     }
 }
 

@@ -73,8 +73,11 @@ public static class QueryableUtils
 
         public async Task<int> GetTotalCount() => await _queryable.CountAsync();
 
-        public async Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex) =>
-            await GetPageAsArray(pageSize, pageIndex);
+        public async Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex)
+        {
+            var ts = await GetPageAsArray(pageSize, pageIndex);
+            return ts;
+        }
 
         public async IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
         {
@@ -95,15 +98,9 @@ public static class QueryableUtils
         {
             IQueryable<T> SafeSkip()
             {
-                int skip;
-                if (pageIndex > int.MaxValue / pageSize)
-                {
-                    skip = int.MaxValue;
-                }
-                else
-                {
-                    skip = pageIndex * pageSize;
-                }
+                var skip = pageIndex > int.MaxValue / pageSize
+                    ? int.MaxValue
+                    : pageIndex * pageSize;
                 return _queryable.Skip(skip);
             }
             return await (pageIndex > 0 ? SafeSkip() : _queryable)

@@ -59,12 +59,4 @@ public class Polling<T>
 
     public Polling<R> Map<R>(Func<T, R> mapper) =>
         new(async token => mapper(await _poller(token)), _timeout, _interval);
-
-    public class PollingFailedException : Exception
-    {
-        public PollingFailedException(int attempts, Duration timeout)
-            : base($"Polling timed out. Attempted {attempts} polls in {timeout.TotalSeconds:0.000} seconds")
-        {
-        }
-    }
 }

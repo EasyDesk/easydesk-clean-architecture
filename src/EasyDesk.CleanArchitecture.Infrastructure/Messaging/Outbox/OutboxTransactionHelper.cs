@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.Tools.Observables;
+using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
@@ -10,14 +11,17 @@ internal class OutboxTransactionHelper
     private readonly OutboxFlushRequestsChannel _requestsChannel;
     private bool _flushRequestWasRegistered = false;
 
-    public OutboxTransactionHelper(IOutbox outbox, IUnitOfWorkProvider unitOfWorkProvider, OutboxFlushRequestsChannel requestsChannel)
+    public OutboxTransactionHelper(
+        IOutbox outbox,
+        IUnitOfWorkProvider unitOfWorkProvider,
+        OutboxFlushRequestsChannel requestsChannel)
     {
         _outbox = outbox;
         _unitOfWorkProvider = unitOfWorkProvider;
         _requestsChannel = requestsChannel;
     }
 
-    public void EnsureCommitHooksAreRegistered()
+    public void EnsureCommitHooksAreRegistered(ITransport transport)
     {
         if (_flushRequestWasRegistered)
         {
@@ -28,7 +32,7 @@ internal class OutboxTransactionHelper
             .OrElseThrow(() => new InvalidOperationException("Unit of work was not started when registering outbox commit hooks"));
 
         unitOfWork.BeforeCommit.Subscribe(_ => _outbox.StoreEnqueuedMessages());
-        unitOfWork.AfterCommit.Subscribe(_ => _requestsChannel.RequestNewFlush());
+        unitOfWork.AfterCommit.Subscribe(_ => _requestsChannel.RequestNewFlush(transport));
         _flushRequestWasRegistered = true;
     }
 }

@@ -9,35 +9,32 @@ internal class OutboxFlusher
     private readonly int _batchSize;
     private readonly IUnitOfWorkProvider _unitOfWorkProvider;
     private readonly IOutbox _outbox;
-    private readonly ITransport _transport;
 
     public OutboxFlusher(
-        int batchSize,
+        RebusMessagingOptions options,
         IUnitOfWorkProvider unitOfWorkProvider,
-        IOutbox outbox,
-        ITransport transport)
+        IOutbox outbox)
     {
-        _batchSize = batchSize;
+        _batchSize = options.OutboxOptions.FlushingBatchSize;
         _unitOfWorkProvider = unitOfWorkProvider;
         _outbox = outbox;
-        _transport = transport;
     }
 
-    public async Task Flush()
+    public async Task Flush(ITransport transport)
     {
-        await _unitOfWorkProvider.RunTransactionally(FlushWithinTransaction);
+        await _unitOfWorkProvider.RunTransactionally(() => FlushWithinTransaction(transport));
     }
 
-    private async Task FlushWithinTransaction()
+    private async Task FlushWithinTransaction(ITransport transport)
     {
         using var scope = new RebusTransactionScope();
-        while (await SendNextBatch(scope.TransactionContext))
+        while (await SendNextBatch(transport, scope.TransactionContext))
         {
         }
         await scope.CompleteAsync();
     }
 
-    private async Task<bool> SendNextBatch(ITransactionContext transactionContext)
+    private async Task<bool> SendNextBatch(ITransport transport, ITransactionContext transactionContext)
     {
         var messages = await _outbox.RetrieveNextMessages(_batchSize);
         if (messages.IsEmpty())
@@ -46,7 +43,7 @@ internal class OutboxFlusher
         }
         foreach (var (message, destination) in messages)
         {
-            await _transport.Send(destination, message, transactionContext);
+            await transport.Send(destination, message, transactionContext);
         }
         return messages.Count() == _batchSize;
     }

@@ -23,7 +23,6 @@ public static class RebusFixtureExtensions
                     t.UseInMemoryTransport(network, e);
                     t.OtherService<ISubscriptionStorage>().StoreInMemory(subscriberStore);
                 });
-                services.AddHostedService<RebusResettingTask>();
             }))
             .OnReset(_ => network.Reset());
     }
