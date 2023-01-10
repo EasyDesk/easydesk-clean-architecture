@@ -44,7 +44,9 @@ internal class EfCoreOutbox : IOutbox
             .Take(count)
             .ToListAsync();
 
-        var messages = outboxMessages.Select(m => (ToTransportMessage(m), m.DestinationAddress));
+        var messages = outboxMessages
+            .Select(m => (ToTransportMessage(m), m.DestinationAddress))
+            .ToList();
 
         if (messages.Any())
         {
