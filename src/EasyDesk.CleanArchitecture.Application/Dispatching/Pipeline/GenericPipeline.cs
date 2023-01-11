@@ -1,32 +1,41 @@
 ﻿using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
 internal class GenericPipeline : IPipeline
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IEnumerable<Type> _stepTypes;
+    private readonly ConcurrentDictionary<(Type, Type), IEnumerable<Type>> _pipelineCache = new();
+    private readonly IImmutableList<Type> _stepTypes;
 
-    public GenericPipeline(IServiceProvider serviceProvider, IEnumerable<Type> stepTypes)
+    public GenericPipeline(IEnumerable<Type> stepTypes)
     {
-        _serviceProvider = serviceProvider;
-        _stepTypes = stepTypes;
+        _stepTypes = stepTypes.ToImmutableList();
     }
 
-    public IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>() =>
-        _stepTypes.SelectMany(t => ConvertTypeToStep<T, R>(t));
-
-    private Option<IPipelineStep<T, R>> ConvertTypeToStep<T, R>(Type type)
+    public IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>(IServiceProvider serviceProvider)
     {
-        return type
+        var stepTypes = _pipelineCache.GetOrAdd((typeof(T), typeof(R)), _ => ComputePipelineStepTypes<T, R>());
+        return stepTypes
+            .Select(t => (IPipelineStep<T, R>)ActivatorUtilities.CreateInstance(serviceProvider, t));
+    }
+
+    private IEnumerable<Type> ComputePipelineStepTypes<T, R>()
+    {
+        return _stepTypes.SelectMany(t => GetActualStepType<T, R>(t));
+    }
+
+    private Option<Type> GetActualStepType<T, R>(Type stepType)
+    {
+        return stepType
             .GetInterfaces()
             .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPipelineStep<,>))
             .SingleOption(() => new InvalidOperationException(
-                $"Pipeline step of type {type.Name} implements more than one {typeof(IPipelineStep<,>).Name} interface."))
+                $"Pipeline step of type {stepType.Name} implements more than one {typeof(IPipelineStep<,>).Name} interface."))
             .Filter(MatchesPipelineInterface<T, R>)
-            .FlatMap(i => GetActualStepType<T, R>(type, i))
-            .Map(t => (IPipelineStep<T, R>)ActivatorUtilities.CreateInstance(_serviceProvider, t));
+            .FlatMap(i => ConstructStepType<T, R>(stepType, i));
     }
 
     private bool MatchesPipelineInterface<T, R>(Type type)
@@ -41,11 +50,11 @@ internal class GenericPipeline : IPipeline
         return argType.IsGenericParameter || predicate(typeof(T), argType);
     }
 
-    private Option<Type> GetActualStepType<T, R>(Type type, Type stepInterface)
+    private Option<Type> ConstructStepType<T, R>(Type stepType, Type stepInterface)
     {
-        if (!type.IsGenericTypeDefinition)
+        if (!stepType.IsGenericTypeDefinition)
         {
-            return Some(type);
+            return Some(stepType);
         }
 
         var arguments = stepInterface
@@ -56,7 +65,7 @@ internal class GenericPipeline : IPipeline
             .ToArray();
         try
         {
-            return Some(type.MakeGenericType(arguments));
+            return Some(stepType.MakeGenericType(arguments));
         }
         catch (ArgumentException)
         {

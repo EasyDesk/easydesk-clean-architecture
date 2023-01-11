@@ -45,7 +45,7 @@ public class GenericPipelineTests
     }
 
     private GenericPipeline CreatePipeline(params Type[] stepTypes) =>
-        new(_serviceProvider, stepTypes);
+        new(stepTypes);
 
     [Fact]
     public void ShouldReturnPipelineStepsInOrder()
@@ -56,7 +56,7 @@ public class GenericPipelineTests
             typeof(OpenGenericRequestStep<>),
             typeof(ClosedStep));
 
-        pipeline.GetSteps<Request, Nothing>().ShouldBe(Items<IPipelineStep<Request, Nothing>>(
+        pipeline.GetSteps<Request, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
             new OpenGenericStep<Request, Nothing>(),
             new OpenGenericResultStep<Nothing>(),
             new OpenGenericRequestStep<Request>(),
@@ -72,7 +72,7 @@ public class GenericPipelineTests
             typeof(OpenGenericRequestStep<>),
             typeof(ClosedStep));
 
-        pipeline.GetSteps<int, Nothing>().ShouldBe(Items<IPipelineStep<int, Nothing>>(
+        pipeline.GetSteps<int, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<int, Nothing>>(
             new OpenGenericStep<int, Nothing>(),
             new OpenGenericRequestStep<int>()));
     }
@@ -86,7 +86,7 @@ public class GenericPipelineTests
             typeof(OpenGenericRequestStep<>),
             typeof(ClosedStep));
 
-        pipeline.GetSteps<Request, int>().ShouldBe(Items<IPipelineStep<Request, int>>(
+        pipeline.GetSteps<Request, int>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, int>>(
             new OpenGenericStep<Request, int>(),
             new OpenGenericResultStep<int>()));
     }
@@ -98,7 +98,7 @@ public class GenericPipelineTests
             typeof(OpenGenericResultStep<>),
             typeof(OpenGenericResultStepSpecific<>));
 
-        pipeline.GetSteps<SpecificRequest, Nothing>().ShouldBe(Items<IPipelineStep<SpecificRequest, Nothing>>(
+        pipeline.GetSteps<SpecificRequest, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<SpecificRequest, Nothing>>(
             new OpenGenericResultStep<Nothing>(),
             new OpenGenericResultStepSpecific<Nothing>()));
     }
@@ -108,7 +108,7 @@ public class GenericPipelineTests
     {
         var pipeline = CreatePipeline(typeof(StepWithService<,>));
 
-        pipeline.GetSteps<Request, Nothing>().ShouldBe(Items<IPipelineStep<Request, Nothing>>(
+        pipeline.GetSteps<Request, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
             new StepWithService<Request, Nothing>(_testService)));
     }
 
@@ -117,7 +117,7 @@ public class GenericPipelineTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<Request, Nothing>().ShouldBe(Items<IPipelineStep<Request, Nothing>>(
+        pipeline.GetSteps<Request, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
             new StepWithConstraints<Request, Nothing>()));
     }
 
@@ -126,7 +126,7 @@ public class GenericPipelineTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<int, Nothing>().ShouldBe(Enumerable.Empty<IPipelineStep<int, Nothing>>());
+        pipeline.GetSteps<int, Nothing>(_serviceProvider).ShouldBe(Enumerable.Empty<IPipelineStep<int, Nothing>>());
     }
 
     [Fact]
@@ -134,6 +134,21 @@ public class GenericPipelineTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<Request, Request>().ShouldBe(Enumerable.Empty<IPipelineStep<Request, Request>>());
+        pipeline.GetSteps<Request, Request>(_serviceProvider).ShouldBe(Enumerable.Empty<IPipelineStep<Request, Request>>());
+    }
+
+    [Fact]
+    public void ShouldReturnTheSameStepsConsistently()
+    {
+        var pipeline = CreatePipeline(
+            typeof(OpenGenericStep<,>),
+            typeof(OpenGenericResultStep<>),
+            typeof(OpenGenericRequestStep<>),
+            typeof(ClosedStep));
+
+        var first = pipeline.GetSteps<Request, Nothing>(_serviceProvider);
+        var second = pipeline.GetSteps<Request, Nothing>(_serviceProvider);
+
+        first.ShouldBe(second);
     }
 }

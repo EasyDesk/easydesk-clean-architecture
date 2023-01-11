@@ -30,7 +30,7 @@ public class DispatchingModule : AppModule
         pipelineDesc += stepsEnumerable.Append("-------- Handler --------").Concat(stepsEnumerable.Reverse()).ConcatStrings("\n", "\n", "\n");
         pipelineDesc += "\n------------------------------------------------------------------------------";
         Console.WriteLine(pipelineDesc);
-        services.AddScoped<IPipeline>(p => new GenericPipeline(p, steps));
+        services.AddSingleton<IPipeline>(p => new GenericPipeline(steps));
     }
 
     private void RegisterRequestHandlers(IServiceCollection services, AppDescription app)

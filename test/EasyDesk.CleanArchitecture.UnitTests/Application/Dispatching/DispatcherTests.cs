@@ -61,8 +61,8 @@ public class DispatcherTests
     public DispatcherTests()
     {
         _pipeline = Substitute.For<IPipeline>();
-        _pipeline.GetSteps<StringRequest, string>().Returns(Enumerable.Empty<IPipelineStep<StringRequest, string>>());
-        _pipeline.GetSteps<IntRequest, int>().Returns(Enumerable.Empty<IPipelineStep<IntRequest, int>>());
+        _pipeline.GetSteps<StringRequest, string>(default).ReturnsForAnyArgs(Enumerable.Empty<IPipelineStep<StringRequest, string>>());
+        _pipeline.GetSteps<IntRequest, int>(default).ReturnsForAnyArgs(Enumerable.Empty<IPipelineStep<IntRequest, int>>());
 
         _intHandler = Substitute.For<IHandler<IntRequest, int>>();
         _intHandler.Handle(_intRequest).Returns(Success(IntValue));
@@ -100,7 +100,7 @@ public class DispatcherTests
 
         await Should.ThrowAsync<HandlerNotFoundException>(dispatcher.Dispatch(_intRequest));
 
-        _pipeline.DidNotReceiveWithAnyArgs().GetSteps<IntRequest, int>();
+        _pipeline.DidNotReceiveWithAnyArgs().GetSteps<IntRequest, int>(default);
     }
 
     [Fact]
@@ -224,7 +224,7 @@ public class DispatcherTests
 
     private void SetupPipeline<T, R>(params IPipelineStep<T, R>[] steps)
     {
-        _pipeline.GetSteps<T, R>().Returns(steps);
+        _pipeline.GetSteps<T, R>(default).ReturnsForAnyArgs(steps);
     }
 
     private IPipelineStep<T, R> SubstituteForPipelineStep<T, R>()

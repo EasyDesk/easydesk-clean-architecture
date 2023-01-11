@@ -30,7 +30,7 @@ internal class Dispatcher : IDispatcher
         where T : IDispatchable<R>
     {
         var handler = FindHandler<T, R>();
-        return await _pipeline.GetSteps<T, R>()
+        return await _pipeline.GetSteps<T, R>(_serviceProvider)
             .Reverse()
             .Aggregate<IPipelineStep<T, R>, NextPipelineStep<R>>(
                 () => handler.Handle(dispatchable),
