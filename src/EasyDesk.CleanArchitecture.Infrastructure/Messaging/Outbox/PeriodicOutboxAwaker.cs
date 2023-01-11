@@ -17,16 +17,16 @@ internal class PeriodicOutboxAwaker : PausableBackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteUntilPausedAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteUntilPausedAsync(CancellationToken pausingToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        while (!pausingToken.IsCancellationRequested)
         {
             try
             {
                 _requestsChannel.RequestNewFlush();
-                await Task.Delay(_period.ToTimeSpan(), stoppingToken);
+                await Task.Delay(_period.ToTimeSpan(), pausingToken);
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException) when (pausingToken.IsCancellationRequested)
             {
             }
             catch (Exception ex)
