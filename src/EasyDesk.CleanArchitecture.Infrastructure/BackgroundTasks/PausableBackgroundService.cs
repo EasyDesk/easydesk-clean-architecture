@@ -62,6 +62,11 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
                 return;
             }
 
+            if (_pause is null)
+            {
+                return;
+            }
+
             _pause.Cancel();
 
             executingTask = _executingTask;
