@@ -33,6 +33,13 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     protected ITestBus NewBus(string inputQueueAddress = null, Duration? defaultTimeout = null) =>
         UsingAsync(RebusTestBus.CreateFromServices(WebService.Services, inputQueueAddress, defaultTimeout));
 
+    /// <summary>
+    /// The passed argument will be disposed before resetting the fixture,
+    /// after each test.
+    /// </summary>
+    /// <typeparam name="X">the type of disposable object.</typeparam>
+    /// <param name="disposable">the disposable instance.</param>
+    /// <returns>the passed argument.</returns>
     protected X Using<X>(X disposable) where X : IDisposable
     {
         _disposeActions.Add(() =>
@@ -43,6 +50,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
         return disposable;
     }
 
+    /// <inheritdoc cref="Using"/>
     protected X UsingAsync<X>(X disposable) where X : IAsyncDisposable
     {
         _disposeActions.Add(async () => await disposable.DisposeAsync());
@@ -72,12 +80,12 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await Fixture.ResetAsync(CancellationToken.None);
-        await OnDisposal();
         foreach (var action in _disposeActions)
         {
             await action();
         }
+        await Fixture.ResetAsync(CancellationToken.None);
+        await OnDisposal();
     }
 
     protected virtual Task OnDisposal() => Task.CompletedTask;

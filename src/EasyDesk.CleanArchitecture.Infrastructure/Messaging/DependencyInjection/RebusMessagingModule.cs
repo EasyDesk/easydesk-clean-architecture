@@ -13,6 +13,7 @@ using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +21,7 @@ using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
+using Rebus.Threading;
 using Rebus.Transport;
 using System.Reflection;
 
@@ -65,12 +67,16 @@ public class RebusMessagingModule : AppModule
         services.AddSingleton(_transport);
 
         ITransport originalTransport = null;
+        services.AddSingleton<PausableAsyncTaskFactory>();
+        services.AddSingleton<IRebusPausableTaskPool>(provider =>
+            provider.GetRequiredService<PausableAsyncTaskFactory>());
         services.AddRebus((configurer, provider) =>
         {
             options.Apply(provider, _endpoint, configurer);
             configurer.Options(o =>
             {
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
+                o.Register<IAsyncTaskFactory>(_ => provider.GetRequiredService<PausableAsyncTaskFactory>());
                 o.UseOutbox();
                 if (app.IsMultitenant())
                 {
@@ -85,7 +91,6 @@ public class RebusMessagingModule : AppModule
         AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true), options.OutboxOptions);
 
         AddEventPropagators(services, options.KnownMessageTypes);
-
         services.AddScoped<MessageBroker>();
         services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
         services.AddScoped<ICommandSender>(provider => provider.GetRequiredService<MessageBroker>());
