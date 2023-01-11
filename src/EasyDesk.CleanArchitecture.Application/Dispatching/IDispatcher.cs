@@ -2,5 +2,5 @@
 
 public interface IDispatcher
 {
-    Task<Result<T>> Dispatch<T>(IDispatchable<T> dispatchable);
+    Task<Result<R>> Dispatch<R>(IDispatchable<R> dispatchable);
 }

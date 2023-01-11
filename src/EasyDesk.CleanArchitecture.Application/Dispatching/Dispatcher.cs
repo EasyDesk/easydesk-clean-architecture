@@ -17,27 +17,24 @@ internal class Dispatcher : IDispatcher
         _pipeline = pipeline;
     }
 
-    public async Task<Result<T>> Dispatch<T>(IDispatchable<T> request)
+    public async Task<Result<R>> Dispatch<R>(IDispatchable<R> dispatchable)
     {
-        var requestType = request.GetType();
-        var methodInfo = _dispatchMethodsByType.GetOrAdd(requestType, t => typeof(Dispatcher)
+        var dispatchableType = dispatchable.GetType();
+        var methodInfo = _dispatchMethodsByType.GetOrAdd(dispatchableType, t => typeof(Dispatcher)
             .GetMethod(nameof(DispatchImpl), BindingFlags.NonPublic | BindingFlags.Instance)
-            .MakeGenericMethod(t, typeof(T)));
-        return await (Task<Result<T>>)methodInfo.Invoke(this, new[] { request });
+            .MakeGenericMethod(t, typeof(R)));
+        return await (Task<Result<R>>)methodInfo.Invoke(this, new[] { dispatchable });
     }
 
-    private async Task<Result<R>> DispatchImpl<T, R>(T request)
+    private async Task<Result<R>> DispatchImpl<T, R>(T dispatchable)
         where T : IDispatchable<R>
     {
+        var handler = FindHandler<T, R>();
         return await _pipeline.GetSteps<T, R>()
             .Reverse()
-            .Aggregate(Handler<T, R>(request), (next, step) => () => step.Run(request, next))();
-    }
-
-    private NextPipelineStep<R> Handler<T, R>(T request)
-        where T : IDispatchable<R>
-    {
-        return () => FindHandler<T, R>().Handle(request);
+            .Aggregate<IPipelineStep<T, R>, NextPipelineStep<R>>(
+                () => handler.Handle(dispatchable),
+                (next, step) => () => step.Run(dispatchable, next))();
     }
 
     private IHandler<T, R> FindHandler<T, R>()

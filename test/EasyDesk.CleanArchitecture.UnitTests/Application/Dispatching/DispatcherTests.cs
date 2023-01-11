@@ -7,7 +7,7 @@ using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Dispatching;
 
-public class CqrsRequestDispatcherTests
+public class DispatcherTests
 {
     public record IntRequest : IDispatchable<int>;
 
@@ -58,7 +58,7 @@ public class CqrsRequestDispatcherTests
     private readonly IHandler<IntRequest, int> _intHandler;
     private readonly IHandler<StringRequest, string> _stringHandler;
 
-    public CqrsRequestDispatcherTests()
+    public DispatcherTests()
     {
         _pipeline = Substitute.For<IPipeline>();
         _pipeline.GetSteps<StringRequest, string>().Returns(Enumerable.Empty<IPipelineStep<StringRequest, string>>());
@@ -88,6 +88,19 @@ public class CqrsRequestDispatcherTests
 
         var exception = await Should.ThrowAsync<HandlerNotFoundException>(dispatcher.Dispatch(_intRequest));
         exception.RequestType.ShouldBe(typeof(IntRequest));
+    }
+
+    [Fact]
+    public async Task ShouldNotCallThePipelineIfNoHandlerExists()
+    {
+        var dispatcher = CreateDispatcher(services =>
+        {
+            services.AddSingleton(_stringHandler);
+        });
+
+        await Should.ThrowAsync<HandlerNotFoundException>(dispatcher.Dispatch(_intRequest));
+
+        _pipeline.DidNotReceiveWithAnyArgs().GetSteps<IntRequest, int>();
     }
 
     [Fact]
