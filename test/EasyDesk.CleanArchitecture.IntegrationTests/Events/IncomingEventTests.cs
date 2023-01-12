@@ -44,7 +44,7 @@ public class IncomingEventTests : SampleIntegrationTest
         await Http.GetOwnedPets(_person.Id).PollUntil(pets => pets.Count() == 2).EnsureSuccess();
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
         var bus = NewBus("pet-freedom-service");

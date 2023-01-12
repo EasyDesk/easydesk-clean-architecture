@@ -132,7 +132,7 @@ public class CreatePersonTests : SampleIntegrationTest
         }
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task ShouldSucceedWithManyPaginatedReadRequests()
     {
         await CreatePerson()

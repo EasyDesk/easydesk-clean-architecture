@@ -46,7 +46,7 @@ public class PaginationTests : SampleIntegrationTest
         .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)
         .SetPageSize(pageSize);
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task DefaultPageSize_ShouldBeConfigurable()
     {
         var response = await Http
@@ -56,7 +56,7 @@ public class PaginationTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task MaxPageSize_ShouldBeConfigurable()
     {
         var response = await GetPeople(int.MaxValue)
@@ -65,7 +65,7 @@ public class PaginationTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task MinPageSize_ShouldBeOne()
     {
         var response = await GetPeople(int.MinValue)
@@ -74,7 +74,7 @@ public class PaginationTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task HttpRequestBuilder_ShouldWorkWithAnyPageSize()
     {
         var response = await Http.GetPeople().SetPageSize(1).Send().AsVerifiableEnumerable();
@@ -82,7 +82,7 @@ public class PaginationTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSize()
     {
         var response = await Http.GetPeople().SetPageIndex(3).SetPageSize(5).Send().AsVerifiableEnumerable();
@@ -90,7 +90,7 @@ public class PaginationTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSizeEvenIfOutOfBounds()
     {
         var response = await Http.GetPeople().SetPageIndex(int.MaxValue).SetPageSize(int.MaxValue).Send().AsVerifiableEnumerable();
@@ -98,7 +98,7 @@ public class PaginationTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSizeEvenIfOutOfBoundsInNegative()
     {
         var response = await Http.GetPeople().SetPageIndex(int.MinValue).SetPageSize(int.MinValue).Send().AsVerifiableEnumerable();
@@ -106,7 +106,7 @@ public class PaginationTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    [Fact(Skip = "pagination is somehow broken, causes deadlocks")]
+    [Fact]
     public async Task HttpRequestBuilder_ShouldNotWorkWithInvalidInput()
     {
         var response = await Http
