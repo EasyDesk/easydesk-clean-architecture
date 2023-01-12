@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Rebus.Pipeline;
 using Rebus.Transport;
 

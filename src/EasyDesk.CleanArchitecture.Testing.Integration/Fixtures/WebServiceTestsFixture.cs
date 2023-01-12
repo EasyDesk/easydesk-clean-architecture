@@ -21,7 +21,7 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
     private readonly SimpleAsyncEvent<ITestWebService> _onReset = new();
     private readonly SimpleAsyncEvent<ITestWebService> _onDisposal = new();
 
-    public WebServiceTestsFixture(Type entryPointMarker)
+    protected WebServiceTestsFixture(Type entryPointMarker)
     {
         _webServiceBuilder = new TestWebServiceBuilder(entryPointMarker)
             .WithEnvironment(DefaultTestEnvironment)
