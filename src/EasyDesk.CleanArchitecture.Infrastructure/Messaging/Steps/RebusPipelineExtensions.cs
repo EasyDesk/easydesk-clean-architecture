@@ -20,4 +20,13 @@ internal static class RebusPipelineExtensions
                 .OnSend(new TenantManagementStep(), PipelineAbsolutePosition.Front);
         });
     }
+
+    public static void PatchAsyncDisposables(this OptionsConfigurer configurer)
+    {
+        configurer.Decorate<IPipeline>(c =>
+        {
+            return new PipelineStepConcatenator(c.Get<IPipeline>())
+                .OnReceive(new ServiceScopeAsyncDisposeStep(), PipelineAbsolutePosition.Front);
+        });
+    }
 }

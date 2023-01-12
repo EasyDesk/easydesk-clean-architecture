@@ -78,6 +78,7 @@ public class RebusMessagingModule : AppModule
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
                 o.Register<IAsyncTaskFactory>(_ => provider.GetRequiredService<PausableAsyncTaskFactory>());
                 o.UseOutbox();
+                o.PatchAsyncDisposables();
                 if (app.IsMultitenant())
                 {
                     o.SetupForMultitenancy();
