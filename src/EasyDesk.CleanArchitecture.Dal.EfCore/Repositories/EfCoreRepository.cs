@@ -20,15 +20,14 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     {
         Context = context;
         _eventNotifier = eventNotifier;
+        DbSet = context.Set<TPersistence>();
     }
 
     protected TContext Context { get; }
 
     internal AggregatesTracker<TAggregate, TPersistence> Tracker { get; } = new();
 
-    protected virtual DbSet<TPersistence> GetDbSet(TContext context) => context.Set<TPersistence>();
-
-    protected DbSet<TPersistence> DbSet => GetDbSet(Context);
+    protected DbSet<TPersistence> DbSet { get; }
 
     private IQueryable<TPersistence> InitialQuery() => Includes(DbSet);
 

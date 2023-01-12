@@ -14,8 +14,6 @@ public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, Samp
     {
     }
 
-    protected override DbSet<PersonModel> GetDbSet(SampleAppContext context) => context.People;
-
     protected override IQueryable<PersonModel> Includes(IQueryable<PersonModel> initialQuery) => initialQuery;
 
     public Task<Option<Person>> GetById(Guid id) => GetSingle(q => q.Where(p => p.Id == id));
