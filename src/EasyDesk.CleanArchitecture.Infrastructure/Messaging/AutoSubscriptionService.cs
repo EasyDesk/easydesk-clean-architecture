@@ -21,7 +21,7 @@ internal class AutoSubscriptionService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        using var serviceScope = _serviceScopeFactory.CreateScope();
+        await using var serviceScope = _serviceScopeFactory.CreateAsyncScope();
         using var scope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(serviceScope.ServiceProvider);
         foreach (var messageType in _options.KnownMessageTypes.Where(ShouldAutoSubscribe))
         {

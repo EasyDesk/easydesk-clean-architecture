@@ -111,7 +111,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        using var scope = WebService.Services.CreateScope();
+        await using var scope = WebService.Services.CreateAsyncScope();
         var personRecord = await scope.ServiceProvider
             .GetRequiredService<SampleAppContext>()
             .People

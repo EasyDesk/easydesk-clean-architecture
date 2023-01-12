@@ -26,7 +26,7 @@ internal class OutboxFlusherBackgroundService : PausableBackgroundService
         {
             try
             {
-                using var scope = _serviceScopeFactory.CreateScope();
+                await using var scope = _serviceScopeFactory.CreateAsyncScope();
                 await scope.ServiceProvider.GetRequiredService<OutboxFlusher>().Flush();
                 _logger.LogDebug("Correctly flushed outbox");
             }

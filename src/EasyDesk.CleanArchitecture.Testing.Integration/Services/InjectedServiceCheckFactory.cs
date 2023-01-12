@@ -15,7 +15,7 @@ public static class InjectedServiceCheckFactory<TService>
         Duration? timeout = null,
         Duration? interval = null)
     {
-        using (var scope = serviceProvider.CreateScope())
+        await using (var scope = serviceProvider.CreateAsyncScope())
         {
             var polling = new Polling<TService>(
                 _ => Task.FromResult(scope.ServiceProvider.GetRequiredService<TService>()),
@@ -34,7 +34,7 @@ public static class InjectedServiceCheckFactory<TService>
         var polling = new Polling<bool>(
             async token =>
             {
-                using (var scope = serviceProvider.CreateScope())
+                await using (var scope = serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<TService>();
                     return await predicate(service);

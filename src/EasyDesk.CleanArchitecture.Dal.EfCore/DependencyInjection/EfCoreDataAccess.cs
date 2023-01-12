@@ -139,7 +139,7 @@ public static class EfCoreDataAccessExtensions
 
     public static async Task MigrateDatabases(this WebApplication app)
     {
-        using var scope = app.Services.CreateScope();
+        await using var scope = app.Services.CreateAsyncScope();
         await scope.ServiceProvider.GetRequiredService<MigrationsService>().MigrateDatabases();
     }
 }

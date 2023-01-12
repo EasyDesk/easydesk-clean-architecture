@@ -41,7 +41,7 @@ public static class SqlFixtureExtensions
 
     private static async Task UsingDbConnection(ITestWebService webService, AsyncAction<DbConnection> action)
     {
-        using var scope = webService.Services.CreateScope();
+        await using var scope = webService.Services.CreateAsyncScope();
         var connection = scope.ServiceProvider.GetRequiredService<DbConnection>();
         await connection.OpenAsync();
         await action(connection);
