@@ -5,7 +5,7 @@ using NodaTime;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 
 public class HttpSingleRequestExecutor<T>
-    : HttpRequestExecutor<HttpSingleResponseWrapper<T>, HttpResponseMessage, HttpSingleRequestExecutor<T>>
+    : HttpRequestExecutor<HttpSingleResponseWrapper<T>, ImmutableHttpResponseMessage, HttpSingleRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
@@ -28,9 +28,13 @@ public class HttpSingleRequestExecutor<T>
     public HttpSingleResponseWrapper<T> PollWhile(Func<T, bool> predicate, Duration? interval, Duration? timeout = null) =>
         PollWhile(async wrapped => predicate(await wrapped.AsData()), interval, timeout);
 
-    protected override Task<HttpResponseMessage> MakeRequest(CancellationToken timeoutToken) =>
-        _httpClient.SendAsync(CreateRequest());
+    protected override async Task<ImmutableHttpResponseMessage> MakeRequest(CancellationToken timeoutToken)
+    {
+        using var req = CreateRequest().ToHttpRequestMessage();
+        using var res = await _httpClient.SendAsync(req);
+        return await ImmutableHttpResponseMessage.From(res);
+    }
 
-    protected override HttpSingleResponseWrapper<T> Wrap(AsyncFunc<HttpResponseMessage> request) =>
+    protected override HttpSingleResponseWrapper<T> Wrap(AsyncFunc<ImmutableHttpResponseMessage> request) =>
         new(request, _jsonSerializerSettings);
 }

@@ -31,7 +31,7 @@ public class HttpPaginatedRequestExecutor<T> :
     public HttpPageSequenceWrapper<T> PollWhile(Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         PollWhile(async wrapped => predicate(await wrapped.AsVerifiableEnumerable()), interval, timeout);
 
-    private HttpPageResponseWrapper<T> WrapSinglePage(AsyncFunc<HttpResponseMessage> message) =>
+    private HttpPageResponseWrapper<T> WrapSinglePage(AsyncFunc<ImmutableHttpResponseMessage> message) =>
         new(message, _jsonSerializerSettings);
 
     protected override Task<IEnumerable<HttpPageResponseWrapper<T>>> MakeRequest(CancellationToken timeoutToken) =>
@@ -45,7 +45,12 @@ public class HttpPaginatedRequestExecutor<T> :
         {
             timeoutToken.ThrowIfCancellationRequested();
             var request = CreateRequest();
-            var page = WrapSinglePage(() => _httpClient.SendAsync(request));
+            var page = WrapSinglePage(async () =>
+            {
+                using var req = request.ToHttpRequestMessage();
+                using var res = await _httpClient.SendAsync(req, CancellationToken.None);
+                return await ImmutableHttpResponseMessage.From(res);
+            });
             var paginationMetadata = await page.AsMetadata();
             var pageCount = paginationMetadata.PageCount;
             var pageSize = paginationMetadata.PageSize;

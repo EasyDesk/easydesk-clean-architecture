@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
 public class HttpRequestUnexpectedFailureException : Exception
 {
@@ -6,7 +8,7 @@ public class HttpRequestUnexpectedFailureException : Exception
     {
     }
 
-    public static async Task<HttpRequestUnexpectedFailureException> Create(HttpResponseMessage response) => new(
+    public static HttpRequestUnexpectedFailureException Create(ImmutableHttpResponseMessage response) => new(
         $$"""
         HttpRequest failed unexpectedly.
         Response
@@ -15,7 +17,7 @@ public class HttpRequestUnexpectedFailureException : Exception
         Headers:
         {{response.Headers}}
         Content:
-        {{await ReadContent(response.Content)}}
+        {{response.Content}}
         }
         
         Request
@@ -25,10 +27,7 @@ public class HttpRequestUnexpectedFailureException : Exception
         Headers:
         {{response.RequestMessage.Headers}}
         Content:
-        {{await ReadContent(response.RequestMessage.Content)}}
+        {{response.RequestMessage.Content}}
         }
         """);
-
-    private static async Task<string> ReadContent(HttpContent content) =>
-        await content.AsOption().MapAsync(c => c.ReadAsStringAsync()) | string.Empty;
 }

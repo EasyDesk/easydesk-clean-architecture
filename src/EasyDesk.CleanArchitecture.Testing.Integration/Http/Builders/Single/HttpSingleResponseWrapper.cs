@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 
 public class HttpSingleResponseWrapper<T> : HttpResponseWrapper<T, Nothing>
 {
-    public HttpSingleResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+    public HttpSingleResponseWrapper(AsyncFunc<ImmutableHttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
         : base(httpResponseMessage, jsonSerializerSettings)
     {
     }

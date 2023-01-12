@@ -4,18 +4,22 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public interface ITestHttpAuthentication
 {
-    void ConfigureAuthentication(HttpRequestMessage message, IEnumerable<Claim> identity);
+    ImmutableHttpRequestMessage ConfigureAuthentication(
+        ImmutableHttpRequestMessage message,
+        IEnumerable<Claim> identity);
 
-    void RemoveAuthentication(HttpRequestMessage message);
+    ImmutableHttpRequestMessage RemoveAuthentication(
+        ImmutableHttpRequestMessage message);
 }
 
 internal class NoAuthentication : ITestHttpAuthentication
 {
-    public void ConfigureAuthentication(HttpRequestMessage message, IEnumerable<Claim> identity)
-    {
-    }
+    public ImmutableHttpRequestMessage ConfigureAuthentication(
+        ImmutableHttpRequestMessage message,
+        IEnumerable<Claim> identity) =>
+        message;
 
-    public void RemoveAuthentication(HttpRequestMessage message)
-    {
-    }
+    public ImmutableHttpRequestMessage RemoveAuthentication(
+        ImmutableHttpRequestMessage message) =>
+        message;
 }

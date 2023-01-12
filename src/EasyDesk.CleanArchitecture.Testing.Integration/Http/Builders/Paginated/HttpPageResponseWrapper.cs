@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated
 
 public class HttpPageResponseWrapper<T> : HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>
 {
-    public HttpPageResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+    public HttpPageResponseWrapper(AsyncFunc<ImmutableHttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
         : base(httpResponseMessage, jsonSerializerSettings)
     {
     }

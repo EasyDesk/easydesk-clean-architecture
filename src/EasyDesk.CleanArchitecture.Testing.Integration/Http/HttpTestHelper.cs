@@ -41,14 +41,14 @@ public class HttpTestHelper
     public HttpSingleRequestExecutor<R> Delete<R>(string requestUri) =>
         Request<R>(requestUri, HttpMethod.Delete);
 
-    private StringContent JsonContent<T>(T body)
+    private ImmutableHttpContent JsonContent<T>(T body)
     {
         var bodyAsJson = JsonConvert.SerializeObject(body, Formatting.None, _settings);
-        var content = new StringContent(bodyAsJson, null, MediaTypeNames.Application.Json);
+        var content = new ImmutableHttpContent(bodyAsJson, MediaTypeNames.Application.Json);
         return content;
     }
 
-    private HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, HttpContent content = null)
+    private HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, ImmutableHttpContent content = null)
     {
         var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _settings)
             .WithContent(content);
@@ -56,7 +56,7 @@ public class HttpTestHelper
         return builder;
     }
 
-    private HttpPaginatedRequestExecutor<R> RequestPaginated<R>(string requestUri, HttpMethod method, HttpContent content = null)
+    private HttpPaginatedRequestExecutor<R> RequestPaginated<R>(string requestUri, HttpMethod method, ImmutableHttpContent content = null)
     {
         var builder = new HttpPaginatedRequestExecutor<R>(requestUri, method, _httpClient, _settings, _httpAuthentication)
             .WithContent(content);

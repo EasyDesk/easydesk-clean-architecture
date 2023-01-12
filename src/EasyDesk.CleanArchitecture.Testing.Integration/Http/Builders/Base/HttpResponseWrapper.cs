@@ -6,15 +6,15 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 public class HttpResponseWrapper<T, M>
 {
     private readonly JsonSerializerSettings _jsonSerializerSettings;
-    private readonly AsyncCache<HttpResponseMessage> _response;
+    private readonly AsyncCache<ImmutableHttpResponseMessage> _response;
 
-    public HttpResponseWrapper(AsyncFunc<HttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+    public HttpResponseWrapper(AsyncFunc<ImmutableHttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
     {
         _jsonSerializerSettings = jsonSerializerSettings;
         _response = new(httpResponseMessage);
     }
 
-    private async Task<HttpResponseMessage> GetResponse() => await _response.Get();
+    private async Task<ImmutableHttpResponseMessage> GetResponse() => await _response.Get();
 
     public Task<bool> IsSuccess() => GetResponse().Map(r => r.IsSuccessStatusCode && r.Content is not null);
 
@@ -22,13 +22,13 @@ public class HttpResponseWrapper<T, M>
     {
         if (!await IsSuccess())
         {
-            throw await HttpRequestUnexpectedFailureException.Create(await GetResponse());
+            throw HttpRequestUnexpectedFailureException.Create(await GetResponse());
         }
     }
 
     private async Task<ResponseDto<T, M>> ParseContent()
     {
-        var bodyAsJson = await (await GetResponse()).Content.ReadAsStringAsync();
+        var bodyAsJson = (await GetResponse()).Content.Text;
         try
         {
             return JsonConvert.DeserializeObject<ResponseDto<T, M>>(bodyAsJson, _jsonSerializerSettings);
