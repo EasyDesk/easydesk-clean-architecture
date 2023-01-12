@@ -84,6 +84,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
         {
             await action();
         }
+        _disposeActions.Clear();
         await Fixture.ResetAsync(CancellationToken.None);
         await OnDisposal();
     }
