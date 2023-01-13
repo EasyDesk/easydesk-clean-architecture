@@ -59,6 +59,7 @@ public class CreatePetTests : SampleIntegrationTest
     [Fact]
     public async Task BulkCreatePets_ShouldSucceed()
     {
+        var timeout = Duration.FromSeconds(15);
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
@@ -76,14 +77,14 @@ public class CreatePetTests : SampleIntegrationTest
 
         var response = await Http
             .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
-            .Send()
+            .Send(timeout)
             .AsData();
 
         response.Pets.ShouldBe(BulkQuantity);
 
         var pets = await Http
             .GetOwnedPets(person.Id)
-            .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: Duration.FromSeconds(15))
+            .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
             .AsVerifiableEnumerable();
 
         await Verify(pets);
