@@ -15,7 +15,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration;
 public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     where T : WebServiceTestsFixture
 {
-    private readonly ISet<AsyncAction> _disposeActions = new HashSet<AsyncAction>();
+    private readonly IList<RebusTestBus> _buses = new List<RebusTestBus>();
 
     protected WebServiceIntegrationTest(T fixture)
     {
@@ -30,31 +30,11 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected FakeClock Clock => Fixture.Clock;
 
-    protected ITestBus NewBus(string inputQueueAddress = null, Duration? defaultTimeout = null) =>
-        UsingAsync(RebusTestBus.CreateFromServices(WebService.Services, inputQueueAddress, defaultTimeout));
-
-    /// <summary>
-    /// The passed argument will be disposed before resetting the fixture,
-    /// after each test.
-    /// </summary>
-    /// <typeparam name="X">the type of disposable object.</typeparam>
-    /// <param name="disposable">the disposable instance.</param>
-    /// <returns>the passed argument.</returns>
-    protected X Using<X>(X disposable) where X : IDisposable
+    protected ITestBus NewBus(string inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        _disposeActions.Add(() =>
-        {
-            disposable.Dispose();
-            return Task.CompletedTask;
-        });
-        return disposable;
-    }
-
-    /// <inheritdoc cref="Using"/>
-    protected X UsingAsync<X>(X disposable) where X : IAsyncDisposable
-    {
-        _disposeActions.Add(async () => await disposable.DisposeAsync());
-        return disposable;
+        var bus = RebusTestBus.CreateFromServices(WebService.Services, inputQueueAddress, defaultTimeout);
+        _buses.Add(bus);
+        return bus;
     }
 
     protected HttpTestHelper CreateHttpTestHelper()
@@ -80,11 +60,11 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        foreach (var action in _disposeActions)
+        foreach (var bus in _buses)
         {
-            await action();
+            await bus.DisposeAsync();
         }
-        _disposeActions.Clear();
+        _buses.Clear();
         await Fixture.ResetAsync(CancellationToken.None);
         await OnDisposal();
     }
