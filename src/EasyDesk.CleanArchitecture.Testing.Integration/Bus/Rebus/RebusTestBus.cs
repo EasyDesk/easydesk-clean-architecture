@@ -21,15 +21,16 @@ public class RebusTestBus : ITestBus
     private readonly Channel<IMessage> _messages = Channel.CreateUnbounded<IMessage>();
     private readonly IList<IMessage> _deadLetter = new List<IMessage>();
     private readonly Duration _timeout;
+    private readonly BuiltinHandlerActivator _handlerActivator;
 
     public RebusTestBus(Action<RebusConfigurer> configureRebus, Duration? timeout = null)
     {
         _timeout = timeout ?? _defaultTimeout;
 
-        var activator = new BuiltinHandlerActivator();
-        activator.Handle<IMessage>(Handler);
+        _handlerActivator = new BuiltinHandlerActivator();
+        _handlerActivator.Handle<IMessage>(Handler);
 
-        var configurer = Configure.With(activator);
+        var configurer = Configure.With(_handlerActivator);
         configureRebus(configurer);
         _bus = configurer.Start();
     }
@@ -70,13 +71,12 @@ public class RebusTestBus : ITestBus
         var actualTimeout = timeout ?? _timeout;
         try
         {
+            using var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
             var messages = _deadLetter
                 .Select((m, i) => (m, Some(i)))
                 .ToAsyncEnumerable()
                 .ThenConcat(() =>
                 {
-                    var cts = new CancellationTokenSource();
-                    cts.CancelAfter(actualTimeout.ToTimeSpan());
                     return _messages.Reader.ReadAllAsync(cts.Token).Select(m => (m, NoneT<int>()));
                 });
 
@@ -105,6 +105,7 @@ public class RebusTestBus : ITestBus
         }
         _subscriptions.Clear();
         _bus.Dispose();
+        _handlerActivator.Dispose();
         GC.SuppressFinalize(this);
     }
 

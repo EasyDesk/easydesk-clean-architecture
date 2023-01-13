@@ -22,7 +22,7 @@ public class Polling<T>
 
     public async Task<T> PollWhile(AsyncFunc<T, bool> predicate)
     {
-        var cts = new CancellationTokenSource(_timeout.ToTimeSpan());
+        using var cts = new CancellationTokenSource(_timeout.ToTimeSpan());
         var attempts = 1;
         var actualInterval = _interval.ToTimeSpan();
         var pollResult = await _poller(cts.Token);

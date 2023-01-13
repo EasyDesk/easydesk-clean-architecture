@@ -19,14 +19,15 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
 
     protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
     {
+        using var dbConfiguration = new PostgreSqlTestcontainerConfiguration
+        {
+            Database = "TestSampleDb",
+            Username = "sample",
+            Password = "sample",
+        };
         var container = new TestcontainersBuilder<PostgreSqlTestcontainer>()
             .WithUniqueName("sample-app-integration-tests-postgres")
-            .WithDatabase(new PostgreSqlTestcontainerConfiguration
-            {
-                Database = "TestSampleDb",
-                Username = "sample",
-                Password = "sample",
-            })
+            .WithDatabase(dbConfiguration)
             .Build();
 
         builder

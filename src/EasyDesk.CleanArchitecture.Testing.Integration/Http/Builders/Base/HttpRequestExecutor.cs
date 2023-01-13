@@ -8,6 +8,7 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
 {
     private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(7);
     private static readonly Duration _defaultRequestInterval = Duration.FromMilliseconds(200);
+    private static readonly Duration _defaultRequestTimeout = Duration.FromSeconds(5);
 
     public HttpRequestExecutor(
         string endpoint,
@@ -21,7 +22,11 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
 
     protected abstract W Wrap(AsyncFunc<I> request);
 
-    public W Send() => Wrap(() => MakeRequest(CancellationToken.None));
+    public W Send(Duration? timeout = null) => Wrap(() =>
+    {
+        using var cts = new CancellationTokenSource((timeout ?? _defaultRequestTimeout).ToTimeSpan());
+        return MakeRequest(cts.Token);
+    });
 
     public W PollWhile(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         PollWrapper((p, cond) => p.PollWhile(cond), predicate, interval, timeout);
