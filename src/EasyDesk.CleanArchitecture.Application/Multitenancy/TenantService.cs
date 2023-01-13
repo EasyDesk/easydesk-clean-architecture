@@ -4,6 +4,7 @@ namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 internal class TenantService : ITenantNavigator, IContextTenantInitializer
 {
+#pragma warning disable CA2000 // Dispose objects before losing scope
     private readonly Stack<TenantScope> _scopes = new();
 
     public void Initialize(TenantInfo tenantInfo)
@@ -60,4 +61,5 @@ internal class TenantService : ITenantNavigator, IContextTenantInitializer
 
         public void Dispose() => _onDispose(this);
     }
+#pragma warning restore CA2000 // Dispose objects before losing scope
 }
