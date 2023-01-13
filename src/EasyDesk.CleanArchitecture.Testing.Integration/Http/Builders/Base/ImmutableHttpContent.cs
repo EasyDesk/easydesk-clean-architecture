@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using EasyDesk.Tools.Collections;
+using System.Text;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
@@ -21,6 +22,14 @@ public record class ImmutableHttpContent(
         : this(text, encoding.AsOption(), mediaType.AsOption())
     {
     }
+
+    private string ToMetadata() => Encoding.Select(e => $"{nameof(Encoding)}: {e}").Concat(MediaType.Select(m => $"{nameof(MediaType)}: {m}")).ConcatStrings(", ", " [", "]");
+
+    public override string ToString() =>
+        $"""
+        {GetType().Name}{ToMetadata()}:
+        {Text}
+        """;
 
     public static async Task<ImmutableHttpContent> From(HttpContent content) =>
         new(await content.AsOption().MapAsync(c => c.ReadAsStringAsync()) | string.Empty, content?.Headers.ContentType.MediaType);

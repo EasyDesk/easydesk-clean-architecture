@@ -24,5 +24,5 @@ public record class ImmutableHttpHeaders(
     public ImmutableHttpHeaders Remove(string header) =>
         new(Dictionary.Remove(header));
 
-    public override string ToString() => Dictionary.Select(pair => $"{pair.Key}: {pair.Value}").ConcatStrings("\n");
+    public override string ToString() => Dictionary.Select(pair => $"{pair.Key}: {pair.Value.ConcatStrings(", ")}").ConcatStrings("\n");
 }
