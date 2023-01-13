@@ -5,8 +5,10 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 public abstract class PausableBackgroundService : BackgroundService, IPausableHostedService
 {
     private bool _isPaused = false;
+#pragma warning disable CA2213 // Disposable fields should be disposed
     private CancellationTokenSource _pause;
     private CancellationTokenSource _resume;
+#pragma warning restore CA2213 // Disposable fields should be disposed
     private Task _executingTask;
 
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -30,12 +32,23 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
                     throw;
                 }
             }
-            lock (this)
+            finally
             {
-                _isPaused = true;
-                _resume = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+                _pause.Dispose();
             }
-            await WaitUntilResumed(_resume.Token);
+            try
+            {
+                lock (this)
+                {
+                    _isPaused = true;
+                    _resume = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+                }
+                await WaitUntilResumed(_resume.Token);
+            }
+            finally
+            {
+                _resume.Dispose();
+            }
         }
     }
 
