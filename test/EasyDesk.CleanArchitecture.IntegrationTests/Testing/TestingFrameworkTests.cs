@@ -68,10 +68,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
                         async s =>
                         {
                             s.GetRequiredService<IContextTenantInitializer>()
-                                .Initialize(
-                                    new TenantInfo(
-                                        Some(TenantId.Create(
-                                            IntegrationTestExample.Tenant))));
+                                .Initialize(TenantInfo.Tenant(TenantId.Create(Tenant)));
                             var context = s.GetRequiredService<SampleAppContext>();
                             return await context.Pets.CountAsync() == count;
                         });

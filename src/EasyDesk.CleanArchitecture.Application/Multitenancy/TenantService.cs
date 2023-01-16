@@ -1,54 +1,37 @@
-﻿using EasyDesk.Tools.Collections;
-
-namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 internal class TenantService : ITenantNavigator, IContextTenantInitializer
 {
-    private readonly Stack<TenantScope> _scopes = new();
+    private Option<TenantInfo> _contextTenantInfo = None;
+    private Option<TenantInfo> _overriddenTenantInfo = None;
 
     public void Initialize(TenantInfo tenantInfo)
     {
-        if (!_scopes.IsEmpty())
+        if (_contextTenantInfo.IsPresent)
         {
             throw new InvalidOperationException("Trying to initialize tenant after it was already initialized");
         }
-#pragma warning disable CA2000 // Dispose objects before losing scope
-        _scopes.Push(new TenantScope(tenantInfo, _ => throw new InvalidOperationException("Can't dispose the default context tenant scope.")));
-#pragma warning restore CA2000 // Dispose objects before losing scope
+
+        _contextTenantInfo = Some(tenantInfo);
     }
 
-    private TenantScope Open(TenantInfo tenantInfo)
+    public void MoveToTenant(TenantId id) => MoveToTenantInfo(Some(TenantInfo.Tenant(id)));
+
+    public void MoveToPublic() => MoveToTenantInfo(Some(TenantInfo.Public));
+
+    public void MoveToContextTenant() => MoveToTenantInfo(None);
+
+    private void MoveToTenantInfo(Option<TenantInfo> tenantInfo)
     {
-        if (_scopes.IsEmpty())
+        if (_contextTenantInfo.IsAbsent)
         {
-            throw new InvalidOperationException("Opening scope before tenant initialization");
+            throw new InvalidOperationException("Trying to move to a different tenant before initialization");
         }
-        var scope = new TenantScope(tenantInfo, scope =>
-        {
-            if (!_scopes.TryPeek(out var topScope))
-            {
-                throw new InvalidOperationException("Closing scope before tenant initialization");
-            }
-            if (!ReferenceEquals(scope, topScope))
-            {
-                throw new InvalidOperationException("The current scope doesn't match the exiting scope. A dispose call is probably missing somewhere.");
-            }
-            _scopes.Pop();
-        });
-        _scopes.Push(scope);
-        return scope;
+        _overriddenTenantInfo = tenantInfo;
     }
 
-    public ITenantScope MoveToTenant(TenantId id) => Open(TenantInfo.Tenant(id));
-
-    public ITenantScope MoveToPublic() => Open(TenantInfo.Public);
-
-#pragma warning disable CA2000 // Dispose objects before losing scope
-    public TenantInfo TenantInfo =>
-        _scopes.TryPeek(out var scope)
-            ? scope.TenantInfo
-            : throw new InvalidOperationException("Accessing tenant before initialization");
-#pragma warning restore CA2000 // Dispose objects before losing scope
+    public TenantInfo TenantInfo => _overriddenTenantInfo.OrElse(
+        _contextTenantInfo.OrElseThrow(() => new InvalidOperationException("Accessing tenant before initialization")));
 
     private sealed class TenantScope : ITenantScope, ITenantProvider
     {

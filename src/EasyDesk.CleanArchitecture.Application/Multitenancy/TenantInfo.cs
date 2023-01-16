@@ -1,7 +1,14 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-public record TenantInfo(Option<TenantId> Id)
+public record TenantInfo
 {
+    private TenantInfo(Option<TenantId> id)
+    {
+        Id = id;
+    }
+
+    public Option<TenantId> Id { get; }
+
     public bool IsPublic => Id.IsAbsent;
 
     public bool IsInTenant => Id.IsPresent;

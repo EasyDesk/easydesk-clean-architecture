@@ -34,7 +34,13 @@ public class TenantServiceTests
     [Fact]
     public void MoveToPublic_ShouldThrow_IfUsedWithoutInitialization()
     {
-        Should.Throw<InvalidOperationException>(() => _sut.MoveToPublic());
+        Should.Throw<InvalidOperationException>(_sut.MoveToPublic);
+    }
+
+    [Fact]
+    public void MoveToContextTenant_ShouldThrow_IfUsedWithoutInitialization()
+    {
+        Should.Throw<InvalidOperationException>(_sut.MoveToContextTenant);
     }
 
     [Fact]
@@ -44,84 +50,63 @@ public class TenantServiceTests
     }
 
     [Fact]
-    public void ShouldThrow_IfDisposingTheWrongScope()
-    {
-        _sut.Initialize(new TenantInfo(None));
-        using var scope1 = _sut.MoveToTenant(_tenantId);
-        using (var scope2 = _sut.MoveToPublic())
-        {
-            Should.Throw<InvalidOperationException>(() => scope1.Dispose());
-            using var scope3 = _sut.MoveToPublic();
-            Should.Throw<InvalidOperationException>(() => scope2.Dispose());
-        }
-    }
-
-    [Fact]
-    public void IsInTenant_And_IsPublic_ShouldBeMutualExclusiveWithTenant()
-    {
-        _sut.Initialize(_tenantInfo);
-        _sut.TenantInfo.IsInTenant.ShouldBeTrue();
-        _sut.TenantInfo.IsPublic.ShouldBeFalse();
-    }
-
-    [Fact]
-    public void IsInTenant_And_IsPublic_ShouldBeMutualExclusiveWithPublic()
-    {
-        _sut.Initialize(new TenantInfo(None));
-        _sut.TenantInfo.IsInTenant.ShouldBeFalse();
-        _sut.TenantInfo.IsPublic.ShouldBeTrue();
-    }
-
-    [Fact]
-    public void IsInTenant_And_IsPublic_ShouldBeMutualExclusiveWithTenantAfterMove()
-    {
-        _sut.Initialize(new TenantInfo(None));
-        using var s = _sut.MoveToTenant(_tenantId);
-        _sut.TenantInfo.IsInTenant.ShouldBeTrue();
-        _sut.TenantInfo.IsPublic.ShouldBeFalse();
-    }
-
-    [Fact]
-    public void IsInTenant_And_IsPublic_ShouldBeMutualExclusiveWithPublicAfterMove()
-    {
-        _sut.Initialize(_tenantInfo);
-        using var s = _sut.MoveToPublic();
-        _sut.TenantInfo.IsInTenant.ShouldBeFalse();
-        _sut.TenantInfo.IsPublic.ShouldBeTrue();
-    }
-
-    [Fact]
-    public void ShouldSuceed_WithUsingChain()
+    public void TenantInfo_ShouldReturnTheCorrectTenantInfoAfterInitialization_WithTenant()
     {
         _sut.Initialize(_tenantInfo);
         _sut.TenantInfo.ShouldBe(_tenantInfo);
-        using var scope1 = _sut.MoveToPublic();
-        _sut.TenantInfo.Id.ShouldBe(None);
-        using var scope2 = _sut.MoveToTenant(_tenantId);
-        _sut.TenantInfo.Id.ShouldBe(Some(_tenantId));
-        using var scope3 = _sut.MoveToPublic();
-        _sut.TenantInfo.Id.ShouldBe(None);
     }
 
     [Fact]
-    public void ShouldSucceed_WithParenthesisInception()
+    public void TenantInfo_ShouldReturnTheCorrectTenantInfoAfterInitialization_WithPublic()
+    {
+        _sut.Initialize(TenantInfo.Public);
+        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+    }
+
+    [Fact]
+    public void TenantInfo_ShouldBeMutualExclusiveWithTenantAfterMove()
+    {
+        _sut.Initialize(TenantInfo.Public);
+        _sut.MoveToTenant(_tenantId);
+        _sut.TenantInfo.ShouldBe(_tenantInfo);
+    }
+
+    [Fact]
+    public void TenantInfo_ShouldBeMutualExclusiveWithPublicAfterMove()
+    {
+        _sut.Initialize(_tenantInfo);
+        _sut.MoveToPublic();
+        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+    }
+
+    [Fact]
+    public void ShouldSuceed_WithMoveChain()
     {
         _sut.Initialize(_tenantInfo);
         _sut.TenantInfo.ShouldBe(_tenantInfo);
-        using (var scope1 = _sut.MoveToPublic())
-        {
-            _sut.TenantInfo.Id.ShouldBe(None);
-            using (var scope2 = _sut.MoveToTenant(_tenantId))
-            {
-                _sut.TenantInfo.Id.ShouldBe(Some(_tenantId));
-                using (var scope3 = _sut.MoveToPublic())
-                {
-                    _sut.TenantInfo.Id.ShouldBe(None);
-                }
-                _sut.TenantInfo.Id.ShouldBe(Some(_tenantId));
-            }
-            _sut.TenantInfo.Id.ShouldBe(None);
-        }
+        _sut.MoveToPublic();
+        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+        _sut.MoveToTenant(_tenantId);
+        _sut.TenantInfo.ShouldBe(TenantInfo.Tenant(_tenantId));
+        _sut.MoveToPublic();
+        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+    }
+
+    [Fact]
+    public void MoveToContextTenant_ShouldReturnToTheInitializedTenant_AfterMovingToPublic()
+    {
+        _sut.Initialize(_tenantInfo);
+        _sut.MoveToPublic();
+        _sut.MoveToContextTenant();
         _sut.TenantInfo.ShouldBe(_tenantInfo);
+    }
+
+    [Fact]
+    public void MoveToContextTenant_ShouldReturnToTheInitializedTenant_AfterMovingToTenant()
+    {
+        _sut.Initialize(TenantInfo.Public);
+        _sut.MoveToTenant(_tenantId);
+        _sut.MoveToContextTenant();
+        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
     }
 }
