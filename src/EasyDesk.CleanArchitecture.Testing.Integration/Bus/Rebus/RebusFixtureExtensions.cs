@@ -25,6 +25,9 @@ public static class RebusFixtureExtensions
                 });
                 services.AddHostedService<RebusResettingTask>();
             }))
-            .OnReset(_ => network.Reset());
+            .OnReset(_ =>
+            {
+                network.Reset();
+            });
     }
 }

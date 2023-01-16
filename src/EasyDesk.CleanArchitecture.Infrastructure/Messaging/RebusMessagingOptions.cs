@@ -7,11 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rebus.Config;
-using Rebus.Injection;
 using Rebus.Serialization;
 using Rebus.Serialization.Json;
 using Rebus.Time;
 using Rebus.Topic;
+using Rebus.Workers.TplBased;
 using System.Collections.Immutable;
 using System.Reflection;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
@@ -54,9 +54,6 @@ public class RebusMessagingOptions
     public RebusMessagingOptions ConfigureRebusOptions(Action<OptionsConfigurer> configurationAction) =>
         ConfigureRebus((_, c) => c.Options(configurationAction));
 
-    public RebusMessagingOptions DecorateRebusService<T>(Func<IResolutionContext, T> factory, string description = null) =>
-        ConfigureRebusOptions(o => o.Decorate(factory, description));
-
     public void Apply(IServiceProvider serviceProvider, RebusEndpoint endpoint, RebusConfigurer configurer)
     {
         var transport = serviceProvider.GetRequiredService<RebusTransportConfiguration>();
@@ -82,11 +79,11 @@ public class RebusMessagingOptions
 
         configurer.Options(o =>
         {
+            o.UseTplToReceiveMessages();
             var clock = serviceProvider.GetRequiredService<IClock>();
-            o.Decorate<IRebusTime>(_ => new NodaTimeRebusClock(clock));
-            o.Decorate<ITopicNameConvention>(_ => new TopicNameConvention());
-            o.Decorate<IMessageTypeNameConvention>(c => new KnownTypesConvention(KnownMessageTypes));
-            o.LogPipeline(verbose: true);
+            o.Register<IRebusTime>(_ => new NodaTimeRebusClock(clock));
+            o.Register<ITopicNameConvention>(_ => new TopicNameConvention());
+            o.Register<IMessageTypeNameConvention>(c => new KnownTypesConvention(KnownMessageTypes));
         });
 
         _configureRebus?.Invoke(endpoint, configurer);
