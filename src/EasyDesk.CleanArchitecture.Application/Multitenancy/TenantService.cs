@@ -4,7 +4,6 @@ namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 internal class TenantService : ITenantNavigator, IContextTenantInitializer
 {
-#pragma warning disable CA2000 // Dispose objects before losing scope
     private readonly Stack<TenantScope> _scopes = new();
 
     public void Initialize(TenantInfo tenantInfo)
@@ -13,7 +12,9 @@ internal class TenantService : ITenantNavigator, IContextTenantInitializer
         {
             throw new InvalidOperationException("Trying to initialize tenant after it was already initialized");
         }
+#pragma warning disable CA2000 // Dispose objects before losing scope
         _scopes.Push(new TenantScope(tenantInfo, _ => throw new InvalidOperationException("Can't dispose the default context tenant scope.")));
+#pragma warning restore CA2000 // Dispose objects before losing scope
     }
 
     private TenantScope Open(TenantInfo tenantInfo)
@@ -42,10 +43,12 @@ internal class TenantService : ITenantNavigator, IContextTenantInitializer
 
     public ITenantScope MoveToPublic() => Open(TenantInfo.Public);
 
+#pragma warning disable CA2000 // Dispose objects before losing scope
     public TenantInfo TenantInfo =>
         _scopes.TryPeek(out var scope)
             ? scope.TenantInfo
             : throw new InvalidOperationException("Accessing tenant before initialization");
+#pragma warning restore CA2000 // Dispose objects before losing scope
 
     private sealed class TenantScope : ITenantScope, ITenantProvider
     {
@@ -61,5 +64,4 @@ internal class TenantService : ITenantNavigator, IContextTenantInitializer
 
         public void Dispose() => _onDispose(this);
     }
-#pragma warning restore CA2000 // Dispose objects before losing scope
 }

@@ -36,6 +36,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
             {
                 _pause.Dispose();
             }
+
             try
             {
                 lock (this)
