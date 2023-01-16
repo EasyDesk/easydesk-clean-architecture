@@ -10,7 +10,6 @@ using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Testing;
@@ -62,16 +61,9 @@ internal class IntegrationTestExample : SampleIntegrationTest
                     .GetPeople()
                     .PollUntil(people => people.Count() == count, Duration.FromMilliseconds(100), Duration.FromSeconds(15))
                     .EnsureSuccess();
-                await InjectedServiceCheckFactory<IServiceProvider>
-                    .ScopedUntil(
-                        webService.Services,
-                        async s =>
-                        {
-                            s.GetRequiredService<IContextTenantInitializer>()
-                                .Initialize(TenantInfo.Tenant(TenantId.Create(Tenant)));
-                            var context = s.GetRequiredService<SampleAppContext>();
-                            return await context.Pets.CountAsync() == count;
-                        });
+                await webService.WaitConditionUnderTenant<SampleAppContext>(
+                    TenantId.Create(Tenant),
+                    async context => await context.Pets.CountAsync() == count);
             }
         }
     }
