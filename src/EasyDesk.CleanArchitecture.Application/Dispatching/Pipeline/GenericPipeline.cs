@@ -22,10 +22,8 @@ internal class GenericPipeline : IPipeline
             .Select(t => (IPipelineStep<T, R>)ActivatorUtilities.CreateInstance(serviceProvider, t));
     }
 
-    private IEnumerable<Type> ComputePipelineStepTypes<T, R>()
-    {
-        return _stepTypes.SelectMany(t => GetActualStepType<T, R>(t));
-    }
+    private IEnumerable<Type> ComputePipelineStepTypes<T, R>() =>
+        _stepTypes.SelectMany(t => GetActualStepType<T, R>(t));
 
     private Option<Type> GetActualStepType<T, R>(Type stepType)
     {

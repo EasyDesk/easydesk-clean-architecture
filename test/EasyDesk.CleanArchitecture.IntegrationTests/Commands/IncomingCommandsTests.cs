@@ -34,7 +34,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
 
         await bus.Send(new RemoveTenant(tenantName));
 
-        await InjectedServiceCheckFactory<IMultitenancyManager>.SingleScopeUntil(WebService.Services, async m => !await m.TenantExists(tenantId));
+        await WebService.WaitUntilTenantDoesNotExist(tenantId);
     }
 
     [Fact]
@@ -65,8 +65,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
             .EnsureSuccess();
 
         await bus.Send(new RemoveTenant(tenantName));
-
-        var tenantChecker = InjectedServiceCheckFactory<IMultitenancyManager>.SingleScopeUntil(WebService.Services, async m => !await m.TenantExists(tenantId));
+        await WebService.WaitUntilTenantDoesNotExist(tenantId);
 
         await bus.Send(new CreateTenant(tenantName));
         await WebService.WaitUntilTenantExists(tenantId);

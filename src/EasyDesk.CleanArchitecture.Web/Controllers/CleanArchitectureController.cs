@@ -10,7 +10,7 @@ public abstract class CleanArchitectureController : AbstractController
     private T GetService<T>() => HttpContext.RequestServices.GetRequiredService<T>();
 
     protected ActionResultBuilder<T, T, Nothing> Dispatch<T>(IDispatchable<T> request) =>
-        new(() => Handle(request), It, _ => Nothing.Value, this);
+        DispatchInternal(d => d.Dispatch(request), It, _ => Nothing.Value);
 
     protected ActionResultBuilder<PageInfo<T>, IEnumerable<T>, PaginationMetaDto> DispatchWithPagination<T>(
         IDispatchable<IPageable<T>> request, PaginationDto pagination)
@@ -18,13 +18,15 @@ public abstract class CleanArchitectureController : AbstractController
         var paginationService = GetService<PaginationService>();
         var pageSize = paginationService.GetPageSize(pagination.PageSize.AsOption());
         var pageIndex = paginationService.GetPageIndex(pagination.PageIndex.AsOption());
-        return new(
-            () => Handle(request).ThenMapAsync(pageable => pageable.GetPageInfo(pageSize, pageIndex)),
+        return DispatchInternal(
+            d => d.Dispatch(request, pageable => pageable.GetPageInfo(pageSize, pageIndex)),
             pageInfo => pageInfo.Page,
-            pageInfo => PaginationMetaDto.FromResult(pageInfo, pageSize, pageIndex),
-            this);
+            pageInfo => PaginationMetaDto.FromResult(pageInfo, pageSize, pageIndex));
     }
 
-    private async Task<Result<T>> Handle<T>(IDispatchable<T> request) =>
-        await GetService<IDispatcher>().Dispatch(request);
+    private ActionResultBuilder<TResult, TDto, TMeta> DispatchInternal<TResult, TDto, TMeta>(
+        AsyncFunc<IDispatcher, Result<TResult>> request,
+        Func<TResult, TDto> mapper,
+        Func<Result<TResult>, TMeta> meta) =>
+        new(() => request(GetService<IDispatcher>()), mapper, meta, this);
 }

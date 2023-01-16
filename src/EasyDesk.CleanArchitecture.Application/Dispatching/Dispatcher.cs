@@ -17,30 +17,30 @@ internal class Dispatcher : IDispatcher
         _pipeline = pipeline;
     }
 
-    public async Task<Result<R>> Dispatch<R>(IDispatchable<R> dispatchable)
+    public async Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper)
     {
         var dispatchableType = dispatchable.GetType();
         var methodInfo = _dispatchMethodsByType.GetOrAdd(dispatchableType, t => typeof(Dispatcher)
             .GetMethod(nameof(DispatchImpl), BindingFlags.NonPublic | BindingFlags.Instance)
-            .MakeGenericMethod(t, typeof(R)));
-        return await (Task<Result<R>>)methodInfo.Invoke(this, new[] { dispatchable });
+            .MakeGenericMethod(t, typeof(X), typeof(R)));
+        return await (Task<Result<R>>)methodInfo.Invoke(this, new object[] { dispatchable, mapper });
     }
 
-    private async Task<Result<R>> DispatchImpl<T, R>(T dispatchable)
-        where T : IDispatchable<R>
+    private async Task<Result<R>> DispatchImpl<T, X, R>(T dispatchable, AsyncFunc<X, R> mapper)
+        where T : IDispatchable<X>
     {
-        var handler = FindHandler<T, R>();
+        var handler = FindHandler<T, X>();
         return await _pipeline.GetSteps<T, R>(_serviceProvider)
             .Reverse()
             .Aggregate<IPipelineStep<T, R>, NextPipelineStep<R>>(
-                () => handler.Handle(dispatchable),
+                () => handler.Handle(dispatchable).ThenMapAsync(mapper),
                 (next, step) => () => step.Run(dispatchable, next))();
     }
 
-    private IHandler<T, R> FindHandler<T, R>()
-        where T : IDispatchable<R>
+    private IHandler<T, X> FindHandler<T, X>()
+        where T : IDispatchable<X>
     {
-        var handler = _serviceProvider.GetService<IHandler<T, R>>();
+        var handler = _serviceProvider.GetService<IHandler<T, X>>();
         return handler ?? throw new HandlerNotFoundException(typeof(T));
     }
 }
