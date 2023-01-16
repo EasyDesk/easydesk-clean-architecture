@@ -25,27 +25,22 @@ public class Polling<T>
         using var cts = new CancellationTokenSource(_timeout.ToTimeSpan());
         var attempts = 1;
         var actualInterval = _interval.ToTimeSpan();
-        var pollResult = await _poller(cts.Token);
-        while (await predicate(pollResult))
+        try
         {
-            if (cts.IsCancellationRequested)
-            {
-                throw new PollingFailedException(attempts, _timeout);
-            }
-
-            try
+            var pollResult = await _poller(cts.Token);
+            while (await predicate(pollResult))
             {
                 await Task.Delay(actualInterval, cts.Token);
-            }
-            catch (OperationCanceledException)
-            {
-                throw new PollingFailedException(attempts, _timeout);
-            }
 
-            attempts++;
-            pollResult = await _poller(cts.Token);
+                attempts++;
+                pollResult = await _poller(cts.Token);
+            }
+            return pollResult;
         }
-        return pollResult;
+        catch (OperationCanceledException)
+        {
+            throw new PollingFailedException(attempts, _timeout);
+        }
     }
 
     public Task<T> PollWhile(Func<T, bool> predicate) =>
