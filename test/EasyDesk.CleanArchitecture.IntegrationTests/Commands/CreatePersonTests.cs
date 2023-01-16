@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.SampleApp.Application.DomainEvents;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -193,5 +194,19 @@ public class CreatePersonTests : SampleIntegrationTest
             .AsVerifiableEnumerable();
 
         await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldCreateThePersonsPassport()
+    {
+        var bus = NewBus(OtherServicesEndpoints.PassportService);
+
+        var person = await CreatePerson().Send().AsData();
+
+        await bus.WaitForMessageOrFail(new CreatePassport(
+            person.Id,
+            person.FirstName,
+            person.LastName,
+            person.DateOfBirth));
     }
 }
