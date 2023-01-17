@@ -10,3 +10,10 @@ updates:
     labels:
       - ci
       - dependency
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: daily
+    labels:
+      - dependency
+    open-pull-requests-limit: 0 # no limit
