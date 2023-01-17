@@ -7,6 +7,7 @@ using EasyDesk.SampleApp.Application.DomainEvents;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+using EasyDesk.Tools.Collections;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
@@ -87,6 +88,42 @@ public class CreatePersonTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(otherTenant));
         await WebService.WaitUntilTenantExists(TenantId.Create(otherTenant));
+
+        var person = await CreatePerson()
+            .Send()
+            .AsData();
+
+        var response = await GetPerson(person.Id)
+            .Tenant(otherTenant)
+            .AuthenticateAs(AdminId)
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldFail_WithInvalidTenant()
+    {
+        var otherTenant = Enumerable.Repeat("a", TenantId.MaxLength + 1).ConcatStrings();
+
+        var person = await CreatePerson()
+            .Send()
+            .AsData();
+
+        var response = await GetPerson(person.Id)
+            .Tenant(otherTenant)
+            .AuthenticateAs(AdminId)
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldFail_WithNonExistingTenant()
+    {
+        var otherTenant = "other-tenant";
 
         var person = await CreatePerson()
             .Send()

@@ -85,6 +85,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
             UnknownUserError => _controller.Unauthorized(body),
             ForbiddenError => ActionResults.Forbidden(body),
             TenantNotFoundError
+                or InvalidTenantIdError
                 or MissingTenantError
                 or MultitenancyNotSupportedError => _controller.BadRequest(body),
             DomainError

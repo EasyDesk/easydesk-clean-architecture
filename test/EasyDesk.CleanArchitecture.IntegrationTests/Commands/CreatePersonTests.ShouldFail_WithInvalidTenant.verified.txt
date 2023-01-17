@@ -1,0 +1,14 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidTenant,
+        Detail: The provided tenant is invalid,
+        Meta: {}
+      }
+    ],
+    Meta: {}
+  }
+}
