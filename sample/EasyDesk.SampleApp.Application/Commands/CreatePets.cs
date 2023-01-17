@@ -1,12 +1,15 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Sagas.BulkOperations;
 using EasyDesk.CleanArchitecture.Domain.Model;
+using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using EasyDesk.Tools.Collections;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
+[RequireAnyOf(Permissions.CAN_EDIT_PETS)]
 public record CreatePets(IEnumerable<CreatePet> Pets) : ICommandRequest<CreatePetsResult>;
 
 public record CreatePetsResult(int Pets);

@@ -28,7 +28,7 @@ public class PaginationTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
-
+        await Http.AddAdmin().Send().EnsureSuccess();
         foreach (var i in Enumerable.Range(0, InitialPopulationSize))
         {
             await CreatePerson(i).Send().EnsureSuccess();

@@ -1,4 +1,5 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
@@ -15,6 +16,7 @@ using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
+using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,7 +30,9 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .WithServiceName("EasyDesk.Sample.App")
         .AddApiVersioning()
         .AddAuthentication(configure => configure.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
-        .AddAuthorization()
+        .AddAuthorization(options => options
+            .UseRoleBasedPermissions()
+            .WithStaticPermissions(PermissionSettings.RolesToPermissions))
         .AddOpenApi()
         .AddAsyncApi()
         .AddSagas()

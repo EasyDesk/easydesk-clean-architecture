@@ -34,6 +34,7 @@ public class CreatePersonTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await Http.AddAdmin().Send().EnsureSuccess();
     }
 
     private HttpSingleRequestExecutor<PersonDto> CreatePerson() => Http
@@ -208,5 +209,16 @@ public class CreatePersonTests : SampleIntegrationTest
             person.FirstName,
             person.LastName,
             person.DateOfBirth));
+    }
+
+    [Fact]
+    public async Task ShouldFailIfUnauthorized()
+    {
+        var response = await CreatePerson()
+            .AuthenticateAs("non-admin-id")
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
     }
 }

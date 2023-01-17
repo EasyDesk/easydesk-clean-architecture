@@ -38,6 +38,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await Http.AddAdmin().Send().EnsureSuccess();
     }
 
     public HttpSingleRequestExecutor<PersonDto> CreatePerson(int id) => Http

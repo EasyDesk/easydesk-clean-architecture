@@ -11,21 +11,21 @@ public class HttpRequestUnexpectedFailureException : Exception
     public static HttpRequestUnexpectedFailureException Create(ImmutableHttpResponseMessage response) => new(
         $$"""
         HttpRequest failed unexpectedly.
-        ------Response------
+        -----<Response>-----
         StatusCode: {{response.StatusCode}}
         Headers:
-            {{response.Headers.ToString().Replace("\n", "\t\n")}}
+            {{response.Headers}}
         Content:
-            {{response.Content.ToString().Replace("\n", "\t\n")}}
-        --------------------
+            {{response.Content}}
+        ---------<>---------
 
-        ------Request-------
+        -----<Request>------
         Method: {{response.RequestMessage.Method}}
         Uri: {{response.RequestMessage.RequestUri}}
         Headers:
-            {{response.RequestMessage.Headers.ToString().Replace("\n", "\t\n")}}
+            {{response.RequestMessage.Headers}}
         Content:
-            {{response.RequestMessage.Content.ToString().Replace("\n", "\t\n")}}
-        --------------------
+            {{response.RequestMessage.Content}}
+        ---------<>---------
         """);
 }

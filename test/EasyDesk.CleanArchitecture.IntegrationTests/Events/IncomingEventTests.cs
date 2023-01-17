@@ -29,12 +29,15 @@ public class IncomingEventTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await Http.AddAdmin().Send().EnsureSuccess();
 
-        _person = await Http.CreatePerson(new(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12)))
-        .Send().AsData();
+        _person = await Http
+            .CreatePerson(new(
+                FirstName: "Foo",
+                LastName: "Bar",
+                DateOfBirth: new LocalDate(1995, 10, 12)))
+            .Send()
+            .AsData();
 
         await Http
             .CreatePet(_person.Id, new("Snoopy"))
