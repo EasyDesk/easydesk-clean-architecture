@@ -17,4 +17,4 @@ updates:
       interval: daily
     labels:
       - dependency
-    open-pull-requests-limit: 0 # no limit
+    open-pull-requests-limit: 10
