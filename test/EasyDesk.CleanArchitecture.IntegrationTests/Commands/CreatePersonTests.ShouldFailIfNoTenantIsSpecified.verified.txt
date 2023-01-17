@@ -4,7 +4,7 @@
     Data: null,
     Errors: [
       {
-        Code: MissingTenantError,
+        Code: MissingTenant,
         Detail: Missing tenant information on the given request,
         Meta: {}
       }
