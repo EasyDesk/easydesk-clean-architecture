@@ -45,5 +45,5 @@ public record class ImmutableHttpContent(
         """;
 
     public static async Task<ImmutableHttpContent> From(HttpContent content) =>
-        new(await content.AsOption().MapAsync(c => c.ReadAsStringAsync()) | string.Empty, content?.Headers.ContentType.MediaType);
+        new(await content.AsOption().MapAsync(c => c.ReadAsStringAsync()) | string.Empty, content?.Headers.ContentType?.MediaType);
 }
