@@ -39,6 +39,7 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
         if (IsComplete(context.State.RemainingWork))
         {
             context.CompleteSaga();
+            await OnCompletion();
         }
         else
         {
@@ -70,4 +71,6 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
     protected abstract Task<TWork> HandleBatch(TBatchCommand command, TWork remainingWork);
 
     protected abstract TBatchCommand CreateCommand(Guid operationId);
+
+    protected virtual Task OnCompletion() => Task.CompletedTask;
 }
