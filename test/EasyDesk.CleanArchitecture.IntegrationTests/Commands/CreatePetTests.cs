@@ -30,6 +30,7 @@ public class CreatePetTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await Http.AddAdmin().Send().EnsureSuccess();
     }
 
     [Fact]
@@ -88,5 +89,27 @@ public class CreatePetTests : SampleIntegrationTest
             .AsVerifiableEnumerable();
 
         await Verify(pets);
+    }
+
+    [Fact]
+    public async Task ShouldFailIfNotAuthorized()
+    {
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        var response = await Http
+            .CreatePet(person.Id, new(Nickname))
+            .AuthenticateAs("non-admin-id")
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
     }
 }

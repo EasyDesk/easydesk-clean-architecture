@@ -85,6 +85,8 @@ public class AbstractDbContext<T> : DbContext
     {
         public override bool GeneratesTemporaryValues => false;
 
+        public override bool GeneratesStableValues => true;
+
         protected override object NextValue(EntityEntry entry) =>
             (entry.Context as T).GetCurrentTenantAsString();
     }

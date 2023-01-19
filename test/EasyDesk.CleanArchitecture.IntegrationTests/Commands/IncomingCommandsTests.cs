@@ -46,6 +46,12 @@ public class IncomingCommandsTests : SampleIntegrationTest
 
         var tenantId = TenantId.Create(tenantName);
         await WebService.WaitUntilTenantExists(tenantId);
+        var adminId = "test-admin-asd";
+        await Http.AddAdmin()
+            .AuthenticateAs(adminId)
+            .Tenant(tenantName)
+            .Send()
+            .EnsureSuccess();
 
         var person = await Http
             .CreatePerson(new(
@@ -53,14 +59,14 @@ public class IncomingCommandsTests : SampleIntegrationTest
                 LastName: "Bar",
                 DateOfBirth: new LocalDate(1996, 2, 2)))
             .Tenant(tenantName)
-            .AuthenticateAs("test-admin")
+            .AuthenticateAs(adminId)
             .Send()
             .AsData();
 
         await Http
             .GetOwnedPets(person.Id)
             .Tenant(tenantName)
-            .AuthenticateAs("test-admin")
+            .AuthenticateAs(adminId)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
@@ -73,13 +79,13 @@ public class IncomingCommandsTests : SampleIntegrationTest
         await Http
             .GetOwnedPets(person.Id)
             .Tenant(tenantName)
-            .AuthenticateAs("test-admin")
+            .AuthenticateAs(adminId)
             .PollUntil(pets => !pets.Any())
             .EnsureSuccess();
 
         var response = await Http.GetPerson(person.Id)
             .Tenant(tenantName)
-            .AuthenticateAs("test-admin")
+            .AuthenticateAs(adminId)
             .PollWhile(w => w.IsSuccess())
             .AsVerifiable();
 

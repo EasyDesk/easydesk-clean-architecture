@@ -4,14 +4,14 @@
     Data: null,
     Errors: [
       {
-        Code: InputValidationError,
+        Code: InvalidInput,
         Detail: The value 'foo' is not valid.,
         Meta: {
           propertyName: PageSize
         }
       },
       {
-        Code: InputValidationError,
+        Code: InvalidInput,
         Detail: The value 'bar' is not valid.,
         Meta: {
           propertyName: PageIndex

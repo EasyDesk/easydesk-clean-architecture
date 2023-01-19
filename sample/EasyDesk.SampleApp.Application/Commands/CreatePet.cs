@@ -1,12 +1,15 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Domain.Model;
+using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
+[RequireAnyOf(Permissions.CAN_EDIT_PETS)]
 public record CreatePet(string Nickname, Guid PersonId) : ICommandRequest<PetSnapshot>;
 
 public class CreatePetValidator : AbstractValidator<CreatePet>

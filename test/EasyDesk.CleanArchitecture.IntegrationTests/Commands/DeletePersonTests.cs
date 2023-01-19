@@ -37,6 +37,7 @@ public class DeletePersonTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await Http.AddAdmin().Send().EnsureSuccess();
     }
 
     private async Task<PersonDto> CreateTestPerson()
@@ -120,5 +121,18 @@ public class DeletePersonTests : SampleIntegrationTest
             .FirstOptionAsync();
 
         personRecord.ShouldContain(p => p.IsDeleted);
+    }
+
+    [Fact]
+    public async Task ShouldFailIfNotAuthorized()
+    {
+        var person = await CreateTestPerson();
+
+        var response = await DeletePerson(person.Id)
+            .AuthenticateAs("non-admin-id")
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
     }
 }

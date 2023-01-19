@@ -4,8 +4,8 @@
     Data: null,
     Errors: [
       {
-        Code: MissingTenant,
-        Detail: Missing tenant information on the given request,
+        Code: InvalidTenant,
+        Detail: The provided tenant is invalid,
         Meta: {}
       }
     ],

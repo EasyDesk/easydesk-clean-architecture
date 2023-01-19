@@ -1,0 +1,18 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: TenantNotFound,
+        Detail: The provided tenant doesn't exist,
+        Meta: {
+          tenantId: {
+            value: other-tenant
+          }
+        }
+      }
+    ],
+    Meta: {}
+  }
+}

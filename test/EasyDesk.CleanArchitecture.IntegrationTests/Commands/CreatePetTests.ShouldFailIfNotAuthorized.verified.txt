@@ -1,0 +1,14 @@
+﻿{
+  StatusCode: Forbidden,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: Forbidden,
+        Detail: Forbidden: Not authorized,
+        Meta: {}
+      }
+    ],
+    Meta: {}
+  }
+}
