@@ -60,6 +60,8 @@ var app = builder.Build();
 
 await app.MigrateDatabases();
 
+app.Services.LogForgedJwtForUser(Guid.NewGuid().ToString());
+
 app.UseHttpsRedirection();
 
 app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());

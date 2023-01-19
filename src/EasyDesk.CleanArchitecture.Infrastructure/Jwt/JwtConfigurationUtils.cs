@@ -39,7 +39,7 @@ public static class JwtConfigurationUtils
             DecryptionKeys: Enumerable.Empty<SecurityKey>());
     }
 
-    public static JwtTokenConfiguration GetJwtTokenConfiguration(
+    public static JwtGenerationConfiguration GetJwtGenerationConfiguration(
         this IConfiguration configuration, string sectionName = DefaultConfigurationSectionName)
     {
         var section = configuration.RequireSection(sectionName);
@@ -48,7 +48,7 @@ public static class JwtConfigurationUtils
         var issuer = authoritySection.GetValueAsOption<string>(DefaultIssuerKeyName);
         var audience = authoritySection.GetValueAsOption<string>(DefaultAudienceKeyName);
 
-        return new JwtTokenConfiguration(
+        return new JwtGenerationConfiguration(
             new SigningCredentials(
                 GetSecretKeyFromSection(section),
                 DefaultAlgorithm),

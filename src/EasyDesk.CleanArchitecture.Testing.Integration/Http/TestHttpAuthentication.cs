@@ -5,9 +5,6 @@ using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.Tools.Collections;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
@@ -39,15 +36,8 @@ public static class TestHttpAuthentication
         };
     }
 
-    private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IServiceProvider serviceProvider, string schemeName)
-    {
-        var jwtBearerOptions = serviceProvider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(schemeName);
-        var jwtValidationConfiguration = jwtBearerOptions.Configuration;
-        var jwtConfiguration = new JwtTokenConfiguration(
-                new SigningCredentials(jwtValidationConfiguration.ValidationKey, JwtConfigurationUtils.DefaultAlgorithm),
-                Duration.FromDays(365),
-                jwtValidationConfiguration.Issuers.FirstOption(),
-                jwtValidationConfiguration.Audiences.FirstOption());
-        return new JwtHttpAuthentication(serviceProvider.GetRequiredService<JwtFacade>(), jwtConfiguration);
-    }
+    private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IServiceProvider serviceProvider, string schemeName) =>
+        new JwtHttpAuthentication(
+            serviceProvider.GetRequiredService<JwtFacade>(),
+            serviceProvider.GetJwtConfigurationFromAuthScheme(schemeName));
 }

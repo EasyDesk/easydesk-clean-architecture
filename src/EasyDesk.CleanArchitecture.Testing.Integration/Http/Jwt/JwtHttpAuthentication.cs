@@ -9,12 +9,12 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 public class JwtHttpAuthentication : ITestHttpAuthentication
 {
     private readonly JwtFacade _jwtFacade;
-    private readonly JwtTokenConfiguration _jwtTokenConfiguration;
+    private readonly JwtGenerationConfiguration _jwtGenerationConfiguration;
 
-    public JwtHttpAuthentication(JwtFacade jwtFacade, JwtTokenConfiguration jwtTokenConfiguration)
+    public JwtHttpAuthentication(JwtFacade jwtFacade, JwtGenerationConfiguration jwtGenerationConfiguration)
     {
         _jwtFacade = jwtFacade;
-        _jwtTokenConfiguration = jwtTokenConfiguration;
+        _jwtGenerationConfiguration = jwtGenerationConfiguration;
     }
 
     public ImmutableHttpRequestMessage ConfigureAuthentication(ImmutableHttpRequestMessage message, IEnumerable<Claim> identity) =>
@@ -24,5 +24,5 @@ public class JwtHttpAuthentication : ITestHttpAuthentication
         message with { Headers = message.Headers.Remove(HeaderNames.Authorization) };
 
     private string ForgeJwt(IEnumerable<Claim> identity) =>
-        _jwtFacade.Create(identity, _jwtTokenConfiguration.ConfigureBuilder);
+        _jwtFacade.Create(identity, _jwtGenerationConfiguration.ConfigureBuilder);
 }

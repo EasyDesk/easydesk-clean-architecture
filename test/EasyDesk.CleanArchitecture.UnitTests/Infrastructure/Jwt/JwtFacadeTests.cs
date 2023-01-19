@@ -1,9 +1,9 @@
-﻿using System.Security.Claims;
-using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using NodaTime.Testing;
 using Shouldly;
+using System.Security.Claims;
 using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Jwt;
@@ -18,7 +18,7 @@ public class JwtFacadeTests
     private readonly FakeClock _clock = new(SystemClock.Instance.GetCurrentInstant());
     private readonly SecurityKey _key = KeyUtils.KeyFromString("abcdefghijklmnopqrstuvwxyz", KeyId);
     private readonly Duration _lifetime = Duration.FromMinutes(5);
-    private readonly Action<JwtTokenBuilder> _configureJwtToken;
+    private readonly Action<JwtGenerationBuilder> _configureJwtGeneration;
     private readonly Action<JwtValidationBuilder> _configureDefaultValidation;
     private readonly JwtFacade _sut;
 
@@ -33,7 +33,7 @@ public class JwtFacadeTests
 
     public JwtFacadeTests()
     {
-        _configureJwtToken = builder => builder
+        _configureJwtGeneration = builder => builder
             .WithSigningCredentials(new SigningCredentials(_key, Algorithm))
             .WithLifetime(_lifetime)
             .WithIssuer(Issuer)
@@ -48,7 +48,7 @@ public class JwtFacadeTests
     [Fact]
     public void NoneAlgorithmAttackShouldNotBePossible()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
         var jwtWithoutHeader = jwt[jwt.IndexOf('.')..];
         var replacedHeader = Base64UrlEncoder.Encode($@"{{""alg"":""none"",""typ"":""jwt"",""kid"":""{KeyId}""}}");
         var forgedJwt = replacedHeader + jwtWithoutHeader;
@@ -58,7 +58,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldCreateATokenWithTheProperExpiration()
     {
-        _sut.Create(_claims, out var token, _configureJwtToken);
+        _sut.Create(_claims, out var token, _configureJwtGeneration);
 
         token.ValidTo.ShouldBe(
             (_clock.GetCurrentInstant() + _lifetime).ToDateTimeUtc(),
@@ -74,7 +74,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldFailValidatingTokenSignedWithADifferentKey()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
 
         _sut.Validate(jwt, builder => builder.WithSignatureValidation(KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm", KeyId))).ShouldBeEmpty();
     }
@@ -82,7 +82,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldFailValidatingExpiredTokens()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
 
         AdvanceToPostExpiration();
 
@@ -92,7 +92,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldSucceedValidatingCorrectTokens()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
 
         _sut.Validate(jwt, _configureDefaultValidation).ShouldNotBeEmpty();
     }
@@ -100,7 +100,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldKeepTheOriginalClaimsAfterValidation()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
         var identity = _sut.Validate(jwt, _configureDefaultValidation).Value;
         _claims.ShouldBeSubsetOf(identity.Claims, _claimsComparer);
     }
@@ -108,7 +108,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldFailIfTheIssuerIsNotValid()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
         _sut.Validate(jwt, b =>
         {
             _configureDefaultValidation(b);
@@ -119,7 +119,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldFailIfTheAudienceIsNotValid()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
         _sut.Validate(jwt, b =>
         {
             _configureDefaultValidation(b);
@@ -130,7 +130,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldIgnoreLifetimeValidationIfExplicitlyRequested()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
 
         AdvanceToPostExpiration();
 
@@ -144,7 +144,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldSucceedIfAllAdditionalRequirementsAreMet()
     {
-        var jwt = _sut.Create(_claims, _configureJwtToken);
+        var jwt = _sut.Create(_claims, _configureJwtGeneration);
 
         var result = _sut.Validate(jwt, b =>
         {

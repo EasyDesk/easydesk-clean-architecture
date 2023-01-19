@@ -13,12 +13,12 @@ public class JwtFacade
         _clock = clock;
     }
 
-    public string Create(IEnumerable<Claim> claims, Action<JwtTokenBuilder> configure) =>
+    public string Create(IEnumerable<Claim> claims, Action<JwtGenerationBuilder> configure) =>
         Create(claims, out _, configure);
 
-    public string Create(IEnumerable<Claim> claims, out JwtSecurityToken token, Action<JwtTokenBuilder> configure)
+    public string Create(IEnumerable<Claim> claims, out JwtSecurityToken token, Action<JwtGenerationBuilder> configure)
     {
-        var builder = new JwtTokenBuilder(_clock.GetCurrentInstant()).WithClaims(claims);
+        var builder = new JwtGenerationBuilder(_clock.GetCurrentInstant()).WithClaims(claims);
         configure(builder);
         var descriptor = builder.Build();
 

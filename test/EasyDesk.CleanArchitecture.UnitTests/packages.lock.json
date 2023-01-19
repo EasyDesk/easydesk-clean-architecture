@@ -66,6 +66,18 @@
           "StyleCop.Analyzers.Unstable": "1.2.0.435"
         }
       },
+      "Verify.Xunit": {
+        "type": "Direct",
+        "requested": "[19.6.0, )",
+        "resolved": "19.6.0",
+        "contentHash": "DUorE7driJPmyRtwHmP/snYVl3yMidf/Y5aCBd9DqnpJ8RqN7kOYlGFiEWtM+mcmse+SRKXaKt6Pb3LMsRcIRg==",
+        "dependencies": {
+          "EmptyFiles": "4.1.0",
+          "Verify": "19.6.0",
+          "xunit.abstractions": "2.0.3",
+          "xunit.extensibility.execution": "2.4.2"
+        }
+      },
       "xunit": {
         "type": "Direct",
         "requested": "[2.4.2, )",
@@ -648,8 +660,8 @@
       },
       "SimpleInfoName": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "sXzz3+zns3HWmv+8wzhF1f4up8NjXHeD1X7w9zBjmnpwMk08zuCw5PPmZUAv8ou6F0AgG/8QpvZQr4hC82Wwqg=="
+        "resolved": "2.1.0",
+        "contentHash": "N6pwZI8i3yFje7IiQk17y40dIxh01PWLlIhDGthziJ3+olLmcWiu/Q6a6eppYopRQhD3WW/OlmAGMBXJ8IH/9Q=="
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
@@ -1464,13 +1476,13 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.5.0",
-        "contentHash": "ntyRBxtFvOjADiMD3LjYaASHCSCfL34zX6vSRfUKcJlswfRU9jnL6PIY6cGhuKdCrU5sNpB3ZxevCprxDvGzAw==",
+        "resolved": "19.6.0",
+        "contentHash": "57jsgtoTM2ny7AwaNtxesaLBKpbQaX8fjC/1IgMPNghJ+NbMG4y2jU6MuruolctG+QR+LN3IUozDNHSQqesUsg==",
         "dependencies": {
           "Argon": "0.1.0",
           "DiffEngine": "11.0.0",
           "EmptyFiles": "4.1.0",
-          "SimpleInfoName": "2.0.0"
+          "SimpleInfoName": "2.1.0"
         }
       },
       "Verify.NewtonsoftJson": {

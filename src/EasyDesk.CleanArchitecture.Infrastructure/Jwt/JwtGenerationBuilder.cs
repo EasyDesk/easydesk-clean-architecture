@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
-public record JwtTokenConfiguration(
+public record JwtGenerationConfiguration(
     SigningCredentials SigningCredentials,
     Duration Lifetime,
     Option<string> Issuer = default,
@@ -12,7 +12,7 @@ public record JwtTokenConfiguration(
     Option<string> CompressionAlgorithm = default,
     Option<EncryptingCredentials> EncryptingCredentials = default)
 {
-    public void ConfigureBuilder(JwtTokenBuilder builder)
+    public void ConfigureBuilder(JwtGenerationBuilder builder)
     {
         builder
             .WithSigningCredentials(SigningCredentials)
@@ -24,7 +24,7 @@ public record JwtTokenConfiguration(
     }
 }
 
-public class JwtTokenBuilder
+public class JwtGenerationBuilder
 {
     private bool _wasBuilt = false;
     private bool _hasSigningCredentials = false;
@@ -32,7 +32,7 @@ public class JwtTokenBuilder
     private readonly SecurityTokenDescriptor _descriptor;
     private readonly ISet<Claim> _claims = new HashSet<Claim>();
 
-    public JwtTokenBuilder(Instant issuedAt)
+    public JwtGenerationBuilder(Instant issuedAt)
     {
         _descriptor = new SecurityTokenDescriptor
         {
@@ -60,20 +60,20 @@ public class JwtTokenBuilder
         return _descriptor;
     }
 
-    public JwtTokenBuilder WithClaims(IEnumerable<Claim> claims) =>
+    public JwtGenerationBuilder WithClaims(IEnumerable<Claim> claims) =>
         NextStep(() => _claims.UnionWith(claims));
 
-    public JwtTokenBuilder WithClaim(Claim claim) =>
+    public JwtGenerationBuilder WithClaim(Claim claim) =>
         NextStep(() => _claims.Add(claim));
 
-    public JwtTokenBuilder WithSigningCredentials(SigningCredentials signingCredentials) =>
+    public JwtGenerationBuilder WithSigningCredentials(SigningCredentials signingCredentials) =>
         NextStep(() =>
         {
             _descriptor.SigningCredentials = signingCredentials;
             _hasSigningCredentials = true;
         });
 
-    public JwtTokenBuilder WithLifetime(Duration lifetime) =>
+    public JwtGenerationBuilder WithLifetime(Duration lifetime) =>
         NextStep(() =>
         {
             _descriptor.NotBefore = _descriptor.IssuedAt;
@@ -81,19 +81,19 @@ public class JwtTokenBuilder
             _hasLifetime = true;
         });
 
-    public JwtTokenBuilder WithIssuer(string issuer) =>
+    public JwtGenerationBuilder WithIssuer(string issuer) =>
         NextStep(() => _descriptor.Issuer = issuer);
 
-    public JwtTokenBuilder WithAudience(string audience) =>
+    public JwtGenerationBuilder WithAudience(string audience) =>
         NextStep(() => _descriptor.Audience = audience);
 
-    public JwtTokenBuilder WithEncryptingCredentials(EncryptingCredentials encryptingCredentials) =>
+    public JwtGenerationBuilder WithEncryptingCredentials(EncryptingCredentials encryptingCredentials) =>
         NextStep(() => _descriptor.EncryptingCredentials = encryptingCredentials);
 
-    public JwtTokenBuilder WithCompressionAlgorithm(string compressionAlgorithm) =>
+    public JwtGenerationBuilder WithCompressionAlgorithm(string compressionAlgorithm) =>
         NextStep(() => _descriptor.CompressionAlgorithm = compressionAlgorithm);
 
-    private JwtTokenBuilder NextStep(Action update)
+    private JwtGenerationBuilder NextStep(Action update)
     {
         update();
         return this;
