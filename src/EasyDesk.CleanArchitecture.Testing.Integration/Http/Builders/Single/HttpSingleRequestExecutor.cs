@@ -31,7 +31,7 @@ public class HttpSingleRequestExecutor<T>
     protected override async Task<ImmutableHttpResponseMessage> MakeRequest(CancellationToken timeoutToken)
     {
         using var req = CreateRequest().ToHttpRequestMessage();
-        using var res = await _httpClient.SendAsync(req);
+        using var res = await _httpClient.SendAsync(req, timeoutToken);
         return await ImmutableHttpResponseMessage.From(res);
     }
 

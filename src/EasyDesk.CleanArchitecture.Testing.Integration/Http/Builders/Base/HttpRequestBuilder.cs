@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
+using NodaTime;
 using System.Collections.Immutable;
 using System.Security.Claims;
 
@@ -29,11 +30,15 @@ public abstract class HttpRequestBuilder
     public abstract HttpRequestBuilder WithQuery(string key, string value);
 
     public abstract HttpRequestBuilder WithoutQuery(string key);
+
+    public abstract HttpRequestBuilder WithTimeout(Duration timeout);
 }
 
 public class HttpRequestBuilder<B> : HttpRequestBuilder
     where B : HttpRequestBuilder<B>
 {
+    private static readonly Duration _defaultTimeout = Duration.FromSeconds(30);
+
     private readonly string _endpoint;
     private readonly HttpMethod _method;
     private readonly ITestHttpAuthentication _testHttpAuthentication;
@@ -49,6 +54,10 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         _method = method;
         _testHttpAuthentication = testHttpAuthentication;
     }
+
+    protected IImmutableDictionary<string, StringValues> Query => _queryParameters.ToImmutableDictionary();
+
+    protected Duration Timeout { get; private set; } = _defaultTimeout;
 
     public override B WithApiVersion(ApiVersion version) =>
         Headers(h => h.Replace(ApiVersioningUtils.VersionHeader, version.ToString()));
@@ -90,6 +99,12 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         return (B)this;
     }
 
+    public override B WithTimeout(Duration timeout)
+    {
+        Timeout = timeout;
+        return (B)this;
+    }
+
     protected ImmutableHttpRequestMessage CreateRequest()
     {
         var uri = QueryHelpers.AddQueryString(_endpoint, _queryParameters);
@@ -100,6 +115,4 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         }
         return request;
     }
-
-    protected IImmutableDictionary<string, StringValues> Query => _queryParameters.ToImmutableDictionary();
 }

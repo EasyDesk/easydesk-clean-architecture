@@ -48,7 +48,7 @@ public class HttpPaginatedRequestExecutor<T> :
             var page = WrapSinglePage(async () =>
             {
                 using var req = request.ToHttpRequestMessage();
-                using var res = await _httpClient.SendAsync(req, CancellationToken.None);
+                using var res = await _httpClient.SendAsync(req, timeoutToken);
                 return await ImmutableHttpResponseMessage.From(res);
             });
             var paginationMetadata = await page.AsMetadata();

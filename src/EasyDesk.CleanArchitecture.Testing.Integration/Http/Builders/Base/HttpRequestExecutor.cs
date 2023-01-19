@@ -6,9 +6,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
     where E : HttpRequestExecutor<W, I, E>
 {
-    private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(7);
-    private static readonly Duration _defaultRequestInterval = Duration.FromMilliseconds(200);
-    private static readonly Duration _defaultRequestTimeout = Duration.FromSeconds(5);
+    private static readonly Duration _defaultPollingInterval = Duration.FromMilliseconds(200);
 
     public HttpRequestExecutor(
         string endpoint,
@@ -24,7 +22,7 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
 
     public W Send(Duration? timeout = null) => Wrap(() =>
     {
-        using var cts = new CancellationTokenSource((timeout ?? _defaultRequestTimeout).ToTimeSpan());
+        using var cts = new CancellationTokenSource((timeout ?? Timeout).ToTimeSpan());
         return MakeRequest(cts.Token);
     });
 
@@ -41,8 +39,8 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
         Duration? timeout = null) =>
         Wrap(async () =>
         {
-            var actualTimeout = timeout ?? _defaultPollTimeout;
-            var actualInterval = interval ?? _defaultRequestInterval;
+            var actualTimeout = timeout ?? Timeout;
+            var actualInterval = interval ?? _defaultPollingInterval;
             var polling = new Polling<I>(token => MakeRequest(token), actualTimeout, actualInterval);
             return await pollingType(polling, i => predicate(Wrap(() => Task.FromResult(i))));
         });
