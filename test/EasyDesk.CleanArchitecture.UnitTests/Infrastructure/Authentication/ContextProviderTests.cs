@@ -7,7 +7,6 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Authentication;
 
 public class ContextProviderTests
 {
-
     [Fact]
     public void ShouldDetectAuthentication_FromHttpContextAccessor()
     {
