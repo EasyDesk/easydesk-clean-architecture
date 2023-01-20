@@ -92,6 +92,33 @@ public class CreatePetTests : SampleIntegrationTest
     }
 
     [Fact]
+    public async Task BulkCreatePets_ShouldFailWithEmptyList()
+    {
+        var timeout = Duration.FromSeconds(15);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        var response = await Http
+            .CreatePets(person.Id, new(PetGenerator(0)))
+            .Send(timeout)
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
     public async Task ShouldFailIfNotAuthorized()
     {
         var body = new CreatePersonBodyDto(

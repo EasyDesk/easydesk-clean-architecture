@@ -6,11 +6,22 @@ using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using EasyDesk.Tools.Collections;
+using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
 [RequireAnyOf(Permissions.CAN_EDIT_PETS)]
-public record CreatePets(IEnumerable<CreatePet> Pets) : ICommandRequest<CreatePetsResult>;
+public record CreatePets(IEnumerable<CreatePet> Pets) : ICommandRequest<CreatePetsResult>
+{
+    public class Validation : AbstractValidator<CreatePets>
+    {
+        public Validation()
+        {
+            RuleFor(x => x.Pets)
+                .NotEmpty();
+        }
+    }
+}
 
 public record CreatePetsResult(int Pets);
 

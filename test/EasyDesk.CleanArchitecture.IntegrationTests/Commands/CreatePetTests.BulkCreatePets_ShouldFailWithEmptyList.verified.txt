@@ -1,0 +1,16 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: 'Pets' must not be empty.,
+        Meta: {
+          propertyName: Pets
+        }
+      }
+    ],
+    Meta: {}
+  }
+}
