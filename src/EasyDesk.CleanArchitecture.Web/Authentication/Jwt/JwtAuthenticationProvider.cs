@@ -73,7 +73,7 @@ public static class JwtAuthenticationExtensions
         var logger = serviceProvider.GetRequiredService<ILogger<JwtAuthenticationProvider>>();
         var jwtFacade = serviceProvider.GetRequiredService<JwtFacade>();
         var jwt = jwtFacade.Create(claims, jwtConfiguration.ConfigureBuilder);
-        logger.LogDebug("Forged JWT: {jwt}", jwt);
+        logger.LogWarning("Forged JWT: {jwt}", jwt);
     }
 
     public static JwtGenerationConfiguration GetJwtConfigurationFromAuthScheme(
