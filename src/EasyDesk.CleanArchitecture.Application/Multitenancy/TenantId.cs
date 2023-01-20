@@ -34,6 +34,8 @@ public record TenantId
     }
 
     public static implicit operator string(TenantId tenantId) => tenantId.Value;
+
+    public override string ToString() => Value;
 }
 
 public static partial class TenantIdRegex
