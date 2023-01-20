@@ -5,6 +5,8 @@ public interface IUnitOfWorkProvider
     Option<IUnitOfWork> CurrentUnitOfWork { get; }
 
     Task<IUnitOfWork> BeginUnitOfWork();
+
+    void EndUnitOfWork();
 }
 
 public static class UnitOfWorkProviderExtensions
@@ -18,6 +20,7 @@ public static class UnitOfWorkProviderExtensions
             await result.MatchAsync(
                 success: _ => unitOfWork.Commit(),
                 failure: _ => unitOfWork.Rollback());
+            unitOfWorkProvider.EndUnitOfWork();
             return result;
         }
         catch (AfterCommitException)

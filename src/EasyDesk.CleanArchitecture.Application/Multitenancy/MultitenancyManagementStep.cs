@@ -29,7 +29,13 @@ public class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
 
         return await ValidateTenantId(rawTenantId)
             .FlatMapAsync(t => policy(t, _multitenancyManager))
-            .ThenIfSuccess(_tenantInitializer.Initialize)
+            .ThenIfSuccess(ti =>
+            {
+                if (!_tenantInitializer.IsInitialized)
+                {
+                    _tenantInitializer.Initialize(ti);
+                }
+            })
             .ThenFlatMapAsync(_ => next());
     }
 

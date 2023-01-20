@@ -3,4 +3,6 @@
 public interface IContextTenantInitializer
 {
     void Initialize(TenantInfo tenantInfo);
+
+    bool IsInitialized { get; }
 }
