@@ -19,6 +19,4 @@ public abstract class UnitOfWorkProviderBase<T> : IUnitOfWorkProvider
     }
 
     protected abstract Task<T> CreateUnitOfWork();
-
-    public void EndUnitOfWork() => UnitOfWork = None;
 }

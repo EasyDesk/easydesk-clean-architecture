@@ -9,8 +9,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInject
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -63,18 +61,6 @@ public static partial class Extensions
         appDescription.ConfigureServices(builder.Services);
 
         return appDescription;
-    }
-
-    public static async Task SetupForDevelopment(this WebApplication app, AsyncAction<IServiceProvider, ILogger> setup)
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            await using (var scope = app.Services.CreateAsyncScope())
-            {
-                var logger = scope.ServiceProvider.GetRequiredService<ILogger<WebApplication>>();
-                await setup(scope.ServiceProvider, logger);
-            }
-        }
     }
 
     [GeneratedRegex("^(.+)\\.Web$")]

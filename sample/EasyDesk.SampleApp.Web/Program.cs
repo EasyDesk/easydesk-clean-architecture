@@ -17,6 +17,7 @@ using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Seeding;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.Commands;
@@ -64,16 +65,18 @@ var app = builder.Build();
 
 await app.MigrateDatabases();
 
-await app.SetupForDevelopment(async (services, logger) =>
+await app.SetupDevelopment(async (services, logger) =>
 {
     var adminId = Guid.NewGuid().ToString();
     var tenantId = TenantId.Create(Guid.NewGuid().ToString());
-    services.GetRequiredService<IHttpContextAccessor>().SetupAuthenticatedHttpContext(adminId).SetupMultitenantHttpContext(tenantId);
-    var dispatcher = services.GetRequiredService<IDispatcher>();
-    var a = await dispatcher.Dispatch(new CreateTenant(tenantId));
-    var b = await dispatcher.Dispatch(new AddAdmin());
+    var dispatcher = services.SetupSelfScopedDispatcher(services =>
+    {
+        services.GetRequiredService<IHttpContextAccessor>().SetupAuthenticatedHttpContext(adminId).SetupMultitenantHttpContext(tenantId);
+    });
+    await dispatcher.Dispatch(new CreateTenant(tenantId));
+    await dispatcher.Dispatch(new AddAdmin());
     logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, adminId);
-    app.Services.LogForgedJwtForUser(adminId.ToString());
+    services.LogForgedJwtForUser(adminId.ToString());
 });
 
 app.UseHttpsRedirection();
