@@ -7,8 +7,8 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public record class ImmutableHttpContent(
     string Text,
-    Option<Encoding> Encoding,
-    Option<string> MediaType)
+    Option<string> MediaType,
+    Option<Encoding> Encoding)
 {
     public ImmutableHttpContent(string text)
         : this(text, None, None)
@@ -16,12 +16,12 @@ public record class ImmutableHttpContent(
     }
 
     public ImmutableHttpContent(string text, string mediaType)
-        : this(text, None, mediaType.AsOption())
+        : this(text, mediaType.AsOption(), None)
     {
     }
 
     public ImmutableHttpContent(string text, string mediaType, Encoding encoding)
-        : this(text, encoding.AsOption(), mediaType.AsOption())
+        : this(text, mediaType.AsOption(), encoding.AsOption())
     {
     }
 
