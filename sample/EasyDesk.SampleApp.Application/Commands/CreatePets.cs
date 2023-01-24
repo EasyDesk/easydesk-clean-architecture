@@ -27,7 +27,13 @@ public record CreatePetsResult(int Pets);
 
 public record CreatePetsBatch(Guid OperationId) : AbstractBulkOperationCommand(OperationId);
 
-public class BulkCreatePets : AbstractSequentialBulkOperation<BulkCreatePets, CreatePets, CreatePetsResult, IEnumerable<CreatePet>, CreatePetsBatch>
+public class BulkCreatePets
+    : AbstractSequentialBulkOperation<
+        BulkCreatePets,
+        CreatePets,
+        CreatePetsResult,
+        IEnumerable<CreatePet>,
+        CreatePetsBatch>
 {
     private const int BatchSize = 3;
     private readonly IPetRepository _petRepository;
