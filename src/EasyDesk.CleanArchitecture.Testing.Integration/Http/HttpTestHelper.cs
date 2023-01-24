@@ -48,7 +48,7 @@ public class HttpTestHelper
         return content;
     }
 
-    private HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, ImmutableHttpContent content = null)
+    public HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, ImmutableHttpContent content = null)
     {
         var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _settings)
             .WithContent(content);
