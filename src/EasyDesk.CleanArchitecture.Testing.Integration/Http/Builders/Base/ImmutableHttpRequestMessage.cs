@@ -15,7 +15,7 @@ public record ImmutableHttpRequestMessage(
     }
 
     public ImmutableHttpRequestMessage(HttpMethod method, Uri requestUri)
-        : this(method, requestUri, new(Map<string, IEnumerable<string>>()), new(Array.Empty<byte>()))
+        : this(method, requestUri, new(Map<string, IEnumerable<string>>()), new())
     {
     }
 
