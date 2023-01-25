@@ -28,7 +28,7 @@ public class HttpResponseWrapper<T, M>
 
     private async Task<ResponseDto<T, M>> ParseContent()
     {
-        var bodyAsJson = (await GetResponse()).Content.Text;
+        var bodyAsJson = (await GetResponse()).Content.AsString();
         try
         {
             return JsonConvert.DeserializeObject<ResponseDto<T, M>>(bodyAsJson, _jsonSerializerSettings);

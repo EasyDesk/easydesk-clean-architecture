@@ -15,7 +15,7 @@ public record ImmutableHttpRequestMessage(
     }
 
     public ImmutableHttpRequestMessage(HttpMethod method, Uri requestUri)
-        : this(method, requestUri, new(Map<string, IEnumerable<string>>()), new(string.Empty))
+        : this(method, requestUri, new(Map<string, IEnumerable<string>>()), new(Array.Empty<byte>()))
     {
     }
 
@@ -29,9 +29,7 @@ public record ImmutableHttpRequestMessage(
     {
         var request = new HttpRequestMessage(Method, RequestUri)
         {
-            Content = Content?.MediaType.Match(
-                some: mt => new StringContent(Content.Text, Content.Encoding.OrElseNull(), mt),
-                none: () => new StringContent(Content.Text, Content.Encoding.OrElseNull()))
+            Content = Content?.ToHttpContent()
         };
         foreach (var (headerKey, headerValue) in Headers.Dictionary)
         {
