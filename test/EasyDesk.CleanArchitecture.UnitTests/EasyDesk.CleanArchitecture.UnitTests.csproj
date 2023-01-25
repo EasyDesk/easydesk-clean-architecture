@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Testing" Version="0.7.0" />
+    <PackageReference Include="EasyDesk.Testing" Version="0.8.0" />
     <PackageReference Include="GitHubActionsTestLogger" Version="2.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
