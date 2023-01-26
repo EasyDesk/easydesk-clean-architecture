@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
 using Shouldly;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values;
 
@@ -39,5 +38,12 @@ public class ValueWrapperTests
     public void Wrapper_ShouldBeUsedAsWrapped()
     {
         (_sut * 2).ShouldBe(_innerValue * 2);
+    }
+
+    [Fact]
+    public void Wrapper_ShouldBeImplicitlyConvertibleToWrapped()
+    {
+        int value = _sut;
+        value.ShouldBe(_innerValue);
     }
 }

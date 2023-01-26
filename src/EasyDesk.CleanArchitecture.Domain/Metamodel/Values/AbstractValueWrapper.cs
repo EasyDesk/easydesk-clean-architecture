@@ -1,7 +1,7 @@
 ﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
 public abstract record AbstractValueWrapper<T, S>
-    where T : IEquatable<T>
+    where T : notnull, IEquatable<T>
     where S : AbstractValueWrapper<T, S>
 {
     public T Value { get; }
@@ -13,5 +13,5 @@ public abstract record AbstractValueWrapper<T, S>
 
     public sealed override string ToString() => StringRepresentation();
 
-    protected virtual string StringRepresentation() => Value!.ToString()!;
+    protected virtual string StringRepresentation() => Value.ToString()!;
 }

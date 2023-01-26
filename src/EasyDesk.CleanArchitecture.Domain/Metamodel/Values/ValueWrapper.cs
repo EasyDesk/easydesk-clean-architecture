@@ -10,14 +10,12 @@
 /// <typeparam name="T">The wrapped value type.</typeparam>
 /// <typeparam name="S">The type extending this record.</typeparam>
 public abstract record ValueWrapper<T, S> : AbstractValueWrapper<T, S>
-    where T : IEquatable<T>
+    where T : notnull, IEquatable<T>
     where S : AbstractValueWrapper<T, S>
 {
     protected ValueWrapper(T value) : base(value)
     {
     }
 
-    public static implicit operator T(ValueWrapper<T, S> wrapper) => wrapper is null
-        ? throw new ArgumentNullException(nameof(wrapper), "Implicit conversion of a null ValueWrapper.")
-        : wrapper.Value;
+    public static implicit operator T(ValueWrapper<T, S> wrapper) => wrapper.Value;
 }
