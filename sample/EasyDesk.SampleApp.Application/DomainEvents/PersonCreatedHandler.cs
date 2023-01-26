@@ -24,7 +24,10 @@ public class PersonCreatedHandler : IDomainEventHandler<PersonCreatedEvent>
     public async Task<Result<Nothing>> Handle(PersonCreatedEvent ev)
     {
         await _sender.Send(new CreateBestFriend(ev.Person.Id, ev.Person.FirstName));
-        await _sender.Send(new CreatePassport(ev.Person.Id, ev.Person.FirstName, ev.Person.LastName, ev.Person.DateOfBirth));
+        if (ev.Person.DateOfBirth.IsLessThan(new LocalDate(2000, 1, 1)))
+        {
+            await _sender.Send(new CreatePassport(ev.Person.Id, ev.Person.FirstName, ev.Person.LastName, ev.Person.DateOfBirth));
+        }
         return Ok;
     }
 }

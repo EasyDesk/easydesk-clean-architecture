@@ -1,16 +1,17 @@
-﻿using EasyDesk.Tools.Collections;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
+using EasyDesk.Tools.Collections;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using HeaderNames = Microsoft.Net.Http.Headers.HeaderNames;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public record class ImmutableHttpContent(
     ImmutableArray<byte> Bytes,
-    Option<Encoding> TextEncoding,
-    Option<string> MediaType)
+    ImmutableHttpHeaders ContentHeaders)
 {
     public ImmutableHttpContent()
         : this(ImmutableArray<byte>.Empty)
@@ -18,17 +19,19 @@ public record class ImmutableHttpContent(
     }
 
     public ImmutableHttpContent(ImmutableArray<byte> bytes)
-        : this(bytes, None, None)
+        : this(bytes, new ImmutableHttpHeaders())
     {
     }
 
     public ImmutableHttpContent(ImmutableArray<byte> bytes, string mediaType)
-        : this(bytes, None, mediaType.AsOption())
+        : this(bytes, new ImmutableHttpHeaders().Add(HeaderNames.ContentType, mediaType))
     {
     }
 
     public ImmutableHttpContent(ImmutableArray<byte> bytes, Encoding encoding, string mediaType)
-        : this(bytes, encoding.AsOption(), mediaType.AsOption())
+        : this(bytes, new ImmutableHttpHeaders()
+              .Add(HeaderNames.ContentType, mediaType)
+              .Add(HeaderNames.ContentEncoding, encoding.WebName))
     {
     }
 
@@ -36,6 +39,20 @@ public record class ImmutableHttpContent(
         : this(Encoding.Default.GetBytes(text).ToImmutableArray(), Encoding.Default, mediaType)
     {
     }
+
+    public Option<MediaTypeHeaderValue> MediaType =>
+        ContentHeaders.Dictionary
+        .GetOption(HeaderNames.ContentType)
+        .FlatMap(e => e.FirstOption())
+        .Map(m => MediaTypeHeaderValue.Parse(m));
+
+    public Option<Encoding> TextEncoding =>
+        ContentHeaders.Dictionary
+        .GetOption(HeaderNames.ContentEncoding)
+        .FlatMap(e => e.FirstOption())
+        .Or(MediaType
+            .FlatMap(m => m.CharSet.AsOption()))
+        .Map(Encoding.GetEncoding);
 
     private string ToMetadata() => TextEncoding
         .Select(e => $"{nameof(Encoding)}: {e}")
@@ -48,10 +65,10 @@ public record class ImmutableHttpContent(
         ? string.Empty
         : TextEncoding
             .Map(e => e.GetString(Bytes.ToArray()))
-            .OrElseThrow(() => new InvalidOperationException("Can't convert Http content to text because an encoding is missing."));
+            .OrElseGet(() => $"BINARY {nameof(ImmutableHttpContent)} in base64:\n{Convert.ToBase64String(Bytes.ToArray())}");
 
     private string ToText() =>
-        MediaType.Any(m => m == MediaTypeNames.Application.Json)
+        MediaType.Any(m => m.MediaType == MediaTypeNames.Application.Json)
         ? JsonConvert.SerializeObject(JsonConvert.DeserializeObject(AsString()), Formatting.Indented)
         : AsString();
 
@@ -61,16 +78,33 @@ public record class ImmutableHttpContent(
         {ToText()}
         """;
 
-    public HttpContent ToHttpContent() =>
-        TextEncoding.Match(
+    public HttpContent ToHttpContent()
+    {
+        var content = TextEncoding.Match(
             some: e => MediaType.Match(
                 some: m => new StringContent(e.GetString(Bytes.ToArray()), e, m),
                 none: () => new StringContent(e.GetString(Bytes.ToArray()), e)),
             none: () => new ByteArrayContent(Bytes.ToArray()));
+        foreach (var (key, value) in ContentHeaders.Dictionary)
+        {
+            if (!content.Headers.Contains(key))
+            {
+                content.Headers.Add(key, value);
+            }
+        }
+        return content;
+    }
 
     public static async Task<ImmutableHttpContent> From(HttpContent? content) =>
         new(
-            Bytes: await content.AsOption().MapAsync(c => c.ReadAsByteArrayAsync()).ThenMap(b => b.ToImmutableArray()) | ImmutableArray<byte>.Empty,
-            TextEncoding: content.AsOption().Map(c => c.Headers).FlatMap(h => (h.ContentType?.CharSet).AsOption() || h.ContentEncoding.FirstOption()).Map(e => Encoding.GetEncoding(e)),
-            MediaType: content.AsOption().Map(c => c.Headers).FlatMap(h => (h.ContentType?.MediaType).AsOption()));
+            Bytes: await content
+                .AsOption()
+                .MapAsync(c => c.ReadAsByteArrayAsync())
+                .ThenMap(b => b.ToImmutableArray())
+                | ImmutableArray<byte>.Empty,
+            ContentHeaders: content
+                .AsOption()
+                .Map(c => c.Headers.ToImmutableDictionary())
+                .Map(d => new ImmutableHttpHeaders(d))
+                .OrElseGet(() => new()));
 }

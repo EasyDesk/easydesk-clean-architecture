@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Web.Dto;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
@@ -31,4 +33,10 @@ public abstract class CleanArchitectureController : AbstractController
         where TDto : notnull
         where TResult : notnull =>
         new(() => request(GetService<IDispatcher>()), mapper, meta, this);
+
+    protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error) where TDto : notnull =>
+        new ActionResultBuilder<TDto, TDto, Nothing>(() => Task.FromResult(new Result<TDto>(error)), It, _ => Nothing.Value, this).ReturnOk();
+
+    protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error, params Error[] secondaryErrors) where TDto : notnull =>
+        Failure<TDto>(Errors.Multiple(error, secondaryErrors));
 }

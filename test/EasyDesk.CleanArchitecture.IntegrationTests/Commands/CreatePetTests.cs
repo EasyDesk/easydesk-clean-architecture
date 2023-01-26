@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
+using EasyDesk.Tools.Collections;
 using NodaTime;
 using Shouldly;
 
@@ -55,7 +56,10 @@ public class CreatePetTests : SampleIntegrationTest
     }
 
     public IEnumerable<CreatePetBodyDto> PetGenerator(int count) =>
-        Enumerable.Range(0, count).Select(i => new CreatePetBodyDto("buddy" + i));
+        PetNameGenerator(count).Select(n => new CreatePetBodyDto(n));
+
+    public IEnumerable<string> PetNameGenerator(int count) =>
+        Enumerable.Range(0, count).Select(i => "buddy" + i);
 
     [Fact]
     public async Task BulkCreatePets_ShouldSucceed()
@@ -135,6 +139,69 @@ public class CreatePetTests : SampleIntegrationTest
             .CreatePet(person.Id, new(Nickname))
             .AuthenticateAs("non-admin-id")
             .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task BulkCreatePetsFromCsv_ShouldSucceed()
+    {
+        var timeout = Duration.FromSeconds(30);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        var response = await Http
+            .CreatePetsFromCsv(
+                person.Id,
+                PetNameGenerator(BulkQuantity).ConcatStrings("\n"))
+            .Send(timeout)
+            .AsData();
+
+        response.Pets.ShouldBe(BulkQuantity);
+
+        var pets = await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
+            .AsVerifiableEnumerable();
+
+        await Verify(pets);
+    }
+
+    [Fact]
+    public async Task BulkCreatePetsFromCsv_ShouldFailWithEmptyList()
+    {
+        var timeout = Duration.FromSeconds(15);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        var response = await Http
+            .CreatePetsFromCsv(person.Id, PetGenerator(0).ConcatStrings("\n"))
+            .Send(timeout)
             .AsVerifiable();
 
         await Verify(response);

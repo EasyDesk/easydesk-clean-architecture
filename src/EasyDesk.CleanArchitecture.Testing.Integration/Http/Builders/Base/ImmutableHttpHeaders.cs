@@ -6,6 +6,11 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 public record class ImmutableHttpHeaders(
     IImmutableDictionary<string, IEnumerable<string>> Dictionary)
 {
+    public ImmutableHttpHeaders()
+        : this(ImmutableDictionary<string, IEnumerable<string>>.Empty)
+    {
+    }
+
     public ImmutableHttpHeaders Replace(string header, string value) =>
         new(Dictionary
             .SetItem(

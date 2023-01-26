@@ -1,0 +1,16 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: File is empty,
+        Meta: {
+          propertyName: petListCsv
+        }
+      }
+    ],
+    Meta: {}
+  }
+}
