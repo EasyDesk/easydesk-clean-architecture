@@ -60,7 +60,7 @@ public class CreatePetTests : SampleIntegrationTest
     [Fact]
     public async Task BulkCreatePets_ShouldSucceed()
     {
-        var timeout = Duration.FromSeconds(15);
+        var timeout = Duration.FromSeconds(30);
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",

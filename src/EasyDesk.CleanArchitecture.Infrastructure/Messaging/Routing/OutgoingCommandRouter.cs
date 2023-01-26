@@ -16,10 +16,10 @@ internal class OutgoingCommandRouter : IRouter
         _routingContext = new(endpoint.InputQueueAddress);
     }
 
-    public Task<string> GetDestinationAddress(Message message) =>
+    public Task<string?> GetDestinationAddress(Message message) =>
         Task.FromResult(GetDestinationAddressSync(message));
 
-    private string GetDestinationAddressSync(Message message)
+    private string? GetDestinationAddressSync(Message message)
     {
         if (message.Body is not IOutgoingCommand)
         {
@@ -28,7 +28,7 @@ internal class OutgoingCommandRouter : IRouter
         var messageType = message.Body.GetType();
         return typeof(OutgoingCommandRouter)
             .GetMethod(nameof(GetDestinationAddressFromType), BindingFlags.NonPublic | BindingFlags.Instance)
-            .MakeGenericMethod(messageType)
+            ?.MakeGenericMethod(messageType)
             .Invoke(this, null) as string;
     }
 

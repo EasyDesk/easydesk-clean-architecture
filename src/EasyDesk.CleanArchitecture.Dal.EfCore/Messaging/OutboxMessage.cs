@@ -5,13 +5,13 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
 internal class OutboxMessage
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
-    public byte[] Content { get; set; }
+    public byte[]? Content { get; set; }
 
-    public byte[] Headers { get; set; }
+    public byte[]? Headers { get; set; }
 
-    public string DestinationAddress { get; set; }
+    public string? DestinationAddress { get; set; }
 
     public class Configuration : IEntityTypeConfiguration<OutboxMessage>
     {

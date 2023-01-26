@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 public class SagaBuilder<TId, TState>
+    where TState : notnull
 {
     private readonly ISagaConfigurationSink<TId, TState> _sink;
 
@@ -12,7 +13,7 @@ public class SagaBuilder<TId, TState>
         _sink = sink;
     }
 
-    public SagaCorrelationSelector<T, R, TId, TState> On<T, R>() where T : IDispatchable<R> =>
+    public SagaCorrelationSelector<T, R, TId, TState> On<T, R>() where T : IDispatchable<R> where R : notnull =>
         new(_sink);
 
     public SagaCorrelationSelector<T, Nothing, TId, TState> On<T>() where T : IDispatchable<Nothing> =>
@@ -20,6 +21,8 @@ public class SagaBuilder<TId, TState>
 }
 
 public class SagaCorrelationSelector<T, R, TId, TState>
+    where TState : notnull
+    where R : notnull
     where T : IDispatchable<R>
 {
     private readonly ISagaConfigurationSink<TId, TState> _sink;
@@ -34,6 +37,8 @@ public class SagaCorrelationSelector<T, R, TId, TState>
 }
 
 public class SagaHandlerSelector<T, R, TId, TState>
+    where TState : notnull
+    where R : notnull
     where T : IDispatchable<R>
 {
     private readonly ISagaConfigurationSink<TId, TState> _sink;
@@ -60,13 +65,13 @@ public class SagaHandlerSelector<T, R, TId, TState>
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<T, TState> initialState) =>
         InitializeWith((_, _, r) => initialState(r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TId, T, TState> initialState) =>
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TId, T, TState> initialState) where H : notnull =>
         InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, T, TState> initialState) =>
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, T, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, r) => initialState(h, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TState> initialState) =>
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, _) => initialState(h));
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<IServiceProvider, TId, T, TState> initialState) =>
@@ -78,13 +83,13 @@ public class SagaHandlerSelector<T, R, TId, TState>
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<T, TState> initialState) =>
         InitializeWith((_, _, r) => initialState(r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TId, T, TState> initialState) =>
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TId, T, TState> initialState) where H : notnull =>
         InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, T, TState> initialState) =>
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, T, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, r) => initialState(h, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TState> initialState) =>
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, _) => initialState(h));
 
     public void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler)
@@ -92,7 +97,7 @@ public class SagaHandlerSelector<T, R, TId, TState>
         _sink.RegisterConfiguration<T, R>(new(_correlationProperty, handler, _initializer));
     }
 
-    public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<R>> handler) =>
+    public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<R>> handler) where H : notnull =>
         HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
 
     public void HandleWith(Func<IServiceProvider, ISagaStepHandler<T, R, TId, TState>> handlerFactory) =>
@@ -105,5 +110,6 @@ public class SagaHandlerSelector<T, R, TId, TState>
 internal interface ISagaConfigurationSink<TId, TState>
 {
     void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration)
+        where R : notnull
         where T : IDispatchable<R>;
 }

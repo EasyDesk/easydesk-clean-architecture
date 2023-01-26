@@ -15,7 +15,7 @@ internal class GenericPipeline : IPipeline
         _stepTypes = stepTypes.ToImmutableList();
     }
 
-    public IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>(IServiceProvider serviceProvider)
+    public IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>(IServiceProvider serviceProvider) where R : notnull
     {
         var stepTypes = _pipelineCache.GetOrAdd((typeof(T), typeof(R)), _ => ComputePipelineStepTypes<T, R>());
         return stepTypes

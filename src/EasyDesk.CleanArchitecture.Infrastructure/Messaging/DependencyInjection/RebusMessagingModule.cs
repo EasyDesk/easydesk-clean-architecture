@@ -31,9 +31,9 @@ public class RebusMessagingModule : AppModule
 {
     private readonly RebusEndpoint _endpoint;
     private readonly RebusTransportConfiguration _transport;
-    private readonly Action<RebusMessagingOptions> _configure;
+    private readonly Action<RebusMessagingOptions>? _configure;
 
-    public RebusMessagingModule(RebusEndpoint endpoint, RebusTransportConfiguration transport, Action<RebusMessagingOptions> configure = null)
+    public RebusMessagingModule(RebusEndpoint endpoint, RebusTransportConfiguration transport, Action<RebusMessagingOptions>? configure = null)
     {
         _endpoint = endpoint;
         _transport = transport;
@@ -66,7 +66,7 @@ public class RebusMessagingModule : AppModule
         services.AddSingleton(options);
         services.AddSingleton(_transport);
 
-        ITransport originalTransport = null;
+        ITransport? originalTransport = null;
         services.AddSingleton<PausableAsyncTaskFactory>();
         services.AddSingleton<IRebusPausableTaskPool>(provider =>
             provider.GetRequiredService<PausableAsyncTaskFactory>());
@@ -89,7 +89,7 @@ public class RebusMessagingModule : AppModule
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
         SetupMessageHandlers(services, options.KnownMessageTypes);
-        AddOutboxServices(services, new(() => originalTransport, isThreadSafe: true), options.OutboxOptions);
+        AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true), options.OutboxOptions);
 
         AddEventPropagators(services, options.KnownMessageTypes);
         services.AddScoped<MessageBroker>();
@@ -133,7 +133,7 @@ public class RebusMessagingModule : AppModule
                 .Where(i => i.GetGenericTypeDefinition() == typeof(IPropagatedEvent<,>))
                 .Select(i => i.GetGenericArguments())
                 .Select(a => typeof(RebusMessagingModule)
-                    .GetMethod(nameof(RegisterPropagatorForType), BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetMethod(nameof(RegisterPropagatorForType), BindingFlags.NonPublic | BindingFlags.Instance)!
                     .MakeGenericMethod(a))
                 .ForEach(m => m.Invoke(this, arguments));
         }
@@ -176,7 +176,7 @@ public class RebusMessagingModule : AppModule
 
 public static class RebusMessagingModuleExtensions
 {
-    public static AppBuilder AddRebusMessaging(this AppBuilder builder, string inputQueueAddress, RebusTransportConfiguration transport, Action<RebusMessagingOptions> configure = null)
+    public static AppBuilder AddRebusMessaging(this AppBuilder builder, string inputQueueAddress, RebusTransportConfiguration transport, Action<RebusMessagingOptions>? configure = null)
     {
         return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), transport, configure));
     }

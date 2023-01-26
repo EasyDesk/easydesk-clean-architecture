@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
 public static class KeyUtils
 {
-    public static SecurityKey KeyFromString(string rawKey, string keyId = null)
+    public static SecurityKey KeyFromString(string rawKey, string? keyId = null)
     {
         var encodedKey = Encoding.UTF8.GetBytes(rawKey);
         var securityKey = new SymmetricSecurityKey(encodedKey);

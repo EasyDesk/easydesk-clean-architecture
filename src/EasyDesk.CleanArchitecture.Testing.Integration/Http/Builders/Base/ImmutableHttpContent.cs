@@ -68,7 +68,7 @@ public record class ImmutableHttpContent(
                 none: () => new StringContent(e.GetString(Bytes.ToArray()), e)),
             none: () => new ByteArrayContent(Bytes.ToArray()));
 
-    public static async Task<ImmutableHttpContent> From(HttpContent content) =>
+    public static async Task<ImmutableHttpContent> From(HttpContent? content) =>
         new(
             Bytes: await content.AsOption().MapAsync(c => c.ReadAsByteArrayAsync()).ThenMap(b => b.ToImmutableArray()) | ImmutableArray<byte>.Empty,
             TextEncoding: content.AsOption().Map(c => c.Headers).FlatMap(h => (h.ContentType?.CharSet).AsOption() || h.ContentEncoding.FirstOption()).Map(e => Encoding.GetEncoding(e)),

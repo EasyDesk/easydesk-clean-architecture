@@ -108,7 +108,7 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
 
     private void AddDbContext<C>(
         IServiceCollection services,
-        Action<IServiceProvider, TBuilder> configure = null)
+        Action<IServiceProvider, TBuilder>? configure = null)
         where C : DbContext
     {
         if (_registeredDbContextTypes.Contains(typeof(C)))
@@ -126,7 +126,7 @@ public static class EfCoreDataAccessExtensions
     public static AppBuilder AddEfCoreDataAccess<T, TBuilder, TExtension>(
         this AppBuilder builder,
         IEfCoreProvider<TBuilder, TExtension> provider,
-        Action<EfCoreDataAccessOptions<TBuilder, TExtension>> configure = null)
+        Action<EfCoreDataAccessOptions<TBuilder, TExtension>>? configure = null)
         where T : DomainContext<T>
         where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
         where TExtension : RelationalOptionsExtension, new()

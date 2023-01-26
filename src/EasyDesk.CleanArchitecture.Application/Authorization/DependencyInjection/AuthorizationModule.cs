@@ -8,9 +8,9 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjecti
 
 public class AuthorizationModule : AppModule
 {
-    private readonly Action<AuthorizationOptions> _configure;
+    private readonly Action<AuthorizationOptions>? _configure;
 
-    public AuthorizationModule(Action<AuthorizationOptions> configure)
+    public AuthorizationModule(Action<AuthorizationOptions>? configure)
     {
         _configure = configure;
     }
@@ -36,7 +36,7 @@ public class AuthorizationModule : AppModule
 
 public static class AuthorizationModuleExtensions
 {
-    public static AppBuilder AddAuthorization(this AppBuilder builder, Action<AuthorizationOptions> configure = null)
+    public static AppBuilder AddAuthorization(this AppBuilder builder, Action<AuthorizationOptions>? configure = null)
     {
         return builder.AddModule(new AuthorizationModule(configure));
     }

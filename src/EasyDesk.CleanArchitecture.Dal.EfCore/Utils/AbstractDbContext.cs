@@ -41,7 +41,7 @@ public class AbstractDbContext<T> : DbContext
 
         if (multitenantEntities.Any())
         {
-            var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureMultitenantEntity));
+            var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureMultitenantEntity))!;
             var args = new object[] { modelBuilder, queryFilters };
             multitenantEntities
                 .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
@@ -88,6 +88,6 @@ public class AbstractDbContext<T> : DbContext
         public override bool GeneratesStableValues => true;
 
         protected override object NextValue(EntityEntry entry) =>
-            (entry.Context as T).GetCurrentTenantAsString();
+            ((T)entry.Context).GetCurrentTenantAsString();
     }
 }

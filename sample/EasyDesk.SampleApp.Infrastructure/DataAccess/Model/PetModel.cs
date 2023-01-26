@@ -14,18 +14,18 @@ public class PetModel : IPersistenceModelWithHydration<Pet, PetModel, int>, IMul
 {
     public int Id { get; set; }
 
-    public string Nickname { get; set; }
+    public string? Nickname { get; set; }
 
     public Guid PersonId { get; set; }
 
-    public string TenantId { get; set; }
+    public string? TenantId { get; set; }
 
-    public PersonModel Person { get; set; }
+    public PersonModel? Person { get; set; }
 
     public static Expression<Func<PetModel, PetSnapshot>> Projection() =>
-        src => new(src.Id, src.Nickname, src.PersonId);
+        src => new(src.Id, src.Nickname!, src.PersonId);
 
-    public Pet ToDomain() => new(Id, Name.From(Nickname), PersonId);
+    public Pet ToDomain() => new(Id, Name.From(Nickname!), PersonId);
 
     public int GetHydrationData() => Id;
 

@@ -26,11 +26,13 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected ITestWebService WebService => Fixture.WebService;
 
-    protected HttpTestHelper Http { get; private set; }
+    private HttpTestHelper? _http;
+
+    protected HttpTestHelper Http => _http!;
 
     protected FakeClock Clock => Fixture.Clock;
 
-    protected ITestBus NewBus(string inputQueueAddress = null, Duration? defaultTimeout = null)
+    protected ITestBus NewBus(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
         var bus = RebusTestBus.CreateFromServices(WebService.Services, inputQueueAddress, defaultTimeout);
         _buses.Add(bus);
@@ -52,7 +54,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        Http = CreateHttpTestHelper();
+        _http = CreateHttpTestHelper();
         await OnInitialization();
     }
 

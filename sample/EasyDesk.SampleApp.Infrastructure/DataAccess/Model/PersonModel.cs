@@ -16,24 +16,24 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
 {
     public Guid Id { get; set; }
 
-    public string FirstName { get; set; }
+    public string? FirstName { get; set; }
 
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
     public LocalDate DateOfBirth { get; set; }
 
-    public string TenantId { get; set; }
+    public string? TenantId { get; set; }
 
     public bool IsDeleted { get; set; }
 
-    public string CreatedBy { get; set; }
+    public string? CreatedBy { get; set; }
 
     public ICollection<PetModel> Pets { get; set; } = new HashSet<PetModel>();
 
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
-        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy);
+        src => new(src.Id, src.FirstName!, src.LastName!, src.DateOfBirth, src.CreatedBy!);
 
-    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy));
+    public Person ToDomain() => new(Id, Name.From(FirstName!), Name.From(LastName!), DateOfBirth, AdminId.From(CreatedBy!));
 
     public static PersonModel CreateDefaultPersistenceModel() => new();
 

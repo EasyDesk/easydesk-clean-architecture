@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
 public class ValidationStep<T, R> : IPipelineStep<T, R>
+    where R : notnull
 {
     private readonly IServiceProvider _serviceProvider;
 

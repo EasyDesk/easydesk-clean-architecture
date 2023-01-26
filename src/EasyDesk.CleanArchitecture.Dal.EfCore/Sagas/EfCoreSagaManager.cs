@@ -18,14 +18,16 @@ internal class EfCoreSagaManager : ISagaManager
     }
 
     public async Task<Option<(ISagaReference<TState> Reference, TState State)>> Find<TId, TState>(TId id)
+        where TId : notnull
     {
         return await _context.Sagas
             .Where(s => s.Id == GetSagaIdAsString(id) && s.Type == FormatSagaType<TState>())
             .FirstOptionAsync()
-            .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), _serializer.DeserializeFromBsonBytes<TState>(m.State)));
+            .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), _serializer.DeserializeFromBsonBytes<TState>(m.State!)));
     }
 
     public ISagaReference<TState> CreateNew<TId, TState>(TId id)
+        where TId : notnull
     {
         var sagaModel = new SagaModel
         {
@@ -37,7 +39,7 @@ internal class EfCoreSagaManager : ISagaManager
         return CreateReferenceFromSagaModel<TState>(sagaModel);
     }
 
-    private string GetSagaIdAsString<TId>(TId id) => id.ToString();
+    private string GetSagaIdAsString<TId>(TId id) where TId : notnull => id.ToString()!;
 
     private string FormatSagaType<T>() => FormatSagaType(typeof(T));
 

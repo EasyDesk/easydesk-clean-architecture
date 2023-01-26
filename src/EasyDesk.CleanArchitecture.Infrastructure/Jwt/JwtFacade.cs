@@ -30,7 +30,7 @@ public class JwtFacade
     public Option<ClaimsPrincipal> Validate(string jwt, Action<JwtValidationBuilder> configure) =>
         Validate(jwt, out _, configure);
 
-    public Option<ClaimsPrincipal> Validate(string jwt, out JwtSecurityToken token, Action<JwtValidationBuilder> configure)
+    public Option<ClaimsPrincipal> Validate(string jwt, out JwtSecurityToken? token, Action<JwtValidationBuilder> configure)
     {
         var builder = new JwtValidationBuilder(_clock);
         configure(builder);

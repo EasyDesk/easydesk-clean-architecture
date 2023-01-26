@@ -15,6 +15,8 @@ public delegate Option<ActionResult> ErrorHandler(object body, Error error);
 public delegate ActionResult SuccessHandler<TResult>(object body, TResult result);
 
 public class ActionResultBuilder<TResult, TDto, TMeta>
+    where TResult : notnull
+    where TDto : notnull
 {
     private readonly AsyncFunc<Result<TResult>> _resultProvider;
     private readonly Func<TResult, TDto> _mapper;
@@ -51,6 +53,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
     }
 
     public ActionResultBuilder<TResult, TNewDto, TMeta> Map<TNewDto>(Func<TDto, TNewDto> mapper)
+        where TNewDto : notnull
     {
         return new(_resultProvider, x => mapper(_mapper(x)), _meta, _controller, _errorHandlers);
     }
@@ -110,6 +113,7 @@ public static class ActionResultBuilderExtensions
     public static ActionResultBuilder<TResult, IEnumerable<TNewDto>, TMeta> MapEachElement<TResult, TDto, TNewDto, TMeta>(
         this ActionResultBuilder<TResult, IEnumerable<TDto>, TMeta> builder,
         Func<TDto, TNewDto> mapper)
+        where TResult : notnull
     {
         return builder.Map(ts => ts.Select(mapper));
     }

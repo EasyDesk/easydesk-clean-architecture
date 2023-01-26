@@ -28,7 +28,8 @@ public static class MultitenancyChecks
         TenantId tenantId,
         AsyncFunc<TService, bool> condition,
         Duration? timeout = null,
-        Duration? interval = null) =>
+        Duration? interval = null)
+        where TService : notnull =>
         InjectedServiceCheckFactory<IServiceProvider>.ScopedUntil(
             webService.Services,
             async services =>

@@ -15,7 +15,7 @@ public record ImmutableHttpResponseMessage(
         response.StatusCode,
         new(response.Headers.ToImmutableDictionary()),
         await ImmutableHttpContent.From(response.Content),
-        await ImmutableHttpRequestMessage.From(response.RequestMessage));
+        await ImmutableHttpRequestMessage.From(response.RequestMessage ?? throw new InvalidOperationException("Request message is missing.")));
 }
 
 public static class HttpResponseMessageExtensions

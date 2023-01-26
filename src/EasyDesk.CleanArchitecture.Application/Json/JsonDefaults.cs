@@ -9,7 +9,7 @@ namespace EasyDesk.CleanArchitecture.Application.Json;
 
 public static class JsonDefaults
 {
-    public static void ApplyDefaultConfiguration(this JsonSerializerSettings serializerSettings, IDateTimeZoneProvider dateTimeZoneProvider = null)
+    public static void ApplyDefaultConfiguration(this JsonSerializerSettings serializerSettings, IDateTimeZoneProvider? dateTimeZoneProvider = null)
     {
         serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 
@@ -18,7 +18,7 @@ public static class JsonDefaults
         serializerSettings.ConfigureForNodaTime(dateTimeZoneProvider ?? DateTimeZoneProviders.Tzdb);
     }
 
-    public static JsonSerializerSettings DefaultSerializerSettings(IDateTimeZoneProvider dateTimeZoneProvider = null)
+    public static JsonSerializerSettings DefaultSerializerSettings(IDateTimeZoneProvider? dateTimeZoneProvider = null)
     {
         var serializerSettings = new JsonSerializerSettings();
         serializerSettings.ApplyDefaultConfiguration(dateTimeZoneProvider);

@@ -27,7 +27,7 @@ public static class TestHttpAuthentication
         {
             return None;
         }
-        var schemeName = options.DefaultScheme;
+        var schemeName = options.DefaultScheme ?? throw new InvalidOperationException("A default scheme is not available.");
         var provider = options.Schemes[schemeName];
         return provider switch
         {

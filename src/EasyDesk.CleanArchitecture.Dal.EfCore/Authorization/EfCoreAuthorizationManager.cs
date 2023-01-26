@@ -32,14 +32,14 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
     public async Task<IImmutableSet<Role>> GetRolesForUser(UserInfo userInfo)
     {
         return await RolesByUser(userInfo)
-            .Select(u => new Role(u.RoleId))
+            .Select(u => new Role(u.RoleId!))
             .ToEquatableSetAsync();
     }
 
     public async Task GrantRolesToUser(UserInfo userInfo, IEnumerable<Role> roles)
     {
         var currentRoleIds = await RolesByUser(userInfo)
-            .Select(r => r.RoleId)
+            .Select(r => r.RoleId!)
             .ToListAsync();
 
         var rolesToBeAdded = RoleIds(roles)

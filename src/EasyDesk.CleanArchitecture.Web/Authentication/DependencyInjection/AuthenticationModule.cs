@@ -52,7 +52,7 @@ public static class AuthenticationModuleExtensions
 
 public class AuthenticationModuleOptions
 {
-    public string DefaultScheme { get; private set; }
+    public string? DefaultScheme { get; private set; }
 
     public IImmutableDictionary<string, IAuthenticationProvider> Schemes { get; private set; } = Map<string, IAuthenticationProvider>();
 

@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
 internal class InboxMessage
 {
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
     public class Configuration : IEntityTypeConfiguration<InboxMessage>
     {

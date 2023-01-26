@@ -15,15 +15,15 @@ public static class SqlFixtureExtensions
         T container,
         string connectionStringName,
         RespawnerOptions respawnerOptions,
-        Func<string, string> editDbConnectionString = null)
+        Func<string, string>? editDbConnectionString = null)
         where T : TestcontainerDatabase
     {
-        Respawner respawner = null;
+        Respawner? respawner = null;
         return builder
             .ConfigureContainers(containers => containers.RegisterTestContainer(container))
             .ConfigureWebService(ws => ws.WithConfiguration(config =>
             {
-                config.AddInMemoryCollection(new Dictionary<string, string>
+                config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     [connectionStringName] =
                         editDbConnectionString?.Invoke(container.ConnectionString) ?? container.ConnectionString,
@@ -35,7 +35,7 @@ public static class SqlFixtureExtensions
             }))
             .OnReset(ws => UsingDbConnection(ws, async connection =>
             {
-                await respawner.ResetAsync(connection);
+                await respawner!.ResetAsync(connection);
             }));
     }
 

@@ -7,7 +7,7 @@ public record ImmutableHttpRequestMessage(
     HttpMethod Method,
     Uri RequestUri,
     ImmutableHttpHeaders Headers,
-    ImmutableHttpContent Content)
+    ImmutableHttpContent? Content)
 {
     public ImmutableHttpRequestMessage(HttpMethod method, string requestUri)
         : this(method, new Uri(requestUri, UriKind.RelativeOrAbsolute))
@@ -21,7 +21,7 @@ public record ImmutableHttpRequestMessage(
 
     public static async Task<ImmutableHttpRequestMessage> From(HttpRequestMessage request) => new(
         request.Method,
-        request.RequestUri,
+        request.RequestUri ?? throw new InvalidOperationException("Request URI is missing."),
         new(request.Headers.ToImmutableDictionary()),
         await ImmutableHttpContent.From(request.Content));
 

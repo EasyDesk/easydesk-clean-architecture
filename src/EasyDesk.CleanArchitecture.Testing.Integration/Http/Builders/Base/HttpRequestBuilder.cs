@@ -55,7 +55,8 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         _testHttpAuthentication = testHttpAuthentication;
     }
 
-    protected IImmutableDictionary<string, StringValues> Query => _queryParameters.ToImmutableDictionary();
+    protected IImmutableDictionary<string, IImmutableList<string>> Query =>
+        _queryParameters.ToImmutableDictionary(pair => pair.Key, pair => pair.Value.ToImmutableList() as IImmutableList<string>);
 
     protected Duration Timeout { get; private set; } = _defaultTimeout;
 
@@ -79,7 +80,7 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
 
     public override B NoAuthentication() => ConfigureRequest(_testHttpAuthentication.RemoveAuthentication);
 
-    public override B WithContent(ImmutableHttpContent content) => ConfigureRequest(r => r with { Content = content });
+    public override B WithContent(ImmutableHttpContent? content) => ConfigureRequest(r => r with { Content = content });
 
     public override B WithQuery(string key, string value) =>
         ConfigureQuery(q => q[key] = value);

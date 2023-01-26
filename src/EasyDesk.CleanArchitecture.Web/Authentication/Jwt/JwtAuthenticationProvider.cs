@@ -56,10 +56,10 @@ public static class JwtAuthenticationExtensions
         return options.AddScheme(schemeName, new JwtAuthenticationProvider(configureOptions));
     }
 
-    public static void LogForgedJwtForUser(this IServiceProvider serviceProvider, string userId, string schemeName = null) =>
+    public static void LogForgedJwtForUser(this IServiceProvider serviceProvider, string userId, string? schemeName = null) =>
         serviceProvider.LogForgedJwt(new[] { new Claim(ClaimTypes.NameIdentifier, userId) }, schemeName);
 
-    public static void LogForgedJwt(this IServiceProvider serviceProvider, IEnumerable<Claim> claims, string schemeName = null)
+    public static void LogForgedJwt(this IServiceProvider serviceProvider, IEnumerable<Claim> claims, string? schemeName = null)
     {
         var authModuleOptions = serviceProvider.GetRequiredService<AuthenticationModuleOptions>();
         var scheme = schemeName ?? authModuleOptions.Schemes

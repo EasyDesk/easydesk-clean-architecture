@@ -10,9 +10,9 @@ namespace EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 
 public class AsyncApiModule : AppModule
 {
-    private readonly Action<AsyncApiOptions> _configure;
+    private readonly Action<AsyncApiOptions>? _configure;
 
-    public AsyncApiModule(Action<AsyncApiOptions> configure = null)
+    public AsyncApiModule(Action<AsyncApiOptions>? configure = null)
     {
         _configure = configure;
     }
@@ -40,7 +40,7 @@ public class AsyncApiModule : AppModule
 
 public static class AsyncApiModuleExtensions
 {
-    public static AppBuilder AddAsyncApi(this AppBuilder builder, Action<AsyncApiOptions> configure = null)
+    public static AppBuilder AddAsyncApi(this AppBuilder builder, Action<AsyncApiOptions>? configure = null)
     {
         return builder.AddModule(new AsyncApiModule(configure));
     }

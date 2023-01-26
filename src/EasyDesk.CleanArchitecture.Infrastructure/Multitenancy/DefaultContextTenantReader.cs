@@ -33,15 +33,15 @@ internal class DefaultContextTenantReader : IContextTenantReader
 
     private Option<string> GetTenantIdForRequestContext()
     {
-        var request = _httpContextAccessor.HttpContext.Request;
-        return ReadTenantIdFromHeaders(request) | ReadTenantIdFromQuery(request);
+        var request = _httpContextAccessor.HttpContext?.Request;
+        return request.AsOption().FlatMap(r => ReadTenantIdFromHeaders(r) | ReadTenantIdFromQuery(r));
     }
 
     private static Option<string> ReadTenantIdFromHeaders(HttpRequest request) =>
-        request.Headers[MultitenancyDefaults.TenantIdHttpHeader].FirstOption();
+        request.Headers[MultitenancyDefaults.TenantIdHttpHeader].WhereNotNull().FirstOption();
 
     private static Option<string> ReadTenantIdFromQuery(HttpRequest request) =>
-        request.Query[MultitenancyDefaults.TenantIdHttpQueryParam].FirstOption();
+        request.Query[MultitenancyDefaults.TenantIdHttpQueryParam].SelectMany(h => h.AsOption()).FirstOption();
 
     private Option<string> GetTenantIdForAsyncMessageContext() =>
         MessageContext.Current.Headers.GetOption(MultitenantMessagingUtils.TenantIdHeader);

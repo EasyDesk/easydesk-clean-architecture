@@ -18,7 +18,7 @@ public class SoftDeletionExtension : DbContextExtension
 
         if (softDeletableEntities.Any())
         {
-            var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureSoftDeletableEntity));
+            var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureSoftDeletableEntity))!;
             var args = new object[] { queryFilters };
             softDeletableEntities
                 .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
@@ -34,7 +34,7 @@ public class SoftDeletionExtension : DbContextExtension
 
     public override async Task<int> SaveChanges(Func<Task<int>> next)
     {
-        Context.ChangeTracker.Entries()
+        Context!.ChangeTracker.Entries()
             .Where(e => e.Entity is ISoftDeletable)
             .ForEach(e =>
             {

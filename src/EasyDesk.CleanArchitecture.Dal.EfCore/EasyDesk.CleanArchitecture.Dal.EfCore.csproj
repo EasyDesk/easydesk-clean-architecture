@@ -30,8 +30,4 @@
       <_Parameter1>EasyDesk.CleanArchitecture.Dal.SqlServer</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
-  </ItemGroup>
 </Project>

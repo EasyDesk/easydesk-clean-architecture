@@ -9,10 +9,11 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="7.5.0" />
+    <PackageReference Include="EasyDesk.Tools" Version="8.1.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,7 @@ using static EasyDesk.Tools.Collections.ImmutableCollections;
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
 public record ResponseDto<T, M>(Option<T> Data, IImmutableList<ErrorDto> Errors, M Meta)
+    where T : notnull
 {
     public static ResponseDto<T, M> FromData(T data, M meta) =>
         new(Some(data), List<ErrorDto>(), meta);

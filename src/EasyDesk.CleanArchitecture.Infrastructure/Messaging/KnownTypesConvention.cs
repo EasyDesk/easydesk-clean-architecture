@@ -14,5 +14,5 @@ internal class KnownTypesConvention : IMessageTypeNameConvention
 
     public string GetTypeName(Type type) => type.Name;
 
-    public Type GetType(string name) => _knownTypes.GetOption(name).OrElseNull();
+    public Type? GetType(string name) => _knownTypes.GetOption(name).OrElseNull();
 }

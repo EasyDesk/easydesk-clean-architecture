@@ -38,9 +38,9 @@ public static partial class Extensions
     [MethodImpl(MethodImplOptions.NoInlining)]
     public static AppDescription ConfigureForCleanArchitecture(
         this WebApplicationBuilder builder,
-        Action<AppBuilder> configure = null)
+        Action<AppBuilder>? configure = null)
     {
-        var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name;
+        var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name!;
         var match = WebAssemblyRegex().Match(callingAssemblyName);
         var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
 

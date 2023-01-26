@@ -17,10 +17,12 @@ public static partial class ApiVersioningUtils
     public static Option<ApiVersion> GetControllerVersion(this Type controllerType)
     {
         return controllerType.Namespace
-            .Split('.')
-            .Reverse()
-            .SelectMany(v => ParseVersionFromNamespace(v))
-            .FirstOption();
+            .AsOption()
+            .FlatMap(n => n
+                .Split('.')
+                .Reverse()
+                .SelectMany(v => ParseVersionFromNamespace(v))
+                .FirstOption());
     }
 
     public static Option<ApiVersion> ParseVersionFromNamespace(string version)

@@ -10,14 +10,14 @@ namespace EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 
 public class ApiVersioningModule : AppModule
 {
-    private readonly Action<ApiVersioningOptions> _configure;
+    private readonly Action<ApiVersioningOptions>? _configure;
 
-    public ApiVersioningModule(Action<ApiVersioningOptions> configure = null)
+    public ApiVersioningModule(Action<ApiVersioningOptions>? configure = null)
     {
         _configure = configure;
     }
 
-    public ApiVersioningInfo ApiVersioningInfo { get; private set; }
+    public ApiVersioningInfo? ApiVersioningInfo { get; private set; }
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
@@ -27,7 +27,7 @@ public class ApiVersioningModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddSingleton(ApiVersioningInfo);
+        services.AddSingleton(ApiVersioningInfo!);
 
         services.AddApiVersioning(options =>
         {
@@ -38,7 +38,7 @@ public class ApiVersioningModule : AppModule
                 new HeaderApiVersionReader(ApiVersioningUtils.VersionHeader));
 
             options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = ApiVersioningInfo.SupportedVersions
+            options.DefaultApiVersion = ApiVersioningInfo!.SupportedVersions
                 .MaxOption()
                 .OrElseGet(() => ApiVersioningUtils.DefaultVersion);
 
@@ -63,7 +63,7 @@ public class ApiVersioningModule : AppModule
 
 public static class ApiVersioningModuleExtensions
 {
-    public static AppBuilder AddApiVersioning(this AppBuilder builder, Action<ApiVersioningOptions> configure = null)
+    public static AppBuilder AddApiVersioning(this AppBuilder builder, Action<ApiVersioningOptions>? configure = null)
     {
         return builder.AddModule(new ApiVersioningModule(configure));
     }

@@ -20,7 +20,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
 public class RebusMessagingOptions
 {
-    private Action<RebusEndpoint, RebusConfigurer> _configureRebus;
+    private Action<RebusEndpoint, RebusConfigurer>? _configureRebus;
 
     public OutboxOptions OutboxOptions { get; private set; } = new();
 

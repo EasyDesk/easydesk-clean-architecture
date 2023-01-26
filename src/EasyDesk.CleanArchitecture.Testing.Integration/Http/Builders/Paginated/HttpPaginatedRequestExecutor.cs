@@ -65,7 +65,7 @@ public class HttpPaginatedRequestExecutor<T> :
             }
         }
         while (hasNextPage);
-        initialPage.Match(some: i => this.SetPageIndex(i), none: () => this.RemovePageIndex());
+        initialPage.Match(some: i => this.SetPageIndex(i[0]), none: () => this.RemovePageIndex());
     }
 
     protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpPageResponseWrapper<T>>> request) =>

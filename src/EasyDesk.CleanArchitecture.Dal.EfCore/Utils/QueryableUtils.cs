@@ -14,14 +14,14 @@ public static class QueryableUtils
         return (await query.FirstOrDefaultAsync()).AsOption();
     }
 
-    public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T> op)
+    public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T>? op)
     {
         return query.Conditionally(op != null, op);
     }
 
-    public static IQueryable<T> Conditionally<T>(this IQueryable<T> query, bool condition, QueryWrapper<T> op)
+    public static IQueryable<T> Conditionally<T>(this IQueryable<T> query, bool condition, QueryWrapper<T>? op)
     {
-        return condition ? op(query) : query;
+        return condition ? op?.Invoke(query) ?? query : query;
     }
 
     public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op)
@@ -31,12 +31,12 @@ public static class QueryableUtils
             none: () => query);
     }
 
-    public static Task<T> MaxByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
+    public static Task<T?> MaxByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
     {
         return query.OrderByDescending(keySelector).FirstOrDefaultAsync();
     }
 
-    public static Task<T> MinByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
+    public static Task<T?> MinByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
     {
         return query.OrderBy(keySelector).FirstOrDefaultAsync();
     }

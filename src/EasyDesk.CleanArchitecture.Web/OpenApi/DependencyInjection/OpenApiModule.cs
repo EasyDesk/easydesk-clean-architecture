@@ -20,9 +20,9 @@ namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 
 public class OpenApiModule : AppModule
 {
-    private readonly Action<SwaggerGenOptions> _configure;
+    private readonly Action<SwaggerGenOptions>? _configure;
 
-    public OpenApiModule(Action<SwaggerGenOptions> configure = null)
+    public OpenApiModule(Action<SwaggerGenOptions>? configure = null)
     {
         _configure = configure;
     }
@@ -66,7 +66,7 @@ public class OpenApiModule : AppModule
 
     private void SetupApiVersionedDocs(ApiVersioningModule module, AppDescription app, SwaggerGenOptions options)
     {
-        module.ApiVersioningInfo
+        module.ApiVersioningInfo!
             .SupportedVersions
             .Select(version => version.ToDisplayString())
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
@@ -124,7 +124,7 @@ public class OpenApiModule : AppModule
 
 public static class SwaggerModuleExtensions
 {
-    public static AppBuilder AddOpenApi(this AppBuilder builder, Action<SwaggerGenOptions> configure = null)
+    public static AppBuilder AddOpenApi(this AppBuilder builder, Action<SwaggerGenOptions>? configure = null)
     {
         return builder.AddModule(new OpenApiModule(configure));
     }

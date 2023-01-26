@@ -18,15 +18,20 @@ internal class Dispatcher : IDispatcher
     }
 
     public async Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper)
+        where R : notnull
     {
         var dispatchableType = dispatchable.GetType();
-        var methodInfo = _dispatchMethodsByType.GetOrAdd(dispatchableType, t => typeof(Dispatcher)
-            .GetMethod(nameof(DispatchImpl), BindingFlags.NonPublic | BindingFlags.Instance)
-            .MakeGenericMethod(t, typeof(X), typeof(R)));
-        return await (Task<Result<R>>)methodInfo.Invoke(this, new object[] { dispatchable, mapper });
+        var methodInfo = _dispatchMethodsByType
+            .GetOrAdd(dispatchableType, t =>
+                typeof(Dispatcher)
+                .GetMethod(nameof(DispatchImpl), BindingFlags.NonPublic | BindingFlags.Instance)!
+                .MakeGenericMethod(t, typeof(X), typeof(R)));
+        return await (Task<Result<R>>)methodInfo.Invoke(this, new object[] { dispatchable, mapper })!;
     }
 
     private async Task<Result<R>> DispatchImpl<T, X, R>(T dispatchable, AsyncFunc<X, R> mapper)
+        where R : notnull
+        where X : notnull
         where T : IDispatchable<X>
     {
         var handler = FindHandler<T, X>();
@@ -37,10 +42,11 @@ internal class Dispatcher : IDispatcher
                 (next, step) => () => step.Run(dispatchable, next))();
     }
 
-    private IHandler<T, X> FindHandler<T, X>()
-        where T : IDispatchable<X>
+    private IHandler<T, R> FindHandler<T, R>()
+        where R : notnull
+        where T : IDispatchable<R>
     {
-        var handler = _serviceProvider.GetService<IHandler<T, X>>();
+        var handler = _serviceProvider.GetService<IHandler<T, R>>();
         return handler ?? throw new HandlerNotFoundException(typeof(T));
     }
 }

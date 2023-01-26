@@ -21,7 +21,7 @@ internal class MigrationsService
     {
         foreach (var dbContextType in _dbContextTypes)
         {
-            var dbContext = (DbContext)_serviceProvider.GetService(dbContextType);
+            var dbContext = (DbContext)_serviceProvider.GetService(dbContextType)!;
             await dbContext.Database.MigrateAsync();
             _logger.LogInformation("Successfully migrated DbContext of type {dbContextType}", dbContextType.Name);
         }

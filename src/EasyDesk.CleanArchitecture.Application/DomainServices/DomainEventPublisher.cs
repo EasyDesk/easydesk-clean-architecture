@@ -18,10 +18,10 @@ internal class DomainEventPublisher : IDomainEventPublisher
         var eventType = domainEvent.GetType();
         var result = GetType()
             .GetTypeInfo()
-            .GetMethod(nameof(PublishEventOfType))
+            .GetMethod(nameof(PublishEventOfType))!
             .MakeGenericMethod(eventType)
             .Invoke(this, new object[] { domainEvent });
-        return await (result as Task<Result<Nothing>>);
+        return await (Task<Result<Nothing>>)result!;
     }
 
     public async Task<Result<Nothing>> PublishEventOfType<T>(T domainEvent)

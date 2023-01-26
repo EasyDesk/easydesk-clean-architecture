@@ -32,7 +32,9 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
             });
     }
 
-    public ITestWebService WebService { get; private set; }
+    private ITestWebService? _webService;
+
+    public ITestWebService WebService => _webService!;
 
     public FakeClock Clock { get; } = new(SystemClock.Instance.GetCurrentInstant());
 
@@ -46,7 +48,7 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
         ConfigureFixture(builder);
 
         await _containers.StartAll();
-        WebService = StartService();
+        _webService = StartService();
         await _onInitialization.Emit(WebService);
     }
 

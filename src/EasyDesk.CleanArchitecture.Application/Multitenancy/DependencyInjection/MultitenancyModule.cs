@@ -8,7 +8,7 @@ namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjectio
 
 public class MultitenancyModule : AppModule
 {
-    public MultitenancyModule(Action<MultitenancyOptions> configureOptions = null)
+    public MultitenancyModule(Action<MultitenancyOptions>? configureOptions = null)
     {
         configureOptions?.Invoke(Options);
     }
@@ -42,7 +42,7 @@ public class MultitenancyModule : AppModule
 
 public static class MultitenancyModuleExtensions
 {
-    public static AppBuilder AddMultitenancy(this AppBuilder builder, Action<MultitenancyOptions> configure = null)
+    public static AppBuilder AddMultitenancy(this AppBuilder builder, Action<MultitenancyOptions>? configure = null)
     {
         return builder.AddModule(new MultitenancyModule(configure));
     }

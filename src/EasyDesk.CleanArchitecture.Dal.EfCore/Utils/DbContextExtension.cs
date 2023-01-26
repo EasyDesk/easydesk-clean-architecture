@@ -4,7 +4,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
 public abstract class DbContextExtension
 {
-    protected DbContext Context { get; private set; }
+    protected DbContext? Context { get; private set; }
 
     public void Initialize(DbContext context)
     {

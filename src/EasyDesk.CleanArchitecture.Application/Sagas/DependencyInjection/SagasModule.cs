@@ -21,7 +21,7 @@ public class SagasModule : AppModule
             .SelectMany(c => c.GetInterfaces()
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaController<,>))
                 .Select(i => GetType()
-                    .GetMethod(nameof(ConfigureSaga), BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetMethod(nameof(ConfigureSaga), BindingFlags.NonPublic | BindingFlags.Instance)!
                     .MakeGenericMethod(i.GetGenericArguments().Append(c).ToArray())))
             .ForEach(m => m.Invoke(this, configureSagaArgs));
 
@@ -29,6 +29,8 @@ public class SagasModule : AppModule
     }
 
     private void ConfigureSaga<TId, TState, TController>(IServiceCollection services)
+        where TId : notnull
+        where TState : notnull
         where TController : class, ISagaController<TId, TState>
     {
         var sink = new SagaConfigurationSink<TId, TState>(services);
@@ -38,6 +40,7 @@ public class SagasModule : AppModule
     }
 
     private class SagaConfigurationSink<TId, TState> : ISagaConfigurationSink<TId, TState>
+        where TId : notnull
     {
         private readonly IServiceCollection _services;
 
@@ -46,7 +49,7 @@ public class SagasModule : AppModule
             _services = services;
         }
 
-        public void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration) where T : IDispatchable<R>
+        public void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration) where T : IDispatchable<R> where R : notnull
         {
             _services.AddSingleton(configuration);
             _services.AddTransient<IHandler<T, R>, SagaHandler<T, R, TId, TState>>();

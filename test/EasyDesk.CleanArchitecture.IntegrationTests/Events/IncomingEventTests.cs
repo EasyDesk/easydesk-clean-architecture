@@ -13,7 +13,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Events;
 public class IncomingEventTests : SampleIntegrationTest
 {
     private const string Tenant = "a-tenant";
-    private PersonDto _person;
+    private PersonDto? _person;
 
     public IncomingEventTests(SampleAppTestsFixture factory) : base(factory)
     {
@@ -52,6 +52,6 @@ public class IncomingEventTests : SampleIntegrationTest
     {
         var bus = NewBus("pet-freedom-service");
         await bus.Publish(new PetFreedomDayEvent(Tenant));
-        await Http.GetOwnedPets(_person.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
+        await Http.GetOwnedPets(_person!.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }
 }

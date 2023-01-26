@@ -10,14 +10,14 @@
 /// <typeparam name="T">The wrapped value type.</typeparam>
 /// <typeparam name="S">The type extending this record.</typeparam>
 public abstract record QuantityWrapper<T, S> : AbstractValueWrapper<T, S>, IComparable<QuantityWrapper<T, S>>
-    where T : IEquatable<T>, IComparable<T>
+    where T : struct, IEquatable<T>, IComparable<T>
     where S : AbstractValueWrapper<T, S>
 {
     protected QuantityWrapper(T value) : base(value)
     {
     }
 
-    public int CompareTo(QuantityWrapper<T, S> other) => Value.CompareTo(other.Value);
+    public int CompareTo(QuantityWrapper<T, S>? other) => Value.CompareTo(other?.Value ?? throw new InvalidOperationException("Cannot compare a quantity to null."));
 
     public static bool operator >(QuantityWrapper<T, S> a, QuantityWrapper<T, S> b) => a.CompareTo(b) > 0;
 

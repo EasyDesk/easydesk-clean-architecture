@@ -13,5 +13,5 @@ public abstract record AbstractValueWrapper<T, S>
 
     public sealed override string ToString() => StringRepresentation();
 
-    protected virtual string StringRepresentation() => Value.ToString();
+    protected virtual string StringRepresentation() => Value!.ToString()!;
 }

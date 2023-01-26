@@ -6,10 +6,10 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
 {
     private bool _isPaused = false;
 #pragma warning disable CA2213 // Disposable fields should be disposed
-    private CancellationTokenSource _pause;
-    private CancellationTokenSource _resume;
+    private CancellationTokenSource? _pause;
+    private CancellationTokenSource? _resume;
 #pragma warning restore CA2213 // Disposable fields should be disposed
-    private Task _executingTask;
+    private Task? _executingTask;
 
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -34,7 +34,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
             }
             finally
             {
-                _pause.Dispose();
+                _pause?.Dispose();
             }
 
             try
@@ -48,7 +48,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
             }
             finally
             {
-                _resume.Dispose();
+                _resume?.Dispose();
             }
         }
     }
@@ -81,9 +81,10 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
                 return;
             }
 
-            _pause.Cancel();
+            executingTask = _executingTask ?? throw new InvalidOperationException(
+                $"The background task is not running. {nameof(ExecuteAsync)} must be executed before {nameof(Pause)}.");
 
-            executingTask = _executingTask;
+            _pause.Cancel();
         }
         try
         {
@@ -100,6 +101,11 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
         {
             if (_isPaused)
             {
+                if (_resume is null)
+                {
+                    throw new InvalidOperationException(
+                        $"The background task is not paused. {nameof(ExecuteAsync)} must be executed before {nameof(Pause)}, which must be executed before {nameof(Resume)}.");
+                }
                 _resume.Cancel();
             }
         }

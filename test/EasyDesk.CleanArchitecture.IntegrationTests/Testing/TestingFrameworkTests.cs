@@ -27,7 +27,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
 
     public HttpTestHelper GetHttp() => Http;
 
-    public ITestBus GetNewBus(string inputQueue = null) => NewBus(inputQueue);
+    public ITestBus GetNewBus(string? inputQueue = null) => NewBus(inputQueue);
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(Tenant)

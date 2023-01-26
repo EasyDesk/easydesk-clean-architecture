@@ -1,6 +1,7 @@
 ﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public class AsyncCache<T>
+    where T : notnull
 {
     private Option<T> _cache = None;
     private readonly AsyncFunc<T> _fetch;

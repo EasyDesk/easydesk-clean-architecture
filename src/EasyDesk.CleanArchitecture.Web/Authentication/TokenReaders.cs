@@ -14,9 +14,9 @@ public static class TokenReaders
         .Request
         .Headers
         .GetOption(HeaderNames.Authorization)
-        .FlatMap(x => ParseHeader(x))
+        .FlatMap(x => ParseHeader(x.ToString()))
         .Filter(x => x.Scheme.Equals(scheme, StringComparison.OrdinalIgnoreCase))
-        .Map(x => x.Parameter);
+        .FlatMap(x => x.Parameter.AsOption());
 
     public static TokenReader Bearer() => FromAuthorizationHeader("Bearer");
 

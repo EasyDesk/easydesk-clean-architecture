@@ -13,15 +13,11 @@
     <PackageReference Include="Rebus" Version="7.0.0" />
     <PackageReference Include="Rebus.Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Rebus.ServiceProvider" Version="8.4.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.25.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Application\EasyDesk.CleanArchitecture.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public class UnitOfWorkStep<T, R> : IPipelineStep<T, R>
+    where R : notnull
     where T : IReadWriteOperation
 {
     private readonly IUnitOfWorkProvider _unitOfWorkProvider;

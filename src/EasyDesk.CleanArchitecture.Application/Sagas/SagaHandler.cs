@@ -4,6 +4,8 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 internal class SagaHandler<T, R, TId, TState> : IHandler<T, R>
+    where TId : notnull
+    where R : notnull
     where T : IDispatchable<R>
 {
     private readonly ISagaManager _sagaManager;

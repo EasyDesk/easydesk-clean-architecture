@@ -45,7 +45,7 @@ internal class EfCoreOutbox : IOutbox
             .ToListAsync();
 
         var messages = outboxMessages
-            .Select(m => (ToTransportMessage(m), m.DestinationAddress))
+            .Select(m => (ToTransportMessage(m), m.DestinationAddress!))
             .ToList();
 
         if (messages.Any())
@@ -59,7 +59,7 @@ internal class EfCoreOutbox : IOutbox
 
     private TransportMessage ToTransportMessage(OutboxMessage outboxMessage)
     {
-        var headers = _serializer.DeserializeFromBsonBytes<Dictionary<string, string>>(outboxMessage.Headers);
+        var headers = _serializer.DeserializeFromBsonBytes<Dictionary<string, string>>(outboxMessage.Headers!);
         return new TransportMessage(headers, outboxMessage.Content);
     }
 }

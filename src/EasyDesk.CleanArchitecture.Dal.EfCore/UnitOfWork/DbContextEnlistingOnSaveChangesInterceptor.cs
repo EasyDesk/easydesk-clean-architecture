@@ -16,7 +16,7 @@ internal class DbContextEnlistingOnSaveChangesInterceptor : SaveChangesIntercept
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-        await _unitOfWorkProvider.EnlistDbContextForCurrentTransaction(eventData.Context);
+        await _unitOfWorkProvider.EnlistDbContextForCurrentTransaction(eventData.Context!);
         return result;
     }
 }

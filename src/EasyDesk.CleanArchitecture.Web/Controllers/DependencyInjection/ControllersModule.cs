@@ -13,7 +13,7 @@ public class ControllersModuleOptions
 {
     public const int DefaultDefaultPageSize = 100;
     public const int DefaultMaxPageSize = 100;
-    private Action<MvcOptions> _configureMvc;
+    private Action<MvcOptions>? _configureMvc;
 
     public int DefaultPageSize { get; set; } = DefaultDefaultPageSize;
 
@@ -30,7 +30,7 @@ public class ControllersModule : AppModule
 
     public ControllersModuleOptions Options { get; } = new();
 
-    public ControllersModule(IWebHostEnvironment environment, Action<ControllersModuleOptions> configure = null)
+    public ControllersModule(IWebHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
     {
         _environment = environment;
         configure?.Invoke(Options);
@@ -63,7 +63,7 @@ public class ControllersModule : AppModule
 
 public static class ControllersModuleExtension
 {
-    public static AppBuilder AddControllers(this AppBuilder builder, IWebHostEnvironment environment, Action<ControllersModuleOptions> configure = null)
+    public static AppBuilder AddControllers(this AppBuilder builder, IWebHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
     {
         return builder.AddModule(new ControllersModule(environment, configure));
     }

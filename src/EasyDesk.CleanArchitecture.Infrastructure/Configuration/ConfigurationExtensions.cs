@@ -19,8 +19,8 @@ public static class ConfigurationExtensions
     public static Option<string> GetConnectionStringAsOption(this IConfiguration configuration, string name) =>
         configuration.GetValueAsOption<string>(ConnectionStringKey(name));
 
-    public static Option<T> GetValueAsOption<T>(this IConfiguration configuration, string key) =>
-        configuration.GetSectionAsOption(key).Map(s => s.Get<T>());
+    public static Option<T> GetValueAsOption<T>(this IConfiguration configuration, string key) where T : notnull =>
+        configuration.GetSectionAsOption(key).FlatMap(s => s.Get<T>().AsOption());
 
     public static IConfigurationSection RequireSection(this IConfiguration configuration, string key) =>
         configuration.GetSectionAsOption(key).OrElseThrow(() => new MissingConfigurationException(GetCompleteKey(configuration, key)));
@@ -29,7 +29,7 @@ public static class ConfigurationExtensions
         configuration.RequireValue<string>(ConnectionStringKey(name));
 
     public static T RequireValue<T>(this IConfiguration configuration, string key) =>
-        configuration.RequireSection(key).Get<T>();
+        configuration.RequireSection(key).Get<T>()!;
 
     private static string ConnectionStringKey(string name) => $"ConnectionStrings:{name}";
 

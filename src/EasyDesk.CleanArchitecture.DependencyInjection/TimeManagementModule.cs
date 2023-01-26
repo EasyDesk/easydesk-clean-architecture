@@ -33,7 +33,7 @@ public class TimeManagementOptions
 
 public static class TimeManagementModuleExtensions
 {
-    public static AppBuilder AddTimeManagement(this AppBuilder builder, Action<TimeManagementOptions> configure = null)
+    public static AppBuilder AddTimeManagement(this AppBuilder builder, Action<TimeManagementOptions>? configure = null)
     {
         var options = new TimeManagementOptions();
         configure?.Invoke(options);

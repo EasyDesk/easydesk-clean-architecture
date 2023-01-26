@@ -109,7 +109,7 @@ public class RebusTestBus : ITestBus
         GC.SuppressFinalize(this);
     }
 
-    public static RebusTestBus CreateFromServices(IServiceProvider serviceProvider, string inputQueueAddress = null, Duration? defaultTimeout = null)
+    public static RebusTestBus CreateFromServices(IServiceProvider serviceProvider, string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
         var options = serviceProvider.GetRequiredService<RebusMessagingOptions>();
         var serviceEndpoint = serviceProvider.GetRequiredService<RebusEndpoint>();

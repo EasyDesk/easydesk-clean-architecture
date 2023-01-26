@@ -4,7 +4,8 @@ namespace EasyDesk.CleanArchitecture.Application.Mapping;
 
 public abstract class MappingHandler<T, F, R> : IHandler<T, R>
     where T : IDispatchable<R>
-    where R : IMappableFrom<F, R>
+    where F : notnull
+    where R : notnull, IMappableFrom<F, R>
 {
     public Task<Result<R>> Handle(T request) => Process(request).ThenMap(R.MapFrom);
 

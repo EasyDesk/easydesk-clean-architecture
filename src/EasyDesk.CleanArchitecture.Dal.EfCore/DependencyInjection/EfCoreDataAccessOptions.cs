@@ -15,8 +15,8 @@ public class EfCoreDataAccessOptions<TBuilder, TExtension>
     private const string MigrationsSchema = "ef";
 
     private readonly IEfCoreProvider<TBuilder, TExtension> _provider;
-    private Action<DbContextOptionsBuilder> _configureDbContextOptions;
-    private Action<TBuilder> _configureProviderOptions;
+    private Action<DbContextOptionsBuilder>? _configureDbContextOptions;
+    private Action<TBuilder>? _configureProviderOptions;
 
     public EfCoreDataAccessOptions(IEfCoreProvider<TBuilder, TExtension> provider)
     {
@@ -46,7 +46,7 @@ public class EfCoreDataAccessOptions<TBuilder, TExtension>
 
     internal void RegisterDbContext<C>(
         IServiceCollection services,
-        Action<IServiceProvider, TBuilder> configure = null)
+        Action<IServiceProvider, TBuilder>? configure = null)
         where C : DbContext
     {
         services.AddDbContext<C>((provider, options) =>

@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Dispatching;
 
@@ -14,6 +13,7 @@ public class DispatcherTests
     public record StringRequest : IDispatchable<string>;
 
     public abstract class GenericStepBase<T, R> : IPipelineStep<T, R>
+        where R : notnull
     {
         private readonly Action _before;
         private readonly Action _after;
@@ -34,6 +34,7 @@ public class DispatcherTests
     }
 
     public class GenericStepA<T, R> : GenericStepBase<T, R>
+        where R : notnull
     {
         public GenericStepA(Action<string> notifier) : base(() => notifier("A1"), () => notifier("A2"))
         {
@@ -41,6 +42,7 @@ public class DispatcherTests
     }
 
     public class GenericStepB<T, R> : GenericStepBase<T, R>
+        where R : notnull
     {
         public GenericStepB(Action<string> notifier) : base(() => notifier("B1"), () => notifier("B2"))
         {

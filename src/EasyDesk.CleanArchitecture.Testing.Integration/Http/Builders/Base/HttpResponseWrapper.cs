@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public class HttpResponseWrapper<T, M>
+    where T : notnull
 {
     private readonly JsonSerializerSettings _jsonSerializerSettings;
     private readonly AsyncCache<ImmutableHttpResponseMessage> _response;
@@ -26,7 +27,7 @@ public class HttpResponseWrapper<T, M>
         }
     }
 
-    private async Task<ResponseDto<T, M>> ParseContent()
+    private async Task<ResponseDto<T, M>?> ParseNullableContent()
     {
         var bodyAsJson = (await GetResponse()).Content.AsString();
         try
@@ -39,8 +40,10 @@ public class HttpResponseWrapper<T, M>
         }
     }
 
+    private async Task<ResponseDto<T, M>> ParseContent() => await ParseNullableContent() ?? throw new InvalidOperationException($"Response was successful but the body was empty. Expected a {typeof(T).Name}.");
+
     public Task<VerifiableHttpResponse<T, M>> AsVerifiable() =>
-        GetResponse().FlatMap(async r => new VerifiableHttpResponse<T, M>(r.StatusCode, await ParseContent()));
+        GetResponse().FlatMap(async r => new VerifiableHttpResponse<T, M>(r.StatusCode, await ParseNullableContent()));
 
     public async Task<T> AsData()
     {

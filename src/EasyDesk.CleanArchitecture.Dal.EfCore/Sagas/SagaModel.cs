@@ -6,15 +6,15 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 
 internal class SagaModel : IMultitenantEntity
 {
-    public string Id { get; set; }
+    public string? Id { get; set; }
 
-    public string Type { get; set; }
+    public string? Type { get; set; }
 
-    public byte[] State { get; set; }
+    public byte[]? State { get; set; }
 
-    public int Version { get; set; }
+    public int? Version { get; set; }
 
-    public string TenantId { get; set; }
+    public string? TenantId { get; set; }
 
     public class Configuration : IEntityTypeConfiguration<SagaModel>
     {

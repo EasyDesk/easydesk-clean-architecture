@@ -8,7 +8,7 @@ public static class JsonSettingsConfiguratorExtensions
 {
     public static JsonSerializerSettings CreateSettings(
         this JsonSettingsConfigurator configurator,
-        JsonSerializerSettings settings = null)
+        JsonSerializerSettings? settings = null)
     {
         var actualSettings = settings ?? new JsonSerializerSettings();
         configurator(actualSettings);

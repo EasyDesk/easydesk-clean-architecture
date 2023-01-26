@@ -26,8 +26,4 @@
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Dal.EfCore\EasyDesk.CleanArchitecture.Dal.EfCore.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="EasyDesk.Tools" Version="7.6.1" />
-  </ItemGroup>
-
 </Project>

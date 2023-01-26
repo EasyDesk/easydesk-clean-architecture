@@ -37,7 +37,7 @@ public static class SqlServerExtensions
     public static AppBuilder AddPostgreSqlDataAccess<T>(
         this AppBuilder builder,
         string connectionString,
-        Action<EfCoreDataAccessOptions<Builder, Extension>> configure = null)
+        Action<EfCoreDataAccessOptions<Builder, Extension>>? configure = null)
         where T : DomainContext<T>
     {
 #pragma warning disable EF1001

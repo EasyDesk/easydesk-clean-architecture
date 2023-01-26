@@ -9,8 +9,8 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
 public class TestWebServiceBuilder
 {
     private readonly Type _startupAssemblyMarker;
-    private Action<IHostBuilder> _configureHost;
-    private Action<IWebHostBuilder> _configureWebHost;
+    private Action<IHostBuilder>? _configureHost;
+    private Action<IWebHostBuilder>? _configureWebHost;
 
     public TestWebServiceBuilder(Type startupAssemblyMarker)
     {
@@ -41,7 +41,7 @@ public class TestWebServiceBuilder
     public ITestWebService Build()
     {
         var testWebServiceType = typeof(TestWebService<>).MakeGenericType(_startupAssemblyMarker);
-        return (ITestWebService)Activator.CreateInstance(testWebServiceType, _configureHost, _configureWebHost);
+        return (ITestWebService)Activator.CreateInstance(testWebServiceType, _configureHost, _configureWebHost)!;
     }
 
     private class TestWebService<T> : WebApplicationFactory<T>, ITestWebService

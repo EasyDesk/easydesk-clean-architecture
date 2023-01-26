@@ -5,6 +5,7 @@ using NodaTime;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Services;
 
 public static class InjectedServiceCheckFactory<TService>
+        where TService : notnull
 {
     private static readonly Duration _defaultPollTimeout = Duration.FromSeconds(10);
     private static readonly Duration _defaultQueryInterval = Duration.FromMilliseconds(200);

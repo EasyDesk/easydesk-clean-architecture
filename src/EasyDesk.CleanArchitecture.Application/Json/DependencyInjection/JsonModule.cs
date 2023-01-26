@@ -8,9 +8,9 @@ namespace EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 
 public class JsonModule : AppModule
 {
-    private readonly JsonSettingsConfigurator _configurator;
+    private readonly JsonSettingsConfigurator? _configurator;
 
-    public JsonModule(JsonSettingsConfigurator configurator = null)
+    public JsonModule(JsonSettingsConfigurator? configurator = null)
     {
         _configurator = configurator;
     }
@@ -39,7 +39,7 @@ public class JsonModule : AppModule
 
 public static class JsonModuleExtensions
 {
-    public static AppBuilder AddJsonSerialization(this AppBuilder builder, JsonSettingsConfigurator configurator = null)
+    public static AppBuilder AddJsonSerialization(this AppBuilder builder, JsonSettingsConfigurator? configurator = null)
     {
         return builder.AddModule(new JsonModule(configurator));
     }
