@@ -1,0 +1,16 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: Error at line 1. The accepted number of column is 1.,
+        Meta: {
+          propertyName: petListCsv
+        }
+      }
+    ],
+    Meta: {}
+  }
+}

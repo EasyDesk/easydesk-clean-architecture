@@ -1,0 +1,16 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: File is too large (max 4194304 bytes),
+        Meta: {
+          propertyName: petListCsv
+        }
+      }
+    ],
+    Meta: {}
+  }
+}

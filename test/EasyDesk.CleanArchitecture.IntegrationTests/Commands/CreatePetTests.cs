@@ -206,4 +206,58 @@ public class CreatePetTests : SampleIntegrationTest
 
         await Verify(response);
     }
+
+    [Fact]
+    public async Task BulkCreatePetsFromCsv_ShouldFailWithFileTooLarge()
+    {
+        var timeout = Duration.FromSeconds(15);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        var response = await Http
+            .CreatePetsFromCsv(person.Id, PetGenerator(1_000_000).ConcatStrings("\n"))
+            .Send(timeout)
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task BulkCreatePetsFromCsv_ShouldFailWithInvalidFile()
+    {
+        var timeout = Duration.FromSeconds(15);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        var response = await Http
+            .CreatePetsFromCsv(person.Id, PetGenerator(2).ConcatStrings(";\n"))
+            .Send(timeout)
+            .AsVerifiable();
+
+        await Verify(response);
+    }
 }
