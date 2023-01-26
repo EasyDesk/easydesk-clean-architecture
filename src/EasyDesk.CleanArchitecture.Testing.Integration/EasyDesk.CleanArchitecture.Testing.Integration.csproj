@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Testing" Version="0.7.0" />
+    <PackageReference Include="EasyDesk.Testing" Version="0.8.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.2" />
     <PackageReference Include="NodaTime.Testing" Version="3.1.6" />
     <PackageReference Include="Respawn" Version="6.0.0" />
