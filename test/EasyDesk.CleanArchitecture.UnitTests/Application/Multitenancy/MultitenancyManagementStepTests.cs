@@ -4,7 +4,6 @@ using EasyDesk.CleanArchitecture.Testing.Unit.Application;
 using EasyDesk.Testing.MatrixExpansion;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Multitenancy;
 
@@ -69,7 +68,7 @@ public class MultitenancyManagementStepTests
     {
         var result = await Run(request);
         result.ShouldBe(expectedError);
-        _tenantInitializer.DidNotReceiveWithAnyArgs().Initialize(default);
+        _tenantInitializer.DidNotReceiveWithAnyArgs().Initialize(default!);
         await _next.DidNotReceiveWithAnyArgs()();
     }
 

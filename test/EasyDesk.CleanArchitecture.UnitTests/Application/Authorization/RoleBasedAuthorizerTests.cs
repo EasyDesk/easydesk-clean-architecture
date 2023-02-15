@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
@@ -31,7 +30,7 @@ public class RoleBasedAuthorizerTests
 
     private RoleBasedAuthorizer CreateAuthorizer<T>() => new(_permissionsProvider);
 
-    private async Task<bool> IsAuthorized<T>() where T : new() =>
+    private async Task<bool> IsAuthorized<T>() where T : notnull, new() =>
         await CreateAuthorizer<T>().IsAuthorized(new T(), _userInfo);
 
     private void SetPermissions(params string[] permissions)
@@ -40,13 +39,13 @@ public class RoleBasedAuthorizerTests
         _permissionsProvider.GetPermissionsForUser(_userInfo).Returns(permissionSet);
     }
 
-    private async Task ShouldNotBeAuthorized<T>() where T : new()
+    private async Task ShouldNotBeAuthorized<T>() where T : notnull, new()
     {
         var result = await IsAuthorized<T>();
         result.ShouldBe(false);
     }
 
-    private async Task ShouldBeAuthorized<T>() where T : new()
+    private async Task ShouldBeAuthorized<T>() where T : notnull, new()
     {
         var result = await IsAuthorized<T>();
         result.ShouldBe(true);

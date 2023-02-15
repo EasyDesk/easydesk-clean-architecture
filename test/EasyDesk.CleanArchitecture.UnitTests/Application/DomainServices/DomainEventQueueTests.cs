@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
 using NSubstitute;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.DomainServices;
 
@@ -20,7 +19,7 @@ public class DomainEventQueueTests
     public DomainEventQueueTests()
     {
         _publisher = Substitute.For<IDomainEventPublisher>();
-        _publisher.Publish(default).ReturnsForAnyArgs(Ok);
+        _publisher.Publish(default!).ReturnsForAnyArgs(Ok);
 
         _sut = new(_publisher);
     }

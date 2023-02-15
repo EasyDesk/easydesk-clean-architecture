@@ -63,8 +63,8 @@ public class DispatcherTests
     public DispatcherTests()
     {
         _pipeline = Substitute.For<IPipeline>();
-        _pipeline.GetSteps<StringRequest, string>(default).ReturnsForAnyArgs(Enumerable.Empty<IPipelineStep<StringRequest, string>>());
-        _pipeline.GetSteps<IntRequest, int>(default).ReturnsForAnyArgs(Enumerable.Empty<IPipelineStep<IntRequest, int>>());
+        _pipeline.GetSteps<StringRequest, string>(default!).ReturnsForAnyArgs(Enumerable.Empty<IPipelineStep<StringRequest, string>>());
+        _pipeline.GetSteps<IntRequest, int>(default!).ReturnsForAnyArgs(Enumerable.Empty<IPipelineStep<IntRequest, int>>());
 
         _intHandler = Substitute.For<IHandler<IntRequest, int>>();
         _intHandler.Handle(_intRequest).Returns(Success(IntValue));
@@ -73,10 +73,10 @@ public class DispatcherTests
         _stringHandler.Handle(_stringRequest).Returns(Success(StringValue));
     }
 
-    private Dispatcher CreateDispatcher(Action<IServiceCollection> configure = null)
+    private Dispatcher CreateDispatcher(Action<IServiceCollection>? configure = null)
     {
         var services = new ServiceCollection();
-        configure(services);
+        configure?.Invoke(services);
         return new Dispatcher(services.BuildServiceProvider(), _pipeline);
     }
 
@@ -102,7 +102,7 @@ public class DispatcherTests
 
         await Should.ThrowAsync<HandlerNotFoundException>(dispatcher.Dispatch(_intRequest));
 
-        _pipeline.DidNotReceiveWithAnyArgs().GetSteps<IntRequest, int>(default);
+        _pipeline.DidNotReceiveWithAnyArgs().GetSteps<IntRequest, int>(default!);
     }
 
     [Fact]
@@ -225,15 +225,17 @@ public class DispatcherTests
     }
 
     private void SetupPipeline<T, R>(params IPipelineStep<T, R>[] steps)
+        where R : notnull
     {
-        _pipeline.GetSteps<T, R>(default).ReturnsForAnyArgs(steps);
+        _pipeline.GetSteps<T, R>(default!).ReturnsForAnyArgs(steps);
     }
 
     private IPipelineStep<T, R> SubstituteForPipelineStep<T, R>()
         where T : IDispatchable<R>
+        where R : notnull
     {
         var step = Substitute.For<IPipelineStep<T, R>>();
-        step.Run(default, default).ReturnsForAnyArgs(x => x.Arg<NextPipelineStep<R>>()());
+        step.Run(default!, default!).ReturnsForAnyArgs(x => x.Arg<NextPipelineStep<R>>()());
         return step;
     }
 }

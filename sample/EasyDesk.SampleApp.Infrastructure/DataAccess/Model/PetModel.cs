@@ -14,22 +14,20 @@ public class PetModel : IPersistenceModelWithHydration<Pet, PetModel, int>, IMul
 {
     public int Id { get; set; }
 
-    public string? Nickname { get; set; }
+    required public string Nickname { get; set; }
 
     public Guid PersonId { get; set; }
 
     public string? TenantId { get; set; }
 
-    public PersonModel? Person { get; set; }
+    public PersonModel Person { get; set; } = null!;
 
     public static Expression<Func<PetModel, PetSnapshot>> Projection() =>
-        src => new(src.Id, src.Nickname!, src.PersonId);
+        src => new(src.Id, src.Nickname, src.PersonId);
 
-    public Pet ToDomain() => new(Id, Name.From(Nickname!), PersonId);
+    public Pet ToDomain() => new(Id, Name.From(Nickname), PersonId);
 
     public int GetHydrationData() => Id;
-
-    public static PetModel CreateDefaultPersistenceModel() => new();
 
     public static void ApplyChanges(Pet origin, PetModel destination)
     {
@@ -37,6 +35,13 @@ public class PetModel : IPersistenceModelWithHydration<Pet, PetModel, int>, IMul
         destination.Nickname = origin.Nickname;
         destination.PersonId = origin.OwnerId;
     }
+
+    public static PetModel ToPersistence(Pet origin) => new()
+    {
+        Id = origin.Id,
+        Nickname = origin.Nickname,
+        PersonId = origin.OwnerId,
+    };
 
     public class Configuration : IEntityTypeConfiguration<PetModel>
     {

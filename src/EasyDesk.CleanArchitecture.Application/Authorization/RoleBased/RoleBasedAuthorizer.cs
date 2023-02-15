@@ -15,8 +15,9 @@ internal class RoleBasedAuthorizer : IAuthorizer
     }
 
     public async Task<bool> IsAuthorized<T>(T request, UserInfo userInfo)
+        where T : notnull
     {
-        var requirementAttributes = request!.GetType().GetCustomAttributes<RequireAnyOfAttribute>();
+        var requirementAttributes = request.GetType().GetCustomAttributes<RequireAnyOfAttribute>();
         if (requirementAttributes.IsEmpty())
         {
             return true;

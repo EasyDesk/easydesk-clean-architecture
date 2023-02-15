@@ -6,6 +6,7 @@ using System.Reflection;
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public class AuthorizationStep<T, R> : IPipelineStep<T, R>
+    where T : notnull
     where R : notnull
 {
     private readonly IAuthorizer _authorizer;

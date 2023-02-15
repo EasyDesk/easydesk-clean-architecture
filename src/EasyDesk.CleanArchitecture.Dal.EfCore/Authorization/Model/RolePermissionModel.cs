@@ -7,9 +7,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 
 internal class RolePermissionModel : IMultitenantEntity
 {
-    public string? RoleId { get; set; }
+    required public string RoleId { get; set; }
 
-    public string? PermissionName { get; set; }
+    required public string PermissionName { get; set; }
 
     public string? TenantId { get; set; }
 

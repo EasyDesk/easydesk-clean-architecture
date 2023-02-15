@@ -5,7 +5,7 @@ public interface IPersistenceModel<TDomain, TPersistence>
 {
     TDomain ToDomain();
 
-    static abstract TPersistence CreateDefaultPersistenceModel();
+    static abstract TPersistence ToPersistence(TDomain origin);
 
     static abstract void ApplyChanges(TDomain origin, TPersistence destination);
 }
@@ -15,15 +15,4 @@ public interface IPersistenceModelWithHydration<TDomain, TPersistence, THydratio
     where TPersistence : IPersistenceModelWithHydration<TDomain, TPersistence, THydrationData>
 {
     THydrationData GetHydrationData();
-}
-
-public static class ModelConverterExtensions
-{
-    public static TPersistence ToPersistence<TDomain, TPersistence>(this TDomain aggregate)
-        where TPersistence : IPersistenceModel<TDomain, TPersistence>
-    {
-        var persistenceModel = TPersistence.CreateDefaultPersistenceModel();
-        TPersistence.ApplyChanges(aggregate, persistenceModel);
-        return persistenceModel;
-    }
 }

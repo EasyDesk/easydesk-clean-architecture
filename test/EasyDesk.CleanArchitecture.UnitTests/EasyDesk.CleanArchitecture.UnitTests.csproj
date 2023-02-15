@@ -31,7 +31,6 @@
 
   <PropertyGroup>
     <RootFolder>..\..</RootFolder>
-    <Nullable>disable</Nullable>
   </PropertyGroup>
 
 </Project>

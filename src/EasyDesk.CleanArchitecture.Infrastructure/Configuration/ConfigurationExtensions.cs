@@ -29,7 +29,7 @@ public static class ConfigurationExtensions
         configuration.RequireValue<string>(ConnectionStringKey(name));
 
     public static T RequireValue<T>(this IConfiguration configuration, string key) =>
-        configuration.RequireSection(key).Get<T>()!;
+        configuration.RequireSection(key).Get<T>() ?? throw new InvalidOperationException($"Section {key} couldn't bind to type {typeof(T)}.");
 
     private static string ConnectionStringKey(string name) => $"ConnectionStrings:{name}";
 

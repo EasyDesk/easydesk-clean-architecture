@@ -40,7 +40,7 @@ public static partial class Extensions
         this WebApplicationBuilder builder,
         Action<AppBuilder>? configure = null)
     {
-        var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name!;
+        var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name ?? throw new InvalidOperationException("Calling assembly name not found.");
         var match = WebAssemblyRegex().Match(callingAssemblyName);
         var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
 

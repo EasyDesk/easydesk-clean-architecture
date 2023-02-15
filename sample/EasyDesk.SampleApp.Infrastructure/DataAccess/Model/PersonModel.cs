@@ -16,9 +16,9 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
 {
     public Guid Id { get; set; }
 
-    public string? FirstName { get; set; }
+    required public string FirstName { get; set; }
 
-    public string? LastName { get; set; }
+    required public string LastName { get; set; }
 
     public LocalDate DateOfBirth { get; set; }
 
@@ -26,16 +26,14 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
 
     public bool IsDeleted { get; set; }
 
-    public string? CreatedBy { get; set; }
+    required public string CreatedBy { get; set; }
 
     public ICollection<PetModel> Pets { get; set; } = new HashSet<PetModel>();
 
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
-        src => new(src.Id, src.FirstName!, src.LastName!, src.DateOfBirth, src.CreatedBy!);
+        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy);
 
-    public Person ToDomain() => new(Id, Name.From(FirstName!), Name.From(LastName!), DateOfBirth, AdminId.From(CreatedBy!));
-
-    public static PersonModel CreateDefaultPersistenceModel() => new();
+    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy));
 
     public static void ApplyChanges(Person origin, PersonModel destination)
     {
@@ -45,6 +43,15 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
         destination.DateOfBirth = origin.DateOfBirth;
         destination.CreatedBy = origin.CreatedBy;
     }
+
+    public static PersonModel ToPersistence(Person origin) => new()
+    {
+        Id = origin.Id,
+        FirstName = origin.FirstName,
+        LastName = origin.LastName,
+        CreatedBy = origin.CreatedBy,
+        DateOfBirth = origin.DateOfBirth,
+    };
 
     public class Configuration : IEntityTypeConfiguration<PersonModel>
     {

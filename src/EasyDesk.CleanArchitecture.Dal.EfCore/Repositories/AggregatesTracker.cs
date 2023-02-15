@@ -22,7 +22,7 @@ internal class AggregatesTracker<A, P>
         }
         else
         {
-            var persistenceModel = aggregate.ToPersistence<A, P>();
+            var persistenceModel = P.ToPersistence(aggregate);
             _modelsMap.Add(aggregate, persistenceModel);
             return (persistenceModel, false);
         }

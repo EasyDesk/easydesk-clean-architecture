@@ -17,7 +17,7 @@ public static class ConversionUtils
         {
             dstByKey.GetOption(srcKey(s)).Match(
                 some: m1 => P.ApplyChanges(s, m1),
-                none: () => dst.Add(s.ToPersistence<D, P>()));
+                none: () => dst.Add(P.ToPersistence(s)));
         }
 
         var srcKeys = src.Select(srcKey).ToHashSet();

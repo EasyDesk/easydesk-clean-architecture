@@ -39,7 +39,7 @@ internal class EfCoreSagaManager : ISagaManager
         return CreateReferenceFromSagaModel<TState>(sagaModel);
     }
 
-    private string GetSagaIdAsString<TId>(TId id) where TId : notnull => id.ToString()!;
+    private string GetSagaIdAsString<TId>(TId id) where TId : notnull => id.ToString() ?? throw new InvalidOperationException($"{typeof(TId)}.ToString returned null.");
 
     private string FormatSagaType<T>() => FormatSagaType(typeof(T));
 

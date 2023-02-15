@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Dispatching;
@@ -13,21 +12,22 @@ public class GenericPipelineTests
     private record SpecificRequest : Request;
 
     private abstract record BaseStep<T, R> : IPipelineStep<T, R>
+        where R : notnull
     {
         public Task<Result<R>> Run(T request, NextPipelineStep<R> next) => throw new NotImplementedException();
     }
 
-    private record OpenGenericStep<T, R> : BaseStep<T, R>;
+    private record OpenGenericStep<T, R> : BaseStep<T, R> where R : notnull;
 
     private record OpenGenericRequestStep<T> : BaseStep<T, Nothing>;
 
-    private record OpenGenericResultStep<R> : BaseStep<Request, R>;
+    private record OpenGenericResultStep<R> : BaseStep<Request, R> where R : notnull;
 
-    private record OpenGenericResultStepSpecific<R> : BaseStep<SpecificRequest, R>;
+    private record OpenGenericResultStepSpecific<R> : BaseStep<SpecificRequest, R> where R : notnull;
 
     private record ClosedStep : BaseStep<Request, Nothing>;
 
-    private record StepWithService<T, R>(TestService TestService) : BaseStep<T, R>;
+    private record StepWithService<T, R>(TestService TestService) : BaseStep<T, R> where R : notnull;
 
     private record StepWithConstraints<T, R> : BaseStep<T, R>
         where T : Request
