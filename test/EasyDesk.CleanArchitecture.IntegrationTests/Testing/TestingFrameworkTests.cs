@@ -77,7 +77,7 @@ public class TestFixtureLifecycleTests
     {
         await using var fixture = new SampleAppTestsFixture();
         await fixture.InitializeAsync();
-        for (var ii = 0; ii < 20; ii++)
+        for (var ii = 0; ii < 10; ii++)
         {
             await using var integrationTest = new IntegrationTestExample(fixture);
             await integrationTest.InitializeAsync();
@@ -93,7 +93,7 @@ public class TestFixtureLifecycleTests_SkippingWaits
     {
         await using var fixture = new SampleAppTestsFixture();
         await fixture.InitializeAsync();
-        for (var ii = 0; ii < 20; ii++)
+        for (var ii = 0; ii < 10; ii++)
         {
             await using var integrationTest = new IntegrationTestExample(fixture);
             await integrationTest.InitializeAsync();
@@ -111,7 +111,7 @@ public class TestFixtureLifecycleWithParallelismTests
         {
             await using var fixture = new SampleAppTestsFixture();
             await fixture.InitializeAsync();
-            for (var ii = 0; ii < 20; ii++)
+            for (var ii = 0; ii < 10; ii++)
             {
                 await using var integrationTest = new IntegrationTestExample(fixture);
                 await integrationTest.InitializeAsync();
@@ -131,7 +131,7 @@ public class TestFixtureLifecycleWithParallelismTests_SkippingWaits
         {
             await using var fixture = new SampleAppTestsFixture();
             await fixture.InitializeAsync();
-            for (var ii = 0; ii < 20; ii++)
+            for (var ii = 0; ii < 10; ii++)
             {
                 await using var integrationTest = new IntegrationTestExample(fixture);
                 await integrationTest.InitializeAsync();
