@@ -14,6 +14,7 @@ public class ValidationModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
+        ValidatorOptions.Global.LanguageManager.Enabled = false;
         services.AddValidatorsFromAssembly(app.GetLayerAssembly(CleanArchitectureLayer.Application));
     }
 }
