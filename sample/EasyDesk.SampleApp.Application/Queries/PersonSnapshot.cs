@@ -9,8 +9,9 @@ public record PersonSnapshot(
     string FirstName,
     string LastName,
     LocalDate DateOfBirth,
-    string CreatedBy) : IMappableFrom<Person, PersonSnapshot>
+    string CreatedBy,
+    AddressValue Residence) : IMappableFrom<Person, PersonSnapshot>
 {
     public static PersonSnapshot MapFrom(Person src) =>
-        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy);
+        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, AddressValue.MapFrom(src.Residence));
 }

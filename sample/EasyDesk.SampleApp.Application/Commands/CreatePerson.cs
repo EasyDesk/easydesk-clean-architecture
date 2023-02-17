@@ -15,7 +15,8 @@ namespace EasyDesk.SampleApp.Application.Commands;
 public record CreatePerson(
     string FirstName,
     string LastName,
-    LocalDate DateOfBirth) : ICommandRequest<PersonSnapshot>;
+    LocalDate DateOfBirth,
+    AddressValue Residence) : ICommandRequest<PersonSnapshot>;
 
 public class CreatePersonValidator : AbstractValidator<CreatePerson>
 {
@@ -43,7 +44,8 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSn
             Name.From(command.FirstName),
             Name.From(command.LastName),
             command.DateOfBirth,
-            AdminId.From(_contextProvider.RequireUserInfo().UserId));
+            AdminId.From(_contextProvider.RequireUserInfo().UserId),
+            command.Residence.MapToDomain());
         _personRepository.Save(person);
         return Task.FromResult<Result<Person>>(person);
     }

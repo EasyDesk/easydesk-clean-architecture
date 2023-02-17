@@ -30,8 +30,10 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
 
     public ICollection<PetModel> Pets { get; set; } = new HashSet<PetModel>();
 
+    required public AddressModel Residence { get; set; }
+
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
-        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy);
+        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, src.Residence);
 
     public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy));
 
