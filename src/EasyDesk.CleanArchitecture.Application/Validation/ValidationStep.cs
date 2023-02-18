@@ -32,6 +32,6 @@ public class ValidationStep<T, R> : IPipelineStep<T, R>
             .Select(x => Errors.InvalidInput(x.PropertyName, x.ErrorMessage))
             .ToList();
 
-        return errors.Any() ? Errors.Multiple(errors[0], errors.Skip(1)) : await next();
+        return errors.Any() ? Errors.Multiple(errors.First(), errors.Skip(1)) : await next();
     }
 }

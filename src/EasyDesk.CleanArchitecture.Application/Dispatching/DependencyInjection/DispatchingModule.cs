@@ -23,6 +23,7 @@ public class DispatchingModule : AppModule
         RegisterRequestHandlers(services, app);
 
         Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
+        Pipeline.AddStep(typeof(DomainConstraintViolationsHandlingStep<,>));
 
         var steps = Pipeline.GetOrderedSteps().ToList();
         var pipelineDesc = "------------------------------------------------------------------------------\nRequest pipeline\n------------------------------------------------------------------------------\n";
