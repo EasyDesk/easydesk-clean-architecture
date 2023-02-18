@@ -1,48 +1,47 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
-using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
 public record AddressModel(
-    string StreetType,
+    string? StreetType,
     string StreetName,
-    string StreetNumber,
-    string City,
-    string District,
-    string Region,
-    string State,
-    string Country)
+    string? StreetNumber,
+    string? City,
+    string? District,
+    string? Region,
+    string? State,
+    string? Country)
     : IPersistenceObject<Address, AddressModel>
 {
-    public static Expression<Func<AddressModel, AddressValue>> Projection() => src => new(
-        src.StreetType,
-        src.StreetName,
-        src.StreetNumber,
-        src.City,
-        src.District,
-        src.Region,
-        src.State,
-        src.Country);
-
     public static AddressModel ToPersistence(Address origin) => new(
-        origin.StreetType,
+        origin.StreetType.Map(n => n.Value).OrElseNull(),
         origin.StreetName,
-        origin.StreetNumber,
-        origin.City,
-        origin.District,
-        origin.Region,
-        origin.State,
-        origin.Country);
+        origin.StreetNumber.Map(n => n.Value).OrElseNull(),
+        origin.City.Map(n => n.Value).OrElseNull(),
+        origin.District.Map(n => n.Value).OrElseNull(),
+        origin.Region.Map(n => n.Value).OrElseNull(),
+        origin.State.Map(n => n.Value).OrElseNull(),
+        origin.Country.Map(n => n.Value).OrElseNull());
 
     public Address ToDomain() => new(
-        new PlaceName(StreetType),
+        StreetType.AsOption().Map(n => new PlaceName(n)),
         new PlaceName(StreetName),
-        new PlaceName(StreetNumber),
-        new PlaceName(City),
-        new PlaceName(District),
-        new PlaceName(Region),
-        new PlaceName(State),
-        new PlaceName(Country));
+        StreetNumber.AsOption().Map(n => new PlaceName(n)),
+        City.AsOption().Map(n => new PlaceName(n)),
+        District.AsOption().Map(n => new PlaceName(n)),
+        Region.AsOption().Map(n => new PlaceName(n)),
+        State.AsOption().Map(n => new PlaceName(n)),
+        Country.AsOption().Map(n => new PlaceName(n)));
+
+    public AddressValue Projection() => new(
+        StreetType.AsOption(),
+        StreetName,
+        StreetNumber.AsOption(),
+        City.AsOption(),
+        District.AsOption(),
+        Region.AsOption(),
+        State.AsOption(),
+        Country.AsOption());
 }

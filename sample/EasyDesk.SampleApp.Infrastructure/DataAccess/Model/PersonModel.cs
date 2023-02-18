@@ -32,10 +32,10 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
 
     required public AddressModel Residence { get; set; }
 
-    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() =>
-        src => new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, src.Residence);
+    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src =>
+        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, src.Residence.Projection());
 
-    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy));
+    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain());
 
     public static void ApplyChanges(Person origin, PersonModel destination)
     {
@@ -53,6 +53,7 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
         LastName = origin.LastName,
         CreatedBy = origin.CreatedBy,
         DateOfBirth = origin.DateOfBirth,
+        Residence = AddressModel.ToPersistence(origin.Residence),
     };
 
     public class Configuration : IEntityTypeConfiguration<PersonModel>
@@ -71,6 +72,8 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
                 .WithOne(x => x.Person)
                 .HasForeignKey(x => x.PersonId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Property(x => x.Residence).HasColumnType("jsonb");
         }
     }
 }

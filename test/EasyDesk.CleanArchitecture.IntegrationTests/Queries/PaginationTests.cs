@@ -40,7 +40,8 @@ public class PaginationTests : SampleIntegrationTest
             new(
                 FirstName: $"Foo{index:0000}",
                 LastName: $"Bar{index:0000}",
-                DateOfBirth: new LocalDate(2000, 1, 1).PlusDays(index)));
+                DateOfBirth: new LocalDate(2000, 1, 1).PlusDays(index),
+                Residence: new("some name idk", "street", index.ToString())));
 
     private HttpSingleRequestExecutor<IEnumerable<PersonDto>> GetPeople(int pageSize) => Http
         .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)

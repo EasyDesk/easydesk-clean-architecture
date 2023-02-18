@@ -42,7 +42,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
     }
 
     public HttpSingleRequestExecutor<PersonDto> CreatePerson(int id) => Http
-        .CreatePerson(new($"FirstName_{id}", $"LastName_{id}", new LocalDate(1997, 1, 1).PlusDays(id)));
+        .CreatePerson(new($"FirstName_{id}", $"LastName_{id}", new LocalDate(1997, 1, 1).PlusDays(id), new("a place")));
 
     public static async Task CreateAndCheckPeopleAndPets(int count, IntegrationTestExample integrationTest, bool skipWaits = false)
     {
@@ -60,7 +60,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
             {
                 await http
                     .GetPeople()
-                    .PollUntil(people => people.Count() == count, Duration.FromMilliseconds(100), Duration.FromSeconds(15))
+                    .PollUntil(people => people.Count() == count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
                     .EnsureSuccess();
                 await webService.WaitConditionUnderTenant<SampleAppContext>(
                     TenantId.Create(Tenant),

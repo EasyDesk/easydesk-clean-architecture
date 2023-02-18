@@ -22,6 +22,7 @@ public class DeletePersonTests : SampleIntegrationTest
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
     private const string AdminId = "test-admin";
+    private static readonly AddressDto _address = new("somewhere");
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
     public DeletePersonTests(SampleAppTestsFixture fixture) : base(fixture)
@@ -43,7 +44,7 @@ public class DeletePersonTests : SampleIntegrationTest
     private async Task<PersonDto> CreateTestPerson()
     {
         return await Http
-            .Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth))
+            .Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth, _address))
             .Send()
             .AsData();
     }

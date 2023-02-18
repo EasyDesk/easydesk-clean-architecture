@@ -20,7 +20,8 @@ public class CreatePersonTests : SampleIntegrationTest
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
         LastName: "Bar",
-        DateOfBirth: new LocalDate(1996, 2, 2));
+        DateOfBirth: new LocalDate(1996, 2, 2),
+        Residence: new("Calvin", "street", "15", "New York", null, null, "New York State", "USA"));
 
     public CreatePersonTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -48,6 +49,17 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task ShouldSucceed()
     {
         var response = await CreatePerson()
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldFailWithEmptyAddress()
+    {
+        var response = await Http
+            .CreatePerson(_body with { Residence = new(string.Empty) })
             .Send()
             .AsVerifiable();
 
@@ -222,7 +234,8 @@ public class CreatePersonTests : SampleIntegrationTest
             var body = new CreatePersonBodyDto(
                 $"test-name-{i}",
                 $"test-last-name-{i}",
-                new LocalDate(1992, 3, 12).PlusDays(i));
+                new LocalDate(1992, 3, 12).PlusDays(i),
+                new("number", StreetNumber: i.ToString()));
             await Http.CreatePerson(body).Send().EnsureSuccess();
         }
 

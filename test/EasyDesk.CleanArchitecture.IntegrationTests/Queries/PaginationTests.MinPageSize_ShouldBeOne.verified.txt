@@ -7,7 +7,17 @@
         FirstName: Foo0000,
         LastName: Bar0000,
         DateOfBirth: LocalDate_1,
-        CreatedBy: test-admin-a
+        CreatedBy: test-admin-a,
+        Residence: {
+          StreetName: some name idk,
+          StreetType: street,
+          StreetNumber: 0,
+          City: null,
+          District: null,
+          Region: null,
+          State: null,
+          Country: null
+        }
       }
     ],
     Errors: [],

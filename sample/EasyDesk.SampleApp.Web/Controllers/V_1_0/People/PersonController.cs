@@ -24,7 +24,7 @@ public class PersonController : CleanArchitectureController
     [HttpPost(PersonRoutes.CreatePerson)]
     public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
-        return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth))
+        return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth, body.Residence.ToValue()))
             .Map(PersonDto.MapFrom)
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }

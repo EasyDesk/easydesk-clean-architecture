@@ -6,7 +6,17 @@
       FirstName: Foo,
       LastName: Bar,
       DateOfBirth: LocalDate_1,
-      CreatedBy: test-admin
+      CreatedBy: test-admin,
+      Residence: {
+        StreetName: Calvin,
+        StreetType: street,
+        StreetNumber: 15,
+        City: New York,
+        District: null,
+        Region: null,
+        State: New York State,
+        Country: USA
+      }
     },
     Errors: [],
     Meta: {}

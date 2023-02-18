@@ -57,7 +57,8 @@ public class IncomingCommandsTests : SampleIntegrationTest
             .CreatePerson(new(
                 FirstName: "Foo",
                 LastName: "Bar",
-                DateOfBirth: new LocalDate(1996, 2, 2)))
+                DateOfBirth: new LocalDate(1996, 2, 2),
+                Residence: new("unknown")))
             .Tenant(tenantName)
             .AuthenticateAs(adminId)
             .Send()

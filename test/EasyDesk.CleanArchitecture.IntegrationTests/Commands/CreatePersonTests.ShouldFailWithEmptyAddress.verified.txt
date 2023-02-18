@@ -1,0 +1,14 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: DomainError.EmptyPlaceName,
+        Detail: Empty place name,
+        Meta: {}
+      }
+    ],
+    Meta: {}
+  }
+}

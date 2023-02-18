@@ -6,7 +6,17 @@
       FirstName: Foo,
       LastName: Bar,
       DateOfBirth: LocalDate_1,
-      CreatedBy: test-admin
+      CreatedBy: test-admin,
+      Residence: {
+        StreetName: somewhere,
+        StreetType: null,
+        StreetNumber: null,
+        City: null,
+        District: null,
+        Region: null,
+        State: null,
+        Country: null
+      }
     },
     Errors: [],
     Meta: {}

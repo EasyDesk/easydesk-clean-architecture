@@ -22,8 +22,8 @@ public class PetModel : IPersistenceModelWithHydration<Pet, PetModel, int>, IMul
 
     public PersonModel Person { get; set; } = null!;
 
-    public static Expression<Func<PetModel, PetSnapshot>> Projection() =>
-        src => new(src.Id, src.Nickname, src.PersonId);
+    public static Expression<Func<PetModel, PetSnapshot>> Projection() => src =>
+        new(src.Id, src.Nickname, src.PersonId);
 
     public Pet ToDomain() => new(Id, Name.From(Nickname), PersonId);
 

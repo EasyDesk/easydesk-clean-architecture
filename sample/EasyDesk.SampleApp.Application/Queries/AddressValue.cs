@@ -3,32 +3,32 @@
 namespace EasyDesk.SampleApp.Application.Queries;
 
 public record AddressValue(
-    string StreetType,
+    Option<string> StreetType,
     string StreetName,
-    string StreetNumber,
-    string City,
-    string District,
-    string Region,
-    string State,
-    string Country)
+    Option<string> StreetNumber,
+    Option<string> City,
+    Option<string> District,
+    Option<string> Region,
+    Option<string> State,
+    Option<string> Country)
 {
     public static AddressValue MapFrom(Address address) => new(
-        address.StreetType,
+        address.StreetType.Map(n => n.Value),
         address.StreetName,
-        address.StreetNumber,
-        address.City,
-        address.District,
-        address.Region,
-        address.State,
-        address.Country);
+        address.StreetNumber.Map(n => n.Value),
+        address.City.Map(n => n.Value),
+        address.District.Map(n => n.Value),
+        address.Region.Map(n => n.Value),
+        address.State.Map(n => n.Value),
+        address.Country.Map(n => n.Value));
 
     public Address MapToDomain() => new(
-        new PlaceName(StreetType),
+        StreetType.Map(n => new PlaceName(n)),
         new PlaceName(StreetName),
-        new PlaceName(StreetNumber),
-        new PlaceName(City),
-        new PlaceName(District),
-        new PlaceName(Region),
-        new PlaceName(State),
-        new PlaceName(Country));
+        StreetNumber.Map(n => new PlaceName(n)),
+        City.Map(n => new PlaceName(n)),
+        District.Map(n => new PlaceName(n)),
+        Region.Map(n => new PlaceName(n)),
+        State.Map(n => new PlaceName(n)),
+        Country.Map(n => new PlaceName(n)));
 }

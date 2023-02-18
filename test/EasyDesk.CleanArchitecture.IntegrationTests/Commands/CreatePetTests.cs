@@ -40,7 +40,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            new("street", "Arthur IV", "12324", "New York", null, null, "New York State", "USA"));
 
         var person = await Http
             .CreatePerson(body)
@@ -68,7 +69,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("unknown"));
 
         var person = await Http
             .CreatePerson(body)
@@ -102,7 +104,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            new("_"));
 
         var person = await Http
             .CreatePerson(body)
@@ -128,7 +131,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("-"));
 
         var person = await Http
             .CreatePerson(body)
@@ -151,7 +155,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("asd"));
 
         var person = await Http
             .CreatePerson(body)
@@ -187,7 +192,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("__"));
 
         var person = await Http
             .CreatePerson(body)
@@ -214,7 +220,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            new("ooo"));
 
         var person = await Http
             .CreatePerson(body)
@@ -241,7 +248,8 @@ public class CreatePetTests : SampleIntegrationTest
         var body = new CreatePersonBodyDto(
             FirstName: "Foo",
             LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12));
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            new("..."));
 
         var person = await Http
             .CreatePerson(body)
