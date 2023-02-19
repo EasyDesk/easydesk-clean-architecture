@@ -41,8 +41,8 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSn
     protected override Task<Result<Person>> Process(CreatePerson command)
     {
         var person = Person.Create(
-            Name.From(command.FirstName),
-            Name.From(command.LastName),
+            new Name(command.FirstName),
+            new Name(command.LastName),
             command.DateOfBirth,
             AdminId.From(_contextProvider.RequireUserInfo().UserId),
             command.Residence.ToDomainObject());

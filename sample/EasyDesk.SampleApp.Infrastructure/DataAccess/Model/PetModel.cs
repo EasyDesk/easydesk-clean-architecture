@@ -24,7 +24,7 @@ public class PetModel : IEntityPersistenceWithHydration<Pet, PetModel, int>, IMu
     public static Expression<Func<PetModel, PetSnapshot>> Projection() => src =>
         new(src.Id, src.Nickname, src.PersonId);
 
-    public Pet ToDomain() => new(Id, Name.From(Nickname), PersonId);
+    public Pet ToDomain() => new(Id, new Name(Nickname), PersonId);
 
     public int GetHydrationData() => Id;
 

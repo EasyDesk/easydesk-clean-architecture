@@ -34,7 +34,7 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src =>
         new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, src.Residence.ToProjection());
 
-    public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain());
+    public Person ToDomain() => new(Id, new Name(FirstName), new Name(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain());
 
     public static void ApplyChanges(Person origin, PersonModel destination)
     {

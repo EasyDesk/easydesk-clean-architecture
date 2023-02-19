@@ -22,7 +22,7 @@ public class CreateBestFriendHandler : IHandler<CreateBestFriend>
 
     public async Task<Result<Nothing>> Handle(CreateBestFriend request)
     {
-        var pet = Pet.Create(Name.From($"{request.PersonName}'s best buddy"), request.PersonId);
+        var pet = Pet.Create(new Name($"{request.PersonName}'s best buddy"), request.PersonId);
         await _petRepository.SaveAndHydrate(pet);
         return Ok;
     }

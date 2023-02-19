@@ -31,7 +31,7 @@ public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
 
     public async Task<Result<PetSnapshot>> Handle(CreatePet request)
     {
-        var pet = Pet.Create(Name.From(request.Nickname), request.PersonId);
+        var pet = Pet.Create(new Name(request.Nickname), request.PersonId);
         await _petRepository.SaveAndHydrate(pet);
         return PetSnapshot.MapFrom(pet);
     }

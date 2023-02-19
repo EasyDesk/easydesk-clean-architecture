@@ -47,7 +47,7 @@ public class BulkCreatePets
     {
         foreach (var createPetCommand in remainingWork.Take(BatchSize))
         {
-            var pet = Pet.Create(Name.From(createPetCommand.Nickname), createPetCommand.PersonId);
+            var pet = Pet.Create(new Name(createPetCommand.Nickname), createPetCommand.PersonId);
             await _petRepository.SaveAndHydrate(pet);
         }
         return remainingWork.Skip(BatchSize);
