@@ -1,9 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.SoftDeletion;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Model;
-using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
-public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<PersonModel, PersonSnapshot>, IPersistenceModel<Person, PersonModel>
+public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<PersonModel, PersonSnapshot>, IEntityPersistence<Person, PersonModel>
 {
     public Guid Id { get; set; }
 
@@ -33,7 +32,7 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
     required public AddressModel Residence { get; set; }
 
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src =>
-        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, src.Residence.Projection());
+        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, src.Residence.ToProjection());
 
     public Person ToDomain() => new(Id, Name.From(FirstName), Name.From(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain());
 

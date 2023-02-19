@@ -1,8 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mapping;
+﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using NodaTime;
 
-namespace EasyDesk.SampleApp.Application.Queries;
+namespace EasyDesk.SampleApp.Application.Snapshots;
 
 public record PersonSnapshot(
     Guid Id,
@@ -10,7 +10,7 @@ public record PersonSnapshot(
     string LastName,
     LocalDate DateOfBirth,
     string CreatedBy,
-    AddressValue Residence) : IMappableFrom<Person, PersonSnapshot>
+    AddressValue Residence) : ISnapshot<PersonSnapshot, Person>
 {
     public static PersonSnapshot MapFrom(Person src) =>
         new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, AddressValue.MapFrom(src.Residence));

@@ -1,4 +1,4 @@
-﻿using EasyDesk.SampleApp.Application.Queries;
+﻿using EasyDesk.SampleApp.Application.Snapshots;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 

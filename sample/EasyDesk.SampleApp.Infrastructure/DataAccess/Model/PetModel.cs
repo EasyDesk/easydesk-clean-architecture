@@ -1,8 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Model;
-using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
-public class PetModel : IPersistenceModelWithHydration<Pet, PetModel, int>, IMultitenantEntity, IProjectable<PetModel, PetSnapshot>
+public class PetModel : IEntityPersistenceWithHydration<Pet, PetModel, int>, IMultitenantEntity, IProjectable<PetModel, PetSnapshot>
 {
     public int Id { get; set; }
 

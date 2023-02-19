@@ -1,6 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
-using EasyDesk.SampleApp.Application.Queries;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
@@ -13,7 +14,7 @@ public record AddressModel(
     string? Region,
     string? State,
     string? Country)
-    : IPersistenceObject<Address, AddressModel>
+    : IDomainPersistence<Address, AddressModel>, IProjectable<AddressModel, AddressValue>
 {
     public static AddressModel ToPersistence(Address origin) => new(
         origin.StreetType.Map(n => n.Value).OrElseNull(),
@@ -35,13 +36,15 @@ public record AddressModel(
         State.AsOption().Map(n => new PlaceName(n)),
         Country.AsOption().Map(n => new PlaceName(n)));
 
-    public AddressValue Projection() => new(
-        StreetType.AsOption(),
-        StreetName,
-        StreetNumber.AsOption(),
-        City.AsOption(),
-        District.AsOption(),
-        Region.AsOption(),
-        State.AsOption(),
-        Country.AsOption());
+    public AddressValue ToProjection() => Projection().Compile().Invoke(this);
+
+    public static Expression<Func<AddressModel, AddressValue>> Projection() => src => new(
+        src.StreetType.AsOption(),
+        src.StreetName,
+        src.StreetNumber.AsOption(),
+        src.City.AsOption(),
+        src.District.AsOption(),
+        src.Region.AsOption(),
+        src.State.AsOption(),
+        src.Country.AsOption());
 }

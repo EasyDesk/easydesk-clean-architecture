@@ -1,6 +1,7 @@
-﻿using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
+using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
-namespace EasyDesk.SampleApp.Application.Queries;
+namespace EasyDesk.SampleApp.Application.Snapshots;
 
 public record AddressValue(
     Option<string> StreetType,
@@ -11,6 +12,7 @@ public record AddressValue(
     Option<string> Region,
     Option<string> State,
     Option<string> Country)
+    : IObjectValue<AddressValue, Address>
 {
     public static AddressValue MapFrom(Address address) => new(
         address.StreetType.Map(n => n.Value),
@@ -22,7 +24,7 @@ public record AddressValue(
         address.State.Map(n => n.Value),
         address.Country.Map(n => n.Value));
 
-    public Address MapToDomain() => new(
+    public Address ToDomainObject() => new(
         StreetType.Map(n => new PlaceName(n)),
         new PlaceName(StreetName),
         StreetNumber.Map(n => new PlaceName(n)),

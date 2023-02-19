@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Tools.Collections;
 
@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
 internal class AggregatesTracker<A, P>
     where A : AggregateRoot
-    where P : IPersistenceModel<A, P>
+    where P : IEntityPersistence<A, P>
 {
     private readonly Dictionary<A, P> _modelsMap = new();
 

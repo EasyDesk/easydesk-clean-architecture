@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Mapping;
+﻿namespace EasyDesk.CleanArchitecture.Application.Abstractions;
 
 public interface IMappableFrom<F, T>
     where T : IMappableFrom<F, T>

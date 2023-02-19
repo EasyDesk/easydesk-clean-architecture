@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.Commands;

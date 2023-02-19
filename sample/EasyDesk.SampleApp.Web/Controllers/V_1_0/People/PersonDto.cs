@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.SampleApp.Application.Queries;
+﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
+using EasyDesk.SampleApp.Application.Snapshots;
 using NodaTime;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.People;

@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using FluentValidation;
 
@@ -33,6 +33,6 @@ public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
     {
         var pet = Pet.Create(Name.From(request.Nickname), request.PersonId);
         await _petRepository.SaveAndHydrate(pet);
-        return PetSnapshot.FromPet(pet);
+        return PetSnapshot.MapFrom(pet);
     }
 }

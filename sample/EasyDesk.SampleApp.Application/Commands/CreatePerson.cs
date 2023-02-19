@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using FluentValidation;
 using NodaTime;
@@ -45,7 +45,7 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSn
             Name.From(command.LastName),
             command.DateOfBirth,
             AdminId.From(_contextProvider.RequireUserInfo().UserId),
-            command.Residence.MapToDomain());
+            command.Residence.ToDomainObject());
         _personRepository.Save(person);
         return Task.FromResult<Result<Person>>(person);
     }

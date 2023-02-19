@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
+using EasyDesk.SampleApp.Application.Snapshots;
 
 namespace EasyDesk.SampleApp.Application.Queries;
 

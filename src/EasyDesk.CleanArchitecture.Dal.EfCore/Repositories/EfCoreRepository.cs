@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.ModelConversion;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
@@ -11,7 +11,7 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     ISaveRepository<TAggregate>,
     IRemoveRepository<TAggregate>
     where TContext : DbContext
-    where TPersistence : class, IPersistenceModel<TAggregate, TPersistence>
+    where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
 {
     private readonly IDomainEventNotifier _eventNotifier;
