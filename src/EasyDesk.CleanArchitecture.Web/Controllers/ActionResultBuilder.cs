@@ -1,6 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
+using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Tools.Collections;
@@ -58,6 +60,9 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         return new(_resultProvider, x => mapper(_mapper(x)), _meta, _controller, _errorHandlers);
     }
 
+    public ActionResultBuilder<TResult, TNewDto, TMeta> MapTo<TNewDto>()
+        where TNewDto : notnull, IMappableFrom<TDto, TNewDto> => Map(TNewDto.MapFrom);
+
     public async Task<ActionResult<ResponseDto<TDto, TMeta>>> OnSuccess(SuccessHandler<TResult> handler)
     {
         var result = await _resultProvider();
@@ -108,13 +113,25 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         OnSuccess((body, result) => _controller.CreatedAtAction(actionName, controllerName, routeValues(result), body));
 }
 
-public static class ActionResultBuilderExtensions
+public class PaginatedActionResultBuilder<TDto> : ActionResultBuilder<PageInfo<TDto>, IEnumerable<TDto>, PaginationMetaDto>
 {
-    public static ActionResultBuilder<TResult, IEnumerable<TNewDto>, TMeta> MapEachElement<TResult, TDto, TNewDto, TMeta>(
-        this ActionResultBuilder<TResult, IEnumerable<TDto>, TMeta> builder,
-        Func<TDto, TNewDto> mapper)
-        where TResult : notnull
+    public PaginatedActionResultBuilder(
+        AsyncFunc<Result<PageInfo<TDto>>> resultProvider,
+        Func<PageInfo<TDto>, IEnumerable<TDto>> mapper,
+        Func<Result<PageInfo<TDto>>, PaginationMetaDto> meta,
+        ControllerBase controller)
+        : base(resultProvider, mapper, meta, controller)
     {
-        return builder.Map(ts => ts.Select(mapper));
+    }
+
+    public ActionResultBuilder<PageInfo<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElement<TNewDto>(Func<TDto, TNewDto> mapper)
+    {
+        return Map(ts => ts.Select(mapper));
+    }
+
+    public ActionResultBuilder<PageInfo<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElementTo<TNewDto>()
+        where TNewDto : IMappableFrom<TDto, TNewDto>
+    {
+        return Map(ts => ts.Select(TNewDto.MapFrom));
     }
 }

@@ -25,7 +25,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
         return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth, body.Residence.ToValue()))
-            .Map(PersonDto.MapFrom)
+            .MapTo<PersonDto>()
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
     }
 
@@ -33,7 +33,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> DeletePerson([FromRoute] Guid id)
     {
         return await Dispatch(new DeletePerson(id))
-            .Map(PersonDto.MapFrom)
+            .MapTo<PersonDto>()
             .ReturnOk();
     }
 
@@ -41,7 +41,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>, PaginationMetaDto>>> GetPeople([FromQuery] PaginationDto pagination)
     {
         return await DispatchWithPagination(new GetPeople(), pagination)
-            .MapEachElement(PersonDto.MapFrom)
+            .MapEachElementTo<PersonDto>()
             .ReturnOk();
     }
 
@@ -49,7 +49,7 @@ public class PersonController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> GetPerson([FromRoute] Guid id)
     {
         return await Dispatch(new GetPerson(id))
-            .Map(PersonDto.MapFrom)
+            .MapTo<PersonDto>()
             .ReturnOk();
     }
 }
