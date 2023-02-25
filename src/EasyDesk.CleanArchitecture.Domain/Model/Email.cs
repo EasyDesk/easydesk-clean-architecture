@@ -6,9 +6,12 @@ namespace EasyDesk.CleanArchitecture.Domain.Model;
 
 public record Email : ValueWrapper<string, Email>
 {
+    public const int MaxLength = 254;
+
     private Email(string email) : base(email.Trim().ToLower())
     {
         DomainConstraints.Check()
+            .If(Value.Length > MaxLength, () => new InvalidEmailAddress())
             .IfNot(EmailRegex.Instance().IsMatch(Value), () => new InvalidEmailAddress())
             .ThrowException();
     }
