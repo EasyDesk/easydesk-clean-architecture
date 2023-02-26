@@ -11,6 +11,16 @@ public static class ConversionUtils
         ICollection<P> dst,
         Func<P, K> dstKey)
         where P : IEntityPersistence<D, P>
+        where K : IEquatable<K> =>
+        ApplyChangesToCollection(src, srcKey, dst, dstKey, P.ToPersistence);
+
+    public static void ApplyChangesToCollection<D, P, K>(
+        IEnumerable<D> src,
+        Func<D, K> srcKey,
+        ICollection<P> dst,
+        Func<P, K> dstKey,
+        Func<D, P> toPersistence)
+        where P : IMutablePersistence<D, P>
         where K : IEquatable<K>
     {
         var dstByKey = dst.ToDictionary(dstKey);
@@ -18,7 +28,7 @@ public static class ConversionUtils
         {
             dstByKey.GetOption(srcKey(s)).Match(
                 some: m1 => P.ApplyChanges(s, m1),
-                none: () => dst.Add(P.ToPersistence(s)));
+                none: () => dst.Add(toPersistence(s)));
         }
 
         var srcKeys = src.Select(srcKey).ToHashSet();
