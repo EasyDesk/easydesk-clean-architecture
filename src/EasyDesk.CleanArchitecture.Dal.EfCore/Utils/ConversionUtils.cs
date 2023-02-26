@@ -10,7 +10,7 @@ public static class ConversionUtils
         Func<D, K> srcKey,
         ICollection<P> dst,
         Func<P, K> dstKey)
-        where P : IMutablePersistence<D, P>
+        where P : IEntityPersistence<D, P>
         where K : IEquatable<K>
     {
         var dstByKey = dst.ToDictionary(dstKey);
