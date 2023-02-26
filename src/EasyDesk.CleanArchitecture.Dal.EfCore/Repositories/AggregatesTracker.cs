@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
 internal class AggregatesTracker<A, P>
     where A : AggregateRoot
-    where P : IEntityPersistence<A, P>
+    where P : IMutablePersistence<A, P>
 {
     private readonly Dictionary<A, P> _modelsMap = new();
 

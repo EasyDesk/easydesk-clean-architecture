@@ -11,7 +11,7 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     ISaveRepository<TAggregate>,
     IRemoveRepository<TAggregate>
     where TContext : DbContext
-    where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>
+    where TPersistence : class, IMutablePersistence<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
 {
     private readonly IDomainEventNotifier _eventNotifier;

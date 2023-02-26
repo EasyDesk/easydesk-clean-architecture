@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
-public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<PersonModel, PersonSnapshot>, IEntityPersistence<Person, PersonModel>
+public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<PersonModel, PersonSnapshot>, IMutablePersistence<Person, PersonModel>
 {
     public Guid Id { get; set; }
 

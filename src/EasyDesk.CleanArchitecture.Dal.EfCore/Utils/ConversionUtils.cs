@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
-using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Tools.Collections;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
@@ -11,8 +10,7 @@ public static class ConversionUtils
         Func<D, K> srcKey,
         ICollection<P> dst,
         Func<P, K> dstKey)
-        where D : Entity
-        where P : IEntityPersistence<D, P>
+        where P : IMutablePersistence<D, P>
         where K : IEquatable<K>
     {
         var dstByKey = dst.ToDictionary(dstKey);
