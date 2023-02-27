@@ -8,15 +8,13 @@ public record Email : ValueWrapper<string, Email>
 {
     public const int MaxLength = 254;
 
-    private Email(string email) : base(email.Trim().ToLower())
+    public Email(string email) : base(email.Trim().ToLower())
     {
         DomainConstraints.Check()
             .If(Value.Length > MaxLength, () => new InvalidEmailAddress())
             .IfNot(EmailRegex.Instance().IsMatch(Value), () => new InvalidEmailAddress())
             .ThrowException();
     }
-
-    public static Email From(string email) => new(email);
 }
 
 public static partial class EmailRegex
