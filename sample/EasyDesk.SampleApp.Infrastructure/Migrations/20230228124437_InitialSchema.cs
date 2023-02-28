@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
+using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 
 #nullable disable
@@ -30,7 +31,8 @@ public partial class InitialSchema : Migration
                 DateOfBirth = table.Column<LocalDate>(type: "date", nullable: false),
                 TenantId = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                 IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                CreatedBy = table.Column<string>(type: "text", nullable: true)
+                CreatedBy = table.Column<string>(type: "text", nullable: false),
+                Residence = table.Column<AddressModel>(type: "jsonb", nullable: false)
             },
             constraints: table =>
             {

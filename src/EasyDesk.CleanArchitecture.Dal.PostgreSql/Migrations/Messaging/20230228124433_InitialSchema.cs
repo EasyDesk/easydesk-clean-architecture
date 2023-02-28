@@ -34,7 +34,7 @@ public partial class InitialSchema : Migration
                 Id = table.Column<int>(type: "integer", nullable: false)
                     .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                 Content = table.Column<byte[]>(type: "bytea", nullable: false),
-                Headers = table.Column<byte[]>(type: "bytea", nullable: true),
+                Headers = table.Column<byte[]>(type: "bytea", nullable: false),
                 DestinationAddress = table.Column<string>(type: "text", nullable: false)
             },
             constraints: table =>

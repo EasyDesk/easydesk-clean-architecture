@@ -14,8 +14,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-[Migration("20230218193922_AddResidenceToPerson")]
-partial class AddResidenceToPerson
+[Migration("20230228124437_InitialSchema")]
+partial class InitialSchema
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -33,7 +33,7 @@ public partial class InitialSchema : Migration
                 Id = table.Column<int>(type: "int", nullable: false)
                     .Annotation("SqlServer:Identity", "1, 1"),
                 Content = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                Headers = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                Headers = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                 DestinationAddress = table.Column<string>(type: "nvarchar(max)", nullable: false)
             },
             constraints: table =>

@@ -18,7 +18,7 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                Id = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {
@@ -53,14 +53,15 @@ public partial class InitialSchema : Migration
             {
                 RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                 UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                TenantIdFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
             },
             constraints: table =>
             {
                 table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId, x.TenantId });
                 table.ForeignKey(
-                    name: "FK_UserRoles_Tenants_TenantId",
-                    column: x => x.TenantId,
+                    name: "FK_UserRoles_Tenants_TenantIdFk",
+                    column: x => x.TenantIdFk,
                     principalSchema: "auth",
                     principalTable: "Tenants",
                     principalColumn: "Id",
@@ -78,6 +79,12 @@ public partial class InitialSchema : Migration
             schema: "auth",
             table: "UserRoles",
             column: "TenantId");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_UserRoles_TenantIdFk",
+            schema: "auth",
+            table: "UserRoles",
+            column: "TenantIdFk");
     }
 
     /// <inheritdoc />
