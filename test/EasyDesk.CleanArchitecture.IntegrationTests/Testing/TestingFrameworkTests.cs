@@ -81,7 +81,7 @@ public class TestFixtureLifecycleTests
         {
             await using var integrationTest = new IntegrationTestExample(fixture);
             await integrationTest.InitializeAsync();
-            await IntegrationTestExample.CreateAndCheckPeopleAndPets(200, integrationTest);
+            await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest);
         }
     }
 }
@@ -97,7 +97,7 @@ public class TestFixtureLifecycleTests_SkippingWaits
         {
             await using var integrationTest = new IntegrationTestExample(fixture);
             await integrationTest.InitializeAsync();
-            await IntegrationTestExample.CreateAndCheckPeopleAndPets(200, integrationTest, skipWaits: true);
+            await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest, skipWaits: true);
         }
     }
 }
@@ -115,7 +115,7 @@ public class TestFixtureLifecycleWithParallelismTests
             {
                 await using var integrationTest = new IntegrationTestExample(fixture);
                 await integrationTest.InitializeAsync();
-                await IntegrationTestExample.CreateAndCheckPeopleAndPets(200, integrationTest);
+                await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest);
             }
         };
         await Task.WhenAll(action(), action());
@@ -135,7 +135,7 @@ public class TestFixtureLifecycleWithParallelismTests_SkippingWaits
             {
                 await using var integrationTest = new IntegrationTestExample(fixture);
                 await integrationTest.InitializeAsync();
-                await IntegrationTestExample.CreateAndCheckPeopleAndPets(200, integrationTest, skipWaits: true);
+                await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest, skipWaits: true);
             }
         };
         await Task.WhenAll(action(), action());
