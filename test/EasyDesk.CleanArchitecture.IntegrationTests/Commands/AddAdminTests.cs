@@ -48,4 +48,14 @@ public class AddAdminTests : SampleIntegrationTest
             TenantId.Create(Tenant),
             async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
     }
+
+    [Fact]
+    public async Task ShouldSucceed_WithPublicTenant_Again()
+    {
+        await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
+
+        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
+            TenantId.Create(Tenant),
+            async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+    }
 }
