@@ -64,8 +64,7 @@ public class AbstractDbContext<T> : DbContext
                  .IsRequired()
                  .HasMaxLength(TenantId.MaxLength)
                  .ValueGeneratedOnAdd()
-                 .HasValueGenerator<TenantIdGenerator>()
-                 .HasDefaultValue(PublicTenantName);
+                 .HasValueGenerator<TenantIdGenerator>();
 
         queryFilters.AddFilter<E>(x => x.TenantId == PublicTenantName
             || x.TenantId == GetCurrentTenantAsString()
@@ -88,7 +87,7 @@ public class AbstractDbContext<T> : DbContext
 
         public override bool GeneratesStableValues => true;
 
-        protected override object NextValue(EntityEntry entry) =>
+        protected override object? NextValue(EntityEntry entry) =>
             ((T)entry.Context).GetCurrentTenantAsString();
     }
 }

@@ -58,4 +58,32 @@ public class AddAdminTests : SampleIntegrationTest
             TenantId.Create(Tenant),
             async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
     }
+
+    [Fact]
+    public async Task ShouldReset_AfterTenantIsDeleted()
+    {
+        await Http.AddAdmin().Send().EnsureSuccess();
+
+        var bus = NewBus();
+        await bus.Send(new RemoveTenant(Tenant));
+        await bus.Send(new CreateTenant(Tenant));
+
+        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
+            TenantId.Create(Tenant),
+            async p => !(await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+    }
+
+    [Fact]
+    public async Task ShouldNotReset_AfterTenantIsDeleted_WithPublicRole()
+    {
+        await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
+
+        var bus = NewBus();
+        await bus.Send(new RemoveTenant(Tenant));
+        await bus.Send(new CreateTenant(Tenant));
+
+        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
+            TenantId.Create(Tenant),
+            async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+    }
 }
