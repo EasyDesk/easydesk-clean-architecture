@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Messaging;
 
 [DbContext(typeof(MessagingContext))]
-partial class MessagingContextModelSnapshot : ModelSnapshot
+[Migration("20230228100748_MakeFieldsNonNullable")]
+partial class MakeFieldsNonNullable
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder

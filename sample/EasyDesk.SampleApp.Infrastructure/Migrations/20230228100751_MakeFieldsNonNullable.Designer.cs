@@ -4,6 +4,7 @@ using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-partial class SampleAppContextModelSnapshot : ModelSnapshot
+[Migration("20230228100751_MakeFieldsNonNullable")]
+partial class MakeFieldsNonNullable
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder

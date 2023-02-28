@@ -64,7 +64,8 @@ public class AbstractDbContext<T> : DbContext
                  .IsRequired()
                  .HasMaxLength(TenantId.MaxLength)
                  .ValueGeneratedOnAdd()
-                 .HasValueGenerator<TenantIdGenerator>();
+                 .HasValueGenerator<TenantIdGenerator>()
+                 .HasDefaultValue(PublicTenantName);
 
         queryFilters.AddFilter<E>(x => x.TenantId == PublicTenantName
             || x.TenantId == GetCurrentTenantAsString()

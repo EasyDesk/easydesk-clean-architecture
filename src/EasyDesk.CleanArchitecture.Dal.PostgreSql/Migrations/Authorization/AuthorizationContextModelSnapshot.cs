@@ -35,7 +35,8 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                 b.Property<string>("TenantId")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("character varying(256)")
+                    .HasDefaultValue("");
 
                 b.HasKey("RoleId", "PermissionName", "TenantId");
 
@@ -73,7 +74,8 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                 b.Property<string>("TenantId")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("character varying(256)")
+                    .HasDefaultValue("");
 
                 b.HasKey("UserId", "RoleId", "TenantId");
 

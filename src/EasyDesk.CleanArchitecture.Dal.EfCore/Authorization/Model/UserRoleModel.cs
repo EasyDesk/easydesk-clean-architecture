@@ -11,7 +11,7 @@ internal class UserRoleModel : IMultitenantEntity
 
     required public string UserId { get; set; }
 
-    public string? TenantId { get; set; }
+    public string? TenantId { get; set; } = string.Empty;
 
     public static UserRoleModel Create(string userId, string roleId) =>
         new()

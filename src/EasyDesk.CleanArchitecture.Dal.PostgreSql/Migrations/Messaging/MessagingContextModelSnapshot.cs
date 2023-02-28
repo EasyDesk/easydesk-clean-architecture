@@ -17,7 +17,7 @@ partial class MessagingContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("messaging")
-            .HasAnnotation("ProductVersion", "7.0.1")
+            .HasAnnotation("ProductVersion", "7.0.3")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -49,6 +49,7 @@ partial class MessagingContextModelSnapshot : ModelSnapshot
                     .HasColumnType("text");
 
                 b.Property<byte[]>("Headers")
+                    .IsRequired()
                     .HasColumnType("bytea");
 
                 b.HasKey("Id");
