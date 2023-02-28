@@ -16,8 +16,6 @@ public class TenantModel
 
             builder.Property(x => x.Id)
                 .HasMaxLength(TenantId.MaxLength);
-
-            builder.HasData(new TenantModel() { Id = AuthorizationContext.PublicTenantName });
         }
     }
 }

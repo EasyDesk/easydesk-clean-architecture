@@ -17,7 +17,7 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("auth")
-            .HasAnnotation("ProductVersion", "7.0.3")
+            .HasAnnotation("ProductVersion", "7.0.1")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -48,18 +48,11 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", b =>
             {
                 b.Property<string>("Id")
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("text");
 
                 b.HasKey("Id");
 
                 b.ToTable("Tenants", "auth");
-
-                b.HasData(
-                    new
-                    {
-                        Id = ""
-                    });
             });
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.UserRoleModel", b =>
