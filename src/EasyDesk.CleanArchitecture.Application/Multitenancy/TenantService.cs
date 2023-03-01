@@ -32,19 +32,4 @@ internal class TenantService : ITenantNavigator, IContextTenantInitializer
 
     public TenantInfo TenantInfo => _overriddenTenantInfo.OrElse(
         _contextTenantInfo.OrElseThrow(() => new InvalidOperationException("Accessing tenant before initialization")));
-
-    private sealed class TenantScope : ITenantScope, ITenantProvider
-    {
-        private readonly Action<TenantScope> _onDispose;
-
-        public TenantScope(TenantInfo tenantInfo, Action<TenantScope> onDispose)
-        {
-            TenantInfo = tenantInfo;
-            _onDispose = onDispose;
-        }
-
-        public TenantInfo TenantInfo { get; }
-
-        public void Dispose() => _onDispose(this);
-    }
 }
