@@ -1,14 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 namespace EasyDesk.SampleApp.Application.IncomingEvents;
 
-public record PetFreedomDayEvent(string Tenant) : IIncomingEvent, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.IgnoreAndUseExistingTenant(TenantId.Create(Tenant));
-}
+public record PetFreedomDayEvent : IIncomingEvent;
 
 public class PetFreedomDayEventHandler : IHandler<PetFreedomDayEvent>
 {

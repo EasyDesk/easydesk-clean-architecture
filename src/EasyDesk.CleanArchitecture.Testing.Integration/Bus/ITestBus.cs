@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus;
@@ -8,6 +9,12 @@ public interface ITestBus : IAsyncDisposable
     Task Subscribe<T>() where T : IEvent;
 
     Task Unsubscribe<T>() where T : IEvent;
+
+    Task Defer<T>(T message, Duration delay, TenantId tenant) where T : ICommand;
+
+    Task Publish<T>(T message, TenantId tenant) where T : IEvent;
+
+    Task Send<T>(T message, TenantId tenant) where T : ICommand;
 
     Task Defer<T>(T message, Duration delay) where T : ICommand;
 
