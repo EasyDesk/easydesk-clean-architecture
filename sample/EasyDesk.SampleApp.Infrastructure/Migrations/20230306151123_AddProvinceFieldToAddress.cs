@@ -71,7 +71,7 @@ public partial class AddProvinceFieldToAddress : Migration
             type: "character varying(100)",
             maxLength: 100,
             nullable: false,
-            defaultValue: "");
+            defaultValue: string.Empty);
 
         migrationBuilder.AddColumn<string>(
             name: "Residence_StreetNumber",
