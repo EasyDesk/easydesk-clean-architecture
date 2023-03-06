@@ -9,6 +9,7 @@ public record AddressValue(
     Option<string> StreetNumber,
     Option<string> City,
     Option<string> District,
+    Option<string> Province,
     Option<string> Region,
     Option<string> State,
     Option<string> Country)
@@ -20,6 +21,7 @@ public record AddressValue(
         address.StreetNumber.Map(ToValue),
         address.City.Map(ToValue),
         address.District.Map(ToValue),
+        address.Province.Map(ToValue),
         address.Region.Map(ToValue),
         address.State.Map(ToValue),
         address.Country.Map(ToValue));
@@ -30,6 +32,7 @@ public record AddressValue(
         StreetNumber.Map(n => new PlaceName(n)),
         City.Map(n => new PlaceName(n)),
         District.Map(n => new PlaceName(n)),
+        Province.Map(n => new PlaceName(n)),
         Region.Map(n => new PlaceName(n)),
         State.Map(n => new PlaceName(n)),
         Country.Map(n => new PlaceName(n)));

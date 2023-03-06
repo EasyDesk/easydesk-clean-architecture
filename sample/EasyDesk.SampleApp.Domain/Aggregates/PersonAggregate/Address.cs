@@ -6,6 +6,7 @@ public record Address(
     Option<PlaceName> StreetNumber,
     Option<PlaceName> City,
     Option<PlaceName> District,
+    Option<PlaceName> Province,
     Option<PlaceName> Region,
     Option<PlaceName> State,
     Option<PlaceName> Country);

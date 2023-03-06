@@ -21,7 +21,7 @@ public class CreatePersonTests : SampleIntegrationTest
         FirstName: "Foo",
         LastName: "Bar",
         DateOfBirth: new LocalDate(1996, 2, 2),
-        Residence: new("Calvin", "street", "15", "New York", null, null, "New York State", "USA"));
+        Residence: new("Calvin", "street", "15", "New York", null, null, null, "New York State", "USA"));
 
     public CreatePersonTests(SampleAppTestsFixture fixture) : base(fixture)
     {

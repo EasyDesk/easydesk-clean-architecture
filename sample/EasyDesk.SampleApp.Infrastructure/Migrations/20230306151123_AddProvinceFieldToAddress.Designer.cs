@@ -3,6 +3,7 @@ using System;
 using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-partial class SampleAppContextModelSnapshot : ModelSnapshot
+[Migration("20230306151123_AddProvinceFieldToAddress")]
+partial class AddProvinceFieldToAddress
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
@@ -43,6 +46,9 @@ partial class SampleAppContextModelSnapshot : ModelSnapshot
                 b.Property<string>("FirstName")
                     .IsRequired()
                     .HasColumnType("text");
+
+                b.Property<bool>("IsDeleted")
+                    .HasColumnType("boolean");
 
                 b.Property<string>("LastName")
                     .IsRequired()

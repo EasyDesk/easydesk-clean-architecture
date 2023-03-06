@@ -13,6 +13,7 @@
         StreetNumber: 15,
         City: New York,
         District: null,
+        Province: null,
         Region: null,
         State: New York State,
         Country: USA

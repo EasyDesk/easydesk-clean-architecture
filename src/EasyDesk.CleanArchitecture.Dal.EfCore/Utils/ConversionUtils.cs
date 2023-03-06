@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.Tools.Collections;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;

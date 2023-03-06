@@ -8,6 +8,7 @@ public record AddressDto(
     string? StreetNumber = null,
     string? City = null,
     string? District = null,
+    string? Province = null,
     string? Region = null,
     string? State = null,
     string? Country = null)
@@ -18,6 +19,7 @@ public record AddressDto(
         StreetNumber.AsOption(),
         City.AsOption(),
         District.AsOption(),
+        Province.AsOption(),
         Region.AsOption(),
         State.AsOption(),
         Country.AsOption());
@@ -28,6 +30,7 @@ public record AddressDto(
         address.StreetNumber.OrElseNull(),
         address.City.OrElseNull(),
         address.District.OrElseNull(),
+        address.Province.OrElseNull(),
         address.Region.OrElseNull(),
         address.State.OrElseNull(),
         address.Country.OrElseNull());

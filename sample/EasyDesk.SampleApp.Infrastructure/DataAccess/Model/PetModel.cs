@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Snapshots;
@@ -9,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
-public class PetModel : IEntityPersistenceWithHydration<Pet, PetModel, int>, IMultitenantEntity, IProjectable<PetModel, PetSnapshot>
+public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, IMultitenantEntity, IProjectable<PetModel, PetSnapshot>
 {
     public int Id { get; set; }
 

@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.SoftDeletion;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
-public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<PersonModel, PersonSnapshot>, IEntityPersistence<Person, PersonModel>
+public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonSnapshot>, IEntityPersistence<Person, PersonModel>
 {
     public Guid Id { get; set; }
 
@@ -23,8 +23,6 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
 
     public string? TenantId { get; set; }
 
-    public bool IsDeleted { get; set; }
-
     required public string CreatedBy { get; set; }
 
     public ICollection<PetModel> Pets { get; set; } = new HashSet<PetModel>();
@@ -32,7 +30,16 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
     required public AddressModel Residence { get; set; }
 
     public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src =>
-        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, src.Residence.ToProjection());
+        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, new(
+            src.Residence.StreetType.AsOption(),
+            src.Residence.StreetName,
+            src.Residence.StreetNumber.AsOption(),
+            src.Residence.City.AsOption(),
+            src.Residence.Province.AsOption(),
+            src.Residence.District.AsOption(),
+            src.Residence.Region.AsOption(),
+            src.Residence.State.AsOption(),
+            src.Residence.Country.AsOption()));
 
     public Person ToDomain() => new(Id, new Name(FirstName), new Name(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain());
 
@@ -43,6 +50,7 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
         destination.LastName = origin.LastName;
         destination.DateOfBirth = origin.DateOfBirth;
         destination.CreatedBy = origin.CreatedBy;
+        AddressModel.ApplyChanges(origin.Residence, destination.Residence);
     }
 
     public static PersonModel ToPersistence(Person origin) => new()
@@ -52,7 +60,18 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
         LastName = origin.LastName,
         CreatedBy = origin.CreatedBy,
         DateOfBirth = origin.DateOfBirth,
-        Residence = AddressModel.ToPersistence(origin.Residence),
+        Residence = new AddressModel()
+        {
+            StreetType = origin.Residence.StreetType.Map(ToValue).OrElseNull(),
+            StreetName = origin.Residence.StreetName,
+            StreetNumber = origin.Residence.StreetNumber.Map(ToValue).OrElseNull(),
+            City = origin.Residence.City.Map(ToValue).OrElseNull(),
+            District = origin.Residence.District.Map(ToValue).OrElseNull(),
+            Province = origin.Residence.Province.Map(ToValue).OrElseNull(),
+            Region = origin.Residence.Region.Map(ToValue).OrElseNull(),
+            State = origin.Residence.State.Map(ToValue).OrElseNull(),
+            Country = origin.Residence.Country.Map(ToValue).OrElseNull(),
+        },
     };
 
     public class Configuration : IEntityTypeConfiguration<PersonModel>
@@ -72,7 +91,28 @@ public class PersonModel : IMultitenantEntity, ISoftDeletable, IProjectable<Pers
                 .HasForeignKey(x => x.PersonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Property(x => x.Residence).HasColumnType("jsonb");
+            builder.OwnsOne(x => x.Residence, builder =>
+            {
+                builder.WithOwner();
+                builder.Property(x => x.StreetType)
+                .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.StreetName)
+                    .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.StreetNumber)
+                    .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.City)
+                    .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.District)
+                    .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.Province)
+                    .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.Region)
+                    .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.State)
+                    .HasMaxLength(PlaceName.MaxLength);
+                builder.Property(x => x.Country)
+                    .HasMaxLength(PlaceName.MaxLength);
+            });
         }
     }
 }

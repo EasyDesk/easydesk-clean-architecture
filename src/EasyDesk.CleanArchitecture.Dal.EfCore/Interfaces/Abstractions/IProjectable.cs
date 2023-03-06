@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 
 public interface IProjectable<F, T>
     where F : IProjectable<F, T>

@@ -121,7 +121,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Where(p => p.Id == person.Id)
             .FirstOptionAsync();
 
-        personRecord.ShouldContain(p => p.IsDeleted);
+        personRecord.IsAbsent.ShouldBeTrue();
     }
 
     [Fact]

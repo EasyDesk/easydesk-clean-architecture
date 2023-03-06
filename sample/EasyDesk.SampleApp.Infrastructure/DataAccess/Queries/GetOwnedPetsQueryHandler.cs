@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Pagination;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Application.Snapshots;

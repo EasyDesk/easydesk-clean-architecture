@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Hydration;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
@@ -10,7 +11,7 @@ public abstract class EfCoreRepositoryWithHydration<TAggregate, TPersistence, TC
     EfCoreRepository<TAggregate, TPersistence, TContext>,
     ISaveAndHydrateRepository<TAggregate, THydrationData>
     where TContext : DbContext
-    where TPersistence : class, IEntityPersistenceWithHydration<TAggregate, TPersistence, THydrationData>
+    where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>, IWithHydration<THydrationData>
     where TAggregate : AggregateRoot, IAggregateRootWithHydration<THydrationData>
 {
     protected EfCoreRepositoryWithHydration(TContext context, IDomainEventNotifier eventNotifier)

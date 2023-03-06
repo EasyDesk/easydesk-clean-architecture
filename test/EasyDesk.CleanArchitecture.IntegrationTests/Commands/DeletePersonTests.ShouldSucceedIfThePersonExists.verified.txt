@@ -13,6 +13,7 @@
         StreetNumber: null,
         City: null,
         District: null,
+        Province: null,
         Region: null,
         State: null,
         Country: null
