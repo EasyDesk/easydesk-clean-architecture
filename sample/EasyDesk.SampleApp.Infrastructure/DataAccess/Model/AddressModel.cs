@@ -1,10 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 
 public class AddressModel
-    : IMutablePersistence<Address, AddressModel>
+    : IValuePersistence<Address, AddressModel, Address>
 {
     required public string? StreetType { get; set; }
 
@@ -47,4 +47,17 @@ public class AddressModel
         destination.State = origin.State.Map(ToValue).OrElseNull();
         destination.Country = origin.Country.Map(ToValue).OrElseNull();
     }
+
+    public static AddressModel ToPersistence(Address origin) => new AddressModel()
+    {
+        StreetType = origin.StreetType.Map(ToValue).OrElseNull(),
+        StreetName = origin.StreetName,
+        StreetNumber = origin.StreetNumber.Map(ToValue).OrElseNull(),
+        City = origin.City.Map(ToValue).OrElseNull(),
+        District = origin.District.Map(ToValue).OrElseNull(),
+        Province = origin.Province.Map(ToValue).OrElseNull(),
+        Region = origin.Region.Map(ToValue).OrElseNull(),
+        State = origin.State.Map(ToValue).OrElseNull(),
+        Country = origin.Country.Map(ToValue).OrElseNull(),
+    };
 }

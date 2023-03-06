@@ -60,18 +60,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
         LastName = origin.LastName,
         CreatedBy = origin.CreatedBy,
         DateOfBirth = origin.DateOfBirth,
-        Residence = new AddressModel()
-        {
-            StreetType = origin.Residence.StreetType.Map(ToValue).OrElseNull(),
-            StreetName = origin.Residence.StreetName,
-            StreetNumber = origin.Residence.StreetNumber.Map(ToValue).OrElseNull(),
-            City = origin.Residence.City.Map(ToValue).OrElseNull(),
-            District = origin.Residence.District.Map(ToValue).OrElseNull(),
-            Province = origin.Residence.Province.Map(ToValue).OrElseNull(),
-            Region = origin.Residence.Region.Map(ToValue).OrElseNull(),
-            State = origin.Residence.State.Map(ToValue).OrElseNull(),
-            Country = origin.Residence.Country.Map(ToValue).OrElseNull(),
-        },
+        Residence = AddressModel.ToPersistence(origin.Residence),
     };
 
     public class Configuration : IEntityTypeConfiguration<PersonModel>

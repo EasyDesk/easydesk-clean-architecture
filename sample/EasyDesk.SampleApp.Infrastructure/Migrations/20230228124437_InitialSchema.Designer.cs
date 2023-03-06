@@ -55,7 +55,7 @@ partial class InitialSchema
                     .IsRequired()
                     .HasColumnType("text");
 
-                b.Property<AddressModel>("Residence")
+                b.Property<Address>("Residence")
                     .IsRequired()
                     .HasColumnType("jsonb");
 
