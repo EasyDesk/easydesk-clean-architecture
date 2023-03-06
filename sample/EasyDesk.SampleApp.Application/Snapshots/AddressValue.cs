@@ -15,14 +15,14 @@ public record AddressValue(
     : IObjectValue<AddressValue, Address>
 {
     public static AddressValue MapFrom(Address address) => new(
-        address.StreetType.Map(n => n.Value),
+        address.StreetType.Map(ToValue),
         address.StreetName,
-        address.StreetNumber.Map(n => n.Value),
-        address.City.Map(n => n.Value),
-        address.District.Map(n => n.Value),
-        address.Region.Map(n => n.Value),
-        address.State.Map(n => n.Value),
-        address.Country.Map(n => n.Value));
+        address.StreetNumber.Map(ToValue),
+        address.City.Map(ToValue),
+        address.District.Map(ToValue),
+        address.Region.Map(ToValue),
+        address.State.Map(ToValue),
+        address.Country.Map(ToValue));
 
     public Address ToDomainObject() => new(
         StreetType.Map(n => new PlaceName(n)),

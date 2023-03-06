@@ -17,14 +17,14 @@ public record AddressModel(
     : IDomainPersistence<Address, AddressModel>, IProjectable<AddressModel, AddressValue>
 {
     public static AddressModel ToPersistence(Address origin) => new(
-        origin.StreetType.Map(n => n.Value).OrElseNull(),
+        origin.StreetType.Map(ToValue).OrElseNull(),
         origin.StreetName,
-        origin.StreetNumber.Map(n => n.Value).OrElseNull(),
-        origin.City.Map(n => n.Value).OrElseNull(),
-        origin.District.Map(n => n.Value).OrElseNull(),
-        origin.Region.Map(n => n.Value).OrElseNull(),
-        origin.State.Map(n => n.Value).OrElseNull(),
-        origin.Country.Map(n => n.Value).OrElseNull());
+        origin.StreetNumber.Map(ToValue).OrElseNull(),
+        origin.City.Map(ToValue).OrElseNull(),
+        origin.District.Map(ToValue).OrElseNull(),
+        origin.Region.Map(ToValue).OrElseNull(),
+        origin.State.Map(ToValue).OrElseNull(),
+        origin.Country.Map(ToValue).OrElseNull());
 
     public Address ToDomain() => new(
         StreetType.AsOption().Map(n => new PlaceName(n)),

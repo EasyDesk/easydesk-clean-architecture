@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
@@ -61,7 +62,7 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
         await _context.SaveChangesAsync();
     }
 
-    private IEnumerable<string> RoleIds(IEnumerable<Role> roles) => roles.Select(r => r.Value);
+    private IEnumerable<string> RoleIds(IEnumerable<Role> roles) => roles.Select(ValueWrapperUtils.ToValue);
 
     public async Task<IImmutableSet<Permission>> MapRolesToPermissions(IEnumerable<Role> roles)
     {

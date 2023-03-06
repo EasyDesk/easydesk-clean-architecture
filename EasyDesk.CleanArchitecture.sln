@@ -36,6 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.CleanArchitecture.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{33B73B08-BCF2-49AA-BAA0-57CD06202AD1}"
 	ProjectSection(SolutionItems) = preProject
+		sample\Directory.Build.props = sample\Directory.Build.props
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
