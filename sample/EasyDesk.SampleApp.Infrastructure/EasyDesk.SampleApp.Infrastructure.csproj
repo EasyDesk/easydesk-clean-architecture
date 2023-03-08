@@ -6,6 +6,10 @@
     <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <RootFolder>..\..</RootFolder>
   </PropertyGroup>

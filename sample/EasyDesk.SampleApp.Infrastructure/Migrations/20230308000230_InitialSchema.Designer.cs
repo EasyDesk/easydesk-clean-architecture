@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-[Migration("20230306163650_RemoveSoftDelete")]
-partial class RemoveSoftDelete
+[Migration("20230308000230_InitialSchema")]
+partial class InitialSchema
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)

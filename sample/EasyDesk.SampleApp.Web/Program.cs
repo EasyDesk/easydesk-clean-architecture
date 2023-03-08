@@ -8,7 +8,6 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
-using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web;
@@ -69,10 +68,7 @@ await app.SetupDevelopment(async (services, logger) =>
 {
     var adminId = Guid.NewGuid().ToString();
     var tenantId = TenantId.Create(Guid.NewGuid().ToString());
-    var dispatcher = services.SetupSelfScopedDispatcher(services =>
-    {
-        services.GetRequiredService<IHttpContextAccessor>().SetupAuthenticatedHttpContext(adminId).SetupMultitenantHttpContext(tenantId);
-    });
+    var dispatcher = services.SetupSelfScopedRequestDispatcher(adminId, tenantId);
     await dispatcher.Dispatch(new CreateTenant(tenantId));
     await dispatcher.Dispatch(new AddAdmin());
     logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, adminId);

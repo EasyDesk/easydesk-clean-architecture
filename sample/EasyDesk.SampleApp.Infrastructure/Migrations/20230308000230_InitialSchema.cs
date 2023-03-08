@@ -1,5 +1,4 @@
-﻿using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
 
 #nullable disable
@@ -30,9 +29,16 @@ public partial class InitialSchema : Migration
                 LastName = table.Column<string>(type: "text", nullable: false),
                 DateOfBirth = table.Column<LocalDate>(type: "date", nullable: false),
                 TenantId = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                 CreatedBy = table.Column<string>(type: "text", nullable: false),
-                Residence = table.Column<AddressModel>(type: "jsonb", nullable: false)
+                Residence_StreetType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Residence_StreetName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                Residence_StreetNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Residence_City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Residence_District = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Residence_Province = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Residence_Region = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Residence_State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Residence_Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
             },
             constraints: table =>
             {
