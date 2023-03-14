@@ -41,6 +41,7 @@ public class SagasModule : AppModule
 
     private class SagaConfigurationSink<TId, TState> : ISagaConfigurationSink<TId, TState>
         where TId : notnull
+        where TState : notnull
     {
         private readonly IServiceCollection _services;
 

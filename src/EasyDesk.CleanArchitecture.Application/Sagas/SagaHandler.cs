@@ -6,6 +6,7 @@ namespace EasyDesk.CleanArchitecture.Application.Sagas;
 internal class SagaHandler<T, R, TId, TState> : IHandler<T, R>
     where TId : notnull
     where R : notnull
+    where TState : notnull
     where T : IDispatchable<R>
 {
     private readonly ISagaManager _sagaManager;
@@ -26,10 +27,8 @@ internal class SagaHandler<T, R, TId, TState> : IHandler<T, R>
     {
         var sagaId = _configuration.GetSagaId(request);
         var existingSaga = await _sagaManager.Find<TId, TState>(sagaId);
-        var saga = existingSaga || await GetNewSagaIfPossible(sagaId, request);
-        return await saga.MatchAsync(
-            some: s => HandleSaga(request, sagaId, s.State, s.Reference),
-            none: () => Task.FromResult(Failure<R>(Errors.Generic("Unable to start saga with request of type {requestType}", typeof(T).Name))));
+        var saga = existingSaga.OrElseError(Errors.NotFound) || await GetNewSagaIfPossible(sagaId, request);
+        return await saga.FlatMapAsync(s => HandleSaga(request, sagaId, s.State, s.Reference));
     }
 
     private async Task<Result<R>> HandleSaga(T request, TId id, TState state, ISagaReference<TState> sagaReference)
@@ -40,7 +39,7 @@ internal class SagaHandler<T, R, TId, TState> : IHandler<T, R>
             .ThenIfSuccessAsync(_ => HandleSagaState(sagaReference, context));
     }
 
-    private async Task<Option<(ISagaReference<TState> Reference, TState State)>> GetNewSagaIfPossible(TId sagaId, T request)
+    private async Task<Result<(ISagaReference<TState> Reference, TState State)>> GetNewSagaIfPossible(TId sagaId, T request)
     {
         var state = await _configuration
             .InitializeSaga(_serviceProvider, sagaId, request);

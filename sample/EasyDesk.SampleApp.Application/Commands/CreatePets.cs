@@ -55,8 +55,8 @@ public class BulkCreatePets
 
     protected override CreatePetsBatch CreateCommand(Guid operationId) => new(operationId);
 
-    protected override Task<(CreatePetsResult, IEnumerable<CreatePet>)> Prepare(CreatePets command) =>
-        Task.FromResult((new CreatePetsResult(command.Pets.Count()), command.Pets));
+    protected override Task<Result<(CreatePetsResult, IEnumerable<CreatePet>)>> Prepare(CreatePets command) =>
+        Task.FromResult(Success((new CreatePetsResult(command.Pets.Count()), command.Pets)));
 
     protected override bool IsComplete(IEnumerable<CreatePet> remainingWork) =>
         remainingWork.IsEmpty();

@@ -53,11 +53,9 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
     {
         saga.On<TStartCommand, TResult>()
             .CorrelateWith(_ => Guid.NewGuid())
-            .InitializeWith<TSelf>(async (controller, id, command) =>
-            {
-                var (result, state) = await controller.Prepare(command);
-                return new BulkOperationState<TResult, TWork>(result, state);
-            })
+            .InitializeWith<TSelf>((controller, id, command) => controller
+                .Prepare(command)
+                .ThenMap(rs => new BulkOperationState<TResult, TWork>(rs.Item1, rs.Item2)))
             .HandleWith<TSelf>((c, _, s) => c.Start(s));
 
         saga.On<TBatchCommand>()
@@ -67,7 +65,7 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
 
     protected abstract bool IsComplete(TWork remainingWork);
 
-    protected abstract Task<(TResult, TWork)> Prepare(TStartCommand command);
+    protected abstract Task<Result<(TResult, TWork)>> Prepare(TStartCommand command);
 
     protected abstract Task<TWork> HandleBatch(TBatchCommand command, TWork remainingWork);
 
