@@ -4,9 +4,9 @@
     "net7.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[8.1.0, )",
-        "resolved": "8.1.0",
-        "contentHash": "LnH7XzYhze8KGIimv9J8St34H6h3P3t0Or5HrCNFgZTHQV4l1eOnZjJLer2XrDFNGAVTlrxQGkOE/kSKJ9obxg=="
+        "requested": "[8.2.3, )",
+        "resolved": "8.2.3",
+        "contentHash": "3e1t7h9hxYwKfwArlYTXSQgbm1smyKAB2nMRFa9OXWlfyqj9zkc48vDGdYr0vYm0LimkWAjhU618lcAEg5N9wQ=="
       },
       "StyleCop.Analyzers": {
         "type": "Direct",
@@ -117,7 +117,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[8.1.0, )",
+          "EasyDesk.Tools": "[8.2.3, )",
           "FluentValidation": "[11.5.1, )",
           "FluentValidation.DependencyInjectionExtensions": "[11.5.1, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
@@ -130,7 +130,7 @@
       "easydesk.cleanarchitecture.dependencyinjection": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.1.0, )",
+          "EasyDesk.Tools": "[8.2.3, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )",
           "NodaTime": "[3.1.6, )"
         }
@@ -138,7 +138,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.1.0, )",
+          "EasyDesk.Tools": "[8.2.3, )",
           "NodaTime": "[3.1.6, )"
         }
       },
@@ -146,7 +146,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[8.1.0, )"
+          "EasyDesk.Tools": "[8.2.3, )"
         }
       }
     }

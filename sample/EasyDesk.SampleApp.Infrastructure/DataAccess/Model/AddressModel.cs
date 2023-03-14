@@ -48,7 +48,7 @@ public class AddressModel
         destination.Country = origin.Country.Map(ToValue).OrElseNull();
     }
 
-    public static AddressModel ToPersistence(Address origin) => new AddressModel()
+    public static AddressModel ToPersistence(Address origin) => new()
     {
         StreetType = origin.StreetType.Map(ToValue).OrElseNull(),
         StreetName = origin.StreetName,
