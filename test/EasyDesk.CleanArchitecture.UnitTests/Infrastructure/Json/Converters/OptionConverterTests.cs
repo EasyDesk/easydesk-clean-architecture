@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json.Converters;
 using Newtonsoft.Json;
 using Shouldly;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Json.Converters;
 

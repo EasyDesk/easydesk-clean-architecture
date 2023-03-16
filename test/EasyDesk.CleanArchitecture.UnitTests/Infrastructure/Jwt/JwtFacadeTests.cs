@@ -4,7 +4,6 @@ using NodaTime;
 using NodaTime.Testing;
 using Shouldly;
 using System.Security.Claims;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Jwt;
 

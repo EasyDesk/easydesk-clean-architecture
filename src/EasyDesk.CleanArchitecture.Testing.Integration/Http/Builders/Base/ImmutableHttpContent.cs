@@ -1,10 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿using EasyDesk.Tools.Collections;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using System.Collections.Immutable;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
-using EasyDesk.Tools.Collections;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using HeaderNames = Microsoft.Net.Http.Headers.HeaderNames;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;

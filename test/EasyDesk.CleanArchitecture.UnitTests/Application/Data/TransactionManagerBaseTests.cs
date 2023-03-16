@@ -2,7 +2,6 @@
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Shouldly;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Data;
 

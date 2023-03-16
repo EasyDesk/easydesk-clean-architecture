@@ -33,7 +33,7 @@
         "kind",
         "constant"
       ],
-      "systemUsingDirectivesFirst": true,
+      "systemUsingDirectivesFirst": false,
       "usingDirectivesPlacement": "outsideNamespace"
     },
     "readabilityRules": {

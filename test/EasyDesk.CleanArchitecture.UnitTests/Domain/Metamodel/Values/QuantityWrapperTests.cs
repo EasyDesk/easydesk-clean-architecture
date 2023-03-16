@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
 using Shouldly;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values;
 

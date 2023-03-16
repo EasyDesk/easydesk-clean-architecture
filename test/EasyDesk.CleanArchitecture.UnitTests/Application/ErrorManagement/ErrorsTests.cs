@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using Shouldly;
 using System.Collections.Immutable;
-using Xunit;
 using static EasyDesk.Tools.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.ErrorManagement;

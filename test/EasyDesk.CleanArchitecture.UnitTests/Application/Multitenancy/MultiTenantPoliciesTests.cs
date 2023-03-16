@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using NSubstitute;
 using Shouldly;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Multitenancy;
 

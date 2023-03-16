@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using Shouldly;
-using Xunit;
 using static EasyDesk.Tools.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel;

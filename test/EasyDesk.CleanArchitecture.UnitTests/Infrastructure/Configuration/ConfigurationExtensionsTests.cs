@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Shouldly;
 using System.Text;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Configuration;
 
