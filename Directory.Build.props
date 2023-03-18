@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="8.2.3" />
+    <PackageReference Include="EasyDesk.Tools" Version="8.3.0" />
   </ItemGroup>
 
   <ItemGroup>

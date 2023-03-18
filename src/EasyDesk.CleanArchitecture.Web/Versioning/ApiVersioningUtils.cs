@@ -1,9 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.Tools.Collections;
 using EasyDesk.Tools.Reflection;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Web.Versioning;
 
@@ -27,7 +27,7 @@ public static partial class ApiVersioningUtils
 
     public static Option<ApiVersion> ParseVersionFromNamespace(string version)
     {
-        var match = ApiVersionNamespaceRegex().Match(version);
+        var match = ApiVersionNamespaceRegexConfiguration.ApiVersionNamespaceRegex().Match(version);
         if (!match.Success)
         {
             return None;
@@ -53,7 +53,4 @@ public static partial class ApiVersioningUtils
     {
         return $"v{apiVersion}";
     }
-
-    [GeneratedRegex("^V_(\\d+)_(\\d+)$")]
-    private static partial Regex ApiVersionNamespaceRegex();
 }
