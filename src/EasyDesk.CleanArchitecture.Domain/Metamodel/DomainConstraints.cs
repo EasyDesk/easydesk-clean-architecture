@@ -19,7 +19,11 @@ public class DomainConstraints
         return this;
     }
 
+    public DomainConstraints ElseIf(bool requirement, Func<DomainError> error) => If(_errors.IsEmpty() && requirement, error);
+
     public DomainConstraints IfNot(bool requirement, Func<DomainError> error) => If(!requirement, error);
+
+    public DomainConstraints ElseIfNot(bool requirement, Func<DomainError> error) => If(_errors.IsEmpty() && !requirement, error);
 
     public void ThrowException()
     {

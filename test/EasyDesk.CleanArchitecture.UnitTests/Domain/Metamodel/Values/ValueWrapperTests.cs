@@ -14,7 +14,7 @@ public class ValueWrapperTests
         public TestValueWrapper(int value) : base(value)
         {
             DomainConstraints.Check()
-                .IfNot(value != 0, () => TestDomainError.Create())
+                .IfNot(value != 0, TestDomainError.Create)
                 .ThrowException();
         }
     }
