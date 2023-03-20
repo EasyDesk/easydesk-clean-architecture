@@ -4,9 +4,9 @@
     "net7.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[8.3.0, )",
-        "resolved": "8.3.0",
-        "contentHash": "XPl7n5tOaRb2nvjvM9bjKmV3kvWUxg8XWshZVVIYZh3oZivVavaFsw9rALcOFayKXES3LnA8cFmVEvoy9LDMHA=="
+        "requested": "[8.4.0, )",
+        "resolved": "8.4.0",
+        "contentHash": "Q2Rzyi0iZytpS32QJe6wBrxWuBIm8FHpW5jeyQd+d7rI9LikCrlNkkBC2/hMZJKH1cs0F8ou4eK21PQZliKgVg=="
       },
       "StyleCop.Analyzers": {
         "type": "Direct",
@@ -38,7 +38,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "NodaTime": "[3.1.6, )"
         }
       }

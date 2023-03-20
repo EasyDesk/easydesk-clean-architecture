@@ -4,9 +4,9 @@
     "net7.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[8.3.0, )",
-        "resolved": "8.3.0",
-        "contentHash": "XPl7n5tOaRb2nvjvM9bjKmV3kvWUxg8XWshZVVIYZh3oZivVavaFsw9rALcOFayKXES3LnA8cFmVEvoy9LDMHA=="
+        "requested": "[8.4.0, )",
+        "resolved": "8.4.0",
+        "contentHash": "Q2Rzyi0iZytpS32QJe6wBrxWuBIm8FHpW5jeyQd+d7rI9LikCrlNkkBC2/hMZJKH1cs0F8ou4eK21PQZliKgVg=="
       },
       "FluentValidation": {
         "type": "Direct",
@@ -53,9 +53,9 @@
       },
       "Newtonsoft.Json": {
         "type": "Direct",
-        "requested": "[13.0.2, )",
-        "resolved": "13.0.2",
-        "contentHash": "R2pZ3B0UjeyHShm9vG+Tu0EBb2lC8b0dFzV9gVn50ofHXh9Smjk6kTn7A/FdAsC8B5cKib1OnGYOXxRBz5XQDg=="
+        "requested": "[13.0.3, )",
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Direct",
@@ -142,7 +142,7 @@
       "easydesk.cleanarchitecture.dependencyinjection": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )",
           "NodaTime": "[3.1.6, )"
         }
@@ -150,7 +150,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "NodaTime": "[3.1.6, )"
         }
       }

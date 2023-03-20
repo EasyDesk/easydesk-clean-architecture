@@ -19,17 +19,17 @@
       },
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[8.3.0, )",
-        "resolved": "8.3.0",
-        "contentHash": "XPl7n5tOaRb2nvjvM9bjKmV3kvWUxg8XWshZVVIYZh3oZivVavaFsw9rALcOFayKXES3LnA8cFmVEvoy9LDMHA=="
+        "requested": "[8.4.0, )",
+        "resolved": "8.4.0",
+        "contentHash": "Q2Rzyi0iZytpS32QJe6wBrxWuBIm8FHpW5jeyQd+d7rI9LikCrlNkkBC2/hMZJKH1cs0F8ou4eK21PQZliKgVg=="
       },
       "Microsoft.AspNetCore.Mvc.Testing": {
         "type": "Direct",
-        "requested": "[7.0.3, )",
-        "resolved": "7.0.3",
-        "contentHash": "uK3h+RhJHRDt+HEOty3LMDVJAWKucjpAdm2RKQR7QYQVAtRB9b3+Jl+9wGxlrqW5Den7Ut9RJlA+aO4nPceieQ==",
+        "requested": "[7.0.4, )",
+        "resolved": "7.0.4",
+        "contentHash": "Tb/CV2tvY8XlXZVD4SkV5++DoeHCuQwWlIQafgWeR2L1298PkNRF/DJhLdx+M2zXrKRAcMHZSrXXU0lBTaSEpg==",
         "dependencies": {
-          "Microsoft.AspNetCore.TestHost": "7.0.3",
+          "Microsoft.AspNetCore.TestHost": "7.0.4",
           "Microsoft.Extensions.DependencyModel": "7.0.0",
           "Microsoft.Extensions.Hosting": "7.0.1"
         }
@@ -213,16 +213,16 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "7.0.3",
-        "contentHash": "LoWGXSI5P67sjTVEcUf0u37Ms9t/jEUyW462M6CAOfs48Gug2InaBXkt+dUYxkwtD4+WH4blafqF9Es2SrBBEw==",
+        "resolved": "7.0.4",
+        "contentHash": "yMCO9yU1kNQ5MomCnGDNsjPyIvnxHu4U7AfRkLmzZuzCeOGGA5XiehmpfzzqlyIs8wbSR/c6jbuLexedfKgjgA==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.15.1"
         }
       },
       "Microsoft.AspNetCore.JsonPatch": {
         "type": "Transitive",
-        "resolved": "7.0.3",
-        "contentHash": "k5Vf0AK5dFh0gdg4aZha3caJ7DD0h+0MzgvjbAO4zfIxxpZn25LlUwEC/a5e8nUbw1DBPxfaic2K6yJolWaBkw==",
+        "resolved": "7.0.4",
+        "contentHash": "Ign6gpOinYLePR66lVRHhh3qY9sBiVwvp2P3kjYIi5yRd/60BC5kQb+NZWqaIz1/8BXnVqdRE2baEKDm5fU3gg==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Newtonsoft.Json": "13.0.1"
@@ -230,10 +230,10 @@
       },
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
         "type": "Transitive",
-        "resolved": "7.0.3",
-        "contentHash": "Q4Trx6jnKgsC/UARC2pCOIm0pFWRjc28e0ex3HZzcQE0EaVfmQaELIo8akgmljXnebT5D4Ivx5hXyvZbQOAWbw==",
+        "resolved": "7.0.4",
+        "contentHash": "o7gsUVT5HjBWBOeh8OaZSIoKBr5gCZdBfThivMr8Xh3IPGcQDO1cGHzBTaQQ/DoxhPnducXacCl9On5GFxcOxw==",
         "dependencies": {
-          "Microsoft.AspNetCore.JsonPatch": "7.0.3",
+          "Microsoft.AspNetCore.JsonPatch": "7.0.4",
           "Newtonsoft.Json": "13.0.1",
           "Newtonsoft.Json.Bson": "1.0.2"
         }
@@ -245,8 +245,8 @@
       },
       "Microsoft.AspNetCore.TestHost": {
         "type": "Transitive",
-        "resolved": "7.0.3",
-        "contentHash": "wS+gBqK8O6ASpGjEoRdxKR4qb/Hqt+RumM1bMfKxkjYpsBl4UMh8ClmXzU42omn3sWCpPqxZIBSIO3F4zEYPzQ==",
+        "resolved": "7.0.4",
+        "contentHash": "vL8iDF1I2EJ7PNEPcPuob+Z0FYYb0Fx/bRsxm1N/9Zy5F/UfsHnYdzI5Jurvsfzc6ceofvo5q0jbwrb4oHBLMg==",
         "dependencies": {
           "System.IO.Pipelines": "7.0.0"
         }
@@ -740,8 +740,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.2",
-        "contentHash": "R2pZ3B0UjeyHShm9vG+Tu0EBb2lC8b0dFzV9gVn50ofHXh9Smjk6kTn7A/FdAsC8B5cKib1OnGYOXxRBz5XQDg=="
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
@@ -1877,12 +1877,12 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "FluentValidation": "[11.5.1, )",
           "FluentValidation.DependencyInjectionExtensions": "[11.5.1, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.0, )",
-          "Newtonsoft.Json": "[13.0.2, )",
+          "Newtonsoft.Json": "[13.0.3, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
           "NodaTime.Serialization.JsonNet": "[3.0.1, )"
         }
@@ -1890,7 +1890,7 @@
       "easydesk.cleanarchitecture.dependencyinjection": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )",
           "NodaTime": "[3.1.6, )"
         }
@@ -1898,7 +1898,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "NodaTime": "[3.1.6, )"
         }
       },
@@ -1906,9 +1906,9 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.9, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.3, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.4, )",
           "Rebus": "[7.0.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[4.0.0, )",
           "Rebus.ServiceProvider": "[8.4.0, )",
@@ -1919,9 +1919,9 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "MicroElements.Swashbuckle.NodaTime": "[4.0.1, )",
-          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[7.0.3, )",
+          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[7.0.4, )",
           "Microsoft.AspNetCore.Mvc.Versioning": "[5.0.0, )",
           "Saunter": "[0.11.0, )",
           "Swashbuckle.AspNetCore": "[6.5.0, )",

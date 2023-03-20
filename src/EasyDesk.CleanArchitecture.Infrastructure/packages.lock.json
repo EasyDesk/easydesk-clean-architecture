@@ -4,9 +4,9 @@
     "net7.0": {
       "EasyDesk.Tools": {
         "type": "Direct",
-        "requested": "[8.3.0, )",
-        "resolved": "8.3.0",
-        "contentHash": "XPl7n5tOaRb2nvjvM9bjKmV3kvWUxg8XWshZVVIYZh3oZivVavaFsw9rALcOFayKXES3LnA8cFmVEvoy9LDMHA=="
+        "requested": "[8.4.0, )",
+        "resolved": "8.4.0",
+        "contentHash": "Q2Rzyi0iZytpS32QJe6wBrxWuBIm8FHpW5jeyQd+d7rI9LikCrlNkkBC2/hMZJKH1cs0F8ou4eK21PQZliKgVg=="
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Direct",
@@ -20,9 +20,9 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Direct",
-        "requested": "[7.0.3, )",
-        "resolved": "7.0.3",
-        "contentHash": "LoWGXSI5P67sjTVEcUf0u37Ms9t/jEUyW462M6CAOfs48Gug2InaBXkt+dUYxkwtD4+WH4blafqF9Es2SrBBEw==",
+        "requested": "[7.0.4, )",
+        "resolved": "7.0.4",
+        "contentHash": "yMCO9yU1kNQ5MomCnGDNsjPyIvnxHu4U7AfRkLmzZuzCeOGGA5XiehmpfzzqlyIs8wbSR/c6jbuLexedfKgjgA==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.15.1"
         }
@@ -250,8 +250,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.2",
-        "contentHash": "R2pZ3B0UjeyHShm9vG+Tu0EBb2lC8b0dFzV9gVn50ofHXh9Smjk6kTn7A/FdAsC8B5cKib1OnGYOXxRBz5XQDg=="
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
@@ -327,12 +327,12 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "FluentValidation": "[11.5.1, )",
           "FluentValidation.DependencyInjectionExtensions": "[11.5.1, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.0, )",
-          "Newtonsoft.Json": "[13.0.2, )",
+          "Newtonsoft.Json": "[13.0.3, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
           "NodaTime.Serialization.JsonNet": "[3.0.1, )"
         }
@@ -340,7 +340,7 @@
       "easydesk.cleanarchitecture.dependencyinjection": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )",
           "NodaTime": "[3.1.6, )"
         }
@@ -348,7 +348,7 @@
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
-          "EasyDesk.Tools": "[8.3.0, )",
+          "EasyDesk.Tools": "[8.4.0, )",
           "NodaTime": "[3.1.6, )"
         }
       }
