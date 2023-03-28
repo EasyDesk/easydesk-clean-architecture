@@ -50,15 +50,25 @@ jobs:
         uses: EasyDesk/action-dotnet-build@v1
         with:
           warnings-as-errors: true
-      - name: Unit tests
+      - name: EasyDesk.Commons Unit Tests
         uses: EasyDesk/action-dotnet-test@v1
         with:
-          path: test/EasyDesk.CleanArchitecture.UnitTests
+          path: test/commons/EasyDesk.Commons
+          test-args: --logger 'GitHubActions'
+      - name: EasyDesk.Testing Unit tests
+        uses: EasyDesk/action-dotnet-test@v1
+        with:
+          path: test/commons/EasyDesk.Testing
+          test-args: --logger 'GitHubActions'
+      - name: EasyDesk.CleanArchitecture Unit tests
+        uses: EasyDesk/action-dotnet-test@v1
+        with:
+          path: test/ca/EasyDesk.CleanArchitecture.UnitTests
           test-args: --logger 'GitHubActions'
       - name: Integration tests
         uses: EasyDesk/action-dotnet-test@v1
         with:
-          path: test/EasyDesk.CleanArchitecture.IntegrationTests
+          path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
           test-args: --logger 'GitHubActions'
       - name: Pack
         uses: EasyDesk/action-dotnet-pack@v1
