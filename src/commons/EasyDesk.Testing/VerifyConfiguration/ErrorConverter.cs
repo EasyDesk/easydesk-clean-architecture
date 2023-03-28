@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using Argon;
 
 namespace EasyDesk.Testing.VerifyConfiguration;
 
@@ -30,22 +30,41 @@ public class ErrorConverter : WriteOnlyJsonConverter<Error>
         }
         else
         {
-            writer.WriteStartObject();
-            foreach (var property in value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                writer.WritePropertyName(property.Name);
-                var propertyValue = property.GetValue(value);
-                if (propertyValue is null)
-                {
-                    writer.WriteNull();
-                }
-                else
-                {
-                    writer.Serialize(propertyValue);
-                }
-            }
-            writer.WriteEndObject();
+            var settings = CloneSettingsFromSerializer(writer.Serializer);
+            var nestedSerializer = JsonSerializer.Create(settings);
+            nestedSerializer.Serialize(writer, value);
         }
         writer.WriteEndObject();
+    }
+
+    private JsonSerializerSettings CloneSettingsFromSerializer(JsonSerializer serializer)
+    {
+        var serializerSettings = new JsonSerializerSettings
+        {
+            CheckAdditionalContent = serializer.CheckAdditionalContent,
+            ConstructorHandling = serializer.ConstructorHandling,
+            ContractResolver = serializer.ContractResolver,
+            Converters = new List<JsonConverter>(serializer.Converters),
+            DefaultValueHandling = serializer.DefaultValueHandling,
+            EqualityComparer = serializer.EqualityComparer,
+            Error = serializer.Error,
+            EscapeHandling = serializer.EscapeHandling,
+            FloatFormatHandling = serializer.FloatFormatHandling,
+            FloatParseHandling = serializer.FloatParseHandling,
+            Formatting = serializer.Formatting,
+            MaxDepth = serializer.MaxDepth,
+            MetadataPropertyHandling = serializer.MetadataPropertyHandling,
+            MissingMemberHandling = serializer.MissingMemberHandling,
+            NullValueHandling = serializer.NullValueHandling,
+            ObjectCreationHandling = serializer.ObjectCreationHandling,
+            PreserveReferencesHandling = serializer.PreserveReferencesHandling,
+            ReferenceLoopHandling = serializer.ReferenceLoopHandling,
+            ReferenceResolverProvider = () => serializer.ReferenceResolver,
+            SerializationBinder = serializer.SerializationBinder,
+            TypeNameAssemblyFormatHandling = serializer.TypeNameAssemblyFormatHandling,
+            TypeNameHandling = serializer.TypeNameHandling,
+        };
+        serializerSettings.Converters.Remove(this);
+        return serializerSettings;
     }
 }
