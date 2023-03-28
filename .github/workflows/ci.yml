@@ -53,12 +53,12 @@ jobs:
       - name: EasyDesk.Commons Unit Tests
         uses: EasyDesk/action-dotnet-test@v1
         with:
-          path: test/commons/EasyDesk.Commons
+          path: test/commons/EasyDesk.Commons.UnitTests
           test-args: --logger 'GitHubActions'
       - name: EasyDesk.Testing Unit tests
         uses: EasyDesk/action-dotnet-test@v1
         with:
-          path: test/commons/EasyDesk.Testing
+          path: test/commons/EasyDesk.Testing.UnitTests
           test-args: --logger 'GitHubActions'
       - name: EasyDesk.CleanArchitecture Unit tests
         uses: EasyDesk/action-dotnet-test@v1
