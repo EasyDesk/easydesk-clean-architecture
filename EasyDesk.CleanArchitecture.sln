@@ -5,6 +5,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B4CAD0C5-8ACD-4DAC-B837-45F732ABA436}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{787D543E-56F2-4B79-8587-C7AE646D0D07}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Build.props = test\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{DA0FBFB1-B2B7-480D-8CC2-B051A0EA65DA}"
 	ProjectSection(SolutionItems) = preProject
