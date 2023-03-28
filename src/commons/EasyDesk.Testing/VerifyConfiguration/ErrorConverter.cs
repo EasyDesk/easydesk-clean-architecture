@@ -1,6 +1,4 @@
-﻿using EasyDesk.Commons;
-using System.Linq;
-using VerifyTests;
+﻿using System.Reflection;
 
 namespace EasyDesk.Testing.VerifyConfiguration;
 
@@ -32,10 +30,21 @@ public class ErrorConverter : WriteOnlyJsonConverter<Error>
         }
         else
         {
-            var thisIndex = writer.Serializer.Converters.IndexOf(this);
-            writer.Serializer.Converters.RemoveAt(thisIndex);
-            writer.Serialize(value);
-            writer.Serializer.Converters.Insert(thisIndex, this);
+            writer.WriteStartObject();
+            foreach (var property in value.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                writer.WritePropertyName(property.Name);
+                var propertyValue = property.GetValue(value);
+                if (propertyValue is null)
+                {
+                    writer.WriteNull();
+                }
+                else
+                {
+                    writer.Serialize(propertyValue);
+                }
+            }
+            writer.WriteEndObject();
         }
         writer.WriteEndObject();
     }
