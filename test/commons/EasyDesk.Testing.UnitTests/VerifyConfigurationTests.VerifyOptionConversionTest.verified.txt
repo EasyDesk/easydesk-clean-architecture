@@ -1,0 +1,6 @@
+﻿{
+  Some: 123,
+  None: null,
+  Nested: 123,
+  NoneInt: null
+}

@@ -21,16 +21,18 @@ jobs:
     runs-on: ubuntu-20.04
     env:
       PROJECT_DIRS: |
-        src/EasyDesk.CleanArchitecture.Domain
-        src/EasyDesk.CleanArchitecture.Application
-        src/EasyDesk.CleanArchitecture.Infrastructure
-        src/EasyDesk.CleanArchitecture.Dal.EfCore
-        src/EasyDesk.CleanArchitecture.Dal.SqlServer
-        src/EasyDesk.CleanArchitecture.Dal.PostgreSql
-        src/EasyDesk.CleanArchitecture.Web
-        src/EasyDesk.CleanArchitecture.DependencyInjection
-        src/EasyDesk.CleanArchitecture.Testing.Unit
-        src/EasyDesk.CleanArchitecture.Testing.Integration
+        src/commons/EasyDesk.Commons
+        src/commons/EasyDesk.Testing
+        src/ca/EasyDesk.CleanArchitecture.Domain
+        src/ca/EasyDesk.CleanArchitecture.Application
+        src/ca/EasyDesk.CleanArchitecture.Infrastructure
+        src/ca/EasyDesk.CleanArchitecture.Dal.EfCore
+        src/ca/EasyDesk.CleanArchitecture.Dal.SqlServer
+        src/ca/EasyDesk.CleanArchitecture.Dal.PostgreSql
+        src/ca/EasyDesk.CleanArchitecture.Web
+        src/ca/EasyDesk.CleanArchitecture.DependencyInjection
+        src/ca/EasyDesk.CleanArchitecture.Testing.Unit
+        src/ca/EasyDesk.CleanArchitecture.Testing.Integration
       OUTPUT_DIR: publish
     outputs:
       version: ${{ steps.semver.outputs.version }}

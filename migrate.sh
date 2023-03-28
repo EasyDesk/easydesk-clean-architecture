@@ -14,8 +14,8 @@ MIGRATION_NAME=$2
 
 function DAL_MIGRATION_COMMAND_1() {
 	dotnet ef migrations add "$1" \
-	-s "src/EasyDesk.CleanArchitecture.Dal.$2" \
-	-p "src/EasyDesk.CleanArchitecture.Dal.$2" \
+	-s "src/ca/EasyDesk.CleanArchitecture.Dal.$2" \
+	-p "src/ca/EasyDesk.CleanArchitecture.Dal.$2" \
 	--output-dir "Migrations/$3" \
 	--context "${3}Context" \
 	--no-build

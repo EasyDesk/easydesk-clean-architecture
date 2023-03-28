@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ca\EasyDesk.CleanArchitecture.Dal.PostgreSql\EasyDesk.CleanArchitecture.Dal.PostgreSql.csproj" />
+    <ProjectReference Include="..\..\ca\EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj" />
+    <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RootFolder>..\..\..</RootFolder>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,30 @@
+﻿{
+  Error: MultiError,
+  Meta: {
+    Primary: {
+      Error: CustomError,
+      Meta: {
+        Field: 42,
+        Inner: {
+          AnotherField: hello
+        }
+      }
+    },
+    Secondary: [
+      {
+        Error: CustomError,
+        Meta: {
+          Field: 123,
+          Inner: {
+            AnotherField: world
+          }
+        }
+      },
+      {
+        Error: CustomErrorInside,
+        Meta: {
+          AnotherField: asd
+        }
+      }
+    ]
+  }}

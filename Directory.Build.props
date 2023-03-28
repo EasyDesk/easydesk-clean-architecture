@@ -13,12 +13,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyDesk.Tools" Version="8.4.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Using Static="true" Include="EasyDesk.Tools.StaticImports" />
-    <Using Include="EasyDesk.Tools" />
+    <Using Static="true" Include="EasyDesk.Commons.StaticImports" />
+    <Using Include="EasyDesk.Commons" />
   </ItemGroup>
 
   <ItemGroup>
