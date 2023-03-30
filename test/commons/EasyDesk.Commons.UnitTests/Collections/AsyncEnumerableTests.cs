@@ -40,6 +40,20 @@ public class AsyncEnumerableTests
         });
     }
 
+    [Fact]
+    public async Task FirstOption_ShouldReturnNone_IfSequenceIsEmpty()
+    {
+        var result = await Empty<int>().FirstOption();
+        result.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task FirstOption_ShouldReturnTheFirstElement_IfSequenceIsNotEmpty()
+    {
+        var result = await Of(1, 2, 3).FirstOption();
+        result.ShouldContain(1);
+    }
+
     [Theory]
     [MemberData(nameof(ConcatData))]
     public async Task ThenConcat_ShouldJoinItsArguments(

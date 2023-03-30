@@ -71,6 +71,21 @@ public static class AsyncEnumerable
         }
     }
 
+    public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence)
+    {
+        await using (var enumerator = sequence.GetAsyncEnumerator())
+        {
+            if (!await enumerator.MoveNextAsync())
+            {
+                return None;
+            }
+            return Some(enumerator.Current);
+        }
+    }
+
+    public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence, Func<T, bool> predicate) =>
+        await sequence.Where(predicate).FirstOption();
+
     public static async IAsyncEnumerable<R> Select<T, R>(this IAsyncEnumerable<T> sequence, Func<T, R> mapper)
     {
         await foreach (var item in sequence)

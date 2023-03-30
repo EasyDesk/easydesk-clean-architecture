@@ -95,32 +95,30 @@ public class RebusTestBus : ITestBus
 
     public async Task<T> WaitForMessageOrFail<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
     {
-        var (m, deadLetterIndex) = await WaitForMessage(predicate, timeout);
-        deadLetterIndex.IfPresent(_deadLetter.RemoveAt);
-        return m;
-    }
+        var deadLetterMessage = _deadLetter.SelectMany(x => ValidateMessage(x, predicate)).FirstOption();
+        if (deadLetterMessage.IsPresent)
+        {
+            _deadLetter.Remove(deadLetterMessage.Value);
+            return deadLetterMessage.Value;
+        }
 
-    private async Task<(T, Option<int>)> WaitForMessage<T>(Func<T, bool> predicate, Duration? timeout = null)
-    {
         var actualTimeout = timeout ?? _timeout;
         try
         {
             using var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
-            var messages = _deadLetter
-                .Select((m, i) => (m, Some(i)))
-                .ToAsyncEnumerable()
-                .ThenConcat(() =>
-                {
-                    return _messages.Reader.ReadAllAsync(cts.Token).Select(m => (m, NoneT<int>()));
-                });
-
-            await foreach (var (m, deadLetterIndex) in messages)
+            while (true)
             {
-                if (m is T t && predicate(t))
+                if (cts.IsCancellationRequested)
                 {
-                    return (t, deadLetterIndex);
+                    throw new OperationCanceledException();
                 }
-                _deadLetter.Add(m);
+                var message = await _messages.Reader.ReadAsync(cts.Token);
+                var validatedMessage = ValidateMessage(message, predicate);
+                if (validatedMessage.IsPresent)
+                {
+                    return validatedMessage.Value;
+                }
+                _deadLetter.Add(message);
             }
 
             throw new UnreachableException();
@@ -130,6 +128,9 @@ public class RebusTestBus : ITestBus
             throw new MessageNotReceivedWithinTimeoutException(actualTimeout, typeof(T));
         }
     }
+
+    private Option<T> ValidateMessage<T>(IMessage message, Func<T, bool> predicate) =>
+        message is T t && predicate(t) ? Some(t) : None;
 
     public async ValueTask DisposeAsync()
     {
