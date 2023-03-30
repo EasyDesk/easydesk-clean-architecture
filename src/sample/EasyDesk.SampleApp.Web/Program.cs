@@ -33,6 +33,11 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
     config
         .WithServiceName("EasyDesk.Sample.App")
         .AddApiVersioning()
+        .AddMultitenancy(options =>
+        {
+            options.DefaultPolicy = MultitenantPolicies.RequireExistingTenant();
+            options.UseDefaultContextTenantReader();
+        })
         .AddAuthentication(configure => configure.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
         .AddAuthorization(options => options
             .UseRoleBasedPermissions()
@@ -41,12 +46,6 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddAsyncApi()
         .AddSagas()
         .AddModule<SampleAppDomainModule>();
-
-    config.ConfigureMultitenancy(options =>
-    {
-        options.DefaultPolicy = MultitenantPolicies.RequireExistingTenant();
-        options.UseDefaultContextTenantReader();
-    });
 
     config.AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"));
 

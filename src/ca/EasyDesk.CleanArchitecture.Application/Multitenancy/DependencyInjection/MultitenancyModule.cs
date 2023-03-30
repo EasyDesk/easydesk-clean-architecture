@@ -47,10 +47,5 @@ public static class MultitenancyModuleExtensions
         return builder.AddModule(new MultitenancyModule(configure));
     }
 
-    public static AppBuilder ConfigureMultitenancy(this AppBuilder builder, Action<MultitenancyOptions> configure)
-    {
-        return builder.ConfigureModule<MultitenancyModule>(m => configure(m.Options));
-    }
-
     public static bool IsMultitenant(this AppDescription app) => app.HasModule<MultitenancyModule>();
 }

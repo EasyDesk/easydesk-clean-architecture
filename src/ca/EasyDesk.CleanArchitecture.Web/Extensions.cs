@@ -51,7 +51,6 @@ public static partial class Extensions
             .AddContextProvider()
             .AddTimeManagement()
             .AddDispatching()
-            .AddMultitenancy()
             .AddValidation();
 
         configure?.Invoke(appBuilder);
