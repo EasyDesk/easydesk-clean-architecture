@@ -29,11 +29,11 @@
       },
       "NodaTime.Testing": {
         "type": "Direct",
-        "requested": "[3.1.6, )",
-        "resolved": "3.1.6",
-        "contentHash": "wzrLIBe7SgYdvwTyWWBIOinlOJXM1Sud7Bs0tixovIgAjPtQq1W3sOE+qjVX8r0G/vVRK2u2Ob2nlWev1ZYPlg==",
+        "requested": "[3.1.9, )",
+        "resolved": "3.1.9",
+        "contentHash": "9Xro9Gw3+VtEDHKZt8I++fpxorcMyHRthuX91IJLhod9sEtRJ1tUA2nRQlhK6fV9aVhJ1jw6SKsScVgg+Xqu9Q==",
         "dependencies": {
-          "NodaTime": "3.1.6"
+          "NodaTime": "3.1.9"
         }
       },
       "StyleCop.Analyzers": {
@@ -47,12 +47,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[19.11.1, )",
-        "resolved": "19.11.1",
-        "contentHash": "/bAPzV25PgtSaWQZj8WJOWi7KWyehz6NaRFQWapaOpHtfn1JVoLOUB0FSZMPE/f93h8lG81hWzXMwy0mwVdOYg==",
+        "requested": "[19.11.2, )",
+        "resolved": "19.11.2",
+        "contentHash": "bB24XltVFs7XOMTdfsn5yB54Rv4yv07pnphqWDdyjOU3olB7o7IwOq1iBZhDZ8Z1uxlaS9jtexQRlKET3AXHfA==",
         "dependencies": {
           "EmptyFiles": "4.3.0",
-          "Verify": "19.11.1",
+          "Verify": "19.11.2",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -76,16 +76,16 @@
       },
       "Argon": {
         "type": "Transitive",
-        "resolved": "0.5.0",
-        "contentHash": "57yiWJe8l5bQHPjXpkeM+KsJvQjj04+32FiLqTl/4KNv/y5ZGCkLKiHSzbKatL7Bg4VCL7rTkOM6sgGdwRpXUQ=="
+        "resolved": "0.5.1",
+        "contentHash": "4qOctLu0cmACJT59OZ9YqRMfk7DAWZCldyrUe1CIohSddeRp3Ykcnh4vW5UnNTwWHOyVobdL/dLl19wrsAVL1g=="
       },
       "Argon.NodaTime": {
         "type": "Transitive",
-        "resolved": "0.1.0",
-        "contentHash": "h0HwBGac7pdSrgs3f8jz2qEgbKtivU78JutV7hqcFU0Npe3wtn2cj8pTjjODyz1d0lijlNAblpJAkQ5YDT1Fuw==",
+        "resolved": "0.3.3",
+        "contentHash": "hIqKDkcoR/nMwPG/w++VK6Dfg6OxtgFOttrrytVAB6a4LuTRUYdx6/KVcJUeJkN8Z70GsPNyeridnABTgnJ5qg==",
         "dependencies": {
-          "Argon": "0.1.0",
-          "NodaTime": "3.1.3"
+          "Argon": "0.3.3",
+          "NodaTime": "3.1.6"
         }
       },
       "Castle.Core": {
@@ -438,8 +438,8 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.1.6",
-        "contentHash": "0ZGOyyLldBHYhFpDi22YcXDuAjj3bI33ChGJyp4/dP2gbhpIIVAKaIgU0h+1oUlh/LgA/UKeyJkWOCW2wHYfIg==",
+        "resolved": "3.1.9",
+        "contentHash": "EzjwDOtsETlXWBDE6qvTQqc3guP+9xrAOf9j1mHL++UD4VeZay+dbCPNnXyZhoQMkKAOZ/+hIOtz7STl0Rkknw==",
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": "4.7.1"
         }
@@ -464,8 +464,8 @@
       },
       "NSubstitute": {
         "type": "Transitive",
-        "resolved": "4.4.0",
-        "contentHash": "aArWp0M9n/3IZHCNSb3QIHy0tkPLSft8l3KFeUa54GbznKiv0FE687TBfPhZbXf0/zGtc4EsHLEUqEEf0Bf4HQ==",
+        "resolved": "5.0.0",
+        "contentHash": "CWGy4oXvcJcZzL7m5Rr/eMSejFXMDq1RRMlsbL6eltS3AuN/d8GH3ZzUcuStQcCSlcx+hpsgTxdnb3lhozWG6w==",
         "dependencies": {
           "Castle.Core": "5.0.0"
         }
@@ -477,8 +477,8 @@
       },
       "Rebus": {
         "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "IGfOsJf25uJB+2Gu1HXvIv2IXCJFcM3XiC5+3P+Y9UtQQURgzBr1gqpmY3zW6KUclbcKwjtITmSR8DVFzAAWWw==",
+        "resolved": "7.1.0",
+        "contentHash": "FatWlu0kUjHL8c3JDWhQ28sj56XxHTqh2NIJZ+cok8m74E+62MB/PrnVbXL479dIvPm2+X05IZkxyVTrWp7dtg==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Newtonsoft.Json": "[12.0.1, 14.0.0)",
@@ -496,12 +496,13 @@
       },
       "Rebus.ServiceProvider": {
         "type": "Transitive",
-        "resolved": "8.4.0",
-        "contentHash": "MVEEcGoESWFtaZiP664U3NNq4UDO2PQuqnRdc84rkZwXmgbj7BKCnwT29cVIGJBtTjleW0W0eF0tIt2yyd53FA==",
+        "resolved": "9.0.0",
+        "contentHash": "SF+qPpWHtnlgZ/1hw/OVC+dqCUN7y7RbzfVPVdKJf4LVIrT1io7a4NAaUuzzvo9SCyoXJJYS6kIdDHvq2oiJSw==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "[3.0.0, 8.0.0)",
-          "Microsoft.Extensions.Hosting.Abstractions": "[3.0.0, 8.0.0)",
-          "Rebus": "6.0.0"
+          "Microsoft.Extensions.DependencyInjection": "[6.0.0, 8.0.0)",
+          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 8.0.0)",
+          "Rebus": "6.0.0",
+          "microsoft.extensions.logging.abstractions": "[6.0.0, 8.0.0)"
         }
       },
       "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl": {
@@ -1436,10 +1437,10 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.11.1",
-        "contentHash": "RX+wBsNW8GS3jwOyTXzJLLMMJOCIee6mSrLNkC409Fs9JZhWKBQ+tLiVFVd0h3W2Wi7FL1A5CZpxMpg6gtPuEA==",
+        "resolved": "19.11.2",
+        "contentHash": "gZ1Q/Oj8CLzHAAZkr1j0+XeLrDprBorA6aNCJ48eyRXY3CysJtYctK8qj+YhVm8N1Rlb+UYAWZKSprxn2KR0xg==",
         "dependencies": {
-          "Argon": "0.5.0",
+          "Argon": "0.5.1",
           "DiffEngine": "11.2.0",
           "EmptyFiles": "4.3.0",
           "SimpleInfoName": "2.1.1"
@@ -1447,22 +1448,22 @@
       },
       "Verify.NewtonsoftJson": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "rirjFZ3ywYcBsqRiDS30ZthYdpTVQb4dluVKoWemZUTRux1aF/7T5vAkWqo48r9+OQiJKPhWYOVj4znqAEwQZw==",
+        "resolved": "1.1.0",
+        "contentHash": "YtQ4wL2OGSdm8lG9g/2T57N1iNQ+EYa+XUA81n9UefbGPn/9lDy3/9Bi1TzYD1eVDUild/ZuZozMuyzOb7LM8Q==",
         "dependencies": {
-          "Argon": "0.1.0",
+          "Argon": "0.3.3",
           "Newtonsoft.Json": "13.0.2",
-          "Verify": "19.5.0"
+          "Verify": "19.9.2"
         }
       },
       "Verify.NodaTime": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "AuLMXkmEiDjmeYmE2TTvBDjvuoli1+duMFaEJODwVmvg1+XmCeWAVJKC3veAmMVPgoU/S7RWyGStpP6Y9hoF3Q==",
+        "resolved": "2.1.0",
+        "contentHash": "gXoNGpNv9qxeLTW+E1D5E18e2K2yZ71j2YnHmo0aEMaFCsOXTTKeuy1tywGXdNh1o+2diLRlYqZaCms55FSS8g==",
         "dependencies": {
-          "Argon.NodaTime": "0.1.0",
+          "Argon.NodaTime": "0.3.3",
           "NodaTime": "3.1.6",
-          "Verify": "19.5.0"
+          "Verify": "19.9.2"
         }
       },
       "xunit.abstractions": {
@@ -1529,14 +1530,14 @@
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )",
-          "NodaTime": "[3.1.6, )"
+          "NodaTime": "[3.1.9, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
-          "NodaTime": "[3.1.6, )"
+          "NodaTime": "[3.1.9, )"
         }
       },
       "easydesk.cleanarchitecture.infrastructure": {
@@ -1545,9 +1546,9 @@
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.9, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.4, )",
-          "Rebus": "[7.0.0, )",
+          "Rebus": "[7.1.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[4.0.0, )",
-          "Rebus.ServiceProvider": "[8.4.0, )",
+          "Rebus.ServiceProvider": "[9.0.0, )",
           "System.IdentityModel.Tokens.Jwt": "[6.27.0, )"
         }
       },
@@ -1582,11 +1583,11 @@
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
-          "NSubstitute": "[4.4.0, )",
+          "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.1.0, )",
-          "Verify": "[19.7.1, )",
-          "Verify.NewtonsoftJson": "[1.0.0, )",
-          "Verify.NodaTime": "[2.0.1, )"
+          "Verify": "[19.11.2, )",
+          "Verify.NewtonsoftJson": "[1.1.0, )",
+          "Verify.NodaTime": "[2.1.0, )"
         }
       }
     }
