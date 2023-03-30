@@ -1,5 +1,4 @@
 ﻿using Argon;
-using VerifyTests;
 
 namespace EasyDesk.Testing.VerifyConfiguration;
 
@@ -7,7 +6,7 @@ public static class VerifySettingsInitializer
 {
     public static void Initialize()
     {
-        VerifyNewtonsoftJson.Enable();
+        VerifyNewtonsoftJson.Initialize();
         VerifierSettings.AddExtraSettings(settings =>
         {
             settings.Converters.Add(new OptionConverter());
@@ -19,6 +18,6 @@ public static class VerifySettingsInitializer
 
         VerifierSettings.DontIgnoreEmptyCollections();
 
-        VerifyNodaTime.Enable();
+        VerifyNodaTime.Initialize();
     }
 }
