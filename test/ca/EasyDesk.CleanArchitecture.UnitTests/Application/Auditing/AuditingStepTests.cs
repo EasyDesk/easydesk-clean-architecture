@@ -27,7 +27,7 @@ public class AuditingStepTests
 
     public record TestEvent : IEvent;
 
-    public record TestDescriptionProvider : ICommand, IAuditDescriptionProvider
+    public record TestDescriptionProvider : ICommand, IOverrideAuditDescription
     {
         public const string Description = "TestDescription";
 

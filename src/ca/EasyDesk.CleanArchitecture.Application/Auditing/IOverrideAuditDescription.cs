@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Auditing;
 
-public interface IAuditDescriptionProvider
+public interface IOverrideAuditDescription
 {
     string GetAuditDescription();
 }
