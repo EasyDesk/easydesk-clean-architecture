@@ -19,4 +19,6 @@ public interface IDataAccessImplementation
     void AddMultitenancy(IServiceCollection services, AppDescription app);
 
     void AddSagas(IServiceCollection services, AppDescription app);
+
+    void AddAuditing(IServiceCollection services, AppDescription app);
 }

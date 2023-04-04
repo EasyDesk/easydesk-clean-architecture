@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 
-internal class AuditContext : AbstractDbContext<AuditContext>
+internal class AuditingContext : AbstractDbContext<AuditingContext>
 {
-    public AuditContext(ITenantProvider tenantProvider, DbContextOptions<AuditContext> options)
+    public AuditingContext(ITenantProvider tenantProvider, DbContextOptions<AuditingContext> options)
         : base(tenantProvider, options)
     {
     }
 
-    public DbSet<AuditRecordModel> Records { get; set; }
+    public DbSet<AuditRecordModel> AuditRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

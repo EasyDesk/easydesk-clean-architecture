@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EntityFrameworkCore.SqlServer.NodaTime.Extensions;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.DesignTimeFactories;
@@ -11,6 +12,7 @@ internal static class DbContextOptionsUtils
         return new DbContextOptionsBuilder<T>()
             .UseSqlServer(options =>
             {
+                options.UseNodaTime();
                 options.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
             })
             .Options;

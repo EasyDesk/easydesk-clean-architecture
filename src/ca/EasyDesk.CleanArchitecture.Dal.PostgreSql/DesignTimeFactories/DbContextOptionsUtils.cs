@@ -11,6 +11,7 @@ internal static class DbContextOptionsUtils
         return new DbContextOptionsBuilder<T>()
             .UseNpgsql(options =>
             {
+                options.UseNodaTime();
                 options.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
             })
             .Options;

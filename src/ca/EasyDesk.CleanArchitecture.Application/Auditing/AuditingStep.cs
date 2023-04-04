@@ -50,9 +50,9 @@ public class AuditingStep<T, R> : IPipelineStep<T, R>
 
     private Option<string> DetectDescription(T request)
     {
-        if (request is IOverrideAuditDescription descriptionProvider)
+        if (request is IOverrideAuditDescription descriptionOverride)
         {
-            return Some(descriptionProvider.GetAuditDescription());
+            return Some(descriptionOverride.GetAuditDescription());
         }
         return None;
     }

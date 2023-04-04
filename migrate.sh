@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-USAGE_HELP="Usage: $0 <sample|auth|sagas|messaging|framework|all> <migration_name>"
+USAGE_HELP="Usage: $0 <sample|auth|sagas|messaging|msg|audit|auditing|framework|all> <migration_name>"
 
 
 if [ $# -ne 2 ] || [ -z "$1" ] || [ -z "$2" ] ; then
@@ -41,6 +41,8 @@ SAGAS_MIGRATION_COMMAND="DAL_MIGRATION_COMMAND ${MIGRATION_NAME} Sagas"
 
 MESSAGING_MIGRATION_COMMAND="DAL_MIGRATION_COMMAND ${MIGRATION_NAME} Messaging"
 
+AUDITING_MIGRATION_COMMAND="DAL_MIGRATION_COMMAND ${MIGRATION_NAME} Auditing"
+
 dotnet build
 
 case "$TARGET" in
@@ -61,16 +63,22 @@ case "$TARGET" in
 		$MESSAGING_MIGRATION_COMMAND
 	;;
 
+	audit | auditing)
+		$AUDITING_MIGRATION_COMMAND
+	;;
+
 	framework)
 		$AUTH_MIGRATION_COMMAND
 		$SAGAS_MIGRATION_COMMAND
 		$MESSAGING_MIGRATION_COMMAND
+		$AUDITING_MIGRATION_COMMAND
 	;;
 
 	all)
 		$AUTH_MIGRATION_COMMAND
 		$SAGAS_MIGRATION_COMMAND
 		$MESSAGING_MIGRATION_COMMAND
+		$AUDITING_MIGRATION_COMMAND
 		SAMPLE_MIGRATION_COMMAND "$MIGRATION_NAME"
 	;;
 

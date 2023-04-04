@@ -1,9 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
@@ -61,9 +63,7 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
 
     public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<MessagingContext>(
-            services,
-            ConfigureMigrationsAssembly);
+        AddDbContext<MessagingContext>(services, ConfigureMigrationsAssembly);
         services.AddScoped<IOutbox, EfCoreOutbox>();
         services.AddScoped<IInbox, EfCoreInbox>();
     }
@@ -99,6 +99,14 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     {
         AddDbContext<SagasContext>(services, ConfigureMigrationsAssembly);
         services.AddScoped<ISagaManager, EfCoreSagaManager>();
+    }
+
+    public void AddAuditing(IServiceCollection services, AppDescription app)
+    {
+        AddDbContext<AuditingContext>(services, ConfigureMigrationsAssembly);
+        services.AddScoped<AuditManager>();
+        services.AddScoped<IAuditLog>(p => p.GetRequiredService<AuditManager>());
+        services.AddScoped<IAuditStorage>(p => p.GetRequiredService<AuditManager>());
     }
 
     private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)

@@ -8,58 +8,29 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 
 internal class AuditManager : IAuditStorage, IAuditLog
 {
-    private readonly AuditContext _context;
+    private readonly AuditingContext _context;
 
-    public AuditManager(AuditContext context)
+    public AuditManager(AuditingContext context)
     {
         _context = context;
     }
 
     public IPageable<AuditRecord> Audit(AuditQuery query)
     {
-        IQueryable<AuditRecordModel> result = _context.Records;
-
-        if (query.MatchType)
+        if (query.MatchUserId.IsPresent && query.IsAnonymous.Contains(true))
         {
-            result = result.Where(r => r.Type == query.MatchType.Value);
+            throw new InvalidOperationException("A record can't be anonymous and match given user id at the same time.");
         }
 
-        if (query.MatchName)
-        {
-            result = result.Where(r => r.Name == query.MatchName.Value);
-        }
-
-        if (query.MatchUserId)
-        {
-            if (query.IsAnonymous.OrElse(false))
-            {
-                throw new InvalidOperationException("A record can't be anonymous and match given user id at the same time.");
-            }
-            result = result.Where(r => r.UserId == query.MatchUserId.Value);
-        }
-        else if (query.IsAnonymous)
-        {
-            if (query.IsAnonymous.Value)
-            {
-                result = result.Where(r => r.UserId == null);
-            }
-            else
-            {
-                result = result.Where(r => r.UserId != null);
-            }
-        }
-
-        if (query.IsSuccess)
-        {
-            result = result.Where(r => r.Success == query.IsSuccess.Value);
-        }
-
-        if (query.MatchTimeInterval)
-        {
-            result = result.Where(r => query.MatchTimeInterval.Value.Contains(r.Instant));
-        }
-
-        return result
+        return _context.AuditRecords
+            .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
+            .Conditionally(query.MatchName, name => q => q.Where(r => r.Name == name))
+            .Conditionally(query.IsSuccess, success => q => q.Where(r => r.Success == success))
+            .Conditionally(query.MatchTimeInterval, interval => q => q.Where(r => interval.Contains(r.Instant)))
+            .Conditionally(query.MatchUserId, userId => q => q.Where(r => r.UserId == userId))
+            .Conditionally(query.IsAnonymous, anonymous => q => q.Where(anonymous
+                ? r => r.UserId == null
+                : r => r.UserId != null))
             .Project<AuditRecordModel, AuditRecord>()
             .ToPageable();
     }
