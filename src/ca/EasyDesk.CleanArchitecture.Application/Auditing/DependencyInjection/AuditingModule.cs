@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,8 @@ public class AuditingModule : AppModule
     {
         app.ConfigureDispatchingPipeline(pipeline => pipeline
             .AddStep(typeof(AuditingStep<,>))
-            .After(typeof(UnitOfWorkStep<,>)));
+            .After(typeof(UnitOfWorkStep<,>))
+            .After(typeof(MultitenancyManagementStep<,>)));
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)

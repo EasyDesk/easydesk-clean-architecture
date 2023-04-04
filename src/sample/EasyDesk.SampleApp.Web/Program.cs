@@ -1,3 +1,4 @@
+using EasyDesk.CleanArchitecture.Application.Auditing.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
@@ -38,6 +39,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
             options.DefaultPolicy = MultitenantPolicies.RequireExistingTenant();
             options.UseDefaultContextTenantReader();
         })
+        .AddAuditing()
         .AddAuthentication(configure => configure.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
         .AddAuthorization(options => options
             .UseRoleBasedPermissions()
