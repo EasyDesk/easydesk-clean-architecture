@@ -13,6 +13,7 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.Auditing;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using Microsoft.AspNetCore.Builder;
@@ -105,7 +106,7 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     {
         AddDbContext<AuditingContext>(services, ConfigureMigrationsAssembly);
         services.AddScoped<IAuditLog, EfCoreAuditLog>();
-        services.AddScoped<IAuditStorage, EfCoreAuditStorage>();
+        services.AddScoped<IAuditStorageImplementation, EfCoreAuditStorage>();
     }
 
     private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)

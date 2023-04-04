@@ -1,27 +1,21 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;
-using Microsoft.Extensions.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Auditing;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 
-internal class EfCoreAuditStorage : IAuditStorage
+internal class EfCoreAuditStorage : IAuditStorageImplementation
 {
-    private readonly ITenantProvider _tenantProvider;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly AuditingContext _context;
 
-    public EfCoreAuditStorage(ITenantProvider tenantProvider, IServiceScopeFactory serviceScopeFactory)
+    public EfCoreAuditStorage(AuditingContext context)
     {
-        _tenantProvider = tenantProvider;
-        _serviceScopeFactory = serviceScopeFactory;
+        _context = context;
     }
 
     public async Task StoreAudit(AuditRecord record)
     {
-        await using var scope = _serviceScopeFactory.CreateAsyncScope();
-        scope.ServiceProvider.GetRequiredService<IContextTenantInitializer>().Initialize(_tenantProvider.TenantInfo);
-        var context = scope.ServiceProvider.GetRequiredService<AuditingContext>();
-        context.Add(AuditRecordModel.Create(record));
-        await context.SaveChangesAsync();
+        _context.Add(AuditRecordModel.Create(record));
+        await _context.SaveChangesAsync();
     }
 }
