@@ -104,9 +104,8 @@ public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementati
     public void AddAuditing(IServiceCollection services, AppDescription app)
     {
         AddDbContext<AuditingContext>(services, ConfigureMigrationsAssembly);
-        services.AddScoped<AuditManager>();
-        services.AddScoped<IAuditLog>(p => p.GetRequiredService<AuditManager>());
-        services.AddScoped<IAuditStorage>(p => p.GetRequiredService<AuditManager>());
+        services.AddScoped<IAuditLog, EfCoreAuditLog>();
+        services.AddScoped<IAuditStorage, EfCoreAuditStorage>();
     }
 
     private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)

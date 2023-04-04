@@ -6,11 +6,11 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 
-internal class AuditManager : IAuditStorage, IAuditLog
+internal class EfCoreAuditLog : IAuditLog
 {
     private readonly AuditingContext _context;
 
-    public AuditManager(AuditingContext context)
+    public EfCoreAuditLog(AuditingContext context)
     {
         _context = context;
     }
@@ -33,11 +33,5 @@ internal class AuditManager : IAuditStorage, IAuditLog
                 : r => r.UserId != null))
             .Project<AuditRecordModel, AuditRecord>()
             .ToPageable();
-    }
-
-    public Task StoreAudit(AuditRecord record)
-    {
-        _context.Add(AuditRecordModel.Create(record));
-        return _context.SaveChangesAsync();
     }
 }
