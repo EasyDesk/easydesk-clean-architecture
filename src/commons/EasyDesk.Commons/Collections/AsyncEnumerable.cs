@@ -55,6 +55,14 @@ public static class AsyncEnumerable
         }
     }
 
+    public static async Task<bool> Any<T>(this IAsyncEnumerable<T> sequence)
+    {
+        await using (var enumerator = sequence.GetAsyncEnumerator())
+        {
+            return await enumerator.MoveNextAsync();
+        }
+    }
+
     public static IAsyncEnumerable<T> Concat<T>(this IAsyncEnumerable<T> left, IAsyncEnumerable<T> right) =>
         left.ThenConcat(() => right);
 

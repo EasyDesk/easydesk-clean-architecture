@@ -38,7 +38,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
                 new RespawnerOptions
                 {
                     DbAdapter = DbAdapter.Postgres,
-                    SchemasToInclude = new[] { "domain", "messaging", "auth", "sagas" }
+                    SchemasToInclude = new[] { "domain", "messaging", "auth", "sagas", "audit" }
                 },
                 connectionString =>
                 {

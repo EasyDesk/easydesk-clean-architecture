@@ -41,6 +41,20 @@ public class AsyncEnumerableTests
     }
 
     [Fact]
+    public async Task Any_ShouldReturnFalse_IfSequenceIsEmpty()
+    {
+        var result = await Empty<int>().Any();
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task Any_ShouldReturnTrue_IfSequenceIsNotEmpty()
+    {
+        var result = await Of(1, 2, 3).Any();
+        result.ShouldBeTrue();
+    }
+
+    [Fact]
     public async Task FirstOption_ShouldReturnNone_IfSequenceIsEmpty()
     {
         var result = await Empty<int>().FirstOption();
