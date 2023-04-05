@@ -30,8 +30,8 @@ public class AuditingModule : AppModule
             SingleWriter = false,
         });
         services.AddHostedService(p => new AuditingBackgroundTask(
-            channel.Reader,
             p.GetRequiredService<IServiceScopeFactory>(),
+            channel.Reader,
             p.GetRequiredService<ILogger<AuditingBackgroundTask>>()));
         services.AddScoped<IAuditStorage>(p => new OutOfProcessAuditStorage(
             p.GetRequiredService<ITenantProvider>(),

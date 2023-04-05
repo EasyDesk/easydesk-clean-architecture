@@ -22,8 +22,7 @@ internal class Dispatcher : IDispatcher
     {
         var dispatchableType = dispatchable.GetType();
         var methodInfo = _dispatchMethodsByType
-            .GetOrAdd(dispatchableType, t =>
-                typeof(Dispatcher)
+            .GetOrAdd(dispatchableType, t => typeof(Dispatcher)
                 .GetMethod(nameof(DispatchImpl), BindingFlags.NonPublic | BindingFlags.Instance)!
                 .MakeGenericMethod(t, typeof(X), typeof(R)));
         return await (Task<Result<R>>)methodInfo.Invoke(this, new object[] { dispatchable, mapper })!;

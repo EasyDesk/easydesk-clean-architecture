@@ -4,36 +4,31 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
-internal class OutboxFlusherBackgroundService : PausableBackgroundService
+internal class OutboxFlusherBackgroundService : BackgroundConsumer<Nothing>
 {
     private readonly OutboxFlushRequestsChannel _requestsChannel;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly ILogger<OutboxFlusherBackgroundService> _logger;
 
     public OutboxFlusherBackgroundService(
-        OutboxFlushRequestsChannel requestsChannel,
         IServiceScopeFactory serviceScopeFactory,
-        ILogger<OutboxFlusherBackgroundService> logger)
+        OutboxFlushRequestsChannel requestsChannel,
+        ILogger<OutboxFlusherBackgroundService> logger) : base(serviceScopeFactory)
     {
         _requestsChannel = requestsChannel;
-        _serviceScopeFactory = serviceScopeFactory;
         _logger = logger;
     }
 
-    protected override async Task ExecuteUntilPausedAsync(CancellationToken stoppingToken)
+    protected override IAsyncEnumerable<Nothing> GetProducer(CancellationToken pausingToken) =>
+        _requestsChannel.GetAllFlushRequests(pausingToken);
+
+    protected override async Task Consume(Nothing item, IServiceProvider serviceProvider, CancellationToken pausingToken)
     {
-        await foreach (var request in _requestsChannel.GetAllFlushRequests(stoppingToken))
-        {
-            try
-            {
-                await using var scope = _serviceScopeFactory.CreateAsyncScope();
-                await scope.ServiceProvider.GetRequiredService<OutboxFlusher>().Flush();
-                _logger.LogDebug("Correctly flushed outbox");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error while publishing outbox messages.");
-            }
-        }
+        await serviceProvider.GetRequiredService<OutboxFlusher>().Flush();
+        _logger.LogDebug("Correctly flushed outbox");
+    }
+
+    protected override void OnException(Nothing item, IServiceProvider serviceProvider, Exception exception)
+    {
+        _logger.LogError(exception, "Unexpected error while publishing outbox messages.");
     }
 }
