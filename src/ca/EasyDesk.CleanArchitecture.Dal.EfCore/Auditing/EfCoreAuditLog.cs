@@ -23,10 +23,12 @@ internal class EfCoreAuditLog : IAuditLog
         }
 
         return _context.AuditRecords
+            .Conditionally(
+                query.MatchTimeInterval.HasEnd || query.MatchTimeInterval.HasEnd,
+                q => q.Where(r => query.MatchTimeInterval.Contains(r.Instant)))
             .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
             .Conditionally(query.MatchName, name => q => q.Where(r => r.Name == name))
             .Conditionally(query.IsSuccess, success => q => q.Where(r => r.Success == success))
-            .Conditionally(query.MatchTimeInterval, interval => q => q.Where(r => interval.Contains(r.Instant)))
             .Conditionally(query.MatchUserId, userId => q => q.Where(r => r.UserId == userId))
             .Conditionally(query.IsAnonymous, anonymous => q => q.Where(anonymous
                 ? r => r.UserId == null
