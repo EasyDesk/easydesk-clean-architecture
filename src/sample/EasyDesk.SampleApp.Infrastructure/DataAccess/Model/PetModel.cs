@@ -51,9 +51,6 @@ public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, 
 
             builder.Property(x => x.Id)
                 .UseHiLo();
-
-            builder.Property(x => x.Nickname)
-                .IsRequired();
         }
     }
 }

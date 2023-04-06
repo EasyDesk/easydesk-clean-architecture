@@ -69,12 +69,6 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.FirstName)
-                .IsRequired();
-
-            builder.Property(x => x.LastName)
-                .IsRequired();
-
             builder.HasMany(x => x.Pets)
                 .WithOne(x => x.Person)
                 .HasForeignKey(x => x.PersonId)
@@ -84,7 +78,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
             {
                 builder.WithOwner();
                 builder.Property(x => x.StreetType)
-                .HasMaxLength(PlaceName.MaxLength);
+                    .HasMaxLength(PlaceName.MaxLength);
                 builder.Property(x => x.StreetName)
                     .HasMaxLength(PlaceName.MaxLength);
                 builder.Property(x => x.StreetNumber)

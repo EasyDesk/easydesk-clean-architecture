@@ -6,11 +6,11 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 
 internal class SagaModel : IMultitenantEntity
 {
-    public string? Id { get; set; }
+    required public string Id { get; set; }
 
-    public string? Type { get; set; }
+    required public string Type { get; set; }
 
-    public byte[]? State { get; set; }
+    public byte[] State { get; set; } = Array.Empty<byte>();
 
     public int? Version { get; set; }
 
@@ -21,15 +21,6 @@ internal class SagaModel : IMultitenantEntity
         public void Configure(EntityTypeBuilder<SagaModel> builder)
         {
             builder.HasKey(x => new { x.Id, x.Type, x.TenantId });
-
-            builder.Property(x => x.Id)
-                .IsRequired();
-
-            builder.Property(x => x.Type)
-                .IsRequired();
-
-            builder.Property(x => x.State)
-                .IsRequired();
         }
     }
 }

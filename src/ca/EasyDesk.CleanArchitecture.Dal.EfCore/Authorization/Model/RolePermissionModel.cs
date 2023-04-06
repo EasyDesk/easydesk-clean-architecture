@@ -20,11 +20,9 @@ internal class RolePermissionModel : IMultitenantEntity
             builder.HasKey(x => new { x.RoleId, x.PermissionName, x.TenantId });
 
             builder.Property(x => x.RoleId)
-                .IsRequired()
                 .HasMaxLength(Role.MaxLength);
 
             builder.Property(x => x.PermissionName)
-                .IsRequired()
                 .HasMaxLength(Permission.MaxLength);
 
             builder.HasOne<TenantModel>()

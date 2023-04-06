@@ -28,8 +28,8 @@ function DAL_MIGRATION_COMMAND() {
 
 function SAMPLE_MIGRATION_COMMAND() {
 	dotnet ef migrations add "$1" \
-	-s "sample/EasyDesk.SampleApp.Web" \
-	-p "sample/EasyDesk.SampleApp.Infrastructure" \
+	-s "src/sample/EasyDesk.SampleApp.Web" \
+	-p "src/sample/EasyDesk.SampleApp.Infrastructure" \
 	--output-dir "Migrations" \
 	--context "SampleAppContext" \
 	--no-build
