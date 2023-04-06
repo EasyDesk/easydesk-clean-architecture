@@ -10,7 +10,7 @@ using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-[RequireAnyOf(Permissions.CAN_EDIT_PETS)]
+[RequireAnyOf(Permissions.CanEditPets)]
 public record CreatePets(IEnumerable<CreatePet> Pets) : ICommandRequest<CreatePetsResult>
 {
     public class Validation : AbstractValidator<CreatePets>

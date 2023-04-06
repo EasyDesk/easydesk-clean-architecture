@@ -8,7 +8,7 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-[RequireAnyOf(Permissions.CAN_EDIT_PEOPLE)]
+[RequireAnyOf(Permissions.CanEditPeople)]
 public record DeletePerson(Guid PersonId) : ICommandRequest<PersonSnapshot>;
 
 public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonSnapshot>

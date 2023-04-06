@@ -11,7 +11,7 @@ using NodaTime;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-[RequireAnyOf(Permissions.CAN_EDIT_PEOPLE)]
+[RequireAnyOf(Permissions.CanEditPeople)]
 public record CreatePerson(
     string FirstName,
     string LastName,

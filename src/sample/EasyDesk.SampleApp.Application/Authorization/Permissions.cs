@@ -2,6 +2,6 @@
 
 public enum Permissions
 {
-    CAN_EDIT_PEOPLE,
-    CAN_EDIT_PETS
+    CanEditPeople,
+    CanEditPets
 }

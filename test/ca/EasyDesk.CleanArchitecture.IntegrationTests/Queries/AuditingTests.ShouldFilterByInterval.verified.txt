@@ -1,0 +1,18 @@
+﻿[
+  {
+    Type: CommandRequest,
+    Name: CreatePet,
+    Description: Bobby1,
+    UserId: admin-id,
+    Success: true,
+    Instant: Instant_1
+  },
+  {
+    Type: CommandRequest,
+    Name: CreatePet,
+    Description: Bobby2,
+    UserId: admin-id,
+    Success: true,
+    Instant: Instant_1
+  }
+]

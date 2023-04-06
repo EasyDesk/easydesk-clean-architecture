@@ -8,7 +8,7 @@ public static class PermissionSettings
     {
         builder.ForRoles(Roles.Admin)
             .AddPermissions(
-                Permissions.CAN_EDIT_PEOPLE,
-                Permissions.CAN_EDIT_PETS);
+                Permissions.CanEditPeople,
+                Permissions.CanEditPets);
     }
 }

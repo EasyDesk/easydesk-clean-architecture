@@ -1,13 +1,5 @@
 ﻿[
   {
-    Type: Command,
-    Name: CreateTenant,
-    Description: null,
-    UserId: null,
-    Success: true,
-    Instant: Instant_1
-  },
-  {
     Type: CommandRequest,
     Name: AddAdmin,
     Description: null,
@@ -20,14 +12,6 @@
     Name: CreatePerson,
     Description: null,
     UserId: admin-id,
-    Success: true,
-    Instant: Instant_1
-  },
-  {
-    Type: Command,
-    Name: CreateBestFriend,
-    Description: null,
-    UserId: null,
     Success: true,
     Instant: Instant_1
   }

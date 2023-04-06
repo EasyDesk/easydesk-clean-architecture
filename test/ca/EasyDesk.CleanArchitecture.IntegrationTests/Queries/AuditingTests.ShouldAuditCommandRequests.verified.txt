@@ -30,5 +30,13 @@
     UserId: null,
     Success: true,
     Instant: Instant_1
+  },
+  {
+    Type: CommandRequest,
+    Name: CreatePet,
+    Description: Bobby,
+    UserId: admin-id,
+    Success: true,
+    Instant: Instant_1
   }
 ]
