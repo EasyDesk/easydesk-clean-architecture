@@ -1,9 +1,12 @@
 ﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Versioning;
+using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Saunter;
+using Saunter.AsyncApiSchema.v2;
 using Saunter.Generation;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
@@ -17,24 +20,26 @@ public class AsyncApiModule : AppModule
         _configure = configure;
     }
 
-    public override void BeforeServiceConfiguration(AppDescription app)
-    {
-        app.RequireModule<RebusMessagingModule>();
-    }
-
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddTransient<IDocumentGenerator>(p => new KnownTypesDocumentGenerator(
-            app.Name,
-            p.GetRequiredService<RebusEndpoint>().InputQueueAddress));
+        services.AddTransient<IDocumentGenerator, KnownTypesDocumentGenerator>();
         services.AddTransient<IAsyncApiDocumentProvider, KnownTypesDocumentProvider>();
         services.AddAsyncApiSchemaGeneration(options =>
         {
-            options.Middleware.Route = "/asyncapi/asyncapi.json";
-            options.Middleware.UiBaseRoute = "/asyncapi/";
+            options.Middleware.Route = "/asyncapi/{document}/asyncapi.json";
+            options.Middleware.UiBaseRoute = "/asyncapi/{document}/";
             options.Middleware.UiTitle = $"AsyncApi :: {app.Name}";
             _configure?.Invoke(options);
         });
+        app.RequireModule<RebusMessagingModule>().Options.KnownMessageTypes
+            .GetSupportedApiVersionsFromNamespaces()
+            .ForEach(v =>
+            {
+                services.ConfigureNamedAsyncApi(v.ToString(), doc =>
+                {
+                    doc.Info = new Info(app.Name, v.ToString());
+                });
+            });
     }
 }
 
@@ -49,6 +54,15 @@ public static class AsyncApiModuleExtensions
 
     public static void UseAsyncApiModule(this WebApplication app)
     {
+        app.Services.GetRequiredService<RebusMessagingOptions>().KnownMessageTypes
+            .GetSupportedApiVersionsFromNamespaces()
+            .MaxOption()
+            .IfPresent(v => app.MapGet("/asyncapi", context =>
+            {
+                context.Response.Redirect($"/asyncapi/{v}", permanent: true);
+                return Task.CompletedTask;
+            }));
+
         app.MapAsyncApiDocuments();
         app.MapAsyncApiUi();
     }

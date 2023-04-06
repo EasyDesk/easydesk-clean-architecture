@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using NJsonSchema;
@@ -17,15 +18,11 @@ namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
 {
     public const string Version = "1.0.0";
-    private readonly string _microserviceName;
     private readonly string _address;
 
-    public KnownTypesDocumentGenerator(
-        string microserviceName,
-        string address)
+    public KnownTypesDocumentGenerator(RebusEndpoint endpoint)
     {
-        _microserviceName = microserviceName;
-        _address = address;
+        _address = endpoint.InputQueueAddress;
     }
 
     public string ServerName => $"Rebus @ {_address}";
@@ -52,10 +49,9 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
         return asyncApiSchema;
     }
 
-    private void ConfigureDocument(AsyncApiDocument asyncApiSchema, TypeInfo[] asyncApiTypes, AsyncApiSchemaOptions schemaOptions)
+    private void ConfigureDocument(AsyncApiDocument asyncApiSchema, IEnumerable<TypeInfo> asyncApiTypes, AsyncApiSchemaOptions schemaOptions)
     {
         asyncApiSchema.DefaultContentType = MediaTypeNames.Application.Json;
-        asyncApiSchema.Info = new Info(_microserviceName, Version);
 
         asyncApiSchema.Servers[ServerName] = ConfigureServer();
 

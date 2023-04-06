@@ -38,7 +38,11 @@ public class RebusMessagingModule : AppModule
         _endpoint = endpoint;
         _transport = transport;
         _configure = configure;
+        Options = new RebusMessagingOptions();
+        configure?.Invoke(Options);
     }
+
+    public RebusMessagingOptions Options { get; }
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
@@ -50,20 +54,15 @@ public class RebusMessagingModule : AppModule
                 .After(typeof(UnitOfWorkStep<,>));
         });
         app.RequireModule<JsonModule>();
+        Options.AddKnownMessageTypesFromAssemblies(
+            app.GetLayerAssembly(CleanArchitectureLayer.Application),
+            typeof(SagasModule).Assembly);
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        var options = new RebusMessagingOptions();
-
-        options.AddKnownMessageTypesFromAssemblies(
-            app.GetLayerAssembly(CleanArchitectureLayer.Application),
-            typeof(SagasModule).Assembly);
-
-        _configure?.Invoke(options);
-
         services.AddSingleton(_endpoint);
-        services.AddSingleton(options);
+        services.AddSingleton(Options);
         services.AddSingleton(_transport);
 
         ITransport? originalTransport = null;
@@ -72,7 +71,7 @@ public class RebusMessagingModule : AppModule
             provider.GetRequiredService<PausableAsyncTaskFactory>());
         services.AddRebus((configurer, provider) =>
         {
-            options.Apply(provider, _endpoint, configurer);
+            Options.Apply(provider, _endpoint, configurer);
             configurer.Options(o =>
             {
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
@@ -88,15 +87,15 @@ public class RebusMessagingModule : AppModule
         });
 
         app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
-        SetupMessageHandlers(services, options.KnownMessageTypes);
-        AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true), options.OutboxOptions);
+        SetupMessageHandlers(services, Options.KnownMessageTypes);
+        AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true));
 
-        AddEventPropagators(services, options.KnownMessageTypes);
+        AddEventPropagators(services);
         services.AddScoped<MessageBroker>();
         services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
         services.AddScoped<ICommandSender>(provider => provider.GetRequiredService<MessageBroker>());
 
-        if (options.AutoSubscribe)
+        if (Options.AutoSubscribe)
         {
             services.AddHostedService<AutoSubscriptionService>();
         }
@@ -122,10 +121,10 @@ public class RebusMessagingModule : AppModule
             .Select(i => i.GetGenericArguments()[0]);
     }
 
-    private void AddEventPropagators(IServiceCollection services, IEnumerable<Type> knownMessageTypes)
+    private void AddEventPropagators(IServiceCollection services)
     {
         var arguments = new object[] { services };
-        foreach (var messageType in knownMessageTypes)
+        foreach (var messageType in Options.KnownMessageTypes)
         {
             messageType
                 .GetInterfaces()
@@ -146,14 +145,14 @@ public class RebusMessagingModule : AppModule
         services.AddTransient<IDomainEventHandler<D>, DomainEventPropagator<M, D>>();
     }
 
-    private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport, OutboxOptions options)
+    private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)
     {
         services.AddScoped<OutboxTransactionHelper>();
 
-        if (options.PeriodicTaskEnabled)
+        if (Options.OutboxOptions.PeriodicTaskEnabled)
         {
             services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
-                options.FlushingPeriod,
+                Options.OutboxOptions.FlushingPeriod,
                 provider.GetRequiredService<OutboxFlushRequestsChannel>(),
                 provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
         }
@@ -166,7 +165,7 @@ public class RebusMessagingModule : AppModule
             _ = provider.GetRequiredService<IBus>();
 
             return new OutboxFlusher(
-                options.FlushingBatchSize,
+                Options.OutboxOptions.FlushingBatchSize,
                 provider.GetRequiredService<IUnitOfWorkProvider>(),
                 provider.GetRequiredService<IOutbox>(),
                 originalTransport.Value);

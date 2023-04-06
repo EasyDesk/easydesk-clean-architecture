@@ -28,8 +28,7 @@ public class ApiVersioningModule : AppModule
             .NonAbstract()
             .SubtypesOrImplementationsOf<AbstractController>()
             .FindTypes()
-            .SelectMany(t => t.GetApiVersionFromNamespace())
-            .ToEquatableSet();
+            .GetSupportedApiVersionsFromNamespaces();
         ApiVersioningInfo = new ApiVersioningInfo(supportedVersions);
     }
 

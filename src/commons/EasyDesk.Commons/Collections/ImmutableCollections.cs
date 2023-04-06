@@ -15,6 +15,8 @@ public static class ImmutableCollections
 
     public static IImmutableSet<T> ToEquatableSet<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer) => Set(items, comparer);
 
+    public static IImmutableSet<T> ToEquatableSet<T>(this IEnumerable<T> items, IComparer<T> comparer) => Set(items, comparer);
+
     public static IImmutableSet<T> Set<T>(params T[] items) => Set(items as IEnumerable<T>);
 
     public static IImmutableSet<T> Set<T>(IEnumerable<T> items) => Set(items, EqualityComparer<T>.Default);
@@ -22,7 +24,13 @@ public static class ImmutableCollections
     public static IImmutableSet<T> Set<T>(IEnumerable<T> items, IEqualityComparer<T> comparer)
     {
         var set = ImmutableHashSet.CreateRange(comparer, items);
-        return EquatableImmutableSet<T>.FromHashSet(set);
+        return EquatableImmutableHashSet<T>.Create(set);
+    }
+
+    public static IImmutableSet<T> Set<T>(IEnumerable<T> items, IComparer<T> comparer)
+    {
+        var set = ImmutableSortedSet.CreateRange(comparer, items);
+        return EquatableImmutableSortedSet<T>.Create(set);
     }
 
     public static IImmutableList<T> ToEquatableList<T>(this IEnumerable<T> items) => List(items);
