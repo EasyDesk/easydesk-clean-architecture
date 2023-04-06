@@ -6,7 +6,7 @@
     <Product>EasyDesk.Commons library</Product>
     <Description>A library containing a series of common utilities and extensions built on top of the C# standard library.</Description>
     <PackageTags>EasyDesk Core Common Utilities Option Collections Extensions</PackageTags>
-    <RepositoryUrl>https://github.com/EasyDesk/easydesk-tools</RepositoryUrl>
+    <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup>

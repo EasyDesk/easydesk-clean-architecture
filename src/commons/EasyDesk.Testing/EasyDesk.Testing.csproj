@@ -4,7 +4,7 @@
     <Authors>Francesco Dente, Luca Deluigi</Authors>
     <Company>EasyDesk</Company>
     <Description>A set of utilities that can be used to simplify automated test writing.</Description>
-    <RepositoryUrl>https://github.com/EasyDesk/easydesk-testing</RepositoryUrl>
+    <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
