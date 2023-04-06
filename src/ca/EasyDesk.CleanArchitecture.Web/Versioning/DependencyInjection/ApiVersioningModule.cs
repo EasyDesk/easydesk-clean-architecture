@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
@@ -21,7 +23,13 @@ public class ApiVersioningModule : AppModule
 
     public override void BeforeServiceConfiguration(AppDescription app)
     {
-        var supportedVersions = ApiVersioningUtils.GetSupportedVersions(app).ToEquatableSet();
+        var supportedVersions = new AssemblyScanner()
+            .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Web))
+            .NonAbstract()
+            .SubtypesOrImplementationsOf<AbstractController>()
+            .FindTypes()
+            .SelectMany(t => t.GetApiVersionFromNamespace())
+            .ToEquatableSet();
         ApiVersioningInfo = new ApiVersioningInfo(supportedVersions);
     }
 
@@ -34,13 +42,14 @@ public class ApiVersioningModule : AppModule
             options.ReportApiVersions = true;
 
             options.ApiVersionReader = ApiVersionReader.Combine(
-                new QueryStringApiVersionReader(ApiVersioningUtils.VersionQueryParam),
-                new HeaderApiVersionReader(ApiVersioningUtils.VersionHeader));
+                new QueryStringApiVersionReader(RestApiVersioning.VersionQueryParam),
+                new HeaderApiVersionReader(RestApiVersioning.VersionHeader));
 
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.DefaultApiVersion = ApiVersioningInfo!.SupportedVersions
                 .MaxOption()
-                .OrElseGet(() => ApiVersioningUtils.DefaultVersion);
+                .OrElseGet(() => ApiVersioningUtils.DefaultVersion)
+                .ToAspNetApiVersion();
 
             options.Conventions.Add(new NamespaceConvention());
 
@@ -52,10 +61,12 @@ public class ApiVersioningModule : AppModule
     {
         public bool Apply(IControllerConventionBuilder controller, ControllerModel controllerModel)
         {
-            controllerModel.ControllerType.GetControllerVersion()
+            controllerModel.ControllerType
+                .GetApiVersionFromNamespace()
+                .Map(v => v.ToAspNetApiVersion())
                 .Match(
-                    some: v => controller.HasApiVersion(v),
-                    none: () => controller.IsApiVersionNeutral());
+                    some: controller.HasApiVersion,
+                    none: controller.IsApiVersionNeutral);
             return true;
         }
     }

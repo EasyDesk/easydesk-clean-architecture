@@ -68,7 +68,7 @@ public class OpenApiModule : AppModule
     {
         module.ApiVersioningInfo!
             .SupportedVersions
-            .Select(version => version.ToDisplayString())
+            .Select(v => v.ToString())
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
             {
                 Title = $"{app.Name} {version}",
@@ -88,8 +88,8 @@ public class OpenApiModule : AppModule
             }
             return descriptor
                 .ControllerTypeInfo
-                .GetControllerVersion()
-                .Map(v => v.ToDisplayString())
+                .GetApiVersionFromNamespace()
+                .Map(v => v.ToString())
                 .Contains(version);
         });
     }

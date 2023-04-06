@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Web.Versioning;
-using Microsoft.AspNetCore.Mvc;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Versioning;
+using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -17,7 +17,7 @@ internal class AddApiVersionParameterFilter : IOperationFilter
         }
         descriptor
             .ControllerTypeInfo
-            .GetControllerVersion()
+            .GetApiVersionFromNamespace()
             .IfPresent(v => AddApiVersionParameter(operation, v));
     }
 

@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.SampleApp.Application.AsyncCommands;
+using EasyDesk.SampleApp.Application.AsyncCommands.V_1_0;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using NodaTime;
 

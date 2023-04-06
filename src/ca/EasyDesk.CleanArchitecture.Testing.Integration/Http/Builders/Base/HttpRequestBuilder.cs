@@ -61,7 +61,7 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     protected Duration Timeout { get; private set; } = _defaultTimeout;
 
     public override B WithApiVersion(ApiVersion version) =>
-        Headers(h => h.Replace(ApiVersioningUtils.VersionHeader, version.ToString()));
+        Headers(h => h.Replace(RestApiVersioning.VersionHeader, version.ToString()));
 
     public override B Tenant(string tenantId) =>
         Headers(h => h.Replace(MultitenancyDefaults.TenantIdHttpHeader, tenantId));

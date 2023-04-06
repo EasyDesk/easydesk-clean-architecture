@@ -82,8 +82,9 @@ public class RebusMessagingOptions
             o.UseTplToReceiveMessages();
             var clock = serviceProvider.GetRequiredService<IClock>();
             o.Register<IRebusTime>(_ => new NodaTimeRebusClock(clock));
-            o.Register<ITopicNameConvention>(_ => new TopicNameConvention());
-            o.Register<IMessageTypeNameConvention>(c => new KnownTypesConvention(KnownMessageTypes));
+            o.Register(_ => new KnownTypesConvention(KnownMessageTypes));
+            o.Register<ITopicNameConvention>(c => c.Get<KnownTypesConvention>());
+            o.Register<IMessageTypeNameConvention>(c => c.Get<KnownTypesConvention>());
         });
 
         _configureRebus?.Invoke(endpoint, configurer);
