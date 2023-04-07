@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
@@ -267,5 +268,70 @@ public class CreatePetTests : SampleIntegrationTest
             .AsVerifiable();
 
         await Verify(response);
+    }
+
+    [Fact]
+    public async Task BulkCreatePets_ShouldFailInParallel()
+    {
+        var timeout = Duration.FromSeconds(30);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("unknown"));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        Task<VerifiableHttpResponse<CreatePetsDto, Nothing>> StartBulkOperation() => Http
+               .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
+               .Send(timeout)
+               .AsVerifiable();
+
+        var success = await StartBulkOperation();
+
+        var failure = await StartBulkOperation();
+
+        await Verify(new { Success = success, Failure = failure });
+    }
+
+    [Fact]
+    public async Task BulkCreatePets_ShouldSucceedInParallel_WithDifferentOperations()
+    {
+        var timeout = Duration.FromSeconds(30);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("unknown"));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        var success = await Http
+               .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
+               .Send(timeout)
+               .AsVerifiable();
+
+        var successToo = await Http
+               .CreatePets2(person.Id, new(PetGenerator(BulkQuantity)))
+               .Send(timeout)
+               .AsVerifiable();
+
+        await Verify(new { Success = success, SuccessToo = successToo });
     }
 }

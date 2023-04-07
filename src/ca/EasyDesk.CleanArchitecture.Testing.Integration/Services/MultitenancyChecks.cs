@@ -25,7 +25,7 @@ public static class MultitenancyChecks
 
     public static Task WaitConditionUnderTenant<TService>(
         this ITestWebService webService,
-        TenantId tenantId,
+        TenantInfo tenantInfo,
         AsyncFunc<TService, bool> condition,
         Duration? timeout = null,
         Duration? interval = null)
@@ -35,10 +35,24 @@ public static class MultitenancyChecks
             async services =>
             {
                 services.GetRequiredService<IContextTenantInitializer>()
-                        .Initialize(TenantInfo.Tenant(tenantId));
+                        .Initialize(tenantInfo);
                 var service = services.GetRequiredService<TService>();
                 return await condition(service);
             },
             timeout: timeout,
             interval: interval);
+
+    public static Task WaitConditionUnderTenant<TService>(
+        this ITestWebService webService,
+        TenantId tenantId,
+        AsyncFunc<TService, bool> condition,
+        Duration? timeout = null,
+        Duration? interval = null)
+        where TService : notnull =>
+        WaitConditionUnderTenant(
+            webService,
+            TenantInfo.Tenant(tenantId),
+            condition,
+            timeout,
+            interval);
 }

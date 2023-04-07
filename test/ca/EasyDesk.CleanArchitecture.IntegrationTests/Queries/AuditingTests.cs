@@ -20,6 +20,7 @@ public class AuditingTests : SampleIntegrationTest
     private const string AdminId = "admin-id";
 
     private Guid _personId;
+    private int _initialAudits;
 
     public AuditingTests(SampleAppTestsFixture factory) : base(factory)
     {
@@ -33,8 +34,10 @@ public class AuditingTests : SampleIntegrationTest
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
+        _initialAudits++;
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
         await Http.AddAdmin().Send().EnsureSuccess();
+        _initialAudits++;
 
         var createPersonBody = new CreatePersonBodyDto(
             FirstName: "John",
@@ -42,8 +45,25 @@ public class AuditingTests : SampleIntegrationTest
             DateOfBirth: new LocalDate(2012, 12, 21),
             Residence: new(StreetName: "Abbey Road"));
         _personId = await Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
+        _initialAudits += 2;
         await Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();
+        await WebService.WaitConditionUnderTenant<IAuditLog>(
+            TenantInfo.Public,
+            log => log
+                .Audit(new())
+                .GetAllItems(50)
+                .ToEnumerableAsync()
+                .Map(e => e.Count() == _initialAudits));
     }
+
+    private Task WaitUntilAuditLogHasMoreRecords(int newRecords) =>
+        WebService.WaitConditionUnderTenant<IAuditLog>(
+            TenantInfo.Public,
+            log => log
+                .Audit(new())
+                .GetAllItems(50)
+                .ToEnumerableAsync()
+                .Map(e => e.Count() == _initialAudits + newRecords));
 
     [Fact]
     public async Task ShouldReturnInitialAudits()
@@ -75,6 +95,8 @@ public class AuditingTests : SampleIntegrationTest
     {
         await Http.CreatePet(_personId, new("Bobby")).Send().EnsureSuccess();
 
+        await WaitUntilAuditLogHasMoreRecords(1);
+
         var response = await Http.GetAudits().Send().AsVerifiableEnumerable();
 
         await Verify(response);
@@ -97,6 +119,8 @@ public class AuditingTests : SampleIntegrationTest
     {
         var success = await Http.CreatePet(Guid.NewGuid(), new("Bobby")).Send().IsSuccess();
         success.ShouldBeFalse();
+
+        await WaitUntilAuditLogHasMoreRecords(1);
 
         Task<IEnumerable<AuditRecordDto>> RunQuery(bool success) => Http
             .GetAudits()
@@ -167,6 +191,8 @@ public class AuditingTests : SampleIntegrationTest
         var to = Clock.GetCurrentInstant();
         Advance();
         await RunCommand("Bobby3");
+
+        await WaitUntilAuditLogHasMoreRecords(4);
 
         var response = await Http
             .GetAudits()

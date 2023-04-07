@@ -1,0 +1,22 @@
+﻿{
+  Success: {
+    StatusCode: OK,
+    Content: {
+      Data: {
+        Pets: 200
+      },
+      Errors: [],
+      Meta: {}
+    }
+  },
+  SuccessToo: {
+    StatusCode: OK,
+    Content: {
+      Data: {
+        Pets: 200
+      },
+      Errors: [],
+      Meta: {}
+    }
+  }
+}

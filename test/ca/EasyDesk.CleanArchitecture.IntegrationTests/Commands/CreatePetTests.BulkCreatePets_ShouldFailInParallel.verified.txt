@@ -1,0 +1,28 @@
+﻿{
+  Success: {
+    StatusCode: OK,
+    Content: {
+      Data: {
+        Pets: 200
+      },
+      Errors: [],
+      Meta: {}
+    }
+  },
+  Failure: {
+    StatusCode: BadRequest,
+    Content: {
+      Data: null,
+      Errors: [
+        {
+          Code: Generic,
+          Detail: Another bulk operation of type BulkCreatePets is already in progress.,
+          Meta: {
+            operationType: BulkCreatePets
+          }
+        }
+      ],
+      Meta: {}
+    }
+  }
+}

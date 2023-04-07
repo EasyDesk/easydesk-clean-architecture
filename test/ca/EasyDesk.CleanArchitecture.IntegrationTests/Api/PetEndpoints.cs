@@ -15,6 +15,9 @@ public static class PetEndpoints
     public static HttpSingleRequestExecutor<CreatePetsDto> CreatePets(this HttpTestHelper http, Guid personId, CreatePetsBodyDto body) =>
         http.Post<CreatePetsBodyDto, CreatePetsDto>(PetsRoutes.CreatePets.WithRouteParam(nameof(personId), personId), body);
 
+    public static HttpSingleRequestExecutor<CreatePetsDto> CreatePets2(this HttpTestHelper http, Guid personId, CreatePetsBodyDto body) =>
+        http.Post<CreatePetsBodyDto, CreatePetsDto>(PetsRoutes.CreatePets2.WithRouteParam(nameof(personId), personId), body);
+
     public static HttpSingleRequestExecutor<CreatePetsDto> CreatePetsFromCsv(this HttpTestHelper http, Guid personId, string csv, string? fileName = null)
     {
         using var multipartFormContent = new MultipartFormDataContent();

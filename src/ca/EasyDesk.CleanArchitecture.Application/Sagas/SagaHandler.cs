@@ -28,12 +28,12 @@ internal class SagaHandler<T, R, TId, TState> : IHandler<T, R>
         var sagaId = _configuration.GetSagaId(request);
         var existingSaga = await _sagaManager.Find<TId, TState>(sagaId);
         var saga = existingSaga.OrElseError(Errors.NotFound) || await GetNewSagaIfPossible(sagaId, request);
-        return await saga.FlatMapAsync(s => HandleSaga(request, sagaId, s.State, s.Reference));
+        return await saga.FlatMapAsync(s => HandleSaga(request, sagaId, s.State, s.Reference, existingSaga.IsAbsent));
     }
 
-    private async Task<Result<R>> HandleSaga(T request, TId id, TState state, ISagaReference<TState> sagaReference)
+    private async Task<Result<R>> HandleSaga(T request, TId id, TState state, ISagaReference<TState> sagaReference, bool isNew)
     {
-        var context = new SagaContext<TId, TState>(id, state);
+        var context = new SagaContext<TId, TState>(id, state, isNew);
         return await _configuration
             .HandleStep(_serviceProvider, request, context)
             .ThenIfSuccessAsync(_ => HandleSagaState(sagaReference, context));
