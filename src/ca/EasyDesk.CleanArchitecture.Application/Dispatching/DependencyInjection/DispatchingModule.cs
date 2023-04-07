@@ -2,8 +2,8 @@
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using EasyDesk.Commons.Collections;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 
@@ -24,13 +24,8 @@ public class DispatchingModule : AppModule
 
         Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
         Pipeline.AddStep(typeof(DomainConstraintViolationsHandlingStep<,>));
-
         var steps = Pipeline.GetOrderedSteps().ToList();
-        var pipelineDesc = "------------------------------------------------------------------------------\nRequest pipeline\n------------------------------------------------------------------------------\n";
-        var stepsEnumerable = steps.Select((s, i) => $"{i + 1}. {s.FullName}");
-        pipelineDesc += stepsEnumerable.Append("-------- Handler --------").Concat(stepsEnumerable.Reverse()).ConcatStrings("\n", "\n", "\n");
-        pipelineDesc += "\n------------------------------------------------------------------------------";
-        Console.WriteLine(pipelineDesc);
+        services.AddHostedService<StartupPipelineLogger>(sp => new(steps, sp.GetRequiredService<ILogger<StartupPipelineLogger>>()));
         services.AddSingleton<IPipeline>(p => new GenericPipeline(steps));
     }
 
