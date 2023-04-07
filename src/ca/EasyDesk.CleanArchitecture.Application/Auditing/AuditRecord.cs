@@ -1,4 +1,5 @@
 ﻿using NodaTime;
+using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Auditing;
 
@@ -14,5 +15,6 @@ public record AuditRecord(
     string Name,
     Option<string> Description,
     Option<string> UserId,
+    IImmutableDictionary<string, string> Properties,
     bool Success,
     Instant Instant);

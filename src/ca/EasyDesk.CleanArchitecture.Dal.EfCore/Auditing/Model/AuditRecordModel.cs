@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+using EasyDesk.Commons.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NodaTime;
@@ -26,6 +27,8 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
 
     public string? TenantId { get; set; }
 
+    public ICollection<AuditRecordPropertyModel> Properties { get; set; } = new HashSet<AuditRecordPropertyModel>();
+
     public class Configuration : IEntityTypeConfiguration<AuditRecordModel>
     {
         void IEntityTypeConfiguration<AuditRecordModel>.Configure(EntityTypeBuilder<AuditRecordModel> builder)
@@ -34,6 +37,13 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
             builder.HasIndex(x => x.Instant).IsDescending();
+
+            builder.OwnsMany(x => x.Properties, child =>
+            {
+                child.HasKey(x => new { x.AuditRecordId, x.Key });
+
+                child.WithOwner().HasForeignKey(x => x.AuditRecordId);
+            });
         }
     }
 
@@ -48,5 +58,12 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
     };
 
     public static Expression<Func<AuditRecordModel, AuditRecord>> Projection() => src =>
-        new(src.Type, src.Name, src.Description.AsOption(), src.UserId.AsOption(), src.Success, src.Instant);
+        new(
+            src.Type,
+            src.Name,
+            src.Description.AsOption(),
+            src.UserId.AsOption(),
+            src.Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
+            src.Success,
+            src.Instant);
 }

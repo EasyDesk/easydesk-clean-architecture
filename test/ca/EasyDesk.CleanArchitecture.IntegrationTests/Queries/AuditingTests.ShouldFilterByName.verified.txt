@@ -4,6 +4,7 @@
     Name: CreatePerson,
     Description: null,
     UserId: admin-id,
+    Properties: {},
     Success: true,
     Instant: Instant_1
   }

@@ -10,6 +10,8 @@ using NodaTime;
 using NodaTime.Testing;
 using NSubstitute;
 using Shouldly;
+using System.Collections.Immutable;
+using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Auditing;
 
@@ -27,11 +29,26 @@ public class AuditingStepTests
 
     public record TestEvent : IEvent;
 
-    public record TestDescriptionProvider : ICommand, IOverrideAuditDescription
+    public record TestDescriptionOverride : ICommand, IOverrideAuditDescription
     {
         public const string Description = "TestDescription";
 
         public string GetAuditDescription() => Description;
+    }
+
+    public record TestPropertiesOverride : ICommand, IOverrideAuditProperties
+    {
+        public static readonly IImmutableDictionary<string, string> TestProperties = Map(
+            ("A", "B"),
+            ("C", "D"));
+
+        public void ConfigureProperties(IDictionary<string, string> properties)
+        {
+            foreach (var (k, v) in TestProperties)
+            {
+                properties.Add(k, v);
+            }
+        }
     }
 
     public record SkipAuditing : IReadWriteOperation;
@@ -95,6 +112,7 @@ public class AuditingStepTests
             Name: typeof(T).Name,
             Description: None,
             UserId: userId,
+            Properties: Map<string, string>(),
             Success: result.IsSuccess,
             Instant: _now));
 
@@ -112,8 +130,16 @@ public class AuditingStepTests
     [Fact]
     public async Task ShouldRecordADescriptionIfTheRequestSupportsIt()
     {
-        await Run<TestDescriptionProvider>();
+        await Run<TestDescriptionOverride>();
 
-        await _auditStorage.Received(1).StoreAudit(Arg.Is<AuditRecord>(r => r.Description.Contains(TestDescriptionProvider.Description)));
+        await _auditStorage.Received(1).StoreAudit(Arg.Is<AuditRecord>(r => r.Description.Contains(TestDescriptionOverride.Description)));
+    }
+
+    [Fact]
+    public async Task ShouldRecordPropertiesIfTheRequestSupportsIt()
+    {
+        await Run<TestPropertiesOverride>();
+
+        await _auditStorage.Received(1).StoreAudit(Arg.Is<AuditRecord>(r => r.Properties.Equals(TestPropertiesOverride.TestProperties)));
     }
 }

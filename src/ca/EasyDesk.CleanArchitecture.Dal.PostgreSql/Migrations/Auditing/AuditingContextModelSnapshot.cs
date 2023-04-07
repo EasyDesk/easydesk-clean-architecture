@@ -65,6 +65,31 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 
                 b.ToTable("AuditRecords", "audit");
             });
+
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
+            {
+                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordPropertyModel", "Properties", b1 =>
+                    {
+                        b1.Property<long>("AuditRecordId")
+                            .HasColumnType("bigint");
+
+                        b1.Property<string>("Key")
+                            .HasColumnType("text");
+
+                        b1.Property<string>("Value")
+                            .IsRequired()
+                            .HasColumnType("text");
+
+                        b1.HasKey("AuditRecordId", "Key");
+
+                        b1.ToTable("AuditRecordPropertyModel", "audit");
+
+                        b1.WithOwner()
+                            .HasForeignKey("AuditRecordId");
+                    });
+
+                b.Navigation("Properties");
+            });
 #pragma warning restore 612, 618
     }
 }

@@ -49,6 +49,9 @@ public static class ImmutableCollections
     public static IImmutableDictionary<K, V> ToEquatableMap<K, V>(this IEnumerable<KeyValuePair<K, V>> items)
         where K : notnull => Map(items);
 
+    public static IImmutableDictionary<K, V> ToEquatableMap<T, K, V>(this IEnumerable<T> items, Func<T, K> key, Func<T, V> value)
+        where K : notnull => Map(items.Select(t => (key(t), value(t))));
+
     public static IImmutableDictionary<K, V> Map<K, V>(params (K Key, V Value)[] items)
         where K : notnull =>
         Map(items as IEnumerable<(K, V)>);

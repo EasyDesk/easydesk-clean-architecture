@@ -5,6 +5,7 @@
       Name: CreatePet,
       Description: Bobby,
       UserId: admin-id,
+      Properties: {},
       Success: false,
       Instant: Instant_1
     }
@@ -15,6 +16,7 @@
       Name: CreateTenant,
       Description: null,
       UserId: null,
+      Properties: {},
       Success: true,
       Instant: Instant_1
     },
@@ -23,6 +25,7 @@
       Name: AddAdmin,
       Description: null,
       UserId: admin-id,
+      Properties: {},
       Success: true,
       Instant: Instant_1
     },
@@ -31,6 +34,7 @@
       Name: CreatePerson,
       Description: null,
       UserId: admin-id,
+      Properties: {},
       Success: true,
       Instant: Instant_1
     },
@@ -39,6 +43,7 @@
       Name: CreateBestFriend,
       Description: null,
       UserId: null,
+      Properties: {},
       Success: true,
       Instant: Instant_1
     }

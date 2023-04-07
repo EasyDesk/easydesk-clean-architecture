@@ -24,7 +24,7 @@ internal class EfCoreAuditLog : IAuditLog
 
         return _context.AuditRecords
             .Conditionally(
-                query.MatchTimeInterval.HasEnd || query.MatchTimeInterval.HasEnd,
+                query.MatchTimeInterval.HasStart || query.MatchTimeInterval.HasEnd,
                 q => q.Where(r => query.MatchTimeInterval.Contains(r.Instant)))
             .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
             .Conditionally(query.MatchName, name => q => q.Where(r => r.Name == name))
