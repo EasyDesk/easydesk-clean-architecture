@@ -38,12 +38,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[19.11.2, )",
-        "resolved": "19.11.2",
-        "contentHash": "bB24XltVFs7XOMTdfsn5yB54Rv4yv07pnphqWDdyjOU3olB7o7IwOq1iBZhDZ8Z1uxlaS9jtexQRlKET3AXHfA==",
+        "requested": "[19.12.1, )",
+        "resolved": "19.12.1",
+        "contentHash": "1ATWK0EXaZ6t8BZIY9v7ZVn6WKZB3oCG7o0o3xI1BYcqx0ZYj07hVnFnUZT69hehAU5YlBASNFFHQTz/p/bLaw==",
         "dependencies": {
-          "EmptyFiles": "4.3.0",
-          "Verify": "19.11.2",
+          "EmptyFiles": "4.4.0",
+          "Verify": "19.12.1",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -67,8 +67,8 @@
       },
       "Argon": {
         "type": "Transitive",
-        "resolved": "0.5.1",
-        "contentHash": "4qOctLu0cmACJT59OZ9YqRMfk7DAWZCldyrUe1CIohSddeRp3Ykcnh4vW5UnNTwWHOyVobdL/dLl19wrsAVL1g=="
+        "resolved": "0.5.2",
+        "contentHash": "VSYrsvvYhArAubf3yE4/4qPrZ7Mo5znTH4/x8j3Krw+oEe30ijzMlGGGQ2WmkqBvS8DPvg7jZVnTeZHeUtp1mQ=="
       },
       "Argon.NodaTime": {
         "type": "Transitive",
@@ -98,8 +98,8 @@
       },
       "EmptyFiles": {
         "type": "Transitive",
-        "resolved": "4.3.0",
-        "contentHash": "ocm+5eUbZt0jzfbxW7kNjqCymHtdvJ+1QCPwT8nE6fuehvjHtzTMgMqwzUZO7orUfVsfJTbDrkP6KIv8iU0Qug=="
+        "resolved": "4.4.0",
+        "contentHash": "gwJEfIGS7FhykvtZoscwXj/XwW+mJY6UbAZk+qtLKFUGWC95kfKXnj8VkxsZQnWBxJemM/q664rGLN5nf+OHZw=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
@@ -1116,12 +1116,12 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.11.2",
-        "contentHash": "gZ1Q/Oj8CLzHAAZkr1j0+XeLrDprBorA6aNCJ48eyRXY3CysJtYctK8qj+YhVm8N1Rlb+UYAWZKSprxn2KR0xg==",
+        "resolved": "19.12.1",
+        "contentHash": "y9wnnF+k8OUG9v9u9eZ89nzNrFElFHxNM1zUSUs+15wzmr2G2/MFePsujBcr2jIBC7LnKRtpp1f90NfRLWkFNQ==",
         "dependencies": {
-          "Argon": "0.5.1",
+          "Argon": "0.5.2",
           "DiffEngine": "11.2.0",
-          "EmptyFiles": "4.3.0",
+          "EmptyFiles": "4.4.0",
           "SimpleInfoName": "2.1.1"
         }
       },
@@ -1200,7 +1200,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.1.0, )",
-          "Verify": "[19.11.2, )",
+          "Verify": "[19.12.1, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
