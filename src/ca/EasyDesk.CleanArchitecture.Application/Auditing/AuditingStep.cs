@@ -14,13 +14,13 @@ public class AuditingStep<T, R> : IPipelineStep<T, R>
 {
     private readonly IAuditStorage _auditStorage;
     private readonly IUserInfoProvider _userInfoProvider;
-    private readonly AuditConfigurer _auditConfigurer;
+    private readonly IAuditConfigurer _auditConfigurer;
     private readonly IClock _clock;
 
     public AuditingStep(
         IAuditStorage auditStorage,
         IUserInfoProvider userInfoProvider,
-        AuditConfigurer auditConfigurer,
+        IAuditConfigurer auditConfigurer,
         IClock clock)
     {
         _auditStorage = auditStorage;
