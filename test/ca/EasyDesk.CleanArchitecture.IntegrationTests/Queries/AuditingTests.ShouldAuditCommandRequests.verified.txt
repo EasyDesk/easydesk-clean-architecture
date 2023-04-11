@@ -38,9 +38,11 @@
   {
     Type: CommandRequest,
     Name: CreatePet,
-    Description: Bobby,
+    Description: null,
     UserId: admin-id,
-    Properties: {},
+    Properties: {
+      nickname: Bobby
+    },
     Success: true,
     Instant: Instant_1
   }

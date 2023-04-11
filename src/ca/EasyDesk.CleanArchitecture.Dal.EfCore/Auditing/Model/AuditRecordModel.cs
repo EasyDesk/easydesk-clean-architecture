@@ -47,15 +47,27 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
         }
     }
 
-    public static AuditRecordModel Create(AuditRecord record) => new()
+    public static AuditRecordModel Create(AuditRecord record)
     {
-        Type = record.Type,
-        Name = record.Name,
-        Description = record.Description.OrElseNull(),
-        UserId = record.UserId.OrElseNull(),
-        Success = record.Success,
-        Instant = record.Instant,
-    };
+        var model = new AuditRecordModel()
+        {
+            Type = record.Type,
+            Name = record.Name,
+            Description = record.Description.OrElseNull(),
+            UserId = record.UserId.OrElseNull(),
+            Success = record.Success,
+            Instant = record.Instant,
+        };
+
+        model.Properties.AddAll(
+            record.Properties.Select(p => new AuditRecordPropertyModel
+            {
+                Key = p.Key,
+                Value = p.Value
+            }));
+
+        return model;
+    }
 
     public static Expression<Func<AuditRecordModel, AuditRecord>> Projection() => src =>
         new(

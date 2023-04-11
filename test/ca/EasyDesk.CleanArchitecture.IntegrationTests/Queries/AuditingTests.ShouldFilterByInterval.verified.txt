@@ -2,18 +2,22 @@
   {
     Type: CommandRequest,
     Name: CreatePet,
-    Description: Bobby1,
+    Description: null,
     UserId: admin-id,
-    Properties: {},
+    Properties: {
+      nickname: Bobby1
+    },
     Success: true,
     Instant: Instant_1
   },
   {
     Type: CommandRequest,
     Name: CreatePet,
-    Description: Bobby2,
+    Description: null,
     UserId: admin-id,
-    Properties: {},
+    Properties: {
+      nickname: Bobby2
+    },
     Success: true,
     Instant: Instant_1
   }

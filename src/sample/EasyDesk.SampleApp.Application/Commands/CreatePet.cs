@@ -38,7 +38,7 @@ public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
 
     public async Task<Result<PetSnapshot>> Handle(CreatePet request)
     {
-        _audit.SetDescription(request.Nickname);
+        _audit.AddProperty("nickname", request.Nickname);
 
         return await _personRepository.GetById(request.PersonId)
             .ThenOrElseError(Errors.NotFound)
