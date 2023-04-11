@@ -20,6 +20,7 @@ public class AuditingStepTests
     private static readonly Instant _now = Instant.FromUtc(2023, 10, 21, 13, 45);
     private readonly IUserInfoProvider _userInfoProvider;
     private readonly IAuditStorage _auditStorage;
+    private readonly AuditConfigurer _auditConfigurer = new();
     private readonly FakeClock _clock = new(_now);
     private readonly NextPipelineStep<Nothing> _next;
 
@@ -28,28 +29,6 @@ public class AuditingStepTests
     public record TestCommand : ICommand;
 
     public record TestEvent : IEvent;
-
-    public record TestDescriptionOverride : ICommand, IOverrideAuditDescription
-    {
-        public const string Description = "TestDescription";
-
-        public string GetAuditDescription() => Description;
-    }
-
-    public record TestPropertiesOverride : ICommand, IOverrideAuditProperties
-    {
-        public static readonly IImmutableDictionary<string, string> TestProperties = Map(
-            ("A", "B"),
-            ("C", "D"));
-
-        public void ConfigureProperties(IDictionary<string, string> properties)
-        {
-            foreach (var (k, v) in TestProperties)
-            {
-                properties.Add(k, v);
-            }
-        }
-    }
 
     public record SkipAuditing : IReadWriteOperation;
 
@@ -65,7 +44,7 @@ public class AuditingStepTests
     }
 
     private Task<Result<Nothing>> Run<T>() where T : IReadWriteOperation, new() =>
-        new AuditingStep<T, Nothing>(_auditStorage, _userInfoProvider, _clock).Run(new T(), _next);
+        new AuditingStep<T, Nothing>(_auditStorage, _userInfoProvider, _auditConfigurer, _clock).Run(new T(), _next);
 
     [Fact]
     public async Task ShouldNotRecordAnyAudit_IfTheRequestIsNotACommandNorAnEvent()
@@ -130,16 +109,22 @@ public class AuditingStepTests
     [Fact]
     public async Task ShouldRecordADescriptionIfTheRequestSupportsIt()
     {
-        await Run<TestDescriptionOverride>();
+        var description = "Test description";
+        _auditConfigurer.SetDescription(description);
 
-        await _auditStorage.Received(1).StoreAudit(Arg.Is<AuditRecord>(r => r.Description.Contains(TestDescriptionOverride.Description)));
+        await Run<TestCommand>();
+
+        await _auditStorage.Received(1).StoreAudit(Arg.Is<AuditRecord>(r => r.Description.Contains(description)));
     }
 
     [Fact]
     public async Task ShouldRecordPropertiesIfTheRequestSupportsIt()
     {
-        await Run<TestPropertiesOverride>();
+        _auditConfigurer.AddProperty("A", "B");
+        _auditConfigurer.AddProperty("C", "D");
 
-        await _auditStorage.Received(1).StoreAudit(Arg.Is<AuditRecord>(r => r.Properties.Equals(TestPropertiesOverride.TestProperties)));
+        await Run<TestCommand>();
+
+        await _auditStorage.Received(1).StoreAudit(Arg.Is<AuditRecord>(r => r.Properties.Equals(_auditConfigurer.Properties)));
     }
 }

@@ -36,6 +36,8 @@ public class AuditingModule : AppModule
         services.AddScoped<IAuditStorage>(p => new OutOfProcessAuditStorage(
             p.GetRequiredService<ITenantProvider>(),
             channel.Writer));
+
+        services.AddScoped<IAuditConfigurer, AuditConfigurer>();
     }
 }
 

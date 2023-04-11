@@ -3,10 +3,8 @@ using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Reflection;
 using NodaTime;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Auditing;
 
@@ -16,15 +14,18 @@ public class AuditingStep<T, R> : IPipelineStep<T, R>
 {
     private readonly IAuditStorage _auditStorage;
     private readonly IUserInfoProvider _userInfoProvider;
+    private readonly AuditConfigurer _auditConfigurer;
     private readonly IClock _clock;
 
     public AuditingStep(
         IAuditStorage auditStorage,
         IUserInfoProvider userInfoProvider,
+        AuditConfigurer auditConfigurer,
         IClock clock)
     {
         _auditStorage = auditStorage;
         _userInfoProvider = userInfoProvider;
+        _auditConfigurer = auditConfigurer;
         _clock = clock;
     }
 
@@ -32,42 +33,23 @@ public class AuditingStep<T, R> : IPipelineStep<T, R>
     {
         var result = await next();
 
-        await ComputeAuditRecord(request, result)
+        await ComputeAuditRecord(result)
             .IfPresentAsync(_auditStorage.StoreAudit);
 
         return result;
     }
 
-    private Option<AuditRecord> ComputeAuditRecord(T request, Result<R> result)
+    private Option<AuditRecord> ComputeAuditRecord(Result<R> result)
     {
         return DetectAuditRecordType()
             .Map(type => new AuditRecord(
                 Type: type,
                 Name: typeof(T).Name,
-                Description: DetectDescription(request),
-                Properties: DetectProperties(request),
+                Description: _auditConfigurer.Description,
+                Properties: _auditConfigurer.Properties,
                 UserId: _userInfoProvider.UserInfo.Map(x => x.UserId),
                 Success: result.IsSuccess,
                 Instant: _clock.GetCurrentInstant()));
-    }
-
-    private IImmutableDictionary<string, string> DetectProperties(T request)
-    {
-        var builder = ImmutableDictionary.CreateBuilder<string, string>();
-        if (request is IOverrideAuditProperties propertiesOverride)
-        {
-            propertiesOverride.ConfigureProperties(builder);
-        }
-        return EquatableImmutableDictionary<string, string>.FromDictionary(builder.ToImmutable());
-    }
-
-    private Option<string> DetectDescription(T request)
-    {
-        if (request is IOverrideAuditDescription descriptionOverride)
-        {
-            return Some(descriptionOverride.GetAuditDescription());
-        }
-        return None;
     }
 
     private Option<AuditRecordType> DetectAuditRecordType()

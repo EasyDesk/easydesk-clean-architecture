@@ -13,10 +13,7 @@ using FluentValidation;
 namespace EasyDesk.SampleApp.Application.Commands;
 
 [RequireAnyOf(Permissions.CanEditPets)]
-public record CreatePet(string Nickname, Guid PersonId) : ICommandRequest<PetSnapshot>, IOverrideAuditDescription
-{
-    public string GetAuditDescription() => Nickname;
-}
+public record CreatePet(string Nickname, Guid PersonId) : ICommandRequest<PetSnapshot>;
 
 public class CreatePetValidator : AbstractValidator<CreatePet>
 {
@@ -30,15 +27,19 @@ public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IPetRepository _petRepository;
+    private readonly IAuditConfigurer _audit;
 
-    public CreatePetHandler(IPersonRepository personRepository, IPetRepository petRepository)
+    public CreatePetHandler(IPersonRepository personRepository, IPetRepository petRepository, IAuditConfigurer audit)
     {
         _personRepository = personRepository;
         _petRepository = petRepository;
+        _audit = audit;
     }
 
     public async Task<Result<PetSnapshot>> Handle(CreatePet request)
     {
+        _audit.SetDescription(request.Nickname);
+
         return await _personRepository.GetById(request.PersonId)
             .ThenOrElseError(Errors.NotFound)
             .ThenMap(_ => Pet.Create(new Name(request.Nickname), request.PersonId))
