@@ -44,20 +44,20 @@ internal class PausableAsyncTask : PausableBackgroundService, IAsyncTask
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Exception in periodic task {Description}", _description);
+                _logger.LogError(ex, "Exception in periodic task {description}", _description);
             }
         }
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Starting periodic task {TaskDescription} with interval {TimerInterval}", _description, Interval);
+        _logger.LogDebug("Starting periodic task {taskDescription} with interval {timerInterval}", _description, Interval);
         return base.StartAsync(cancellationToken);
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Stopping periodic task {TaskDescription}", _description);
+        _logger.LogDebug("Stopping periodic task {taskDescription}", _description);
         return base.StopAsync(cancellationToken);
     }
 

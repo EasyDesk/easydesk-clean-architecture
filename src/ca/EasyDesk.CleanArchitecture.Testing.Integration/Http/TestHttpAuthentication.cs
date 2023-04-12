@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
@@ -15,8 +16,7 @@ public static class TestHttpAuthentication
     public static ITestHttpAuthentication CreateFromServices(IServiceProvider serviceProvider)
     {
         return serviceProvider
-            .GetService<AuthenticationModuleOptions>()
-            .AsOption()
+            .GetServiceAsOption<AuthenticationModuleOptions>()
             .FlatMap(options => GetDefaultAuthenticationConfiguration(options, serviceProvider))
             .OrElseGet(() => NoAuthentication);
     }

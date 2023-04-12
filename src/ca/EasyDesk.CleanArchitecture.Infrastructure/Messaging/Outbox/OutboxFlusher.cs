@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
-using EasyDesk.Commons.Collections;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
@@ -40,10 +39,6 @@ internal class OutboxFlusher
     private async Task<bool> SendNextBatch(ITransactionContext transactionContext)
     {
         var messages = await _outbox.RetrieveNextMessages(_batchSize);
-        if (messages.IsEmpty())
-        {
-            return false;
-        }
         foreach (var (message, destination) in messages)
         {
             await _transport.Send(destination, message, transactionContext);

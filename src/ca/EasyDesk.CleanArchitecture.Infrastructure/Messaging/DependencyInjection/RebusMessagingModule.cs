@@ -17,10 +17,13 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
+using Rebus.Logging;
+using Rebus.Retry;
+using Rebus.Retry.PoisonQueues;
+using Rebus.Retry.Simple;
 using Rebus.Threading;
 using Rebus.Transport;
 using System.Reflection;
@@ -82,6 +85,11 @@ public class RebusMessagingModule : AppModule
                 {
                     o.SetupForMultitenancy();
                 }
+                o.Decorate<IErrorHandler>(c =>
+                {
+                    _ = c.Get<ITransport>(); // Forces initialization of 'originalTransport'.
+                    return new PoisonQueueErrorHandler(c.Get<SimpleRetryStrategySettings>(), originalTransport, c.Get<IRebusLoggerFactory>());
+                });
             });
             return configurer;
         });
@@ -153,11 +161,10 @@ public class RebusMessagingModule : AppModule
         {
             services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
                 Options.OutboxOptions.FlushingPeriod,
-                provider.GetRequiredService<OutboxFlushRequestsChannel>(),
-                provider.GetRequiredService<ILogger<PeriodicOutboxAwaker>>()));
+                provider.GetRequiredService<OutboxFlushRequestsChannel>()));
         }
 
-        services.AddHostedService<OutboxFlusherBackgroundService>();
+        services.AddHostedService<OutboxConsumer>();
         services.AddSingleton<OutboxFlushRequestsChannel>();
         services.AddScoped(provider =>
         {

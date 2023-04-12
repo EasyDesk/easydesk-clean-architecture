@@ -1,11 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Threading.Channels;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Auditing;
+
+public delegate Task AuditingExceptionHandler(AuditRecord record, Exception exception);
 
 internal class AuditingBackgroundTask : BackgroundConsumer<(AuditRecord, TenantInfo)>
 {
@@ -35,12 +38,16 @@ internal class AuditingBackgroundTask : BackgroundConsumer<(AuditRecord, TenantI
         _logger.LogDebug("Stored audit with name {auditName}", record.Name);
     }
 
-    protected override void OnException(
+    protected override async Task OnException(
         (AuditRecord, TenantInfo) item,
         IServiceProvider serviceProvider,
-        Exception exception)
+        Exception exception,
+        CancellationToken pausingToken)
     {
         var (record, _) = item;
         _logger.LogError(exception, "Unexpected error while registering audit with name {auditName}.", record.Name);
+        await serviceProvider
+            .GetServiceAsOption<AuditingExceptionHandler>()
+            .IfPresentAsync(h => h(record, exception));
     }
 }

@@ -22,7 +22,7 @@ public abstract class BackgroundConsumer<T> : PausableBackgroundService
             }
             catch (Exception ex)
             {
-                OnException(t, scope.ServiceProvider, ex);
+                await OnException(t, scope.ServiceProvider, ex, pausingToken);
             }
         }
     }
@@ -31,5 +31,5 @@ public abstract class BackgroundConsumer<T> : PausableBackgroundService
 
     protected abstract Task Consume(T item, IServiceProvider serviceProvider, CancellationToken pausingToken);
 
-    protected abstract void OnException(T item, IServiceProvider serviceProvider, Exception exception);
+    protected abstract Task OnException(T item, IServiceProvider serviceProvider, Exception exception, CancellationToken pausingToken);
 }

@@ -1,18 +1,21 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
-internal class OutboxFlusherBackgroundService : BackgroundConsumer<Nothing>
+public delegate Task OutboxExceptionHandler(Exception exception);
+
+internal class OutboxConsumer : BackgroundConsumer<Nothing>
 {
     private readonly OutboxFlushRequestsChannel _requestsChannel;
-    private readonly ILogger<OutboxFlusherBackgroundService> _logger;
+    private readonly ILogger<OutboxConsumer> _logger;
 
-    public OutboxFlusherBackgroundService(
+    public OutboxConsumer(
         IServiceScopeFactory serviceScopeFactory,
         OutboxFlushRequestsChannel requestsChannel,
-        ILogger<OutboxFlusherBackgroundService> logger) : base(serviceScopeFactory)
+        ILogger<OutboxConsumer> logger) : base(serviceScopeFactory)
     {
         _requestsChannel = requestsChannel;
         _logger = logger;
@@ -27,8 +30,11 @@ internal class OutboxFlusherBackgroundService : BackgroundConsumer<Nothing>
         _logger.LogDebug("Correctly flushed outbox");
     }
 
-    protected override void OnException(Nothing item, IServiceProvider serviceProvider, Exception exception)
+    protected override async Task OnException(Nothing item, IServiceProvider serviceProvider, Exception exception, CancellationToken pausingToken)
     {
-        _logger.LogError(exception, "Unexpected error while publishing outbox messages.");
+        _logger.LogError(exception, "Unexpected error while flushing the outbox.");
+        await serviceProvider
+            .GetServiceAsOption<OutboxExceptionHandler>()
+            .IfPresentAsync(h => h(exception));
     }
 }
