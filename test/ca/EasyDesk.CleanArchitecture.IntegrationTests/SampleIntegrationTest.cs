@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests;
 [Collection(nameof(SampleApplicationTestCollection))]
 public abstract class SampleIntegrationTest : WebServiceIntegrationTest<SampleAppTestsFixture>
 {
-    protected SampleIntegrationTest(SampleAppTestsFixture factory) : base(factory)
+    protected SampleIntegrationTest(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 }

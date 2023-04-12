@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rebus.Config;
+using Rebus.Retry.Simple;
 using Rebus.Serialization;
 using Rebus.Serialization.Json;
 using Rebus.Time;
@@ -25,6 +26,8 @@ public class RebusMessagingOptions
     public OutboxOptions OutboxOptions { get; private set; } = new();
 
     public bool AutoSubscribe { get; set; } = true;
+
+    public string ErrorQueueName { get; set; } = SimpleRetryStrategySettings.DefaultErrorQueueName;
 
     public IImmutableSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
 
@@ -85,6 +88,7 @@ public class RebusMessagingOptions
             o.Register(_ => new KnownTypesConvention(KnownMessageTypes));
             o.Register<ITopicNameConvention>(c => c.Get<KnownTypesConvention>());
             o.Register<IMessageTypeNameConvention>(c => c.Get<KnownTypesConvention>());
+            o.SimpleRetryStrategy(errorQueueAddress: ErrorQueueName);
         });
 
         _configureRebus?.Invoke(endpoint, configurer);
