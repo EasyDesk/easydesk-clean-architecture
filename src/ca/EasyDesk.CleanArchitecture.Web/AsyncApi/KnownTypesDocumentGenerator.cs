@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using NJsonSchema;
 using NJsonSchema.Generation;
 using Saunter;
@@ -10,8 +12,10 @@ using Saunter.AsyncApiSchema.v2.Traits;
 using Saunter.Generation;
 using Saunter.Generation.Filters;
 using Saunter.Generation.SchemaGeneration;
+using System.Collections.Immutable;
 using System.Net.Mime;
 using System.Reflection;
+using RebusHeaders = Rebus.Messages.Headers;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
@@ -81,12 +85,29 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
             Message = ConfigureMessage(messageType, schemaOptions)
         };
 
-    private Message ConfigureMessage(Type messageType, AsyncApiSchemaOptions schemaOptions) => new()
+    private Message ConfigureMessage(Type messageType, AsyncApiSchemaOptions schemaOptions)
     {
-        Name = messageType.Name,
-        Title = PascalCaseSplitter.Split(messageType.Name),
-        Payload = JsonSchema.FromType(messageType, schemaOptions)
-    };
+        var headerNames = typeof(RebusHeaders)
+            .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+            .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
+            .SelectMany(fi => fi.GetRawConstantValue() is null ? None : (fi.GetRawConstantValue() as string).AsSome());
+        var rebusHeadersDictionary = headerNames.Select(name => KeyValuePair.Create(name, string.Empty)).ToImmutableDictionary();
+        var frameworkHeadersDictionary = rebusHeadersDictionary
+            .Add(MultitenantMessagingUtils.TenantIdHeader, string.Empty);
+        var headersSchema = JsonSchema.FromSampleJson(JsonConvert.SerializeObject(frameworkHeadersDictionary));
+        headersSchema.Properties.ForEach(p => p.Value.IsRequired = false);
+        foreach (var property in new[] { RebusHeaders.ContentType, RebusHeaders.MessageId, RebusHeaders.SentTime, })
+        {
+            headersSchema.Properties[property].IsRequired = true;
+        }
+        return new()
+        {
+            Name = messageType.Name,
+            Title = PascalCaseSplitter.Split(messageType.Name),
+            Payload = JsonSchema.FromType(messageType, schemaOptions),
+            Headers = headersSchema
+        };
+    }
 
     private Server ConfigureServer() => new(url: "https://github.com/rebus-org/Rebus", protocol: "https")
     {
