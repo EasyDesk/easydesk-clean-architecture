@@ -11,9 +11,20 @@ public class ErrorQueueTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task ShouldSendAMessageToTheErrorQueue()
+    public async Task ShouldSendAMessageToTheErrorQueue_AfterException()
     {
         var message = new GenerateError();
+        var bus = NewBus(WebService.Services.GetRequiredService<RebusMessagingOptions>().ErrorQueueName);
+
+        await bus.Send(message);
+
+        await bus.WaitForMessageOrFail(message);
+    }
+
+    [Fact]
+    public async Task ShouldSendAMessageToTheErrorQueue_AfterError()
+    {
+        var message = new GenerateError2();
         var bus = NewBus(WebService.Services.GetRequiredService<RebusMessagingOptions>().ErrorQueueName);
 
         await bus.Send(message);
