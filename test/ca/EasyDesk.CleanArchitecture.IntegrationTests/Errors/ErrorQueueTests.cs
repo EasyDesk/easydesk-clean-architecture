@@ -31,4 +31,15 @@ public class ErrorQueueTests : SampleIntegrationTest
 
         await bus.WaitForMessageOrFail(message);
     }
+
+    [Fact]
+    public async Task ShouldSendAMessageToTheErrorQueue_AfterNotImplementedException_WithFailFast()
+    {
+        var message = new GenerateError3();
+        var bus = NewBus(WebService.Services.GetRequiredService<RebusMessagingOptions>().ErrorQueueName);
+
+        await bus.Send(message);
+
+        await bus.WaitForMessageOrFail(message);
+    }
 }

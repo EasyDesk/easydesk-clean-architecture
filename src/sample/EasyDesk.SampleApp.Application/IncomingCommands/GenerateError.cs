@@ -30,3 +30,16 @@ public class GenerateError2Handler : IHandler<GenerateError2>
         return Task.FromResult(Failure<Nothing>(Errors.Generic("Deliberately returning error")));
     }
 }
+
+public record GenerateError3 : IIncomingCommand, IOverrideMultitenantPolicy
+{
+    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.AnyTenantOrPublic();
+}
+
+public class GenerateError3Handler : IHandler<GenerateError3>
+{
+    public Task<Result<Nothing>> Handle(GenerateError3 request)
+    {
+        throw new NotImplementedException();
+    }
+}

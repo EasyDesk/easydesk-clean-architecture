@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rebus.Config;
+using Rebus.Retry.FailFast;
 using Rebus.Retry.Simple;
 using Rebus.Serialization;
 using Rebus.Serialization.Json;
@@ -22,6 +23,8 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 public class RebusMessagingOptions
 {
     private Action<RebusEndpoint, RebusConfigurer>? _configureRebus;
+
+    public IList<Func<Exception, Option<bool>>> FailFastCheckers { get; } = new List<Func<Exception, Option<bool>>>();
 
     public OutboxOptions OutboxOptions { get; private set; } = new();
 
@@ -89,6 +92,7 @@ public class RebusMessagingOptions
             o.Register<ITopicNameConvention>(c => c.Get<KnownTypesConvention>());
             o.Register<IMessageTypeNameConvention>(c => c.Get<KnownTypesConvention>());
             o.SimpleRetryStrategy(errorQueueAddress: ErrorQueueName);
+            o.Decorate<IFailFastChecker>(c => new FailFastChecker(c.Get<IFailFastChecker>(), FailFastCheckers));
         });
 
         _configureRebus?.Invoke(endpoint, configurer);
