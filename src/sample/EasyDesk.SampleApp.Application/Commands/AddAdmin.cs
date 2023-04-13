@@ -25,7 +25,7 @@ public class AddAdminHandler : IHandler<AddAdmin>
 
     public async Task<Result<Nothing>> Handle(AddAdmin request)
     {
-        await _userRolesManager.GrantRolesToUser(_userInfoProvider.UserInfo.Value, Roles.Admin);
+        await _userRolesManager.GrantRolesToUser(_userInfoProvider.User.Value, Roles.Admin);
         return Ok;
     }
 }

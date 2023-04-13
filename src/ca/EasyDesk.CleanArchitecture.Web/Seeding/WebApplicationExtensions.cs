@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -13,18 +14,20 @@ public static class WebApplicationExtensions
     public static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, AsyncAction<IServiceProvider> setupScope) =>
         new AutoScopingDispatcher(services, setupScope);
 
-    public static IDispatcher SetupSelfScopedRequestDispatcher(this IServiceProvider services, string? userId = null, string? tenantId = null) =>
+    public static IDispatcher SetupSelfScopedRequestDispatcher(this IServiceProvider services, string? userId = null, TenantId? tenantId = null) =>
         SetupSelfScopedDispatcher(services, services =>
         {
-            var httpContextAccessor = services.GetRequiredService<IHttpContextAccessor>();
-            if (userId != null)
+            services.GetRequiredService<IHttpContextAccessor>().Setup(c =>
             {
-                httpContextAccessor.SetupAuthenticatedHttpContext(userId);
-            }
-            if (tenantId != null)
-            {
-                httpContextAccessor.SetupMultitenantHttpContext(tenantId);
-            }
+                if (userId != null)
+                {
+                    c.SetupAuthenticatedUser(userId);
+                }
+                if (tenantId != null)
+                {
+                    c.SetupTenant(tenantId);
+                }
+            });
         });
 
     public static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, Action<IServiceProvider> setupScope) =>

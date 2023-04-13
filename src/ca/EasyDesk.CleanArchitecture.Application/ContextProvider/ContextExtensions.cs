@@ -3,7 +3,6 @@
 public static class ContextExtensions
 {
     public static UserInfo RequireUserInfo(this IUserInfoProvider userInfo) =>
-        userInfo.UserInfo
-            .OrElseThrow(
-                () => new InvalidOperationException("Request context: request is not authenticated."));
+        userInfo.User.OrElseThrow(
+            () => new InvalidOperationException("Request context: request is not authenticated."));
 }

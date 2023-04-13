@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
@@ -6,24 +7,25 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
 public static class HttpContextAccessorExtensions
 {
-    public static IHttpContextAccessor SetupAuthenticatedHttpContext(this IHttpContextAccessor httpContextAccessor, string userId)
+    public static IHttpContextAccessor Setup(this IHttpContextAccessor httpContextAccessor, Action<HttpContext> configure)
     {
-        var httpContext = new DefaultHttpContext();
-        httpContextAccessor.HttpContext.AsOption().IfPresent(c => httpContext.Initialize(c.Features));
-        httpContext.User = new ClaimsPrincipal(
-            new ClaimsIdentity(
-                new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
-                "Custom"));
+        var httpContext = httpContextAccessor.HttpContext.AsOption().OrElseGet(() => new DefaultHttpContext());
+        configure.Invoke(httpContext);
         httpContextAccessor.HttpContext = httpContext;
         return httpContextAccessor;
     }
 
-    public static IHttpContextAccessor SetupMultitenantHttpContext(this IHttpContextAccessor httpContextAccessor, string tenantId)
+    public static HttpContext SetupTenant(this HttpContext httpContext, TenantId tenantId)
     {
-        var httpContext = new DefaultHttpContext();
-        httpContextAccessor.HttpContext.AsOption().IfPresent(c => httpContext.Initialize(c.Features));
-        httpContext.Request.Headers[MultitenancyDefaults.TenantIdHttpHeader] = tenantId;
-        httpContextAccessor.HttpContext = httpContext;
-        return httpContextAccessor;
+        httpContext.Request.Headers[MultitenancyDefaults.TenantIdHttpHeader] = tenantId.Value;
+        return httpContext;
+    }
+
+    public static HttpContext SetupAuthenticatedUser(this HttpContext httpContext, string userId)
+    {
+        httpContext.User = new(new ClaimsIdentity(
+            new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
+            "Custom"));
+        return httpContext;
     }
 }

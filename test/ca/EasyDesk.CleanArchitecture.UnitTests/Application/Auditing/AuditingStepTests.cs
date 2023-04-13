@@ -35,7 +35,7 @@ public class AuditingStepTests
     public AuditingStepTests()
     {
         _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _userInfoProvider.UserInfo.Returns(None);
+        _userInfoProvider.User.Returns(None);
 
         _auditStorage = Substitute.For<IAuditStorage>();
 
@@ -81,7 +81,7 @@ public class AuditingStepTests
     private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<string> userId, Result<Nothing> result)
         where T : IReadWriteOperation, new()
     {
-        _userInfoProvider.UserInfo.Returns(userId.Map(i => new UserInfo(i)));
+        _userInfoProvider.User.Returns(userId.Map(UserInfo.Create));
         _next().Returns(result);
 
         var stepResult = await Run<T>();

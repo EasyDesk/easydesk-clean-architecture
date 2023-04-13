@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.IncomingCommands;
+using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
@@ -29,14 +30,19 @@ public class AddAdminTests : SampleIntegrationTest
         await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
     }
 
+    private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
+    {
+        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
+            TenantId.Create(Tenant),
+            async p => condition(await p.GetRolesForUser(UserInfo.Create(AdminId))));
+    }
+
     [Fact]
     public async Task ShouldSucceed()
     {
         await Http.AddAdmin().Send().EnsureSuccess();
 
-        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.Create(Tenant),
-            async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+        await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }
 
     [Fact]
@@ -44,9 +50,7 @@ public class AddAdminTests : SampleIntegrationTest
     {
         await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
 
-        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.Create(Tenant),
-            async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+        await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }
 
     [Fact]
@@ -54,9 +58,7 @@ public class AddAdminTests : SampleIntegrationTest
     {
         await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
 
-        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.Create(Tenant),
-            async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+        await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }
 
     [Fact]
@@ -68,9 +70,7 @@ public class AddAdminTests : SampleIntegrationTest
         await bus.Send(new RemoveTenant(Tenant));
         await bus.Send(new CreateTenant(Tenant));
 
-        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.Create(Tenant),
-            async p => !(await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+        await WaitForConditionOnRoles(r => !r.Contains(Roles.Admin));
     }
 
     [Fact]
@@ -82,8 +82,6 @@ public class AddAdminTests : SampleIntegrationTest
         await bus.Send(new RemoveTenant(Tenant));
         await bus.Send(new CreateTenant(Tenant));
 
-        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.Create(Tenant),
-            async p => (await p.GetRolesForUser(new UserInfo(AdminId))).Contains(Roles.Admin));
+        await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }
 }

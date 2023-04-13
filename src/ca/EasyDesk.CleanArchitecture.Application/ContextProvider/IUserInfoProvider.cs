@@ -2,5 +2,5 @@
 
 public interface IUserInfoProvider
 {
-    Option<UserInfo> UserInfo { get; }
+    Option<UserInfo> User { get; }
 }

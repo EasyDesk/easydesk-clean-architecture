@@ -19,7 +19,7 @@ public class RoleBasedAuthorizerTests
     [RequireAnyOf(C)]
     private record RequestWithRequirements;
 
-    private readonly UserInfo _userInfo = new("user");
+    private readonly UserInfo _userInfo = UserInfo.Create("user");
     private readonly IPermissionsProvider _permissionsProvider;
 
     public RoleBasedAuthorizerTests()

@@ -2,27 +2,44 @@
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Http;
 using Rebus.Pipeline;
+using System.Collections.Immutable;
 using System.Security.Claims;
+using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
-public sealed class BasicContextProvider : IContextProvider
+public class ContextProviderOptions
+{
+    private readonly Dictionary<string, string> _claimToAttributes = new();
+
+    public ContextProviderOptions AddAttributeFromClaim(string claim, string attribute)
+    {
+        _claimToAttributes.Add(claim, attribute);
+        return this;
+    }
+
+    internal Option<string> ClaimToAttribute(string claim) => _claimToAttributes.GetOption(claim);
+}
+
+internal sealed class BasicContextProvider : IContextProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ContextProviderOptions _options;
     private readonly Lazy<Context> _context;
 
-    public BasicContextProvider(IHttpContextAccessor httpContextAccessor)
+    public BasicContextProvider(IHttpContextAccessor httpContextAccessor, ContextProviderOptions options)
     {
         _httpContextAccessor = httpContextAccessor;
+        _options = options;
         _context = new(GetContextType);
     }
 
     public Context Context => _context.Value;
 
-    public Option<UserInfo> UserInfo => Context switch
+    public Option<UserInfo> User => Context switch
     {
         AuthenticatedRequestContext(UserInfo info) => Some(info),
-        _ => None
+        _ => None,
     };
 
     private Context GetContextType()
@@ -34,7 +51,8 @@ public sealed class BasicContextProvider : IContextProvider
                 .Identities
                 .Where(i => i.IsAuthenticated)
                 .SelectMany(i => i.FindFirst(ClaimTypes.NameIdentifier).AsOption())
-                .Select(c => new UserInfo(c.Value))
+                .Select(c => c.Value)
+                .Select(id => UserInfo.Create(id, GetUserAttributes(httpContext.User)))
                 .FirstOption()
                 .Match<Context>(
                     some: userInfo => new AuthenticatedRequestContext(userInfo),
@@ -47,5 +65,15 @@ public sealed class BasicContextProvider : IContextProvider
         }
 
         return new NoContext();
+    }
+
+    private IImmutableDictionary<string, string> GetUserAttributes(ClaimsPrincipal claimsPrincipal)
+    {
+        return claimsPrincipal
+            .Identities
+            .Where(i => i.IsAuthenticated)
+            .SelectMany(i => i.Claims)
+            .SelectMany(c => _options.ClaimToAttribute(c.Type).Map(a => (a, c.Value)))
+            .ToEquatableMap();
     }
 }
