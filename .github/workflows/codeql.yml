@@ -44,6 +44,8 @@ jobs:
     
     - name: Build
       uses: EasyDesk/action-dotnet-build@v1
+      with:
+        path: src/ca/EasyDesk.CleanArchitecture.Web/
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
