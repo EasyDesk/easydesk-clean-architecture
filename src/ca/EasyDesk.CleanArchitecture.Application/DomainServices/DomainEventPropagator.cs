@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Domain.Metamodel;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-public class DomainEventPropagator<M, D> : IDomainEventHandler<D>
+public sealed class DomainEventPropagator<M, D> : IDomainEventHandler<D>
     where M : IPropagatedEvent<M, D>, IOutgoingEvent
     where D : DomainEvent
 {

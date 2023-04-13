@@ -13,7 +13,7 @@ internal class RolePermissionModel : IMultitenantEntity
 
     public string? TenantId { get; set; }
 
-    public class Configuration : IEntityTypeConfiguration<RolePermissionModel>
+    public sealed class Configuration : IEntityTypeConfiguration<RolePermissionModel>
     {
         public void Configure(EntityTypeBuilder<RolePermissionModel> builder)
         {

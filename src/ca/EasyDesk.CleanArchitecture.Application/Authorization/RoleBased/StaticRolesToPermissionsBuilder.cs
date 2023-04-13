@@ -4,7 +4,7 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-public class StaticRolesToPermissionsBuilder
+public sealed class StaticRolesToPermissionsBuilder
 {
     private IImmutableSet<(Role, Permission)> _rolePermissionPairs = Set<(Role, Permission)>();
 
@@ -34,7 +34,7 @@ public class StaticRolesToPermissionsBuilder
     }
 }
 
-public class PermissionsSpecification
+public sealed class PermissionsSpecification
 {
     private readonly StaticRolesToPermissionsBuilder _builder;
     private readonly IEnumerable<Permission> _permissions;
@@ -57,7 +57,7 @@ public class PermissionsSpecification
     }
 }
 
-public class RolesSpecification
+public sealed class RolesSpecification
 {
     private readonly StaticRolesToPermissionsBuilder _builder;
     private readonly IEnumerable<Role> _roles;

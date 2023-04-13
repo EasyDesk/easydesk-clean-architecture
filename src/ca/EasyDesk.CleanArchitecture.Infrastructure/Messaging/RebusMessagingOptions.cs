@@ -20,7 +20,7 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
-public class RebusMessagingOptions
+public sealed class RebusMessagingOptions
 {
     private Action<RebusEndpoint, RebusConfigurer>? _configureRebus;
 

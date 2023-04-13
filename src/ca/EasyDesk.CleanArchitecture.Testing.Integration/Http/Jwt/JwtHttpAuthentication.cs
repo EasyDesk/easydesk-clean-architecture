@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 
-public class JwtHttpAuthentication : ITestHttpAuthentication
+public sealed class JwtHttpAuthentication : ITestHttpAuthentication
 {
     private readonly JwtFacade _jwtFacade;
     private readonly JwtGenerationConfiguration _jwtGenerationConfiguration;

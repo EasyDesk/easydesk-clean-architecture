@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
-public class StartupPipelineLogger : IHostedService
+public sealed class StartupPipelineLogger : IHostedService
 {
     private readonly IEnumerable<Type> _steps;
     private readonly ILogger<StartupPipelineLogger> _logger;

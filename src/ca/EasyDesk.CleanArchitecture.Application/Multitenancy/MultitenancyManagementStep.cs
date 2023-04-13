@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-public class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
+public sealed class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
     where R : notnull
 {
     private readonly IContextTenantReader _contextTenantReader;

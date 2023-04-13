@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public class SagaBuilder<TId, TState>
+public sealed class SagaBuilder<TId, TState>
     where TState : notnull
 {
     private readonly ISagaConfigurationSink<TId, TState> _sink;
@@ -21,7 +21,7 @@ public class SagaBuilder<TId, TState>
         On<T, Nothing>();
 }
 
-public class SagaCorrelationSelector<T, R, TId, TState>
+public sealed class SagaCorrelationSelector<T, R, TId, TState>
     where TState : notnull
     where R : notnull
     where T : IDispatchable<R>
@@ -37,7 +37,7 @@ public class SagaCorrelationSelector<T, R, TId, TState>
         new(_sink, correlationProperty);
 }
 
-public class SagaHandlerSelector<T, R, TId, TState>
+public sealed class SagaHandlerSelector<T, R, TId, TState>
     where TState : notnull
     where R : notnull
     where T : IDispatchable<R>

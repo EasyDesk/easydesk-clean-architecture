@@ -24,7 +24,7 @@ public record JwtGenerationConfiguration(
     }
 }
 
-public class JwtGenerationBuilder
+public sealed class JwtGenerationBuilder
 {
     private bool _wasBuilt = false;
     private bool _hasSigningCredentials = false;

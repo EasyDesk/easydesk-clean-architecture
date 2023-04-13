@@ -4,7 +4,7 @@ using EasyDesk.Commons.Observables;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 
-public class WebServiceTestsFixtureBuilder
+public sealed class WebServiceTestsFixtureBuilder
 {
     private readonly TestWebServiceBuilder _webServiceBuilder;
     private readonly ContainersCollection _containers;

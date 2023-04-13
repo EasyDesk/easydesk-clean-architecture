@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public class SagaRequestConfiguration<T, R, TId, TState>
+public sealed class SagaRequestConfiguration<T, R, TId, TState>
     where R : notnull
     where TState : notnull
     where T : IDispatchable<R>

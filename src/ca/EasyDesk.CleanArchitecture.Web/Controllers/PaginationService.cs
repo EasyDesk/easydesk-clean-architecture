@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
-public class PaginationService
+public sealed class PaginationService
 {
     public PaginationService(int defaultPageSize, int maxPageSize)
     {

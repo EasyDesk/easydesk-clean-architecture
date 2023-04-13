@@ -7,7 +7,7 @@ internal class InboxMessage
 {
     required public string Id { get; set; }
 
-    public class Configuration : IEntityTypeConfiguration<InboxMessage>
+    public sealed class Configuration : IEntityTypeConfiguration<InboxMessage>
     {
         public void Configure(EntityTypeBuilder<InboxMessage> builder)
         {

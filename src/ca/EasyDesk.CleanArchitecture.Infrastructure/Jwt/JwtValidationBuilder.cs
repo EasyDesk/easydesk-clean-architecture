@@ -44,7 +44,7 @@ public record JwtValidationConfiguration(
     }
 }
 
-public class JwtValidationBuilder
+public sealed class JwtValidationBuilder
 {
     private bool _wasBuilt = false;
     private bool _hasSignatureValidation = false;

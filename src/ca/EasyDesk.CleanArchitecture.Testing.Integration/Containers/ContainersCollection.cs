@@ -3,7 +3,7 @@ using DotNet.Testcontainers.Containers;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 
-public class ContainersCollection : IAsyncDisposable
+public sealed class ContainersCollection : IAsyncDisposable
 {
     private readonly ISet<ITestcontainersContainer> _containers = new HashSet<ITestcontainersContainer>();
 

@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.Commons.Observables;
 
-public class SimpleSubscription : ISubscription
+public sealed class SimpleSubscription : ISubscription
 {
     private readonly Action _unsubscribeAction;
     private bool _unsubscribed = false;

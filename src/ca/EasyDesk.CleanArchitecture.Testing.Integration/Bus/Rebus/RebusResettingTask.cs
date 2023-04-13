@@ -4,7 +4,7 @@ using Rebus.Bus;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
-public class RebusResettingTask : IPausableHostedService
+public sealed class RebusResettingTask : IPausableHostedService
 {
     private readonly IBus _bus;
     private readonly IRebusPausableTaskPool _rebusPausableTaskPool;

@@ -16,7 +16,7 @@ internal class SagaModel : IMultitenantEntity
 
     public string? TenantId { get; set; }
 
-    public class Configuration : IEntityTypeConfiguration<SagaModel>
+    public sealed class Configuration : IEntityTypeConfiguration<SagaModel>
     {
         public void Configure(EntityTypeBuilder<SagaModel> builder)
         {

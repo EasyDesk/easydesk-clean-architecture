@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-public class RequireAnyOfAttribute : Attribute
+public sealed class RequireAnyOfAttribute : Attribute
 {
     public RequireAnyOfAttribute(params object[] permissions)
     {

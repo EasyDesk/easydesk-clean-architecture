@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
-public class HttpPageResponseWrapper<T> : HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>
+public sealed class HttpPageResponseWrapper<T> : HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>
 {
     public HttpPageResponseWrapper(AsyncFunc<ImmutableHttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
         : base(httpResponseMessage, jsonSerializerSettings)

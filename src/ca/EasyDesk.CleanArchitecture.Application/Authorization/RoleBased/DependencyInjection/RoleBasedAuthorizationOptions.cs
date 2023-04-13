@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 
-public class RoleBasedAuthorizationOptions
+public sealed class RoleBasedAuthorizationOptions
 {
     private readonly IServiceCollection _services;
     private readonly AppDescription _app;

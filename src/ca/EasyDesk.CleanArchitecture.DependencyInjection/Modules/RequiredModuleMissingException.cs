@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
-public class RequiredModuleMissingException : Exception
+public sealed class RequiredModuleMissingException : Exception
 {
     public RequiredModuleMissingException(Type moduleType)
         : base($"Missing required module of type {moduleType.Name}")

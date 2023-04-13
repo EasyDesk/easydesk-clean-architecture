@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
-public class PipelineBuilder
+public sealed class PipelineBuilder
 {
     private readonly IList<Type> _steps = new List<Type>();
     private readonly ISet<(Type, Type)> _dependencies = new HashSet<(Type, Type)>();
@@ -71,7 +71,7 @@ public class PipelineBuilder
         _steps.Contains(dependency.Item1) && _steps.Contains(dependency.Item2);
 }
 
-public class StepDependenciesBuilder
+public sealed class StepDependenciesBuilder
 {
     private readonly PipelineBuilder _builder;
     private readonly Type _stepType;

@@ -24,7 +24,7 @@ internal class UserRoleModel : IMultitenantEntity
             RoleId = roleId
         };
 
-    public class Configuration : IEntityTypeConfiguration<UserRoleModel>
+    public sealed class Configuration : IEntityTypeConfiguration<UserRoleModel>
     {
         public void Configure(EntityTypeBuilder<UserRoleModel> builder)
         {

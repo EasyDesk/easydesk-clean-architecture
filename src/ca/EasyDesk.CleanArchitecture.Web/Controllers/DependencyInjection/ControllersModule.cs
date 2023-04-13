@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 
-public class ControllersModuleOptions
+public sealed class ControllersModuleOptions
 {
     public const int DefaultDefaultPageSize = 100;
     public const int DefaultMaxPageSize = 100;

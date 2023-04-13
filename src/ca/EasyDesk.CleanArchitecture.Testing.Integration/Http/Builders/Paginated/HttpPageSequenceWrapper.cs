@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
-public class HttpPageSequenceWrapper<T>
+public sealed class HttpPageSequenceWrapper<T>
 {
     private readonly AsyncCache<IEnumerable<HttpPageResponseWrapper<T>>> _response;
 

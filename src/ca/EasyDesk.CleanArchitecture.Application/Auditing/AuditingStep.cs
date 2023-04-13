@@ -8,7 +8,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Application.Auditing;
 
-public class AuditingStep<T, R> : IPipelineStep<T, R>
+public sealed class AuditingStep<T, R> : IPipelineStep<T, R>
     where R : notnull
     where T : IReadWriteOperation
 {

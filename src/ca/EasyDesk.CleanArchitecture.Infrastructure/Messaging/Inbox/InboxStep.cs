@@ -7,7 +7,7 @@ using Rebus.Pipeline;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 
-public class InboxStep<T> : IPipelineStep<T, Nothing>
+public sealed class InboxStep<T> : IPipelineStep<T, Nothing>
     where T : IReadWriteOperation, IIncomingMessage
 {
     private readonly IInbox _inbox;

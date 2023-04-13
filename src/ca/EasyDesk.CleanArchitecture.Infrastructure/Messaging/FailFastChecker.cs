@@ -6,7 +6,7 @@ using Rebus.Retry.FailFast;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
-public class FailFastChecker : IFailFastChecker
+internal class FailFastChecker : IFailFastChecker
 {
     private readonly IFailFastChecker _fallback;
     private readonly IEnumerable<Func<Exception, Option<bool>>> _predicates;

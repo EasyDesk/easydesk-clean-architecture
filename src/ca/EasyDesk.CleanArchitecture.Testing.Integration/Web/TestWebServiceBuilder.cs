@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
 
-public class TestWebServiceBuilder
+public sealed class TestWebServiceBuilder
 {
     private readonly Type _startupAssemblyMarker;
     private Action<IHostBuilder>? _configureHost;

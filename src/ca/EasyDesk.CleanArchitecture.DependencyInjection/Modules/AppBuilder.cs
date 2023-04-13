@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
-public class AppBuilder
+public sealed class AppBuilder
 {
     private readonly ModulesCollection _modules = new();
     private readonly Dictionary<CleanArchitectureLayer, Assembly> _layers = new();

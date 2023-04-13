@@ -16,7 +16,7 @@ using System.Threading.Channels;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
-public class RebusTestBus : ITestBus
+public sealed class RebusTestBus : ITestBus
 {
     private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
 

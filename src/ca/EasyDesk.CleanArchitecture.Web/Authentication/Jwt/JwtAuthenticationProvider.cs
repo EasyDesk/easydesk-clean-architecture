@@ -16,7 +16,7 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
-public class JwtAuthenticationProvider : IAuthenticationProvider
+public sealed class JwtAuthenticationProvider : IAuthenticationProvider
 {
     private readonly Action<JwtBearerOptions> _configureOptions;
 

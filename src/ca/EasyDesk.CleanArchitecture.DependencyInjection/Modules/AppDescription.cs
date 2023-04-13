@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
-public class AppDescription
+public sealed class AppDescription
 {
     private readonly string _assemblyPrefix;
     private readonly ModulesCollection _modules;

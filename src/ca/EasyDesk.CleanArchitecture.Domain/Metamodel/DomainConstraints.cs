@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel;
 
-public class DomainConstraints
+public sealed class DomainConstraints
 {
     private readonly List<DomainError> _errors = new();
 

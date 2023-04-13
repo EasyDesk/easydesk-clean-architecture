@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Commons.Polling;
 
-public class Polling<T>
+public sealed class Polling<T>
 {
     public static readonly Duration DefaultTimeout = Duration.FromSeconds(10);
     public static readonly Duration DefaultInterval = Duration.FromMilliseconds(200);

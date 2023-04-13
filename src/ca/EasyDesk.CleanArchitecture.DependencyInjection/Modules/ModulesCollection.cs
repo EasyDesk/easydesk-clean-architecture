@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
-public class ModulesCollection : IEnumerable<AppModule>
+public sealed class ModulesCollection : IEnumerable<AppModule>
 {
     private readonly Dictionary<Type, AppModule> _modules = new();
 

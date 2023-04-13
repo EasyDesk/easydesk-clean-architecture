@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-public class DomainEventHandlingStep<T, R> : IPipelineStep<T, R>
+public sealed class DomainEventHandlingStep<T, R> : IPipelineStep<T, R>
     where R : notnull
     where T : IReadWriteOperation
 {

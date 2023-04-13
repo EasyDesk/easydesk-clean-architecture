@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
-public class JwtFacade
+public sealed class JwtFacade
 {
     private readonly IClock _clock;
 

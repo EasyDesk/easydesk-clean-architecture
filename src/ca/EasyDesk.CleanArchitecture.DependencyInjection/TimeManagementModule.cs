@@ -24,7 +24,7 @@ public class TimeManagementModule : AppModule
     }
 }
 
-public class TimeManagementOptions
+public sealed class TimeManagementOptions
 {
     public IDateTimeZoneProvider DateTimeZoneProvider { get; set; } = DateTimeZoneProviders.Tzdb;
 

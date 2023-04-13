@@ -8,7 +8,7 @@ using System.Text.Encodings.Web;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
-public class JwtBearerOptions : TokenAuthenticationOptions
+public sealed class JwtBearerOptions : TokenAuthenticationOptions
 {
     public JwtValidationConfiguration Configuration { get; private set; } =
         JwtValidationConfiguration.FromKey(KeyUtils.RandomKey());

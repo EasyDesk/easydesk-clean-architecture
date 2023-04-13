@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
-public class HttpPaginatedRequestExecutor<T> :
+public sealed class HttpPaginatedRequestExecutor<T> :
     HttpRequestExecutor<HttpPageSequenceWrapper<T>, IEnumerable<HttpPageResponseWrapper<T>>, HttpPaginatedRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;

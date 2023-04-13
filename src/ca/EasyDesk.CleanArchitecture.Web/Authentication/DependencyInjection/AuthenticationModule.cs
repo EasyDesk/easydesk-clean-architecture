@@ -50,7 +50,7 @@ public static class AuthenticationModuleExtensions
     public static bool HasAuthentication(this AppDescription app) => app.HasModule<AuthenticationModule>();
 }
 
-public class AuthenticationModuleOptions
+public sealed class AuthenticationModuleOptions
 {
     public string? DefaultScheme { get; private set; }
 

@@ -11,7 +11,7 @@ internal class AuditRecordPropertyModel
 
     required public string Value { get; set; }
 
-    public class Configuration : IEntityTypeConfiguration<AuditRecordPropertyModel>
+    public sealed class Configuration : IEntityTypeConfiguration<AuditRecordPropertyModel>
     {
         public void Configure(EntityTypeBuilder<AuditRecordPropertyModel> builder)
         {

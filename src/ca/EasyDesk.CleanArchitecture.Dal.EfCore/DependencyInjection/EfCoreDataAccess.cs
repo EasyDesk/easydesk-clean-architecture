@@ -23,7 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
-public class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementation
+public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementation
     where T : DomainContext<T>
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()

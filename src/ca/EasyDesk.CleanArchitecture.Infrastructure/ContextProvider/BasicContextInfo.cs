@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
-public class BasicContextProvider : IContextProvider
+public sealed class BasicContextProvider : IContextProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly Lazy<Context> _context;

@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
-public class EfCoreDataAccessOptions<TBuilder, TExtension>
+public sealed class EfCoreDataAccessOptions<TBuilder, TExtension>
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {

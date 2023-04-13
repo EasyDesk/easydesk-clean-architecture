@@ -13,7 +13,7 @@ internal class OutboxMessage
 
     required public string DestinationAddress { get; set; }
 
-    public class Configuration : IEntityTypeConfiguration<OutboxMessage>
+    public sealed class Configuration : IEntityTypeConfiguration<OutboxMessage>
     {
         public void Configure(EntityTypeBuilder<OutboxMessage> builder)
         {

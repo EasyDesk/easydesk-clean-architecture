@@ -3,7 +3,7 @@ using Rebus.Pipeline;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 
-public class ServiceScopeAsyncDisposeStep : IIncomingStep
+public sealed class ServiceScopeAsyncDisposeStep : IIncomingStep
 {
     public async Task Process(IncomingStepContext context, Func<Task> next)
     {

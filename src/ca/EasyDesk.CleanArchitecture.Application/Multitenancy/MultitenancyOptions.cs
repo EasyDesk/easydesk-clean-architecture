@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-public class MultitenancyOptions
+public sealed class MultitenancyOptions
 {
     public MultitenantPolicy DefaultPolicy { get; set; } = MultitenantPolicies.IgnoreAndUsePublic();
 

@@ -29,7 +29,7 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
 
     public ICollection<AuditRecordPropertyModel> Properties { get; set; } = new HashSet<AuditRecordPropertyModel>();
 
-    public class Configuration : IEntityTypeConfiguration<AuditRecordModel>
+    public sealed class Configuration : IEntityTypeConfiguration<AuditRecordModel>
     {
         void IEntityTypeConfiguration<AuditRecordModel>.Configure(EntityTypeBuilder<AuditRecordModel> builder)
         {

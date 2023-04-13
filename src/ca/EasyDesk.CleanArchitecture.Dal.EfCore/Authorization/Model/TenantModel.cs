@@ -8,7 +8,7 @@ public class TenantModel
 {
     required public string Id { get; set; }
 
-    public class Configuration : IEntityTypeConfiguration<TenantModel>
+    public sealed class Configuration : IEntityTypeConfiguration<TenantModel>
     {
         public void Configure(EntityTypeBuilder<TenantModel> builder)
         {

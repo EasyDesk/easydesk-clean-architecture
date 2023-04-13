@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EasyDesk.CleanArchitecture.Web.Versioning;
 
-public class ApiVersioningController : AbstractController
+public sealed class ApiVersioningController : AbstractController
 {
     private readonly ApiVersioningInfo _apiVersioningInfo;
 

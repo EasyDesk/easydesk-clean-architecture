@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
-public class OutboxOptions
+public sealed class OutboxOptions
 {
     public Duration FlushingPeriod { get; set; } = Duration.FromMinutes(1);
 
