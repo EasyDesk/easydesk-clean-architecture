@@ -38,12 +38,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[19.12.1, )",
-        "resolved": "19.12.1",
-        "contentHash": "1ATWK0EXaZ6t8BZIY9v7ZVn6WKZB3oCG7o0o3xI1BYcqx0ZYj07hVnFnUZT69hehAU5YlBASNFFHQTz/p/bLaw==",
+        "requested": "[19.12.2, )",
+        "resolved": "19.12.2",
+        "contentHash": "a1wXCRypc/9EDyHueAF0/djvFYPZaTP2sGNoprBZcSX+sh7/CEHcGgCA3m7//hewUbT+IUat1Qk0v6K8fLl3ag==",
         "dependencies": {
           "EmptyFiles": "4.4.0",
-          "Verify": "19.12.1",
+          "Verify": "19.12.2",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -89,11 +89,11 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "11.2.0",
-        "contentHash": "laDaq5VfrIHmbRqfTxy80CLXyfxvWAhcngNGU7+IOZx1l9QDL1BVcWNfVa+jZEp85hM+ijpurRWMxdn89KSRRg==",
+        "resolved": "11.3.0",
+        "contentHash": "k0ZgZqd09jLZQjR8FyQbSQE86Q7QZnjEzq1LPHtj1R2AoWO8sjV5x+jlSisL7NZAbUOI4y+7Bog8gkr9WIRBGw==",
         "dependencies": {
-          "EmptyFiles": "4.2.0",
-          "System.Management": "6.0.0"
+          "EmptyFiles": "4.4.0",
+          "System.Management": "6.0.1"
         }
       },
       "EmptyFiles": {
@@ -622,8 +622,8 @@
       },
       "System.Management": {
         "type": "Transitive",
-        "resolved": "6.0.0",
-        "contentHash": "sHsESYMmPDhQuOC66h6AEOs/XowzKsbT9srMbX71TCXP58hkpn1BqBjdmKj1+DCA/WlBETX1K5WjQHwmV0Txrg==",
+        "resolved": "6.0.1",
+        "contentHash": "10J1D0h/lioojphfJ4Fuh5ZUThT/xOVHdV9roGBittKKNP2PMjrvibEdbVTGZcPra1399Ja3tqIJLyQrc5Wmhg==",
         "dependencies": {
           "System.CodeDom": "6.0.0"
         }
@@ -1116,11 +1116,11 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.12.1",
-        "contentHash": "y9wnnF+k8OUG9v9u9eZ89nzNrFElFHxNM1zUSUs+15wzmr2G2/MFePsujBcr2jIBC7LnKRtpp1f90NfRLWkFNQ==",
+        "resolved": "19.12.2",
+        "contentHash": "RH8cJqLJHe9INUzy3dAEa+dEF2cE+MJHJ7JX9EzvAyNd+DUamCrSYjIyAW+Lg1r7qjDB0jCTCtB8cGZ05F8FcA==",
         "dependencies": {
           "Argon": "0.5.2",
-          "DiffEngine": "11.2.0",
+          "DiffEngine": "11.3.0",
           "EmptyFiles": "4.4.0",
           "SimpleInfoName": "2.1.1"
         }
@@ -1200,7 +1200,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.1.0, )",
-          "Verify": "[19.12.1, )",
+          "Verify": "[19.12.2, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
