@@ -42,10 +42,20 @@ jobs:
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
     
-    - name: Build
+    - name: Build Sample App
       uses: EasyDesk/action-dotnet-build@v1
       with:
-        path: src/ca/EasyDesk.CleanArchitecture.Web/
+        path: src/sample/EasyDesk.SampleApp.Web/
+    
+    - name: Build DAL - PostgreSQL
+      uses: EasyDesk/action-dotnet-build@v1
+      with:
+        path: src/ca/EasyDesk.CleanArchitecture.Dal.PostgreSql/
+    
+    - name: Build DAL - SQL Server
+      uses: EasyDesk/action-dotnet-build@v1
+      with:
+        path: src/ca/EasyDesk.CleanArchitecture.Dal.SqlServer/
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
