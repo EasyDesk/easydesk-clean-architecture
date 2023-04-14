@@ -37,7 +37,7 @@ public class DeletePersonTests : SampleIntegrationTest
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 

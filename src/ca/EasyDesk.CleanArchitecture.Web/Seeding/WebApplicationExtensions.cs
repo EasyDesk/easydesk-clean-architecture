@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using Microsoft.AspNetCore.Builder;
@@ -14,7 +15,7 @@ public static class WebApplicationExtensions
     public static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, AsyncAction<IServiceProvider> setupScope) =>
         new AutoScopingDispatcher(services, setupScope);
 
-    public static IDispatcher SetupSelfScopedRequestDispatcher(this IServiceProvider services, string? userId = null, TenantId? tenantId = null) =>
+    public static IDispatcher SetupSelfScopedRequestDispatcher(this IServiceProvider services, UserId? userId = null, TenantId? tenantId = null) =>
         SetupSelfScopedDispatcher(services, services =>
         {
             services.GetRequiredService<IHttpContextAccessor>().Setup(c =>

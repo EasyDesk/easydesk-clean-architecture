@@ -1,8 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using EasyDesk.Commons.Values;
+using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-public record TenantId
+public record TenantId : IValue<TenantId, string>
 {
     public const int MaxLength = 256;
 
@@ -13,10 +14,10 @@ public record TenantId
 
     public string Value { get; }
 
-    public static TenantId Create(string value) =>
-        TryCreate(value).OrElseThrow(() => new ArgumentException($"TenantId '{value}' has invalid format", nameof(value)));
+    public static TenantId New(string value) =>
+        TryNew(value).OrElseThrow(() => new ArgumentException($"TenantId '{value}' has invalid format", nameof(value)));
 
-    public static Option<TenantId> TryCreate(string value)
+    public static Option<TenantId> TryNew(string value)
     {
         if (!IsValidTenantId(value))
         {

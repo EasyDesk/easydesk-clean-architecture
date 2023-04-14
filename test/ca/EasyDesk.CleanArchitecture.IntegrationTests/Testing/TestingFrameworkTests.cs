@@ -37,7 +37,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 
@@ -63,7 +63,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
                     .PollUntil(people => people.Count() == count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
                     .EnsureSuccess();
                 await webService.WaitConditionUnderTenant<SampleAppContext>(
-                    TenantId.Create(Tenant),
+                    TenantId.New(Tenant),
                     async context => await context.Pets.CountAsync() == count);
             }
         }

@@ -12,7 +12,7 @@ public class TenantServiceTests
     public TenantServiceTests()
     {
         _sut = new TenantService();
-        _tenantId = TenantId.Create("test-tenant-id");
+        _tenantId = TenantId.New("test-tenant-id");
         _tenantInfo = TenantInfo.Tenant(_tenantId);
     }
 

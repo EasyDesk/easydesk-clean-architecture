@@ -10,7 +10,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Multitenancy;
 
 public class DefaultContextTenantReaderTests
 {
-    private static readonly TenantId _tenantId = TenantId.Create("some-tenant-id");
+    private static readonly TenantId _tenantId = TenantId.New("some-tenant-id");
 
     private readonly DefaultContextTenantReader _sut;
     private readonly IContextProvider _contextProvider;

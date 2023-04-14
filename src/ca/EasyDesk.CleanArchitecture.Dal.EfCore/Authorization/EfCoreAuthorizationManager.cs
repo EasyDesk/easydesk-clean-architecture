@@ -19,12 +19,12 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
 
     private IQueryable<UserRoleModel> RolesByUser(UserInfo userInfo) => _context
         .UserRoles
-        .Where(u => u.UserId == userInfo.UserId);
+        .Where(u => u.User == userInfo.UserId);
 
     public async Task<IImmutableSet<Permission>> GetPermissionsForUser(UserInfo userInfo)
     {
         return await RolesByUser(userInfo)
-            .Join(_context.RolePermissions, u => u.RoleId, p => p.RoleId, (u, p) => p.PermissionName)
+            .Join(_context.RolePermissions, u => u.Role, p => p.RoleId, (u, p) => p.PermissionName)
             .Distinct()
             .Select(p => new Permission(p))
             .ToEquatableSetAsync();
@@ -33,14 +33,14 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
     public async Task<IImmutableSet<Role>> GetRolesForUser(UserInfo userInfo)
     {
         return await RolesByUser(userInfo)
-            .Select(u => new Role(u.RoleId))
+            .Select(u => new Role(u.Role))
             .ToEquatableSetAsync();
     }
 
     public async Task GrantRolesToUser(UserInfo userInfo, IEnumerable<Role> roles)
     {
         var currentRoleIds = await RolesByUser(userInfo)
-            .Select(r => r.RoleId)
+            .Select(r => r.Role)
             .ToListAsync();
 
         var rolesToBeAdded = RoleIds(roles)
@@ -55,7 +55,7 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
     {
         var roleIds = RoleIds(roles);
         var rolesToBeRemoved = await RolesByUser(userInfo)
-            .Where(x => roleIds.Contains(x.RoleId))
+            .Where(x => roleIds.Contains(x.Role))
             .ToListAsync();
 
         _context.UserRoles.RemoveRange(rolesToBeRemoved);

@@ -57,7 +57,7 @@ public class AuditingStepTests
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeCommand(
-        Option<string> userId, Result<Nothing> result)
+        Option<UserId> userId, Result<Nothing> result)
     {
         await ShouldRecordAnAudit<TestCommand>(AuditRecordType.Command, userId, result);
     }
@@ -65,7 +65,7 @@ public class AuditingStepTests
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeCommandRequest(
-        Option<string> userId, Result<Nothing> result)
+        Option<UserId> userId, Result<Nothing> result)
     {
         await ShouldRecordAnAudit<TestCommandRequest>(AuditRecordType.CommandRequest, userId, result);
     }
@@ -73,12 +73,12 @@ public class AuditingStepTests
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeEvent(
-        Option<string> userId, Result<Nothing> result)
+        Option<UserId> userId, Result<Nothing> result)
     {
         await ShouldRecordAnAudit<TestEvent>(AuditRecordType.Event, userId, result);
     }
 
-    private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<string> userId, Result<Nothing> result)
+    private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<UserId> userId, Result<Nothing> result)
         where T : IReadWriteOperation, new()
     {
         _userInfoProvider.User.Returns(userId.Map(UserInfo.Create));
@@ -101,7 +101,7 @@ public class AuditingStepTests
     public static IEnumerable<object[]> AuditData()
     {
         return Matrix
-            .Axis(Some("userId"), None)
+            .Axis(Some(UserId.New("userId")), None)
             .Axis(Ok, Failure<Nothing>(TestError.Create()))
             .Build();
     }

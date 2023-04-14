@@ -55,19 +55,19 @@ public class AbstractDbContext<T> : DbContext
         where E : class, IMultitenantEntity
     {
         var entityBuilder = modelBuilder.Entity<E>();
-        var tenantIdProperty = entityBuilder.Metadata.GetProperty(nameof(IMultitenantEntity.TenantId));
+        var tenantIdProperty = entityBuilder.Metadata.GetProperty(nameof(IMultitenantEntity.Tenant));
         if (!tenantIdProperty.IsIndex())
         {
-            entityBuilder.HasIndex(x => x.TenantId);
+            entityBuilder.HasIndex(x => x.Tenant);
         }
-        entityBuilder.Property(x => x.TenantId)
+        entityBuilder.Property(x => x.Tenant)
                  .IsRequired()
                  .HasMaxLength(TenantId.MaxLength)
                  .ValueGeneratedOnAdd()
                  .HasValueGenerator<TenantIdGenerator>();
 
-        queryFilters.AddFilter<E>(x => x.TenantId == PublicTenantName
-            || x.TenantId == GetCurrentTenantAsString()
+        queryFilters.AddFilter<E>(x => x.Tenant == PublicTenantName
+            || x.Tenant == GetCurrentTenantAsString()
             || _tenantProvider.TenantInfo.IsPublic);
     }
 

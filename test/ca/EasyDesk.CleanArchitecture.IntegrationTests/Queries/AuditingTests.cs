@@ -35,7 +35,7 @@ public class AuditingTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
         _initialAudits++;
-        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
         await Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;
 
@@ -77,7 +77,7 @@ public class AuditingTests : SampleIntegrationTest
     public async Task ShouldAuditCommands()
     {
         var bus = NewBus();
-        var tenantId = TenantId.Create("new-tenant");
+        var tenantId = TenantId.New("new-tenant");
         await bus.Send(new CreateTenant(tenantId.Value));
         await WebService.WaitUntilTenantExists(tenantId);
 

@@ -7,55 +7,56 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Messaging;
-
-[DbContext(typeof(MessagingContext))]
-partial class MessagingContextModelSnapshot : ModelSnapshot
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Messaging
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    [DbContext(typeof(MessagingContext))]
+    partial class MessagingContextModelSnapshot : ModelSnapshot
     {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
-        modelBuilder
-            .HasDefaultSchema("messaging")
-            .HasAnnotation("ProductVersion", "7.0.3")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128);
+            modelBuilder
+                .HasDefaultSchema("messaging")
+                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.InboxMessage", b =>
-            {
-                b.Property<string>("Id")
-                    .HasColumnType("nvarchar(450)");
+            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.InboxMessage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("Inbox", "messaging");
-            });
+                    b.ToTable("Inbox", "messaging");
+                });
 
-        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.OutboxMessage", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.OutboxMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<byte[]>("Content")
-                    .IsRequired()
-                    .HasColumnType("varbinary(max)");
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
-                b.Property<string>("DestinationAddress")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("DestinationAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<byte[]>("Headers")
-                    .IsRequired()
-                    .HasColumnType("varbinary(max)");
+                    b.Property<byte[]>("Headers")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("Outbox", "messaging");
-            });
+                    b.ToTable("Outbox", "messaging");
+                });
 #pragma warning restore 612, 618
+        }
     }
 }

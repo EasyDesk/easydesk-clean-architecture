@@ -14,13 +14,15 @@ internal class SagaModel : IMultitenantEntity
 
     public int? Version { get; set; }
 
-    public string? TenantId { get; set; }
+    public string? Tenant { get; set; }
 
     public sealed class Configuration : IEntityTypeConfiguration<SagaModel>
     {
         public void Configure(EntityTypeBuilder<SagaModel> builder)
         {
-            builder.HasKey(x => new { x.Id, x.Type, x.TenantId });
+            builder.HasKey(x => new { x.Id, x.Type, x.Tenant });
+
+            builder.Property(x => x.Type).HasMaxLength(SagaManagerModel.SagaTypeMaxLength);
         }
     }
 }

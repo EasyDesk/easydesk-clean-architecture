@@ -21,7 +21,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
 
     public LocalDate DateOfBirth { get; set; }
 
-    public string? TenantId { get; set; }
+    public string? Tenant { get; set; }
 
     required public string CreatedBy { get; set; }
 

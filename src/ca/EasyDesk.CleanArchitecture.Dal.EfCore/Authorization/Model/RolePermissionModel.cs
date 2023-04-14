@@ -11,13 +11,13 @@ internal class RolePermissionModel : IMultitenantEntity
 
     required public string PermissionName { get; set; }
 
-    public string? TenantId { get; set; }
+    public string? Tenant { get; set; }
 
     public sealed class Configuration : IEntityTypeConfiguration<RolePermissionModel>
     {
         public void Configure(EntityTypeBuilder<RolePermissionModel> builder)
         {
-            builder.HasKey(x => new { x.RoleId, x.PermissionName, x.TenantId });
+            builder.HasKey(x => new { x.RoleId, x.PermissionName, x.Tenant });
 
             builder.Property(x => x.RoleId)
                 .HasMaxLength(Role.MaxLength);
@@ -27,7 +27,7 @@ internal class RolePermissionModel : IMultitenantEntity
 
             builder.HasOne<TenantModel>()
                 .WithMany()
-                .HasForeignKey(x => x.TenantId)
+                .HasForeignKey(x => x.Tenant)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

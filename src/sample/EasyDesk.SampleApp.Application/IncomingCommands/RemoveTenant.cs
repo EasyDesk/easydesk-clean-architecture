@@ -8,7 +8,7 @@ namespace EasyDesk.SampleApp.Application.IncomingCommands;
 
 public record RemoveTenant(string Id) : IIncomingCommand, IOverrideMultitenantPolicy
 {
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.IgnoreAndUseTenant(TenantId.Create(Id));
+    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.IgnoreAndUseTenant(TenantId.New(Id));
 }
 
 public class RemoveTenantHandler : IHandler<RemoveTenant>

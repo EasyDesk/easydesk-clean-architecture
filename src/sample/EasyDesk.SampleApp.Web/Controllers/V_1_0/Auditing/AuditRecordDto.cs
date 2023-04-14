@@ -18,7 +18,7 @@ public record AuditRecordDto(
         Type: src.Type,
         Name: src.Name,
         Description: src.Description,
-        UserId: src.UserId,
+        UserId: src.UserId.Map(u => u.Value),
         Properties: src.Properties,
         Success: src.Success,
         Instant: src.Instant);

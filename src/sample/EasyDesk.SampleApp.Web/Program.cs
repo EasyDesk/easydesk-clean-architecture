@@ -1,5 +1,6 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
@@ -67,8 +68,8 @@ await app.MigrateDatabases();
 
 await app.SetupDevelopment(async (services, logger) =>
 {
-    var adminId = Guid.NewGuid().ToString();
-    var tenantId = TenantId.Create(Guid.NewGuid().ToString());
+    var adminId = UserId.New(Guid.NewGuid().ToString());
+    var tenantId = TenantId.New(Guid.NewGuid().ToString());
     var dispatcher = services.SetupSelfScopedRequestDispatcher(adminId, tenantId);
     await dispatcher.Dispatch(new CreateTenant(tenantId));
     await dispatcher.Dispatch(new AddAdmin());

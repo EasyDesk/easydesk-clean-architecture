@@ -1,47 +1,49 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TenantIdType = EasyDesk.CleanArchitecture.Application.Multitenancy.TenantId;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 
 internal class UserRoleModel : IMultitenantEntity
 {
-    required public string RoleId { get; set; }
+    required public string Role { get; set; }
 
-    required public string UserId { get; set; }
+    required public string User { get; set; }
 
-    public string? TenantId { get; set; }
+    public string? Tenant { get; set; }
 
-    public string? TenantIdFk { get; set; }
+    public string? TenantFk { get; set; }
 
     public static UserRoleModel Create(string userId, string roleId) =>
         new()
         {
-            UserId = userId,
-            RoleId = roleId
+            User = userId,
+            Role = roleId
         };
 
     public sealed class Configuration : IEntityTypeConfiguration<UserRoleModel>
     {
         public void Configure(EntityTypeBuilder<UserRoleModel> builder)
         {
-            builder.HasKey(x => new { x.UserId, x.RoleId, x.TenantId });
+            builder.HasKey(x => new { x.User, x.Role, x.Tenant });
 
-            builder.Property(x => x.RoleId)
-                .HasMaxLength(Role.MaxLength);
+            builder.Property(x => x.User).HasMaxLength(UserId.MaxLength);
 
-            builder.Property(x => x.TenantIdFk)
+            builder.Property(x => x.Role)
+                .HasMaxLength(Application.Authorization.RoleBased.Role.MaxLength);
+
+            builder.Property(x => x.TenantFk)
                 .IsRequired(false)
-                .HasMaxLength(TenantIdType.MaxLength)
+                .HasMaxLength(TenantId.MaxLength)
                 .ValueGeneratedOnAdd()
                 .HasValueGenerator<TenantIdFkGenerator>();
 
             builder.HasOne<TenantModel>()
                 .WithMany()
-                .HasForeignKey(x => x.TenantIdFk)
+                .HasForeignKey(x => x.TenantFk)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

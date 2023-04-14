@@ -9,159 +9,160 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.SampleApp.Infrastructure.Migrations;
-
-[DbContext(typeof(SampleAppContext))]
-partial class SampleAppContextModelSnapshot : ModelSnapshot
+namespace EasyDesk.SampleApp.Infrastructure.Migrations
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    [DbContext(typeof(SampleAppContext))]
+    partial class SampleAppContextModelSnapshot : ModelSnapshot
     {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
-        modelBuilder
-            .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "7.0.3")
-            .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            modelBuilder
+                .HasDefaultSchema("domain")
+                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-        modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
-            .IncrementsBy(10);
+            modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
+                .IncrementsBy(10);
 
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uuid");
+            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-                b.Property<string>("CreatedBy")
-                    .IsRequired()
-                    .HasColumnType("text");
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                b.Property<LocalDate>("DateOfBirth")
-                    .HasColumnType("date");
+                    b.Property<LocalDate>("DateOfBirth")
+                        .HasColumnType("date");
 
-                b.Property<string>("FirstName")
-                    .IsRequired()
-                    .HasColumnType("text");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                b.Property<string>("LastName")
-                    .IsRequired()
-                    .HasColumnType("text");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                b.Property<string>("TenantId")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    b.Property<string>("Tenant")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("TenantId");
+                    b.HasIndex("Tenant");
 
-                b.ToTable("People", "domain");
-            });
+                    b.ToTable("People", "domain");
+                });
 
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PetModel", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
+            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PetModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-                NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
+                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
 
-                b.Property<string>("Nickname")
-                    .IsRequired()
-                    .HasColumnType("text");
+                    b.Property<string>("Nickname")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                b.Property<Guid>("PersonId")
-                    .HasColumnType("uuid");
+                    b.Property<Guid>("PersonId")
+                        .HasColumnType("uuid");
 
-                b.Property<string>("TenantId")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    b.Property<string>("Tenant")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("PersonId");
+                    b.HasIndex("PersonId");
 
-                b.HasIndex("TenantId");
+                    b.HasIndex("Tenant");
 
-                b.ToTable("Pets", "domain");
-            });
+                    b.ToTable("Pets", "domain");
+                });
 
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
-            {
-                b.OwnsOne("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.AddressModel", "Residence", b1 =>
-                    {
-                        b1.Property<Guid>("PersonModelId")
-                            .HasColumnType("uuid");
+            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
+                {
+                    b.OwnsOne("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.AddressModel", "Residence", b1 =>
+                        {
+                            b1.Property<Guid>("PersonModelId")
+                                .HasColumnType("uuid");
 
-                        b1.Property<string>("City")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("City")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("Country")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("Country")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("District")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("District")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("Province")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("Province")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("Region")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("Region")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("State")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("State")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("StreetName")
-                            .IsRequired()
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("StreetName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("StreetNumber")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("StreetNumber")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.Property<string>("StreetType")
-                            .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            b1.Property<string>("StreetType")
+                                .HasMaxLength(100)
+                                .HasColumnType("character varying(100)");
 
-                        b1.HasKey("PersonModelId");
+                            b1.HasKey("PersonModelId");
 
-                        b1.ToTable("People", "domain");
+                            b1.ToTable("People", "domain");
 
-                        b1.WithOwner()
-                            .HasForeignKey("PersonModelId");
-                    });
+                            b1.WithOwner()
+                                .HasForeignKey("PersonModelId");
+                        });
 
-                b.Navigation("Residence")
-                    .IsRequired();
-            });
+                    b.Navigation("Residence")
+                        .IsRequired();
+                });
 
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PetModel", b =>
-            {
-                b.HasOne("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", "Person")
-                    .WithMany("Pets")
-                    .HasForeignKey("PersonId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PetModel", b =>
+                {
+                    b.HasOne("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", "Person")
+                        .WithMany("Pets")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("Person");
-            });
+                    b.Navigation("Person");
+                });
 
-        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
-            {
-                b.Navigation("Pets");
-            });
+            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.DataAccess.Model.PersonModel", b =>
+                {
+                    b.Navigation("Pets");
+                });
 #pragma warning restore 612, 618
+        }
     }
 }

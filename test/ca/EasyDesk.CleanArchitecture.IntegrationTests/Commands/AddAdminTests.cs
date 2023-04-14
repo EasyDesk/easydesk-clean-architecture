@@ -13,7 +13,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class AddAdminTests : SampleIntegrationTest
 {
     private const string Tenant = "test-tenant";
-    private const string AdminId = "test-admin";
+    private static readonly UserId AdminId = UserId.New("test-admin");
 
     public AddAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -27,13 +27,13 @@ public class AddAdminTests : SampleIntegrationTest
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
     }
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.Create(Tenant),
+            TenantId.New(Tenant),
             async p => condition(await p.GetRolesForUser(UserInfo.Create(AdminId))));
     }
 

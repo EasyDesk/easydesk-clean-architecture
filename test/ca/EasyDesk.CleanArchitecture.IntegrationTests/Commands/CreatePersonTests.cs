@@ -35,7 +35,7 @@ public class CreatePersonTests : SampleIntegrationTest
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.Create(Tenant));
+        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 
@@ -99,7 +99,7 @@ public class CreatePersonTests : SampleIntegrationTest
         var otherTenant = "other-tenant";
         var bus = NewBus();
         await bus.Send(new CreateTenant(otherTenant));
-        await WebService.WaitUntilTenantExists(TenantId.Create(otherTenant));
+        await WebService.WaitUntilTenantExists(TenantId.New(otherTenant));
 
         var person = await CreatePerson()
             .Send()

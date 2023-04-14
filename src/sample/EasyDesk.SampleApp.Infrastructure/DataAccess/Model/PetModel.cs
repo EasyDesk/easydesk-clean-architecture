@@ -18,7 +18,7 @@ public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, 
 
     public Guid PersonId { get; set; }
 
-    public string? TenantId { get; set; }
+    public string? Tenant { get; set; }
 
     public PersonModel Person { get; set; } = null!;
 

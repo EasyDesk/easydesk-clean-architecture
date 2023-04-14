@@ -19,7 +19,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(tenantName));
 
-        await WebService.WaitUntilTenantExists(TenantId.Create(tenantName));
+        await WebService.WaitUntilTenantExists(TenantId.New(tenantName));
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(tenantName));
 
-        var tenantId = TenantId.Create(tenantName);
+        var tenantId = TenantId.New(tenantName);
         await WebService.WaitUntilTenantExists(tenantId);
 
         await bus.Send(new RemoveTenant(tenantName));
@@ -44,7 +44,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(tenantName));
 
-        var tenantId = TenantId.Create(tenantName);
+        var tenantId = TenantId.New(tenantName);
         await WebService.WaitUntilTenantExists(tenantId);
         var adminId = "test-admin-asd";
         await Http.AddAdmin()

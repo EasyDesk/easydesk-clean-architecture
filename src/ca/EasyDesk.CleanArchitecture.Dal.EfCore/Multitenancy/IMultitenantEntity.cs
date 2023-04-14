@@ -2,5 +2,5 @@
 
 public interface IMultitenantEntity
 {
-    string? TenantId { get; set; }
+    string? Tenant { get; set; }
 }

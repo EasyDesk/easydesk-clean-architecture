@@ -52,7 +52,7 @@ internal sealed class BasicContextProvider : IContextProvider
                 .Where(i => i.IsAuthenticated)
                 .SelectMany(i => i.FindFirst(ClaimTypes.NameIdentifier).AsOption())
                 .Select(c => c.Value)
-                .Select(id => UserInfo.Create(id, GetUserAttributes(httpContext.User)))
+                .Select(id => UserInfo.Create(UserId.New(id), GetUserAttributes(httpContext.User)))
                 .FirstOption()
                 .Match<Context>(
                     some: userInfo => new AuthenticatedRequestContext(userInfo),

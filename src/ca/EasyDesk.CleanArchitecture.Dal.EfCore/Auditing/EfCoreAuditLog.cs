@@ -31,10 +31,10 @@ internal class EfCoreAuditLog : IAuditLog
             .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
             .Conditionally(query.MatchName, name => q => q.Where(r => r.Name == name))
             .Conditionally(query.IsSuccess, success => q => q.Where(r => r.Success == success))
-            .Conditionally(query.MatchUserId, userId => q => q.Where(r => r.UserId == userId))
+            .Conditionally(query.MatchUserId, userId => q => q.Where(r => r.User == userId))
             .Conditionally(query.IsAnonymous, anonymous => q => q.Where(anonymous
-                ? r => r.UserId == null
-                : r => r.UserId != null))
+                ? r => r.User == null
+                : r => r.User != null))
             .Project<AuditRecordModel, AuditRecord>()
             .ToPageable();
     }
