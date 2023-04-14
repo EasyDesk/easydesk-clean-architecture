@@ -7,100 +7,99 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
+
+[DbContext(typeof(AuthorizationContext))]
+partial class AuthorizationContextModelSnapshot : ModelSnapshot
 {
-    [DbContext(typeof(AuthorizationContext))]
-    partial class AuthorizationContextModelSnapshot : ModelSnapshot
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasDefaultSchema("auth")
-                .HasAnnotation("ProductVersion", "7.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+        modelBuilder
+            .HasDefaultSchema("auth")
+            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
-                {
-                    b.Property<string>("RoleId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
+            {
+                b.Property<string>("RoleId")
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("PermissionName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                b.Property<string>("PermissionName")
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Tenant")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Tenant")
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("RoleId", "PermissionName", "Tenant");
+                b.HasKey("RoleId", "PermissionName", "Tenant");
 
-                    b.HasIndex("Tenant");
+                b.HasIndex("Tenant");
 
-                    b.ToTable("RolePermissions", "auth");
-                });
+                b.ToTable("RolePermissions", "auth");
+            });
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", b =>
+            {
+                b.Property<string>("Id")
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Tenants", "auth");
-                });
+                b.ToTable("Tenants", "auth");
+            });
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.UserRoleModel", b =>
-                {
-                    b.Property<string>("User")
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.UserRoleModel", b =>
+            {
+                b.Property<string>("User")
+                    .HasMaxLength(1024)
+                    .HasColumnType("nvarchar(1024)");
 
-                    b.Property<string>("Role")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                b.Property<string>("Role")
+                    .HasMaxLength(100)
+                    .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("Tenant")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Tenant")
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("TenantFk")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("TenantFk")
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("User", "Role", "Tenant");
+                b.HasKey("User", "Role", "Tenant");
 
-                    b.HasIndex("Tenant");
+                b.HasIndex("Tenant");
 
-                    b.HasIndex("TenantFk");
+                b.HasIndex("TenantFk");
 
-                    b.ToTable("UserRoles", "auth");
-                });
+                b.ToTable("UserRoles", "auth");
+            });
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
-                {
-                    b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", null)
-                        .WithMany()
-                        .HasForeignKey("Tenant")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
+            {
+                b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", null)
+                    .WithMany()
+                    .HasForeignKey("Tenant")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.UserRoleModel", b =>
-                {
-                    b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", null)
-                        .WithMany()
-                        .HasForeignKey("TenantFk")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.UserRoleModel", b =>
+            {
+                b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", null)
+                    .WithMany()
+                    .HasForeignKey("TenantFk")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

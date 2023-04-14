@@ -3,16 +3,16 @@ using System;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Sagas;
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Sagas;
 
 [DbContext(typeof(SagasContext))]
-[Migration("20230228124429_InitialSchema")]
+[Migration("20230414143135_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -21,34 +21,35 @@ partial class InitialSchema
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("sagas")
-            .HasAnnotation("ProductVersion", "7.0.3")
-            .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Sagas.SagaModel", b =>
             {
                 b.Property<string>("Id")
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(450)");
 
                 b.Property<string>("Type")
-                    .HasColumnType("text");
+                    .HasMaxLength(2048)
+                    .HasColumnType("nvarchar(2048)");
 
-                b.Property<string>("TenantId")
+                b.Property<string>("Tenant")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("nvarchar(256)");
 
                 b.Property<byte[]>("State")
                     .IsRequired()
-                    .HasColumnType("bytea");
+                    .HasColumnType("varbinary(max)");
 
                 b.Property<int?>("Version")
-                    .HasColumnType("integer");
+                    .HasColumnType("int");
 
-                b.HasKey("Id", "Type", "TenantId");
+                b.HasKey("Id", "Type", "Tenant");
 
-                b.HasIndex("TenantId");
+                b.HasIndex("Tenant");
 
                 b.ToTable("Sagas", "sagas");
             });

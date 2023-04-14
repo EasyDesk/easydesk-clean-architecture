@@ -8,91 +8,90 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Auditing
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Auditing;
+
+[DbContext(typeof(AuditingContext))]
+partial class AuditingContextModelSnapshot : ModelSnapshot
 {
-    [DbContext(typeof(AuditingContext))]
-    partial class AuditingContextModelSnapshot : ModelSnapshot
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasDefaultSchema("audit")
-                .HasAnnotation("ProductVersion", "7.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+        modelBuilder
+            .HasDefaultSchema("audit")
+            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
+            {
+                b.Property<long>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text");
+                b.Property<string>("Description")
+                    .HasColumnType("text");
 
-                    b.Property<Instant>("Instant")
-                        .HasColumnType("timestamp with time zone");
+                b.Property<Instant>("Instant")
+                    .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)");
+                b.Property<string>("Name")
+                    .IsRequired()
+                    .HasMaxLength(2048)
+                    .HasColumnType("character varying(2048)");
 
-                    b.Property<bool>("Success")
-                        .HasColumnType("boolean");
+                b.Property<bool>("Success")
+                    .HasColumnType("boolean");
 
-                    b.Property<string>("Tenant")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                b.Property<string>("Tenant")
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("character varying(256)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
+                b.Property<int>("Type")
+                    .HasColumnType("integer");
 
-                    b.Property<string>("User")
-                        .HasMaxLength(1024)
-                        .HasColumnType("character varying(1024)");
+                b.Property<string>("User")
+                    .HasMaxLength(1024)
+                    .HasColumnType("character varying(1024)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("Instant")
-                        .IsDescending();
+                b.HasIndex("Instant")
+                    .IsDescending();
 
-                    b.HasIndex("Tenant");
+                b.HasIndex("Tenant");
 
-                    b.ToTable("AuditRecords", "audit");
-                });
+                b.ToTable("AuditRecords", "audit");
+            });
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
-                {
-                    b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordPropertyModel", "Properties", b1 =>
-                        {
-                            b1.Property<long>("AuditRecordId")
-                                .HasColumnType("bigint");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
+            {
+                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordPropertyModel", "Properties", b1 =>
+                    {
+                        b1.Property<long>("AuditRecordId")
+                            .HasColumnType("bigint");
 
-                            b1.Property<string>("Key")
-                                .HasColumnType("text");
+                        b1.Property<string>("Key")
+                            .HasColumnType("text");
 
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text");
+                        b1.Property<string>("Value")
+                            .IsRequired()
+                            .HasColumnType("text");
 
-                            b1.HasKey("AuditRecordId", "Key");
+                        b1.HasKey("AuditRecordId", "Key");
 
-                            b1.ToTable("AuditRecordPropertyModel", "audit");
+                        b1.ToTable("AuditRecordPropertyModel", "audit");
 
-                            b1.WithOwner()
-                                .HasForeignKey("AuditRecordId");
-                        });
+                        b1.WithOwner()
+                            .HasForeignKey("AuditRecordId");
+                    });
 
-                    b.Navigation("Properties");
-                });
+                b.Navigation("Properties");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

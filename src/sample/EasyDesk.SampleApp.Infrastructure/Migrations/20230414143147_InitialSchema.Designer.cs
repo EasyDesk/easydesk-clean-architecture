@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.Migrations;
 
 [DbContext(typeof(SampleAppContext))]
-[Migration("20230308000230_InitialSchema")]
+[Migration("20230414143147_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -22,7 +22,7 @@ partial class InitialSchema
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "7.0.3")
+            .HasAnnotation("ProductVersion", "7.0.5")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -51,7 +51,7 @@ partial class InitialSchema
                     .IsRequired()
                     .HasColumnType("text");
 
-                b.Property<string>("TenantId")
+                b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
@@ -59,7 +59,7 @@ partial class InitialSchema
 
                 b.HasKey("Id");
 
-                b.HasIndex("TenantId");
+                b.HasIndex("Tenant");
 
                 b.ToTable("People", "domain");
             });
@@ -79,7 +79,7 @@ partial class InitialSchema
                 b.Property<Guid>("PersonId")
                     .HasColumnType("uuid");
 
-                b.Property<string>("TenantId")
+                b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
@@ -89,7 +89,7 @@ partial class InitialSchema
 
                 b.HasIndex("PersonId");
 
-                b.HasIndex("TenantId");
+                b.HasIndex("Tenant");
 
                 b.ToTable("Pets", "domain");
             });

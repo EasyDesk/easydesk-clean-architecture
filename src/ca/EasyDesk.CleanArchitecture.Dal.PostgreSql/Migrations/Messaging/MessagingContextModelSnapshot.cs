@@ -7,56 +7,55 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Messaging
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Messaging;
+
+[DbContext(typeof(MessagingContext))]
+partial class MessagingContextModelSnapshot : ModelSnapshot
 {
-    [DbContext(typeof(MessagingContext))]
-    partial class MessagingContextModelSnapshot : ModelSnapshot
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasDefaultSchema("messaging")
-                .HasAnnotation("ProductVersion", "7.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+        modelBuilder
+            .HasDefaultSchema("messaging")
+            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.InboxMessage", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.InboxMessage", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("text");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Inbox", "messaging");
-                });
+                b.ToTable("Inbox", "messaging");
+            });
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.OutboxMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.OutboxMessage", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<byte[]>("Content")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                b.Property<byte[]>("Content")
+                    .IsRequired()
+                    .HasColumnType("bytea");
 
-                    b.Property<string>("DestinationAddress")
-                        .IsRequired()
-                        .HasColumnType("text");
+                b.Property<string>("DestinationAddress")
+                    .IsRequired()
+                    .HasColumnType("text");
 
-                    b.Property<byte[]>("Headers")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                b.Property<byte[]>("Headers")
+                    .IsRequired()
+                    .HasColumnType("bytea");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.ToTable("Outbox", "messaging");
-                });
+                b.ToTable("Outbox", "messaging");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

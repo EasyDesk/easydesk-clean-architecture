@@ -2,16 +2,16 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Authorization;
 
 [DbContext(typeof(AuthorizationContext))]
-[Migration("20230228124426_InitialSchema")]
+[Migration("20230414143128_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -20,29 +20,29 @@ partial class InitialSchema
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("auth")
-            .HasAnnotation("ProductVersion", "7.0.3")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128);
+            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
             {
                 b.Property<string>("RoleId")
                     .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    .HasColumnType("character varying(100)");
 
                 b.Property<string>("PermissionName")
                     .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    .HasColumnType("character varying(100)");
 
-                b.Property<string>("TenantId")
+                b.Property<string>("Tenant")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("character varying(256)");
 
-                b.HasKey("RoleId", "PermissionName", "TenantId");
+                b.HasKey("RoleId", "PermissionName", "Tenant");
 
-                b.HasIndex("TenantId");
+                b.HasIndex("Tenant");
 
                 b.ToTable("RolePermissions", "auth");
             });
@@ -51,7 +51,7 @@ partial class InitialSchema
             {
                 b.Property<string>("Id")
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("character varying(256)");
 
                 b.HasKey("Id");
 
@@ -60,28 +60,29 @@ partial class InitialSchema
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.UserRoleModel", b =>
             {
-                b.Property<string>("UserId")
-                    .HasColumnType("nvarchar(450)");
+                b.Property<string>("User")
+                    .HasMaxLength(1024)
+                    .HasColumnType("character varying(1024)");
 
-                b.Property<string>("RoleId")
+                b.Property<string>("Role")
                     .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    .HasColumnType("character varying(100)");
 
-                b.Property<string>("TenantId")
+                b.Property<string>("Tenant")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("character varying(256)");
 
-                b.Property<string>("TenantIdFk")
+                b.Property<string>("TenantFk")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("character varying(256)");
 
-                b.HasKey("UserId", "RoleId", "TenantId");
+                b.HasKey("User", "Role", "Tenant");
 
-                b.HasIndex("TenantId");
+                b.HasIndex("Tenant");
 
-                b.HasIndex("TenantIdFk");
+                b.HasIndex("TenantFk");
 
                 b.ToTable("UserRoles", "auth");
             });
@@ -90,7 +91,7 @@ partial class InitialSchema
             {
                 b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", null)
                     .WithMany()
-                    .HasForeignKey("TenantId")
+                    .HasForeignKey("Tenant")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
             });
@@ -99,7 +100,7 @@ partial class InitialSchema
             {
                 b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", null)
                     .WithMany()
-                    .HasForeignKey("TenantIdFk")
+                    .HasForeignKey("TenantFk")
                     .OnDelete(DeleteBehavior.Cascade);
             });
 #pragma warning restore 612, 618

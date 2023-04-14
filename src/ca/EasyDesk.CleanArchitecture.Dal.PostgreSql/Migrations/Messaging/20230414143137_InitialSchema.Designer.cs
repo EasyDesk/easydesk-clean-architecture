@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Messaging;
 
 [DbContext(typeof(MessagingContext))]
-[Migration("20230228124433_InitialSchema")]
+[Migration("20230414143137_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -20,7 +20,7 @@ partial class InitialSchema
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("messaging")
-            .HasAnnotation("ProductVersion", "7.0.3")
+            .HasAnnotation("ProductVersion", "7.0.5")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

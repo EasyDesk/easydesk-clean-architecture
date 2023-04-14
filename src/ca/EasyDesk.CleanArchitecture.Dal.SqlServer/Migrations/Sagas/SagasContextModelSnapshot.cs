@@ -8,49 +8,48 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Sagas
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Sagas;
+
+[DbContext(typeof(SagasContext))]
+partial class SagasContextModelSnapshot : ModelSnapshot
 {
-    [DbContext(typeof(SagasContext))]
-    partial class SagasContextModelSnapshot : ModelSnapshot
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasDefaultSchema("sagas")
-                .HasAnnotation("ProductVersion", "7.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+        modelBuilder
+            .HasDefaultSchema("sagas")
+            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Sagas.SagaModel", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Sagas.SagaModel", b =>
+            {
+                b.Property<string>("Id")
+                    .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Type")
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
+                b.Property<string>("Type")
+                    .HasMaxLength(2048)
+                    .HasColumnType("nvarchar(2048)");
 
-                    b.Property<string>("Tenant")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Tenant")
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.Property<byte[]>("State")
-                        .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                b.Property<byte[]>("State")
+                    .IsRequired()
+                    .HasColumnType("varbinary(max)");
 
-                    b.Property<int?>("Version")
-                        .HasColumnType("int");
+                b.Property<int?>("Version")
+                    .HasColumnType("int");
 
-                    b.HasKey("Id", "Type", "Tenant");
+                b.HasKey("Id", "Type", "Tenant");
 
-                    b.HasIndex("Tenant");
+                b.HasIndex("Tenant");
 
-                    b.ToTable("Sagas", "sagas");
-                });
+                b.ToTable("Sagas", "sagas");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }

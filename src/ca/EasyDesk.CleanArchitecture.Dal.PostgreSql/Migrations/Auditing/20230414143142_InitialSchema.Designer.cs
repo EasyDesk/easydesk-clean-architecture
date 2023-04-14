@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Auditing;
 
 [DbContext(typeof(AuditingContext))]
-[Migration("20230407154351_AddProperties")]
-partial class AddProperties
+[Migration("20230414143142_InitialSchema")]
+partial class InitialSchema
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ partial class AddProperties
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("audit")
-            .HasAnnotation("ProductVersion", "7.0.4")
+            .HasAnnotation("ProductVersion", "7.0.5")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -42,12 +42,13 @@ partial class AddProperties
 
                 b.Property<string>("Name")
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasMaxLength(2048)
+                    .HasColumnType("character varying(2048)");
 
                 b.Property<bool>("Success")
                     .HasColumnType("boolean");
 
-                b.Property<string>("TenantId")
+                b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
@@ -56,15 +57,16 @@ partial class AddProperties
                 b.Property<int>("Type")
                     .HasColumnType("integer");
 
-                b.Property<string>("UserId")
-                    .HasColumnType("text");
+                b.Property<string>("User")
+                    .HasMaxLength(1024)
+                    .HasColumnType("character varying(1024)");
 
                 b.HasKey("Id");
 
                 b.HasIndex("Instant")
                     .IsDescending();
 
-                b.HasIndex("TenantId");
+                b.HasIndex("Tenant");
 
                 b.ToTable("AuditRecords", "audit");
             });

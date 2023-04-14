@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Messaging;
 
 [DbContext(typeof(MessagingContext))]
-[Migration("20230228124435_InitialSchema")]
+[Migration("20230414143140_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -20,7 +20,7 @@ partial class InitialSchema
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("messaging")
-            .HasAnnotation("ProductVersion", "7.0.3")
+            .HasAnnotation("ProductVersion", "7.0.5")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);

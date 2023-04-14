@@ -32,14 +32,14 @@ public partial class InitialSchema : Migration
             {
                 RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                 PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionName, x.TenantId });
+                table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionName, x.Tenant });
                 table.ForeignKey(
-                    name: "FK_RolePermissions_Tenants_TenantId",
-                    column: x => x.TenantId,
+                    name: "FK_RolePermissions_Tenants_Tenant",
+                    column: x => x.Tenant,
                     principalSchema: "auth",
                     principalTable: "Tenants",
                     principalColumn: "Id",
@@ -51,17 +51,17 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                TenantIdFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                Role = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                User = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                TenantFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId, x.TenantId });
+                table.PrimaryKey("PK_UserRoles", x => new { x.User, x.Role, x.Tenant });
                 table.ForeignKey(
-                    name: "FK_UserRoles_Tenants_TenantIdFk",
-                    column: x => x.TenantIdFk,
+                    name: "FK_UserRoles_Tenants_TenantFk",
+                    column: x => x.TenantFk,
                     principalSchema: "auth",
                     principalTable: "Tenants",
                     principalColumn: "Id",
@@ -69,22 +69,22 @@ public partial class InitialSchema : Migration
             });
 
         migrationBuilder.CreateIndex(
-            name: "IX_RolePermissions_TenantId",
+            name: "IX_RolePermissions_Tenant",
             schema: "auth",
             table: "RolePermissions",
-            column: "TenantId");
+            column: "Tenant");
 
         migrationBuilder.CreateIndex(
-            name: "IX_UserRoles_TenantId",
+            name: "IX_UserRoles_Tenant",
             schema: "auth",
             table: "UserRoles",
-            column: "TenantId");
+            column: "Tenant");
 
         migrationBuilder.CreateIndex(
-            name: "IX_UserRoles_TenantIdFk",
+            name: "IX_UserRoles_TenantFk",
             schema: "auth",
             table: "UserRoles",
-            column: "TenantIdFk");
+            column: "TenantFk");
     }
 
     /// <inheritdoc />

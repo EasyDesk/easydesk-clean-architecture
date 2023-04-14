@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Auditing;
 
 [DbContext(typeof(AuditingContext))]
-[Migration("20230404111318_InitialSchema")]
+[Migration("20230414143144_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -21,7 +21,7 @@ partial class InitialSchema
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("audit")
-            .HasAnnotation("ProductVersion", "7.0.4")
+            .HasAnnotation("ProductVersion", "7.0.5")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -42,12 +42,13 @@ partial class InitialSchema
 
                 b.Property<string>("Name")
                     .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    .HasMaxLength(2048)
+                    .HasColumnType("nvarchar(2048)");
 
                 b.Property<bool>("Success")
                     .HasColumnType("bit");
 
-                b.Property<string>("TenantId")
+                b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
@@ -56,17 +57,43 @@ partial class InitialSchema
                 b.Property<int>("Type")
                     .HasColumnType("int");
 
-                b.Property<string>("UserId")
-                    .HasColumnType("nvarchar(max)");
+                b.Property<string>("User")
+                    .HasMaxLength(1024)
+                    .HasColumnType("nvarchar(1024)");
 
                 b.HasKey("Id");
 
                 b.HasIndex("Instant")
                     .IsDescending();
 
-                b.HasIndex("TenantId");
+                b.HasIndex("Tenant");
 
                 b.ToTable("AuditRecords", "audit");
+            });
+
+        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
+            {
+                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordPropertyModel", "Properties", b1 =>
+                    {
+                        b1.Property<long>("AuditRecordId")
+                            .HasColumnType("bigint");
+
+                        b1.Property<string>("Key")
+                            .HasColumnType("nvarchar(450)");
+
+                        b1.Property<string>("Value")
+                            .IsRequired()
+                            .HasColumnType("nvarchar(max)");
+
+                        b1.HasKey("AuditRecordId", "Key");
+
+                        b1.ToTable("AuditRecordPropertyModel", "audit");
+
+                        b1.WithOwner()
+                            .HasForeignKey("AuditRecordId");
+                    });
+
+                b.Navigation("Properties");
             });
 #pragma warning restore 612, 618
     }

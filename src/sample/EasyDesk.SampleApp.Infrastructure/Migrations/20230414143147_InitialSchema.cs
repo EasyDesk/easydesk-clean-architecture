@@ -28,7 +28,7 @@ public partial class InitialSchema : Migration
                 FirstName = table.Column<string>(type: "text", nullable: false),
                 LastName = table.Column<string>(type: "text", nullable: false),
                 DateOfBirth = table.Column<LocalDate>(type: "date", nullable: false),
-                TenantId = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                 CreatedBy = table.Column<string>(type: "text", nullable: false),
                 Residence_StreetType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                 Residence_StreetName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
@@ -53,7 +53,7 @@ public partial class InitialSchema : Migration
                 Id = table.Column<int>(type: "integer", nullable: false),
                 Nickname = table.Column<string>(type: "text", nullable: false),
                 PersonId = table.Column<Guid>(type: "uuid", nullable: false),
-                TenantId = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {
@@ -68,10 +68,10 @@ public partial class InitialSchema : Migration
             });
 
         migrationBuilder.CreateIndex(
-            name: "IX_People_TenantId",
+            name: "IX_People_Tenant",
             schema: "domain",
             table: "People",
-            column: "TenantId");
+            column: "Tenant");
 
         migrationBuilder.CreateIndex(
             name: "IX_Pets_PersonId",
@@ -80,10 +80,10 @@ public partial class InitialSchema : Migration
             column: "PersonId");
 
         migrationBuilder.CreateIndex(
-            name: "IX_Pets_TenantId",
+            name: "IX_Pets_Tenant",
             schema: "domain",
             table: "Pets",
-            column: "TenantId");
+            column: "Tenant");
     }
 
     /// <inheritdoc />

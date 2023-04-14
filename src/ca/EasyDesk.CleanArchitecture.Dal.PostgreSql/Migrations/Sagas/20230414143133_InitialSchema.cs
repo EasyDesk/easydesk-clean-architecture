@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Sagas;
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Sagas;
 
 /// <inheritdoc />
 public partial class InitialSchema : Migration
@@ -18,22 +18,22 @@ public partial class InitialSchema : Migration
             schema: "sagas",
             columns: table => new
             {
-                Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                Type = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                TenantId = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                State = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                Version = table.Column<int>(type: "int", nullable: true)
+                Id = table.Column<string>(type: "text", nullable: false),
+                Type = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                State = table.Column<byte[]>(type: "bytea", nullable: false),
+                Version = table.Column<int>(type: "integer", nullable: true)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_Sagas", x => new { x.Id, x.Type, x.TenantId });
+                table.PrimaryKey("PK_Sagas", x => new { x.Id, x.Type, x.Tenant });
             });
 
         migrationBuilder.CreateIndex(
-            name: "IX_Sagas_TenantId",
+            name: "IX_Sagas_Tenant",
             schema: "sagas",
             table: "Sagas",
-            column: "TenantId");
+            column: "Tenant");
     }
 
     /// <inheritdoc />
