@@ -15,6 +15,12 @@ public static class CollectionUtils
     public static void RemoveAll<T>(this ICollection<T> collection, IEnumerable<T> items) =>
         items.ForEach(x => collection.Remove(x));
 
+    public static void AddTo<T>(this IEnumerable<T> items, ICollection<T> collection) =>
+        collection.AddAll(items);
+
+    public static void RemoveFrom<T>(this IEnumerable<T> items, ICollection<T> collection) =>
+        collection.RemoveAll(items);
+
     public static string ToCollectionString<T>(this IEnumerable<T> sequence, string prefix = "[", string suffix = "]", Func<T, string>? formatter = null)
     {
         return sequence

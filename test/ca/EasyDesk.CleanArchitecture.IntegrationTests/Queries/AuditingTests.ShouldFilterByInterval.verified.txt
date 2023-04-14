@@ -3,7 +3,10 @@
     Type: CommandRequest,
     Name: CreatePet,
     Description: null,
-    UserId: admin-id,
+    UserInfo: {
+      UserId: admin-id,
+      Attributes: {}
+    },
     Properties: {
       nickname: Bobby1
     },
@@ -14,7 +17,10 @@
     Type: CommandRequest,
     Name: CreatePet,
     Description: null,
-    UserId: admin-id,
+    UserInfo: {
+      UserId: admin-id,
+      Attributes: {}
+    },
     Properties: {
       nickname: Bobby2
     },

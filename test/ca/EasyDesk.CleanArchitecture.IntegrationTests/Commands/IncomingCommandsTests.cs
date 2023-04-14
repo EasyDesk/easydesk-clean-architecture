@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.IncomingCommands;
@@ -40,16 +41,15 @@ public class IncomingCommandsTests : SampleIntegrationTest
     [Fact]
     public async Task RemoveTenant_ShouldDeleteEntities()
     {
-        var tenantName = "test-tenant-qwe";
+        var tenantId = TenantId.New("test-tenant-qwe");
         var bus = NewBus();
-        await bus.Send(new CreateTenant(tenantName));
+        await bus.Send(new CreateTenant(tenantId));
 
-        var tenantId = TenantId.New(tenantName);
         await WebService.WaitUntilTenantExists(tenantId);
-        var adminId = "test-admin-asd";
+        var adminId = UserId.New("test-admin-asd");
         await Http.AddAdmin()
             .AuthenticateAs(adminId)
-            .Tenant(tenantName)
+            .Tenant(tenantId)
             .Send()
             .EnsureSuccess();
 
@@ -59,33 +59,33 @@ public class IncomingCommandsTests : SampleIntegrationTest
                 LastName: "Bar",
                 DateOfBirth: new LocalDate(1996, 2, 2),
                 Residence: new("unknown")))
-            .Tenant(tenantName)
+            .Tenant(tenantId)
             .AuthenticateAs(adminId)
             .Send()
             .AsData();
 
         await Http
             .GetOwnedPets(person.Id)
-            .Tenant(tenantName)
+            .Tenant(tenantId)
             .AuthenticateAs(adminId)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        await bus.Send(new RemoveTenant(tenantName));
+        await bus.Send(new RemoveTenant(tenantId));
         await WebService.WaitUntilTenantDoesNotExist(tenantId);
 
-        await bus.Send(new CreateTenant(tenantName));
+        await bus.Send(new CreateTenant(tenantId));
         await WebService.WaitUntilTenantExists(tenantId);
 
         await Http
             .GetOwnedPets(person.Id)
-            .Tenant(tenantName)
+            .Tenant(tenantId)
             .AuthenticateAs(adminId)
             .PollUntil(pets => !pets.Any())
             .EnsureSuccess();
 
         var response = await Http.GetPerson(person.Id)
-            .Tenant(tenantName)
+            .Tenant(tenantId)
             .AuthenticateAs(adminId)
             .PollWhile(w => w.IsSuccess())
             .AsVerifiable();

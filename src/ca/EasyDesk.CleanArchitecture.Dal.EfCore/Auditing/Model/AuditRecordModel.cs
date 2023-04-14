@@ -1,16 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.Commons.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NodaTime;
-using System.Linq.Expressions;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;
 
-internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordModel, AuditRecord>
+internal class AuditRecordModel : IMultitenantEntity
 {
     public long Id { get; set; }
 
@@ -29,6 +27,8 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
     public string? Tenant { get; set; }
 
     public ICollection<AuditRecordPropertyModel> Properties { get; set; } = new HashSet<AuditRecordPropertyModel>();
+
+    public ICollection<AuditUserAttributeModel> UserAttributes { get; set; } = new HashSet<AuditUserAttributeModel>();
 
     public sealed class Configuration : IEntityTypeConfiguration<AuditRecordModel>
     {
@@ -49,6 +49,13 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
 
                 child.WithOwner().HasForeignKey(x => x.AuditRecordId);
             });
+
+            builder.OwnsMany(x => x.UserAttributes, child =>
+            {
+                child.HasKey(x => x.Id);
+
+                child.WithOwner().HasForeignKey(x => x.AuditRecordId);
+            });
         }
     }
 
@@ -59,31 +66,48 @@ internal class AuditRecordModel : IMultitenantEntity, IProjectable<AuditRecordMo
             Type = record.Type,
             Name = record.Name,
             Description = record.Description.OrElseNull(),
-            User = record.UserId.Map(u => u.Value).OrElseNull(),
+            User = record.UserInfo.Map(u => u.UserId.Value).OrElseNull(),
             Success = record.Success,
             Instant = record.Instant,
         };
 
-        model.Properties.AddAll(
-            record.Properties.Select(p => new AuditRecordPropertyModel
+        record
+            .Properties
+            .Select(p => new AuditRecordPropertyModel
             {
                 Key = p.Key,
                 Value = p.Value
-            }));
+            })
+            .AddTo(model.Properties);
+
+        record.UserInfo.IfPresent(userInfo =>
+        {
+            userInfo
+                .Attributes
+                .Attributes
+                .SelectMany(a => a.Value.Select(v => new AuditUserAttributeModel
+                {
+                    Key = a.Key,
+                    Value = v,
+                }))
+                .AddTo(model.UserAttributes);
+        });
 
         return model;
     }
 
-    public static Expression<Func<AuditRecordModel, AuditRecord>> Projection()
+    public AuditRecord ToAuditRecord()
     {
-        var map = UserId.New;
-        return src => new(
-            src.Type,
-            src.Name,
-            src.Description.AsOption(),
-            src.User.AsOption().Map(map),
-            src.Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
-            src.Success,
-            src.Instant);
+        return new(
+            Type,
+            Name,
+            Description.AsOption(),
+            User.AsOption().Map(id => UserInfo.Create(UserId.New(id), CreateAttributeCollection())),
+            Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
+            Success,
+            Instant);
     }
+
+    private AttributeCollection CreateAttributeCollection() =>
+        AttributeCollection.FromFlatKeyValuePairs(UserAttributes.Select(a => (a.Key, a.Value)));
 }

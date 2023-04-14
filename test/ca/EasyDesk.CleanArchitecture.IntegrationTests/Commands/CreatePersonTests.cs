@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
@@ -14,8 +16,8 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class CreatePersonTests : SampleIntegrationTest
 {
-    private const string Tenant = "test-tenant";
-    private const string AdminId = "test-admin";
+    private static readonly TenantId _tenant = TenantId.New("test-tenant");
+    private static readonly UserId _adminId = UserId.New("test-admin");
 
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
@@ -28,14 +30,14 @@ public class CreatePersonTests : SampleIntegrationTest
     }
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(Tenant)
-        .AuthenticateAs(AdminId);
+        .Tenant(_tenant)
+        .AuthenticateAs(_adminId);
 
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
-        await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
+        await bus.Send(new CreateTenant(_tenant));
+        await WebService.WaitUntilTenantExists(_tenant);
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 
@@ -96,10 +98,10 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldBeMultitenant()
     {
-        var otherTenant = "other-tenant";
+        var otherTenant = TenantId.New("other-tenant");
         var bus = NewBus();
         await bus.Send(new CreateTenant(otherTenant));
-        await WebService.WaitUntilTenantExists(TenantId.New(otherTenant));
+        await WebService.WaitUntilTenantExists(otherTenant);
 
         var person = await CreatePerson()
             .Send()
@@ -107,7 +109,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await GetPerson(person.Id)
             .Tenant(otherTenant)
-            .AuthenticateAs(AdminId)
+            .AuthenticateAs(_adminId)
             .Send()
             .AsVerifiable();
 
@@ -117,15 +119,15 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFail_WithInvalidTenant()
     {
-        var otherTenant = Enumerable.Repeat("a", TenantId.MaxLength + 1).ConcatStrings();
+        var otherTenant = new string('a', TenantId.MaxLength + 1);
 
         var person = await CreatePerson()
             .Send()
             .AsData();
 
         var response = await GetPerson(person.Id)
-            .Tenant(otherTenant)
-            .AuthenticateAs(AdminId)
+            .Headers(h => h.Replace(MultitenancyDefaults.TenantIdHttpHeader, otherTenant))
+            .AuthenticateAs(_adminId)
             .Send()
             .AsVerifiable();
 
@@ -135,7 +137,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFail_WithNonExistingTenant()
     {
-        var otherTenant = "other-tenant";
+        var otherTenant = TenantId.New("other-tenant");
 
         var person = await CreatePerson()
             .Send()
@@ -143,7 +145,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await GetPerson(person.Id)
             .Tenant(otherTenant)
-            .AuthenticateAs(AdminId)
+            .AuthenticateAs(_adminId)
             .Send()
             .AsVerifiable();
 
@@ -265,7 +267,7 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfUnauthorized()
     {
         var response = await CreatePerson()
-            .AuthenticateAs("non-admin-id")
+            .AuthenticateAs(UserId.New("non-admin-id"))
             .Send()
             .AsVerifiable();
 

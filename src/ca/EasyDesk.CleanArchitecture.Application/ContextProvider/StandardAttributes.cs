@@ -1,6 +1,4 @@
-﻿using EasyDesk.Commons.Collections;
-
-namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
 public static class StandardAttributes
 {
@@ -11,11 +9,11 @@ public static class StandardAttributes
     public const string Email = "email";
 
     public static Option<string> GetFirstName(this UserInfo userInfo) =>
-        userInfo.Attributes.GetOption(FirstName);
+        userInfo.Attributes.GetSingle(FirstName);
 
     public static Option<string> GetLastName(this UserInfo userInfo) =>
-        userInfo.Attributes.GetOption(LastName);
+        userInfo.Attributes.GetSingle(LastName);
 
     public static Option<string> GetEmail(this UserInfo userInfo) =>
-        userInfo.Attributes.GetOption(Email);
+        userInfo.Attributes.GetSingle(Email);
 }

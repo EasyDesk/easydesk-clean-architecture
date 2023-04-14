@@ -2,9 +2,7 @@
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Http;
 using Rebus.Pipeline;
-using System.Collections.Immutable;
 using System.Security.Claims;
-using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
@@ -67,13 +65,14 @@ internal sealed class BasicContextProvider : IContextProvider
         return new NoContext();
     }
 
-    private IImmutableDictionary<string, string> GetUserAttributes(ClaimsPrincipal claimsPrincipal)
+    private AttributeCollection GetUserAttributes(ClaimsPrincipal claimsPrincipal)
     {
-        return claimsPrincipal
+        var pairs = claimsPrincipal
             .Identities
             .Where(i => i.IsAuthenticated)
             .SelectMany(i => i.Claims)
-            .SelectMany(c => _options.ClaimToAttribute(c.Type).Map(a => (a, c.Value)))
-            .ToEquatableMap();
+            .SelectMany(c => _options.ClaimToAttribute(c.Type).Map(a => (Key: a, c.Value)));
+
+        return AttributeCollection.FromFlatKeyValuePairs(pairs);
     }
 }

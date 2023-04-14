@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
@@ -16,8 +17,8 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class AuditingTests : SampleIntegrationTest
 {
-    private const string Tenant = "tenant-id";
-    private const string AdminId = "admin-id";
+    private static readonly TenantId _tenant = TenantId.New("tenant-id");
+    private static readonly UserId _adminId = UserId.New("admin-id");
 
     private Guid _personId;
     private int _initialAudits;
@@ -27,15 +28,15 @@ public class AuditingTests : SampleIntegrationTest
     }
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(Tenant)
-        .AuthenticateAs(AdminId);
+        .Tenant(_tenant)
+        .AuthenticateAs(_adminId);
 
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
-        await bus.Send(new CreateTenant(Tenant));
+        await bus.Send(new CreateTenant(_tenant));
         _initialAudits++;
-        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
+        await WebService.WaitUntilTenantExists(_tenant);
         await Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;
 
@@ -85,7 +86,7 @@ public class AuditingTests : SampleIntegrationTest
             tenantId,
             log => log.Audit(new AuditQuery()).GetAllItems(1).Any());
 
-        var response = await Http.GetAudits().Tenant(tenantId.Value).Send().AsVerifiableEnumerable();
+        var response = await Http.GetAudits().Tenant(tenantId).Send().AsVerifiableEnumerable();
 
         await Verify(response);
     }
@@ -107,7 +108,7 @@ public class AuditingTests : SampleIntegrationTest
     {
         var response = await Http
             .GetAudits()
-            .WithQuery("userId", AdminId)
+            .WithQuery("userId", _adminId)
             .Send()
             .AsVerifiableEnumerable();
 

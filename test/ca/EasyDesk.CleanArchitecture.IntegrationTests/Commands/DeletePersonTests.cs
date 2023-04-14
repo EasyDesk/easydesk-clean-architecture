@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
@@ -18,10 +19,10 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class DeletePersonTests : SampleIntegrationTest
 {
-    private const string Tenant = "test-tenant";
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
-    private const string AdminId = "test-admin";
+    private static readonly TenantId _tenant = TenantId.New("test-tenant");
+    private static readonly UserId _adminId = UserId.New("test-admin");
     private static readonly AddressDto _address = new("somewhere");
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
@@ -30,14 +31,14 @@ public class DeletePersonTests : SampleIntegrationTest
     }
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(Tenant)
-        .AuthenticateAs(AdminId);
+        .Tenant(_tenant)
+        .AuthenticateAs(_adminId);
 
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
-        await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
+        await bus.Send(new CreateTenant(_tenant));
+        await WebService.WaitUntilTenantExists(_tenant);
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 
@@ -130,7 +131,7 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
 
         var response = await DeletePerson(person.Id)
-            .AuthenticateAs("non-admin-id")
+            .AuthenticateAs(UserId.New("non-admin-id"))
             .Send()
             .AsVerifiable();
 

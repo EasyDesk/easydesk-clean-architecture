@@ -4,7 +4,7 @@
       Type: Command,
       Name: CreateTenant,
       Description: null,
-      UserId: null,
+      UserInfo: null,
       Properties: {},
       Success: true,
       Instant: Instant_1
@@ -13,7 +13,7 @@
       Type: Command,
       Name: CreateBestFriend,
       Description: null,
-      UserId: null,
+      UserInfo: null,
       Properties: {},
       Success: true,
       Instant: Instant_1
@@ -24,7 +24,10 @@
       Type: CommandRequest,
       Name: AddAdmin,
       Description: null,
-      UserId: admin-id,
+      UserInfo: {
+        UserId: admin-id,
+        Attributes: {}
+      },
       Properties: {},
       Success: true,
       Instant: Instant_1
@@ -33,7 +36,10 @@
       Type: CommandRequest,
       Name: CreatePerson,
       Description: null,
-      UserId: admin-id,
+      UserInfo: {
+        UserId: admin-id,
+        Attributes: {}
+      },
       Properties: {},
       Success: true,
       Instant: Instant_1

@@ -59,7 +59,7 @@ public partial class InitialSchema : Migration
             schema: "audit",
             table: "AuditRecords",
             column: "Instant",
-            descending: new bool[0]);
+            descending: Array.Empty<bool>());
 
         migrationBuilder.CreateIndex(
             name: "IX_AuditRecords_Tenant",

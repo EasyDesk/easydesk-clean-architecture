@@ -12,29 +12,29 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class AddAdminTests : SampleIntegrationTest
 {
-    private const string Tenant = "test-tenant";
-    private static readonly UserId AdminId = UserId.New("test-admin");
+    private static readonly TenantId _tenantId = TenantId.New("test-tenant");
+    private static readonly UserId _adminId = UserId.New("test-admin");
 
     public AddAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(Tenant)
-        .AuthenticateAs(AdminId);
+        .Tenant(_tenantId)
+        .AuthenticateAs(_adminId);
 
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
-        await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
+        await bus.Send(new CreateTenant(_tenantId));
+        await WebService.WaitUntilTenantExists(TenantId.New(_tenantId));
     }
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.New(Tenant),
-            async p => condition(await p.GetRolesForUser(UserInfo.Create(AdminId))));
+            TenantId.New(_tenantId),
+            async p => condition(await p.GetRolesForUser(UserInfo.Create(_adminId))));
     }
 
     [Fact]
@@ -67,8 +67,8 @@ public class AddAdminTests : SampleIntegrationTest
         await Http.AddAdmin().Send().EnsureSuccess();
 
         var bus = NewBus();
-        await bus.Send(new RemoveTenant(Tenant));
-        await bus.Send(new CreateTenant(Tenant));
+        await bus.Send(new RemoveTenant(_tenantId));
+        await bus.Send(new CreateTenant(_tenantId));
 
         await WaitForConditionOnRoles(r => !r.Contains(Roles.Admin));
     }
@@ -79,8 +79,8 @@ public class AddAdminTests : SampleIntegrationTest
         await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
 
         var bus = NewBus();
-        await bus.Send(new RemoveTenant(Tenant));
-        await bus.Send(new CreateTenant(Tenant));
+        await bus.Send(new RemoveTenant(_tenantId));
+        await bus.Send(new CreateTenant(_tenantId));
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }

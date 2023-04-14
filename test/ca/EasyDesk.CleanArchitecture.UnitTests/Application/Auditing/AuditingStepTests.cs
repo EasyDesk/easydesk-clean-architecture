@@ -57,31 +57,31 @@ public class AuditingStepTests
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeCommand(
-        Option<UserId> userId, Result<Nothing> result)
+        Option<UserInfo> userInfo, Result<Nothing> result)
     {
-        await ShouldRecordAnAudit<TestCommand>(AuditRecordType.Command, userId, result);
+        await ShouldRecordAnAudit<TestCommand>(AuditRecordType.Command, userInfo, result);
     }
 
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeCommandRequest(
-        Option<UserId> userId, Result<Nothing> result)
+        Option<UserInfo> userInfo, Result<Nothing> result)
     {
-        await ShouldRecordAnAudit<TestCommandRequest>(AuditRecordType.CommandRequest, userId, result);
+        await ShouldRecordAnAudit<TestCommandRequest>(AuditRecordType.CommandRequest, userInfo, result);
     }
 
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeEvent(
-        Option<UserId> userId, Result<Nothing> result)
+        Option<UserInfo> userInfo, Result<Nothing> result)
     {
-        await ShouldRecordAnAudit<TestEvent>(AuditRecordType.Event, userId, result);
+        await ShouldRecordAnAudit<TestEvent>(AuditRecordType.Event, userInfo, result);
     }
 
-    private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<UserId> userId, Result<Nothing> result)
+    private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<UserInfo> userInfo, Result<Nothing> result)
         where T : IReadWriteOperation, new()
     {
-        _userInfoProvider.User.Returns(userId.Map(UserInfo.Create));
+        _userInfoProvider.User.Returns(userInfo);
         _next().Returns(result);
 
         var stepResult = await Run<T>();
@@ -90,7 +90,7 @@ public class AuditingStepTests
             Type: type,
             Name: typeof(T).Name,
             Description: None,
-            UserId: userId,
+            UserInfo: userInfo,
             Properties: Map<string, string>(),
             Success: result.IsSuccess,
             Instant: _now));
@@ -100,8 +100,15 @@ public class AuditingStepTests
 
     public static IEnumerable<object[]> AuditData()
     {
+        var userId = UserId.New("user-id");
         return Matrix
-            .Axis(Some(UserId.New("userId")), None)
+            .Axis(
+                Some(UserInfo.Create(userId)),
+                Some(UserInfo.Create(userId, AttributeCollection.FromFlatKeyValuePairs(
+                    ("name", "john"),
+                    ("role", "admin"),
+                    ("role", "user")))),
+                None)
             .Axis(Ok, Failure<Nothing>(TestError.Create()))
             .Build();
     }

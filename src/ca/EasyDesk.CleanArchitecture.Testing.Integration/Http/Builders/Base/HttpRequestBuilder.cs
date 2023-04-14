@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -15,11 +17,11 @@ public abstract class HttpRequestBuilder
 
     public abstract HttpRequestBuilder WithApiVersion(ApiVersion version);
 
-    public abstract HttpRequestBuilder Tenant(string tenantId);
+    public abstract HttpRequestBuilder Tenant(TenantId tenantId);
 
     public abstract HttpRequestBuilder NoTenant();
 
-    public abstract HttpRequestBuilder AuthenticateAs(string userId);
+    public abstract HttpRequestBuilder AuthenticateAs(UserId userId);
 
     public abstract HttpRequestBuilder Authenticate(IEnumerable<Claim> identity);
 
@@ -63,13 +65,13 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     public override B WithApiVersion(ApiVersion version) =>
         Headers(h => h.Replace(RestApiVersioning.VersionHeader, version.ToString()));
 
-    public override B Tenant(string tenantId) =>
+    public override B Tenant(TenantId tenantId) =>
         Headers(h => h.Replace(MultitenancyDefaults.TenantIdHttpHeader, tenantId));
 
     public override B NoTenant() =>
         Headers(h => h.Remove(MultitenancyDefaults.TenantIdHttpHeader));
 
-    public override B AuthenticateAs(string userId) =>
+    public override B AuthenticateAs(UserId userId) =>
         Authenticate(new Claim[] { new Claim(ClaimTypes.NameIdentifier, userId) });
 
     public override B Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders) =>

@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -15,23 +16,23 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class CreatePetTests : SampleIntegrationTest
 {
     private const int BulkQuantity = 200;
-    private const string Tenant = "test-tenant";
-    private const string AdminId = "dog-friendly-admin";
     private const string Nickname = "Rex";
+    private static readonly TenantId _tenant = TenantId.New("test-tenant");
+    private static readonly UserId _adminId = UserId.New("dog-friendly-admin");
 
     public CreatePetTests(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(Tenant)
-        .AuthenticateAs(AdminId);
+        .Tenant(_tenant)
+        .AuthenticateAs(_adminId);
 
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
-        await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
+        await bus.Send(new CreateTenant(_tenant));
+        await WebService.WaitUntilTenantExists(_tenant);
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 
@@ -142,7 +143,7 @@ public class CreatePetTests : SampleIntegrationTest
 
         var response = await Http
             .CreatePet(person.Id, new(Nickname))
-            .AuthenticateAs("non-admin-id")
+            .AuthenticateAs(UserId.New("non-admin-id"))
             .Send()
             .AsVerifiable();
 

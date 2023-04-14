@@ -90,7 +90,38 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
                             .HasForeignKey("AuditRecordId");
                     });
 
+                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditUserAttributeModel", "UserAttributes", b1 =>
+                    {
+                        b1.Property<long>("Id")
+                            .ValueGeneratedOnAdd()
+                            .HasColumnType("bigint");
+
+                        SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<long>("Id"));
+
+                        b1.Property<long>("AuditRecordId")
+                            .HasColumnType("bigint");
+
+                        b1.Property<string>("Key")
+                            .IsRequired()
+                            .HasColumnType("nvarchar(max)");
+
+                        b1.Property<string>("Value")
+                            .IsRequired()
+                            .HasColumnType("nvarchar(max)");
+
+                        b1.HasKey("Id");
+
+                        b1.HasIndex("AuditRecordId");
+
+                        b1.ToTable("AuditUserAttributeModel", "audit");
+
+                        b1.WithOwner()
+                            .HasForeignKey("AuditRecordId");
+                    });
+
                 b.Navigation("Properties");
+
+                b.Navigation("UserAttributes");
             });
 #pragma warning restore 612, 618
     }

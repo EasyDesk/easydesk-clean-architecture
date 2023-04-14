@@ -1,7 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.Pagination;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +22,7 @@ internal class EfCoreAuditLog : IAuditLog
         }
 
         return _context.AuditRecords
-            .Include(r => r.Properties)
+            .AsNoTracking()
             .Conditionally(
                 query.MatchTimeInterval.HasStart || query.MatchTimeInterval.HasEnd,
                 q => q.Where(r => query.MatchTimeInterval.Contains(r.Instant)))
@@ -35,7 +33,7 @@ internal class EfCoreAuditLog : IAuditLog
             .Conditionally(query.IsAnonymous, anonymous => q => q.Where(anonymous
                 ? r => r.User == null
                 : r => r.User != null))
-            .Project<AuditRecordModel, AuditRecord>()
+            .Select(src => src.ToAuditRecord())
             .ToPageable();
     }
 }
