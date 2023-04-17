@@ -1,12 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 
 internal class SagasContext : AbstractDbContext<SagasContext>
 {
-    public SagasContext(ITenantProvider tenantProvider, DbContextOptions<SagasContext> options) : base(tenantProvider, options)
+    public SagasContext(DbContextOptions<SagasContext> options)
+        : base(options)
     {
     }
 

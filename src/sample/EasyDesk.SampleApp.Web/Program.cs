@@ -70,7 +70,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
 var app = builder.Build();
 
-await app.MigrateDatabases();
+await app.MigrateAsync();
 
 await app.SetupDevelopment(async (services, logger) =>
 {

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,8 +6,8 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
 internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
 {
-    public AuthorizationContext(ITenantProvider tenantProvider, DbContextOptions<AuthorizationContext> options)
-        : base(tenantProvider, options)
+    public AuthorizationContext(DbContextOptions<AuthorizationContext> options)
+        : base(options)
     {
     }
 

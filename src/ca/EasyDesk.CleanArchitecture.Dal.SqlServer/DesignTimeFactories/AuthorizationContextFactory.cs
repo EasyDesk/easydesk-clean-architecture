@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.DesignTimeFactories;
@@ -9,6 +8,6 @@ internal class AuthorizationContextFactory : IDesignTimeDbContextFactory<Authori
     public AuthorizationContext CreateDbContext(string[] args)
     {
         var options = DbContextOptionsUtils.CreateDesignTimeOptions<AuthorizationContext>();
-        return new AuthorizationContext(new PublicTenantProvider(), options);
+        return new AuthorizationContext(options);
     }
 }

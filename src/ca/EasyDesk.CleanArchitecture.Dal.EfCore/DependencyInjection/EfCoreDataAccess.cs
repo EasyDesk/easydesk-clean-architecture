@@ -145,9 +145,15 @@ public static class EfCoreDataAccessExtensions
         return builder.AddDataAccess(dataAccessImplementation);
     }
 
-    public static async Task MigrateDatabases(this WebApplication app)
+    public static async Task MigrateSync(this WebApplication app) =>
+        await app.MigrateUsingRunner(context => Task.Run(() => context.Database.Migrate()));
+
+    public static async Task MigrateAsync(this WebApplication app) =>
+        await app.MigrateUsingRunner(context => context.Database.MigrateAsync());
+
+    private static async Task MigrateUsingRunner(this WebApplication app, AsyncAction<DbContext> runner)
     {
         await using var scope = app.Services.CreateAsyncScope();
-        await scope.ServiceProvider.GetRequiredService<MigrationsService>().MigrateDatabases();
+        await scope.ServiceProvider.GetRequiredService<MigrationsService>().Migrate(runner);
     }
 }

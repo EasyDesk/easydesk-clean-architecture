@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.DesignTimeFactories;
@@ -9,6 +8,6 @@ internal class SagasContextFactory : IDesignTimeDbContextFactory<SagasContext>
     public SagasContext CreateDbContext(string[] args)
     {
         var options = DbContextOptionsUtils.CreateDesignTimeOptions<SagasContext>();
-        return new SagasContext(new PublicTenantProvider(), options);
+        return new SagasContext(options);
     }
 }

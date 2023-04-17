@@ -17,12 +17,12 @@ internal class MigrationsService
         _logger = serviceProvider.GetRequiredService<ILogger<MigrationsService>>();
     }
 
-    public async Task MigrateDatabases()
+    public async Task Migrate(AsyncAction<DbContext> runner)
     {
         foreach (var dbContextType in _dbContextTypes)
         {
             var dbContext = (DbContext)_serviceProvider.GetRequiredService(dbContextType);
-            await dbContext.Database.MigrateAsync();
+            await runner(dbContext);
             _logger.LogInformation("Successfully migrated DbContext of type {dbContextType}", dbContextType.Name);
         }
     }

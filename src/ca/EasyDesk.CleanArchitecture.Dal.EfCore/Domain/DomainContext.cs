@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
@@ -9,8 +8,8 @@ public abstract class DomainContext<T> : AbstractDbContext<T>
 {
     public const string SchemaName = "domain";
 
-    protected DomainContext(ITenantProvider tenantProvider, DbContextOptions<T> options)
-        : base(tenantProvider, options)
+    protected DomainContext(DbContextOptions<T> options)
+        : base(options)
     {
     }
 

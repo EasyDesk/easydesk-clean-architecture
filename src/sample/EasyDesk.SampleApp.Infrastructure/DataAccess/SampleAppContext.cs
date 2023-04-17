@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,8 +10,8 @@ public class SampleAppContext : DomainContext<SampleAppContext>
 
     public DbSet<PetModel> Pets { get; set; }
 
-    public SampleAppContext(ITenantProvider tenantProvider, DbContextOptions<SampleAppContext> options)
-        : base(tenantProvider, options)
+    public SampleAppContext(DbContextOptions<SampleAppContext> options)
+        : base(options)
     {
     }
 }

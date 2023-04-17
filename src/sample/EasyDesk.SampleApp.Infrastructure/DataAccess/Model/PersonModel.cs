@@ -63,7 +63,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
         Residence = AddressModel.ToPersistence(origin.Residence),
     };
 
-    public class Configuration : IEntityTypeConfiguration<PersonModel>
+    internal class Configuration : IEntityTypeConfiguration<PersonModel>
     {
         public void Configure(EntityTypeBuilder<PersonModel> builder)
         {

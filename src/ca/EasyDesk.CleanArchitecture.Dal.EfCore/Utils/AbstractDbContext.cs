@@ -3,7 +3,9 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.Commons.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
@@ -13,14 +15,12 @@ public class AbstractDbContext<T> : DbContext
     public const string PublicTenantName = "";
 
     private readonly IList<DbContextExtension> _extensions = new List<DbContextExtension>();
-    private readonly ITenantProvider _tenantProvider;
 
-    public AbstractDbContext(ITenantProvider tenantProvider, DbContextOptions<T> options) : base(options)
+    public AbstractDbContext(DbContextOptions<T> options) : base(options)
     {
-        _tenantProvider = tenantProvider;
     }
 
-    internal void AddExtension(DbContextExtension extension)
+    protected void AddExtension(DbContextExtension extension)
     {
         extension.Initialize(this);
         _extensions.Add(extension);
@@ -68,7 +68,7 @@ public class AbstractDbContext<T> : DbContext
 
         queryFilters.AddFilter<E>(x => x.Tenant == PublicTenantName
             || x.Tenant == GetCurrentTenantAsString()
-            || _tenantProvider.TenantInfo.IsPublic);
+            || this.GetService<ITenantProvider>().TenantInfo.IsPublic);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -79,7 +79,7 @@ public class AbstractDbContext<T> : DbContext
     }
 
     private string GetCurrentTenantAsString() =>
-        _tenantProvider.TenantInfo.Id.Map(t => t.Value).OrElse(PublicTenantName);
+        this.GetService<ITenantProvider>().TenantInfo.Id.Map(t => t.Value).OrElse(PublicTenantName);
 
     public class TenantIdGenerator : ValueGenerator
     {

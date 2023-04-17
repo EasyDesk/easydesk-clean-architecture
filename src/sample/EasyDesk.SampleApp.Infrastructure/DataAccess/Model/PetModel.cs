@@ -43,14 +43,14 @@ public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, 
         PersonId = origin.OwnerId,
     };
 
-    public class Configuration : IEntityTypeConfiguration<PetModel>
+    internal class Configuration : IEntityTypeConfiguration<PetModel>
     {
         public void Configure(EntityTypeBuilder<PetModel> builder)
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Id)
-                .UseHiLo();
+            SqlServerPropertyBuilderExtensions.UseHiLo(builder.Property(x => x.Id));
+            NpgsqlPropertyBuilderExtensions.UseHiLo(builder.Property(x => x.Id));
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,8 +6,8 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 
 internal class AuditingContext : AbstractDbContext<AuditingContext>
 {
-    public AuditingContext(ITenantProvider tenantProvider, DbContextOptions<AuditingContext> options)
-        : base(tenantProvider, options)
+    public AuditingContext(DbContextOptions<AuditingContext> options)
+        : base(options)
     {
     }
 
