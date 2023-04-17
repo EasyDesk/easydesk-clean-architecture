@@ -47,12 +47,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[19.12.2, )",
-        "resolved": "19.12.2",
-        "contentHash": "a1wXCRypc/9EDyHueAF0/djvFYPZaTP2sGNoprBZcSX+sh7/CEHcGgCA3m7//hewUbT+IUat1Qk0v6K8fLl3ag==",
+        "requested": "[19.12.3, )",
+        "resolved": "19.12.3",
+        "contentHash": "Q9lkLjFd74vaMzcFPEY/o6wdSY6WxHUsNOSnmHEyu5gbcE7i/zm05cbFp1u7Z0G+iLbiym09G0ya8qEwm0+3TA==",
         "dependencies": {
           "EmptyFiles": "4.4.0",
-          "Verify": "19.12.2",
+          "Verify": "19.12.3",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -622,11 +622,11 @@
       },
       "Shouldly": {
         "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "sEmt1Wf3VvSmCVMfS0XsmnlLubqK9dTk7RxwMxDjk0YYnkAnb3S+wESntgrjgbcszO+HzVxUy9iVJxwxT1HWIw==",
+        "resolved": "4.2.0",
+        "contentHash": "6mgI6Mv4YxyZodmeEYXLAr0/qfULS2v5XIx3b0R6FxDGkK8UMBefJbsOnlRMa68eNlxStqrczhKaP76S+K//MA==",
         "dependencies": {
-          "DiffEngine": "10.0.0",
-          "EmptyFiles": "2.8.0",
+          "DiffEngine": "11.2.0",
+          "EmptyFiles": "4.4.0",
           "Microsoft.CSharp": "4.7.0"
         }
       },
@@ -1437,8 +1437,8 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.12.2",
-        "contentHash": "RH8cJqLJHe9INUzy3dAEa+dEF2cE+MJHJ7JX9EzvAyNd+DUamCrSYjIyAW+Lg1r7qjDB0jCTCtB8cGZ05F8FcA==",
+        "resolved": "19.12.3",
+        "contentHash": "GW+xhD5sO+hjx+lzQRhxLibKOJ1doKerpA5MG1dnZog39KzWeCSjpKUOq7oXhB6xy5H0Xyynke7ztOxxMhTpkA==",
         "dependencies": {
           "Argon": "0.5.2",
           "DiffEngine": "11.3.0",
@@ -1584,8 +1584,8 @@
           "EasyDesk.Commons": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
-          "Shouldly": "[4.1.0, )",
-          "Verify": "[19.12.2, )",
+          "Shouldly": "[4.2.0, )",
+          "Verify": "[19.12.3, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
