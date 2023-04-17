@@ -5,7 +5,17 @@
     Description: null,
     UserInfo: {
       UserId: admin-id,
-      Attributes: {}
+      Attributes: {
+        email: [
+          johndoe@test.com
+        ],
+        firstName: [
+          John
+        ],
+        lastName: [
+          Doe
+        ]
+      }
     },
     Properties: {},
     Success: true,
@@ -17,7 +27,17 @@
     Description: null,
     UserInfo: {
       UserId: admin-id,
-      Attributes: {}
+      Attributes: {
+        email: [
+          johndoe@test.com
+        ],
+        firstName: [
+          John
+        ],
+        lastName: [
+          Doe
+        ]
+      }
     },
     Properties: {},
     Success: true,

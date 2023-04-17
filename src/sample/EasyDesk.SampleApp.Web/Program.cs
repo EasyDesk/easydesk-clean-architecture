@@ -10,6 +10,7 @@ using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web;
@@ -27,6 +28,7 @@ using EasyDesk.SampleApp.Infrastructure.DataAccess;
 using EasyDesk.SampleApp.Web.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Rebus.Config;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +42,10 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
             options.DefaultPolicy = MultitenantPolicies.RequireExistingTenant();
             options.UseDefaultContextTenantReader();
         })
+        .ConfigureContextProvider(options => options
+            .AddAttributeFromClaim(ClaimTypes.Name, StandardAttributes.FirstName)
+            .AddAttributeFromClaim(ClaimTypes.Surname, StandardAttributes.LastName)
+            .AddAttributeFromClaim(ClaimTypes.Email, StandardAttributes.Email))
         .AddAuditing()
         .AddAuthentication(configure => configure.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
         .AddAuthorization(options => options

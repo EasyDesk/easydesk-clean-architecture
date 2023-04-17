@@ -12,11 +12,16 @@ using EasyDesk.SampleApp.Web.Controllers.V_1_0.Auditing;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 using Shouldly;
+using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class AuditingTests : SampleIntegrationTest
 {
+    private const string AdminFirstName = "John";
+    private const string AdminLastName = "Doe";
+    private const string AdminEmail = "johndoe@test.com";
+
     private static readonly TenantId _tenant = TenantId.New("tenant-id");
     private static readonly UserId _adminId = UserId.New("admin-id");
 
@@ -29,7 +34,11 @@ public class AuditingTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
-        .AuthenticateAs(_adminId);
+        .AuthenticateAs(
+            _adminId,
+            new Claim(ClaimTypes.Email, AdminEmail),
+            new Claim(ClaimTypes.Name, AdminFirstName),
+            new Claim(ClaimTypes.Surname, AdminLastName));
 
     protected override async Task OnInitialization()
     {

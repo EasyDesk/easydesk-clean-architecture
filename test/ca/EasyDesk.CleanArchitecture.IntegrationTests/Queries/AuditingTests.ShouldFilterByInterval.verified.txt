@@ -5,7 +5,17 @@
     Description: null,
     UserInfo: {
       UserId: admin-id,
-      Attributes: {}
+      Attributes: {
+        email: [
+          johndoe@test.com
+        ],
+        firstName: [
+          John
+        ],
+        lastName: [
+          Doe
+        ]
+      }
     },
     Properties: {
       nickname: Bobby1
@@ -19,7 +29,17 @@
     Description: null,
     UserInfo: {
       UserId: admin-id,
-      Attributes: {}
+      Attributes: {
+        email: [
+          johndoe@test.com
+        ],
+        firstName: [
+          John
+        ],
+        lastName: [
+          Doe
+        ]
+      }
     },
     Properties: {
       nickname: Bobby2
