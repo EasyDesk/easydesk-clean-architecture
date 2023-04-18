@@ -17,6 +17,9 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Testing;
 
 internal class IntegrationTestExample : SampleIntegrationTest
 {
+    private const int Count = 50;
+    private const int PageSize = 10;
+
     public static readonly TenantId Tenant = TenantId.New("test-tenant-test");
     private static readonly UserId _adminId = UserId.New("test-admin-test");
 
@@ -45,11 +48,11 @@ internal class IntegrationTestExample : SampleIntegrationTest
     public HttpSingleRequestExecutor<PersonDto> CreatePerson(int id) => Http
         .CreatePerson(new($"FirstName_{id}", $"LastName_{id}", new LocalDate(1997, 1, 1).PlusDays(id), new("a place")));
 
-    public static async Task CreateAndCheckPeopleAndPets(int count, IntegrationTestExample integrationTest, bool skipWaits = false)
+    public static async Task CreateAndCheckPeopleAndPets(IntegrationTestExample integrationTest, bool skipWaits = false)
     {
         var http = integrationTest.GetHttp();
         var webService = integrationTest.GetService();
-        for (var i = 0; i < count; i++)
+        for (var i = 0; i < Count; i++)
         {
             await integrationTest.CreatePerson(i)
                 .Send()
@@ -57,16 +60,14 @@ internal class IntegrationTestExample : SampleIntegrationTest
         }
         if (!skipWaits)
         {
-            for (var i = 0; i < 5; i++)
-            {
-                await http
-                    .GetPeople()
-                    .PollUntil(people => people.Count() == count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
-                    .EnsureSuccess();
-                await webService.WaitConditionUnderTenant<SampleAppContext>(
-                    TenantId.New(Tenant),
-                    async context => await context.Pets.CountAsync() == count);
-            }
+            await http
+                .GetPeople()
+                .SetPageSize(PageSize)
+                .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
+                .EnsureSuccess();
+            await webService.WaitConditionUnderTenant<SampleAppContext>(
+                TenantId.New(Tenant),
+                async context => await context.Pets.CountAsync() == Count);
         }
     }
 }
@@ -82,7 +83,7 @@ public class TestFixtureLifecycleTests
         {
             await using var integrationTest = new IntegrationTestExample(fixture);
             await integrationTest.InitializeAsync();
-            await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest);
+            await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest);
         }
     }
 }
@@ -98,7 +99,7 @@ public class TestFixtureLifecycleTests_SkippingWaits
         {
             await using var integrationTest = new IntegrationTestExample(fixture);
             await integrationTest.InitializeAsync();
-            await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest, skipWaits: true);
+            await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest, skipWaits: true);
         }
     }
 }
@@ -117,7 +118,7 @@ public class TestFixtureLifecycleWithParallelismTests
             {
                 await using var integrationTest = new IntegrationTestExample(fixture);
                 await integrationTest.InitializeAsync();
-                await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest);
+                await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest);
             }
         };
         await Task.WhenAll(
@@ -141,7 +142,7 @@ public class TestFixtureLifecycleWithParallelismTests_SkippingWaits
             {
                 await using var integrationTest = new IntegrationTestExample(fixture);
                 await integrationTest.InitializeAsync();
-                await IntegrationTestExample.CreateAndCheckPeopleAndPets(150, integrationTest, skipWaits: true);
+                await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest, skipWaits: true);
             }
         };
         await Task.WhenAll(action(), action());
