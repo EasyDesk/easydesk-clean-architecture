@@ -23,7 +23,7 @@ internal class GenericPipeline : IPipeline
     }
 
     private IEnumerable<Type> ComputePipelineStepTypes<T, R>() =>
-        _stepTypes.SelectMany(t => GetActualStepType<T, R>(t));
+        _stepTypes.SelectMany(t => GetActualStepType<T, R>(t)).ToList();
 
     private Option<Type> GetActualStepType<T, R>(Type stepType)
     {
