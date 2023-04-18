@@ -24,14 +24,14 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
 public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementation
-    where T : DomainContext<T>
+    where T : DomainContext
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
-    private readonly EfCoreDataAccessOptions<TBuilder, TExtension> _options;
+    private readonly EfCoreDataAccessOptions<T, TBuilder, TExtension> _options;
     private readonly ISet<Type> _registeredDbContextTypes = new HashSet<Type>();
 
-    public EfCoreDataAccess(EfCoreDataAccessOptions<TBuilder, TExtension> options)
+    public EfCoreDataAccess(EfCoreDataAccessOptions<T, TBuilder, TExtension> options)
     {
         _options = options;
     }
@@ -134,12 +134,12 @@ public static class EfCoreDataAccessExtensions
     public static AppBuilder AddEfCoreDataAccess<T, TBuilder, TExtension>(
         this AppBuilder builder,
         IEfCoreProvider<TBuilder, TExtension> provider,
-        Action<EfCoreDataAccessOptions<TBuilder, TExtension>>? configure = null)
-        where T : DomainContext<T>
+        Action<EfCoreDataAccessOptions<T, TBuilder, TExtension>>? configure = null)
+        where T : DomainContext
         where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
         where TExtension : RelationalOptionsExtension, new()
     {
-        var options = new EfCoreDataAccessOptions<TBuilder, TExtension>(provider);
+        var options = new EfCoreDataAccessOptions<T, TBuilder, TExtension>(provider);
         configure?.Invoke(options);
         var dataAccessImplementation = new EfCoreDataAccess<T, TBuilder, TExtension>(options);
         return builder.AddDataAccess(dataAccessImplementation);

@@ -7,6 +7,7 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
+using EasyDesk.CleanArchitecture.Dal.SqlServer;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
@@ -24,7 +25,8 @@ using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.IncomingCommands;
-using EasyDesk.SampleApp.Infrastructure.DataAccess;
+using EasyDesk.SampleApp.Infrastructure.EfCore;
+using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Rebus.Config;
@@ -32,6 +34,7 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var provider = builder.Configuration.RequireValue<DbProvider>("DbProvider");
 var appDescription = builder.ConfigureForCleanArchitecture(config =>
 {
     config
@@ -56,7 +59,23 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddSagas()
         .AddModule<SampleAppDomainModule>();
 
-    config.AddPostgreSqlDataAccess<SampleAppContext>(builder.Configuration.RequireConnectionString("MainDb"));
+    switch (provider)
+    {
+        case DbProvider.SqlServer:
+            config.AddSqlServerDataAccess<SqlServerSampleAppContext>(builder.Configuration.RequireConnectionString("SqlServer"), o =>
+            {
+                o.WithService<SampleAppContext>();
+            });
+            break;
+        case DbProvider.PostgreSql:
+            config.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(builder.Configuration.RequireConnectionString("PostgreSql"), o =>
+            {
+                o.WithService<SampleAppContext>();
+            });
+            break;
+        default:
+            throw new Exception($"Invalid DB provider: {provider}");
+    }
 
     config.AddRebusMessaging("sample", (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e));
 
@@ -69,8 +88,15 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 });
 
 var app = builder.Build();
-
-await app.MigrateAsync();
+if (provider == DbProvider.SqlServer)
+{
+    // Required due to EF core bug.
+    await app.MigrateSync();
+}
+else
+{
+    await app.MigrateAsync();
+}
 
 await app.SetupDevelopment(async (services, logger) =>
 {

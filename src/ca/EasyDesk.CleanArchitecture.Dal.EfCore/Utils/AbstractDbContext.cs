@@ -9,14 +9,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
-public class AbstractDbContext<T> : DbContext
-    where T : AbstractDbContext<T>
+public class AbstractDbContext : DbContext
 {
     public const string PublicTenantName = "";
 
     private readonly IList<DbContextExtension> _extensions = new List<DbContextExtension>();
 
-    public AbstractDbContext(DbContextOptions<T> options) : base(options)
+    public AbstractDbContext(DbContextOptions options) : base(options)
     {
     }
 
@@ -88,6 +87,6 @@ public class AbstractDbContext<T> : DbContext
         public override bool GeneratesStableValues => true;
 
         protected override object? NextValue(EntityEntry entry) =>
-            ((T)entry.Context).GetCurrentTenantAsString();
+            ((AbstractDbContext)entry.Context).GetCurrentTenantAsString();
     }
 }

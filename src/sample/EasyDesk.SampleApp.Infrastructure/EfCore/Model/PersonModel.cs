@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NodaTime;
 using System.Linq.Expressions;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
 public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonSnapshot>, IEntityPersistence<Person, PersonModel>
 {

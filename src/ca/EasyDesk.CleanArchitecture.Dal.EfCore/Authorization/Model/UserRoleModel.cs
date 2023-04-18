@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -48,12 +49,12 @@ internal class UserRoleModel : IMultitenantEntity
         }
     }
 
-    public class TenantIdFkGenerator : AuthorizationContext.TenantIdGenerator
+    public class TenantIdFkGenerator : AbstractDbContext.TenantIdGenerator
     {
         protected override object? NextValue(EntityEntry entry)
         {
             var currentTenantAsString = base.NextValue(entry);
-            return currentTenantAsString is AuthorizationContext.PublicTenantName
+            return currentTenantAsString is AbstractDbContext.PublicTenantName
                 ? null
                 : currentTenantAsString;
         }

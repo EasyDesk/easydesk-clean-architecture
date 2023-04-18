@@ -12,6 +12,18 @@ services:
       - "5672:5672"
       - "15672:15672"
 
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    user: root
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: samplepass.123
+    volumes:
+      - sqlservervolume:/var/opt/mssql
+    ports:
+      - "1433:1433"
+
   postgres:
     image: postgres:alpine3.16
     environment:
@@ -34,3 +46,4 @@ services:
 volumes:
   rabbitmqvolume:
   postgresvolume:
+  sqlservervolume:

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 
-internal class SagasContext : AbstractDbContext<SagasContext>
+internal class SagasContext : AbstractDbContext
 {
     public SagasContext(DbContextOptions<SagasContext> options)
         : base(options)

@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
 public class AddressModel
     : IValuePersistence<Address, AddressModel, Address>

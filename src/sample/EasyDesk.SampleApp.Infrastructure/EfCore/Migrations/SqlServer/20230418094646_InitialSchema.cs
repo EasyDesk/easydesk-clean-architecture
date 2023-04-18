@@ -1,9 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using NodaTime;
 
 #nullable disable
 
-namespace EasyDesk.SampleApp.Infrastructure.Migrations;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.SqlServer;
 
 /// <inheritdoc />
 public partial class InitialSchema : Migration
@@ -24,21 +23,21 @@ public partial class InitialSchema : Migration
             schema: "domain",
             columns: table => new
             {
-                Id = table.Column<Guid>(type: "uuid", nullable: false),
-                FirstName = table.Column<string>(type: "text", nullable: false),
-                LastName = table.Column<string>(type: "text", nullable: false),
-                DateOfBirth = table.Column<LocalDate>(type: "date", nullable: false),
-                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
-                CreatedBy = table.Column<string>(type: "text", nullable: false),
-                Residence_StreetType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_StreetName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                Residence_StreetNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_District = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_Province = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_Region = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
+                Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                DateOfBirth = table.Column<DateTime>(type: "date", nullable: false),
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                Residence_StreetType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Residence_StreetName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                Residence_StreetNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Residence_City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Residence_District = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Residence_Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Residence_Region = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Residence_State = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Residence_Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
             },
             constraints: table =>
             {
@@ -50,10 +49,10 @@ public partial class InitialSchema : Migration
             schema: "domain",
             columns: table => new
             {
-                Id = table.Column<int>(type: "integer", nullable: false),
-                Nickname = table.Column<string>(type: "text", nullable: false),
-                PersonId = table.Column<Guid>(type: "uuid", nullable: false),
-                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
+                Id = table.Column<int>(type: "int", nullable: false),
+                Nickname = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {

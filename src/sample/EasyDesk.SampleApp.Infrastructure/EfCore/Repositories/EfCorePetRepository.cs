@@ -1,10 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
-using EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
+using EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Repositories;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Repositories;
 
 public class EfCorePetRepository : EfCoreRepositoryWithHydration<Pet, PetModel, SampleAppContext, int>, IPetRepository
 {

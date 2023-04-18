@@ -1,7 +1,6 @@
 ﻿using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using System.Data.Common;
@@ -15,20 +14,13 @@ public static class SqlFixtureExtensions
         T container,
         string connectionStringName,
         RespawnerOptions respawnerOptions,
-        Func<string, string>? editDbConnectionString = null)
+        Func<string, string>? editConnection = null)
         where T : TestcontainerDatabase
     {
         Respawner? respawner = null;
         return builder
             .ConfigureContainers(containers => containers.RegisterTestContainer(container))
-            .ConfigureWebService(ws => ws.WithConfiguration(config =>
-            {
-                config.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    [connectionStringName] =
-                        editDbConnectionString?.Invoke(container.ConnectionString) ?? container.ConnectionString,
-                });
-            }))
+            .WithConfiguration(x => x.Add(connectionStringName, editConnection?.Invoke(container.ConnectionString) ?? container.ConnectionString))
             .OnInitialization(ws => UsingDbConnection(ws, async connection =>
             {
                 respawner = await Respawner.CreateAsync(connection, respawnerOptions);

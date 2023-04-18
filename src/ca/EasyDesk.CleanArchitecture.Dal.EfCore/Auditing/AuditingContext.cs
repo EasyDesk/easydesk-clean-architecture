@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 
-internal class AuditingContext : AbstractDbContext<AuditingContext>
+internal class AuditingContext : AbstractDbContext
 {
     public AuditingContext(DbContextOptions<AuditingContext> options)
         : base(options)

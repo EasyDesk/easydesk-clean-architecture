@@ -8,7 +8,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
-using EasyDesk.SampleApp.Infrastructure.DataAccess;
+using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

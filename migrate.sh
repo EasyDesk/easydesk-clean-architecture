@@ -12,27 +12,34 @@ fi
 TARGET=$1
 MIGRATION_NAME=$2
 
-function DAL_MIGRATION_COMMAND_1() {
+function DAL_MIGRATION_COMMAND_GENERATOR() {
 	dotnet ef migrations add "$1" \
-	-s "src/ca/EasyDesk.CleanArchitecture.Dal.$2" \
-	-p "src/ca/EasyDesk.CleanArchitecture.Dal.$2" \
-	--output-dir "Migrations/$3" \
-	--context "${3}Context" \
-	--no-build
+		-s "src/ca/EasyDesk.CleanArchitecture.Dal.$2" \
+		-p "src/ca/EasyDesk.CleanArchitecture.Dal.$2" \
+		--output-dir "Migrations/$3" \
+		--context "${3}Context" \
+		--no-build
 }
 
 function DAL_MIGRATION_COMMAND() {
-	DAL_MIGRATION_COMMAND_1 "$1" PostgreSql "$2"
-	DAL_MIGRATION_COMMAND_1 "$1" SqlServer "$2"
+	DAL_MIGRATION_COMMAND_GENERATOR "$1" PostgreSql "$2"
+	DAL_MIGRATION_COMMAND_GENERATOR "$1" SqlServer "$2"
+}
+
+function SAMPLE_MIGRATION_COMMAND_GENERATOR() {
+	dotnet ef migrations add "$1" \
+		-s "src/sample/EasyDesk.SampleApp.Web" \
+		-p "src/sample/EasyDesk.SampleApp.Infrastructure" \
+		--output-dir "EfCore/Migrations/$2" \
+		--context "${2}SampleAppContext" \
+		--no-build \
+		-- --dbprovider "$2"
 }
 
 function SAMPLE_MIGRATION_COMMAND() {
-	dotnet ef migrations add "$1" \
-	-s "src/sample/EasyDesk.SampleApp.Web" \
-	-p "src/sample/EasyDesk.SampleApp.Infrastructure" \
-	--output-dir "Migrations" \
-	--context "SampleAppContext" \
-	--no-build
+	SAMPLE_MIGRATION_COMMAND_GENERATOR "$1" PostgreSql
+	SAMPLE_MIGRATION_COMMAND_GENERATOR "$1" SqlServer
+
 }
 
 AUTH_MIGRATION_COMMAND="DAL_MIGRATION_COMMAND ${MIGRATION_NAME} Authorization"

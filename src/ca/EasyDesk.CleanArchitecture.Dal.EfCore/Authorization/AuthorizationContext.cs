@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-internal class AuthorizationContext : AbstractDbContext<AuthorizationContext>
+internal class AuthorizationContext : AbstractDbContext
 {
     public AuthorizationContext(DbContextOptions<AuthorizationContext> options)
         : base(options)

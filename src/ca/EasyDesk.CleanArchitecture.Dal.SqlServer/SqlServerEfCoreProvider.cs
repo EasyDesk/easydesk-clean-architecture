@@ -36,11 +36,11 @@ public static class SqlServerExtensions
     public static AppBuilder AddSqlServerDataAccess<T>(
         this AppBuilder builder,
         string connectionString,
-        Action<EfCoreDataAccessOptions<Builder, Extension>>? configure = null)
-        where T : DomainContext<T>
+        Action<EfCoreDataAccessOptions<T, Builder, Extension>>? configure = null)
+        where T : DomainContext
     {
 #pragma warning disable EF1001
-        return builder.AddEfCoreDataAccess<T, Builder, Extension>(
+        return builder.AddEfCoreDataAccess(
             new SqlServerEfCoreProvider(connectionString),
             configure);
 #pragma warning restore EF1001

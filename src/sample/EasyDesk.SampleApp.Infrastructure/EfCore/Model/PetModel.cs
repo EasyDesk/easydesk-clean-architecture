@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq.Expressions;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Model;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
 public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, IMultitenantEntity, IProjectable<PetModel, PetSnapshot>
 {

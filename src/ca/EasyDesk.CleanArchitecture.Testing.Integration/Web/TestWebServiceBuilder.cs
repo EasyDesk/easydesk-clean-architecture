@@ -9,12 +9,19 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
 public sealed class TestWebServiceBuilder
 {
     private readonly Type _startupAssemblyMarker;
+    private Action<IDictionary<string, string?>>? _inMemoryConfig;
     private Action<IHostBuilder>? _configureHost;
     private Action<IWebHostBuilder>? _configureWebHost;
 
     public TestWebServiceBuilder(Type startupAssemblyMarker)
     {
         _startupAssemblyMarker = startupAssemblyMarker;
+        _configureHost += builder =>
+        {
+            var dictionary = new Dictionary<string, string?>();
+            _inMemoryConfig?.Invoke(dictionary);
+            builder.ConfigureHostConfiguration(c => c.AddInMemoryCollection(dictionary));
+        };
     }
 
     public TestWebServiceBuilder ConfigureHost(Action<IHostBuilder> configure)
@@ -32,8 +39,14 @@ public sealed class TestWebServiceBuilder
     public TestWebServiceBuilder WithEnvironment(string environment) =>
         ConfigureWebHost(builder => builder.UseEnvironment(environment));
 
-    public TestWebServiceBuilder WithConfiguration(Action<IConfigurationBuilder> configure) =>
-        ConfigureHost(builder => builder.ConfigureHostConfiguration(configure));
+    public TestWebServiceBuilder WithConfiguration(string key, string value) =>
+        WithConfiguration(d => d.Add(key, value));
+
+    public TestWebServiceBuilder WithConfiguration(Action<IDictionary<string, string?>> configure)
+    {
+        _inMemoryConfig += configure;
+        return this;
+    }
 
     public TestWebServiceBuilder WithServices(Action<IServiceCollection> configure) =>
         ConfigureWebHost(builder => builder.ConfigureServices(configure));
