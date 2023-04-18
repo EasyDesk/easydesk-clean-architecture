@@ -23,9 +23,8 @@ internal class EfCoreAuditLog : IAuditLog
 
         return _context.AuditRecords
             .AsNoTracking()
-            .Conditionally(
-                query.MatchTimeInterval.HasStart || query.MatchTimeInterval.HasEnd,
-                q => q.Where(r => query.MatchTimeInterval.Contains(r.Instant)))
+            .Conditionally(query.FromInstant, from => q => q.Where(r => r.Instant >= from))
+            .Conditionally(query.ToInstant, to => q => q.Where(r => r.Instant <= to))
             .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
             .Conditionally(query.MatchName, name => q => q.Where(r => r.Name == name))
             .Conditionally(query.IsSuccess, success => q => q.Where(r => r.Success == success))

@@ -14,5 +14,7 @@ public record AuditQuery
 
     public Option<bool> IsSuccess { get; init; } = None;
 
-    public Interval MatchTimeInterval { get; init; } = new Interval(null, null);
+    public Option<Instant> FromInstant { get; init; } = None;
+
+    public Option<Instant> ToInstant { get; init; } = None;
 }

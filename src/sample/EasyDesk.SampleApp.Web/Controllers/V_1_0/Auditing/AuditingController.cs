@@ -32,7 +32,8 @@ public class AuditingController : CleanArchitectureController
             IsAnonymous = anonymous.AsOption(),
             IsSuccess = success.AsOption(),
             MatchType = type.AsOption().Map(Enum.Parse<AuditRecordType>),
-            MatchTimeInterval = new Interval(from, to),
+            FromInstant = from.AsOption(),
+            ToInstant = to.AsOption(),
         };
         return await DispatchWithPagination(new GetAudits(query), pagination)
             .MapEachElementTo<AuditRecordDto>()
