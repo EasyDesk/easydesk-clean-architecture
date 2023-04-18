@@ -8,6 +8,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.Data.SqlClient;
+using Npgsql;
 using Respawn;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
@@ -18,7 +19,9 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
     {
     }
 
-    protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
+    protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder) => ConfigureSqlServer(builder);
+
+    private void ConfigureSqlServer(WebServiceTestsFixtureBuilder builder)
     {
         using var dbConfiguration = new MsSqlTestcontainerConfiguration
         {
@@ -26,7 +29,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             Password = "sample.123",
         };
         var container = new TestcontainersBuilder<MsSqlTestcontainer>()
-            .WithUniqueName("sample-app-integration-tests-detabbes")
+            .WithUniqueName("sample-app-integration-tests-sqlserver")
             .WithDatabase(dbConfiguration)
             .Build();
 
@@ -44,37 +47,30 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
                 c => new SqlConnectionStringBuilder(c) { TrustServerCertificate = true }.ConnectionString);
     }
 
-    ////protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
-    ////{
-    ////    using var dbConfiguration = new PostgreSqlTestcontainerConfiguration
-    ////    {
-    ////        Database = "TestSampleDb",
-    ////        Username = "sample",
-    ////        Password = "sample",
-    ////    };
-    ////    var container = new TestcontainersBuilder<PostgreSqlTestcontainer>()
-    ////        .WithUniqueName("sample-app-integration-tests-postgres")
-    ////        .WithDatabase(dbConfiguration)
-    ////        .Build();
+    private void ConfigurePostgres(WebServiceTestsFixtureBuilder builder)
+    {
+        using var dbConfiguration = new PostgreSqlTestcontainerConfiguration
+        {
+            Database = "TestSampleDb",
+            Username = "sample",
+            Password = "sample",
+        };
+        var container = new TestcontainersBuilder<PostgreSqlTestcontainer>()
+            .WithUniqueName("sample-app-integration-tests-postgres")
+            .WithDatabase(dbConfiguration)
+            .Build();
 
-    ////    builder
-    ////        .WithConfiguration("DbProvider", DbProvider.PostgreSql.ToString())
-    ////        .AddInMemoryRebus()
-    ////        .AddResettableSqlDatabase(
-    ////            container,
-    ////            "ConnectionStrings:PostgreSql",
-    ////            new RespawnerOptions
-    ////            {
-    ////                DbAdapter = DbAdapter.Postgres,
-    ////                SchemasToInclude = new[] { "domain", "messaging", "auth", "sagas", "audit" }
-    ////            },
-    ////            connectionString =>
-    ////            {
-    ////                var csb = new NpgsqlConnectionStringBuilder(connectionString)
-    ////                {
-    ////                    IncludeErrorDetail = true
-    ////                };
-    ////                return csb.ConnectionString;
-    ////            });
-    ////}
+        builder
+            .WithConfiguration("DbProvider", DbProvider.PostgreSql.ToString())
+            .AddInMemoryRebus()
+            .AddResettableSqlDatabase(
+                container,
+                "ConnectionStrings:PostgreSql",
+                new RespawnerOptions
+                {
+                    DbAdapter = DbAdapter.Postgres,
+                    SchemasToInclude = new[] { "domain", "messaging", "auth", "sagas", "audit" }
+                },
+                connectionString => new NpgsqlConnectionStringBuilder(connectionString) { IncludeErrorDetail = true }.ConnectionString);
+    }
 }

@@ -18,7 +18,7 @@ public abstract class CleanArchitectureController : AbstractController
         IDispatchable<IPageable<T>> request, PaginationDto pagination)
     {
         var paginationService = GetService<PaginationService>();
-        var pageSize = paginationService.GetPageSize(StaticImports.AsOption<int>(pagination.PageSize));
+        var pageSize = paginationService.GetPageSize(pagination.PageSize.AsOption());
         var pageIndex = paginationService.GetPageIndex(pagination.PageIndex.AsOption());
         return DispatchInternalWithPagination(
             d => d.Dispatch(request, pageable => pageable.GetPageInfo(pageSize, pageIndex)),

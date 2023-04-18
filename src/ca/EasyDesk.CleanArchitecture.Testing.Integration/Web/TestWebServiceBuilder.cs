@@ -68,6 +68,7 @@ public sealed class TestWebServiceBuilder
             _configureHost = configureHost;
             _configureWebHost = configureWebHost;
             HttpClient = CreateClient();
+            HttpClient.Timeout = Timeout.InfiniteTimeSpan;
         }
 
         public HttpClient HttpClient { get; }
