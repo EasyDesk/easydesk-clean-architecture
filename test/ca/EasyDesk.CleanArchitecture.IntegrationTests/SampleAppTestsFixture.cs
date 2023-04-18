@@ -1,6 +1,11 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
@@ -15,13 +20,42 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
 public class SampleAppTestsFixture : WebServiceTestsFixture
 {
+    private static readonly RespawnerOptions _respawnerOptions = new RespawnerOptions
+    {
+        DbAdapter = DbAdapter.SqlServer,
+        SchemasToInclude = new[]
+        {
+            DomainContext.SchemaName,
+            MessagingModel.SchemaName,
+            AuthorizationModel.SchemaName,
+            SagaManagerModel.SchemaName,
+            AuditModel.SchemaName
+        }
+    };
+
+    private static readonly Dictionary<DbProvider, Action<WebServiceTestsFixtureBuilder>> _providerConfigs = new()
+    {
+        { DbProvider.SqlServer, ConfigureSqlServer },
+        { DbProvider.PostgreSql, ConfigurePostgreSql },
+    };
+
     public SampleAppTestsFixture() : base(typeof(PersonController))
     {
     }
 
-    protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder) => ConfigureSqlServer(builder);
+    protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
+    {
+        builder.AddInMemoryRebus();
+        ConfigureForDbProvider(DbProvider.SqlServer, builder);
+    }
 
-    private void ConfigureSqlServer(WebServiceTestsFixtureBuilder builder)
+    private void ConfigureForDbProvider(DbProvider provider, WebServiceTestsFixtureBuilder builder)
+    {
+        builder.WithConfiguration("DbProvider", provider.ToString());
+        _providerConfigs[provider](builder);
+    }
+
+    private static void ConfigureSqlServer(WebServiceTestsFixtureBuilder builder)
     {
         using var dbConfiguration = new MsSqlTestcontainerConfiguration
         {
@@ -33,21 +67,14 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .WithDatabase(dbConfiguration)
             .Build();
 
-        builder
-            .WithConfiguration("DbProvider", DbProvider.SqlServer.ToString())
-            .AddInMemoryRebus()
-            .AddResettableSqlDatabase(
-                container,
-                "ConnectionStrings:SqlServer",
-                new RespawnerOptions
-                {
-                    DbAdapter = DbAdapter.SqlServer,
-                    SchemasToInclude = new[] { "domain", "messaging", "auth", "sagas", "audit" }
-                },
-                c => new SqlConnectionStringBuilder(c) { TrustServerCertificate = true }.ConnectionString);
+        builder.AddResettableSqlDatabase(
+            container,
+            "ConnectionStrings:SqlServer",
+            _respawnerOptions,
+            c => new SqlConnectionStringBuilder(c) { TrustServerCertificate = true }.ConnectionString);
     }
 
-    private void ConfigurePostgres(WebServiceTestsFixtureBuilder builder)
+    private static void ConfigurePostgreSql(WebServiceTestsFixtureBuilder builder)
     {
         using var dbConfiguration = new PostgreSqlTestcontainerConfiguration
         {
@@ -60,17 +87,10 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .WithDatabase(dbConfiguration)
             .Build();
 
-        builder
-            .WithConfiguration("DbProvider", DbProvider.PostgreSql.ToString())
-            .AddInMemoryRebus()
-            .AddResettableSqlDatabase(
-                container,
-                "ConnectionStrings:PostgreSql",
-                new RespawnerOptions
-                {
-                    DbAdapter = DbAdapter.Postgres,
-                    SchemasToInclude = new[] { "domain", "messaging", "auth", "sagas", "audit" }
-                },
-                connectionString => new NpgsqlConnectionStringBuilder(connectionString) { IncludeErrorDetail = true }.ConnectionString);
+        builder.AddResettableSqlDatabase(
+            container,
+            "ConnectionStrings:PostgreSql",
+            _respawnerOptions,
+            connectionString => new NpgsqlConnectionStringBuilder(connectionString) { IncludeErrorDetail = true }.ConnectionString);
     }
 }
