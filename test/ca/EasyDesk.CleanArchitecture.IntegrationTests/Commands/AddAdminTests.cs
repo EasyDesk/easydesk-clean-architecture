@@ -27,13 +27,13 @@ public class AddAdminTests : SampleIntegrationTest
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(_tenantId));
-        await WebService.WaitUntilTenantExists(TenantId.New(_tenantId));
+        await WebService.WaitUntilTenantExists(_tenantId);
     }
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
-            TenantId.New(_tenantId),
+            _tenantId,
             async p => condition(await p.GetRolesForUser(UserInfo.Create(_adminId))));
     }
 

@@ -20,7 +20,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
     private const int Count = 50;
     private const int PageSize = 10;
 
-    public static readonly TenantId Tenant = TenantId.New("test-tenant-test");
+    private static readonly TenantId _tenant = TenantId.New("test-tenant-test");
     private static readonly UserId _adminId = UserId.New("test-admin-test");
 
     public IntegrationTestExample(SampleAppTestsFixture factory) : base(factory)
@@ -34,14 +34,14 @@ internal class IntegrationTestExample : SampleIntegrationTest
     public ITestBus GetNewBus(string? inputQueue = null) => NewBus(inputQueue);
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(Tenant)
+        .Tenant(_tenant)
         .AuthenticateAs(_adminId);
 
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
-        await bus.Send(new CreateTenant(Tenant));
-        await WebService.WaitUntilTenantExists(TenantId.New(Tenant));
+        await bus.Send(new CreateTenant(_tenant));
+        await WebService.WaitUntilTenantExists(_tenant);
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 
@@ -66,7 +66,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
                 .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
                 .EnsureSuccess();
             await webService.WaitConditionUnderTenant<SampleAppContext>(
-                TenantId.New(Tenant),
+                _tenant,
                 async context => await context.Pets.CountAsync() == Count);
         }
     }

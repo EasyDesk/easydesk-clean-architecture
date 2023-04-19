@@ -17,6 +17,10 @@ public record TenantId : IValue<TenantId, string>
     public static TenantId New(string value) =>
         TryNew(value).OrElseThrow(() => new ArgumentException($"TenantId '{value}' has invalid format", nameof(value)));
 
+    public static TenantId FromGuid(Guid value) => New(value.ToString());
+
+    public static TenantId FromRandomGuid() => FromGuid(Guid.NewGuid());
+
     public static Option<TenantId> TryNew(string value)
     {
         if (!IsValidTenantId(value))

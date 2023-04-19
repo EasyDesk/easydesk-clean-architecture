@@ -100,8 +100,8 @@ else
 
 await app.SetupDevelopment(async (services, logger) =>
 {
-    var adminId = UserId.New(Guid.NewGuid().ToString());
-    var tenantId = TenantId.New(Guid.NewGuid().ToString());
+    var adminId = UserId.FromRandomGuid();
+    var tenantId = TenantId.FromRandomGuid();
     var dispatcher = services.SetupSelfScopedRequestDispatcher(adminId, tenantId);
     await dispatcher.Dispatch(new CreateTenant(tenantId));
     await dispatcher.Dispatch(new AddAdmin());
