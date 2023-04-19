@@ -11,27 +11,6 @@ public static class SqlFixtureExtensions
 {
     public static WebServiceTestsFixtureBuilder AddResettableSqlDatabase(
         this WebServiceTestsFixtureBuilder builder,
-        ITestcontainersContainer container,
-        string connectionString,
-        string connectionStringName,
-        RespawnerOptions respawnerOptions)
-    {
-        Respawner? respawner = null;
-        return builder
-            .ConfigureContainers(containers => containers.RegisterTestContainer(container))
-            .WithConfiguration(x => x.Add(connectionStringName, connectionString))
-            .OnInitialization(ws => UsingDbConnection(ws, async connection =>
-            {
-                respawner = await Respawner.CreateAsync(connection, respawnerOptions);
-            }))
-            .OnReset(ws => UsingDbConnection(ws, async connection =>
-            {
-                await respawner!.ResetAsync(connection);
-            }));
-    }
-
-    public static WebServiceTestsFixtureBuilder AddResettableSqlDatabase(
-        this WebServiceTestsFixtureBuilder builder,
         TestcontainerDatabase container,
         string connectionStringName,
         RespawnerOptions respawnerOptions,
@@ -40,7 +19,7 @@ public static class SqlFixtureExtensions
         Respawner? respawner = null;
         return builder
             .ConfigureContainers(containers => containers.RegisterTestContainer(container))
-            .WithConfiguration(x => x.Add(connectionStringName, editConnection?.Invoke(container.ConnectionString) ?? container.ConnectionString))
+            .WithConfiguration(x => x.Add(connectionStringName, (editConnection ?? It)(container.ConnectionString)))
             .OnInitialization(ws => UsingDbConnection(ws, async connection =>
             {
                 respawner = await Respawner.CreateAsync(connection, respawnerOptions);

@@ -1,11 +1,7 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
@@ -92,13 +88,6 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
     private static RespawnerOptions CreateRespawnerOptions(IDbAdapter adapter) => new()
     {
         DbAdapter = adapter,
-        SchemasToInclude = new[]
-        {
-            DomainContext.SchemaName,
-            MessagingModel.SchemaName,
-            AuthorizationModel.SchemaName,
-            SagaManagerModel.SchemaName,
-            AuditModel.SchemaName
-        }
+        SchemasToExclude = new[] { EfCoreUtils.MigrationsSchema }
     };
 }

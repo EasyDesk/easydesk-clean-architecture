@@ -6,5 +6,5 @@ public static class AuditModel
 {
     public const string SchemaName = "audit";
 
-    public const int NameMaxLength = Constants.SymbolMaxLength;
+    public const int NameMaxLength = EfCoreUtils.SymbolMaxLength;
 }

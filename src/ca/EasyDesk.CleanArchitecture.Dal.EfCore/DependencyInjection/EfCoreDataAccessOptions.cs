@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,6 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
     private const string MigrationsTableSuffix = "EFMigrationsHistory";
-    private const string MigrationsSchema = "ef";
 
     private readonly IEfCoreProvider<TBuilder, TExtension> _provider;
     private Action<DbContextOptionsBuilder>? _configureDbContextOptions;
@@ -67,7 +67,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
             var connection = provider.GetRequiredService<DbConnection>();
             _provider.ConfigureDbProvider(options, connection, relationalOptions =>
             {
-                relationalOptions.MigrationsHistoryTable($"{typeof(C).Name}_{MigrationsTableSuffix}", MigrationsSchema);
+                relationalOptions.MigrationsHistoryTable($"{typeof(C).Name}_{MigrationsTableSuffix}", EfCoreUtils.MigrationsSchema);
                 _configureProviderOptions?.Invoke(relationalOptions);
                 configure?.Invoke(provider, relationalOptions);
             });
