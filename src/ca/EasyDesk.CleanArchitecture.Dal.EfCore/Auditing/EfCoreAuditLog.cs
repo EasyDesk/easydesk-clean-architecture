@@ -23,6 +23,7 @@ internal class EfCoreAuditLog : IAuditLog
 
         return _context.AuditRecords
             .AsNoTracking()
+            .AsSplitQuery()
             .Conditionally(query.FromInstant, from => q => q.Where(r => r.Instant >= from))
             .Conditionally(query.ToInstant, to => q => q.Where(r => r.Instant <= to))
             .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
