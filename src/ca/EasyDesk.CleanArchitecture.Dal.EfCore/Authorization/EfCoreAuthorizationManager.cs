@@ -17,13 +17,13 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
         _context = context;
     }
 
-    private IQueryable<UserRoleModel> RolesByUser(UserInfo userInfo) => _context
+    private IQueryable<UserRoleModel> RolesByUser(UserId userId) => _context
         .UserRoles
-        .Where(u => u.User == userInfo.UserId);
+        .Where(u => u.User == userId);
 
     public async Task<IImmutableSet<Permission>> GetPermissionsForUser(UserInfo userInfo)
     {
-        return await RolesByUser(userInfo)
+        return await RolesByUser(userInfo.UserId)
             .Join(_context.RolePermissions, u => u.Role, p => p.RoleId, (u, p) => p.PermissionName)
             .Distinct()
             .Select(p => new Permission(p))
@@ -32,29 +32,29 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
 
     public async Task<IImmutableSet<Role>> GetRolesForUser(UserInfo userInfo)
     {
-        return await RolesByUser(userInfo)
+        return await RolesByUser(userInfo.UserId)
             .Select(u => new Role(u.Role))
             .ToEquatableSetAsync();
     }
 
-    public async Task GrantRolesToUser(UserInfo userInfo, IEnumerable<Role> roles)
+    public async Task GrantRolesToUser(UserId userId, IEnumerable<Role> roles)
     {
-        var currentRoleIds = await RolesByUser(userInfo)
+        var currentRoleIds = await RolesByUser(userId)
             .Select(r => r.Role)
             .ToListAsync();
 
         var rolesToBeAdded = RoleIds(roles)
             .Except(currentRoleIds)
-            .Select(role => UserRoleModel.Create(userInfo.UserId, role));
+            .Select(role => UserRoleModel.Create(userId, role));
 
         _context.UserRoles.AddRange(rolesToBeAdded);
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeRolesToUser(UserInfo userInfo, IEnumerable<Role> roles)
+    public async Task RevokeRolesToUser(UserId userId, IEnumerable<Role> roles)
     {
         var roleIds = RoleIds(roles);
-        var rolesToBeRemoved = await RolesByUser(userInfo)
+        var rolesToBeRemoved = await RolesByUser(userId)
             .Where(x => roleIds.Contains(x.Role))
             .ToListAsync();
 
