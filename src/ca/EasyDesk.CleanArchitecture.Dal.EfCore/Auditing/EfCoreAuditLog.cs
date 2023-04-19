@@ -32,6 +32,8 @@ internal class EfCoreAuditLog : IAuditLog
             .Conditionally(query.IsAnonymous, anonymous => q => q.Where(anonymous
                 ? r => r.User == null
                 : r => r.User != null))
+            .OrderBy(r => r.Instant)
+            .ThenBy(r => r.Id)
             .Select(src => src.ToAuditRecord())
             .ToPageable();
     }
