@@ -10,6 +10,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
+using EasyDesk.Commons.Utils;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.Data.SqlClient;
@@ -20,18 +21,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
 public class SampleAppTestsFixture : WebServiceTestsFixture
 {
-    private static readonly RespawnerOptions _respawnerOptions = new RespawnerOptions
-    {
-        DbAdapter = DbAdapter.SqlServer,
-        SchemasToInclude = new[]
-        {
-            DomainContext.SchemaName,
-            MessagingModel.SchemaName,
-            AuthorizationModel.SchemaName,
-            SagaManagerModel.SchemaName,
-            AuditModel.SchemaName
-        }
-    };
+    public const DbProvider DefaultDbProvider = DbProvider.PostgreSql;
 
     private static readonly Dictionary<DbProvider, Action<WebServiceTestsFixtureBuilder>> _providerConfigs = new()
     {
@@ -46,7 +36,12 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
     protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
     {
         builder.AddInMemoryRebus();
-        ConfigureForDbProvider(DbProvider.SqlServer, builder);
+
+        var provider = Environment.GetEnvironmentVariable("DB_PROVIDER")
+            .AsOption()
+            .Map(p => Enums.ParseOption<DbProvider>(p).OrElseThrow(() => new Exception("Invalid DB provider")))
+            .OrElse(DefaultDbProvider);
+        ConfigureForDbProvider(provider, builder);
     }
 
     private void ConfigureForDbProvider(DbProvider provider, WebServiceTestsFixtureBuilder builder)
@@ -70,7 +65,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
         builder.AddResettableSqlDatabase(
             container,
             "ConnectionStrings:SqlServer",
-            _respawnerOptions,
+            CreateRespawnerOptions(DbAdapter.SqlServer),
             c => new SqlConnectionStringBuilder(c) { TrustServerCertificate = true }.ConnectionString);
     }
 
@@ -90,7 +85,20 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
         builder.AddResettableSqlDatabase(
             container,
             "ConnectionStrings:PostgreSql",
-            _respawnerOptions,
+            CreateRespawnerOptions(DbAdapter.Postgres),
             connectionString => new NpgsqlConnectionStringBuilder(connectionString) { IncludeErrorDetail = true }.ConnectionString);
     }
+
+    private static RespawnerOptions CreateRespawnerOptions(IDbAdapter adapter) => new()
+    {
+        DbAdapter = adapter,
+        SchemasToInclude = new[]
+        {
+            DomainContext.SchemaName,
+            MessagingModel.SchemaName,
+            AuthorizationModel.SchemaName,
+            SagaManagerModel.SchemaName,
+            AuditModel.SchemaName
+        }
+    };
 }
