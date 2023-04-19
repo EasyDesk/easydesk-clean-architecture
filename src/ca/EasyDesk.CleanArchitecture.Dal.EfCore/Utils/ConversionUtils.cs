@@ -12,7 +12,7 @@ public static class ConversionUtils
         ICollection<P> dst,
         Func<P, K> dstKey)
         where P : IEntityPersistence<D, P>
-        where K : IEquatable<K> =>
+        where K : notnull =>
         ApplyChangesToCollection(src, srcKey, dst, dstKey, P.ToPersistence);
 
     public static void ApplyChangesToCollection<D, P, K>(
@@ -22,7 +22,7 @@ public static class ConversionUtils
         Func<P, K> dstKey,
         Func<D, P> toPersistence)
         where P : IMutablePersistence<D, P>
-        where K : IEquatable<K>
+        where K : notnull
     {
         var dstByKey = dst.ToDictionary(dstKey);
         foreach (var s in src)
