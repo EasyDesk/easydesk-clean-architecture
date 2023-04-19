@@ -65,8 +65,17 @@ jobs:
         with:
           path: test/ca/EasyDesk.CleanArchitecture.UnitTests
           test-args: --logger 'GitHubActions'
-      - name: Integration tests
+      - name: Integration tests (SqlServer)
         uses: EasyDesk/action-dotnet-test@v1
+        env:
+          DB_PROVIDER: SqlServer
+        with:
+          path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
+          test-args: --logger 'GitHubActions'
+      - name: Integration tests (PostgreSql)
+        uses: EasyDesk/action-dotnet-test@v1
+        env:
+          DB_PROVIDER: PostgreSql
         with:
           path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
           test-args: --logger 'GitHubActions'
