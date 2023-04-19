@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
@@ -27,7 +28,7 @@ public class MultitenancyModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped(Options.TenantReaderImplementation);
+        services.AddScoped<IContextTenantReader, DefaultContextTenantReader>();
 
         services.AddScoped<TenantService>();
         services.AddScoped<IContextTenantInitializer>(p => p.GetRequiredService<TenantService>());

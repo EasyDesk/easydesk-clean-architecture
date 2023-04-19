@@ -2,8 +2,11 @@
 
 public sealed class MultitenancyOptions
 {
-    public MultitenantPolicy DefaultPolicy { get; set; } = MultitenantPolicies.IgnoreAndUsePublic();
+    public MultitenantPolicy DefaultPolicy { get; private set; } = MultitenantPolicies.IgnoreAndUsePublic();
 
-    public Func<IServiceProvider, IContextTenantReader> TenantReaderImplementation { get; set; } =
-        _ => new PublicContextTenantReader();
+    public MultitenancyOptions WithDefaultPolicy(MultitenantPolicy policy)
+    {
+        DefaultPolicy = policy;
+        return this;
+    }
 }

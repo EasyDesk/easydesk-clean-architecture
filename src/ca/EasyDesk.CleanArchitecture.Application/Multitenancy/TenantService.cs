@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-internal class TenantService : ITenantNavigator, IContextTenantInitializer
+public class TenantService : ITenantNavigator, IContextTenantInitializer
 {
     private Option<TenantInfo> _contextTenantInfo = None;
     private Option<TenantInfo> _overriddenTenantInfo = None;
