@@ -2,7 +2,7 @@
 
 public static partial class StaticImports
 {
-    public static Option<T> IfPresent<T>(this Option<T> option, Action<T> action)
+    public static Option<T> IfPresent<T>(this Option<T> option, Action<T> action) where T : notnull
     {
         option.Match(
             some: action,
@@ -10,7 +10,7 @@ public static partial class StaticImports
         return option;
     }
 
-    public static async Task<Option<T>> IfPresentAsync<T>(this Option<T> option, AsyncAction<T> action)
+    public static async Task<Option<T>> IfPresentAsync<T>(this Option<T> option, AsyncAction<T> action) where T : notnull
     {
         await option.MatchAsync(
             some: action,
@@ -18,7 +18,7 @@ public static partial class StaticImports
         return option;
     }
 
-    public static Option<T> IfAbsent<T>(this Option<T> option, Action action)
+    public static Option<T> IfAbsent<T>(this Option<T> option, Action action) where T : notnull
     {
         option.Match(
             some: _ => { },
@@ -26,7 +26,7 @@ public static partial class StaticImports
         return option;
     }
 
-    public static async Task<Option<T>> IfAbsentAsync<T>(this Option<T> option, AsyncAction action)
+    public static async Task<Option<T>> IfAbsentAsync<T>(this Option<T> option, AsyncAction action) where T : notnull
     {
         await option.MatchAsync(
             some: _ => Task.CompletedTask,
@@ -34,36 +34,36 @@ public static partial class StaticImports
         return option;
     }
 
-    public static Option<R> Map<T, R>(this Option<T> option, Func<T, R> mapper) where R : notnull => option.Match(
+    public static Option<R> Map<T, R>(this Option<T> option, Func<T, R> mapper) where T : notnull where R : notnull => option.Match(
         some: t => Some(mapper(t)),
         none: () => None);
 
-    public static Option<string> MapToString<T>(this Option<T> option) => option.FlatMap(o => (o?.ToString()).AsOption());
+    public static Option<string> MapToString<T>(this Option<T> option) where T : notnull => option.FlatMap(o => o.ToString().AsOption());
 
-    public static Task<Option<R>> MapAsync<T, R>(this Option<T> option, AsyncFunc<T, R> mapper) where R : notnull => option.MatchAsync(
+    public static Task<Option<R>> MapAsync<T, R>(this Option<T> option, AsyncFunc<T, R> mapper) where T : notnull where R : notnull => option.MatchAsync(
         some: async t => Some(await mapper(t)),
         none: () => Task.FromResult<Option<R>>(None));
 
-    public static Option<T> Filter<T>(this Option<T> option, Predicate<T> predicate) => option.Match(
+    public static Option<T> Filter<T>(this Option<T> option, Predicate<T> predicate) where T : notnull => option.Match(
         some: t => predicate(t) ? option : None,
         none: () => None);
 
-    public static Task<Option<T>> FilterAsync<T>(this Option<T> option, AsyncFunc<T, bool> predicate) => option.MatchAsync(
+    public static Task<Option<T>> FilterAsync<T>(this Option<T> option, AsyncFunc<T, bool> predicate) where T : notnull => option.MatchAsync(
         some: async t => (await predicate(t)) ? option : None,
         none: () => Task.FromResult<Option<T>>(None));
 
-    public static Option<R> FlatMap<T, R>(this Option<T> option, Func<T, Option<R>> mapper) => option.Match(
+    public static Option<R> FlatMap<T, R>(this Option<T> option, Func<T, Option<R>> mapper) where T : notnull where R : notnull => option.Match(
         some: mapper,
         none: () => None);
 
-    public static Task<Option<R>> FlatMapAsync<T, R>(this Option<T> option, AsyncFunc<T, Option<R>> mapper) => option.MatchAsync(
+    public static Task<Option<R>> FlatMapAsync<T, R>(this Option<T> option, AsyncFunc<T, Option<R>> mapper) where T : notnull where R : notnull => option.MatchAsync(
         some: mapper,
         none: () => Task.FromResult<Option<R>>(None));
 
-    public static Option<T> Flatten<T>(this Option<Option<T>> option) =>
+    public static Option<T> Flatten<T>(this Option<Option<T>> option) where T : notnull =>
         option.FlatMap(o => o);
 
-    public static Option<T> Or<T>(this Option<T> option, Option<T> other)
+    public static Option<T> Or<T>(this Option<T> option, Option<T> other) where T : notnull
     {
         return option.Match(
             some: _ => option,

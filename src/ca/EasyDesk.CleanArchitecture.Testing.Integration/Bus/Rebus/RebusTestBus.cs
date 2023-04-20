@@ -129,7 +129,7 @@ public sealed class RebusTestBus : ITestBus
         }
     }
 
-    private Option<T> ValidateMessage<T>(IMessage message, Func<T, bool> predicate) =>
+    private Option<T> ValidateMessage<T>(IMessage message, Func<T, bool> predicate) where T : notnull =>
         message is T t && predicate(t) ? Some(t) : None;
 
     public async ValueTask DisposeAsync()

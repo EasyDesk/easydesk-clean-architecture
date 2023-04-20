@@ -4,9 +4,9 @@ public static partial class StaticImports
 {
     public static NoneOption None => NoneOption.Value;
 
-    public static Option<T> NoneT<T>() => default;
+    public static Option<T> NoneT<T>() where T : notnull => default;
 
-    public static Option<T> Some<T>(T? value) =>
+    public static Option<T> Some<T>(T? value) where T : notnull =>
        value is null ? throw new ArgumentNullException(nameof(value)) : new(value);
 
     public static Option<T> Some<T>(T? value) where T : struct =>

@@ -2,15 +2,18 @@
 
 public static partial class StaticImports
 {
-    public static Option<R> Select<T, R>(this Option<T> option, Func<T, R> mapper) where R : notnull =>
+    public static Option<R> Select<T, R>(this Option<T> option, Func<T, R> mapper) where T : notnull where R : notnull =>
         option.Map(mapper);
 
-    public static Option<R> SelectMany<T, R>(this Option<T> option, Func<T, Option<R>> mapper) =>
+    public static Option<R> SelectMany<T, R>(this Option<T> option, Func<T, Option<R>> mapper) where T : notnull where R : notnull =>
         option.FlatMap(mapper);
 
-    public static Option<R> SelectMany<T, X, R>(this Option<T> option, Func<T, Option<X>> mapper, Func<T, X, R> project) where R : notnull =>
+    public static Option<R> SelectMany<T, X, R>(this Option<T> option, Func<T, Option<X>> mapper, Func<T, X, R> project)
+        where T : notnull
+        where X : notnull
+        where R : notnull =>
         option.FlatMap(x => mapper(x).Map(y => project(x, y)));
 
-    public static Option<T> Where<T>(this Option<T> option, Predicate<T> predicate) =>
+    public static Option<T> Where<T>(this Option<T> option, Predicate<T> predicate) where T : notnull =>
         option.Filter(predicate);
 }

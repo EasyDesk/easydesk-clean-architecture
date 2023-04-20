@@ -7,7 +7,7 @@ public readonly record struct NoneOption
     public static NoneOption Value { get; } = default;
 }
 
-public readonly record struct Option<T> : IEnumerable<T>
+public readonly record struct Option<T> : IEnumerable<T> where T : notnull
 {
     private readonly T _value;
 

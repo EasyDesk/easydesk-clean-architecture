@@ -79,7 +79,7 @@ public static class AsyncEnumerable
         }
     }
 
-    public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence)
+    public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence) where T : notnull
     {
         await using (var enumerator = sequence.GetAsyncEnumerator())
         {
@@ -91,7 +91,7 @@ public static class AsyncEnumerable
         }
     }
 
-    public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence, Func<T, bool> predicate) =>
+    public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence, Func<T, bool> predicate) where T : notnull =>
         await sequence.Where(predicate).FirstOption();
 
     public static async IAsyncEnumerable<R> Select<T, R>(this IAsyncEnumerable<T> sequence, Func<T, R> mapper)

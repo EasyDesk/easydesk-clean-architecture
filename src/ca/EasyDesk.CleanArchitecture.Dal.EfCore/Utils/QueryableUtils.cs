@@ -24,7 +24,7 @@ public static class QueryableUtils
         return condition ? op?.Invoke(query) ?? query : query;
     }
 
-    public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op)
+    public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op) where F : notnull
     {
         return filter.Match(
             some: f => query.Wrap(op(f)),

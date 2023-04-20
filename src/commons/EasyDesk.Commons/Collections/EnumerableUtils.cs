@@ -119,7 +119,7 @@ public static class EnumerableUtils
         return sequence.SelectMany(x => x);
     }
 
-    public static IEnumerable<T> Flatten<T>(this IEnumerable<Option<T>> sequence)
+    public static IEnumerable<T> Flatten<T>(this IEnumerable<Option<T>> sequence) where T : notnull
     {
         return sequence.SelectMany(x => x);
     }

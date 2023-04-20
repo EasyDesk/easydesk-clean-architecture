@@ -2,16 +2,16 @@
 
 public static partial class StaticImports
 {
-    public static T OrElseGet<T>(this Option<T> option, Func<T> supplier) =>
+    public static T OrElseGet<T>(this Option<T> option, Func<T> supplier) where T : notnull =>
         option.Match(some: t => t, none: supplier);
 
-    public static Task<T> OrElseGetAsync<T>(this Option<T> option, AsyncFunc<T> supplier) =>
+    public static Task<T> OrElseGetAsync<T>(this Option<T> option, AsyncFunc<T> supplier) where T : notnull =>
         option.MatchAsync(some: t => Task.FromResult(t), none: supplier);
 
-    public static T OrElse<T>(this Option<T> option, T defaultValue) =>
+    public static T OrElse<T>(this Option<T> option, T defaultValue) where T : notnull =>
         option.OrElseGet(() => defaultValue);
 
-    public static T? OrElseDefault<T>(this Option<T> option) =>
+    public static T? OrElseDefault<T>(this Option<T> option) where T : notnull =>
         option.Match<T?>(some: t => t, none: () => default);
 
     public static T? OrElseNull<T>(this Option<T> option) where T : class =>
@@ -20,6 +20,6 @@ public static partial class StaticImports
     public static T? OrElseNothing<T>(this Option<T> option) where T : struct =>
         option.Match<T?>(some: t => t, none: () => null);
 
-    public static T OrElseThrow<T>(this Option<T> option, Func<Exception> exceptionSupplier) =>
+    public static T OrElseThrow<T>(this Option<T> option, Func<Exception> exceptionSupplier) where T : notnull =>
         option.OrElseGet(() => throw exceptionSupplier());
 }
