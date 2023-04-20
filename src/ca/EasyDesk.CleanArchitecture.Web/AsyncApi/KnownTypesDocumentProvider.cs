@@ -28,7 +28,7 @@ internal class KnownTypesDocumentProvider : IAsyncApiDocumentProvider
         var documentVersion = prototype.Info.Version;
         var types = _options
             .KnownMessageTypes
-            .Where(t => t.GetApiVersionFromNamespace().Map(v => v.ToString()).All(x => x == documentVersion))
+            .Where(t => t.GetApiVersionFromNamespace().MapToString().All(x => x == documentVersion))
             .Select(t => t.GetTypeInfo())
             .ToArray();
         return _generator.GenerateDocument(types, options, prototype, _serviceProvider);

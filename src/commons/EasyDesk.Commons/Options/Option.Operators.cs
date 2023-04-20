@@ -38,6 +38,8 @@ public static partial class StaticImports
         some: t => Some(mapper(t)),
         none: () => None);
 
+    public static Option<string> MapToString<T>(this Option<T> option) => option.FlatMap(o => (o?.ToString()).AsOption());
+
     public static Task<Option<R>> MapAsync<T, R>(this Option<T> option, AsyncFunc<T, R> mapper) where R : notnull => option.MatchAsync(
         some: async t => Some(await mapper(t)),
         none: () => Task.FromResult<Option<R>>(None));
