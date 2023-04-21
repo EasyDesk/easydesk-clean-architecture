@@ -23,6 +23,8 @@ public record UserId : IValue<UserId, string>
     public static UserId New(string value) => TryNew(value)
         .OrElseThrow(() => new ArgumentException($"User id length must be less than or equal to {MaxLength}.", nameof(value)));
 
+    public override string ToString() => Value;
+
     public static UserId FromGuid(Guid value) => New(value.ToString());
 
     public static UserId FromRandomGuid() => FromGuid(Guid.NewGuid());

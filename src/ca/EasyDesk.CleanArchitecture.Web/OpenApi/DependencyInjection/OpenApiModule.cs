@@ -89,7 +89,7 @@ public class OpenApiModule : AppModule
             return descriptor
                 .ControllerTypeInfo
                 .GetApiVersionFromNamespace()
-                .Map(v => v.ToString())
+                .MapToString()
                 .Contains(version);
         });
     }

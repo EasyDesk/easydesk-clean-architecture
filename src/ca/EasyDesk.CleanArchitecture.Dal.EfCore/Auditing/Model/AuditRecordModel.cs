@@ -66,7 +66,7 @@ internal class AuditRecordModel : IMultitenantEntity
             Type = record.Type,
             Name = record.Name,
             Description = record.Description.OrElseNull(),
-            User = record.UserInfo.Map(u => u.UserId.Value).OrElseNull(),
+            User = record.UserInfo.Map(u => u.UserId).MapToString().OrElseNull(),
             Success = record.Success,
             Instant = record.Instant,
         };
