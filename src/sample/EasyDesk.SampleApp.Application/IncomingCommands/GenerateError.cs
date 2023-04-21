@@ -40,6 +40,6 @@ public class GenerateError3Handler : IHandler<GenerateError3>
 {
     public Task<Result<Nothing>> Handle(GenerateError3 request)
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("Deliberately throwing a NotImplementedException");
     }
 }
