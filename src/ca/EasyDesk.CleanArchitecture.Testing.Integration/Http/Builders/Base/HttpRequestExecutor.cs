@@ -20,10 +20,11 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
 
     protected abstract W Wrap(AsyncFunc<I> request);
 
-    public W Send(Duration? timeout = null) => Wrap(() =>
+    public W Send(Duration? timeout = null) => Wrap(async () =>
     {
-        using var cts = new CancellationTokenSource((timeout ?? Timeout).ToTimeSpan());
-        return MakeRequest(cts.Token);
+        var actualTimeout = timeout ?? Timeout;
+        using var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
+        return await MakeRequest(cts.Token);
     });
 
     public W PollWhile(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>

@@ -7,19 +7,6 @@ using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
-public class ContextProviderOptions
-{
-    private readonly Dictionary<string, string> _claimToAttributes = new();
-
-    public ContextProviderOptions AddAttributeFromClaim(string claim, string attribute)
-    {
-        _claimToAttributes.Add(claim, attribute);
-        return this;
-    }
-
-    internal Option<string> ClaimToAttribute(string claim) => _claimToAttributes.GetOption(claim);
-}
-
 internal sealed class BasicContextProvider : IContextProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -91,4 +78,17 @@ internal sealed class BasicContextProvider : IContextProvider
 
         return other();
     }
+}
+
+public class ContextProviderOptions
+{
+    private readonly Dictionary<string, string> _claimToAttributes = new();
+
+    public ContextProviderOptions AddAttributeFromClaim(string claim, string attribute)
+    {
+        _claimToAttributes.Add(claim, attribute);
+        return this;
+    }
+
+    internal Option<string> ClaimToAttribute(string claim) => _claimToAttributes.GetOption(claim);
 }
