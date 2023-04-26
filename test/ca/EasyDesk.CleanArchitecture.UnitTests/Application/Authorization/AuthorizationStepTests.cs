@@ -24,7 +24,7 @@ public class AuthorizationStepTests
     public AuthorizationStepTests()
     {
         _contextProvider = Substitute.For<IContextProvider>();
-        _contextProvider.Context.Returns(new AnonymousRequestContext());
+        _contextProvider.CurrentContext.Returns(new ContextInfo.AnonymousRequest());
 
         _next = Substitute.For<NextPipelineStep<Nothing>>();
         _next().Returns(Ok);
@@ -56,7 +56,7 @@ public class AuthorizationStepTests
         return await step.Run(request, _next);
     }
 
-    private void Authenticate() => _contextProvider.Context.Returns(new AuthenticatedRequestContext(_userInfo));
+    private void Authenticate() => _contextProvider.CurrentContext.Returns(new ContextInfo.AuthenticatedRequest(_userInfo));
 
     [Fact]
     public async Task ShouldAllowNonAuthenticatedUserIfRequestAllowsUnknownUser()

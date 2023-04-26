@@ -20,7 +20,7 @@ public class DefaultContextTenantReaderTests
     public DefaultContextTenantReaderTests()
     {
         _contextProvider = Substitute.For<IContextProvider>();
-        _contextProvider.Context.Returns(new AnonymousRequestContext());
+        _contextProvider.CurrentContext.Returns(new ContextInfo.AnonymousRequest());
 
         _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         _httpContextAccessor.HttpContext.Returns(_httpContext);

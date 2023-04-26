@@ -18,7 +18,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Auditing;
 public class AuditingStepTests
 {
     private static readonly Instant _now = Instant.FromUtc(2023, 10, 21, 13, 45);
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IContextProvider _contextProvider;
     private readonly IAuditStorage _auditStorage;
     private readonly AuditConfigurer _auditConfigurer = new();
     private readonly FakeClock _clock = new(_now);
@@ -34,8 +34,8 @@ public class AuditingStepTests
 
     public AuditingStepTests()
     {
-        _userInfoProvider = Substitute.For<IUserInfoProvider>();
-        _userInfoProvider.User.Returns(None);
+        _contextProvider = Substitute.For<IContextProvider>();
+        _contextProvider.CurrentContext.Returns(new ContextInfo.AnonymousRequest());
 
         _auditStorage = Substitute.For<IAuditStorage>();
 
@@ -44,7 +44,7 @@ public class AuditingStepTests
     }
 
     private Task<Result<Nothing>> Run<T>() where T : IReadWriteOperation, new() =>
-        new AuditingStep<T, Nothing>(_auditStorage, _userInfoProvider, _auditConfigurer, _clock).Run(new T(), _next);
+        new AuditingStep<T, Nothing>(_auditStorage, _contextProvider, _auditConfigurer, _clock).Run(new T(), _next);
 
     [Fact]
     public async Task ShouldNotRecordAnyAudit_IfTheRequestIsNotACommandNorAnEvent()
@@ -81,7 +81,9 @@ public class AuditingStepTests
     private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<UserInfo> userInfo, Result<Nothing> result)
         where T : IReadWriteOperation, new()
     {
-        _userInfoProvider.User.Returns(userInfo);
+        _contextProvider.CurrentContext.Returns(userInfo.Match<ContextInfo>(
+            some: i => new ContextInfo.AuthenticatedRequest(i),
+            none: () => new ContextInfo.AnonymousRequest()));
         _next().Returns(result);
 
         var stepResult = await Run<T>();

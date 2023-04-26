@@ -28,7 +28,7 @@ public class ContextProviderTests
     {
         _httpContext.SetupAuthenticatedUser(_user);
 
-        _sut.User.IsPresent.ShouldBeTrue();
-        _sut.Context.ShouldBe(new AuthenticatedRequestContext(UserInfo.Create(_user)));
+        _sut.GetUserInfo().IsPresent.ShouldBeTrue();
+        _sut.CurrentContext.ShouldBe(new ContextInfo.AuthenticatedRequest(UserInfo.Create(_user)));
     }
 }

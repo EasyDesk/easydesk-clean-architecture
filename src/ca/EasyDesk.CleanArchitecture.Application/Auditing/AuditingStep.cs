@@ -13,18 +13,18 @@ public sealed class AuditingStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
 {
     private readonly IAuditStorage _auditStorage;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IContextProvider _contextProvider;
     private readonly IAuditConfigurer _auditConfigurer;
     private readonly IClock _clock;
 
     public AuditingStep(
         IAuditStorage auditStorage,
-        IUserInfoProvider userInfoProvider,
+        IContextProvider contextProvider,
         IAuditConfigurer auditConfigurer,
         IClock clock)
     {
         _auditStorage = auditStorage;
-        _userInfoProvider = userInfoProvider;
+        _contextProvider = contextProvider;
         _auditConfigurer = auditConfigurer;
         _clock = clock;
     }
@@ -47,7 +47,7 @@ public sealed class AuditingStep<T, R> : IPipelineStep<T, R>
                 Name: typeof(T).Name,
                 Description: _auditConfigurer.Description,
                 Properties: _auditConfigurer.Properties,
-                UserInfo: _userInfoProvider.User,
+                UserInfo: _contextProvider.GetUserInfo(),
                 Success: result.IsSuccess,
                 Instant: _clock.GetCurrentInstant()));
     }

@@ -24,10 +24,10 @@ internal class DefaultContextTenantReader : IContextTenantReader
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public Option<string> GetTenantId() => _contextProvider.Context switch
+    public Option<string> GetTenantId() => _contextProvider.CurrentContext switch
     {
-        RequestContext => GetTenantIdForRequestContext(),
-        AsyncMessageContext => GetTenantIdForAsyncMessageContext(),
+        ContextInfo.Request => GetTenantIdForRequestContext(),
+        ContextInfo.AsyncMessage => GetTenantIdForAsyncMessageContext(),
         _ => None
     };
 

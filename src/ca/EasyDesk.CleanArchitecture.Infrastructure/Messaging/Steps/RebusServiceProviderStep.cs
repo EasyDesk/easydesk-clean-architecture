@@ -19,9 +19,9 @@ public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
     }
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next) =>
-        _contextProvider.Context switch
+        _contextProvider.CurrentContext switch
         {
-            AsyncMessageContext => await HandleAsyncMessageContext(next),
+            ContextInfo.AsyncMessage => await HandleAsyncMessageContext(next),
             _ => await HandleGenericContext(next)
         };
 

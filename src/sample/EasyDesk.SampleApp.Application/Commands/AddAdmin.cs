@@ -15,17 +15,17 @@ public record AddAdmin() : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
 public class AddAdminHandler : IHandler<AddAdmin>
 {
     private readonly IUserRolesManager _userRolesManager;
-    private readonly IUserInfoProvider _userInfoProvider;
+    private readonly IContextProvider _contextProvider;
 
-    public AddAdminHandler(IUserRolesManager userRolesManager, IUserInfoProvider userInfoProvider)
+    public AddAdminHandler(IUserRolesManager userRolesManager, IContextProvider contextProvider)
     {
         _userRolesManager = userRolesManager;
-        _userInfoProvider = userInfoProvider;
+        _contextProvider = contextProvider;
     }
 
     public async Task<Result<Nothing>> Handle(AddAdmin request)
     {
-        await _userRolesManager.GrantRolesToUser(_userInfoProvider.User.Value.UserId, Roles.Admin);
+        await _userRolesManager.GrantRolesToUser(_contextProvider.RequireUserInfo().UserId, Roles.Admin);
         return Ok;
     }
 }

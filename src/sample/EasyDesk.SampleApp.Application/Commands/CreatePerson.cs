@@ -30,9 +30,9 @@ public class CreatePersonValidator : AbstractValidator<CreatePerson>
 public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSnapshot>
 {
     private readonly IPersonRepository _personRepository;
-    private readonly IUserInfoProvider _contextProvider;
+    private readonly IContextProvider _contextProvider;
 
-    public CreatePersonHandler(IPersonRepository personRepository, IUserInfoProvider contextProvider)
+    public CreatePersonHandler(IPersonRepository personRepository, IContextProvider contextProvider)
     {
         _personRepository = personRepository;
         _contextProvider = contextProvider;

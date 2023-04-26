@@ -20,10 +20,10 @@ public sealed class AuthorizationStep<T, R> : IPipelineStep<T, R>
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return _contextProvider.Context switch
+        return _contextProvider.CurrentContext switch
         {
-            AuthenticatedRequestContext(var userInfo) => await HandleAuthenticatedRequest(request, userInfo, next),
-            AnonymousRequestContext => await HandleUnknownUserRequest(next),
+            ContextInfo.AuthenticatedRequest(var userInfo) => await HandleAuthenticatedRequest(request, userInfo, next),
+            ContextInfo.AnonymousRequest => await HandleUnknownUserRequest(next),
             _ => await next()
         };
     }

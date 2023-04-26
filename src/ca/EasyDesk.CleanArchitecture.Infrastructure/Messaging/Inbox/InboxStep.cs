@@ -21,7 +21,7 @@ public sealed class InboxStep<T> : IPipelineStep<T, Nothing>
 
     public async Task<Result<Nothing>> Run(T request, NextPipelineStep<Nothing> next)
     {
-        if (_contextProvider.Context is not AsyncMessageContext)
+        if (_contextProvider.CurrentContext is not ContextInfo.AsyncMessage)
         {
             return await next();
         }
