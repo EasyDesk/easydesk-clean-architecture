@@ -23,8 +23,8 @@
       },
       "Argon": {
         "type": "Transitive",
-        "resolved": "0.5.2",
-        "contentHash": "VSYrsvvYhArAubf3yE4/4qPrZ7Mo5znTH4/x8j3Krw+oEe30ijzMlGGGQ2WmkqBvS8DPvg7jZVnTeZHeUtp1mQ=="
+        "resolved": "0.6.0",
+        "contentHash": "sEq6GgcSsN/lADJND8oYV+t+0rBZjkgEEsMoZqI3l5nHoLqxz/lDe+df9Tv5n1t8JPvd77OC9iGIU1R3rU+XnA=="
       },
       "Argon.NodaTime": {
         "type": "Transitive",
@@ -304,12 +304,11 @@
       },
       "Shouldly": {
         "type": "Transitive",
-        "resolved": "4.2.0",
-        "contentHash": "6mgI6Mv4YxyZodmeEYXLAr0/qfULS2v5XIx3b0R6FxDGkK8UMBefJbsOnlRMa68eNlxStqrczhKaP76S+K//MA==",
+        "resolved": "4.2.1",
+        "contentHash": "dKAKiSuhLKqD2TXwLKtqNg1nwzJcIKOOMncZjk9LYe4W+h+SCftpWdxwR79YZUIHMH+3Vu9s0s0UHNrgICLwRQ==",
         "dependencies": {
-          "DiffEngine": "11.2.0",
-          "EmptyFiles": "4.4.0",
-          "Microsoft.CSharp": "4.7.0"
+          "DiffEngine": "11.3.0",
+          "EmptyFiles": "4.4.0"
         }
       },
       "SimpleInfoName": {
@@ -390,10 +389,10 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.12.3",
-        "contentHash": "GW+xhD5sO+hjx+lzQRhxLibKOJ1doKerpA5MG1dnZog39KzWeCSjpKUOq7oXhB6xy5H0Xyynke7ztOxxMhTpkA==",
+        "resolved": "19.13.0",
+        "contentHash": "syDLdPW5h8nId7lHnI3JoNttI5NqnT9iuzODsSCDVBe4+00ZnOjurcQGKYUrZBDBESlwuYR4dNK3Suf6gAtXIA==",
         "dependencies": {
-          "Argon": "0.5.2",
+          "Argon": "0.6.0",
           "DiffEngine": "11.3.0",
           "EmptyFiles": "4.4.0",
           "SimpleInfoName": "2.1.1"
@@ -469,8 +468,8 @@
           "EasyDesk.Commons": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
-          "Shouldly": "[4.2.0, )",
-          "Verify": "[19.12.3, )",
+          "Shouldly": "[4.2.1, )",
+          "Verify": "[19.13.0, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
