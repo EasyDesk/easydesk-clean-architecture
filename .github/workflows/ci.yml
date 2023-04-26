@@ -17,7 +17,7 @@ on:
 
 jobs:
   build:
-    name: Build & Test
+    name: Build & Unit Test
     runs-on: ubuntu-20.04
     env:
       PROJECT_DIRS: |
@@ -65,20 +65,6 @@ jobs:
         with:
           path: test/ca/EasyDesk.CleanArchitecture.UnitTests
           test-args: --logger 'GitHubActions'
-      - name: Integration tests (PostgreSql)
-        uses: EasyDesk/action-dotnet-test@v1
-        env:
-          DB_PROVIDER: PostgreSql
-        with:
-          path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
-          test-args: --logger 'GitHubActions'
-      - name: Integration tests (SqlServer)
-        uses: EasyDesk/action-dotnet-test@v1
-        env:
-          DB_PROVIDER: SqlServer
-        with:
-          path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
-          test-args: --logger 'GitHubActions'
       - name: Pack
         uses: EasyDesk/action-dotnet-pack@v1
         with:
@@ -90,11 +76,40 @@ jobs:
         with:
           name: nuget-package
           path: ${{ env.OUTPUT_DIR }}
+
+  test:
+    name: Integration Test
+    runs-on: ubuntu-20.04
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        db-provider:
+          - SqlServer
+          - PostgreSql
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Build
+        uses: EasyDesk/action-dotnet-build@v1
+        with:
+          warnings-as-errors: true
+      - name: Integration tests (${{ matrix.db-provider }})
+        uses: EasyDesk/action-dotnet-test@v1
+        env:
+          DB_PROVIDER: ${{ matrix.db-provider }}
+        with:
+          path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
+          test-args: --logger 'GitHubActions'
+
   release:
     name: GitHub Release
     if: needs.build.outputs.should-release == 'true'
     concurrency: release
-    needs: [build]
+    needs: [build, test]
     runs-on: ubuntu-20.04
     permissions: write-all
     steps:
@@ -108,6 +123,7 @@ jobs:
           version: ${{ needs.build.outputs.version }}
           prerelease: ${{ needs.build.outputs.is-prerelease }}
           files: '*.nupkg'
+
   deploy:
     name: Deploy to NuGet
     needs: [release]
