@@ -18,7 +18,6 @@ internal class Dispatcher : IDispatcher
     }
 
     public async Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper)
-        where R : notnull
     {
         var dispatchableType = dispatchable.GetType();
         var methodInfo = _dispatchMethodsByType
@@ -29,8 +28,6 @@ internal class Dispatcher : IDispatcher
     }
 
     private async Task<Result<R>> DispatchImpl<T, X, R>(T dispatchable, AsyncFunc<X, R> mapper)
-        where R : notnull
-        where X : notnull
         where T : IDispatchable<X>
     {
         var handler = FindHandler<T, X>();
@@ -42,7 +39,6 @@ internal class Dispatcher : IDispatcher
     }
 
     private IHandler<T, R> FindHandler<T, R>()
-        where R : notnull
         where T : IDispatchable<R>
     {
         var handler = _serviceProvider.GetService<IHandler<T, R>>();

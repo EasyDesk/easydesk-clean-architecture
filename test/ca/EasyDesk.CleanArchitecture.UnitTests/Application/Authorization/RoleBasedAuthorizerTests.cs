@@ -19,7 +19,7 @@ public class RoleBasedAuthorizerTests
     [RequireAnyOf(C)]
     private record RequestWithRequirements;
 
-    private readonly UserInfo _userInfo = UserInfo.Create(UserId.New("user"));
+    private readonly UserInfo _userInfo = new(UserId.New("user"));
     private readonly IPermissionsProvider _permissionsProvider;
 
     public RoleBasedAuthorizerTests()
@@ -30,7 +30,7 @@ public class RoleBasedAuthorizerTests
 
     private RoleBasedAuthorizer CreateAuthorizer<T>() => new(_permissionsProvider);
 
-    private async Task<bool> IsAuthorized<T>() where T : notnull, new() =>
+    private async Task<bool> IsAuthorized<T>() where T : new() =>
         await CreateAuthorizer<T>().IsAuthorized(new T(), _userInfo);
 
     private void SetPermissions(params string[] permissions)
@@ -39,13 +39,13 @@ public class RoleBasedAuthorizerTests
         _permissionsProvider.GetPermissionsForUser(_userInfo).Returns(permissionSet);
     }
 
-    private async Task ShouldNotBeAuthorized<T>() where T : notnull, new()
+    private async Task ShouldNotBeAuthorized<T>() where T : new()
     {
         var result = await IsAuthorized<T>();
         result.ShouldBe(false);
     }
 
-    private async Task ShouldBeAuthorized<T>() where T : notnull, new()
+    private async Task ShouldBeAuthorized<T>() where T : new()
     {
         var result = await IsAuthorized<T>();
         result.ShouldBe(true);

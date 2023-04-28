@@ -14,10 +14,10 @@ public static partial class StaticImports
     public static async Task<Option<T>> ThenIfAbsentAsync<T>(this Task<Option<T>> option, AsyncAction action) =>
         await (await option).IfAbsentAsync(action);
 
-    public static async Task<Option<R>> ThenMap<T, R>(this Task<Option<T>> option, Func<T, R> mapper) where R : notnull =>
+    public static async Task<Option<R>> ThenMap<T, R>(this Task<Option<T>> option, Func<T, R> mapper) =>
         (await option).Map(mapper);
 
-    public static async Task<Option<R>> ThenMapAsync<T, R>(this Task<Option<T>> option, AsyncFunc<T, R> mapper) where R : notnull =>
+    public static async Task<Option<R>> ThenMapAsync<T, R>(this Task<Option<T>> option, AsyncFunc<T, R> mapper) =>
         await (await option).MapAsync(mapper);
 
     public static async Task<Option<T>> ThenFilter<T>(this Task<Option<T>> option, Predicate<T> predicate) =>

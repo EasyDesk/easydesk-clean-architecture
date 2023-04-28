@@ -3,7 +3,6 @@
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 public interface ISagaStepHandler<T, R, TId, TState>
-    where R : notnull
     where T : IDispatchable<R>
 {
     Task<Result<R>> Handle(T request, SagaContext<TId, TState> context);

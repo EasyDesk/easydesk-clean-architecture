@@ -17,7 +17,6 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
     where TStartCommand : IDispatchable<TResult>
     where TBatchCommand : AbstractBulkOperationCommand
     where TSelf : AbstractSequentialBulkOperation<TSelf, TStartCommand, TResult, TWork, TBatchCommand>
-    where TResult : notnull
 {
     private readonly ICommandSender _commandSender;
 

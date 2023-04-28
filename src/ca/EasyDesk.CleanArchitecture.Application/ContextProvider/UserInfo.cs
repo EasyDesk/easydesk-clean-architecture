@@ -2,9 +2,7 @@
 
 public record UserInfo(UserId UserId, AttributeCollection Attributes)
 {
-    public static UserInfo Create(UserId userId) =>
-        Create(userId, AttributeCollection.Empty);
-
-    public static UserInfo Create(UserId userId, AttributeCollection attributes) =>
-        new(userId, attributes);
+    public UserInfo(UserId userId) : this(userId, AttributeCollection.Empty)
+    {
+    }
 }

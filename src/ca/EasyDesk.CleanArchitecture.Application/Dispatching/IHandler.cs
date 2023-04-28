@@ -1,7 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Dispatching;
 
 public interface IHandler<T, R>
-    where R : notnull
     where T : IDispatchable<R>
 {
     Task<Result<R>> Handle(T request);

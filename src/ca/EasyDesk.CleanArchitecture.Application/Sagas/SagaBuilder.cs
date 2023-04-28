@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 public sealed class SagaBuilder<TId, TState>
-    where TState : notnull
 {
     private readonly ISagaConfigurationSink<TId, TState> _sink;
 
@@ -14,7 +13,7 @@ public sealed class SagaBuilder<TId, TState>
         _sink = sink;
     }
 
-    public SagaCorrelationSelector<T, R, TId, TState> On<T, R>() where T : IDispatchable<R> where R : notnull =>
+    public SagaCorrelationSelector<T, R, TId, TState> On<T, R>() where T : IDispatchable<R> =>
         new(_sink);
 
     public SagaCorrelationSelector<T, Nothing, TId, TState> On<T>() where T : IDispatchable<Nothing> =>
@@ -22,8 +21,6 @@ public sealed class SagaBuilder<TId, TState>
 }
 
 public sealed class SagaCorrelationSelector<T, R, TId, TState>
-    where TState : notnull
-    where R : notnull
     where T : IDispatchable<R>
 {
     private readonly ISagaConfigurationSink<TId, TState> _sink;
@@ -38,8 +35,6 @@ public sealed class SagaCorrelationSelector<T, R, TId, TState>
 }
 
 public sealed class SagaHandlerSelector<T, R, TId, TState>
-    where TState : notnull
-    where R : notnull
     where T : IDispatchable<R>
 {
     private readonly ISagaConfigurationSink<TId, TState> _sink;
@@ -109,9 +104,7 @@ public sealed class SagaHandlerSelector<T, R, TId, TState>
 }
 
 internal interface ISagaConfigurationSink<TId, TState>
-    where TState : notnull
 {
     void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration)
-        where R : notnull
         where T : IDispatchable<R>;
 }

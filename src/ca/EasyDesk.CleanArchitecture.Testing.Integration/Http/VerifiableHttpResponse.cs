@@ -5,5 +5,4 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
 public record VerifiableHttpResponse<T, M>(
     HttpStatusCode StatusCode,
-    ResponseDto<T, M>? Content)
-    where T : notnull;
+    ResponseDto<T, M>? Content);

@@ -34,7 +34,7 @@ public class AddAdminTests : SampleIntegrationTest
     {
         await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
             _tenantId,
-            async p => condition(await p.GetRolesForUser(UserInfo.Create(_adminId))));
+            async p => condition(await p.GetRolesForUser(new(_adminId))));
     }
 
     [Fact]

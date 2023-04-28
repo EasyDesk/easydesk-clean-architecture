@@ -3,8 +3,6 @@
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 public sealed class SagaRequestConfiguration<T, R, TId, TState>
-    where R : notnull
-    where TState : notnull
     where T : IDispatchable<R>
 {
     private readonly Func<T, TId> _sagaIdProperty;

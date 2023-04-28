@@ -6,7 +6,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 public delegate Task SaveChangesDelegate();
 
 public sealed class SaveChangesStep<T, R> : IPipelineStep<T, R>
-    where R : notnull
     where T : IReadWriteOperation
 {
     private readonly SaveChangesDelegate _saveChangesDelegate;

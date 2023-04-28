@@ -15,7 +15,7 @@ public class AuthorizationStepTests
     [AllowUnknownUser]
     public record TestRequestWithUnknownUserAllowed : IDispatchable<Nothing>;
 
-    private readonly UserInfo _userInfo = UserInfo.Create(UserId.New("user"));
+    private readonly UserInfo _userInfo = new(UserId.New("user"));
     private readonly IContextProvider _contextProvider;
     private readonly IAuthorizer _authorizer;
     private readonly TestRequest _request = new();

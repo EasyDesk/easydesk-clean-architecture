@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Commons.Collections;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
 public sealed class ValidationStep<T, R> : IPipelineStep<T, R>
-    where R : notnull
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -24,14 +22,7 @@ public sealed class ValidationStep<T, R> : IPipelineStep<T, R>
             return await next();
         }
 
-        var context = new ValidationContext<T>(request);
-        var errors = validators
-            .Select(x => x.Validate(context))
-            .SelectMany(x => x.Errors)
-            .Where(x => x is not null)
-            .Select(x => Errors.InvalidInput(x.PropertyName, x.ErrorMessage))
-            .ToList();
-
-        return errors.Any() ? Errors.Multiple(errors.First(), errors.Skip(1)) : await next();
+        return await ValidationUtils.Validate(request, validators)
+            .FlatMapAsync(_ => next());
     }
 }

@@ -34,7 +34,7 @@ internal sealed class BasicContextProvider : IContextProvider
                 .Where(i => i.IsAuthenticated)
                 .SelectMany(i => i.FindFirst(ClaimTypes.NameIdentifier).AsOption())
                 .Select(c => c.Value)
-                .Select(id => UserInfo.Create(UserId.New(id), GetUserAttributes(c.User)))
+                .Select(id => new UserInfo(UserId.New(id), GetUserAttributes(c.User)))
                 .FirstOption()
                 .Match<ContextInfo>(
                     some: userInfo => new ContextInfo.AuthenticatedRequest(userInfo),

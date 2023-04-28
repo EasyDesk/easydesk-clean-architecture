@@ -6,7 +6,6 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 
 public class HttpSingleRequestExecutor<T>
     : HttpRequestExecutor<HttpSingleResponseWrapper<T>, ImmutableHttpResponseMessage, HttpSingleRequestExecutor<T>>
-    where T : notnull
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;

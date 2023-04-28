@@ -11,7 +11,7 @@ public abstract class CleanArchitectureController : AbstractController
 {
     private T GetService<T>() where T : notnull => HttpContext.RequestServices.GetRequiredService<T>();
 
-    protected ActionResultBuilder<T, T, Nothing> Dispatch<T>(IDispatchable<T> request) where T : notnull =>
+    protected ActionResultBuilder<T, T, Nothing> Dispatch<T>(IDispatchable<T> request) =>
         DispatchInternal(d => d.Dispatch(request), It, _ => Nothing.Value);
 
     protected PaginatedActionResultBuilder<T> DispatchWithPagination<T>(
@@ -29,9 +29,7 @@ public abstract class CleanArchitectureController : AbstractController
     private ActionResultBuilder<TResult, TDto, TMeta> DispatchInternal<TResult, TDto, TMeta>(
         AsyncFunc<IDispatcher, Result<TResult>> request,
         Func<TResult, TDto> mapper,
-        Func<Result<TResult>, TMeta> meta)
-        where TDto : notnull
-        where TResult : notnull =>
+        Func<Result<TResult>, TMeta> meta) =>
         new(() => request(GetService<IDispatcher>()), mapper, meta, this);
 
     private PaginatedActionResultBuilder<TDto> DispatchInternalWithPagination<TDto>(
@@ -40,9 +38,9 @@ public abstract class CleanArchitectureController : AbstractController
         Func<Result<PageInfo<TDto>>, PaginationMetaDto> meta) =>
         new(() => request(GetService<IDispatcher>()), mapper, meta, this);
 
-    protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error) where TDto : notnull =>
+    protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error) =>
         new ActionResultBuilder<TDto, TDto, Nothing>(() => Task.FromResult(new Result<TDto>(error)), It, _ => Nothing.Value, this).ReturnOk();
 
-    protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error, params Error[] secondaryErrors) where TDto : notnull =>
+    protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error, params Error[] secondaryErrors) =>
         Failure<TDto>(Errors.Multiple(error, secondaryErrors));
 }

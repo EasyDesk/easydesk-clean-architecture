@@ -105,8 +105,8 @@ public class AuditingStepTests
         var userId = UserId.New("user-id");
         return Matrix
             .Axis(
-                Some(UserInfo.Create(userId)),
-                Some(UserInfo.Create(userId, AttributeCollection.FromFlatKeyValuePairs(
+                Some(new UserInfo(userId)),
+                Some(new UserInfo(userId, AttributeCollection.FromFlatKeyValuePairs(
                     ("name", "john"),
                     ("role", "admin"),
                     ("role", "user")))),

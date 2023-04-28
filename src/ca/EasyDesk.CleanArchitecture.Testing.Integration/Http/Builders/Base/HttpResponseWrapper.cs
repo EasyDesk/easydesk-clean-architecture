@@ -4,7 +4,6 @@ using Newtonsoft.Json;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public class HttpResponseWrapper<T, M>
-    where T : notnull
 {
     private readonly JsonSerializerSettings _jsonSerializerSettings;
     private readonly AsyncCache<ImmutableHttpResponseMessage> _response;

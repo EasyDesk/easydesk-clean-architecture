@@ -6,7 +6,6 @@ using Rebus.Transport;
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 
 public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
-    where R : notnull
     where T : IReadWriteOperation
 {
     private readonly IServiceProvider _serviceProvider;

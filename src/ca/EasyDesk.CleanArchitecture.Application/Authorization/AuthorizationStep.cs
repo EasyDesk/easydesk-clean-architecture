@@ -6,8 +6,6 @@ using System.Reflection;
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public sealed class AuthorizationStep<T, R> : IPipelineStep<T, R>
-    where T : notnull
-    where R : notnull
 {
     private readonly IAuthorizer _authorizer;
     private readonly IContextProvider _contextProvider;
@@ -29,7 +27,9 @@ public sealed class AuthorizationStep<T, R> : IPipelineStep<T, R>
     }
 
     private async Task<Result<R>> HandleAuthenticatedRequest(
-        T request, UserInfo userInfo, NextPipelineStep<R> next)
+        T request,
+        UserInfo userInfo,
+        NextPipelineStep<R> next)
     {
         var isAuthorized = await _authorizer.IsAuthorized(request, userInfo);
         return isAuthorized ? await next() : Errors.Forbidden();

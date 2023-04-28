@@ -1,7 +1,4 @@
 ﻿using Argon;
-using EasyDesk.Commons;
-using System;
-using static EasyDesk.Commons.StaticImports;
 
 namespace EasyDesk.Testing.VerifyConfiguration;
 
@@ -18,13 +15,12 @@ internal class OptionConverter : JsonConverterFactory
         objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(Option<>);
 
     private class OptionConverterImpl<T> : JsonConverter<Option<T>>
-        where T : notnull
     {
         public override void WriteJson(JsonWriter writer, Option<T> value, JsonSerializer serializer)
         {
             value.Match(
                 some: t => serializer.Serialize(writer, t),
-                none: () => writer.WriteNull());
+                none: writer.WriteNull);
         }
 
         public override Option<T> ReadJson(JsonReader reader, Type objectType, Option<T> existingValue, bool hasExistingValue, JsonSerializer serializer)

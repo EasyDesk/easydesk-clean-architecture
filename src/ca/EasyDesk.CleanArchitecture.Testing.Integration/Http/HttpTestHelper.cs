@@ -26,19 +26,19 @@ public class HttpTestHelper
         _settings = jsonSettingsConfigurator.CreateSettings();
     }
 
-    public HttpSingleRequestExecutor<R> Get<R>(string requestUri) where R : notnull =>
+    public HttpSingleRequestExecutor<R> Get<R>(string requestUri) =>
         Request<R>(requestUri, HttpMethod.Get);
 
-    public HttpPaginatedRequestExecutor<R> GetPaginated<R>(string requestUri) where R : notnull =>
+    public HttpPaginatedRequestExecutor<R> GetPaginated<R>(string requestUri) =>
         RequestPaginated<R>(requestUri, HttpMethod.Get);
 
-    public HttpSingleRequestExecutor<R> Post<T, R>(string requestUri, T body) where R : notnull =>
+    public HttpSingleRequestExecutor<R> Post<T, R>(string requestUri, T body) =>
         Request<R>(requestUri, HttpMethod.Post, JsonContent(body));
 
-    public HttpSingleRequestExecutor<R> Put<T, R>(string requestUri, T body) where R : notnull =>
+    public HttpSingleRequestExecutor<R> Put<T, R>(string requestUri, T body) =>
         Request<R>(requestUri, HttpMethod.Put, JsonContent(body));
 
-    public HttpSingleRequestExecutor<R> Delete<R>(string requestUri) where R : notnull =>
+    public HttpSingleRequestExecutor<R> Delete<R>(string requestUri) =>
         Request<R>(requestUri, HttpMethod.Delete);
 
     private ImmutableHttpContent JsonContent<T>(T body)
@@ -49,7 +49,6 @@ public class HttpTestHelper
     }
 
     public HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, ImmutableHttpContent? content = null)
-         where R : notnull
     {
         var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _settings)
             .WithContent(content);

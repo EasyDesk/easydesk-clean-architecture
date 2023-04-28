@@ -102,7 +102,7 @@ internal class AuditRecordModel : IMultitenantEntity
             Type,
             Name,
             Description.AsOption(),
-            User.AsOption().Map(id => UserInfo.Create(UserId.New(id), CreateAttributeCollection())),
+            User.AsOption().Map(id => new UserInfo(UserId.New(id), CreateAttributeCollection())),
             Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
             Success,
             Instant);

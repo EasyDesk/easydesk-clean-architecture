@@ -15,7 +15,6 @@ internal class AutoScopingDispatcher : IDispatcher
     }
 
     public async Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper)
-        where R : notnull
     {
         await using (var scope = _serviceProvider.CreateAsyncScope())
         {

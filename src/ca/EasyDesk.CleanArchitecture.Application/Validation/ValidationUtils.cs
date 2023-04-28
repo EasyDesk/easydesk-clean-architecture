@@ -1,10 +1,30 @@
-﻿using FluentValidation;
+﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using FluentValidation;
 using static EasyDesk.Commons.ComparisonUtils;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
-public static class ValidatorUtils
+public static class ValidationUtils
 {
+    public static Result<T> Validate<T>(T value, IEnumerable<IValidator<T>> validators)
+    {
+        var context = new ValidationContext<T>(value);
+        var errors = validators
+            .Select(x => x.Validate(context))
+            .SelectMany(x => x.Errors)
+            .Where(x => x is not null)
+            .Select(x => Errors.InvalidInput(x.PropertyName, x.ErrorMessage))
+            .ToList();
+        return errors.Any()
+            ? Errors.Multiple(errors.First(), errors.Skip(1))
+            : value;
+    }
+
+    public static Result<T> Validate<T>(T value, params IValidator<T>[] validators)
+    {
+        return Validate(value, validators.AsEnumerable());
+    }
+
     public static IRuleBuilderOptions<T, TProperty> MustBeLessThan<T, TProperty>(
         this IRuleBuilder<T, TProperty> builder, TProperty value)
         where TProperty : IComparable<TProperty> =>

@@ -13,7 +13,6 @@ public class DispatcherTests
     public record StringRequest : IDispatchable<string>;
 
     public abstract class GenericStepBase<T, R> : IPipelineStep<T, R>
-        where R : notnull
     {
         private readonly Action _before;
         private readonly Action _after;
@@ -34,7 +33,6 @@ public class DispatcherTests
     }
 
     public class GenericStepA<T, R> : GenericStepBase<T, R>
-        where R : notnull
     {
         public GenericStepA(Action<string> notifier) : base(() => notifier("A1"), () => notifier("A2"))
         {
@@ -42,7 +40,6 @@ public class DispatcherTests
     }
 
     public class GenericStepB<T, R> : GenericStepBase<T, R>
-        where R : notnull
     {
         public GenericStepB(Action<string> notifier) : base(() => notifier("B1"), () => notifier("B2"))
         {
@@ -225,14 +222,12 @@ public class DispatcherTests
     }
 
     private void SetupPipeline<T, R>(params IPipelineStep<T, R>[] steps)
-        where R : notnull
     {
         _pipeline.GetSteps<T, R>(default!).ReturnsForAnyArgs(steps);
     }
 
     private IPipelineStep<T, R> SubstituteForPipelineStep<T, R>()
         where T : IDispatchable<R>
-        where R : notnull
     {
         var step = Substitute.For<IPipelineStep<T, R>>();
         step.Run(default!, default!).ReturnsForAnyArgs(x => x.Arg<NextPipelineStep<R>>()());

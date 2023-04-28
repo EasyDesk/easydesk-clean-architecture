@@ -1,21 +1,20 @@
 ﻿namespace EasyDesk.Commons;
 
 public readonly record struct Result<T>
-    where T : notnull
 {
-    private readonly T? _value;
-    private readonly Error? _error;
+    private readonly T _value;
+    private readonly Error _error;
 
     public Result(T value)
     {
         _value = value;
-        _error = default;
+        _error = default!;
         IsFailure = false;
     }
 
     public Result(Error error)
     {
-        _value = default;
+        _value = default!;
         _error = error;
         IsFailure = true;
     }
@@ -40,7 +39,7 @@ public readonly record struct Result<T>
         success: _ => throw new InvalidOperationException("Cannot read error from a successful result"),
         failure: e => e);
 
-    public R Match<R>(Func<T, R> success, Func<Error, R> failure) => IsFailure ? failure(_error!) : success(_value!);
+    public R Match<R>(Func<T, R> success, Func<Error, R> failure) => IsFailure ? failure(_error) : success(_value);
 
     public void Match(Action<T>? success = null, Action<Error>? failure = null)
     {

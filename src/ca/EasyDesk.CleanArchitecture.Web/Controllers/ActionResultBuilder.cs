@@ -17,8 +17,6 @@ public delegate Option<ActionResult> ErrorHandler(object body, Error error);
 public delegate ActionResult SuccessHandler<TResult>(object body, TResult result);
 
 public class ActionResultBuilder<TResult, TDto, TMeta>
-    where TResult : notnull
-    where TDto : notnull
 {
     private readonly AsyncFunc<Result<TResult>> _resultProvider;
     private readonly Func<TResult, TDto> _mapper;
@@ -55,13 +53,12 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
     }
 
     public ActionResultBuilder<TResult, TNewDto, TMeta> Map<TNewDto>(Func<TDto, TNewDto> mapper)
-        where TNewDto : notnull
     {
         return new(_resultProvider, x => mapper(_mapper(x)), _meta, _controller, _errorHandlers);
     }
 
     public ActionResultBuilder<TResult, TNewDto, TMeta> MapTo<TNewDto>()
-        where TNewDto : notnull, IMappableFrom<TDto, TNewDto> => Map(TNewDto.MapFrom);
+        where TNewDto : IMappableFrom<TDto, TNewDto> => Map(TNewDto.MapFrom);
 
     public async Task<ActionResult<ResponseDto<TDto, TMeta>>> OnSuccess(SuccessHandler<TResult> handler)
     {

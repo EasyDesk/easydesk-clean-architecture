@@ -5,8 +5,7 @@ namespace EasyDesk.Commons.Collections;
 public static class ImmutableDictionaryUtils
 {
     public static Option<V> GetOption<K, V>(this IImmutableDictionary<K, V> dictionary, K key)
-        where K : notnull
-        where V : notnull =>
+        where K : notnull =>
         TryOption<K, V>(dictionary.TryGetValue, key);
 
     public static IImmutableDictionary<K, V> Merge<K, V>(
@@ -15,7 +14,6 @@ public static class ImmutableDictionaryUtils
         V value,
         Func<V, V, V> combiner)
         where K : notnull
-        where V : notnull
     {
         return dictionary.Update(key, v => combiner(v, value), () => value);
     }
@@ -29,7 +27,6 @@ public static class ImmutableDictionaryUtils
         Func<V, V> mutation,
         Func<V>? supplier = default)
         where K : notnull
-        where V : notnull
     {
         return dictionary.GetOption(key).Match(
             some: v => dictionary.SetItem(key, mutation(v)),

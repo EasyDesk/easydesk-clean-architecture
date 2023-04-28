@@ -9,7 +9,7 @@ public interface IUnitOfWorkProvider
 
 public static class UnitOfWorkProviderExtensions
 {
-    public static async Task<Result<T>> RunTransactionally<T>(this IUnitOfWorkProvider unitOfWorkProvider, AsyncFunc<Result<T>> action) where T : notnull
+    public static async Task<Result<T>> RunTransactionally<T>(this IUnitOfWorkProvider unitOfWorkProvider, AsyncFunc<Result<T>> action)
     {
         using var unitOfWork = await unitOfWorkProvider.BeginUnitOfWork();
         try
@@ -31,7 +31,7 @@ public static class UnitOfWorkProviderExtensions
         }
     }
 
-    public static async Task<Result<T>> RunTransactionally<T>(this IUnitOfWorkProvider unitOfWorkProvider, AsyncFunc<T> action) where T : notnull =>
+    public static async Task<Result<T>> RunTransactionally<T>(this IUnitOfWorkProvider unitOfWorkProvider, AsyncFunc<T> action) =>
         await unitOfWorkProvider.RunTransactionally(async () => Success(await action()));
 
     public static async Task<Result<Nothing>> RunTransactionally(this IUnitOfWorkProvider unitOfWorkProvider, AsyncAction action) =>
