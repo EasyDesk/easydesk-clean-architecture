@@ -10,11 +10,11 @@
       },
       "GitHubActionsTestLogger": {
         "type": "Direct",
-        "requested": "[2.0.1, )",
-        "resolved": "2.0.1",
-        "contentHash": "EdW9dP2o9ZgkEJg39s7kEebrvqe9jIdzD7hvvGfjsjTi9OYKCfmBqiryJTlYpyjzt9BFFj9tQLH4YtvRraswwg==",
+        "requested": "[2.0.2, )",
+        "resolved": "2.0.2",
+        "contentHash": "/Ulr5fxPeEK5A8fwY38aBnze2eddVBc13UwLgVqcxOjpw227LYq2WfoBoVrxxW5nI2grBuSPFrO4xj2grtXuoQ==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.2.0"
+          "Microsoft.TestPlatform.ObjectModel": "17.5.0"
         }
       },
       "Microsoft.NET.Test.Sdk": {
@@ -38,12 +38,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[19.13.0, )",
-        "resolved": "19.13.0",
-        "contentHash": "vzEC/h4x9ASuA/P99l/GfZp+F0ERmbRfcjhH+nStsGNhy+NqgfzUP3Z4pZppYCY1tnyeYNYZv06QBwHdc7haNg==",
+        "requested": "[19.14.1, )",
+        "resolved": "19.14.1",
+        "contentHash": "4zCVWbYOqf+CSlUH2x9uiIBWez3/mLuGJYMnkdt6gdba+NCp7LLxNaMxY0r1S/u58i3y3a9bJUABWHlQ8xcTNQ==",
         "dependencies": {
           "EmptyFiles": "4.4.0",
-          "Verify": "19.13.0",
+          "Verify": "19.14.1",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -1110,8 +1110,8 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.13.0",
-        "contentHash": "syDLdPW5h8nId7lHnI3JoNttI5NqnT9iuzODsSCDVBe4+00ZnOjurcQGKYUrZBDBESlwuYR4dNK3Suf6gAtXIA==",
+        "resolved": "19.14.1",
+        "contentHash": "5v9nM9el4+awoIIKMlMik4tS3B5eUjmOpEW5qhB9QOQiy9+Y03w84pi/mO9KSdWsaABq5PaImhmLM/jNrVPLpw==",
         "dependencies": {
           "Argon": "0.6.0",
           "DiffEngine": "11.3.0",
@@ -1194,7 +1194,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.2.1, )",
-          "Verify": "[19.13.0, )",
+          "Verify": "[19.14.1, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }

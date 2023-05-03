@@ -8,7 +8,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="NodaTime.Testing" Version="3.1.9" />
     <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="Verify.Xunit" Version="19.13.0" />
+    <PackageReference Include="Verify.Xunit" Version="19.14.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -22,6 +22,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\ca\EasyDesk.CleanArchitecture.Testing.Unit\EasyDesk.CleanArchitecture.Testing.Unit.csproj" />
     <ProjectReference Include="..\..\..\src\ca\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="GitHubActionsTestLogger" Version="2.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <PropertyGroup>

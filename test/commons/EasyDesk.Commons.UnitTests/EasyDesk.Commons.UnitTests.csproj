@@ -23,6 +23,13 @@
     <ProjectReference Include="..\..\..\src\commons\EasyDesk.Commons\EasyDesk.Commons.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="GitHubActionsTestLogger" Version="2.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
   <PropertyGroup>
     <RootFolder>..\..\..</RootFolder>
   </PropertyGroup>

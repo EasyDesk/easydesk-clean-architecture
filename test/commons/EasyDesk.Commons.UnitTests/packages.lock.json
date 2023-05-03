@@ -10,11 +10,11 @@
       },
       "GitHubActionsTestLogger": {
         "type": "Direct",
-        "requested": "[2.0.1, )",
-        "resolved": "2.0.1",
-        "contentHash": "EdW9dP2o9ZgkEJg39s7kEebrvqe9jIdzD7hvvGfjsjTi9OYKCfmBqiryJTlYpyjzt9BFFj9tQLH4YtvRraswwg==",
+        "requested": "[2.0.2, )",
+        "resolved": "2.0.2",
+        "contentHash": "/Ulr5fxPeEK5A8fwY38aBnze2eddVBc13UwLgVqcxOjpw227LYq2WfoBoVrxxW5nI2grBuSPFrO4xj2grtXuoQ==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.2.0"
+          "Microsoft.TestPlatform.ObjectModel": "17.5.0"
         }
       },
       "Microsoft.NET.Test.Sdk": {
