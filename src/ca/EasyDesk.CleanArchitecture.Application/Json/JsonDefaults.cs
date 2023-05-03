@@ -11,7 +11,13 @@ public static class JsonDefaults
 {
     public static void ApplyDefaultConfiguration(this JsonSerializerSettings serializerSettings, IDateTimeZoneProvider? dateTimeZoneProvider = null)
     {
-        serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+        serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()
+        {
+            NamingStrategy = new CamelCaseNamingStrategy()
+            {
+                ProcessDictionaryKeys = false
+            }
+        };
 
         serializerSettings.Converters.Add(new StringEnumConverter());
         serializerSettings.Converters.Add(new OptionConverter());
