@@ -55,4 +55,17 @@ public static class MultitenancyChecks
             condition,
             timeout,
             interval);
+
+    public static Task WaitConditionUnderPublicTenant<TService>(
+        this ITestWebService webService,
+        AsyncFunc<TService, bool> condition,
+        Duration? timeout = null,
+        Duration? interval = null)
+        where TService : notnull =>
+        WaitConditionUnderTenant(
+            webService,
+            TenantInfo.Public,
+            condition,
+            timeout,
+            interval);
 }

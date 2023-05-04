@@ -57,8 +57,7 @@ public class AuditingTests : SampleIntegrationTest
         _personId = await Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
         _initialAudits += 2;
         await Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();
-        await WebService.WaitConditionUnderTenant<IAuditLog>(
-            TenantInfo.Public,
+        await WebService.WaitConditionUnderPublicTenant<IAuditLog>(
             log => log
                 .Audit(new())
                 .GetAllItems(50)
@@ -67,8 +66,7 @@ public class AuditingTests : SampleIntegrationTest
     }
 
     private Task WaitUntilAuditLogHasMoreRecords(int newRecords) =>
-        WebService.WaitConditionUnderTenant<IAuditLog>(
-            TenantInfo.Public,
+        WebService.WaitConditionUnderPublicTenant<IAuditLog>(
             log => log
                 .Audit(new())
                 .GetAllItems(50)
