@@ -7,25 +7,25 @@ using EasyDesk.SampleApp.Application.Authorization;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
-public record AddAdmin : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
+public record RemoveAdmin : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
 {
     public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.ExistingTenantOrPublic();
 }
 
-public class AddAdminHandler : IHandler<AddAdmin>
+public class RemoveAdminHandler : IHandler<RemoveAdmin>
 {
     private readonly IUserRolesManager _userRolesManager;
     private readonly IContextProvider _contextProvider;
 
-    public AddAdminHandler(IUserRolesManager userRolesManager, IContextProvider contextProvider)
+    public RemoveAdminHandler(IUserRolesManager userRolesManager, IContextProvider contextProvider)
     {
         _userRolesManager = userRolesManager;
         _contextProvider = contextProvider;
     }
 
-    public async Task<Result<Nothing>> Handle(AddAdmin request)
+    public async Task<Result<Nothing>> Handle(RemoveAdmin request)
     {
-        await _userRolesManager.GrantRolesToUser(_contextProvider.RequireUserInfo().UserId, Roles.Admin);
+        await _userRolesManager.RevokeRolesToUser(_contextProvider.RequireUserInfo().UserId, Roles.Admin);
         return Ok;
     }
 }

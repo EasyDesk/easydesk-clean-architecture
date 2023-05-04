@@ -7,6 +7,8 @@ public interface IUserRolesManager
     Task GrantRolesToUser(UserId userId, IEnumerable<Role> roles);
 
     Task RevokeRolesToUser(UserId userId, IEnumerable<Role> roles);
+
+    Task RevokeAllRolesToUser(UserId userId);
 }
 
 public static class UserRolesManagerExtensions

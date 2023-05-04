@@ -57,6 +57,7 @@ public class AddAdminTests : SampleIntegrationTest
     public async Task ShouldSucceed_WithPublicTenant_Again()
     {
         await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
+        await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }

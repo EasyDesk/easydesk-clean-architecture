@@ -62,6 +62,15 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
         await _context.SaveChangesAsync();
     }
 
+    public async Task RevokeAllRolesToUser(UserId userId)
+    {
+        var rolesToBeRemoved = await RolesByUser(userId)
+            .ToListAsync();
+
+        _context.UserRoles.RemoveRange(rolesToBeRemoved);
+        await _context.SaveChangesAsync();
+    }
+
     private IEnumerable<string> RoleIds(IEnumerable<Role> roles) => roles.Select(ValueWrapperUtils.ToValue);
 
     public async Task<IImmutableSet<Permission>> MapRolesToPermissions(IEnumerable<Role> roles)
