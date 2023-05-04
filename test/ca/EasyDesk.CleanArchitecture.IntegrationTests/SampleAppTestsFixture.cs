@@ -1,7 +1,4 @@
-﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
@@ -12,6 +9,8 @@ using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.Data.SqlClient;
 using Npgsql;
 using Respawn;
+using Testcontainers.MsSql;
+using Testcontainers.PostgreSql;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
@@ -48,41 +47,36 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
 
     private static void ConfigureSqlServer(WebServiceTestsFixtureBuilder builder)
     {
-        using var dbConfiguration = new MsSqlTestcontainerConfiguration
-        {
-            Database = "TestSampleDb",
-            Password = "sample.123",
-        };
-        var container = new TestcontainersBuilder<MsSqlTestcontainer>()
-            .WithUniqueName("sample-app-integration-tests-sqlserver")
-            .WithDatabase(dbConfiguration)
+        var container = new MsSqlBuilder()
+            .WithUniqueName("sample-app-tests-sqlserver")
+            .WithPassword("sample.123")
             .Build();
 
-        builder.AddResettableSqlDatabase(
-            container,
-            "ConnectionStrings:SqlServer",
-            CreateRespawnerOptions(DbAdapter.SqlServer),
-            c => new SqlConnectionStringBuilder(c) { TrustServerCertificate = true }.ConnectionString);
+        builder
+            .AddResettableSqlDatabase(
+                container,
+                CreateRespawnerOptions(DbAdapter.SqlServer))
+            .WithConfiguration(x => x.Add(
+                "ConnectionStrings:SqlServer",
+                new SqlConnectionStringBuilder(container.GetConnectionString()) { TrustServerCertificate = true }.ConnectionString));
     }
 
     private static void ConfigurePostgreSql(WebServiceTestsFixtureBuilder builder)
     {
-        using var dbConfiguration = new PostgreSqlTestcontainerConfiguration
-        {
-            Database = "TestSampleDb",
-            Username = "sample",
-            Password = "sample",
-        };
-        var container = new TestcontainersBuilder<PostgreSqlTestcontainer>()
-            .WithUniqueName("sample-app-integration-tests-postgres")
-            .WithDatabase(dbConfiguration)
+        var container = new PostgreSqlBuilder()
+            .WithUniqueName("sample-app-tests-postgres")
+            .WithDatabase("TestSampleDb")
+            .WithUsername("sample")
+            .WithPassword("sample")
             .Build();
 
-        builder.AddResettableSqlDatabase(
-            container,
-            "ConnectionStrings:PostgreSql",
-            CreateRespawnerOptions(DbAdapter.Postgres),
-            connectionString => new NpgsqlConnectionStringBuilder(connectionString) { IncludeErrorDetail = true }.ConnectionString);
+        builder
+            .AddResettableSqlDatabase(
+                container,
+                CreateRespawnerOptions(DbAdapter.Postgres))
+            .WithConfiguration(x => x.Add(
+                "ConnectionStrings:PostgreSql",
+                new NpgsqlConnectionStringBuilder(container.GetConnectionString()) { IncludeErrorDetail = true }.ConnectionString));
     }
 
     private static RespawnerOptions CreateRespawnerOptions(IDbAdapter adapter) => new()

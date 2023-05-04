@@ -1,23 +1,25 @@
 ﻿using DotNet.Testcontainers.Builders;
+using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 
 public sealed class ContainersCollection : IAsyncDisposable
 {
-    private readonly ISet<ITestcontainersContainer> _containers = new HashSet<ITestcontainersContainer>();
+    private readonly ISet<IContainer> _containers = new HashSet<IContainer>();
 
     public T RegisterTestContainer<T>(T container)
-        where T : ITestcontainersContainer
+        where T : IContainer
     {
         _containers.Add(container);
         return container;
     }
 
-    public T RegisterTestContainer<T>(Func<ITestcontainersBuilder<T>, ITestcontainersBuilder<T>> configureContainer)
-        where T : ITestcontainersContainer
+    public TContainer RegisterTestContainer<TBuilder, TContainer>(Func<TBuilder, TBuilder> configureContainer)
+        where TContainer : IContainer
+        where TBuilder : ContainerBuilder<TBuilder, TContainer, IContainerConfiguration>, new()
     {
-        var container = configureContainer(new TestcontainersBuilder<T>()).Build();
+        var container = configureContainer(new TBuilder()).Build();
         return RegisterTestContainer(container);
     }
 
@@ -37,7 +39,7 @@ public sealed class ContainersCollection : IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
-    private async Task ForEachContainer(AsyncAction<ITestcontainersContainer> action)
+    private async Task ForEachContainer(AsyncAction<IContainer> action)
     {
         await Task.WhenAll(_containers.Select(c => action(c)));
     }

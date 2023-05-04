@@ -1,25 +1,20 @@
-﻿using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
-using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using NodaTime;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
+using Testcontainers.RabbitMq;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.RebusHelper;
 
 public class RabbitMqContainerFixture : IAsyncLifetime
 {
-    public RabbitMqTestcontainer RabbitMq { get; } = new TestcontainersBuilder<RabbitMqTestcontainer>()
+    public RabbitMqContainer RabbitMq { get; } = new RabbitMqBuilder()
         .WithUniqueName("rebus-helper-tests-rabbitmq")
-        .WithMessageBroker(new RabbitMqTestcontainerConfiguration
-        {
-            Username = "admin",
-            Password = "admin",
-        })
+        .WithUsername("admin")
+        .WithPassword("admin")
         .Build();
 
     public async Task InitializeAsync()
@@ -51,7 +46,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
     public RebusTestBusTests(RabbitMqContainerFixture rabbitMqContainerFixture)
     {
-        _rabbitMqConnection = rabbitMqContainerFixture.RabbitMq.ConnectionString;
+        _rabbitMqConnection = rabbitMqContainerFixture.RabbitMq.GetConnectionString();
         _sender = CreateBus(SenderAddress);
         _receiver = CreateBus(ReceiverAddress);
     }
