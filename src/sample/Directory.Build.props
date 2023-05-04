@@ -1,8 +1,15 @@
 <Project>
 
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..\'))" />
+
   <ItemGroup>
 	  <Using Static="true" Include="EasyDesk.CleanArchitecture.Domain.Metamodel.Values.ValueWrapperUtils"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>EasyDesk.CleanArchitecture.UnitTests</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
 </Project>

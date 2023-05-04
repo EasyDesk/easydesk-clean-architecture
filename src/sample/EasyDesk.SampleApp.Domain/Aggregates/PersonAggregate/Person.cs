@@ -1,16 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Model;
+using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate.Events;
 using NodaTime;
 
 namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
-public record PersonCreatedEvent(Person Person) : DomainEvent;
-
-public record PersonDeletedEvent(Person Person) : DomainEvent;
-
 public class Person : AggregateRoot
 {
-    public Person(Guid id, Name firstName, Name lastName, LocalDate dateOfBirth, AdminId createdBy, Address residence)
+    internal Person(Guid id, Name firstName, Name lastName, LocalDate dateOfBirth, AdminId createdBy, Address residence, bool approved)
     {
         Id = id;
         FirstName = firstName;
@@ -18,10 +15,11 @@ public class Person : AggregateRoot
         DateOfBirth = dateOfBirth;
         CreatedBy = createdBy;
         Residence = residence;
+        Approved = approved;
     }
 
     public static Person Create(Name firstName, Name lastName, LocalDate dateOfBirth, AdminId createdBy, Address residence) =>
-        new(Guid.NewGuid(), firstName, lastName, dateOfBirth, createdBy, residence);
+        new(Guid.NewGuid(), firstName, lastName, dateOfBirth, createdBy, residence, approved: false);
 
     public Guid Id { get; }
 
@@ -34,6 +32,8 @@ public class Person : AggregateRoot
     public AdminId CreatedBy { get; }
 
     public Address Residence { get; }
+
+    public bool Approved { get; set; }
 
     protected override void OnCreation()
     {

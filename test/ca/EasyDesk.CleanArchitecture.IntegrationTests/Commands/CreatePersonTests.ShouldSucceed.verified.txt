@@ -11,13 +11,14 @@
         StreetName: Calvin,
         StreetType: street,
         StreetNumber: 15,
-        City: New York,
-        District: null,
+        City: Brooklyn,
+        District: New York,
         Province: null,
         Region: null,
         State: New York State,
         Country: USA
-      }
+      },
+      Approved: false
     },
     Errors: [],
     Meta: {}

@@ -10,8 +10,9 @@ public record PersonSnapshot(
     string LastName,
     LocalDate DateOfBirth,
     string CreatedBy,
-    AddressValue Residence) : ISnapshot<PersonSnapshot, Person>
+    AddressValue Residence,
+    bool Approved) : ISnapshot<PersonSnapshot, Person>
 {
     public static PersonSnapshot MapFrom(Person src) =>
-        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, AddressValue.MapFrom(src.Residence));
+        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, AddressValue.MapFrom(src.Residence), src.Approved);
 }

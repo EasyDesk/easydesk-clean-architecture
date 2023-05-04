@@ -18,7 +18,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_2,
@@ -36,7 +37,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_3,
@@ -54,7 +56,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_4,
@@ -72,7 +75,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_5,
@@ -90,7 +94,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_6,
@@ -108,7 +113,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_7,
@@ -126,7 +132,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_8,
@@ -144,7 +151,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_9,
@@ -162,7 +170,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       },
       {
         Id: Guid_10,
@@ -180,7 +189,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       }
     ],
     Errors: [],

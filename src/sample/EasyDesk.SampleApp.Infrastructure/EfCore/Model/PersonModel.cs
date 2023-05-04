@@ -29,19 +29,27 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
 
     required public AddressModel Residence { get; set; }
 
-    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src =>
-        new(src.Id, src.FirstName, src.LastName, src.DateOfBirth, src.CreatedBy, new(
+    required public bool Approved { get; set; }
+
+    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src => new(
+        src.Id,
+        src.FirstName,
+        src.LastName,
+        src.DateOfBirth,
+        src.CreatedBy,
+        new(
             src.Residence.StreetType.AsOption(),
             src.Residence.StreetName,
             src.Residence.StreetNumber.AsOption(),
             src.Residence.City.AsOption(),
-            src.Residence.Province.AsOption(),
             src.Residence.District.AsOption(),
+            src.Residence.Province.AsOption(),
             src.Residence.Region.AsOption(),
             src.Residence.State.AsOption(),
-            src.Residence.Country.AsOption()));
+            src.Residence.Country.AsOption()),
+        src.Approved);
 
-    public Person ToDomain() => new(Id, new Name(FirstName), new Name(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain());
+    public Person ToDomain() => new(Id, new Name(FirstName), new Name(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain(), Approved);
 
     public static void ApplyChanges(Person origin, PersonModel destination)
     {
@@ -50,6 +58,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
         destination.LastName = origin.LastName;
         destination.DateOfBirth = origin.DateOfBirth;
         destination.CreatedBy = origin.CreatedBy;
+        destination.Approved = origin.Approved;
         AddressModel.ApplyChanges(origin.Residence, destination.Residence);
     }
 
@@ -61,6 +70,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
         CreatedBy = origin.CreatedBy,
         DateOfBirth = origin.DateOfBirth,
         Residence = AddressModel.ToPersistence(origin.Residence),
+        Approved = origin.Approved,
     };
 
     internal class Configuration : IEntityTypeConfiguration<PersonModel>

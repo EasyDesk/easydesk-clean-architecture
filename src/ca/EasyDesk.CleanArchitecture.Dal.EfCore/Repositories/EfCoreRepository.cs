@@ -45,15 +45,17 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
 
     public void Save(TAggregate aggregate)
     {
-        var (persistenceModel, wasTracked) = Tracker.TrackFromAggregate(aggregate);
+        var wasTracked = Tracker.IsTracked(aggregate);
+        var wasSaved = Tracker.IsSaved(aggregate);
+        var persistenceModel = Tracker.TrackFromAggregate(aggregate);
 
-        if (wasTracked)
-        {
-            DbSet.Update(persistenceModel);
-        }
-        else
+        if (!wasTracked)
         {
             DbSet.Add(persistenceModel);
+        }
+        else if (wasSaved)
+        {
+            DbSet.Update(persistenceModel);
         }
 
         if (!wasTracked)

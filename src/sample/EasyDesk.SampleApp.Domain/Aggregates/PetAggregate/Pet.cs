@@ -6,7 +6,7 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 public class Pet : AggregateRoot, IAggregateRootWithHydration<int>
 {
-    public Pet(int id, Name nickname, Guid ownerId)
+    internal Pet(int id, Name nickname, Guid ownerId)
     {
         Id = id;
         Nickname = nickname;

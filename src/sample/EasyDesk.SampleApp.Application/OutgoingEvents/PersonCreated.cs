@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate.Events;
 
 namespace EasyDesk.SampleApp.Application.OutgoingEvents;
 

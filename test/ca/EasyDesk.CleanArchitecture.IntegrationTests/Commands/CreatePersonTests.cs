@@ -11,6 +11,7 @@ using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
+using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
@@ -23,7 +24,7 @@ public class CreatePersonTests : SampleIntegrationTest
         FirstName: "Foo",
         LastName: "Bar",
         DateOfBirth: new LocalDate(1996, 2, 2),
-        Residence: new("Calvin", "street", "15", "New York", null, null, null, "New York State", "USA"));
+        Residence: new("Calvin", "street", "15", "Brooklyn", "New York", null, null, "New York State", "USA"));
 
     public CreatePersonTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -52,6 +53,21 @@ public class CreatePersonTests : SampleIntegrationTest
     {
         var response = await CreatePerson()
             .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldBeApprovedLater()
+    {
+        var person = await CreatePerson()
+            .Send()
+            .AsData();
+        person.Approved.ShouldBeFalse();
+
+        var response = await GetPerson(person.Id)
+            .PollUntil(p => p.Approved, interval: Duration.FromSeconds(1))
             .AsVerifiable();
 
         await Verify(response);

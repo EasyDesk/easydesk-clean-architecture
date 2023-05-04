@@ -16,24 +16,24 @@ public record AddressValue(
     : IObjectValue<AddressValue, Address>
 {
     public static AddressValue MapFrom(Address address) => new(
-        address.StreetType.Map(ToValue),
-        address.StreetName,
-        address.StreetNumber.Map(ToValue),
-        address.City.Map(ToValue),
-        address.District.Map(ToValue),
-        address.Province.Map(ToValue),
-        address.Region.Map(ToValue),
-        address.State.Map(ToValue),
-        address.Country.Map(ToValue));
+        StreetType: address.StreetType.Map(ToValue),
+        StreetName: address.StreetName,
+        StreetNumber: address.StreetNumber.Map(ToValue),
+        City: address.City.Map(ToValue),
+        District: address.District.Map(ToValue),
+        Province: address.Province.Map(ToValue),
+        Region: address.Region.Map(ToValue),
+        State: address.State.Map(ToValue),
+        Country: address.Country.Map(ToValue));
 
     public Address ToDomainObject() => new(
-        StreetType.Map(n => new PlaceName(n)),
-        new PlaceName(StreetName),
-        StreetNumber.Map(n => new PlaceName(n)),
-        City.Map(n => new PlaceName(n)),
-        District.Map(n => new PlaceName(n)),
-        Province.Map(n => new PlaceName(n)),
-        Region.Map(n => new PlaceName(n)),
-        State.Map(n => new PlaceName(n)),
-        Country.Map(n => new PlaceName(n)));
+        StreetType: StreetType.Map(n => new PlaceName(n)),
+        StreetName: new PlaceName(StreetName),
+        StreetNumber: StreetNumber.Map(n => new PlaceName(n)),
+        City: City.Map(n => new PlaceName(n)),
+        District: District.Map(n => new PlaceName(n)),
+        Province: Province.Map(n => new PlaceName(n)),
+        Region: Region.Map(n => new PlaceName(n)),
+        State: State.Map(n => new PlaceName(n)),
+        Country: Country.Map(n => new PlaceName(n)));
 }

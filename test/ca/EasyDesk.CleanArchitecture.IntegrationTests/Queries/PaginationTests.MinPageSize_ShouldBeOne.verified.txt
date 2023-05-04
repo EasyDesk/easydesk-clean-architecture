@@ -18,7 +18,8 @@
           Region: null,
           State: null,
           Country: null
-        }
+        },
+        Approved: true
       }
     ],
     Errors: [],
