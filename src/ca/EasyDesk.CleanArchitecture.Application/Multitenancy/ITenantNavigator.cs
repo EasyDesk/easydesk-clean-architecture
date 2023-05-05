@@ -2,6 +2,8 @@
 
 public interface ITenantNavigator : ITenantProvider
 {
+    Option<TenantInfo> ContextTenantInfo { get; }
+
     void MoveToContextTenant();
 
     void MoveToTenant(TenantId id);

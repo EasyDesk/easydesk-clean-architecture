@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -34,6 +35,7 @@ public class MultitenancyModule : AppModule
         services.AddScoped<IContextTenantInitializer>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<ITenantNavigator>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<ITenantProvider>(p => p.GetRequiredService<ITenantNavigator>());
+        services.Decorate<IContextResetter, MultitenantContextResetter>();
 
         app.RequireModule<DataAccessModule>().Implementation.AddMultitenancy(services, app);
 

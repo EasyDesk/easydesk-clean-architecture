@@ -22,8 +22,9 @@ public class DispatchingModule : AppModule
 
         RegisterRequestHandlers(services, app);
 
+        // TODO: Move away these steps that do not belong here
         Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
-        Pipeline.AddStep(typeof(DomainConstraintViolationsHandlingStep<,>));
+        Pipeline.AddStep(typeof(DomainConstraintViolationsHandlingStep<,>)).Before(typeof(DomainEventHandlingStep<,>));
         var steps = Pipeline.GetOrderedSteps().ToList();
         services.AddHostedService<StartupPipelineLogger>(sp => new(steps, sp.GetRequiredService<ILogger<StartupPipelineLogger>>()));
         services.AddSingleton<IPipeline>(p => new GenericPipeline(steps));

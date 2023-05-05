@@ -32,4 +32,6 @@ public class TenantService : ITenantNavigator, IContextTenantInitializer
 
     public TenantInfo TenantInfo => _overriddenTenantInfo.OrElse(
         _contextTenantInfo.OrElseThrow(() => new InvalidOperationException("Accessing tenant before initialization")));
+
+    public Option<TenantInfo> ContextTenantInfo => _contextTenantInfo;
 }

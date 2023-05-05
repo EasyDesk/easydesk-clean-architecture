@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Hydration;
 using EasyDesk.CleanArchitecture.Domain.Model;
+using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate.Events;
 
 namespace EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
@@ -28,4 +29,6 @@ public class Pet : AggregateRoot, IAggregateRootWithHydration<int>
         new(id: 0, nickname, personId);
 
     public void Hydrate(int data) => Id = data;
+
+    protected override void OnCreation() => EmitEvent(new PetCreatedEvent(this));
 }

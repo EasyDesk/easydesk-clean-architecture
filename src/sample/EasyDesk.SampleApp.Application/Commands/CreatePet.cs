@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.Snapshots;
@@ -28,22 +29,32 @@ public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
     private readonly IPersonRepository _personRepository;
     private readonly IPetRepository _petRepository;
     private readonly IAuditConfigurer _audit;
+    private readonly ITenantNavigator _tenantNavigator;
 
-    public CreatePetHandler(IPersonRepository personRepository, IPetRepository petRepository, IAuditConfigurer audit)
+    public CreatePetHandler(
+        IPersonRepository personRepository,
+        IPetRepository petRepository,
+        IAuditConfigurer audit,
+        ITenantNavigator tenantNavigator)
     {
         _personRepository = personRepository;
         _petRepository = petRepository;
         _audit = audit;
+        _tenantNavigator = tenantNavigator;
     }
 
     public async Task<Result<PetSnapshot>> Handle(CreatePet request)
     {
         _audit.AddProperty("nickname", request.Nickname);
 
-        return await _personRepository.GetById(request.PersonId)
+        var result = await _personRepository.GetById(request.PersonId)
             .ThenOrElseError(Errors.NotFound)
             .ThenMap(_ => Pet.Create(new Name(request.Nickname), request.PersonId))
             .ThenIfSuccessAsync(_petRepository.SaveAndHydrate)
             .ThenMap(PetSnapshot.MapFrom);
+
+        _tenantNavigator.MoveToTenant(TenantId.New("a-tenant-that-should-not-exist"));
+
+        return result;
     }
 }
