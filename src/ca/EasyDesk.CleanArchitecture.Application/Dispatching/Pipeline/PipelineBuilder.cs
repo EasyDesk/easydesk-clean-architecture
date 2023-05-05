@@ -4,12 +4,23 @@ namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
 public sealed class PipelineBuilder
 {
-    private readonly IList<Type> _steps = new List<Type>();
+    private readonly IList<Type> _beforeAll = new List<Type>();
+    private readonly IList<Type> _middleSteps = new List<Type>();
+    private readonly IList<Type> _afterAll = new List<Type>();
     private readonly ISet<(Type, Type)> _dependencies = new HashSet<(Type, Type)>();
 
-    public StepDependenciesBuilder AddStep(Type stepType)
+    public StepDependenciesBuilder AddStep(Type stepType) =>
+        AddStepToList(stepType, _middleSteps);
+
+    public StepDependenciesBuilder AddStepBeforeAll(Type stepType) =>
+        AddStepToList(stepType, _beforeAll);
+
+    public StepDependenciesBuilder AddStepAfterAll(Type stepType) =>
+        AddStepToList(stepType, _afterAll);
+
+    private StepDependenciesBuilder AddStepToList(Type stepType, IList<Type> list)
     {
-        _steps.Add(stepType);
+        list.Add(stepType);
         return new StepDependenciesBuilder(this, stepType);
     }
 
@@ -21,13 +32,20 @@ public sealed class PipelineBuilder
 
     public IEnumerable<Type> GetOrderedSteps()
     {
-        if (_steps.IsEmpty())
+        return OrderStepList(_beforeAll)
+            .Concat(OrderStepList(_middleSteps))
+            .Concat(OrderStepList(_afterAll));
+    }
+
+    private IEnumerable<Type> OrderStepList(IList<Type> steps)
+    {
+        if (steps.IsEmpty())
         {
             return Enumerable.Empty<Type>();
         }
 
         var result = new List<Type>();
-        var remaining = new List<Type>(_steps.Reverse());
+        var remaining = new List<Type>(steps.Reverse());
         var temp = new HashSet<Type>();
         var successorsMap = _dependencies
             .Where(IsValidDependency)
@@ -68,7 +86,7 @@ public sealed class PipelineBuilder
     }
 
     private bool IsValidDependency((Type, Type) dependency) =>
-        _steps.Contains(dependency.Item1) && _steps.Contains(dependency.Item2);
+        _middleSteps.Contains(dependency.Item1) && _middleSteps.Contains(dependency.Item2);
 }
 
 public sealed class StepDependenciesBuilder
