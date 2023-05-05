@@ -9,165 +9,164 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.SqlServer
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.SqlServer;
+
+[DbContext(typeof(SqlServerSampleAppContext))]
+partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
 {
-    [DbContext(typeof(SqlServerSampleAppContext))]
-    partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
-        {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasDefaultSchema("domain")
-                .HasAnnotation("ProductVersion", "7.0.5")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+        modelBuilder
+            .HasDefaultSchema("domain")
+            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
-                .IncrementsBy(10);
+        modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
+            .IncrementsBy(10);
 
-            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
+            {
+                b.Property<Guid>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("Approved")
-                        .HasColumnType("bit");
+                b.Property<bool>("Approved")
+                    .HasColumnType("bit");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("CreatedBy")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("date");
+                b.Property<DateTime>("DateOfBirth")
+                    .HasColumnType("date");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("FirstName")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("LastName")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tenant")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Tenant")
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("Tenant");
+                b.HasIndex("Tenant");
 
-                    b.ToTable("People", "domain");
-                });
+                b.ToTable("People", "domain");
+            });
 
-            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PetModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("Npgsql:HiLoSequenceName", "EntityFrameworkHiLoSequence")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SequenceHiLo);
+        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PetModel", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("int")
+                    .HasAnnotation("Npgsql:HiLoSequenceName", "EntityFrameworkHiLoSequence")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SequenceHiLo);
 
-                    SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
+                SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
 
-                    b.Property<string>("Nickname")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                b.Property<string>("Nickname")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PersonId")
-                        .HasColumnType("uniqueidentifier");
+                b.Property<Guid>("PersonId")
+                    .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Tenant")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                b.Property<string>("Tenant")
+                    .IsRequired()
+                    .ValueGeneratedOnAdd()
+                    .HasMaxLength(256)
+                    .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("Id");
+                b.HasKey("Id");
 
-                    b.HasIndex("PersonId");
+                b.HasIndex("PersonId");
 
-                    b.HasIndex("Tenant");
+                b.HasIndex("Tenant");
 
-                    b.ToTable("Pets", "domain");
-                });
+                b.ToTable("Pets", "domain");
+            });
 
-            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
-                {
-                    b.OwnsOne("EasyDesk.SampleApp.Infrastructure.EfCore.Model.AddressModel", "Residence", b1 =>
-                        {
-                            b1.Property<Guid>("PersonModelId")
-                                .HasColumnType("uniqueidentifier");
+        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
+            {
+                b.OwnsOne("EasyDesk.SampleApp.Infrastructure.EfCore.Model.AddressModel", "Residence", b1 =>
+                    {
+                        b1.Property<Guid>("PersonModelId")
+                            .HasColumnType("uniqueidentifier");
 
-                            b1.Property<string>("City")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("City")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("Country")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("Country")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("District")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("District")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("Province")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("Province")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("Region")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("Region")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("State")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("State")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("StreetName")
-                                .IsRequired()
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("StreetName")
+                            .IsRequired()
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("StreetNumber")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("StreetNumber")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.Property<string>("StreetType")
-                                .HasMaxLength(100)
-                                .HasColumnType("nvarchar(100)");
+                        b1.Property<string>("StreetType")
+                            .HasMaxLength(100)
+                            .HasColumnType("nvarchar(100)");
 
-                            b1.HasKey("PersonModelId");
+                        b1.HasKey("PersonModelId");
 
-                            b1.ToTable("People", "domain");
+                        b1.ToTable("People", "domain");
 
-                            b1.WithOwner()
-                                .HasForeignKey("PersonModelId");
-                        });
+                        b1.WithOwner()
+                            .HasForeignKey("PersonModelId");
+                    });
 
-                    b.Navigation("Residence")
-                        .IsRequired();
-                });
+                b.Navigation("Residence")
+                    .IsRequired();
+            });
 
-            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PetModel", b =>
-                {
-                    b.HasOne("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", "Person")
-                        .WithMany("Pets")
-                        .HasForeignKey("PersonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PetModel", b =>
+            {
+                b.HasOne("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", "Person")
+                    .WithMany("Pets")
+                    .HasForeignKey("PersonId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
 
-                    b.Navigation("Person");
-                });
+                b.Navigation("Person");
+            });
 
-            modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
-                {
-                    b.Navigation("Pets");
-                });
+        modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
+            {
+                b.Navigation("Pets");
+            });
 #pragma warning restore 612, 618
-        }
     }
 }
