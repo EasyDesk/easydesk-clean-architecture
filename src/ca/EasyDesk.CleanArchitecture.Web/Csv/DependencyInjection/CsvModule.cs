@@ -22,10 +22,12 @@ public class CsvModule : AppModule
         {
             DetectDelimiter = true,
             PrepareHeaderForMatch = args => args.Header.Trim().ToLower(),
+            DetectColumnCountChanges = true,
         };
         _configure?.Invoke(configuration);
         services.AddSingleton(configuration);
         services.AddSingleton<CsvService>();
+        services.AddSingleton<FormFileCsvParser>();
     }
 }
 

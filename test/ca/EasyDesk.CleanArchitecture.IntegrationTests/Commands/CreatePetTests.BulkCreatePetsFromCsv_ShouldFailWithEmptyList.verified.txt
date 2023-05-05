@@ -5,9 +5,9 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: File is empty,
+        Detail: 'Pets' must not be empty.,
         Meta: {
-          propertyName: petListCsv
+          propertyName: Pets
         }
       }
     ],

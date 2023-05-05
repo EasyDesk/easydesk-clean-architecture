@@ -5,7 +5,7 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: File is too large (max 4194304 bytes),
+        Detail: File exceeds maximum upload size of 4096kB.,
         Meta: {
           propertyName: petListCsv
         }

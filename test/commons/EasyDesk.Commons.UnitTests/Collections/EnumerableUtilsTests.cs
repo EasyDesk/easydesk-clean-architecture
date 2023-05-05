@@ -357,4 +357,28 @@ public class EnumerableUtilsTests
         yield return new object[] { Empty<string>(), Empty<string>() };
         yield return new object[] { Items<string?>(null, null, null), Empty<string>() };
     }
+
+    [Fact]
+    public void EnumerateOnce_ShouldEnumerateItemsAtMostOnce()
+    {
+        var sideEffect = Substitute.For<Action<int>>();
+        var items = Items(1, 2, 3);
+
+        var enumerable = items.Peek(sideEffect).EnumerateOnce();
+
+        var list1 = enumerable.ToList();
+        var list2 = enumerable.ToList();
+
+        list1.ShouldBe(items);
+        list2.ShouldBe(items);
+
+        sideEffect.ReceivedWithAnyArgs(items.Count())(default);
+
+        Received.InOrder(() =>
+        {
+            sideEffect(1);
+            sideEffect(2);
+            sideEffect(3);
+        });
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections;
+using System.Text;
 using static EasyDesk.Commons.ComparisonUtils;
 
 namespace EasyDesk.Commons.Collections;
@@ -282,4 +283,56 @@ public static class EnumerableUtils
 
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> values) where T : class =>
         values.SelectMany(v => v.AsOption());
+
+    public sealed class CachedEnumerable<T> : IEnumerable<T>, IDisposable
+    {
+        private IEnumerator<T>? _enumerator;
+        private readonly List<T> _cache = new();
+
+        public CachedEnumerable(IEnumerable<T> enumerable)
+        {
+            _enumerator = enumerable.GetEnumerator();
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            var index = 0;
+
+            for (; index < _cache.Count; index++)
+            {
+                yield return _cache[index];
+            }
+
+            for (; _enumerator != null && _enumerator.MoveNext(); index++)
+            {
+                var current = _enumerator.Current;
+                _cache.Add(current);
+                yield return current;
+            }
+
+            if (_enumerator != null)
+            {
+                _enumerator.Dispose();
+                _enumerator = null;
+            }
+
+            for (; index < _cache.Count; index++)
+            {
+                yield return _cache[index];
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_enumerator != null)
+            {
+                _enumerator.Dispose();
+                _enumerator = null;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    public static IEnumerable<T> EnumerateOnce<T>(this IEnumerable<T> sequence) => new CachedEnumerable<T>(sequence);
 }

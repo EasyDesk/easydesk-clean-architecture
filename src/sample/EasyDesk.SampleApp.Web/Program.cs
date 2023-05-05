@@ -18,6 +18,7 @@ using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Csv.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Seeding;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
@@ -54,6 +55,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddOpenApi()
         .AddAsyncApi()
         .AddSagas()
+        .AddCsvParsing()
         .AddModule<SampleAppDomainModule>();
 
     switch (provider)

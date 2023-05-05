@@ -58,11 +58,19 @@ public class CreatePetTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    public IEnumerable<CreatePetBodyDto> PetGenerator(int count) =>
+    public IEnumerable<CreatePetBodyDto> PetGenerator(long count) =>
         PetNameGenerator(count).Select(n => new CreatePetBodyDto(n));
 
-    public IEnumerable<string> PetNameGenerator(int count) =>
-        Enumerable.Range(0, count).Select(i => "buddy" + i);
+    public IEnumerable<string> PetNameGenerator(long count)
+    {
+        for (var i = 0L; i < count; i++)
+        {
+            yield return "buddy" + i;
+        }
+    }
+
+    public string GenerateCsv(long count) =>
+        PetNameGenerator(count).Prepend("Nickname").ConcatStrings("\n");
 
     [Fact]
     public async Task BulkCreatePets_ShouldSucceed()
@@ -173,7 +181,7 @@ public class CreatePetTests : SampleIntegrationTest
         var response = await Http
             .CreatePetsFromCsv(
                 person.Id,
-                PetNameGenerator(BulkQuantity).ConcatStrings("\n"))
+                GenerateCsv(BulkQuantity))
             .Send(timeout)
             .AsData();
 
@@ -208,7 +216,7 @@ public class CreatePetTests : SampleIntegrationTest
             .EnsureSuccess();
 
         var response = await Http
-            .CreatePetsFromCsv(person.Id, PetGenerator(0).ConcatStrings("\n"))
+            .CreatePetsFromCsv(person.Id, GenerateCsv(0))
             .Send(timeout)
             .AsVerifiable();
 
@@ -236,7 +244,7 @@ public class CreatePetTests : SampleIntegrationTest
             .EnsureSuccess();
 
         var response = await Http
-            .CreatePetsFromCsv(person.Id, PetGenerator(1_000_000).ConcatStrings("\n"))
+            .CreatePetsFromCsv(person.Id, GenerateCsv(PetController.MaxFileSize / 4))
             .Send(timeout)
             .AsVerifiable();
 
@@ -264,7 +272,7 @@ public class CreatePetTests : SampleIntegrationTest
             .EnsureSuccess();
 
         var response = await Http
-            .CreatePetsFromCsv(person.Id, PetGenerator(2).ConcatStrings(";\n"))
+            .CreatePetsFromCsv(person.Id, GenerateCsv(2).Replace("\n", ";\n"))
             .Send(timeout)
             .AsVerifiable();
 
