@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,9 +21,6 @@ public class DispatchingModule : AppModule
 
         RegisterRequestHandlers(services, app);
 
-        // TODO: Move away these steps that do not belong here
-        Pipeline.AddStep(typeof(DomainEventHandlingStep<,>));
-        Pipeline.AddStep(typeof(DomainConstraintViolationsHandlingStep<,>)).Before(typeof(DomainEventHandlingStep<,>));
         var steps = Pipeline.GetOrderedSteps().ToList();
         services.AddHostedService<StartupPipelineLogger>(sp => new(steps, sp.GetRequiredService<ILogger<StartupPipelineLogger>>()));
         services.AddSingleton<IPipeline>(p => new GenericPipeline(steps));

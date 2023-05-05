@@ -38,8 +38,7 @@ public class ContextProviderModule : AppModule
     {
         app.ConfigureDispatchingPipeline(builder =>
         {
-            // TODO: Use AfterAll
-            builder.AddStep(typeof(ContextResetStep<,>)).After(typeof(DomainEventHandlingStep<,>));
+            builder.AddStepAfterAll(typeof(ContextResetStep<,>)).After(typeof(DomainEventHandlingStep<,>));
         });
     }
 }
