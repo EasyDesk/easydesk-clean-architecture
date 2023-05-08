@@ -17,7 +17,10 @@ public class CsvServiceTests
     private IEnumerable<T> Parse<T>(string text, Func<IReaderRow, T> converter)
     {
         using var content = new MemoryStream(Encoding.UTF8.GetBytes(text));
-        return _sut.ParseCsv(content, converter).ToList();
+        foreach (var e in _sut.ParseCsv(content, converter).Select(r => r.ThrowIfFailure()))
+        {
+            yield return e;
+        }
     }
 
     [Fact]
@@ -50,6 +53,24 @@ public class CsvServiceTests
             String = row.GetOptionalField<string>("String"),
             Integer = row.GetOptionalField<int>("Integer"),
         }));
+    }
+
+    [Fact]
+    public async Task ShouldBeLazy()
+    {
+        var csv = """
+            String;Integer
+            A;1
+            B;2
+            C;3
+            ';"kek";;;;;;;;;;;;;;;;;;;;;;XD;;;;;;;;;;
+            """;
+        var counter = 0;
+        await Verify(Parse(csv, row => ++counter == 4 ? throw new Exception("The parser isn't lazy") : new
+        {
+            String = row.GetOptionalField<string>("String"),
+            Integer = row.GetOptionalField<int>("Integer"),
+        }).Take(3));
     }
 
     [Fact(Skip = "https://github.com/JoshClose/CsvHelper/issues/2153")]

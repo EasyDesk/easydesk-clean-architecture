@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Csv;
 using EasyDesk.CleanArchitecture.Web.Dto;
+using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -50,14 +51,16 @@ public class PetController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<CreatePetsDto, Nothing>>> CreatePets(
         [FromServices] FormFileCsvParser parser,
         [FromRoute] Guid personId,
+        [FromQuery] bool greedy,
         IFormFile petListCsv)
     {
-        var parsedPetList = parser.ParseFormFileAsCsv(
-            formFile: petListCsv,
-            converter: row => new CreatePet(row.GetRequiredField<string>("Nickname"), personId),
-            maxSize: MaxFileSize);
+        CreatePet CreatePetRowParser(CsvHelper.IReaderRow row) => new(row.GetRequiredField<string>("Nickname"), personId);
+        var parsedPetList = greedy
+            ? parser.GreedyParseFormFileAsCsv(formFile: petListCsv, converter: CreatePetRowParser, maxSize: MaxFileSize)
+            : parser.EagerParseFormFileAsCsv(formFile: petListCsv, converter: CreatePetRowParser, maxSize: MaxFileSize);
 
-        return await parsedPetList.MatchAsync(
+        return await parsedPetList
+            .MatchAsync(
             success: petList => Dispatch(new CreatePets(petList))
                 .Map(CreatePetsDto.FromCreatePetsResult)
                 .ReturnOk(),

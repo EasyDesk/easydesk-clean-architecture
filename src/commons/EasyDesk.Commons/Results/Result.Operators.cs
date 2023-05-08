@@ -1,4 +1,7 @@
-﻿namespace EasyDesk.Commons;
+﻿using EasyDesk.Commons.Collections;
+using System.Collections.Immutable;
+
+namespace EasyDesk.Commons;
 
 public static partial class StaticImports
 {
@@ -64,4 +67,22 @@ public static partial class StaticImports
         failure: e => throw exception(e));
 
     public static A ThrowIfFailure<A>(this Result<A> result) => result.ThrowIfFailure(e => new ResultFailedException(e));
+
+    public static bool Contains<T>(this Result<T> result, Func<T, bool> proposition) =>
+        result.Match(success: proposition, failure: _ => false);
+
+    public static Result<IEnumerable<T>> CatchFirstFailure<T>(this IEnumerable<Result<T>> enumerable) => enumerable
+        .FirstOption(r => r.IsFailure)
+        .Match(
+            some: r => r.ReadError(),
+            none: () => Success(enumerable.Select(r => r.ReadValue())));
+
+    public static Result<IEnumerable<T>> CatchAllFailures<T>(this IEnumerable<Result<T>> enumerable) => enumerable
+        .SelectMany(r => r.Error)
+        .AsSome()
+        .Map(l => l.ToImmutableList())
+        .Filter(l => !l.IsEmpty)
+        .Map(l => new MultiError(l[0], l.GetRange(1, l.Count - 1)))
+        .Map(Failure<IEnumerable<T>>)
+        .OrElseGet(() => Success(enumerable.Select(r => r.ReadValue())));
 }

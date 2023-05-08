@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
+using CsvHelper.TypeConversion;
 
 namespace EasyDesk.CleanArchitecture.Web.Csv;
 
@@ -12,19 +13,59 @@ public class CsvService
         _configuration = configuration;
     }
 
-    public IEnumerable<T> ParseCsv<T>(Stream content, Func<IReaderRow, T> converter, Action<CsvContext>? configureContext = null)
+    public IEnumerable<Result<T>> ParseCsv<T>(Stream content, Func<IReaderRow, T> converter, Action<CsvContext>? configureContext = null)
     {
         using var reader = new StreamReader(content);
         using var csv = new CsvReader(reader, _configuration);
 
+        configureContext?.Invoke(csv.Context);
+
         // Bug of CsvHelper: see https://github.com/JoshClose/CsvHelper/issues/2153.
         ////csv.Context.TypeConverterCache.AddConverterFactory(new CsvOptionConverterFactory());
-        configureContext?.Invoke(csv.Context);
-        csv.Read();
-        csv.ReadHeader();
-        while (csv.Read())
+
+        long lineIndex = 0;
+        var result = Read(csv, lineIndex).FlatMap(more => more ? ReadHeader(csv, lineIndex) : false);
+        lineIndex++;
+        result = result.FlatMap(more => more ? Read(csv, lineIndex) : false);
+        while (result.Contains(It))
         {
-            yield return converter(csv);
+            yield return Convert(csv, lineIndex, converter);
+            lineIndex++;
+            result = Read(csv, lineIndex);
         }
+        if (result.IsFailure)
+        {
+            yield return result.ReadError();
+        }
+    }
+
+    private Result<bool> Read(CsvReader csv, long lineIndex) =>
+        CatchInvalidRecords(csv, lineIndex, csv => csv.Read());
+
+    private Result<bool> ReadHeader(CsvReader csv, long lineIndex) =>
+        CatchInvalidRecords(csv, lineIndex, csv => csv.ReadHeader());
+
+    private Result<T> Convert<T>(CsvReader csv, long lineIndex, Func<IReaderRow, T> converter) =>
+        CatchInvalidRecords(csv, lineIndex, converter);
+
+    private Result<T> CatchInvalidRecords<T>(CsvReader csv, long lineIndex, Func<CsvReader, T> callable)
+    {
+        try
+        {
+            return callable(csv);
+        }
+        catch (BadDataException e)
+        {
+            return new InvalidCsvLine(lineIndex, e.Field, e.Message);
+        }
+        catch (TypeConverterException e)
+        {
+            return new InvalidCsvLine(lineIndex, e.Text, e.Message);
+        }
+    }
+
+    public record InvalidCsvLine(long LineIndex, string Field, string Message) : Error
+    {
+        public string DisplayMessage => $"Line {LineIndex}: {Message}";
     }
 }

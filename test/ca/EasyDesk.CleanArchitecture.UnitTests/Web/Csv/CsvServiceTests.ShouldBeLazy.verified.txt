@@ -1,0 +1,14 @@
+﻿[
+  {
+    String: A,
+    Integer: 1
+  },
+  {
+    String: B,
+    Integer: 2
+  },
+  {
+    String: C,
+    Integer: 3
+  }
+]

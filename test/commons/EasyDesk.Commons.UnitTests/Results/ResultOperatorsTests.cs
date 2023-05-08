@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using EasyDesk.Commons.Collections;
+using NSubstitute;
+using NSubstitute.ReceivedExtensions;
 using Shouldly;
 using Xunit;
 
@@ -10,7 +12,7 @@ public class ResultOperatorsTests
     private const int Value = 10;
 
     private static readonly Error _error = new TestError(false);
-    private static readonly Error _mappedError = new TestError(true);
+    private static readonly Error _differentError = new TestError(true);
 
     private static Result<int> Success => Success(Value);
 
@@ -25,7 +27,7 @@ public class ResultOperatorsTests
     public static IEnumerable<object[]> FlatMapData()
     {
         yield return new object[] { Success(TestString) };
-        yield return new object[] { Failure<string>(_mappedError) };
+        yield return new object[] { Failure<string>(_differentError) };
     }
 
     [Fact]
@@ -129,11 +131,11 @@ public class ResultOperatorsTests
     public void MapError_ShouldMapTheWrappedError_ForFailedResults()
     {
         var mapper = Substitute.For<Func<Error, Error>>();
-        mapper(_error).Returns(_mappedError);
+        mapper(_error).Returns(_differentError);
 
         var output = Failure.MapError(mapper);
 
-        output.ShouldBe(Failure<int>(_mappedError));
+        output.ShouldBe(Failure<int>(_differentError));
         mapper.Received(1)(_error);
     }
 
@@ -188,11 +190,11 @@ public class ResultOperatorsTests
     public void FlatTap_ShouldReturnTheMappedError_ForSuccessfulResults()
     {
         var mapper = Substitute.For<Func<int, Result<string>>>();
-        mapper(Value).Returns(Failure<string>(_mappedError));
+        mapper(Value).Returns(Failure<string>(_differentError));
 
         var output = Success.FlatTap(mapper);
 
-        output.ShouldBe(Failure<int>(_mappedError));
+        output.ShouldBe(Failure<int>(_differentError));
         mapper.Received(1)(Value);
     }
 
@@ -211,19 +213,19 @@ public class ResultOperatorsTests
     [Fact]
     public void Filter_ShouldReturnTheOriginalValue_IfPredicateIsTrue()
     {
-        Success.Filter(x => x > 0, _ => _mappedError).ShouldBe(Success);
+        Success.Filter(x => x > 0, _ => _differentError).ShouldBe(Success);
     }
 
     [Fact]
     public void Filter_ShouldReturnTheOriginalError()
     {
-        Failure.Filter(x => true, _ => _mappedError).ShouldBe(_error);
+        Failure.Filter(x => true, _ => _differentError).ShouldBe(_error);
     }
 
     [Fact]
     public void Filter_ShouldReturnTheMappedError_IfPredicateIsFalse()
     {
-        Success.Filter(x => x < 0, _ => _mappedError).ShouldBe(_mappedError);
+        Success.Filter(x => x < 0, _ => _differentError).ShouldBe(_differentError);
     }
 
     [Fact]
@@ -347,11 +349,11 @@ public class ResultOperatorsTests
     public async Task FlatTapAsync_ShouldReturnTheMappedError_ForSuccessfulResults()
     {
         var mapper = Substitute.For<AsyncFunc<int, Result<string>>>();
-        mapper(Value).Returns(Failure<string>(_mappedError));
+        mapper(Value).Returns(Failure<string>(_differentError));
 
         var output = await Success.FlatTapAsync(mapper);
 
-        output.ShouldBe(Failure<int>(_mappedError));
+        output.ShouldBe(Failure<int>(_differentError));
         await mapper.Received(1)(Value);
     }
 
@@ -370,22 +372,22 @@ public class ResultOperatorsTests
     [Fact]
     public async Task FilterAsync_ShouldReturnTheOriginalValue_IfPredicateIsTrue()
     {
-        var output = await Success.FilterAsync(x => Task.FromResult(x > 0), _ => _mappedError);
+        var output = await Success.FilterAsync(x => Task.FromResult(x > 0), _ => _differentError);
         output.ShouldBe(Success);
     }
 
     [Fact]
     public async Task FilterAsync_ShouldReturnTheOriginalError()
     {
-        var output = await Failure.FilterAsync(x => Task.FromResult(true), _ => _mappedError);
+        var output = await Failure.FilterAsync(x => Task.FromResult(true), _ => _differentError);
         output.ShouldBe(_error);
     }
 
     [Fact]
     public async Task FilterAsync_ShouldReturnTheMappedError_IfPredicateIsFalse()
     {
-        var output = await Success.FilterAsync(x => Task.FromResult(x < 0), _ => _mappedError);
-        output.ShouldBe(_mappedError);
+        var output = await Success.FilterAsync(x => Task.FromResult(x < 0), _ => _differentError);
+        output.ShouldBe(_differentError);
     }
 
     [Fact]
@@ -419,5 +421,109 @@ public class ResultOperatorsTests
 
         actualException.ShouldBe(expectedException);
         exceptionFactory.Received(1)(_error);
+    }
+
+    [Fact]
+    public void Contains_ShouldReturnTrue_IfPropositionIsTrue_WithSuccess()
+    {
+        Success.Contains(_ => true).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Contains_ShouldReturnFalse_IfPropositionIsFalse_WithSuccess()
+    {
+        Success.Contains(_ => false).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Contains_ShouldCallPredicate_Once()
+    {
+        var predicate = Substitute.For<Func<int, bool>>();
+        Success.Contains(predicate);
+        predicate.Received(1).Invoke(Value);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Contains_ShouldReturnFalse_WithFailure(bool proposition)
+    {
+        Failure.Contains(_ => proposition).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void CatchFirstFailure_ShouldReturnOnlyTheFirstFailure_IfMultipleArePresent()
+    {
+        Enumerable.Range(0, 100)
+            .Select(i => i switch
+            {
+                0 => _error,
+                < 15 => Success(i),
+                < 60 => _differentError,
+                < 85 => Success(-i),
+                _ => _differentError
+            })
+            .CatchFirstFailure()
+            .ShouldBe(Failure<IEnumerable<int>>(_error));
+    }
+
+    [Fact]
+    public void CatchFirstFailure_ShouldReturnSuccess_IfAllElementsAreSuccesses()
+    {
+        var enumerable = Enumerable.Range(0, 120);
+
+        var result = enumerable
+            .Select(Success<int>)
+            .CatchFirstFailure();
+        result.IsSuccess.ShouldBeTrue();
+        result.ReadValue().ShouldBe(enumerable);
+    }
+
+    [Fact]
+    public void CatchFirstFailure_ShouldReturnEmpty_WithEmptyInput()
+    {
+        var result = Enumerable.Empty<Result<Nothing>>().CatchFirstFailure();
+        result.IsSuccess.ShouldBeTrue();
+        result.ReadValue().ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void CatchAllFailures_ShouldReturnEveryFailure_IfMultipleArePresent()
+    {
+        var results = Enumerable.Range(0, 100)
+            .Select(i => i switch
+            {
+                0 => _error,
+                < 15 => Success(i),
+                < 60 => _differentError,
+                < 85 => Success(-i),
+                _ => _differentError
+            });
+        var failures = results.Where(r => r.IsFailure).Select(e => e.ReadError());
+        var result = results.CatchAllFailures();
+        result.IsFailure.ShouldBeTrue();
+        var multiError = result.ReadError().ShouldBeOfType<MultiError>();
+        multiError.PrimaryError.ShouldBe(_error);
+        multiError.SecondaryErrors.ShouldBe(failures.Skip(1));
+    }
+
+    [Fact]
+    public void CatchAllFailures_ShouldReturnSuccess_IfAllElementsAreSuccesses()
+    {
+        var enumerable = Enumerable.Range(0, 120);
+
+        var result = enumerable
+            .Select(Success<int>)
+            .CatchAllFailures();
+        result.IsSuccess.ShouldBeTrue();
+        result.ReadValue().ShouldBe(enumerable);
+    }
+
+    [Fact]
+    public void CatchAllFailures_ShouldReturnEmpty_WithEmptyInput()
+    {
+        var result = Enumerable.Empty<Result<Nothing>>().CatchAllFailures();
+        result.IsSuccess.ShouldBeTrue();
+        result.ReadValue().ShouldBeEmpty();
     }
 }

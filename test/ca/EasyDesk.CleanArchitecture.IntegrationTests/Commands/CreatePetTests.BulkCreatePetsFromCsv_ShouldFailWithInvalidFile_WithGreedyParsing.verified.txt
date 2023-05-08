@@ -5,7 +5,7 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: Error at line 1. The accepted number of column is 1.,
+        Detail: Line 1: Field is missing,
         Meta: {
           propertyName: petListCsv
         }

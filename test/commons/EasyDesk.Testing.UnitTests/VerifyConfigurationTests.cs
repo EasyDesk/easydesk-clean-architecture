@@ -43,7 +43,7 @@ public class VerifyConfigurationTests
     [Fact]
     public Task VerifyErrorConversionTestMultiEmpty()
     {
-        return Verify(new MultiError(new CustomError(42, new CustomErrorInside("hello")), ImmutableHashSet.Create<Error>()));
+        return Verify(new MultiError(new CustomError(42, new CustomErrorInside("hello")), ImmutableList.Create<Error>()));
     }
 
     [Fact]
@@ -51,7 +51,7 @@ public class VerifyConfigurationTests
     {
         return Verify(new MultiError(
                 new CustomError(42, new CustomErrorInside("hello")),
-                ImmutableHashSet.Create<Error>(
+                ImmutableList.Create<Error>(
                     new CustomErrorInside("asd"),
                     new CustomError(
                         123,

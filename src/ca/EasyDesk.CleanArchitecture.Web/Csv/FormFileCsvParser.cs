@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Http;
 using System.Runtime.CompilerServices;
+using static EasyDesk.CleanArchitecture.Web.Csv.CsvService;
 
 namespace EasyDesk.CleanArchitecture.Web.Csv;
 
@@ -17,12 +18,12 @@ public class FormFileCsvParser
         _csvService = csvService;
     }
 
-    public Result<IEnumerable<T>> ParseFormFileAsCsv<T>(
+    private Result<IEnumerable<Result<T>>> InnerLazyParseFormFileAsCsv<T>(
         IFormFile formFile,
         Func<IReaderRow, T> converter,
         long maxSize = DefaultMaxUploadSize,
         Action<CsvContext>? configureContext = null,
-        [CallerArgumentExpression(nameof(formFile))] string? propertyName = null)
+        string? propertyName = null)
     {
         propertyName ??= formFile.FileName;
         if (!formFile.FileName.EndsWith(".csv"))
@@ -37,10 +38,40 @@ public class FormFileCsvParser
         {
             return Errors.InvalidInput(propertyName, $"File should be in CSV format and have text/csv as content type.");
         }
-        return Success(Parse(formFile, converter, configureContext).EnumerateOnce());
+        return Success(Parse(formFile, converter, configureContext).Select(r => r.MapError(e => e switch
+        {
+            InvalidCsvLine x => Errors.InvalidInput(propertyName, x.DisplayMessage),
+            _ => e
+        })).EnumerateOnce());
     }
 
-    private IEnumerable<T> Parse<T>(IFormFile formFile, Func<IReaderRow, T> converter, Action<CsvContext>? configureContext)
+    public Result<IEnumerable<Result<T>>> LazyParseFormFileAsCsv<T>(
+        IFormFile formFile,
+        Func<IReaderRow, T> converter,
+        long maxSize = DefaultMaxUploadSize,
+        Action<CsvContext>? configureContext = null,
+        [CallerArgumentExpression(nameof(formFile))] string? propertyName = null) =>
+            InnerLazyParseFormFileAsCsv(formFile, converter, maxSize, configureContext, propertyName);
+
+    public Result<IEnumerable<T>> EagerParseFormFileAsCsv<T>(
+        IFormFile formFile,
+        Func<IReaderRow, T> converter,
+        long maxSize = DefaultMaxUploadSize,
+        Action<CsvContext>? configureContext = null,
+        [CallerArgumentExpression(nameof(formFile))] string? propertyName = null) =>
+            InnerLazyParseFormFileAsCsv(formFile, converter, maxSize, configureContext, propertyName)
+                .FlatMap(StaticImports.CatchAllFailures);
+
+    public Result<IEnumerable<T>> GreedyParseFormFileAsCsv<T>(
+        IFormFile formFile,
+        Func<IReaderRow, T> converter,
+        long maxSize = DefaultMaxUploadSize,
+        Action<CsvContext>? configureContext = null,
+        [CallerArgumentExpression(nameof(formFile))] string? propertyName = null) =>
+            InnerLazyParseFormFileAsCsv(formFile, converter, maxSize, configureContext, propertyName)
+                .FlatMap(StaticImports.CatchFirstFailure);
+
+    private IEnumerable<Result<T>> Parse<T>(IFormFile formFile, Func<IReaderRow, T> converter, Action<CsvContext>? configureContext)
     {
         using var stream = formFile.OpenReadStream();
         foreach (var record in _csvService.ParseCsv(stream, converter, configureContext))

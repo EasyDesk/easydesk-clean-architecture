@@ -5,7 +5,7 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 public static class Errors
 {
     public static MultiError Multiple(Error primaryError, IEnumerable<Error> secondaryErrors) =>
-        new(primaryError, secondaryErrors.ToEquatableSet());
+        new(primaryError, secondaryErrors.ToEquatableList());
 
     public static InternalError Internal(Exception ex) => new(ex);
 

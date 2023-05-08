@@ -252,7 +252,7 @@ public class CreatePetTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task BulkCreatePetsFromCsv_ShouldFailWithInvalidFile()
+    public async Task BulkCreatePetsFromCsv_ShouldFailWithInvalidFile_WithEagerParsing()
     {
         var timeout = Duration.FromSeconds(15);
         var body = new CreatePersonBodyDto(
@@ -272,7 +272,36 @@ public class CreatePetTests : SampleIntegrationTest
             .EnsureSuccess();
 
         var response = await Http
-            .CreatePetsFromCsv(person.Id, GenerateCsv(2).Replace("\n", ";\n"))
+            .CreatePetsFromCsv(person.Id, GenerateCsv(20).Replace("Nickname", "Nick;Name"))
+            .Send(timeout)
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task BulkCreatePetsFromCsv_ShouldFailWithInvalidFile_WithGreedyParsing()
+    {
+        var timeout = Duration.FromSeconds(15);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            new("..."));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Any())
+            .EnsureSuccess();
+
+        var response = await Http
+            .CreatePetsFromCsv(person.Id, GenerateCsv(20).Replace("Nickname", "Nick;Name"))
+            .WithQuery("greedy", true.ToString())
             .Send(timeout)
             .AsVerifiable();
 
