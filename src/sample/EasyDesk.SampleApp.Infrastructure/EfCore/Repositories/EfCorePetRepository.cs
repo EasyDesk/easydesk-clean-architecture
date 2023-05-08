@@ -13,11 +13,9 @@ public class EfCorePetRepository : EfCoreRepositoryWithHydration<Pet, PetModel, 
     {
     }
 
-    public Task<bool> Exists(int id) => DbSet.AnyAsync(p => p.Id == id);
+    public Task<bool> Exists(int id) => Exists(p => p.Id == id);
 
-    public Task<Option<Pet>> GetById(int id) => GetSingle(q => q.Where(p => p.Id == id));
+    public Task<Option<Pet>> GetById(int id) => GetSingle(p => p.Id == id);
 
     public Task RemoveAll() => DbSet.ExecuteDeleteAsync();
-
-    protected override IQueryable<PetModel> Includes(IQueryable<PetModel> initialQuery) => initialQuery;
 }

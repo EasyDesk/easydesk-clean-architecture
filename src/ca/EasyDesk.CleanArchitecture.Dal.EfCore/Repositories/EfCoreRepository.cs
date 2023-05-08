@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.Commons.Collections;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
@@ -29,19 +30,32 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
 
     protected DbSet<TPersistence> DbSet { get; }
 
-    private IQueryable<TPersistence> InitialQuery() => Includes(DbSet);
+    private IQueryable<TPersistence> InitialQuery() => WrapInitialQuery(DbSet);
+
+    protected async Task<bool> Exists(QueryWrapper<TPersistence> queryWrapper) =>
+        await queryWrapper(InitialQuery()).AnyAsync();
+
+    protected async Task<bool> Exists(Expression<Func<TPersistence, bool>> predicate) =>
+        await Exists(q => q.Where(predicate));
 
     protected async Task<Option<TAggregate>> GetSingle(QueryWrapper<TPersistence> queryWrapper)
+
     {
         var persistenceModel = await queryWrapper(InitialQuery()).FirstOptionAsync();
         return persistenceModel.Map(Tracker.TrackFromPersistenceModel);
     }
+
+    protected async Task<Option<TAggregate>> GetSingle(Expression<Func<TPersistence, bool>> predicate) =>
+        await GetSingle(q => q.Where(predicate));
 
     protected async Task<IEnumerable<TAggregate>> GetMany(QueryWrapper<TPersistence> queryWrapper)
     {
         var persistenceModels = await queryWrapper(InitialQuery()).ToListAsync();
         return persistenceModels.Select(Tracker.TrackFromPersistenceModel);
     }
+
+    protected async Task<IEnumerable<TAggregate>> GetMany(Expression<Func<TPersistence, bool>> predicate) =>
+        await GetMany(q => q.Where(predicate));
 
     public void Save(TAggregate aggregate)
     {
@@ -77,5 +91,5 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     internal void NotifyEmittedEvents(TAggregate aggregate) =>
         aggregate.ConsumeAllEvents().ForEach(_eventNotifier.Notify);
 
-    protected abstract IQueryable<TPersistence> Includes(IQueryable<TPersistence> initialQuery);
+    protected virtual IQueryable<TPersistence> WrapInitialQuery(IQueryable<TPersistence> initialQuery) => initialQuery;
 }
