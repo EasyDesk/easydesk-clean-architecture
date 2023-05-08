@@ -47,8 +47,8 @@ public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
     {
         _audit.AddProperty("nickname", request.Nickname);
 
-        var result = await _personRepository.GetById(request.PersonId)
-            .ThenOrElseError(Errors.NotFound)
+        var result = await _personRepository.FindById(request.PersonId)
+            .OrElseNotFound()
             .ThenMap(_ => Pet.Create(new Name(request.Nickname), request.PersonId))
             .ThenIfSuccessAsync(_petRepository.SaveAndHydrate)
             .ThenMap(PetSnapshot.MapFrom);

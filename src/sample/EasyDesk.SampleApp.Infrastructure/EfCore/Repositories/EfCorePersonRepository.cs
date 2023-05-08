@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Infrastructure.EfCore.Model;
@@ -15,9 +16,7 @@ public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, Samp
     {
     }
 
-    public Task<Option<Person>> GetById(Guid id) => GetSingle(p => p.Id == id);
-
-    public Task<bool> Exists(Guid id) => Exists(p => p.Id == id);
+    public IAggregateView<Person> FindById(Guid id) => Find(p => p.Id == id);
 
     public Task RemoveAll() => DbSet.ExecuteDeleteAsync();
 }

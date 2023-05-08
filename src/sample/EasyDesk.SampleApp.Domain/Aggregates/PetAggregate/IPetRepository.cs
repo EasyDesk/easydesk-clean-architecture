@@ -3,7 +3,7 @@
 namespace EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 public interface IPetRepository :
-    IGetByIdRepository<Pet, int>,
+    IFindByIdRepository<Pet, int>,
     ISaveAndHydrateRepository<Pet, int>,
     IRemoveRepository<Pet>
 {

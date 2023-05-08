@@ -23,8 +23,8 @@ public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonSn
     protected override async Task<Result<Person>> Process(DeletePerson request)
     {
         return await _personRepository
-            .GetById(request.PersonId)
-            .ThenOrElseError(Errors.NotFound)
+            .FindById(request.PersonId)
+            .OrElseNotFound()
             .ThenIfSuccess(_personRepository.Remove);
     }
 }

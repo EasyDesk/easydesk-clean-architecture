@@ -32,21 +32,11 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
 
     private IQueryable<TPersistence> InitialQuery() => WrapInitialQuery(DbSet);
 
-    protected async Task<bool> Exists(QueryWrapper<TPersistence> queryWrapper) =>
-        await queryWrapper(InitialQuery()).AnyAsync();
+    protected IAggregateView<TAggregate> Find(QueryWrapper<TPersistence> queryWrapper) =>
+        new EfCoreAggregateView<TAggregate, TPersistence>(queryWrapper(InitialQuery()), Tracker);
 
-    protected async Task<bool> Exists(Expression<Func<TPersistence, bool>> predicate) =>
-        await Exists(q => q.Where(predicate));
-
-    protected async Task<Option<TAggregate>> GetSingle(QueryWrapper<TPersistence> queryWrapper)
-
-    {
-        var persistenceModel = await queryWrapper(InitialQuery()).FirstOptionAsync();
-        return persistenceModel.Map(Tracker.TrackFromPersistenceModel);
-    }
-
-    protected async Task<Option<TAggregate>> GetSingle(Expression<Func<TPersistence, bool>> predicate) =>
-        await GetSingle(q => q.Where(predicate));
+    protected IAggregateView<TAggregate> Find(Expression<Func<TPersistence, bool>> predicate) =>
+        Find(q => q.Where(predicate));
 
     protected async Task<IEnumerable<TAggregate>> GetMany(QueryWrapper<TPersistence> queryWrapper)
     {
