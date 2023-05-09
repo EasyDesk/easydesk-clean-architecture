@@ -1,5 +1,6 @@
 ﻿using CsvHelper;
 using EasyDesk.CleanArchitecture.Web.Csv;
+using NSubstitute;
 using System.Globalization;
 using System.Text;
 
@@ -14,10 +15,13 @@ public class CsvServiceTests
         PrepareHeaderForMatch = args => args.Header.Trim().ToLower(),
     });
 
-    private IEnumerable<T> Parse<T>(string text, Func<IReaderRow, T> converter)
+    private IEnumerable<T> Parse<T>(string text, Func<IReaderRow, T> converter) =>
+        SafeParse(text, converter).Select(r => r.ThrowIfFailure());
+
+    private IEnumerable<Result<T>> SafeParse<T>(string text, Func<IReaderRow, T> converter)
     {
         using var content = new MemoryStream(Encoding.UTF8.GetBytes(text));
-        foreach (var e in _sut.ParseCsv(content, converter).Select(r => r.ThrowIfFailure()))
+        foreach (var e in _sut.ParseCsv(content, converter))
         {
             yield return e;
         }
@@ -71,6 +75,40 @@ public class CsvServiceTests
             String = row.GetOptionalField<string>("String"),
             Integer = row.GetOptionalField<int>("Integer"),
         }).Take(3));
+    }
+
+    [Fact]
+    public void ShouldCallConverter_ForEachDataRow_WhenConsumed()
+    {
+        var csv = """
+            String;Integer
+            A;1
+            B;2
+            C;3
+            """;
+        var converter = Substitute.For<Func<IReaderRow, object>>();
+        var parsed = Parse(csv, converter);
+        converter.ReceivedWithAnyArgs(0).Invoke(null!);
+        var consumed = parsed.All(_ => true);
+        converter.ReceivedWithAnyArgs(3).Invoke(null!);
+        consumed = parsed.All(_ => true);
+        converter.ReceivedWithAnyArgs(6).Invoke(null!);
+    }
+
+    [Fact]
+    public async Task ShouldReturnError_IfCsvIsMalformed()
+    {
+        var csv = """
+            String;String
+            A;1
+            ;2
+            C;
+            """;
+        await Verify(SafeParse(csv, row => new
+        {
+            String = row.GetOptionalField<string>("String"),
+            Integer = row.GetOptionalField<int>("String"),
+        }));
     }
 
     [Fact(Skip = "https://github.com/JoshClose/CsvHelper/issues/2153")]

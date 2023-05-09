@@ -1,0 +1,39 @@
+﻿[
+  {
+    IsSuccess: false,
+    IsFailure: true,
+    Value: null,
+    Error: {
+      Error: InvalidCsvLine,
+      Meta: {
+        LineIndex: 1,
+        Message: The conversion cannot be performed.,
+        Field: A,
+        DisplayMessage: Line 1: A The conversion cannot be performed.
+      }
+    }
+  },
+  {
+    IsSuccess: true,
+    IsFailure: false,
+    Value: {
+      String: null,
+      Integer: null
+    },
+    Error: null
+  },
+  {
+    IsSuccess: false,
+    IsFailure: true,
+    Value: null,
+    Error: {
+      Error: InvalidCsvLine,
+      Meta: {
+        LineIndex: 3,
+        Message: The conversion cannot be performed.,
+        Field: C,
+        DisplayMessage: Line 3: C The conversion cannot be performed.
+      }
+    }
+  }
+]

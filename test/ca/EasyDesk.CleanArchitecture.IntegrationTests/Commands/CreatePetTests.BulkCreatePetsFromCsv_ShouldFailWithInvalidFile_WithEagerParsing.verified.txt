@@ -5,140 +5,140 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: Line 2: Field is missing,
+        Detail: Line 2: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 3: Field is missing,
+        Detail: Line 3: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 4: Field is missing,
+        Detail: Line 4: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 5: Field is missing,
+        Detail: Line 5: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 6: Field is missing,
+        Detail: Line 6: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 7: Field is missing,
+        Detail: Line 7: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 8: Field is missing,
+        Detail: Line 8: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 9: Field is missing,
+        Detail: Line 9: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 10: Field is missing,
+        Detail: Line 10: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 11: Field is missing,
+        Detail: Line 11: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 12: Field is missing,
+        Detail: Line 12: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 13: Field is missing,
+        Detail: Line 13: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 14: Field is missing,
+        Detail: Line 14: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 15: Field is missing,
+        Detail: Line 15: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 16: Field is missing,
+        Detail: Line 16: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 17: Field is missing,
+        Detail: Line 17: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 18: Field is missing,
+        Detail: Line 18: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 19: Field is missing,
+        Detail: Line 19: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 20: Field is missing,
+        Detail: Line 20: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 1: Field is missing,
+        Detail: Line 1: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }

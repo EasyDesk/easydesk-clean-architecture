@@ -5,7 +5,7 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: Line 1: Field is missing,
+        Detail: Line 1: Field with name 'Nickname' does not exist.,
         Meta: {
           propertyName: petListCsv
         }

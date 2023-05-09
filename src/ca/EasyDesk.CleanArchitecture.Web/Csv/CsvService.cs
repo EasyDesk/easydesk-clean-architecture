@@ -10,7 +10,29 @@ public class CsvService
 
     public CsvService(CsvConfiguration configuration)
     {
-        _configuration = configuration;
+        _configuration = configuration with
+        {
+            MissingFieldFound = args =>
+            {
+                var message = "does not exist.";
+
+                // Get by index.
+                if (args.HeaderNames == null || args.HeaderNames.Length == 0)
+                {
+                    throw new InvalidCsvLineException(args.Context, message, $"Field at index '{args.Index}'");
+                }
+
+                // Get by name.
+                var indexText = args.Index > 0 ? $" at field index '{args.Index}'" : string.Empty;
+
+                if (args.HeaderNames.Length == 1)
+                {
+                    throw new InvalidCsvLineException(args.Context, message, $"Field with name '{args.HeaderNames[0]}'{indexText}");
+                }
+
+                throw new InvalidCsvLineException(args.Context, message, $"Field containing names '{string.Join("' or '", args.HeaderNames)}'{indexText}");
+            },
+        };
     }
 
     public IEnumerable<Result<T>> ParseCsv<T>(Stream content, Func<IReaderRow, T> converter, Action<CsvContext>? configureContext = null)
@@ -56,16 +78,40 @@ public class CsvService
         }
         catch (BadDataException e)
         {
-            return new InvalidCsvLine(lineIndex, e.Field, e.Message);
+            return new InvalidCsvLine(lineIndex, e.Message, e.Field);
         }
         catch (TypeConverterException e)
         {
-            return new InvalidCsvLine(lineIndex, e.Text, e.Message);
+            return new InvalidCsvLine(lineIndex, CleanExceptionMessage(e.Message), e.Text);
+        }
+        catch (InvalidCsvLineException e)
+        {
+            return new InvalidCsvLine(lineIndex, e.Message, e.Field);
+        }
+        catch (ReaderException e)
+        {
+            return new InvalidCsvLine(lineIndex, CleanExceptionMessage(e.Message));
         }
     }
 
-    public record InvalidCsvLine(long LineIndex, string Field, string Message) : Error
+    private string CleanExceptionMessage(string dirty) => dirty.Split('\n', 2)[0].ReplaceLineEndings(string.Empty);
+
+    public record InvalidCsvLine(long LineIndex, string Message, string? Field = null) : Error
     {
-        public string DisplayMessage => $"Line {LineIndex}: {Message}";
+        public string DisplayMessage => $"Line {LineIndex}: {(Field is null ? string.Empty : Field + ' ')}{Message}";
+    }
+
+    private class InvalidCsvLineException : Exception
+    {
+        public InvalidCsvLineException(CsvContext context, string message, string field)
+            : base(message)
+        {
+            Context = context;
+            Field = field;
+        }
+
+        public CsvContext Context { get; }
+
+        public string Field { get; }
     }
 }
