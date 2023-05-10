@@ -18,7 +18,7 @@ public record ErrorDto(string Code, string Detail, object Meta)
     {
         NotFoundError => new(
             Code: "NotFound",
-            Detail: "Unable to fine the requested resource",
+            Detail: "Unable to find the requested resource",
             Meta: Nothing.Value),
         UnknownUserError => new(
             Code: "UnknownUser",
