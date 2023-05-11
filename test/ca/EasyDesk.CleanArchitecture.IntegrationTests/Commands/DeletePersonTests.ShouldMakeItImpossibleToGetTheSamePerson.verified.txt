@@ -5,7 +5,7 @@
     Errors: [
       {
         Code: NotFound,
-        Detail: Unable to fine the requested resource,
+        Detail: Unable to find the requested resource,
         Meta: {}
       }
     ],

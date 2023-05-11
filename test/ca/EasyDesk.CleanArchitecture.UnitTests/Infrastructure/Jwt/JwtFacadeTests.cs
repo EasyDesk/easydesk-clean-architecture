@@ -15,7 +15,7 @@ public class JwtFacadeTests
     private const string KeyId = "test-kid";
 
     private readonly FakeClock _clock = new(SystemClock.Instance.GetCurrentInstant());
-    private readonly SecurityKey _key = KeyUtils.KeyFromString("abcdefghijklmnopqrstuvwxyz", KeyId);
+    private readonly SecurityKey _key = KeyUtils.KeyFromString("abcdefghijklmnopqrstuvwxyz-asdasdasd", KeyId);
     private readonly Duration _lifetime = Duration.FromMinutes(5);
     private readonly Action<JwtGenerationBuilder> _configureJwtGeneration;
     private readonly Action<JwtValidationBuilder> _configureDefaultValidation;
