@@ -7,7 +7,6 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NodaTime;
-using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
@@ -31,7 +30,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
 
     required public bool Approved { get; set; }
 
-    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src => new(
+    public static IQueryable<PersonSnapshot> Projection(IQueryable<PersonModel> query) => query.Select(src => new PersonSnapshot(
         src.Id,
         src.FirstName,
         src.LastName,
@@ -47,7 +46,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
             src.Residence.Region.AsOption(),
             src.Residence.State.AsOption(),
             src.Residence.Country.AsOption()),
-        src.Approved);
+        src.Approved));
 
     public Person ToDomain() => new(Id, new Name(FirstName), new Name(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain(), Approved);
 
