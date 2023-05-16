@@ -24,7 +24,8 @@ public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonSn
     {
         return await _personRepository
             .FindById(request.PersonId)
-            .OrElseNotFound()
+            .AsOption()
+            .ThenOrElseNotFound()
             .ThenIfSuccess(_personRepository.Remove);
     }
 }

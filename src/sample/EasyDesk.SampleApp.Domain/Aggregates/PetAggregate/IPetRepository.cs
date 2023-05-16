@@ -4,8 +4,7 @@ namespace EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 public interface IPetRepository :
     IFindByIdRepository<Pet, int>,
-    ISaveAndHydrateRepository<Pet, int>,
-    IRemoveRepository<Pet>
+    ISaveAndHydrateRepository<Pet, int>
 {
     Task RemoveAll();
 }
