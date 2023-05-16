@@ -1,9 +1,11 @@
-﻿namespace EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
+﻿using System.Linq.Expressions;
+
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 
 public interface IProjectable<F, T>
     where F : IProjectable<F, T>
 {
-    static abstract IQueryable<T> Projection(IQueryable<F> query);
+    static abstract Expression<Func<F, T>> Projection();
 }
 
 public static class ProjectionExtensions
@@ -11,6 +13,6 @@ public static class ProjectionExtensions
     public static IQueryable<T> Project<F, T>(this IQueryable<F> query)
         where F : IProjectable<F, T>
     {
-        return F.Projection(query);
+        return query.Select(F.Projection());
     }
 }
