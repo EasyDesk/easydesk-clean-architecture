@@ -1,11 +1,13 @@
-﻿using CsvHelper.Configuration;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Web.Csv.DependencyInjection;
 
-public class CsvModule : AppModule
+public partial class CsvModule : AppModule
 {
     private readonly CultureInfo _cultureInfo;
     private readonly Action<CsvConfiguration>? _configure;
@@ -21,7 +23,7 @@ public class CsvModule : AppModule
         var configuration = new CsvConfiguration(_cultureInfo)
         {
             DetectDelimiter = true,
-            PrepareHeaderForMatch = args => args.Header.Trim().ToLower(),
+            PrepareHeaderForMatch = DefaultPrepareHeaderForMatch,
             DetectColumnCountChanges = true,
         };
         _configure?.Invoke(configuration);
@@ -29,6 +31,12 @@ public class CsvModule : AppModule
         services.AddSingleton<CsvService>();
         services.AddSingleton<FormFileCsvParser>();
     }
+
+    public static string DefaultPrepareHeaderForMatch(PrepareHeaderForMatchArgs args) =>
+        WhitespaceRegex().Replace(args.Header, string.Empty).ToLower();
+
+    [GeneratedRegex(@"\s")]
+    private static partial Regex WhitespaceRegex();
 }
 
 public static class CsvModuleExtensions
