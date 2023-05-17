@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Sagas;
-using EasyDesk.CleanArchitecture.Application.Sagas.BulkOperations;
 using EasyDesk.SampleApp.Application.Commands;
 
 namespace EasyDesk.SampleApp.Application.Queries;
@@ -21,8 +20,7 @@ public class GetBulkCreatePetsStatusHandler : IHandler<GetBulkCreatePetsStatus, 
 
     public async Task<Result<BulkCreatePetsStatus>> Handle(GetBulkCreatePetsStatus request)
     {
-        var inProgress = await _sagaManager
-            .IsInProgress<string, BulkOperationState<CreatePetsResult, IEnumerable<CreatePet>>>(typeof(BulkCreatePets).Name);
+        var inProgress = await BulkCreatePets.IsInProgress(_sagaManager);
         return new BulkCreatePetsStatus(inProgress);
     }
 }
