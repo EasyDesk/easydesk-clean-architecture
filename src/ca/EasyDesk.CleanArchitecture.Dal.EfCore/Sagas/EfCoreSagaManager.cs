@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Commons.Collections;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
@@ -17,13 +18,18 @@ internal class EfCoreSagaManager : ISagaManager
         _serializer = JsonSerializer.Create(jsonConfigurator.CreateSettings());
     }
 
+    private IQueryable<SagaModel> QuerySaga<TId, TState>(TId id) =>
+        _context.Sagas.Where(s => s.Id == GetSagaIdAsString(id) && s.Type == FormatSagaType<TState>());
+
     public async Task<Option<(ISagaReference<TState> Reference, TState State)>> Find<TId, TState>(TId id)
     {
-        return await _context.Sagas
-            .Where(s => s.Id == GetSagaIdAsString(id) && s.Type == FormatSagaType<TState>())
+        return await QuerySaga<TId, TState>(id)
             .FirstOptionAsync()
             .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), _serializer.DeserializeFromBsonBytes<TState>(m.State!)));
     }
+
+    public async Task<bool> IsInProgress<TId, TState>(TId id) =>
+        await QuerySaga<TId, TState>(id).AnyAsync();
 
     public ISagaReference<TState> CreateNew<TId, TState>(TId id)
     {

@@ -8,9 +8,8 @@ public static class ValidationUtils
 {
     public static Result<T> Validate<T>(T value, IEnumerable<IValidator<T>> validators)
     {
-        var context = new ValidationContext<T>(value);
         var errors = validators
-            .Select(x => x.Validate(context))
+            .Select(x => x.Validate(value))
             .SelectMany(x => x.Errors)
             .Where(x => x is not null)
             .Select(x => Errors.InvalidInput(x.PropertyName, x.ErrorMessage))

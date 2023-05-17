@@ -14,6 +14,8 @@ public static class PetsRoutes
 
     public const string CreatePet = Base;
 
+    public const string GetCreatePetsStatus = "bulk/" + Base;
+
     public const string CreatePets = "bulk/" + Base;
 
     public const string CreatePets2 = "bulk/" + Base + "2";
@@ -84,6 +86,14 @@ public class PetController : CleanArchitectureController
     {
         return await DispatchWithPagination(new GetOwnedPets(personId), pagination)
             .MapEachElement(PetDto.FromPetSnapshot)
+            .ReturnOk();
+    }
+
+    [HttpGet(PetsRoutes.GetCreatePetsStatus)]
+    public async Task<ActionResult<ResponseDto<CreatePetsStatusDto, Nothing>>> GetCreatePetsStatus()
+    {
+        return await Dispatch(new GetBulkCreatePetsStatus())
+            .MapTo<CreatePetsStatusDto>()
             .ReturnOk();
     }
 }

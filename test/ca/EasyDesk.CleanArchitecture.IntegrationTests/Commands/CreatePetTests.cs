@@ -329,9 +329,9 @@ public class CreatePetTests : SampleIntegrationTest
             .EnsureSuccess();
 
         Task<VerifiableHttpResponse<CreatePetsDto, Nothing>> StartBulkOperation() => Http
-               .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
-               .Send(timeout)
-               .AsVerifiable();
+            .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
+            .Send(timeout)
+            .AsVerifiable();
 
         var success = await StartBulkOperation();
 
@@ -361,15 +361,84 @@ public class CreatePetTests : SampleIntegrationTest
             .EnsureSuccess();
 
         var success = await Http
-               .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
-               .Send(timeout)
-               .AsVerifiable();
+            .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
+            .Send(timeout)
+            .AsVerifiable();
 
         var successToo = await Http
-               .CreatePets2(person.Id, new(PetGenerator(BulkQuantity)))
-               .Send(timeout)
-               .AsVerifiable();
+            .CreatePets2(person.Id, new(PetGenerator(BulkQuantity)))
+            .Send(timeout)
+            .AsVerifiable();
 
         await Verify(new { Success = success, SuccessToo = successToo });
+    }
+
+    [Fact]
+    public async Task BulkCreatePets_ShouldNotBeInProgressByDefault()
+    {
+        var response = await Http.GetCreatePetsStatus().Send().AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task BulkCreatePets_ShouldBeInProgress_AfterStartingBulkOperation()
+    {
+        var timeout = Duration.FromSeconds(30);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("unknown"));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
+            .Send(timeout)
+            .EnsureSuccess();
+
+        var response = await Http
+            .GetCreatePetsStatus()
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task BulkCreatePets_ShouldNotBeInProgress_AfterCompletion()
+    {
+        var timeout = Duration.FromSeconds(30);
+        var body = new CreatePersonBodyDto(
+            FirstName: "Foo",
+            LastName: "Bar",
+            DateOfBirth: new LocalDate(1995, 10, 12),
+            Residence: new("unknown"));
+
+        var person = await Http
+            .CreatePerson(body)
+            .Send()
+            .AsData();
+
+        await Http
+            .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
+            .Send(timeout)
+            .EnsureSuccess();
+
+        await Http
+            .GetOwnedPets(person.Id)
+            .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
+            .EnsureSuccess();
+
+        var response = await Http
+            .GetCreatePetsStatus()
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
     }
 }
