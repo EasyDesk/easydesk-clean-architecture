@@ -13,7 +13,7 @@
     <PackageReference Include="Rebus" Version="7.1.0" />
     <PackageReference Include="Rebus.Microsoft.Extensions.Logging" Version="4.0.0" />
     <PackageReference Include="Rebus.ServiceProvider" Version="9.0.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.1" />
   </ItemGroup>
 
   <ItemGroup>

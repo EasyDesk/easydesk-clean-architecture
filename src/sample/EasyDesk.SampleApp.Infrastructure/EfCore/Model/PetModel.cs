@@ -23,7 +23,7 @@ public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, 
     public PersonModel Person { get; set; } = null!;
 
     public static Expression<Func<PetModel, PetSnapshot>> Projection() => src =>
-        new(src.Id, src.Nickname, src.PersonId);
+        new PetSnapshot(src.Id, src.Nickname, src.PersonId);
 
     public Pet ToDomain() => new(Id, new Name(Nickname), PersonId);
 

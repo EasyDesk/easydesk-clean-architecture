@@ -24,7 +24,7 @@ public class JwtValidationTests
     public async Task ShouldConvertValidationToGenerationConfigurationCorrectly()
     {
         var validation = new JwtValidationConfiguration(
-            KeyUtils.KeyFromString("IUYTFCVBNJUHDNEJNUNWOCNJVJNWRN"),
+            KeyUtils.KeyFromString("IUYTFCVBNJUHDNEJNUNWOCNJVJNWRNHIUYFQWEZXVCPIOUBN"),
             Set("Issuer"),
             Set("Audience"),
             Enumerable.Empty<SecurityKey>());

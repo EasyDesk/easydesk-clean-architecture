@@ -31,7 +31,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
 
     required public bool Approved { get; set; }
 
-    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src => new(
+    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src => new PersonSnapshot(
         src.Id,
         src.FirstName,
         src.LastName,
