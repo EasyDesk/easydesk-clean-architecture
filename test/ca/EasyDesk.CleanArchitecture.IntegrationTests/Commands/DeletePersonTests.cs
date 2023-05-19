@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Infrastructure.EfCore;

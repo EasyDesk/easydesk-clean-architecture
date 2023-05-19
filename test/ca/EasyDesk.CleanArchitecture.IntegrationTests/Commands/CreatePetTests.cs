@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
+using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
@@ -43,7 +44,16 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            new("street", "Arthur IV", "12324", "New York", null, null, "New York State", "USA"));
+            new(
+                StreetType: Some("street"),
+                StreetName: "Arthur IV",
+                StreetNumber: Some("12324"),
+                City: Some("New York"),
+                District: None,
+                Province: None,
+                Region: Some("New York State"),
+                State: Some("USA"),
+                Country: None));
 
         var person = await Http
             .CreatePerson(body)
@@ -58,8 +68,8 @@ public class CreatePetTests : SampleIntegrationTest
         await Verify(response);
     }
 
-    public IEnumerable<CreatePetBodyDto> PetGenerator(long count) =>
-        PetNameGenerator(count).Select(n => new CreatePetBodyDto(n));
+    public IEnumerable<PetInfoDto> PetGenerator(long count) =>
+        PetNameGenerator(count).Select(n => new PetInfoDto(n));
 
     public IEnumerable<string> PetNameGenerator(long count)
     {
@@ -328,7 +338,7 @@ public class CreatePetTests : SampleIntegrationTest
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        Task<VerifiableHttpResponse<CreatePetsDto, Nothing>> StartBulkOperation() => Http
+        Task<VerifiableHttpResponse<CreatePetsResultDto, Nothing>> StartBulkOperation() => Http
             .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
             .Send(timeout)
             .AsVerifiable();

@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
-using EasyDesk.SampleApp.Application.Snapshots;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
-public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, IMultitenantEntity, IProjectable<PetModel, PetSnapshot>
+public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, IMultitenantEntity, IProjectable<PetModel, PetDto>
 {
     public int Id { get; set; }
 
@@ -22,8 +22,8 @@ public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, 
 
     public PersonModel Person { get; set; } = null!;
 
-    public static Expression<Func<PetModel, PetSnapshot>> Projection() => src =>
-        new PetSnapshot(src.Id, src.Nickname, src.PersonId);
+    public static Expression<Func<PetModel, PetDto>> Projection() => src =>
+        new PetDto(src.Id, src.Nickname, src.PersonId);
 
     public Pet ToDomain() => new(Id, new Name(Nickname), PersonId);
 

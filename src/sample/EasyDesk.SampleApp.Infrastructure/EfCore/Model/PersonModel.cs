@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
-using EasyDesk.SampleApp.Application.Snapshots;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
-public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonSnapshot>, IEntityPersistence<Person, PersonModel>
+public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonDto>, IEntityPersistence<Person, PersonModel>
 {
     public Guid Id { get; set; }
 
@@ -31,7 +31,7 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonS
 
     required public bool Approved { get; set; }
 
-    public static Expression<Func<PersonModel, PersonSnapshot>> Projection() => src => new PersonSnapshot(
+    public static Expression<Func<PersonModel, PersonDto>> Projection() => src => new PersonDto(
         src.Id,
         src.FirstName,
         src.LastName,

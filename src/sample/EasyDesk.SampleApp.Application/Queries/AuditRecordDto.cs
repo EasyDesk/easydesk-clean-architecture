@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using NodaTime;
 using System.Collections.Immutable;
 
-namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.Auditing;
+namespace EasyDesk.SampleApp.Application.Queries;
 
 public record AuditRecordDto(
     AuditRecordType Type,

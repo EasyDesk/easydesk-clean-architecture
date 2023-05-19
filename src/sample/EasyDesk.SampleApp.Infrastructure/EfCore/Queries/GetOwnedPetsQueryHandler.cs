@@ -2,13 +2,13 @@
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Application.Queries;
-using EasyDesk.SampleApp.Application.Snapshots;
 using EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Queries;
 
-public class GetOwnedPetsQueryHandler : IHandler<GetOwnedPets, IPageable<PetSnapshot>>
+public class GetOwnedPetsQueryHandler : IHandler<GetOwnedPets, IPageable<PetDto>>
 {
     private readonly SampleAppContext _context;
 
@@ -17,12 +17,12 @@ public class GetOwnedPetsQueryHandler : IHandler<GetOwnedPets, IPageable<PetSnap
         _context = context;
     }
 
-    public Task<Result<IPageable<PetSnapshot>>> Handle(GetOwnedPets request)
+    public Task<Result<IPageable<PetDto>>> Handle(GetOwnedPets request)
     {
         return Task.FromResult(Success(_context.Pets
             .Where(p => p.PersonId == request.PersonId)
             .OrderBy(p => p.Id)
-            .Project<PetModel, PetSnapshot>()
+            .Project<PetModel, PetDto>()
             .ToPageable()));
     }
 }

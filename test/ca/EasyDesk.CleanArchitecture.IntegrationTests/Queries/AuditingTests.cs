@@ -8,7 +8,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.Commands;
 using EasyDesk.SampleApp.Application.IncomingCommands;
-using EasyDesk.SampleApp.Web.Controllers.V_1_0.Auditing;
+using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 using Shouldly;
@@ -53,7 +53,7 @@ public class AuditingTests : SampleIntegrationTest
             FirstName: "John",
             LastName: "Doe",
             DateOfBirth: new LocalDate(2012, 12, 21),
-            Residence: new(StreetName: "Abbey Road"));
+            Residence: new(streetName: "Abbey Road"));
         _personId = await Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
         _initialAudits += 2;
         await Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();

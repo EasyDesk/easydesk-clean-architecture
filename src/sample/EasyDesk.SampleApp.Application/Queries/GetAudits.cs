@@ -5,9 +5,9 @@ using EasyDesk.CleanArchitecture.Application.Pagination;
 
 namespace EasyDesk.SampleApp.Application.Queries;
 
-public record GetAudits(AuditQuery Query) : IQueryRequest<IPageable<AuditRecord>>;
+public record GetAudits(AuditQuery Query) : IQueryRequest<IPageable<AuditRecordDto>>;
 
-public class GetAuditsHandler : IHandler<GetAudits, IPageable<AuditRecord>>
+public class GetAuditsHandler : IHandler<GetAudits, IPageable<AuditRecordDto>>
 {
     private readonly IAuditLog _auditLog;
 
@@ -16,6 +16,6 @@ public class GetAuditsHandler : IHandler<GetAudits, IPageable<AuditRecord>>
         _auditLog = auditLog;
     }
 
-    public Task<Result<IPageable<AuditRecord>>> Handle(GetAudits request) =>
-        Task.FromResult(Success(_auditLog.Audit(request.Query)));
+    public Task<Result<IPageable<AuditRecordDto>>> Handle(GetAudits request) =>
+        Task.FromResult(Success(_auditLog.Audit(request.Query).Map(AuditRecordDto.MapFrom)));
 }

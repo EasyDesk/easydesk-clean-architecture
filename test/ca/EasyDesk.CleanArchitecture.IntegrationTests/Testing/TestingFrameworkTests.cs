@@ -7,9 +7,9 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
-using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 

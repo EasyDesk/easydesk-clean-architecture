@@ -6,7 +6,7 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.Snapshots;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using FluentValidation;
@@ -14,17 +14,19 @@ using FluentValidation;
 namespace EasyDesk.SampleApp.Application.Commands;
 
 [RequireAnyOf(Permissions.CanEditPets)]
-public record CreatePet(string Nickname, Guid PersonId) : ICommandRequest<PetSnapshot>;
+public record CreatePet(PetInfoDto Pet, Guid PersonId) : ICommandRequest<PetDto>;
+
+public record PetInfoDto(string Nickname);
 
 public class CreatePetValidator : AbstractValidator<CreatePet>
 {
     public CreatePetValidator()
     {
-        RuleFor(x => x.Nickname).NotEmpty();
+        RuleFor(x => x.Pet.Nickname).NotEmpty();
     }
 }
 
-public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
+public class CreatePetHandler : IHandler<CreatePet, PetDto>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IPetRepository _petRepository;
@@ -43,15 +45,15 @@ public class CreatePetHandler : IHandler<CreatePet, PetSnapshot>
         _tenantNavigator = tenantNavigator;
     }
 
-    public async Task<Result<PetSnapshot>> Handle(CreatePet request)
+    public async Task<Result<PetDto>> Handle(CreatePet request)
     {
-        _audit.AddProperty("nickname", request.Nickname);
+        _audit.AddProperty("nickname", request.Pet.Nickname);
 
         var result = await _personRepository.FindById(request.PersonId)
             .OrElseNotFound()
-            .ThenMap(_ => Pet.Create(new Name(request.Nickname), request.PersonId))
+            .ThenMap(_ => Pet.Create(new Name(request.Pet.Nickname), request.PersonId))
             .ThenIfSuccessAsync(_petRepository.SaveAndHydrate)
-            .ThenMap(PetSnapshot.MapFrom);
+            .ThenMap(PetDto.MapFrom);
 
         _tenantNavigator.MoveToTenant(TenantId.New("a-tenant-that-should-not-exist"));
 

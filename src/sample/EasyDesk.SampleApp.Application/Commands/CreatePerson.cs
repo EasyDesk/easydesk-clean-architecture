@@ -5,7 +5,7 @@ using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.Snapshots;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using FluentValidation;
 using NodaTime;
@@ -17,7 +17,7 @@ public record CreatePerson(
     string FirstName,
     string LastName,
     LocalDate DateOfBirth,
-    AddressValue Residence) : ICommandRequest<PersonSnapshot>;
+    AddressDto Residence) : ICommandRequest<PersonDto>;
 
 public class CreatePersonValidator : AbstractValidator<CreatePerson>
 {
@@ -28,7 +28,7 @@ public class CreatePersonValidator : AbstractValidator<CreatePerson>
     }
 }
 
-public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonSnapshot>
+public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDto>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IContextProvider _contextProvider;

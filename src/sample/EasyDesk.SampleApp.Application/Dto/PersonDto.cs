@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
-using EasyDesk.SampleApp.Application.Snapshots;
+using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using NodaTime;
 
-namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+namespace EasyDesk.SampleApp.Application.Dto;
 
 public record PersonDto(
     Guid Id,
@@ -11,14 +11,14 @@ public record PersonDto(
     LocalDate DateOfBirth,
     string CreatedBy,
     AddressDto Residence,
-    bool Approved) : IMappableFrom<PersonSnapshot, PersonDto>
+    bool Approved) : IMappableFrom<Person, PersonDto>
 {
-    public static PersonDto MapFrom(PersonSnapshot src) => new(
+    public static PersonDto MapFrom(Person src) => new(
         src.Id,
         src.FirstName,
         src.LastName,
         src.DateOfBirth,
         src.CreatedBy,
-        AddressDto.From(src.Residence),
+        AddressDto.MapFrom(src.Residence),
         src.Approved);
 }

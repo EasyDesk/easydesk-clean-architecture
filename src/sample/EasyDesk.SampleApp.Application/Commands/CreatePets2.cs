@@ -11,7 +11,7 @@ using FluentValidation;
 namespace EasyDesk.SampleApp.Application.Commands;
 
 [RequireAnyOf(Permissions.CanEditPets)]
-public record CreatePets2(IEnumerable<CreatePet> Pets) : ICommandRequest<CreatePetsResult>
+public record CreatePets2(IEnumerable<PetInfoDto> Pets, Guid PersonId) : ICommandRequest<CreatePetsResultDto>
 {
     public class Validation : AbstractValidator<CreatePets2>
     {
@@ -29,8 +29,8 @@ public class BulkCreatePets2
     : AbstractSequentialBulkOperation<
         BulkCreatePets2,
         CreatePets2,
-        CreatePetsResult,
-        IEnumerable<CreatePet>,
+        CreatePetsResultDto,
+        CreatePets2,
         CreatePetsBatch2>
 {
     private const int BatchSize = 3;
@@ -41,21 +41,24 @@ public class BulkCreatePets2
         _petRepository = petRepository;
     }
 
-    protected override async Task<IEnumerable<CreatePet>> HandleBatch(CreatePetsBatch2 command, IEnumerable<CreatePet> remainingWork)
+    protected override async Task<CreatePets2> HandleBatch(CreatePetsBatch2 command, CreatePets2 remainingWork)
     {
-        foreach (var createPetCommand in remainingWork.Take(BatchSize))
+        foreach (var createPetCommand in remainingWork.Pets.Take(BatchSize))
         {
-            var pet = Pet.Create(new Name(createPetCommand.Nickname), createPetCommand.PersonId);
+            var pet = Pet.Create(new Name(createPetCommand.Nickname), remainingWork.PersonId);
             await _petRepository.SaveAndHydrate(pet);
         }
-        return remainingWork.Skip(BatchSize);
+        return remainingWork with
+        {
+            Pets = remainingWork.Pets.Skip(BatchSize)
+        };
     }
 
     protected override CreatePetsBatch2 CreateCommand() => new();
 
-    protected override Task<Result<(CreatePetsResult, IEnumerable<CreatePet>)>> Prepare(CreatePets2 command) =>
-        Task.FromResult(Success((new CreatePetsResult(command.Pets.Count()), command.Pets)));
+    protected override Task<Result<(CreatePetsResultDto, CreatePets2)>> Prepare(CreatePets2 command) =>
+        Task.FromResult(Success((new CreatePetsResultDto(command.Pets.Count()), command)));
 
-    protected override bool IsComplete(IEnumerable<CreatePet> remainingWork) =>
-        remainingWork.IsEmpty();
+    protected override bool IsComplete(CreatePets2 remainingWork) =>
+        remainingWork.Pets.IsEmpty();
 }

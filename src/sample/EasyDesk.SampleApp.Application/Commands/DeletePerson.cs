@@ -3,15 +3,15 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.Snapshots;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.Commands;
 
 [RequireAnyOf(Permissions.CanEditPeople)]
-public record DeletePerson(Guid PersonId) : ICommandRequest<PersonSnapshot>;
+public record DeletePerson(Guid PersonId) : ICommandRequest<PersonDto>;
 
-public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonSnapshot>
+public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonDto>
 {
     private readonly IPersonRepository _personRepository;
 

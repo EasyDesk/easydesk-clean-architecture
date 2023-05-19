@@ -1,11 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
-namespace EasyDesk.SampleApp.Application.Snapshots;
+namespace EasyDesk.SampleApp.Application.Dto;
 
-public record PetSnapshot(int Id, string Nickname, Guid PersonId) : ISnapshot<PetSnapshot, Pet>
+public record PetDto(int Id, string Nickname, Guid PersonId) : IMappableFrom<Pet, PetDto>
 {
-    public static PetSnapshot MapFrom(Pet src) => new(
+    public static PetDto MapFrom(Pet src) => new(
         Id: src.Id,
         Nickname: src.Nickname,
         PersonId: src.OwnerId);

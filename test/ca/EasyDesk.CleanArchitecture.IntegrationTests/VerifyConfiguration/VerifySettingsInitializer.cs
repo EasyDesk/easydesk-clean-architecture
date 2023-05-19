@@ -1,4 +1,4 @@
-﻿using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
+﻿using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.Testing.VerifyConfiguration;
 using System.Runtime.CompilerServices;
 

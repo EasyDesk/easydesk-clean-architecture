@@ -36,7 +36,6 @@ public class AuditingController : CleanArchitectureController
             ToInstant = to.AsOption(),
         };
         return await DispatchWithPagination(new GetAudits(query), pagination)
-            .MapEachElementTo<AuditRecordDto>()
             .ReturnOk();
     }
 }

@@ -5,11 +5,11 @@ using EasyDesk.SampleApp.Application.Commands;
 
 namespace EasyDesk.SampleApp.Application.Queries;
 
-public record GetBulkCreatePetsStatus : IQueryRequest<BulkCreatePetsStatus>;
+public record GetBulkCreatePetsStatus : IQueryRequest<CreatePetsStatusDto>;
 
-public record BulkCreatePetsStatus(bool InProgress);
+public record CreatePetsStatusDto(bool InProgress);
 
-public class GetBulkCreatePetsStatusHandler : IHandler<GetBulkCreatePetsStatus, BulkCreatePetsStatus>
+public class GetBulkCreatePetsStatusHandler : IHandler<GetBulkCreatePetsStatus, CreatePetsStatusDto>
 {
     private readonly ISagaManager _sagaManager;
 
@@ -18,9 +18,9 @@ public class GetBulkCreatePetsStatusHandler : IHandler<GetBulkCreatePetsStatus, 
         _sagaManager = sagaManager;
     }
 
-    public async Task<Result<BulkCreatePetsStatus>> Handle(GetBulkCreatePetsStatus request)
+    public async Task<Result<CreatePetsStatusDto>> Handle(GetBulkCreatePetsStatus request)
     {
         var inProgress = await BulkCreatePets.IsInProgress(_sagaManager);
-        return new BulkCreatePetsStatus(inProgress);
+        return new CreatePetsStatusDto(inProgress);
     }
 }

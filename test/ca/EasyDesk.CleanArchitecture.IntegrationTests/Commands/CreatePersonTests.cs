@@ -7,6 +7,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.DomainEvents;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -253,7 +254,7 @@ public class CreatePersonTests : SampleIntegrationTest
                 $"test-name-{i}",
                 $"test-last-name-{i}",
                 new LocalDate(1992, 3, 12).PlusDays(i),
-                new("number", StreetNumber: i.ToString()));
+                new("number", streetNumber: i.ToString()));
             await Http.CreatePerson(body).Send().EnsureSuccess();
         }
 
