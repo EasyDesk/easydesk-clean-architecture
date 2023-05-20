@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using EasyDesk.Testing.Errors;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 
@@ -9,7 +10,7 @@ public class ResultTests
     private const string TestString = "TEST";
 
     private readonly int _value = 10;
-    private readonly TestError _error = new(false);
+    private readonly Error _error = TestError.Create();
 
     private Result<int> Success => Success(_value);
 
@@ -117,14 +118,14 @@ public class ResultTests
 
     public static IEnumerable<object[]> AndOperatorData()
     {
-        var success10 = Success(10);
-        var success20 = Success(20);
-        var failureFalse = Failure<int>(new TestError(false));
-        var failureTrue = Failure<int>(new TestError(true));
-        yield return new object[] { failureFalse, failureTrue, failureFalse };
-        yield return new object[] { failureTrue, success20, failureTrue };
-        yield return new object[] { success20, failureTrue, failureTrue };
-        yield return new object[] { success10, success20, success20 };
+        var success1 = Success(10);
+        var success2 = Success(20);
+        var failureA = Failure<int>(TestError.Create("A"));
+        var failureB = Failure<int>(TestError.Create("B"));
+        yield return new object[] { failureA, failureB, failureA };
+        yield return new object[] { failureB, success2, failureB };
+        yield return new object[] { success2, failureB, failureB };
+        yield return new object[] { success1, success2, success2 };
     }
 
     [Theory]
@@ -137,14 +138,14 @@ public class ResultTests
 
     public static IEnumerable<object[]> OrOperatorData()
     {
-        var success10 = Success(10);
-        var success20 = Success(20);
-        var failureFalse = Failure<int>(new TestError(false));
-        var failureTrue = Failure<int>(new TestError(true));
-        yield return new object[] { failureFalse, failureTrue, failureTrue };
-        yield return new object[] { failureTrue, success20, success20 };
-        yield return new object[] { success20, failureTrue, success20 };
-        yield return new object[] { success10, success20, success10 };
+        var success1 = Success(10);
+        var success2 = Success(20);
+        var failureA = Failure<int>(TestError.Create("A"));
+        var failureB = Failure<int>(TestError.Create("B"));
+        yield return new object[] { failureA, failureB, failureB };
+        yield return new object[] { failureB, success2, success2 };
+        yield return new object[] { success2, failureB, success2 };
+        yield return new object[] { success1, success2, success1 };
     }
 
     [Fact]

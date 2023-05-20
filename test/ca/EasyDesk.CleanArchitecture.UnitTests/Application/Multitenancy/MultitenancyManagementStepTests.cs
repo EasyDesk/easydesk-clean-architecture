@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Unit.Application;
+using EasyDesk.Testing.Errors;
 using EasyDesk.Testing.MatrixExpansion;
 using NSubstitute;
 using Shouldly;
@@ -123,7 +123,7 @@ public class MultitenancyManagementStepTests
 
     public static IEnumerable<object[]> TenantsAndPolicyResults()
     {
-        return Matrix
+        return Matrix.Builder()
             .Axis(
                 TenantInfo.Tenant(_tenantId),
                 TenantInfo.Public)

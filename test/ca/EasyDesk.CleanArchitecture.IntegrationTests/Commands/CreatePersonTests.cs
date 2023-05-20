@@ -25,7 +25,7 @@ public class CreatePersonTests : SampleIntegrationTest
         FirstName: "Foo",
         LastName: "Bar",
         DateOfBirth: new LocalDate(1996, 2, 2),
-        Residence: new("Calvin", "street", "15", "Brooklyn", "New York", null, null, "New York State", "USA"));
+        Residence: AddressDto.Create("Calvin", "street", "15", "Brooklyn", "New York", null, null, "New York State", "USA"));
 
     public CreatePersonTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -78,7 +78,7 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task ShouldFailWithEmptyAddress()
     {
         var response = await Http
-            .CreatePerson(_body with { Residence = new(string.Empty) })
+            .CreatePerson(_body with { Residence = AddressDto.Create(string.Empty) })
             .Send()
             .AsVerifiable();
 
@@ -254,7 +254,7 @@ public class CreatePersonTests : SampleIntegrationTest
                 $"test-name-{i}",
                 $"test-last-name-{i}",
                 new LocalDate(1992, 3, 12).PlusDays(i),
-                new("number", streetNumber: i.ToString()));
+                AddressDto.Create("number", streetNumber: i.ToString()));
             await Http.CreatePerson(body).Send().EnsureSuccess();
         }
 

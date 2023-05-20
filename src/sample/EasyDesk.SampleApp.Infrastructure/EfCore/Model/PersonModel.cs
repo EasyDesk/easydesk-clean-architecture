@@ -38,8 +38,8 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonD
         src.DateOfBirth,
         src.CreatedBy,
         new(
-            src.Residence.StreetType.AsOption(),
             src.Residence.StreetName,
+            src.Residence.StreetType.AsOption(),
             src.Residence.StreetNumber.AsOption(),
             src.Residence.City.AsOption(),
             src.Residence.District.AsOption(),

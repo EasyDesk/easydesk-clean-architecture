@@ -1,72 +1,87 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
+﻿using System.Collections;
 
 namespace EasyDesk.Testing.MatrixExpansion;
 
-public class MatrixBuilder<T1> : MatrixBuilderBase<T1, MatrixBuilder<T1>>
+public delegate IEnumerable Expansion(IEnumerable<object> currentParams);
+
+public class MatrixBuilder
 {
-    public MatrixBuilder(IEnumerable<T1> axis) : base(ImmutableStack.Create<Expansion>(_ => axis.Cast<object>()))
+    private readonly Stack<Expansion> _expansions = new();
+
+    private MatrixBuilder Axis(Expansion expansion)
     {
+        _expansions.Push(expansion);
+        return this;
     }
 
-    public MatrixBuilder<T1, T2> Axis<T2>(IEnumerable<T2> axis) => GeneratedAxis(_ => axis);
+    public MatrixBuilder Axis<T>(IEnumerable<T> items) => Axis(_ => items);
 
-    public MatrixBuilder<T1, T2> Axis<T2>(params T2[] axis) => Axis(axis.AsEnumerable());
+    public MatrixBuilder Axis<T>(params T[] items) => Axis(items.AsEnumerable());
 
-    public MatrixBuilder<T1, T2> GeneratedAxis<T2>(Func<T1, IEnumerable<T2>> axis) => new(AddExpansion(axis));
+    public MatrixBuilder GenerateAxis<T>(Func<IEnumerable<object>, IEnumerable<T>> generator) =>
+        Axis(x => generator(x));
 
-    public MatrixBuilder<T1, T2> GeneratedValue<T2>(Func<T1, T2> value) => GeneratedAxis(x => new T2[] { value(x) });
+    public MatrixBuilder Filter(Func<IEnumerable<object>, bool> predicate)
+    {
+        var head = _expansions.Pop();
+        _expansions.Push(ps => FilteredExpansion(ps, head, predicate));
+        return this;
+    }
 
-    public MatrixBuilder<T1, T2> Fixed<T2>(T2 value) => GeneratedValue(_ => value);
+    private IEnumerable<object> FilteredExpansion(IEnumerable<object> currentParams, Expansion expansion, Func<IEnumerable<object>, bool> predicate)
+    {
+        foreach (var p in expansion(currentParams))
+        {
+            if (predicate(currentParams.Append(p)))
+            {
+                yield return p;
+            }
+        }
+    }
 
-    protected override T1 AsTuple(Func<object> next) => (T1)next();
+    public IEnumerable<object[]> Build()
+    {
+        var result = new List<object[]>();
+        var stack = new List<object>();
+
+        BuildResult(_expansions.ToArray(), stack, result);
+
+        return result;
+    }
+
+    private void BuildResult(Expansion[] expansions, List<object> currentParams, List<object[]> result)
+    {
+        if (currentParams.Count == expansions.Length)
+        {
+            result.Add(currentParams.ToArray());
+            return;
+        }
+        var expansionIndex = expansions.Length - currentParams.Count - 1;
+        var expansion = expansions[expansionIndex];
+        var nextParams = expansion(currentParams);
+        foreach (var param in nextParams)
+        {
+            currentParams.Add(param);
+            BuildResult(expansions, currentParams, result);
+            currentParams.RemoveAt(currentParams.Count - 1);
+        }
+    }
 }
 
-public class MatrixBuilder<T1, T2> : MatrixBuilderBase<(T1, T2), MatrixBuilder<T1, T2>>
+public static class MatrixBuilderExtensions
 {
-    public MatrixBuilder(IImmutableStack<Expansion> expansions) : base(expansions)
-    {
-    }
+    public static MatrixBuilder BooleanAxis(this MatrixBuilder matrixBuilder) =>
+        matrixBuilder.Axis(true, false);
 
-    public MatrixBuilder<T1, T2, T3> Axis<T3>(IEnumerable<T3> axis) => GeneratedAxis(_ => axis);
+    public static MatrixBuilder OptionAxis<T>(this MatrixBuilder matrixBuilder, IEnumerable<T> items) =>
+        matrixBuilder.Axis(items.Select(Some<T>).Append(None));
 
-    public MatrixBuilder<T1, T2, T3> Axis<T3>(params T3[] axis) => Axis(axis.AsEnumerable());
+    public static MatrixBuilder OptionAxis<T>(this MatrixBuilder matrixBuilder, T item, params T[] otherItems) =>
+        matrixBuilder.OptionAxis(otherItems.Prepend(item));
 
-    public MatrixBuilder<T1, T2, T3> GeneratedAxis<T3>(Func<(T1, T2), IEnumerable<T3>> axis) => new(AddExpansion(axis));
+    public static MatrixBuilder ResultAxis(this MatrixBuilder matrixBuilder, IEnumerable<Error> errors) =>
+        matrixBuilder.Axis(errors.Select(Failure<Nothing>).Prepend(Ok));
 
-    public MatrixBuilder<T1, T2, T3> GeneratedValue<T3>(Func<(T1, T2), T3> value) => GeneratedAxis(x => new T3[] { value(x) });
-
-    public MatrixBuilder<T1, T2, T3> Fixed<T3>(T3 value) => GeneratedValue(_ => value);
-
-    protected override (T1, T2) AsTuple(Func<object> next) => ((T1)next(), (T2)next());
-}
-
-public class MatrixBuilder<T1, T2, T3> : MatrixBuilderBase<(T1, T2, T3), MatrixBuilder<T1, T2, T3>>
-{
-    public MatrixBuilder(IImmutableStack<Expansion> expansions) : base(expansions)
-    {
-    }
-
-    public MatrixBuilder<T1, T2, T3, T4> Axis<T4>(IEnumerable<T4> axis) => GeneratedAxis(_ => axis);
-
-    public MatrixBuilder<T1, T2, T3, T4> Axis<T4>(params T4[] axis) => Axis(axis.AsEnumerable());
-
-    public MatrixBuilder<T1, T2, T3, T4> GeneratedAxis<T4>(Func<(T1, T2, T3), IEnumerable<T4>> axis) => new(AddExpansion(axis));
-
-    public MatrixBuilder<T1, T2, T3, T4> GeneratedValue<T4>(Func<(T1, T2, T3), T4> value) => GeneratedAxis(x => new T4[] { value(x) });
-
-    public MatrixBuilder<T1, T2, T3, T4> Fixed<T4>(T4 value) => GeneratedValue(_ => value);
-
-    protected override (T1, T2, T3) AsTuple(Func<object> next) => ((T1)next(), (T2)next(), (T3)next());
-}
-
-public class MatrixBuilder<T1, T2, T3, T4> : MatrixBuilderBase<(T1, T2, T3, T4), MatrixBuilder<T1, T2, T3, T4>>
-{
-    public MatrixBuilder(IImmutableStack<Expansion> expansions) : base(expansions)
-    {
-    }
-
-    protected override (T1, T2, T3, T4) AsTuple(Func<object> next) => ((T1)next(), (T2)next(), (T3)next(), (T4)next());
+    public static MatrixBuilder ResultAxis(this MatrixBuilder matrixBuilder, Error error, params Error[] otherErrors) =>
+        matrixBuilder.ResultAxis(otherErrors.Prepend(error));
 }

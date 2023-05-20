@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using NodaTime;
 
@@ -58,7 +59,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
                 FirstName: "Foo",
                 LastName: "Bar",
                 DateOfBirth: new LocalDate(1996, 2, 2),
-                Residence: new("unknown")))
+                Residence: AddressDto.Create("unknown")))
             .Tenant(tenantId)
             .AuthenticateAs(adminId)
             .Send()

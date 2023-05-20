@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.Commands;
+using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
@@ -90,7 +91,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("unknown"));
+            Residence: AddressDto.Create("unknown"));
 
         var person = await Http
             .CreatePerson(body)
@@ -125,7 +126,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            new("_"));
+            AddressDto.Create("_"));
 
         var person = await Http
             .CreatePerson(body)
@@ -152,7 +153,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("-"));
+            Residence: AddressDto.Create("-"));
 
         var person = await Http
             .CreatePerson(body)
@@ -176,7 +177,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("asd"));
+            Residence: AddressDto.Create("asd"));
 
         var person = await Http
             .CreatePerson(body)
@@ -213,7 +214,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("__"));
+            Residence: AddressDto.Create("__"));
 
         var person = await Http
             .CreatePerson(body)
@@ -241,7 +242,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            new("ooo"));
+            AddressDto.Create("ooo"));
 
         var person = await Http
             .CreatePerson(body)
@@ -269,7 +270,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            new("..."));
+            AddressDto.Create("..."));
 
         var person = await Http
             .CreatePerson(body)
@@ -297,7 +298,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            new("..."));
+            AddressDto.Create("..."));
 
         var person = await Http
             .CreatePerson(body)
@@ -326,7 +327,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("unknown"));
+            Residence: AddressDto.Create("unknown"));
 
         var person = await Http
             .CreatePerson(body)
@@ -358,7 +359,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("unknown"));
+            Residence: AddressDto.Create("unknown"));
 
         var person = await Http
             .CreatePerson(body)
@@ -399,7 +400,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("unknown"));
+            Residence: AddressDto.Create("unknown"));
 
         var person = await Http
             .CreatePerson(body)
@@ -427,7 +428,7 @@ public class CreatePetTests : SampleIntegrationTest
             FirstName: "Foo",
             LastName: "Bar",
             DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: new("unknown"));
+            Residence: AddressDto.Create("unknown"));
 
         var person = await Http
             .CreatePerson(body)

@@ -1,11 +1,12 @@
-﻿using Shouldly;
+﻿using EasyDesk.Testing.Errors;
+using Shouldly;
 using Xunit;
 
 namespace EasyDesk.Commons.UnitTests.Results;
 
 public class ResultFactoriesTests
 {
-    private readonly Error _error = new TestError(false);
+    private readonly Error _error = TestError.Create();
 
     [Fact]
     public void OkShouldBeSuccessful()

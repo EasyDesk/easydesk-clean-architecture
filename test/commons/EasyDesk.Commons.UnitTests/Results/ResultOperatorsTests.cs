@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Testing.Errors;
 using NSubstitute;
 using NSubstitute.ReceivedExtensions;
 using Shouldly;
@@ -11,8 +12,8 @@ public class ResultOperatorsTests
     private const string TestString = "TEST";
     private const int Value = 10;
 
-    private static readonly Error _error = new TestError(false);
-    private static readonly Error _differentError = new TestError(true);
+    private static readonly Error _error = TestError.Create("A");
+    private static readonly Error _differentError = TestError.Create("B");
 
     private static Result<int> Success => Success(Value);
 

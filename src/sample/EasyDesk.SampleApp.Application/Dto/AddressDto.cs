@@ -4,8 +4,8 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 namespace EasyDesk.SampleApp.Application.Dto;
 
 public record AddressDto(
-    Option<string> StreetType,
     string StreetName,
+    Option<string> StreetType,
     Option<string> StreetNumber,
     Option<string> City,
     Option<string> District,
@@ -14,7 +14,7 @@ public record AddressDto(
     Option<string> State,
     Option<string> Country) : IObjectValue<AddressDto, Address>
 {
-    public AddressDto(
+    public static AddressDto Create(
         string streetName,
         string? streetType = null,
         string? streetNumber = null,
@@ -23,18 +23,16 @@ public record AddressDto(
         string? province = null,
         string? region = null,
         string? state = null,
-        string? country = null) : this(
-            streetType.AsOption(),
+        string? country = null) => new(
             streetName,
+            streetType.AsOption(),
             streetNumber.AsOption(),
             city.AsOption(),
             district.AsOption(),
             province.AsOption(),
             region.AsOption(),
             state.AsOption(),
-            country.AsOption())
-    {
-    }
+            country.AsOption());
 
     public Address ToDomainObject() => new(
         StreetType: StreetType.Map(n => new PlaceName(n)),

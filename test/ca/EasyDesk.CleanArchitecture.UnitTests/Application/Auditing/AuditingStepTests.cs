@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.CleanArchitecture.Testing.Unit.Application;
+using EasyDesk.Testing.Errors;
 using EasyDesk.Testing.MatrixExpansion;
 using NodaTime;
 using NodaTime.Testing;
@@ -103,15 +103,14 @@ public class AuditingStepTests
     public static IEnumerable<object[]> AuditData()
     {
         var userId = UserId.New("user-id");
-        return Matrix
-            .Axis(
-                Some(new UserInfo(userId)),
-                Some(new UserInfo(userId, AttributeCollection.FromFlatKeyValuePairs(
+        return Matrix.Builder()
+            .OptionAxis(
+                new UserInfo(userId),
+                new UserInfo(userId, AttributeCollection.FromFlatKeyValuePairs(
                     ("name", "john"),
                     ("role", "admin"),
-                    ("role", "user")))),
-                None)
-            .Axis(Ok, Failure<Nothing>(TestError.Create()))
+                    ("role", "user"))))
+            .ResultAxis(TestError.Create())
             .Build();
     }
 

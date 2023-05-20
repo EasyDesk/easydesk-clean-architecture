@@ -14,7 +14,7 @@ public class MatrixTests
     [Fact]
     public void ShouldExpandSingleLevel()
     {
-        var result = Matrix.Axis(1, 2, 3).Build();
+        var result = Matrix.Builder().Axis(1, 2, 3).Build();
 
         var expected = Items(
             new object[] { 1 },
@@ -27,7 +27,7 @@ public class MatrixTests
     [Fact]
     public void ShouldExpandMultipleLevels()
     {
-        var result = Matrix
+        var result = Matrix.Builder()
             .Axis(0, 1)
             .Axis("a", "b")
             .Axis(true, false)
@@ -49,18 +49,17 @@ public class MatrixTests
     [Fact]
     public void ShouldFilterAtDeepLevels()
     {
-        var result = Matrix
+        var result = Matrix.Builder()
             .Axis(0, 1)
-            .Axis('a', 'b')
-            .Axis(true, false)
-            .Filter(x => x.Item2 == 'a' + x.Item1)
+            .Axis(0, 1)
+            .Axis(0, 1)
+            .Filter(x => x.Cast<int>().Sum() == 1)
             .Build();
 
         var expected = Items(
-            new object[] { 0, 'a', true },
-            new object[] { 0, 'a', false },
-            new object[] { 1, 'b', true },
-            new object[] { 1, 'b', false });
+            new object[] { 1, 0, 0 },
+            new object[] { 0, 1, 0 },
+            new object[] { 0, 0, 1 });
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }

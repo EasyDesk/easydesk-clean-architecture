@@ -37,7 +37,7 @@ public class IncomingEventTests : SampleIntegrationTest
                 FirstName: "Foo",
                 LastName: "Bar",
                 DateOfBirth: new LocalDate(1995, 10, 12),
-                Residence: new("somewhere")))
+                Residence: AddressDto.Create("somewhere")))
             .Send()
             .AsData();
 

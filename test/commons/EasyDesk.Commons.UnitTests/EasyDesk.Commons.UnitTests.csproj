@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\commons\EasyDesk.Commons\EasyDesk.Commons.csproj" />
+    <ProjectReference Include="..\..\..\src\commons\EasyDesk.Testing\EasyDesk.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

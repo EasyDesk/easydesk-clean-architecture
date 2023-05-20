@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.CleanArchitecture.Testing.Unit.Application;
+﻿namespace EasyDesk.Testing.Errors;
 
 public record TestError(string Code) : Error
 {

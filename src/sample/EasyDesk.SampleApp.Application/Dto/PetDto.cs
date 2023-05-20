@@ -3,10 +3,9 @@ using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 namespace EasyDesk.SampleApp.Application.Dto;
 
-public record PetDto(int Id, string Nickname, Guid PersonId) : IMappableFrom<Pet, PetDto>
+public record PetDto(int Id, string Nickname) : IMappableFrom<Pet, PetDto>
 {
     public static PetDto MapFrom(Pet src) => new(
         Id: src.Id,
-        Nickname: src.Nickname,
-        PersonId: src.OwnerId);
+        Nickname: src.Nickname);
 }
