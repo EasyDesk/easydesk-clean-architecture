@@ -69,4 +69,10 @@ public static partial class StaticImports
             some: _ => option,
             none: () => other);
     }
+
+    public static bool Contains<T>(this Option<T> option, Func<T, bool> proposition) =>
+        option.Match(some: proposition, none: () => false);
+
+    public static Task<bool> ContainsAsync<T>(this Option<T> option, AsyncFunc<T, bool> proposition) =>
+        option.MatchAsync(some: proposition, none: () => Task.FromResult(false));
 }

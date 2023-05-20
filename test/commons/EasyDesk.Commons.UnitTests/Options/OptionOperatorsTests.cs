@@ -226,4 +226,63 @@ public class OptionOperatorsTests
 
         result.ShouldBe(Some(Value + 1));
     }
+
+    [Fact]
+    public void Contains_ShouldReturnTrue_IfPropositionIsTrue_WithSome()
+    {
+        Some(Value).Contains(_ => true).ShouldBeTrue();
+    }
+
+    [Fact]
+    public void Contains_ShouldReturnFalse_IfPropositionIsFalse_WithSome()
+    {
+        Some(Value).Contains(_ => false).ShouldBeFalse();
+    }
+
+    [Fact]
+    public void Contains_ShouldCallPredicate_Once()
+    {
+        var predicate = Substitute.For<Func<int, bool>>();
+        Some(Value).Contains(predicate);
+        predicate.Received(1).Invoke(Value);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Contains_ShouldReturnFalse_WithFailure(bool proposition)
+    {
+        NoneT<int>().Contains(_ => proposition).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsAsync_ShouldReturnTrue_IfPropositionIsTrue_WithSome()
+    {
+        var result = await Some(Value).ContainsAsync(_ => Task.FromResult(true));
+        result.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsAsync_ShouldReturnFalse_IfPropositionIsFalse_WithSome()
+    {
+        var result = await Some(Value).ContainsAsync(_ => Task.FromResult(false));
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsAsync_ShouldCallPredicate_Once()
+    {
+        var predicate = Substitute.For<AsyncFunc<int, bool>>();
+        await Some(Value).ContainsAsync(predicate);
+        await predicate.Received(1).Invoke(Value);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ContainsAsync_ShouldReturnFalse_WithFailure(bool proposition)
+    {
+        var result = await NoneT<int>().ContainsAsync(_ => Task.FromResult(proposition));
+        result.ShouldBeFalse();
+    }
 }

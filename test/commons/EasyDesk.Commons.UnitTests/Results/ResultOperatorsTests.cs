@@ -453,6 +453,37 @@ public class ResultOperatorsTests
     }
 
     [Fact]
+    public async Task ContainsAsync_ShouldReturnTrue_IfPropositionIsTrue_WithSuccess()
+    {
+        var result = await Success.ContainsAsync(_ => Task.FromResult(true));
+        result.ShouldBeTrue();
+    }
+
+    [Fact]
+    public async Task ContainsAsync_ShouldReturnFalse_IfPropositionIsFalse_WithSuccess()
+    {
+        var result = await Success.ContainsAsync(_ => Task.FromResult(false));
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task ContainsAsync_ShouldCallPredicate_Once()
+    {
+        var predicate = Substitute.For<AsyncFunc<int, bool>>();
+        await Success.ContainsAsync(predicate);
+        await predicate.Received(1).Invoke(Value);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ContainsAsync_ShouldReturnFalse_WithFailure(bool proposition)
+    {
+        var result = await Failure.ContainsAsync(_ => Task.FromResult(proposition));
+        result.ShouldBeFalse();
+    }
+
+    [Fact]
     public void CatchFirstFailure_ShouldReturnOnlyTheFirstFailure_IfMultipleArePresent()
     {
         Enumerable.Range(0, 100)

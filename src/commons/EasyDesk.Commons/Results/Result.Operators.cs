@@ -71,6 +71,9 @@ public static partial class StaticImports
     public static bool Contains<T>(this Result<T> result, Func<T, bool> proposition) =>
         result.Match(success: proposition, failure: _ => false);
 
+    public static Task<bool> ContainsAsync<T>(this Result<T> result, AsyncFunc<T, bool> proposition) =>
+        result.MatchAsync(success: proposition, failure: _ => Task.FromResult(false));
+
     public static Result<IEnumerable<T>> CatchFirstFailure<T>(this IEnumerable<Result<T>> enumerable) => enumerable
         .FirstOption(r => r.IsFailure)
         .Match(
