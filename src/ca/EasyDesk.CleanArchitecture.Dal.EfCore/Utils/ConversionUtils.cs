@@ -21,14 +21,14 @@ public static class ConversionUtils
         ICollection<P> dst,
         Func<P, K> dstKey,
         Func<D, P> toPersistence)
-        where P : IMutablePersistence<D, P>
+        where P : IMutablePersistence<D>
         where K : notnull
     {
         var dstByKey = dst.ToDictionary(dstKey);
         foreach (var s in src)
         {
             dstByKey.GetOption(srcKey(s)).Match(
-                some: m1 => P.ApplyChanges(s, m1),
+                some: m1 => m1.ApplyChanges(s),
                 none: () => dst.Add(toPersistence(s)));
         }
 

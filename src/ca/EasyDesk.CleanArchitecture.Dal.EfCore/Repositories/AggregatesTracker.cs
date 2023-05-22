@@ -27,7 +27,7 @@ internal class AggregatesTracker<A, P>
         if (IsTracked(aggregate))
         {
             var persistenceModel = _modelsMap[aggregate];
-            P.ApplyChanges(aggregate, persistenceModel.Persistence);
+            persistenceModel.Persistence.ApplyChanges(aggregate);
             return persistenceModel.Persistence;
         }
         else

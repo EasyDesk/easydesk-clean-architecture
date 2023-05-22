@@ -29,11 +29,11 @@ public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, 
 
     public int GetHydrationData() => Id;
 
-    public static void ApplyChanges(Pet origin, PetModel destination)
+    public void ApplyChanges(Pet origin)
     {
-        destination.Id = origin.Id;
-        destination.Nickname = origin.Nickname;
-        destination.PersonId = origin.OwnerId;
+        Id = origin.Id;
+        Nickname = origin.Nickname;
+        PersonId = origin.OwnerId;
     }
 
     public static PetModel ToPersistence(Pet origin) => new()

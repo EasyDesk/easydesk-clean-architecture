@@ -51,15 +51,15 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonD
 
     public Person ToDomain() => new(Id, new Name(FirstName), new Name(LastName), DateOfBirth, AdminId.From(CreatedBy), Residence.ToDomain(), Approved);
 
-    public static void ApplyChanges(Person origin, PersonModel destination)
+    public void ApplyChanges(Person origin)
     {
-        destination.Id = origin.Id;
-        destination.FirstName = origin.FirstName;
-        destination.LastName = origin.LastName;
-        destination.DateOfBirth = origin.DateOfBirth;
-        destination.CreatedBy = origin.CreatedBy;
-        destination.Approved = origin.Approved;
-        AddressModel.ApplyChanges(origin.Residence, destination.Residence);
+        Id = origin.Id;
+        FirstName = origin.FirstName;
+        LastName = origin.LastName;
+        DateOfBirth = origin.DateOfBirth;
+        CreatedBy = origin.CreatedBy;
+        Approved = origin.Approved;
+        Residence.ApplyChanges(origin.Residence);
     }
 
     public static PersonModel ToPersistence(Person origin) => new()
