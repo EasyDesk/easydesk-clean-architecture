@@ -1,71 +1,31 @@
-﻿using System.Collections;
+﻿using EasyDesk.Commons.Collections;
 
 namespace EasyDesk.Testing.MatrixExpansion;
 
-public delegate IEnumerable Expansion(IEnumerable<object> currentParams);
-
 public class MatrixBuilder
 {
-    private readonly Stack<Expansion> _expansions = new();
+    private IEnumerable<IEnumerable<object?>> _matrix = new[] { Enumerable.Empty<object>() };
 
-    private MatrixBuilder Axis(Expansion expansion)
+    private MatrixBuilder AddAxis(IEnumerable<object?> axis)
     {
-        _expansions.Push(expansion);
+        _matrix = CartesianProduct(axis);
         return this;
     }
 
-    public MatrixBuilder Axis<T>(IEnumerable<T> items) => Axis(_ => items);
+    private IEnumerable<IEnumerable<object?>> CartesianProduct(IEnumerable<object?> newAxis) =>
+        _matrix.SelectMany(record => newAxis.Select(element => record.Append(element)));
+
+    public MatrixBuilder Axis<T>(IEnumerable<T> items) => AddAxis(items.Cast<object?>().ToList());
 
     public MatrixBuilder Axis<T>(params T[] items) => Axis(items.AsEnumerable());
 
-    public MatrixBuilder GenerateAxis<T>(Func<IEnumerable<object>, IEnumerable<T>> generator) =>
-        Axis(x => generator(x));
-
-    public MatrixBuilder Filter(Func<IEnumerable<object>, bool> predicate)
+    public MatrixBuilder Filter(Func<IEnumerable<object?>, bool> predicate)
     {
-        var head = _expansions.Pop();
-        _expansions.Push(ps => FilteredExpansion(ps, head, predicate));
+        _matrix = _matrix.Where(predicate);
         return this;
     }
 
-    private IEnumerable<object> FilteredExpansion(IEnumerable<object> currentParams, Expansion expansion, Func<IEnumerable<object>, bool> predicate)
-    {
-        foreach (var p in expansion(currentParams))
-        {
-            if (predicate(currentParams.Append(p)))
-            {
-                yield return p;
-            }
-        }
-    }
-
-    public IEnumerable<object[]> Build()
-    {
-        var result = new List<object[]>();
-        var stack = new List<object>();
-
-        BuildResult(_expansions.ToArray(), stack, result);
-
-        return result;
-    }
-
-    private void BuildResult(Expansion[] expansions, List<object> currentParams, List<object[]> result)
-    {
-        if (currentParams.Count == expansions.Length)
-        {
-            result.Add(currentParams.ToArray());
-            return;
-        }
-        var expansionIndex = expansions.Length - currentParams.Count - 1;
-        var expansion = expansions[expansionIndex];
-        var nextParams = expansion(currentParams);
-        foreach (var param in nextParams)
-        {
-            currentParams.Add(param);
-            BuildResult(expansions, currentParams, result);
-            currentParams.RemoveAt(currentParams.Count - 1);
-        }
-    }
+    public IEnumerable<object?[]> Build() => _matrix.Select(e => e.ToArray());
 }
 
 public static class MatrixBuilderExtensions
@@ -78,10 +38,4 @@ public static class MatrixBuilderExtensions
 
     public static MatrixBuilder OptionAxis<T>(this MatrixBuilder matrixBuilder, T item, params T[] otherItems) =>
         matrixBuilder.OptionAxis(otherItems.Prepend(item));
-
-    public static MatrixBuilder ResultAxis(this MatrixBuilder matrixBuilder, IEnumerable<Error> errors) =>
-        matrixBuilder.Axis(errors.Select(Failure<Nothing>).Prepend(Ok));
-
-    public static MatrixBuilder ResultAxis(this MatrixBuilder matrixBuilder, Error error, params Error[] otherErrors) =>
-        matrixBuilder.ResultAxis(otherErrors.Prepend(error));
 }

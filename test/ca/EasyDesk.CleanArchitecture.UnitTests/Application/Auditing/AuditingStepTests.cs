@@ -100,7 +100,7 @@ public class AuditingStepTests
         stepResult.ShouldBe(result);
     }
 
-    public static IEnumerable<object[]> AuditData()
+    public static IEnumerable<object?[]> AuditData()
     {
         var userId = UserId.New("user-id");
         return Matrix.Builder()
@@ -110,7 +110,7 @@ public class AuditingStepTests
                     ("name", "john"),
                     ("role", "admin"),
                     ("role", "user"))))
-            .ResultAxis(TestError.Create())
+            .ResultAxis<Nothing>(builder => builder.Failure(TestError.Create()))
             .Build();
     }
 

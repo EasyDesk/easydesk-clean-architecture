@@ -121,7 +121,7 @@ public class MultitenancyManagementStepTests
         yield return new object[] { TenantInfo.Public };
     }
 
-    public static IEnumerable<object[]> TenantsAndPolicyResults()
+    public static IEnumerable<object?[]> TenantsAndPolicyResults()
     {
         return Matrix.Builder()
             .Axis(

@@ -78,8 +78,8 @@
       },
       "Argon": {
         "type": "Transitive",
-        "resolved": "0.6.0",
-        "contentHash": "sEq6GgcSsN/lADJND8oYV+t+0rBZjkgEEsMoZqI3l5nHoLqxz/lDe+df9Tv5n1t8JPvd77OC9iGIU1R3rU+XnA=="
+        "resolved": "0.7.1",
+        "contentHash": "pmDCwaLjRNe6efhO2teVweq3+NNiSx4ngJiWEvQV9JxIgROjZvGASJ930yNfiywpQJk1cUzLyfWPkRYVYY7mZg=="
       },
       "Argon.NodaTime": {
         "type": "Transitive",
@@ -1844,10 +1844,10 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "19.14.1",
-        "contentHash": "5v9nM9el4+awoIIKMlMik4tS3B5eUjmOpEW5qhB9QOQiy9+Y03w84pi/mO9KSdWsaABq5PaImhmLM/jNrVPLpw==",
+        "resolved": "20.0.0",
+        "contentHash": "9aZrrb7gQz1VlUw2c/geKOI8ixMUByGvwkTH1NLNNDrWV+bKRF8OpUVh4ortAClViMbkSW5UbxAqCmJc3pT4vA==",
         "dependencies": {
-          "Argon": "0.6.0",
+          "Argon": "0.7.1",
           "DiffEngine": "11.3.0",
           "EmptyFiles": "4.4.0",
           "SimpleInfoName": "2.1.1"
@@ -1946,7 +1946,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.2.1, )",
-          "Verify": "[19.14.1, )",
+          "Verify": "[20.0.0, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
