@@ -32,7 +32,7 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <PackageReference Update="GitHubActionsTestLogger" Version="2.2.1">
+    <PackageReference Include="GitHubActionsTestLogger" Version="2.2.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
