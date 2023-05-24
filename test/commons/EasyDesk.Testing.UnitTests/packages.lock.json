@@ -8,15 +8,6 @@
         "resolved": "6.0.0",
         "contentHash": "tW3lsNS+dAEII6YGUX/VMoJjBS1QvsxqJeqLaJXub08y1FSjasFPtQ4UBUsudE9PNrzLjooClMsPtY2cZLdXpQ=="
       },
-      "GitHubActionsTestLogger": {
-        "type": "Direct",
-        "requested": "[2.2.1, )",
-        "resolved": "2.2.1",
-        "contentHash": "CagiKm0u7j9mLp+hhvLmSX/68JeR+VEJpGz3qR6FZ7FEU7RaN9mM/UzN60IWK7/Oi+RSLgDNkEe6UwkO1Wqjjw==",
-        "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.5.0"
-        }
-      },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[17.6.0, )",

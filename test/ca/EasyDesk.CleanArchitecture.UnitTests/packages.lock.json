@@ -8,15 +8,6 @@
         "resolved": "6.0.0",
         "contentHash": "tW3lsNS+dAEII6YGUX/VMoJjBS1QvsxqJeqLaJXub08y1FSjasFPtQ4UBUsudE9PNrzLjooClMsPtY2cZLdXpQ=="
       },
-      "GitHubActionsTestLogger": {
-        "type": "Direct",
-        "requested": "[2.2.1, )",
-        "resolved": "2.2.1",
-        "contentHash": "CagiKm0u7j9mLp+hhvLmSX/68JeR+VEJpGz3qR6FZ7FEU7RaN9mM/UzN60IWK7/Oi+RSLgDNkEe6UwkO1Wqjjw==",
-        "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.5.0"
-        }
-      },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
         "requested": "[17.6.0, )",
@@ -178,8 +169,8 @@
       },
       "Microsoft.AspNetCore.Mvc.Versioning": {
         "type": "Transitive",
-        "resolved": "5.0.0",
-        "contentHash": "mN9IARvNpHMBD2/oGmp5Bxp1Dg45Hfcp+LWaAyTtL2HisWLMOIcf0Ox1qW9IvCvdbHM+2A9dWEInhiqBsNxsJA=="
+        "resolved": "5.1.0",
+        "contentHash": "UX8w9BlCiZpr6Ox4YAve1w0CkI1CAovukGNzKd7v0+5pZc8lzuG5tRovucr1RWIKHs0E/Yx8563CN7KzaB3bpw=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
@@ -1598,7 +1589,7 @@
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
           "MicroElements.Swashbuckle.NodaTime": "[4.0.1, )",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[7.0.5, )",
-          "Microsoft.AspNetCore.Mvc.Versioning": "[5.0.0, )",
+          "Microsoft.AspNetCore.Mvc.Versioning": "[5.1.0, )",
           "Saunter": "[0.11.0, )",
           "Swashbuckle.AspNetCore": "[6.5.0, )",
           "Swashbuckle.AspNetCore.Newtonsoft": "[6.5.0, )",
