@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <IsPackable>false</IsPackable>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <RootFolder>..\..\..</RootFolder>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,9 +28,5 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
-  <PropertyGroup>
-    <RootFolder>..\..\..</RootFolder>
-  </PropertyGroup>
 
 </Project>

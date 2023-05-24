@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <IsPackable>false</IsPackable>
+    <RootFolder>..\..\..</RootFolder>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,10 +26,6 @@
     <ProjectReference Include="..\..\..\src\sample\EasyDesk.SampleApp.Web\EasyDesk.SampleApp.Web.csproj" />
     <ProjectReference Include="..\..\..\src\ca\EasyDesk.CleanArchitecture.Testing.Integration\EasyDesk.CleanArchitecture.Testing.Integration.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <RootFolder>..\..\..</RootFolder>
-  </PropertyGroup>
 	
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
