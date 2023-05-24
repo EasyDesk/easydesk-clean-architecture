@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Http;
+using System.Net.Mime;
 using System.Runtime.CompilerServices;
 using static EasyDesk.CleanArchitecture.Web.Csv.CsvService;
 
@@ -26,7 +27,7 @@ public class FormFileCsvParser
         string? propertyName = null)
     {
         propertyName ??= formFile.FileName;
-        if (!formFile.FileName.EndsWith(".csv"))
+        if (!formFile.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
         {
             return Errors.InvalidInput(propertyName, "File is not a CSV.");
         }
@@ -34,7 +35,8 @@ public class FormFileCsvParser
         {
             return Errors.InvalidInput(propertyName, $"File exceeds maximum upload size of {maxSize / 1024}kB.");
         }
-        if (formFile.ContentType != "text/csv" || !formFile.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+        var contentType = new ContentType(formFile.ContentType);
+        if (contentType.MediaType != "text/csv")
         {
             return Errors.InvalidInput(propertyName, $"File should be in CSV format and have text/csv as content type.");
         }
