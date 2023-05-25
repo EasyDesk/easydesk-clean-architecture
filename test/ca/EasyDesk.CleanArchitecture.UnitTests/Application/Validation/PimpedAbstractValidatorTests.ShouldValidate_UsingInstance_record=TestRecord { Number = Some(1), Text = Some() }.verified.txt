@@ -1,0 +1,14 @@
+﻿[
+  {
+    PropertyName: tested-property,
+    ErrorMessage: 'tested-property' must not be empty.,
+    AttemptedValue: ,
+    CustomState: null,
+    Severity: Error,
+    ErrorCode: NotEmptyValidator,
+    FormattedMessagePlaceholderValues: {
+      PropertyName: tested-property,
+      PropertyValue: 
+    }
+  }
+]

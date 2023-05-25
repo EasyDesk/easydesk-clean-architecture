@@ -1,0 +1,17 @@
+﻿[
+  {
+    PropertyName: tested-property,
+    ErrorMessage: tested-message,
+    AttemptedValue: 123456,
+    CustomState: null,
+    Severity: Error,
+    ErrorCode: tested-code,
+    FormattedMessagePlaceholderValues: {
+      MaxLength: 5,
+      MinLength: 0,
+      PropertyName: tested-property,
+      PropertyValue: 123456,
+      TotalLength: 6
+    }
+  }
+]

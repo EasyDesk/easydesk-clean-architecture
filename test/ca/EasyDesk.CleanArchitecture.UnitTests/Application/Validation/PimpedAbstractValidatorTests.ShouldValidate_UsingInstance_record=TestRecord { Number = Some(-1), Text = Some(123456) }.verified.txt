@@ -1,0 +1,31 @@
+﻿[
+  {
+    PropertyName: Number,
+    ErrorMessage: 'Number' must be greater than '0'.,
+    AttemptedValue: -1,
+    CustomState: null,
+    Severity: Error,
+    ErrorCode: GreaterThanValidator,
+    FormattedMessagePlaceholderValues: {
+      ComparisonProperty: ,
+      ComparisonValue: 0,
+      PropertyName: Number,
+      PropertyValue: -1
+    }
+  },
+  {
+    PropertyName: tested-property,
+    ErrorMessage: tested-message,
+    AttemptedValue: 123456,
+    CustomState: null,
+    Severity: Error,
+    ErrorCode: tested-code,
+    FormattedMessagePlaceholderValues: {
+      MaxLength: 5,
+      MinLength: 0,
+      PropertyName: tested-property,
+      PropertyValue: 123456,
+      TotalLength: 6
+    }
+  }
+]
