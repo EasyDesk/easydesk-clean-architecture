@@ -9,9 +9,11 @@ public abstract class PimpedAbstractValidator<T> : AbstractValidator<T>
     public void RuleForOption<TProperty>(Expression<Func<T, Option<TProperty>>> property, Func<IRuleBuilderOptions<T, TProperty>, IRuleBuilderOptions<T, TProperty>> rules)
     {
         var propertySelector = property.Compile();
-        rules(RuleFor(x => propertySelector(x).Value)
+        When(x => propertySelector(x).IsPresent, () =>
+        {
+            rules(RuleFor(x => propertySelector(x).Value)
                 .SetValidator(new InlineValidator<TProperty>())
-                .OverridePropertyName(property.GetMember().Name))
-        .When(x => propertySelector(x).IsPresent);
+                .OverridePropertyName(property.GetMember().Name));
+        });
     }
 }
