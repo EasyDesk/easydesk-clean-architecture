@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.Dto;
@@ -19,7 +20,7 @@ public record CreatePerson(
     LocalDate DateOfBirth,
     AddressDto Residence) : ICommandRequest<PersonDto>;
 
-public class CreatePersonValidator : AbstractValidator<CreatePerson>
+public class CreatePersonValidator : PimpedAbstractValidator<CreatePerson>
 {
     public CreatePersonValidator()
     {

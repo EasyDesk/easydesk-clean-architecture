@@ -1,0 +1,16 @@
+﻿[
+  {
+    PropertyName: Value,
+    ErrorMessage: 'Value' must be greater than '0'.,
+    AttemptedValue: -1,
+    CustomState: null,
+    Severity: Error,
+    ErrorCode: GreaterThanValidator,
+    FormattedMessagePlaceholderValues: {
+      ComparisonProperty: ,
+      ComparisonValue: 0,
+      PropertyName: Value,
+      PropertyValue: -1
+    }
+  }
+]

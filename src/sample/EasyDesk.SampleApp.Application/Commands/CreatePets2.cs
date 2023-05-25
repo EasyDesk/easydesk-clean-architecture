@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Sagas.BulkOperations;
+using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.Authorization;
@@ -13,7 +14,7 @@ namespace EasyDesk.SampleApp.Application.Commands;
 [RequireAnyOf(Permissions.CanEditPets)]
 public record CreatePets2(IEnumerable<PetInfoDto> Pets, Guid PersonId) : ICommandRequest<CreatePetsResultDto>
 {
-    public class Validation : AbstractValidator<CreatePets2>
+    public class Validation : PimpedAbstractValidator<CreatePets2>
     {
         public Validation()
         {

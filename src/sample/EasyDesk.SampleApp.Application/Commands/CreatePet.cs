@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.Dto;
@@ -18,7 +19,7 @@ public record CreatePet(PetInfoDto Pet, Guid PersonId) : ICommandRequest<PetDto>
 
 public record PetInfoDto(string Nickname);
 
-public class CreatePetValidator : AbstractValidator<CreatePet>
+public class CreatePetValidator : PimpedAbstractValidator<CreatePet>
 {
     public CreatePetValidator()
     {

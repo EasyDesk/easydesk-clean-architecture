@@ -15,17 +15,18 @@ public static class ConfigurationAssertions
 
 public class ConfigurationExtensionsTests
 {
-    private const string JsonConfiguration = @"
-            {
-                ""A"": {
-                    ""AA"": 1,
-                    ""AB"": 2,
-                },
-                ""B"": {
-                    ""BA"": 3.2,
-                },
-                ""C"": ""Hello""
-            }";
+    private const string JsonConfiguration = """
+        {
+            "A": {
+                "AA": 1,
+                "AB": 2,
+            },
+            "B": {
+                "BA": 3.2,
+            },
+            "C": "Hello"
+        }
+        """;
 
     private readonly IConfiguration _configuration;
 
