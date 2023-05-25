@@ -4,9 +4,11 @@
     Data: null,
     Errors: [
       {
-        Code: DomainError.EmptyPlaceName,
-        Detail: Empty place name,
-        Meta: {}
+        Code: InvalidInput,
+        Detail: 'Street Name' must not be empty.,
+        Meta: {
+          propertyName: Residence.StreetName
+        }
       }
     ],
     Meta: {}

@@ -10,6 +10,7 @@ using EasyDesk.SampleApp.Application.DomainEvents;
 using EasyDesk.SampleApp.Application.Dto;
 using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.OutgoingEvents;
+using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 using Shouldly;
@@ -289,5 +290,33 @@ public class CreatePersonTests : SampleIntegrationTest
             .AsVerifiable();
 
         await Verify(response);
+    }
+
+    public static IEnumerable<object[]> WrongAddresses()
+    {
+        var badPlaceNames = new[] { (string.Empty, "empty"), (new string('a', PlaceName.MaxLength + 1), "too long") };
+        foreach (var (streetName, streetNameProblem) in badPlaceNames)
+        {
+            foreach (var (streetType, streetTypeProblem) in badPlaceNames)
+            {
+                foreach (var (streetNumber, streetNumberProblem) in badPlaceNames)
+                {
+                    yield return new object[] { AddressDto.Create(streetName, streetType: streetType, streetNumber: streetNumber), streetNameProblem, streetTypeProblem, streetNumberProblem };
+                }
+            }
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(WrongAddresses))]
+    public async Task ShouldFail_WithInvalidResidenceAddresses(AddressDto addressDto, string streetNameProblem, string streetTypeProblem, string streetNumberProblem)
+    {
+        var body = _body with { Residence = addressDto };
+        var response = await Http.CreatePerson(body)
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response)
+            .UseParameters(null, streetNameProblem, streetTypeProblem, streetNumberProblem);
     }
 }

@@ -26,6 +26,7 @@ public class CreatePersonValidator : PimpedAbstractValidator<CreatePerson>
     {
         RuleFor(x => x.FirstName).NotEmpty();
         RuleFor(x => x.LastName).NotEmpty();
+        RuleFor(x => x.Residence).SetValidator(new AddressDtoValidator());
     }
 }
 

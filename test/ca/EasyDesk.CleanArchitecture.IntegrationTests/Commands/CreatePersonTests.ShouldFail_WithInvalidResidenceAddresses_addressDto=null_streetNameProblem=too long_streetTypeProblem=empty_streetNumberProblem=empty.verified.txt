@@ -1,0 +1,30 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: 'Street Type' must not be empty.,
+        Meta: {
+          propertyName: Residence.StreetType
+        }
+      },
+      {
+        Code: InvalidInput,
+        Detail: 'Street Number' must not be empty.,
+        Meta: {
+          propertyName: Residence.StreetNumber
+        }
+      },
+      {
+        Code: InvalidInput,
+        Detail: The length of 'Street Name' must be 100 characters or fewer. You entered 101 characters.,
+        Meta: {
+          propertyName: Residence.StreetName
+        }
+      }
+    ],
+    Meta: {}
+  }
+}

@@ -1,5 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
+using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.Dto;
 
@@ -55,4 +57,25 @@ public record AddressDto(
         Region: address.Region.Map(ToValue),
         State: address.State.Map(ToValue),
         Country: address.Country.Map(ToValue));
+}
+
+public class AddressDtoValidator : PimpedAbstractValidator<AddressDto>
+{
+    public AddressDtoValidator()
+    {
+        RuleFor(x => x.StreetName)
+            .NotEmpty()
+            .MaximumLength(PlaceName.MaxLength);
+        Func<IRuleBuilderOptions<AddressDto, string>, IRuleBuilderOptions<AddressDto, string>> validatePlaceName = builder => builder
+            .NotEmpty()
+            .MaximumLength(PlaceName.MaxLength);
+        RuleForOption(x => x.StreetType, validatePlaceName);
+        RuleForOption(x => x.StreetNumber, validatePlaceName);
+        RuleForOption(x => x.City, validatePlaceName);
+        RuleForOption(x => x.District, validatePlaceName);
+        RuleForOption(x => x.Province, validatePlaceName);
+        RuleForOption(x => x.Region, validatePlaceName);
+        RuleForOption(x => x.State, validatePlaceName);
+        RuleForOption(x => x.Country, validatePlaceName);
+    }
 }
