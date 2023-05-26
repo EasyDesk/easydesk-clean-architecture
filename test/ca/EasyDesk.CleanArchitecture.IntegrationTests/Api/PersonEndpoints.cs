@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.SampleApp.Application.Dto;
+using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Api;

@@ -1,4 +1,4 @@
-﻿using EasyDesk.SampleApp.Application.Dto;
+﻿using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.Testing.VerifyConfiguration;
 using System.Runtime.CompilerServices;
 

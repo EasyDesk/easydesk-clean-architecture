@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
-using EasyDesk.SampleApp.Application.Dto;
+using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

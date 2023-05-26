@@ -2,8 +2,8 @@
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
-using EasyDesk.SampleApp.Application.Dto;
-using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.SampleApp.Application.V_1_0.Dto;
+using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Queries;

@@ -2,9 +2,9 @@
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.SampleApp.Application.Commands;
-using EasyDesk.SampleApp.Application.Dto;
-using EasyDesk.SampleApp.Application.Queries;
+using EasyDesk.SampleApp.Application.V_1_0.Commands;
+using EasyDesk.SampleApp.Application.V_1_0.Dto;
+using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
 using System.Net.Http.Headers;
 

@@ -1,4 +1,4 @@
-﻿using EasyDesk.SampleApp.Application.OutgoingEvents;
+﻿using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Cancellation;
 using NodaTime;
 using Shouldly;
