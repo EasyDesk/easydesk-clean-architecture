@@ -199,6 +199,13 @@
       },
       "easydesk.commons": {
         "type": "Project"
+      },
+      "easydesk.extensions.dependencyinjection": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.Commons": "[1.0.0, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[7.0.0, )"
+        }
       }
     }
   }

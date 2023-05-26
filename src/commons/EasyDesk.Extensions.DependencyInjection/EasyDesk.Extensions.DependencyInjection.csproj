@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Authors>Francesco Dente, Luca Deluigi</Authors>
     <Company>EasyDesk</Company>
-    <Product>EasyDesk.Extensions.Configuration library</Product>
-    <Description>A library containing a series of extensions of .NET's Microsoft.Extensions.Configuration package.</Description>
-    <PackageTags>EasyDesk Common Utilities Extensions Configuration</PackageTags>
+    <Product>EasyDesk.Extensions.DependencyInjection library</Product>
+    <Description>A library containing a series of extensions of .NET's Microsoft.Extensions.DependencyInjection package.</Description>
+    <PackageTags>EasyDesk Common Utilities Extensions DependencyInjection</PackageTags>
     <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
   </PropertyGroup>
 
@@ -16,7 +16,7 @@
   <Import Project="$(RootFolder)\Packaging.targets" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,6 +23,7 @@ jobs:
       PROJECT_DIRS: |
         src/commons/EasyDesk.Commons
         src/commons/EasyDesk.Extensions.Configuration
+        src/commons/EasyDesk.Extensions.DependencyInjection
         src/commons/EasyDesk.Testing
         src/ca/EasyDesk.CleanArchitecture.Domain
         src/ca/EasyDesk.CleanArchitecture.Application

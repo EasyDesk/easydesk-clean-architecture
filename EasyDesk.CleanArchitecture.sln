@@ -81,9 +81,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.Testing.UnitTests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.Commons.UnitTests", "test\commons\EasyDesk.Commons.UnitTests\EasyDesk.Commons.UnitTests.csproj", "{7101B394-4CE6-4471-BEEB-5FC0A90B5E5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.Extensions.Configuration", "src\commons\EasyDesk.Extensions.Configuration\EasyDesk.Extensions.Configuration.csproj", "{D7E9428C-B858-4B97-B61A-2722410A47B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.Extensions.Configuration", "src\commons\EasyDesk.Extensions.Configuration\EasyDesk.Extensions.Configuration.csproj", "{D7E9428C-B858-4B97-B61A-2722410A47B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.Extensions.Configuration.UnitTests", "test\commons\EasyDesk.Extensions.Configuration.UnitTests\EasyDesk.Extensions.Configuration.UnitTests.csproj", "{C302FCAE-729D-41AC-AB1B-588E9762305C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyDesk.Extensions.Configuration.UnitTests", "test\commons\EasyDesk.Extensions.Configuration.UnitTests\EasyDesk.Extensions.Configuration.UnitTests.csproj", "{C302FCAE-729D-41AC-AB1B-588E9762305C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.Extensions.DependencyInjection", "src\commons\EasyDesk.Extensions.DependencyInjection\EasyDesk.Extensions.DependencyInjection.csproj", "{69E83F25-FDCA-4467-A73A-94A281AE4DDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -179,6 +181,10 @@ Global
 		{C302FCAE-729D-41AC-AB1B-588E9762305C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C302FCAE-729D-41AC-AB1B-588E9762305C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C302FCAE-729D-41AC-AB1B-588E9762305C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69E83F25-FDCA-4467-A73A-94A281AE4DDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69E83F25-FDCA-4467-A73A-94A281AE4DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69E83F25-FDCA-4467-A73A-94A281AE4DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69E83F25-FDCA-4467-A73A-94A281AE4DDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -213,6 +219,7 @@ Global
 		{7101B394-4CE6-4471-BEEB-5FC0A90B5E5A} = {838D7C39-3F68-42F7-AD7C-AFD46A0819D9}
 		{D7E9428C-B858-4B97-B61A-2722410A47B5} = {97BF71BF-3D5F-4C80-BA10-5F5ED720394C}
 		{C302FCAE-729D-41AC-AB1B-588E9762305C} = {838D7C39-3F68-42F7-AD7C-AFD46A0819D9}
+		{69E83F25-FDCA-4467-A73A-94A281AE4DDB} = {97BF71BF-3D5F-4C80-BA10-5F5ED720394C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D8D92860-D9D0-4987-985E-F151E0C54794}
