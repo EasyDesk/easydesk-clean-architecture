@@ -10,11 +10,11 @@
       },
       "GitHubActionsTestLogger": {
         "type": "Direct",
-        "requested": "[2.2.1, )",
-        "resolved": "2.2.1",
-        "contentHash": "CagiKm0u7j9mLp+hhvLmSX/68JeR+VEJpGz3qR6FZ7FEU7RaN9mM/UzN60IWK7/Oi+RSLgDNkEe6UwkO1Wqjjw==",
+        "requested": "[2.3.0, )",
+        "resolved": "2.3.0",
+        "contentHash": "gO7MWKjUDoOx2w5JAagomSuoLyeVldmm+GCj1mSSqBzsRzIjOl8MjacxbsPXho5UyTRkeRdx1fzFgujiCUNT4g==",
         "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.5.0"
+          "Microsoft.TestPlatform.ObjectModel": "17.6.0"
         }
       },
       "Microsoft.AspNetCore.Mvc.Testing": {
@@ -76,12 +76,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[20.0.0, )",
-        "resolved": "20.0.0",
-        "contentHash": "RnkpyCSBAfhT/WAVTCQHcxzwAtwfrWUZblv/OCpFunHu6x+kpqAxXfhm03ILxZ+mdBKI2NwGq1/kpkC68fGZyg==",
+        "requested": "[20.1.1, )",
+        "resolved": "20.1.1",
+        "contentHash": "HW/CuOOUaKdWWxU5lDfte0HgIIV6jSt3j2Qo3U/o3nMp1JcXrKRJS/NoxQ8NMsYn8C3n8qaulxiOG4Nm1rNylQ==",
         "dependencies": {
           "EmptyFiles": "4.4.0",
-          "Verify": "20.0.0",
+          "Verify": "20.1.1",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -1451,6 +1451,11 @@
           "System.Runtime": "4.3.0"
         }
       },
+      "System.IO.Hashing": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "sDnWM0N3AMCa86LrKTWeF3BZLD2sgWyYUc7HL6z4+xyDZNQRwzmxbo4qP2rX2MqC+Sy1/gOSRDah5ltxY5jPxw=="
+      },
       "System.IO.Pipelines": {
         "type": "Transitive",
         "resolved": "7.0.0",
@@ -2077,13 +2082,14 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "20.0.0",
-        "contentHash": "9aZrrb7gQz1VlUw2c/geKOI8ixMUByGvwkTH1NLNNDrWV+bKRF8OpUVh4ortAClViMbkSW5UbxAqCmJc3pT4vA==",
+        "resolved": "20.1.1",
+        "contentHash": "BwbyqLntZj3kOVop31j7xIrEPN9y2IODfVDzBuJcjAOkTokl35Ifn7zS1Nia0/XZJU8fgtaK3rYaR3q9C1jkgg==",
         "dependencies": {
           "Argon": "0.7.1",
           "DiffEngine": "11.3.0",
           "EmptyFiles": "4.4.0",
-          "SimpleInfoName": "2.1.1"
+          "SimpleInfoName": "2.1.1",
+          "System.IO.Hashing": "7.0.0"
         }
       },
       "Verify.NewtonsoftJson": {
@@ -2287,7 +2293,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.2.1, )",
-          "Verify": "[20.0.0, )",
+          "Verify": "[20.1.1, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }

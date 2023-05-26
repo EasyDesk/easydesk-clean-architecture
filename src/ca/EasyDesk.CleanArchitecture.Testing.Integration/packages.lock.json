@@ -1252,6 +1252,11 @@
           "System.Runtime": "4.3.0"
         }
       },
+      "System.IO.Hashing": {
+        "type": "Transitive",
+        "resolved": "7.0.0",
+        "contentHash": "sDnWM0N3AMCa86LrKTWeF3BZLD2sgWyYUc7HL6z4+xyDZNQRwzmxbo4qP2rX2MqC+Sy1/gOSRDah5ltxY5jPxw=="
+      },
       "System.IO.Pipelines": {
         "type": "Transitive",
         "resolved": "7.0.0",
@@ -1844,13 +1849,14 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "20.0.0",
-        "contentHash": "9aZrrb7gQz1VlUw2c/geKOI8ixMUByGvwkTH1NLNNDrWV+bKRF8OpUVh4ortAClViMbkSW5UbxAqCmJc3pT4vA==",
+        "resolved": "20.1.1",
+        "contentHash": "BwbyqLntZj3kOVop31j7xIrEPN9y2IODfVDzBuJcjAOkTokl35Ifn7zS1Nia0/XZJU8fgtaK3rYaR3q9C1jkgg==",
         "dependencies": {
           "Argon": "0.7.1",
           "DiffEngine": "11.3.0",
           "EmptyFiles": "4.4.0",
-          "SimpleInfoName": "2.1.1"
+          "SimpleInfoName": "2.1.1",
+          "System.IO.Hashing": "7.0.0"
         }
       },
       "Verify.NewtonsoftJson": {
@@ -1946,7 +1952,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.2.1, )",
-          "Verify": "[20.0.0, )",
+          "Verify": "[20.1.1, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
