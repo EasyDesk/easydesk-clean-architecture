@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+﻿namespace EasyDesk.Extensions.Configuration;
 
 public sealed class MissingConfigurationException : Exception
 {

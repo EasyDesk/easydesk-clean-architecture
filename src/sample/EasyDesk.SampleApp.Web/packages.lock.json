@@ -264,6 +264,14 @@
           "Microsoft.Extensions.Primitives": "7.0.0"
         }
       },
+      "Microsoft.Extensions.Configuration.Binder": {
+        "type": "Transitive",
+        "resolved": "7.0.4",
+        "contentHash": "8+XPvJnHZsYgHOQlcMuQe7QNF5KdVKHH1F/wW3nd8/u81Gk/XFAYMDP0Lpz18h7/AM95M662vvqMorcYxCBB4w==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0"
+        }
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Transitive",
         "resolved": "7.0.0",
@@ -939,6 +947,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
+          "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.9, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.5, )",
           "Rebus": "[7.1.0, )",
@@ -965,6 +974,13 @@
       },
       "easydesk.commons": {
         "type": "Project"
+      },
+      "easydesk.extensions.configuration": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.Commons": "[1.0.0, )",
+          "Microsoft.Extensions.Configuration.Binder": "[7.0.4, )"
+        }
       },
       "easydesk.sampleapp.application": {
         "type": "Project",

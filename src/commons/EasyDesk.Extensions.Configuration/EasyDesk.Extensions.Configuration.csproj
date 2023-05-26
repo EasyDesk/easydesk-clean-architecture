@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Authors>Francesco Dente, Luca Deluigi</Authors>
+    <Company>EasyDesk</Company>
+    <Product>EasyDesk.Extensions.Configuration library</Product>
+    <Description>A library containing a series of extensions of .NET's Microsoft.Extensions.Configuration.Abstractions package.</Description>
+    <PackageTags>EasyDesk Common Utilities Extensions Configuration</PackageTags>
+    <RepositoryUrl>https://github.com/EasyDesk/easydesk-clean-architecture</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootFolder>..\..\..</RootFolder>
+  </PropertyGroup>
+
+  <Import Project="$(RootFolder)\Packaging.targets" />
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EasyDesk.Commons\EasyDesk.Commons.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,9 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+﻿using EasyDesk.Extensions.Configuration.UnitTests;
 using Microsoft.Extensions.Configuration;
 using Shouldly;
 using System.Text;
 
-namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Configuration;
+namespace EasyDesk.Extensions.Configuration.UnitTests;
 
 public static class ConfigurationAssertions
 {

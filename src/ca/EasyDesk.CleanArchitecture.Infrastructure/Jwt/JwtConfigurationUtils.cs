@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
-using EasyDesk.Commons.Collections;
+﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Extensions.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;

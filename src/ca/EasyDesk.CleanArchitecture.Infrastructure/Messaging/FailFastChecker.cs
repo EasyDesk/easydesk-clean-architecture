@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using EasyDesk.CleanArchitecture.Infrastructure.Configuration;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Extensions.Configuration;
 using Rebus.Retry.FailFast;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;

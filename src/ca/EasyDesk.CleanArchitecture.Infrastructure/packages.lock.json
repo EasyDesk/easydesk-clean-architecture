@@ -115,6 +115,14 @@
           "Microsoft.Extensions.Primitives": "7.0.0"
         }
       },
+      "Microsoft.Extensions.Configuration.Binder": {
+        "type": "Transitive",
+        "resolved": "7.0.4",
+        "contentHash": "8+XPvJnHZsYgHOQlcMuQe7QNF5KdVKHH1F/wW3nd8/u81Gk/XFAYMDP0Lpz18h7/AM95M662vvqMorcYxCBB4w==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "7.0.0"
+        }
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Transitive",
         "resolved": "7.0.0",
@@ -387,6 +395,13 @@
       },
       "easydesk.commons": {
         "type": "Project"
+      },
+      "easydesk.extensions.configuration": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.Commons": "[1.0.0, )",
+          "Microsoft.Extensions.Configuration.Binder": "[7.0.4, )"
+        }
       }
     }
   }

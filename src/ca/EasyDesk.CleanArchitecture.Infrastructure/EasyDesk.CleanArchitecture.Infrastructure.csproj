@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\commons\EasyDesk.Extensions.Configuration\EasyDesk.Extensions.Configuration.csproj" />
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Application\EasyDesk.CleanArchitecture.Application.csproj" />
   </ItemGroup>
 

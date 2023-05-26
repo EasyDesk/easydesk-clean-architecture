@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Configuration;
+namespace EasyDesk.Extensions.Configuration;
 
 public static class ConfigurationExtensions
 {

@@ -22,6 +22,7 @@ jobs:
     env:
       PROJECT_DIRS: |
         src/commons/EasyDesk.Commons
+        src/commons/EasyDesk.Extensions.Configuration
         src/commons/EasyDesk.Testing
         src/ca/EasyDesk.CleanArchitecture.Domain
         src/ca/EasyDesk.CleanArchitecture.Application
@@ -54,6 +55,11 @@ jobs:
         uses: EasyDesk/action-dotnet-test@v1
         with:
           path: test/commons/EasyDesk.Commons.UnitTests
+          test-args: --logger 'GitHubActions'
+      - name: EasyDesk.Extensions.Configuration Unit Tests
+        uses: EasyDesk/action-dotnet-test@v1
+        with:
+          path: test/commons/EasyDesk.Extensions.Configuration.UnitTests
           test-args: --logger 'GitHubActions'
       - name: EasyDesk.Testing Unit tests
         uses: EasyDesk/action-dotnet-test@v1
