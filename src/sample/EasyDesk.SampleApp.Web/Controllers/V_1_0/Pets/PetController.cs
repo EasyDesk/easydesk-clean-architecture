@@ -1,8 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Csv;
 using EasyDesk.CleanArchitecture.Web.Dto;
-using EasyDesk.SampleApp.Application.Commands;
-using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.Queries;

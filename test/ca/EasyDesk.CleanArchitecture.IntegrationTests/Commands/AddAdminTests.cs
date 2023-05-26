@@ -5,7 +5,7 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.IncomingCommands;
+using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;

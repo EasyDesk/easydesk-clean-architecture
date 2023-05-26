@@ -2,8 +2,8 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
-using EasyDesk.SampleApp.Application.IncomingCommands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
+using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;

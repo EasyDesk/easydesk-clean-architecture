@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Dto;
-using EasyDesk.SampleApp.Application.Commands;
+using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.Admins;

@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using EasyDesk.SampleApp.Application.IncomingCommands;
+using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Errors;

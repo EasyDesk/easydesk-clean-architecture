@@ -66,16 +66,16 @@ public class AddressDtoValidator : PimpedAbstractValidator<AddressDto>
         RuleFor(x => x.StreetName)
             .NotEmpty()
             .MaximumLength(PlaceName.MaxLength);
-        Func<IRuleBuilderOptions<AddressDto, string>, IRuleBuilderOptions<AddressDto, string>> validatePlaceName = builder => builder
+        IRuleBuilderOptions<AddressDto, string> ValidatePlaceName(IRuleBuilderOptions<AddressDto, string> builder) => builder
             .NotEmpty()
             .MaximumLength(PlaceName.MaxLength);
-        RuleForOption(x => x.StreetType, validatePlaceName);
-        RuleForOption(x => x.StreetNumber, validatePlaceName);
-        RuleForOption(x => x.City, validatePlaceName);
-        RuleForOption(x => x.District, validatePlaceName);
-        RuleForOption(x => x.Province, validatePlaceName);
-        RuleForOption(x => x.Region, validatePlaceName);
-        RuleForOption(x => x.State, validatePlaceName);
-        RuleForOption(x => x.Country, validatePlaceName);
+        RuleForOption(x => x.StreetType, ValidatePlaceName);
+        RuleForOption(x => x.StreetNumber, ValidatePlaceName);
+        RuleForOption(x => x.City, ValidatePlaceName);
+        RuleForOption(x => x.District, ValidatePlaceName);
+        RuleForOption(x => x.Province, ValidatePlaceName);
+        RuleForOption(x => x.Region, ValidatePlaceName);
+        RuleForOption(x => x.State, ValidatePlaceName);
+        RuleForOption(x => x.Country, ValidatePlaceName);
     }
 }

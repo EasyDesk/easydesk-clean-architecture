@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Dto;
-using EasyDesk.SampleApp.Application.Queries;
 using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
