@@ -1,25 +1,40 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using Rebus.Transport;
+using System.Diagnostics;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
 internal class OutboxFlusher
 {
-    private readonly int _batchSize;
+    private readonly Func<int, bool> _batchPredicate;
+    private readonly Option<int> _batchSize;
     private readonly IUnitOfWorkProvider _unitOfWorkProvider;
     private readonly IOutbox _outbox;
     private readonly ITransport _transport;
 
     public OutboxFlusher(
-        int batchSize,
+        OutboxFlushingStrategy flushingStrategy,
         IUnitOfWorkProvider unitOfWorkProvider,
         IOutbox outbox,
         ITransport transport)
     {
-        _batchSize = batchSize;
         _unitOfWorkProvider = unitOfWorkProvider;
         _outbox = outbox;
         _transport = transport;
+        _batchPredicate = flushingStrategy switch
+        {
+            OutboxFlushingStrategy.AllAtOnce
+                or OutboxFlushingStrategy.AllInBatches => _ => true,
+            OutboxFlushingStrategy.Batched(var batches, _) => i => i < batches,
+            _ => throw new UnreachableException()
+        };
+        _batchSize = flushingStrategy switch
+        {
+            OutboxFlushingStrategy.AllAtOnce => None,
+            OutboxFlushingStrategy.AllInBatches(var batchSize) => Some(batchSize),
+            OutboxFlushingStrategy.Batched(_, var batchSize) => Some(batchSize),
+            _ => throw new UnreachableException()
+        };
     }
 
     public async Task Flush()
@@ -30,7 +45,7 @@ internal class OutboxFlusher
     private async Task FlushWithinTransaction()
     {
         using var scope = new RebusTransactionScope();
-        while (await SendNextBatch(scope.TransactionContext))
+        for (var i = 0; _batchPredicate(i) && await SendNextBatch(scope.TransactionContext); i++)
         {
         }
         await scope.CompleteAsync();
@@ -43,6 +58,6 @@ internal class OutboxFlusher
         {
             await _transport.Send(destination, message, transactionContext);
         }
-        return messages.Count() == _batchSize;
+        return _batchSize.Contains(messages.Count());
     }
 }
