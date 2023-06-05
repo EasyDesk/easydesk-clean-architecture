@@ -53,8 +53,18 @@ public class PaginationTests : SampleIntegrationTest
     public async Task DefaultPageSize_ShouldBeConfigurable()
     {
         var response = await Http
-            .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)
-            .Send()
+            .GetPeople()
+            .SinglePage()
+            .AsVerifiable();
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldGetAnyPage()
+    {
+        var response = await Http
+            .GetPeople()
+            .SinglePage(1)
             .AsVerifiable();
         await Verify(response);
     }
@@ -113,10 +123,10 @@ public class PaginationTests : SampleIntegrationTest
     public async Task HttpRequestBuilder_ShouldNotWorkWithInvalidInput()
     {
         var response = await Http
-        .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)
+        .GetPeople()
         .SetPageSize("foo")
         .SetPageIndex("bar")
-        .Send()
+        .SinglePage()
         .AsVerifiable();
 
         await Verify(response);
