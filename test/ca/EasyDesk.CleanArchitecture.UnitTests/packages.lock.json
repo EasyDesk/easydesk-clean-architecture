@@ -47,12 +47,12 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[20.3.1, )",
-        "resolved": "20.3.1",
-        "contentHash": "0GG56JudzEqsmvuA/xR+t0zlBvgVl2mQVOuXRfecN7UQq/YdflcklAUDsh+gfTo5TN5AEiJzYIK9gaG5t+2pCA==",
+        "requested": "[20.3.2, )",
+        "resolved": "20.3.2",
+        "contentHash": "Mhf0OrHicOjfEgmqBBaUCcIjolVHOr33xSi0d9XTJItb0YRsbnl7DX/LLc8BNcB79OHXxQIW8EZh1KIGrxJw5Q==",
         "dependencies": {
           "EmptyFiles": "4.4.0",
-          "Verify": "20.3.1",
+          "Verify": "20.3.2",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.4.2"
         }
@@ -103,8 +103,8 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "11.4.0",
-        "contentHash": "ORiQ383XTZpXhNzqywR/lL6uMxcKdfqoVtMTDdlbUacwAxklEvB31DuhoMpNOIVOFpg55Fc7yMQNJmYA0xLBTw==",
+        "resolved": "11.4.1",
+        "contentHash": "dp1r41w+d8ufEkr1Mul02sBFRk/mmAPLu20d8A00/5oU5S8gX6VUpgqZWBiwwZ7/onakyFMtOufUg8XPUFDhHw==",
         "dependencies": {
           "EmptyFiles": "4.4.0",
           "System.Management": "6.0.1"
@@ -1480,11 +1480,11 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "20.3.1",
-        "contentHash": "PWyd98YXIKVET6Ft82XruBwRap5IcYJEQQmUHRkdAD3AABrM/lGBEtquFy53Skcv+CNrAW3mnzo82rnSDZAijA==",
+        "resolved": "20.3.2",
+        "contentHash": "GRShUCZGmEGhwsWw666yJDbIMWXXLSWmohKyPeyYvwii3c8Tb075gFf1m3nUQP1Yp5Ir73TqJd81oGEx/LY4fw==",
         "dependencies": {
           "Argon": "0.7.2",
-          "DiffEngine": "11.4.0",
+          "DiffEngine": "11.4.1",
           "EmptyFiles": "4.4.0",
           "SimpleInfoName": "2.1.1",
           "System.IO.Hashing": "7.0.0"
@@ -1647,7 +1647,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.2.1, )",
-          "Verify": "[20.3.1, )",
+          "Verify": "[20.3.2, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
