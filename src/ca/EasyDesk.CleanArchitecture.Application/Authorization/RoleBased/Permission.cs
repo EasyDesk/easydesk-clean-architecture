@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-public record Permission : ValueWrapper<string, Permission>
+public record Permission : ValueWrapper<string>
 {
     public const int MaxLength = 100;
 

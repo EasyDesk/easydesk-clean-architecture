@@ -1,8 +1,7 @@
 ﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
-public abstract record AbstractValueWrapper<T, S>
+public abstract record AbstractValueWrapper<T>
     where T : notnull, IEquatable<T>
-    where S : AbstractValueWrapper<T, S>
 {
     public T Value { get; }
 

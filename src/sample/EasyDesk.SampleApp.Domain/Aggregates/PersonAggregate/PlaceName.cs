@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
 namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
-public record PlaceName : ValueWrapper<string, PlaceName>
+public record PlaceName : ValueWrapper<string>
 {
     public const int MaxLength = 100;
 
@@ -15,8 +15,6 @@ public record PlaceName : ValueWrapper<string, PlaceName>
     {
         DomainConstraints.Check()
             .If(string.IsNullOrWhiteSpace(value), () => new EmptyPlaceName())
-            .ThrowException();
-        DomainConstraints.Check()
             .IfNot(value.Length < MaxLength, () => new PlaceNameTooLong(value.Length, MaxLength))
             .ThrowException();
     }

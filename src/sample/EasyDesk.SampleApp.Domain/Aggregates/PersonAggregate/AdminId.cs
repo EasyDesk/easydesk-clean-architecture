@@ -2,7 +2,7 @@
 
 namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
-public record AdminId : ValueWrapper<string, AdminId>
+public record AdminId : ValueWrapper<string>
 {
     private AdminId(string value) : base(value)
     {

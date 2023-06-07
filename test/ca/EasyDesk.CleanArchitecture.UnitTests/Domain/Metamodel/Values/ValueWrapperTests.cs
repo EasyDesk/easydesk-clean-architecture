@@ -9,7 +9,7 @@ public class ValueWrapperTests
 {
     private static readonly int _innerValue = 5;
 
-    private record TestValueWrapper : ValueWrapper<int, TestValueWrapper>
+    private record TestValueWrapper : ValueWrapper<int>
     {
         public TestValueWrapper(int value) : base(value)
         {

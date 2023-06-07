@@ -2,5 +2,5 @@
 
 public static class ValueWrapperUtils
 {
-    public static T ToValue<T, W>(AbstractValueWrapper<T, W> wrapper) where T : IEquatable<T> where W : AbstractValueWrapper<T, W> => wrapper.Value;
+    public static T ToValue<T>(AbstractValueWrapper<T> wrapper) where T : IEquatable<T> => wrapper.Value;
 }

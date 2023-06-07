@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
 namespace EasyDesk.CleanArchitecture.Domain.Model;
 
-public record Name : ValueWrapper<string, Name>
+public record Name : ValueWrapper<string>
 {
     public Name(string name) : base(name.Trim())
     {

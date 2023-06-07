@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Domain.Model;
 
-public record Email : ValueWrapper<string, Email>
+public record Email : ValueWrapper<string>
 {
     public const int MaxLength = 254;
 

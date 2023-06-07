@@ -9,9 +9,9 @@
 /// </summary>
 /// <typeparam name="T">The wrapped value type.</typeparam>
 /// <typeparam name="S">The type extending this record.</typeparam>
-public abstract record QuantityWrapper<T, S> : AbstractValueWrapper<T, S>, IComparable<QuantityWrapper<T, S>>
+public abstract record QuantityWrapper<T, S> : AbstractValueWrapper<T>, IComparable<QuantityWrapper<T, S>>
     where T : struct, IEquatable<T>, IComparable<T>
-    where S : AbstractValueWrapper<T, S>
+    where S : QuantityWrapper<T, S>
 {
     protected QuantityWrapper(T value) : base(value)
     {
