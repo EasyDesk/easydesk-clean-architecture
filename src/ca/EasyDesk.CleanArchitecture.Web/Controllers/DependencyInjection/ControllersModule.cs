@@ -57,6 +57,7 @@ public class ControllersModule : AppModule
         }
         options.Filters.Add<BadRequestFilter>();
         options.EnableEndpointRouting = false;
+        options.ModelBinderProviders.Insert(0, new OptionBinderProvider());
         Options.ApplyMvcConfiguration(options);
     }
 }

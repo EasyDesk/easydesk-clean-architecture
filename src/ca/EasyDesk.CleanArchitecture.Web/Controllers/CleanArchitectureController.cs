@@ -38,6 +38,9 @@ public abstract class CleanArchitectureController : AbstractController
         Func<Result<PageInfo<TDto>>, PaginationMetaDto> meta) =>
         new(() => request(GetService<IDispatcher>()), mapper, meta, this);
 
+    protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Success<TDto>(TDto result) =>
+        new ActionResultBuilder<TDto, TDto, Nothing>(() => Task.FromResult(new Result<TDto>(result)), It, _ => Nothing.Value, this).ReturnOk();
+
     protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error) =>
         new ActionResultBuilder<TDto, TDto, Nothing>(() => Task.FromResult(new Result<TDto>(error)), It, _ => Nothing.Value, this).ReturnOk();
 
