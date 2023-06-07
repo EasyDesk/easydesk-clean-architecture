@@ -33,7 +33,7 @@ internal class AuditingBackgroundTask : BackgroundConsumer<(AuditRecord, TenantI
         CancellationToken pausingToken)
     {
         var (record, tenantInfo) = item;
-        serviceProvider.GetRequiredService<IContextTenantInitializer>().Initialize(tenantInfo);
+        serviceProvider.GetServiceAsOption<IContextTenantInitializer>().IfPresent(i => i.Initialize(tenantInfo));
         await serviceProvider.GetRequiredService<IAuditStorageImplementation>().StoreAudit(record);
         _logger.LogDebug("Stored audit with name {auditName}", record.Name);
     }
