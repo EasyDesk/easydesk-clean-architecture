@@ -18,6 +18,11 @@
         }
       }
     ],
-    Meta: {}
+    Meta: {
+      PageIndex: 0,
+      PageSize: 0,
+      TotalCount: 0,
+      PageCount: 0
+    }
   }
 }

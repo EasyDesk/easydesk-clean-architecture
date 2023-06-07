@@ -166,17 +166,17 @@ public class RebusMessagingModule : AppModule
 
         services.AddHostedService<OutboxConsumer>();
         services.AddSingleton<OutboxFlushRequestsChannel>();
-        services.AddScoped(provider =>
+        services.AddScoped((Func<IServiceProvider, OutboxFlusher>)(provider =>
         {
             // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
             _ = provider.GetRequiredService<IBus>();
 
             return new OutboxFlusher(
-                Options.OutboxOptions.FlushingBatchSize,
+                Options.OutboxOptions.FlushingStrategy,
                 provider.GetRequiredService<IUnitOfWorkProvider>(),
                 provider.GetRequiredService<IOutbox>(),
                 originalTransport.Value);
-        });
+        }));
     }
 }
 

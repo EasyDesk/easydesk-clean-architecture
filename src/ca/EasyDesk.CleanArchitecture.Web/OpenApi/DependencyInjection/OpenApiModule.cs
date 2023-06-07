@@ -20,11 +20,13 @@ namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 
 public class OpenApiModule : AppModule
 {
-    private readonly Action<SwaggerGenOptions>? _configure;
+    private readonly OpenApiModuleOptions _options;
 
-    public OpenApiModule(Action<SwaggerGenOptions>? configure = null)
+    public OpenApiModule(Action<OpenApiModuleOptions>? configure)
     {
-        _configure = configure;
+        var options = new OpenApiModuleOptions();
+        configure?.Invoke(options);
+        _options = options;
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
@@ -37,13 +39,13 @@ public class OpenApiModule : AppModule
             SetupAuthenticationSchemesSupport(app, options);
             SetupMultitenancySupport(app, options);
 
-            _configure?.Invoke(options);
+            _options.ConfigureSwagger?.Invoke(options);
         });
     }
 
-    private static void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)
+    private void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)
     {
-        if (app.IsMultitenant())
+        if (app.IsMultitenant() && _options.AddDefaultMultitenancyFilters)
         {
             options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
             {
@@ -53,12 +55,14 @@ public class OpenApiModule : AppModule
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "multitenancy"
             });
+            options.OperationFilter<TenantIdOperationFilterForDefaultContextReader>();
         }
     }
 
     private void SetupSwaggerDocs(AppDescription app, SwaggerGenOptions options)
     {
         options.SchemaFilter<OptionSchemaFilter>();
+        options.SupportNonNullableReferenceTypes();
         app.GetModule<ApiVersioningModule>().Match(
             some: m => SetupApiVersionedDocs(m, app, options),
             none: () => SetupSingleVersionDoc(app, options));
@@ -124,7 +128,7 @@ public class OpenApiModule : AppModule
 
 public static class SwaggerModuleExtensions
 {
-    public static AppBuilder AddOpenApi(this AppBuilder builder, Action<SwaggerGenOptions>? configure = null)
+    public static AppBuilder AddOpenApi(this AppBuilder builder, Action<OpenApiModuleOptions>? configure = null)
     {
         return builder.AddModule(new OpenApiModule(configure));
     }
@@ -148,4 +152,11 @@ public static class SwaggerModuleExtensions
             });
         });
     }
+}
+
+public sealed class OpenApiModuleOptions
+{
+    public Action<SwaggerGenOptions>? ConfigureSwagger { get; set; }
+
+    public bool AddDefaultMultitenancyFilters { get; set; } = true;
 }

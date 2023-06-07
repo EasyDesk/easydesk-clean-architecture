@@ -37,11 +37,11 @@ internal class EfCoreOutbox : IOutbox
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<(TransportMessage, string)>> RetrieveNextMessages(int count)
+    public async Task<IEnumerable<(TransportMessage, string)>> RetrieveNextMessages(Option<int> count)
     {
         var outboxMessages = await _context.Outbox
             .OrderBy(m => m.Id)
-            .Take(count)
+            .Conditionally(count, c => q => q.Take(c))
             .ToListAsync();
 
         var messages = outboxMessages

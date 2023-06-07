@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Saunter;
 using Saunter.AsyncApiSchema.v2;
@@ -54,16 +55,20 @@ public static class AsyncApiModuleExtensions
 
     public static void UseAsyncApiModule(this WebApplication app)
     {
+        app.MapAsyncApiDocuments();
+        app.MapAsyncApiUi();
         app.Services.GetRequiredService<RebusMessagingOptions>().KnownMessageTypes
             .GetSupportedApiVersionsFromNamespaces()
             .MaxOption()
-            .IfPresent(v => app.MapGet("/asyncapi", context =>
+            .IfPresent(v =>
             {
-                context.Response.Redirect($"/asyncapi/{v}", permanent: true);
-                return Task.CompletedTask;
-            }));
-
-        app.MapAsyncApiDocuments();
-        app.MapAsyncApiUi();
+                Task Action(HttpContext context)
+                {
+                    context.Response.Redirect($"/asyncapi/{v}", permanent: true);
+                    return Task.CompletedTask;
+                }
+                app.MapGet("/asyncapi", Action);
+                app.MapGet("/asyncapi/index.html", Action);
+            });
     }
 }

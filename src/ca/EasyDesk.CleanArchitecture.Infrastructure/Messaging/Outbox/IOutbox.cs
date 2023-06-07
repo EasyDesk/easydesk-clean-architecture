@@ -8,5 +8,5 @@ public interface IOutbox
 
     Task StoreEnqueuedMessages();
 
-    Task<IEnumerable<(TransportMessage Message, string DestinationAddress)>> RetrieveNextMessages(int count);
+    Task<IEnumerable<(TransportMessage Message, string DestinationAddress)>> RetrieveNextMessages(Option<int> count);
 }

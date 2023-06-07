@@ -1,12 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Web.Dto;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
 public sealed class HttpPageSequenceWrapper<T>
 {
-    private readonly AsyncCache<IEnumerable<HttpPageResponseWrapper<T>>> _response;
+    private readonly AsyncCache<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> _response;
 
-    public HttpPageSequenceWrapper(AsyncFunc<IEnumerable<HttpPageResponseWrapper<T>>> responses)
+    public HttpPageSequenceWrapper(AsyncFunc<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> responses)
     {
         _response = new(responses);
     }
@@ -29,5 +30,5 @@ public sealed class HttpPageSequenceWrapper<T>
         }
     }
 
-    private async Task<IEnumerable<HttpPageResponseWrapper<T>>> GetResponse() => await _response.Get();
+    private async Task<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> GetResponse() => await _response.Get();
 }

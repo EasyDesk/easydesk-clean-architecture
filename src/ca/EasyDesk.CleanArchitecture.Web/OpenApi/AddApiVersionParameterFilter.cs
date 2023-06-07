@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -11,12 +10,9 @@ internal class AddApiVersionParameterFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        if (context.ApiDescription.ActionDescriptor is not ControllerActionDescriptor descriptor)
-        {
-            return;
-        }
-        descriptor
-            .ControllerTypeInfo
+        context
+            .MethodInfo
+            .DeclaringType?
             .GetApiVersionFromNamespace()
             .IfPresent(v => AddApiVersionParameter(operation, v));
     }
@@ -27,6 +23,7 @@ internal class AddApiVersionParameterFilter : IOperationFilter
         {
             Name = "version",
             In = ParameterLocation.Query,
+            Description = "Optional parameter used to select the API version for this endpoint.",
             Schema = new OpenApiSchema
             {
                 ReadOnly = true,
