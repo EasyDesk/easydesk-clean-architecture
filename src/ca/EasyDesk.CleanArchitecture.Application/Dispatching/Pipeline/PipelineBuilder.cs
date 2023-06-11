@@ -4,6 +4,7 @@ namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
 public sealed class PipelineBuilder
 {
+    private readonly ISet<Type> _registeredSteps = new HashSet<Type>();
     private readonly IList<Type> _beforeAll = new List<Type>();
     private readonly IList<Type> _middleSteps = new List<Type>();
     private readonly IList<Type> _afterAll = new List<Type>();
@@ -20,6 +21,11 @@ public sealed class PipelineBuilder
 
     private StepDependenciesBuilder AddStepToList(Type stepType, IList<Type> list)
     {
+        if (_registeredSteps.Contains(stepType))
+        {
+            throw new ArgumentException($"A pipeline step of type {stepType} has already been registered.", nameof(stepType));
+        }
+        _registeredSteps.Add(stepType);
         list.Add(stepType);
         return new StepDependenciesBuilder(this, stepType);
     }
