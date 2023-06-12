@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;

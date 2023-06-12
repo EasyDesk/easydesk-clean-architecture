@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
@@ -8,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesManager, IUserRolesProvider, IRolesToPermissionsMapper
+internal class EfCoreAuthorizationManager : IAuthorizationInfoProvider, IUserRolesManager, IUserRolesProvider, IRolesToPermissionsMapper
 {
     private readonly AuthorizationContext _context;
 
@@ -21,13 +22,15 @@ internal class EfCoreAuthorizationManager : IPermissionsProvider, IUserRolesMana
         .UserRoles
         .Where(u => u.User == userId);
 
-    public async Task<IImmutableSet<Permission>> GetPermissionsForUser(UserInfo userInfo)
+    public async Task<AuthorizationInfo> GetAuthorizationInfoForUser(UserInfo userInfo)
     {
-        return await RolesByUser(userInfo.UserId)
+        var permissions = await RolesByUser(userInfo.UserId)
             .Join(_context.RolePermissions, u => u.Role, p => p.RoleId, (u, p) => p.PermissionName)
             .Distinct()
             .Select(p => new Permission(p))
             .ToEquatableSetAsync();
+
+        return new(permissions);
     }
 
     public async Task<IImmutableSet<Role>> GetRolesForUser(UserInfo userInfo)

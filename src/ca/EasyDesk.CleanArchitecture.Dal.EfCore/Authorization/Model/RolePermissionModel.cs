@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

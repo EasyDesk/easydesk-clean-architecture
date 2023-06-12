@@ -1,8 +1,9 @@
-﻿using System.Collections.Immutable;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using System.Collections.Immutable;
 using System.Data;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public sealed class StaticRolesToPermissionsBuilder
 {

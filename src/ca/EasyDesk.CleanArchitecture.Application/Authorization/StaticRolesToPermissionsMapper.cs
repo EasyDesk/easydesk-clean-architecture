@@ -1,8 +1,9 @@
-﻿using EasyDesk.Commons.Collections;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.Commons.Collections;
 using System.Collections.Immutable;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 internal class StaticRolesToPermissionsMapper : IRolesToPermissionsMapper
 {

@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
@@ -69,13 +69,12 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
         services.AddScoped<IInbox, EfCoreInbox>();
     }
 
-    public void AddRoleBasedPermissionsProvider(IServiceCollection services, AppDescription app)
+    public void AddAuthorizationInfoProvider(IServiceCollection services, AppDescription app)
     {
-        AddRoleManager(services, app);
-        services.AddScoped<IPermissionsProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
+        services.AddScoped<IAuthorizationInfoProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
     }
 
-    public void AddRoleManager(IServiceCollection services, AppDescription app)
+    public void AddRolesManagement(IServiceCollection services, AppDescription app)
     {
         AddAuthorizationContext(services);
         services.AddScoped<EfCoreAuthorizationManager>();

@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 
 namespace EasyDesk.SampleApp.Application.Authorization;
 

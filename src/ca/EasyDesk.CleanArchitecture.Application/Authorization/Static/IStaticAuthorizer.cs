@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
-public interface IAuthorizer
+public interface IStaticAuthorizer
 {
     Task<bool> IsAuthorized<T>(T request, UserInfo userInfo);
 }

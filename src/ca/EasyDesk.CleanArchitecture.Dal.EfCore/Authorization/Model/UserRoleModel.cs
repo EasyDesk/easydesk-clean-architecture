@@ -34,7 +34,7 @@ internal class UserRoleModel : IMultitenantEntity
             builder.Property(x => x.User).HasMaxLength(UserId.MaxLength);
 
             builder.Property(x => x.Role)
-                .HasMaxLength(Application.Authorization.RoleBased.Role.MaxLength);
+                .HasMaxLength(Application.Authorization.Model.Role.MaxLength);
 
             builder.Property(x => x.TenantFk)
                 .IsRequired(false)

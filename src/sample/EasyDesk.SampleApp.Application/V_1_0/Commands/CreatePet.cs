@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;

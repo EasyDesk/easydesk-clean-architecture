@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using NSubstitute;
 using Shouldly;
@@ -6,7 +8,7 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
 
-public class RoleBasedAuthorizerTests
+public class DefaultStaticAuthorizerTests
 {
     private const string A = "A";
     private const string B = "B";
@@ -20,15 +22,15 @@ public class RoleBasedAuthorizerTests
     private record RequestWithRequirements;
 
     private readonly UserInfo _userInfo = new(UserId.New("user"));
-    private readonly IPermissionsProvider _permissionsProvider;
+    private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
 
-    public RoleBasedAuthorizerTests()
+    public DefaultStaticAuthorizerTests()
     {
-        _permissionsProvider = Substitute.For<IPermissionsProvider>();
-        _permissionsProvider.GetPermissionsForUser(_userInfo).Returns(Set<Permission>());
+        _authorizationInfoProvider = Substitute.For<IAuthorizationInfoProvider>();
+        _authorizationInfoProvider.GetAuthorizationInfoForUser(_userInfo).Returns(new AuthorizationInfo(Set<Permission>()));
     }
 
-    private RoleBasedAuthorizer CreateAuthorizer<T>() => new(_permissionsProvider);
+    private DefaultStaticAuthorizer CreateAuthorizer<T>() => new(_authorizationInfoProvider);
 
     private async Task<bool> IsAuthorized<T>() where T : new() =>
         await CreateAuthorizer<T>().IsAuthorized(new T(), _userInfo);
@@ -36,7 +38,7 @@ public class RoleBasedAuthorizerTests
     private void SetPermissions(params string[] permissions)
     {
         var permissionSet = permissions.Select(p => new Permission(p)).ToEquatableSet();
-        _permissionsProvider.GetPermissionsForUser(_userInfo).Returns(permissionSet);
+        _authorizationInfoProvider.GetAuthorizationInfoForUser(_userInfo).Returns(new AuthorizationInfo(permissionSet));
     }
 
     private async Task ShouldNotBeAuthorized<T>() where T : new()

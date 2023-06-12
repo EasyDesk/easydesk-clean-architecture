@@ -1,5 +1,4 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
@@ -50,7 +49,6 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddAuthentication(options => options
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
         .AddAuthorization(options => options
-            .UseRoleBasedPermissions()
             .WithStaticPermissions(PermissionSettings.RolesToPermissions))
         .AddOpenApi()
         .AddAsyncApi()

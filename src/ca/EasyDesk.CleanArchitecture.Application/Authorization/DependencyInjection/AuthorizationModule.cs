@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -20,7 +21,7 @@ public class AuthorizationModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline =>
         {
             pipeline
-                .AddStep(typeof(AuthorizationStep<,>))
+                .AddStep(typeof(StaticAuthorizationStep<,>))
                 .After(typeof(UnitOfWorkStep<,>))
                 .After(typeof(MultitenancyManagementStep<,>));
         });
@@ -28,9 +29,9 @@ public class AuthorizationModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        var options = new AuthorizationOptions(services, app);
-        services.AddScoped(typeof(IAuthorizer), typeof(NoAuthorizer));
+        var options = new AuthorizationOptions();
         _configure?.Invoke(options);
+        options.Apply(services, app);
     }
 }
 

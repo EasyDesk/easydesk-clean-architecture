@@ -3,14 +3,14 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using System.Reflection;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
-public sealed class AuthorizationStep<T, R> : IPipelineStep<T, R>
+public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
 {
-    private readonly IAuthorizer _authorizer;
+    private readonly IStaticAuthorizer _authorizer;
     private readonly IContextProvider _contextProvider;
 
-    public AuthorizationStep(IAuthorizer authorizer, IContextProvider contextProvider)
+    public StaticAuthorizationStep(IStaticAuthorizer authorizer, IContextProvider contextProvider)
     {
         _authorizer = authorizer;
         _contextProvider = contextProvider;

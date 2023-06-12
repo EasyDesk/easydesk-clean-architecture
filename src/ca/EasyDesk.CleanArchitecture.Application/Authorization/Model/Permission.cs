@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.Model;
 
 public record Permission : ValueWrapper<string>
 {

@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
@@ -8,7 +9,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
 
-public class AuthorizationStepTests
+public class StaticAuthorizationStepTests
 {
     public record TestRequest : IDispatchable<Nothing>;
 
@@ -17,11 +18,11 @@ public class AuthorizationStepTests
 
     private readonly UserInfo _userInfo = new(UserId.New("user"));
     private readonly IContextProvider _contextProvider;
-    private readonly IAuthorizer _authorizer;
+    private readonly IStaticAuthorizer _authorizer;
     private readonly TestRequest _request = new();
     private readonly NextPipelineStep<Nothing> _next;
 
-    public AuthorizationStepTests()
+    public StaticAuthorizationStepTests()
     {
         _contextProvider = Substitute.For<IContextProvider>();
         _contextProvider.CurrentContext.Returns(new ContextInfo.AnonymousRequest());
@@ -29,7 +30,7 @@ public class AuthorizationStepTests
         _next = Substitute.For<NextPipelineStep<Nothing>>();
         _next().Returns(Ok);
 
-        _authorizer = Substitute.For<IAuthorizer>();
+        _authorizer = Substitute.For<IStaticAuthorizer>();
         _authorizer.IsAuthorized(_request, _userInfo).Returns(false);
     }
 
@@ -50,9 +51,9 @@ public class AuthorizationStepTests
     private async Task<Result<Nothing>> Handle<T>(bool authorizerResult) where T : IDispatchable<Nothing>, new()
     {
         var request = new T();
-        var authorizer = Substitute.For<IAuthorizer>();
+        var authorizer = Substitute.For<IStaticAuthorizer>();
         authorizer.IsAuthorized(request, _userInfo).Returns(authorizerResult);
-        var step = new AuthorizationStep<T, Nothing>(authorizer, _contextProvider);
+        var step = new StaticAuthorizationStep<T, Nothing>(authorizer, _contextProvider);
         return await step.Run(request, _next);
     }
 
