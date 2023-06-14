@@ -24,7 +24,7 @@ public class AuditingTests : SampleIntegrationTest
     private const string AdminEmail = "johndoe@test.com";
 
     private static readonly TenantId _tenant = TenantId.New("tenant-id");
-    private static readonly UserId _adminId = UserId.New("admin-id");
+    private static readonly IdentityId _adminId = IdentityId.New("admin-id");
 
     private Guid _personId;
     private int _initialAudits;
@@ -112,11 +112,11 @@ public class AuditingTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task ShouldFilterByUserId()
+    public async Task ShouldFilterByIdentity()
     {
         var response = await Http
             .GetAudits()
-            .WithQuery("userId", _adminId)
+            .WithQuery("identity", _adminId)
             .Send()
             .AsVerifiableEnumerable();
 
@@ -156,7 +156,7 @@ public class AuditingTests : SampleIntegrationTest
         await Verify(new
         {
             Anonymous = await RunQuery(true),
-            MadeByAUser = await RunQuery(false),
+            MadeBySomeone = await RunQuery(false),
         });
     }
 

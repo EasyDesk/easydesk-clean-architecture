@@ -13,7 +13,7 @@ internal class AuthorizationContext : AbstractDbContext
 
     public DbSet<TenantModel> Tenants { get; set; }
 
-    public DbSet<UserRoleModel> UserRoles { get; set; }
+    public DbSet<IdentityRoleModel> IdentityRoles { get; set; }
 
     public DbSet<RolePermissionModel> RolePermissions { get; set; }
 
@@ -22,7 +22,7 @@ internal class AuthorizationContext : AbstractDbContext
         modelBuilder.HasDefaultSchema(AuthorizationModel.SchemaName);
 
         modelBuilder.ApplyConfiguration(new TenantModel.Configuration());
-        modelBuilder.ApplyConfiguration(new UserRoleModel.Configuration());
+        modelBuilder.ApplyConfiguration(new IdentityRoleModel.Configuration());
         modelBuilder.ApplyConfiguration(new RolePermissionModel.Configuration());
 
         base.OnModelCreating(modelBuilder);

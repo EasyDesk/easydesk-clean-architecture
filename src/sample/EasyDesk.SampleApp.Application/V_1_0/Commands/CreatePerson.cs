@@ -49,7 +49,7 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDt
             new Name(command.FirstName),
             new Name(command.LastName),
             command.DateOfBirth,
-            AdminId.From(_contextProvider.RequireUserInfo().UserId),
+            AdminId.From(_contextProvider.RequireIdentity().Id),
             command.Residence.ToDomainObject());
         _personRepository.Save(person);
 

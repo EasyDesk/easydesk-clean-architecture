@@ -34,16 +34,16 @@ internal sealed class BasicContextProvider : IContextProvider
                 .Where(i => i.IsAuthenticated)
                 .SelectMany(i => i.FindFirst(ClaimTypes.NameIdentifier).AsOption())
                 .Select(c => c.Value)
-                .Select(id => new UserInfo(UserId.New(id), GetUserAttributes(c.User)))
+                .Select(id => new Identity(IdentityId.New(id), GetIdentityAttributes(c.User)))
                 .FirstOption()
                 .Match<ContextInfo>(
-                    some: userInfo => new ContextInfo.AuthenticatedRequest(userInfo),
+                    some: identity => new ContextInfo.AuthenticatedRequest(identity),
                     none: () => new ContextInfo.AnonymousRequest()),
             messageContext: _ => new ContextInfo.AsyncMessage(),
             other: () => new ContextInfo.Unknown());
     }
 
-    private AttributeCollection GetUserAttributes(ClaimsPrincipal claimsPrincipal)
+    private AttributeCollection GetIdentityAttributes(ClaimsPrincipal claimsPrincipal)
     {
         var pairs = claimsPrincipal
             .Identities

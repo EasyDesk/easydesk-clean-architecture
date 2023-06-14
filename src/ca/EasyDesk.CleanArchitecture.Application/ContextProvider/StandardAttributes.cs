@@ -8,12 +8,12 @@ public static class StandardAttributes
 
     public const string Email = "email";
 
-    public static Option<string> GetFirstName(this UserInfo userInfo) =>
-        userInfo.Attributes.GetSingle(FirstName);
+    public static Option<string> GetFirstName(this Identity identity) =>
+        identity.Attributes.GetSingle(FirstName);
 
-    public static Option<string> GetLastName(this UserInfo userInfo) =>
-        userInfo.Attributes.GetSingle(LastName);
+    public static Option<string> GetLastName(this Identity identity) =>
+        identity.Attributes.GetSingle(LastName);
 
-    public static Option<string> GetEmail(this UserInfo userInfo) =>
-        userInfo.Attributes.GetSingle(Email);
+    public static Option<string> GetEmail(this Identity identity) =>
+        identity.Attributes.GetSingle(Email);
 }

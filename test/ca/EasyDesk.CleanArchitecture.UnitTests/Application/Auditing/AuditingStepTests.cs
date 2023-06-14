@@ -57,31 +57,31 @@ public class AuditingStepTests
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeCommand(
-        Option<UserInfo> userInfo, Result<Nothing> result)
+        Option<Identity> identity, Result<Nothing> result)
     {
-        await ShouldRecordAnAudit<TestCommand>(AuditRecordType.Command, userInfo, result);
+        await ShouldRecordAnAudit<TestCommand>(AuditRecordType.Command, identity, result);
     }
 
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeCommandRequest(
-        Option<UserInfo> userInfo, Result<Nothing> result)
+        Option<Identity> identity, Result<Nothing> result)
     {
-        await ShouldRecordAnAudit<TestCommandRequest>(AuditRecordType.CommandRequest, userInfo, result);
+        await ShouldRecordAnAudit<TestCommandRequest>(AuditRecordType.CommandRequest, identity, result);
     }
 
     [Theory]
     [MemberData(nameof(AuditData))]
     public async Task ShouldRecordAnAuditOfTypeEvent(
-        Option<UserInfo> userInfo, Result<Nothing> result)
+        Option<Identity> identity, Result<Nothing> result)
     {
-        await ShouldRecordAnAudit<TestEvent>(AuditRecordType.Event, userInfo, result);
+        await ShouldRecordAnAudit<TestEvent>(AuditRecordType.Event, identity, result);
     }
 
-    private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<UserInfo> userInfo, Result<Nothing> result)
+    private async Task ShouldRecordAnAudit<T>(AuditRecordType type, Option<Identity> identity, Result<Nothing> result)
         where T : IReadWriteOperation, new()
     {
-        _contextProvider.CurrentContext.Returns(userInfo.Match<ContextInfo>(
+        _contextProvider.CurrentContext.Returns(identity.Match<ContextInfo>(
             some: i => new ContextInfo.AuthenticatedRequest(i),
             none: () => new ContextInfo.AnonymousRequest()));
         _next().Returns(result);
@@ -92,7 +92,7 @@ public class AuditingStepTests
             Type: type,
             Name: typeof(T).Name,
             Description: None,
-            UserInfo: userInfo,
+            Identity: identity,
             Properties: Map<string, string>(),
             Success: result.IsSuccess,
             Instant: _now));
@@ -102,11 +102,12 @@ public class AuditingStepTests
 
     public static IEnumerable<object?[]> AuditData()
     {
-        var userId = UserId.New("user-id");
+        var identityId = IdentityId.New("identity-id");
         return Matrix.Builder()
             .OptionAxis(
-                new UserInfo(userId),
-                new UserInfo(userId, AttributeCollection.FromFlatKeyValuePairs(
+                new Identity(identityId),
+                new Identity(identityId),
+                new Identity(identityId, AttributeCollection.FromFlatKeyValuePairs(
                     ("name", "john"),
                     ("role", "admin"),
                     ("role", "user"))))

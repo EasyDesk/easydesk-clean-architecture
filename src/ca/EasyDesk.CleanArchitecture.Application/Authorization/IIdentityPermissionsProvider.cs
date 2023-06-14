@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-public interface IUserPermissionsProvider
+public interface IIdentityPermissionsProvider
 {
-    Task<IImmutableSet<Permission>> GetPermissionsForUser(UserInfo userInfo);
+    Task<IImmutableSet<Permission>> GetPermissionsForIdentity(Identity identity);
 }

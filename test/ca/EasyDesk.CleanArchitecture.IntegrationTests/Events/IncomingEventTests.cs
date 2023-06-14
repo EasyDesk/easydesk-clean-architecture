@@ -22,7 +22,7 @@ public class IncomingEventTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req)
     {
-        req.Tenant(_tenant).AuthenticateAs(UserId.New("an-admin"));
+        req.Tenant(_tenant).AuthenticateAs(IdentityId.New("an-admin"));
     }
 
     protected override async Task OnInitialization()

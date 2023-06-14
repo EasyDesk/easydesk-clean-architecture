@@ -15,14 +15,14 @@ public static class WebApplicationExtensions
     public static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, AsyncAction<IServiceProvider> setupScope) =>
         new AutoScopingDispatcher(services, setupScope);
 
-    public static IDispatcher SetupSelfScopedRequestDispatcher(this IServiceProvider services, UserId? userId = null, TenantId? tenantId = null) =>
+    public static IDispatcher SetupSelfScopedRequestDispatcher(this IServiceProvider services, IdentityId? identityId = null, TenantId? tenantId = null) =>
         SetupSelfScopedDispatcher(services, services =>
         {
             services.GetRequiredService<IHttpContextAccessor>().Setup(c =>
             {
-                if (userId != null)
+                if (identityId != null)
                 {
-                    c.SetupAuthenticatedUser(userId);
+                    c.SetupAuthenticatedIdentity(identityId);
                 }
                 if (tenantId != null)
                 {

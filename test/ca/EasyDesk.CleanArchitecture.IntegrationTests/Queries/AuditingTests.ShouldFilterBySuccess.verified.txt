@@ -4,8 +4,8 @@
       Type: CommandRequest,
       Name: CreatePet,
       Description: null,
-      UserInfo: {
-        UserId: admin-id,
+      Identity: {
+        Id: admin-id,
         Attributes: {
           email: [
             johndoe@test.com
@@ -30,7 +30,7 @@
       Type: Command,
       Name: CreateTenant,
       Description: null,
-      UserInfo: null,
+      Identity: null,
       Properties: {},
       Success: true,
       Instant: Instant_1
@@ -39,8 +39,8 @@
       Type: CommandRequest,
       Name: AddAdmin,
       Description: null,
-      UserInfo: {
-        UserId: admin-id,
+      Identity: {
+        Id: admin-id,
         Attributes: {
           email: [
             johndoe@test.com
@@ -61,8 +61,8 @@
       Type: CommandRequest,
       Name: CreatePerson,
       Description: null,
-      UserInfo: {
-        UserId: admin-id,
+      Identity: {
+        Id: admin-id,
         Attributes: {
           email: [
             johndoe@test.com
@@ -83,7 +83,7 @@
       Type: Command,
       Name: CreateBestFriend,
       Description: null,
-      UserInfo: null,
+      Identity: null,
       Properties: {},
       Success: true,
       Instant: Instant_1

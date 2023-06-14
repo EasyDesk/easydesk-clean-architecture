@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;
 
-internal class AuditUserAttributeModel
+internal class AuditIdentityAttributeModel
 {
     public long Id { get; set; }
 

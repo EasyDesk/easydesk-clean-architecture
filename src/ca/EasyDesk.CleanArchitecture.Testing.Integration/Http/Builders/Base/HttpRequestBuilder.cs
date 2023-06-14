@@ -21,9 +21,9 @@ public abstract class HttpRequestBuilder
 
     public abstract HttpRequestBuilder NoTenant();
 
-    public abstract HttpRequestBuilder AuthenticateAs(UserId userId, params Claim[] additionalClaims);
+    public abstract HttpRequestBuilder AuthenticateAs(IdentityId identityId, params Claim[] additionalClaims);
 
-    public abstract HttpRequestBuilder AuthenticateAs(UserId userId, IEnumerable<Claim> additionalClaims);
+    public abstract HttpRequestBuilder AuthenticateAs(IdentityId identityId, IEnumerable<Claim> additionalClaims);
 
     public abstract HttpRequestBuilder Authenticate(params Claim[] claims);
 
@@ -78,11 +78,11 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     public override B Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders) =>
         ConfigureRequest(r => r with { Headers = configureHeaders(r.Headers) });
 
-    public override B AuthenticateAs(UserId userId, IEnumerable<Claim> additionalClaims) =>
-        Authenticate(additionalClaims.Prepend(new Claim(ClaimTypes.NameIdentifier, userId)));
+    public override B AuthenticateAs(IdentityId identityId, IEnumerable<Claim> additionalClaims) =>
+        Authenticate(additionalClaims.Prepend(new Claim(ClaimTypes.NameIdentifier, identityId)));
 
-    public override B AuthenticateAs(UserId userId, params Claim[] additionalClaims) =>
-        AuthenticateAs(userId, additionalClaims.AsEnumerable());
+    public override B AuthenticateAs(IdentityId identityId, params Claim[] additionalClaims) =>
+        AuthenticateAs(identityId, additionalClaims.AsEnumerable());
 
     public override B Authenticate(IEnumerable<Claim> identity) =>
         ConfigureRequest(r => _testHttpAuthentication.ConfigureAuthentication(r, identity));

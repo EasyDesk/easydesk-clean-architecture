@@ -9,7 +9,7 @@ using NodaTime;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
-[AllowUnknownUser]
+[AllowUnknownIdentity]
 public record CancellableRequest(Duration WaitTime) : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
 {
     public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.IgnoreAndUsePublic();

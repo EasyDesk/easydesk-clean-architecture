@@ -3,23 +3,23 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Model;
 
-public record AuthorizationInfo(UserInfo UserInfo, IImmutableSet<Permission> Permissions)
+public record AuthorizationInfo(Identity Identity, IImmutableSet<Permission> Permissions)
 {
-    public bool HasUserId(UserId validUserId) =>
-        HasAnyUserIdAmong(validUserId);
+    public bool HasId(IdentityId id) =>
+        HasAnyIdAmong(id);
 
-    public bool HasAnyUserIdAmong(params UserId[] validUserIds) =>
-        HasAnyUserIdAmong(validUserIds.AsEnumerable());
+    public bool HasAnyIdAmong(params IdentityId[] ids) =>
+        HasAnyIdAmong(ids.AsEnumerable());
 
-    public bool HasAnyUserIdAmong(IEnumerable<UserId> validUserIds) =>
-        validUserIds.Contains(UserInfo.UserId);
+    public bool HasAnyIdAmong(IEnumerable<IdentityId> ids) =>
+        ids.Contains(Identity.Id);
 
     public bool HasPermission(Permission permission) =>
         HasAnyPermissionAmong(permission);
 
-    public bool HasAnyPermissionAmong(params Permission[] validPermissions) =>
-        HasAnyPermissionAmong(validPermissions.AsEnumerable());
+    public bool HasAnyPermissionAmong(params Permission[] permissions) =>
+        HasAnyPermissionAmong(permissions.AsEnumerable());
 
-    public bool HasAnyPermissionAmong(IEnumerable<Permission> validPermissions) =>
-        Permissions.Overlaps(validPermissions);
+    public bool HasAnyPermissionAmong(IEnumerable<Permission> permissions) =>
+        Permissions.Overlaps(permissions);
 }

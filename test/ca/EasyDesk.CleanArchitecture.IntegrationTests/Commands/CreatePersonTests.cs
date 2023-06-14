@@ -20,7 +20,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class CreatePersonTests : SampleIntegrationTest
 {
     private static readonly TenantId _tenant = TenantId.New("test-tenant");
-    private static readonly UserId _adminId = UserId.New("test-admin");
+    private static readonly IdentityId _adminId = IdentityId.New("test-admin");
 
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
@@ -47,8 +47,8 @@ public class CreatePersonTests : SampleIntegrationTest
     private HttpSingleRequestExecutor<PersonDto> CreatePerson() => Http
         .CreatePerson(_body);
 
-    private HttpSingleRequestExecutor<PersonDto> GetPerson(Guid userId) => Http
-        .GetPerson(userId);
+    private HttpSingleRequestExecutor<PersonDto> GetPerson(Guid id) => Http
+        .GetPerson(id);
 
     [Fact]
     public async Task ShouldSucceed()
@@ -285,7 +285,7 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfUnauthorized()
     {
         var response = await CreatePerson()
-            .AuthenticateAs(UserId.New("non-admin-id"))
+            .AuthenticateAs(IdentityId.New("non-admin-id"))
             .Send()
             .AsVerifiable();
 

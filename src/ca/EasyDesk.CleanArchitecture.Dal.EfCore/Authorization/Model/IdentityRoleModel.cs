@@ -8,30 +8,30 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 
-internal class UserRoleModel : IMultitenantEntity
+internal class IdentityRoleModel : IMultitenantEntity
 {
     required public string Role { get; set; }
 
-    required public string User { get; set; }
+    required public string Identity { get; set; }
 
     public string? Tenant { get; set; }
 
     public string? TenantFk { get; set; }
 
-    public static UserRoleModel Create(string userId, string roleId) =>
+    public static IdentityRoleModel Create(string identity, string role) =>
         new()
         {
-            User = userId,
-            Role = roleId
+            Identity = identity,
+            Role = role
         };
 
-    public sealed class Configuration : IEntityTypeConfiguration<UserRoleModel>
+    public sealed class Configuration : IEntityTypeConfiguration<IdentityRoleModel>
     {
-        public void Configure(EntityTypeBuilder<UserRoleModel> builder)
+        public void Configure(EntityTypeBuilder<IdentityRoleModel> builder)
         {
-            builder.HasKey(x => new { x.User, x.Role, x.Tenant });
+            builder.HasKey(x => new { x.Identity, x.Role, x.Tenant });
 
-            builder.Property(x => x.User).HasMaxLength(UserId.MaxLength);
+            builder.Property(x => x.Identity).HasMaxLength(IdentityId.MaxLength);
 
             builder.Property(x => x.Role)
                 .HasMaxLength(Application.Authorization.Model.Role.MaxLength);

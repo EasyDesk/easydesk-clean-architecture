@@ -23,7 +23,7 @@ public class DeletePersonTests : SampleIntegrationTest
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
     private static readonly TenantId _tenant = TenantId.New("test-tenant");
-    private static readonly UserId _adminId = UserId.New("test-admin");
+    private static readonly IdentityId _adminId = IdentityId.New("test-admin");
     private static readonly AddressDto _address = AddressDto.Create("somewhere");
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
@@ -51,8 +51,8 @@ public class DeletePersonTests : SampleIntegrationTest
             .AsData();
     }
 
-    private HttpSingleRequestExecutor<PersonDto> DeletePerson(Guid userId) => Http
-        .Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam("id", userId));
+    private HttpSingleRequestExecutor<PersonDto> DeletePerson(Guid id) => Http
+        .Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam(nameof(id), id));
 
     [Fact]
     public async Task ShouldSucceedIfThePersonExists()
@@ -132,7 +132,7 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
 
         var response = await DeletePerson(person.Id)
-            .AuthenticateAs(UserId.New("non-admin-id"))
+            .AuthenticateAs(IdentityId.New("non-admin-id"))
             .Send()
             .AsVerifiable();
 

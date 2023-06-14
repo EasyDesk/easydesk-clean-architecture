@@ -34,6 +34,10 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
                 b.Property<string>("Description")
                     .HasColumnType("nvarchar(max)");
 
+                b.Property<string>("Identity")
+                    .HasMaxLength(1024)
+                    .HasColumnType("nvarchar(1024)");
+
                 b.Property<DateTime>("Instant")
                     .HasColumnType("datetime2");
 
@@ -54,10 +58,6 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
                 b.Property<int>("Type")
                     .HasColumnType("int");
 
-                b.Property<string>("User")
-                    .HasMaxLength(1024)
-                    .HasColumnType("nvarchar(1024)");
-
                 b.HasKey("Id");
 
                 b.HasIndex("Instant")
@@ -70,27 +70,7 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
             {
-                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordPropertyModel", "Properties", b1 =>
-                    {
-                        b1.Property<long>("AuditRecordId")
-                            .HasColumnType("bigint");
-
-                        b1.Property<string>("Key")
-                            .HasColumnType("nvarchar(450)");
-
-                        b1.Property<string>("Value")
-                            .IsRequired()
-                            .HasColumnType("nvarchar(max)");
-
-                        b1.HasKey("AuditRecordId", "Key");
-
-                        b1.ToTable("AuditRecordPropertyModel", "audit");
-
-                        b1.WithOwner()
-                            .HasForeignKey("AuditRecordId");
-                    });
-
-                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditUserAttributeModel", "UserAttributes", b1 =>
+                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditIdentityAttributeModel", "IdentityAttributes", b1 =>
                     {
                         b1.Property<long>("Id")
                             .ValueGeneratedOnAdd()
@@ -113,15 +93,35 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 
                         b1.HasIndex("AuditRecordId");
 
-                        b1.ToTable("AuditUserAttributeModel", "audit");
+                        b1.ToTable("AuditIdentityAttributeModel", "audit");
 
                         b1.WithOwner()
                             .HasForeignKey("AuditRecordId");
                     });
 
-                b.Navigation("Properties");
+                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordPropertyModel", "Properties", b1 =>
+                    {
+                        b1.Property<long>("AuditRecordId")
+                            .HasColumnType("bigint");
 
-                b.Navigation("UserAttributes");
+                        b1.Property<string>("Key")
+                            .HasColumnType("nvarchar(450)");
+
+                        b1.Property<string>("Value")
+                            .IsRequired()
+                            .HasColumnType("nvarchar(max)");
+
+                        b1.HasKey("AuditRecordId", "Key");
+
+                        b1.ToTable("AuditRecordPropertyModel", "audit");
+
+                        b1.WithOwner()
+                            .HasForeignKey("AuditRecordId");
+                    });
+
+                b.Navigation("IdentityAttributes");
+
+                b.Navigation("Properties");
             });
 #pragma warning restore 612, 618
     }

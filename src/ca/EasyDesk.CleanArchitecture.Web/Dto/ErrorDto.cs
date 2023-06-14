@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
@@ -21,8 +20,8 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: "NotFound",
             Detail: "Unable to find the requested resource",
             Meta: Nothing.Value),
-        UnknownUserError => new(
-            Code: "UnknownUser",
+        UnknownIdentityError => new(
+            Code: "UnknownIdentity",
             Detail: "Missing authentication information on the given request",
             Meta: Nothing.Value),
         ForbiddenError(var reason) => new(

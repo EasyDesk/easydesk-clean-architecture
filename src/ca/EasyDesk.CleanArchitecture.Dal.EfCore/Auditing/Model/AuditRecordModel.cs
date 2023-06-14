@@ -18,7 +18,7 @@ internal class AuditRecordModel : IMultitenantEntity
 
     required public string? Description { get; set; }
 
-    required public string? User { get; set; }
+    required public string? Identity { get; set; }
 
     required public bool Success { get; set; }
 
@@ -28,7 +28,7 @@ internal class AuditRecordModel : IMultitenantEntity
 
     public ICollection<AuditRecordPropertyModel> Properties { get; set; } = new HashSet<AuditRecordPropertyModel>();
 
-    public ICollection<AuditUserAttributeModel> UserAttributes { get; set; } = new HashSet<AuditUserAttributeModel>();
+    public ICollection<AuditIdentityAttributeModel> IdentityAttributes { get; set; } = new HashSet<AuditIdentityAttributeModel>();
 
     public sealed class Configuration : IEntityTypeConfiguration<AuditRecordModel>
     {
@@ -41,7 +41,7 @@ internal class AuditRecordModel : IMultitenantEntity
 
             builder.Property(x => x.Name).HasMaxLength(AuditModel.NameMaxLength);
 
-            builder.Property(x => x.User).HasMaxLength(UserId.MaxLength);
+            builder.Property(x => x.Identity).HasMaxLength(IdentityId.MaxLength);
 
             builder.OwnsMany(x => x.Properties, child =>
             {
@@ -50,7 +50,7 @@ internal class AuditRecordModel : IMultitenantEntity
                 child.WithOwner().HasForeignKey(x => x.AuditRecordId);
             });
 
-            builder.OwnsMany(x => x.UserAttributes, child =>
+            builder.OwnsMany(x => x.IdentityAttributes, child =>
             {
                 child.HasKey(x => x.Id);
 
@@ -66,7 +66,7 @@ internal class AuditRecordModel : IMultitenantEntity
             Type = record.Type,
             Name = record.Name,
             Description = record.Description.OrElseNull(),
-            User = record.UserInfo.Map(u => u.UserId).MapToString().OrElseNull(),
+            Identity = record.Identity.Map(u => u.Id).MapToString().OrElseNull(),
             Success = record.Success,
             Instant = record.Instant,
         };
@@ -80,17 +80,17 @@ internal class AuditRecordModel : IMultitenantEntity
             })
             .AddTo(model.Properties);
 
-        record.UserInfo.IfPresent(userInfo =>
+        record.Identity.IfPresent(identity =>
         {
-            userInfo
+            identity
                 .Attributes
                 .Attributes
-                .SelectMany(a => a.Value.Select(v => new AuditUserAttributeModel
+                .SelectMany(a => a.Value.Select(v => new AuditIdentityAttributeModel
                 {
                     Key = a.Key,
                     Value = v,
                 }))
-                .AddTo(model.UserAttributes);
+                .AddTo(model.IdentityAttributes);
         });
 
         return model;
@@ -102,12 +102,12 @@ internal class AuditRecordModel : IMultitenantEntity
             Type,
             Name,
             Description.AsOption(),
-            User.AsOption().Map(id => new UserInfo(UserId.New(id), CreateAttributeCollection())),
+            Identity.AsOption().Map(id => new Identity(IdentityId.New(id), CreateAttributeCollection())),
             Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
             Success,
             Instant);
     }
 
     private AttributeCollection CreateAttributeCollection() =>
-        AttributeCollection.FromFlatKeyValuePairs(UserAttributes.Select(a => (a.Key, a.Value)));
+        AttributeCollection.FromFlatKeyValuePairs(IdentityAttributes.Select(a => (a.Key, a.Value)));
 }

@@ -13,5 +13,5 @@ internal class EmptyAuthorizationInfoProvider : IAuthorizationInfoProvider
         _contextProvider = contextProvider;
     }
 
-    public Task<Option<AuthorizationInfo>> GetAuthorizationInfo() => Task.FromResult(_contextProvider.GetUserInfo().Map(u => new AuthorizationInfo(u, Set<Permission>())));
+    public Task<Option<AuthorizationInfo>> GetAuthorizationInfo() => Task.FromResult(_contextProvider.GetIdentity().Map(u => new AuthorizationInfo(u, Set<Permission>())));
 }

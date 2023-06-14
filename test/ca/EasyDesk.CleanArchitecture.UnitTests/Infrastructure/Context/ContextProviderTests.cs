@@ -8,7 +8,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Context;
 
 public class ContextProviderTests
 {
-    private static readonly UserId _user = UserId.New("some-user-id");
+    private static readonly IdentityId _identity = IdentityId.New("some-id");
 
     private readonly BasicContextProvider _sut;
     private readonly HttpContext _httpContext = new DefaultHttpContext();
@@ -26,9 +26,9 @@ public class ContextProviderTests
     [Fact]
     public void ShouldDetectAuthentication_FromHttpContextAccessor()
     {
-        _httpContext.SetupAuthenticatedUser(_user);
+        _httpContext.SetupAuthenticatedIdentity(_identity);
 
-        _sut.GetUserInfo().IsPresent.ShouldBeTrue();
-        _sut.CurrentContext.ShouldBe(new ContextInfo.AuthenticatedRequest(new(_user)));
+        _sut.GetIdentity().IsPresent.ShouldBeTrue();
+        _sut.CurrentContext.ShouldBe(new ContextInfo.AuthenticatedRequest(new(_identity)));
     }
 }

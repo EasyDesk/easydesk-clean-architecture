@@ -22,10 +22,10 @@ public static class HttpContextAccessorExtensions
         return httpContext;
     }
 
-    public static HttpContext SetupAuthenticatedUser(this HttpContext httpContext, UserId userId)
+    public static HttpContext SetupAuthenticatedIdentity(this HttpContext httpContext, IdentityId id)
     {
         httpContext.User = new(new ClaimsIdentity(
-            new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
+            new[] { new Claim(ClaimTypes.NameIdentifier, id) },
             "Custom"));
         return httpContext;
     }

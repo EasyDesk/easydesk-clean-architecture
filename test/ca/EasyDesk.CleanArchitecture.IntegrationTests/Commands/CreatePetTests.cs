@@ -20,7 +20,7 @@ public class CreatePetTests : SampleIntegrationTest
     private const int BulkQuantity = 200;
     private const string Nickname = "Rex";
     private static readonly TenantId _tenant = TenantId.New("test-tenant");
-    private static readonly UserId _adminId = UserId.New("dog-friendly-admin");
+    private static readonly IdentityId _adminId = IdentityId.New("dog-friendly-admin");
 
     public CreatePetTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -162,7 +162,7 @@ public class CreatePetTests : SampleIntegrationTest
 
         var response = await Http
             .CreatePet(person.Id, new(Nickname))
-            .AuthenticateAs(UserId.New("non-admin-id"))
+            .AuthenticateAs(IdentityId.New("non-admin-id"))
             .Send()
             .AsVerifiable();
 

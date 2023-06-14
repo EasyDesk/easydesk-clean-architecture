@@ -9,14 +9,14 @@ public interface IContextProvider
 
 public static class ContextProviderExtensions
 {
-    public static Option<UserInfo> GetUserInfo(this IContextProvider contextProvider) =>
+    public static Option<Identity> GetIdentity(this IContextProvider contextProvider) =>
         contextProvider.CurrentContext switch
         {
             ContextInfo.AuthenticatedRequest(var info) => Some(info),
             _ => None,
         };
 
-    public static UserInfo RequireUserInfo(this IContextProvider userInfo) =>
-        userInfo.GetUserInfo().OrElseThrow(
+    public static Identity RequireIdentity(this IContextProvider contextProvider) =>
+        contextProvider.GetIdentity().OrElseThrow(
             () => new InvalidOperationException("Request context: request is not authenticated."));
 }

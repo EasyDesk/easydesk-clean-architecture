@@ -14,7 +14,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class AddAdminTests : SampleIntegrationTest
 {
     private static readonly TenantId _tenantId = TenantId.New("test-tenant");
-    private static readonly UserId _adminId = UserId.New("test-admin");
+    private static readonly IdentityId _adminId = IdentityId.New("test-admin");
 
     public AddAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -33,9 +33,9 @@ public class AddAdminTests : SampleIntegrationTest
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
-        await WebService.WaitConditionUnderTenant<IUserRolesProvider>(
+        await WebService.WaitConditionUnderTenant<IIdentityRolesProvider>(
             _tenantId,
-            async p => condition(await p.GetRolesForUser(new(_adminId))));
+            async p => condition(await p.GetRolesForIdentity(new(_adminId))));
     }
 
     [Fact]

@@ -15,10 +15,10 @@ public class StaticAuthorizationStepTests
 {
     public record TestRequest : IDispatchable<Nothing>;
 
-    [AllowUnknownUser]
-    public record TestRequestWithUnknownUserAllowed : IDispatchable<Nothing>;
+    [AllowUnknownIdentity]
+    public record TestRequestWithUnknownIdentityAllowed : IDispatchable<Nothing>;
 
-    private readonly UserInfo _userInfo = new(UserId.New("user"));
+    private readonly Identity _identity = new(IdentityId.New("identity"));
     private readonly IContextProvider _contextProvider;
     private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
     private readonly NextPipelineStep<Nothing> _next;
@@ -32,11 +32,11 @@ public class StaticAuthorizationStepTests
         _next().Returns(Ok);
 
         _authorizationInfoProvider = Substitute.For<IAuthorizationInfoProvider>();
-        _authorizationInfoProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetUserInfo().Map(ToAuthorizationInfo));
+        _authorizationInfoProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetIdentity().Map(ToAuthorizationInfo));
     }
 
-    private AuthorizationInfo ToAuthorizationInfo(UserInfo userInfo) =>
-        new(userInfo, Set<Permission>());
+    private AuthorizationInfo ToAuthorizationInfo(Identity identity) =>
+        new(identity, Set<Permission>());
 
     private async Task ShouldNotBeAuthorized<T>(Error error, bool authorizerResult = false) where T : IDispatchable<Nothing>, new()
     {
@@ -56,41 +56,41 @@ public class StaticAuthorizationStepTests
     {
         var request = new T();
         var authorizer = Substitute.For<IStaticAuthorizer>();
-        authorizer.IsAuthorized(request, ToAuthorizationInfo(_userInfo)).Returns(authorizerResult);
+        authorizer.IsAuthorized(request, ToAuthorizationInfo(_identity)).Returns(authorizerResult);
         var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, authorizer, _authorizationInfoProvider);
         return await step.Run(request, _next);
     }
 
-    private void Authenticate() => _contextProvider.CurrentContext.Returns(new ContextInfo.AuthenticatedRequest(_userInfo));
+    private void Authenticate() => _contextProvider.CurrentContext.Returns(new ContextInfo.AuthenticatedRequest(_identity));
 
     [Fact]
-    public async Task ShouldAllowNonAuthenticatedUserIfRequestAllowsUnknownUser()
+    public async Task ShouldAllowNonAuthenticatedIdentityIfRequestAllowsUnknownIdentity()
     {
-        await ShouldBeAuthorized<TestRequestWithUnknownUserAllowed>();
+        await ShouldBeAuthorized<TestRequestWithUnknownIdentityAllowed>();
     }
 
     [Fact]
-    public async Task ShouldAllowAuthenticatedUserIfRequestAllowsUnknownUser()
+    public async Task ShouldAllowAuthenticatedIdentityIfRequestAllowsUnknownIdentity()
     {
         Authenticate();
-        await ShouldBeAuthorized<TestRequestWithUnknownUserAllowed>(authorizerResult: true);
+        await ShouldBeAuthorized<TestRequestWithUnknownIdentityAllowed>(authorizerResult: true);
     }
 
     [Fact]
-    public async Task ShouldAllowAuthenticatedUserIfTheyAreAuthorized()
+    public async Task ShouldAllowAuthenticatedIdentityIfTheyAreAuthorized()
     {
         Authenticate();
         await ShouldBeAuthorized<TestRequest>(authorizerResult: true);
     }
 
     [Fact]
-    public async Task ShouldNotAllowNonAuthenticatedUserIfTheRequestDoesNotAllowUnknownUsers()
+    public async Task ShouldNotAllowNonAuthenticatedIdentityIfTheRequestDoesNotAllowUnknownIdentitys()
     {
-        await ShouldNotBeAuthorized<TestRequest>(new UnknownUserError());
+        await ShouldNotBeAuthorized<TestRequest>(new UnknownIdentityError());
     }
 
     [Fact]
-    public async Task ShouldNotAllowAuthenticatedUserIfTheyAreNotAuthorized()
+    public async Task ShouldNotAllowAuthenticatedIdentityIfTheyAreNotAuthorized()
     {
         Authenticate();
         await ShouldNotBeAuthorized<TestRequest>(Errors.Forbidden());

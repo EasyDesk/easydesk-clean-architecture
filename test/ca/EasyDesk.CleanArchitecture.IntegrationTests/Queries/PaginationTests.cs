@@ -15,7 +15,7 @@ public class PaginationTests : SampleIntegrationTest
 {
     private const int InitialPopulationSize = 300;
     private static readonly TenantId _tenant = TenantId.New("test-tenant-a");
-    private static readonly UserId _adminId = UserId.New("test-admin-a");
+    private static readonly IdentityId _adminId = IdentityId.New("test-admin-a");
 
     public PaginationTests(SampleAppTestsFixture fixture) : base(fixture)
     {

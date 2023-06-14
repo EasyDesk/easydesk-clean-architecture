@@ -26,6 +26,28 @@ public partial class InitialSchema : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "IdentityRoles",
+            schema: "auth",
+            columns: table => new
+            {
+                Role = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                Identity = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                TenantFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_IdentityRoles", x => new { x.Identity, x.Role, x.Tenant });
+                table.ForeignKey(
+                    name: "FK_IdentityRoles_Tenants_TenantFk",
+                    column: x => x.TenantFk,
+                    principalSchema: "auth",
+                    principalTable: "Tenants",
+                    principalColumn: "Id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
             name: "RolePermissions",
             schema: "auth",
             columns: table => new
@@ -46,56 +68,34 @@ public partial class InitialSchema : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateTable(
-            name: "UserRoles",
+        migrationBuilder.CreateIndex(
+            name: "IX_IdentityRoles_Tenant",
             schema: "auth",
-            columns: table => new
-            {
-                Role = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                User = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                TenantFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_UserRoles", x => new { x.User, x.Role, x.Tenant });
-                table.ForeignKey(
-                    name: "FK_UserRoles_Tenants_TenantFk",
-                    column: x => x.TenantFk,
-                    principalSchema: "auth",
-                    principalTable: "Tenants",
-                    principalColumn: "Id",
-                    onDelete: ReferentialAction.Cascade);
-            });
+            table: "IdentityRoles",
+            column: "Tenant");
+
+        migrationBuilder.CreateIndex(
+            name: "IX_IdentityRoles_TenantFk",
+            schema: "auth",
+            table: "IdentityRoles",
+            column: "TenantFk");
 
         migrationBuilder.CreateIndex(
             name: "IX_RolePermissions_Tenant",
             schema: "auth",
             table: "RolePermissions",
             column: "Tenant");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_UserRoles_Tenant",
-            schema: "auth",
-            table: "UserRoles",
-            column: "Tenant");
-
-        migrationBuilder.CreateIndex(
-            name: "IX_UserRoles_TenantFk",
-            schema: "auth",
-            table: "UserRoles",
-            column: "TenantFk");
     }
 
     /// <inheritdoc />
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            name: "RolePermissions",
+            name: "IdentityRoles",
             schema: "auth");
 
         migrationBuilder.DropTable(
-            name: "UserRoles",
+            name: "RolePermissions",
             schema: "auth");
 
         migrationBuilder.DropTable(

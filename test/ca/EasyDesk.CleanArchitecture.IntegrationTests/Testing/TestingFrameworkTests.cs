@@ -21,7 +21,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
     private const int PageSize = 10;
 
     private static readonly TenantId _tenant = TenantId.New("test-tenant-test");
-    private static readonly UserId _adminId = UserId.New("test-admin-test");
+    private static readonly IdentityId _adminId = IdentityId.New("test-admin-test");
 
     public IntegrationTestExample(SampleAppTestsFixture factory) : base(factory)
     {

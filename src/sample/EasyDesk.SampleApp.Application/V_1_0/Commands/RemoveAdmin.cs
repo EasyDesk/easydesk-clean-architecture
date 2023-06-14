@@ -14,18 +14,18 @@ public record RemoveAdmin : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
 
 public class RemoveAdminHandler : IHandler<RemoveAdmin>
 {
-    private readonly IUserRolesManager _userRolesManager;
+    private readonly IIdentityRolesManager _identityRolesManager;
     private readonly IContextProvider _contextProvider;
 
-    public RemoveAdminHandler(IUserRolesManager userRolesManager, IContextProvider contextProvider)
+    public RemoveAdminHandler(IIdentityRolesManager identityRolesManager, IContextProvider contextProvider)
     {
-        _userRolesManager = userRolesManager;
+        _identityRolesManager = identityRolesManager;
         _contextProvider = contextProvider;
     }
 
     public async Task<Result<Nothing>> Handle(RemoveAdmin request)
     {
-        await _userRolesManager.RevokeRolesToUser(_contextProvider.RequireUserInfo().UserId, Roles.Admin);
+        await _identityRolesManager.RevokeRolesToIdentity(_contextProvider.RequireIdentity().Id, Roles.Admin);
         return Ok;
     }
 }

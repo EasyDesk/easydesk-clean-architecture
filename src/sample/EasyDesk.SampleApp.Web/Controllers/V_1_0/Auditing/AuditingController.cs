@@ -18,7 +18,7 @@ public class AuditingController : CleanArchitectureController
     public async Task<ActionResult<ResponseDto<IEnumerable<AuditRecordDto>, PaginationMetaDto>>> GetAudits(
         [FromQuery] PaginationDto pagination,
         [FromQuery] string? name = null,
-        [FromQuery] string? userId = null,
+        [FromQuery] string? identity = null,
         [FromQuery] bool? anonymous = null,
         [FromQuery] bool? success = null,
         [FromQuery] string? type = null,
@@ -28,7 +28,7 @@ public class AuditingController : CleanArchitectureController
         var query = new AuditQuery
         {
             MatchName = name.AsOption(),
-            MatchUserId = userId.AsOption(),
+            MatchIdentity = identity.AsOption(),
             IsAnonymous = anonymous.AsOption(),
             IsSuccess = success.AsOption(),
             MatchType = type.AsOption().Map(Enum.Parse<AuditRecordType>),

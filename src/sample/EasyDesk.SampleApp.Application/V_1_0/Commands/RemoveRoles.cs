@@ -13,18 +13,18 @@ public class RemoveRoles : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
 
 public class RemoveRolesHandler : IHandler<RemoveRoles>
 {
-    private readonly IUserRolesManager _userRolesManager;
+    private readonly IIdentityRolesManager _identityRolesManager;
     private readonly IContextProvider _contextProvider;
 
-    public RemoveRolesHandler(IUserRolesManager userRolesManager, IContextProvider contextProvider)
+    public RemoveRolesHandler(IIdentityRolesManager identityRolesManager, IContextProvider contextProvider)
     {
-        _userRolesManager = userRolesManager;
+        _identityRolesManager = identityRolesManager;
         _contextProvider = contextProvider;
     }
 
     public async Task<Result<Nothing>> Handle(RemoveRoles request)
     {
-        await _userRolesManager.RevokeAllRolesToUser(_contextProvider.RequireUserInfo().UserId);
+        await _identityRolesManager.RevokeAllRolesToIdentity(_contextProvider.RequireIdentity().Id);
         return Ok;
     }
 }

@@ -3,8 +3,8 @@
     Type: CommandRequest,
     Name: CreatePerson,
     Description: null,
-    UserInfo: {
-      UserId: admin-id,
+    Identity: {
+      Id: admin-id,
       Attributes: {
         email: [
           johndoe@test.com

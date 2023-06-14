@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-internal class EfCoreAuthorizationManager : IUserPermissionsProvider, IUserRolesManager, IUserRolesProvider, IRolesToPermissionsMapper
+internal class EfCoreAuthorizationManager : IIdentityPermissionsProvider, IIdentityRolesManager, IIdentityRolesProvider, IRolesToPermissionsMapper
 {
     private readonly AuthorizationContext _context;
 
@@ -18,48 +18,48 @@ internal class EfCoreAuthorizationManager : IUserPermissionsProvider, IUserRoles
         _context = context;
     }
 
-    private IQueryable<UserRoleModel> RolesByUser(UserId userId) => _context
-        .UserRoles
-        .Where(u => u.User == userId);
+    private IQueryable<IdentityRoleModel> RolesByIdentity(IdentityId id) => _context
+        .IdentityRoles
+        .Where(u => u.Identity == id);
 
-    public async Task<IImmutableSet<Role>> GetRolesForUser(UserInfo userInfo)
+    public async Task<IImmutableSet<Role>> GetRolesForIdentity(Identity identity)
     {
-        return await RolesByUser(userInfo.UserId)
+        return await RolesByIdentity(identity.Id)
             .Select(u => new Role(u.Role))
             .ToEquatableSetAsync();
     }
 
-    public async Task GrantRolesToUser(UserId userId, IEnumerable<Role> roles)
+    public async Task GrantRolesToIdentity(IdentityId identityId, IEnumerable<Role> roles)
     {
-        var currentRoleIds = await RolesByUser(userId)
+        var currentRoleIds = await RolesByIdentity(identityId)
             .Select(r => r.Role)
             .ToListAsync();
 
         var rolesToBeAdded = RoleIds(roles)
             .Except(currentRoleIds)
-            .Select(role => UserRoleModel.Create(userId, role));
+            .Select(role => IdentityRoleModel.Create(identityId, role));
 
-        _context.UserRoles.AddRange(rolesToBeAdded);
+        _context.IdentityRoles.AddRange(rolesToBeAdded);
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeRolesToUser(UserId userId, IEnumerable<Role> roles)
+    public async Task RevokeRolesToIdentity(IdentityId id, IEnumerable<Role> roles)
     {
         var roleIds = RoleIds(roles);
-        var rolesToBeRemoved = await RolesByUser(userId)
+        var rolesToBeRemoved = await RolesByIdentity(id)
             .Where(x => roleIds.Contains(x.Role))
             .ToListAsync();
 
-        _context.UserRoles.RemoveRange(rolesToBeRemoved);
+        _context.IdentityRoles.RemoveRange(rolesToBeRemoved);
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeAllRolesToUser(UserId userId)
+    public async Task RevokeAllRolesToIdentity(IdentityId id)
     {
-        var rolesToBeRemoved = await RolesByUser(userId)
+        var rolesToBeRemoved = await RolesByIdentity(id)
             .ToListAsync();
 
-        _context.UserRoles.RemoveRange(rolesToBeRemoved);
+        _context.IdentityRoles.RemoveRange(rolesToBeRemoved);
         await _context.SaveChangesAsync();
     }
 
@@ -76,9 +76,9 @@ internal class EfCoreAuthorizationManager : IUserPermissionsProvider, IUserRoles
             .ToEquatableSetAsync();
     }
 
-    public async Task<IImmutableSet<Permission>> GetPermissionsForUser(UserInfo userInfo)
+    public async Task<IImmutableSet<Permission>> GetPermissionsForIdentity(Identity identity)
     {
-        return await RolesByUser(userInfo.UserId)
+        return await RolesByIdentity(identity.Id)
             .Join(_context.RolePermissions, u => u.Role, p => p.RoleId, (u, p) => p.PermissionName)
             .Distinct()
             .Select(p => new Permission(p))

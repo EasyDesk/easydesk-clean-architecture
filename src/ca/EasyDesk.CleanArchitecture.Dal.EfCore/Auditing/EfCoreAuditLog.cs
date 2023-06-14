@@ -16,9 +16,9 @@ internal class EfCoreAuditLog : IAuditLog
 
     public IPageable<AuditRecord> Audit(AuditQuery query)
     {
-        if (query.MatchUserId.IsPresent && query.IsAnonymous.Contains(true))
+        if (query.MatchIdentity.IsPresent && query.IsAnonymous.Contains(true))
         {
-            throw new InvalidOperationException("A record can't be anonymous and match given user id at the same time.");
+            throw new InvalidOperationException("A record can't be anonymous and match given identity id at the same time.");
         }
 
         return _context.AuditRecords
@@ -29,10 +29,10 @@ internal class EfCoreAuditLog : IAuditLog
             .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
             .Conditionally(query.MatchName, name => q => q.Where(r => r.Name == name))
             .Conditionally(query.IsSuccess, success => q => q.Where(r => r.Success == success))
-            .Conditionally(query.MatchUserId, userId => q => q.Where(r => r.User == userId))
+            .Conditionally(query.MatchIdentity, identity => q => q.Where(r => r.Identity == identity))
             .Conditionally(query.IsAnonymous, anonymous => q => q.Where(anonymous
-                ? r => r.User == null
-                : r => r.User != null))
+                ? r => r.Identity == null
+                : r => r.Identity != null))
             .OrderBy(r => r.Instant)
             .ThenBy(r => r.Id)
             .Select(src => src.ToAuditRecord())

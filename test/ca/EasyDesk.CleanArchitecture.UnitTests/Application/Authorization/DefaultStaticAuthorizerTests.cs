@@ -19,12 +19,12 @@ public class DefaultStaticAuthorizerTests
     [RequireAnyOf(C)]
     private record RequestWithRequirements;
 
-    private readonly UserInfo _userInfo = new(UserId.New("user"));
+    private readonly Identity _identity = new(IdentityId.New("identity"));
 
     private readonly DefaultStaticAuthorizer _sut = new();
 
     private async Task<bool> IsAuthorized<T>(params string[] permissions) where T : new() =>
-        await _sut.IsAuthorized(new T(), new AuthorizationInfo(_userInfo, permissions.Select(p => new Permission(p)).ToEquatableSet()));
+        await _sut.IsAuthorized(new T(), new AuthorizationInfo(_identity, permissions.Select(p => new Permission(p)).ToEquatableSet()));
 
     private async Task ShouldNotBeAuthorized<T>(params string[] permissions) where T : new()
     {
@@ -39,25 +39,25 @@ public class DefaultStaticAuthorizerTests
     }
 
     [Fact]
-    public async Task ShouldAuthorizeTheUserIfTheRequestHasNoRequirements()
+    public async Task ShouldAuthorizeTheIdentityIfTheRequestHasNoRequirements()
     {
         await ShouldBeAuthorized<RequestWithNoRequirements>();
     }
 
     [Fact]
-    public async Task ShouldAuthorizeTheUserIfTheyHaveTheCorrectPermissions()
+    public async Task ShouldAuthorizeTheIdentityIfTheyHaveTheCorrectPermissions()
     {
         await ShouldBeAuthorized<RequestWithRequirements>(A, C);
     }
 
     [Fact]
-    public async Task ShouldNotAuthorizeTheUserIfTheyDoNotHaveCorrectPermissions()
+    public async Task ShouldNotAuthorizeTheIdentityIfTheyDoNotHaveCorrectPermissions()
     {
         await ShouldNotBeAuthorized<RequestWithRequirements>(D);
     }
 
     [Fact]
-    public async Task ShouldNotAuthorizeTheUserIfTheyDoHavePartiallyCorrectPermissions()
+    public async Task ShouldNotAuthorizeTheIdentityIfTheyDoHavePartiallyCorrectPermissions()
     {
         await ShouldNotBeAuthorized<RequestWithRequirements>(A, B);
     }

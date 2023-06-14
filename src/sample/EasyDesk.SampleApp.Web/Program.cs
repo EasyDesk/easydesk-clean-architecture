@@ -97,13 +97,13 @@ else
 
 await app.SetupDevelopment(async (services, logger) =>
 {
-    var adminId = UserId.FromRandomGuid();
+    var adminId = IdentityId.FromRandomGuid();
     var tenantId = TenantId.FromRandomGuid();
     var dispatcher = services.SetupSelfScopedRequestDispatcher(adminId, tenantId);
     await dispatcher.Dispatch(new CreateTenant(tenantId));
     await dispatcher.Dispatch(new AddAdmin());
     logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, adminId);
-    services.LogForgedJwtForUser(adminId.ToString());
+    services.LogForgedJwtForIdentity(adminId.ToString());
 });
 
 app.UseHttpsRedirection();

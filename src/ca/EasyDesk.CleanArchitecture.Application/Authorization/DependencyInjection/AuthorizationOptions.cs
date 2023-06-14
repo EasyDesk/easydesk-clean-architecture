@@ -24,7 +24,7 @@ public sealed class AuthorizationOptions
         _configure = (services, app) =>
         {
             app.RequireModule<DataAccessModule>().Implementation.AddRolesManagement(services, app);
-            app.RequireModule<DataAccessModule>().Implementation.AddUserPermissionsProvider(services, app);
+            app.RequireModule<DataAccessModule>().Implementation.AddPermissionsProvider(services, app);
         };
         return this;
     }
@@ -39,7 +39,7 @@ public sealed class AuthorizationOptions
 
             app.RequireModule<DataAccessModule>().Implementation.AddRolesManagement(services, app);
             services.AddSingleton<IRolesToPermissionsMapper>(rolesToPermissionsMapper);
-            services.AddScoped<IUserPermissionsProvider, DefaultUserPermissionsProvider>();
+            services.AddScoped<IIdentityPermissionsProvider, DefaultIdentityPermissionsProvider>();
             services.AddScoped<IAuthorizationInfoProvider, DefaultAuthorizationInfoProvider>();
         };
         return this;
