@@ -4,11 +4,11 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-internal class EmptyAuthorizationInfoProvider : IAuthorizationInfoProvider
+internal class EmptyAuthorizationProvider : IAuthorizationProvider
 {
     private readonly IContextProvider _contextProvider;
 
-    public EmptyAuthorizationInfoProvider(IContextProvider contextProvider)
+    public EmptyAuthorizationProvider(IContextProvider contextProvider)
     {
         _contextProvider = contextProvider;
     }

@@ -10,13 +10,13 @@ public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
 {
     private readonly IContextProvider _contextProvider;
     private readonly IStaticAuthorizer _authorizer;
-    private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
+    private readonly IAuthorizationProvider _authorizationProvider;
 
-    public StaticAuthorizationStep(IContextProvider contextProvider, IStaticAuthorizer authorizer, IAuthorizationInfoProvider authorizationInfoProvider)
+    public StaticAuthorizationStep(IContextProvider contextProvider, IStaticAuthorizer authorizer, IAuthorizationProvider authorizationProvider)
     {
         _contextProvider = contextProvider;
         _authorizer = authorizer;
-        _authorizationInfoProvider = authorizationInfoProvider;
+        _authorizationProvider = authorizationProvider;
     }
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
@@ -30,7 +30,7 @@ public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
 
     private async Task<Result<R>> HandleRequest(T request, NextPipelineStep<R> next)
     {
-        return await _authorizationInfoProvider.GetAuthorizationInfo().ThenMatchAsync(
+        return await _authorizationProvider.GetAuthorizationInfo().ThenMatchAsync(
             some: authInfo => HandleAuthenticatedRequest(request, authInfo, next),
             none: () => HandleUnknownIdentityRequest(next));
     }

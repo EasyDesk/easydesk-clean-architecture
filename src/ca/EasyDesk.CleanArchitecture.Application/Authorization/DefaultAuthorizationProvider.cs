@@ -3,12 +3,12 @@ using EasyDesk.CleanArchitecture.Application.ContextProvider;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-internal class DefaultAuthorizationInfoProvider : IAuthorizationInfoProvider
+internal class DefaultAuthorizationProvider : IAuthorizationProvider
 {
     private readonly IContextProvider _contextProvider;
     private readonly IIdentityPermissionsProvider _identityPermissionsProvider;
 
-    public DefaultAuthorizationInfoProvider(IContextProvider contextProvider, IIdentityPermissionsProvider identityPermissionsProvider)
+    public DefaultAuthorizationProvider(IContextProvider contextProvider, IIdentityPermissionsProvider identityPermissionsProvider)
     {
         _contextProvider = contextProvider;
         _identityPermissionsProvider = identityPermissionsProvider;

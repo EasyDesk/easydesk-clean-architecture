@@ -20,7 +20,7 @@ public class StaticAuthorizationStepTests
 
     private readonly Identity _identity = new(IdentityId.New("identity"));
     private readonly IContextProvider _contextProvider;
-    private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
+    private readonly IAuthorizationProvider _authorizationProvider;
     private readonly NextPipelineStep<Nothing> _next;
 
     public StaticAuthorizationStepTests()
@@ -31,8 +31,8 @@ public class StaticAuthorizationStepTests
         _next = Substitute.For<NextPipelineStep<Nothing>>();
         _next().Returns(Ok);
 
-        _authorizationInfoProvider = Substitute.For<IAuthorizationInfoProvider>();
-        _authorizationInfoProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetIdentity().Map(ToAuthorizationInfo));
+        _authorizationProvider = Substitute.For<IAuthorizationProvider>();
+        _authorizationProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetIdentity().Map(ToAuthorizationInfo));
     }
 
     private AuthorizationInfo ToAuthorizationInfo(Identity identity) =>
@@ -57,7 +57,7 @@ public class StaticAuthorizationStepTests
         var request = new T();
         var authorizer = Substitute.For<IStaticAuthorizer>();
         authorizer.IsAuthorized(request, ToAuthorizationInfo(_identity)).Returns(authorizerResult);
-        var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, authorizer, _authorizationInfoProvider);
+        var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, authorizer, _authorizationProvider);
         return await step.Run(request, _next);
     }
 
