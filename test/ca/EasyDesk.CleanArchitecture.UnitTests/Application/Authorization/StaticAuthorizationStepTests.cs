@@ -55,9 +55,9 @@ public class StaticAuthorizationStepTests
     private async Task<Result<Nothing>> Handle<T>(bool authorizerResult) where T : IDispatchable<Nothing>, new()
     {
         var request = new T();
-        var authorizer = Substitute.For<IStaticAuthorizer>();
+        var authorizer = Substitute.For<IStaticAuthorizer<T>>();
         authorizer.IsAuthorized(request, ToAuthorizationInfo(_identity)).Returns(authorizerResult);
-        var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, authorizer, _authorizationProvider);
+        var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, new[] { authorizer }, _authorizationProvider);
         return await step.Run(request, _next);
     }
 

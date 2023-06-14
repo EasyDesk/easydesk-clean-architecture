@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
@@ -14,8 +15,11 @@ using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
-[RequireAnyOf(Permissions.CanEditPets)]
-public record CreatePet(PetInfoDto Pet, Guid PersonId) : ICommandRequest<PetDto>;
+public record CreatePet(PetInfoDto Pet, Guid PersonId) : ICommandRequest<PetDto>, IAuthorize
+{
+    public bool IsAuthorized(AuthorizationInfo auth) =>
+        auth.HasPermission(Permissions.CanEditPeople);
+}
 
 public record PetInfoDto(string Nickname);
 

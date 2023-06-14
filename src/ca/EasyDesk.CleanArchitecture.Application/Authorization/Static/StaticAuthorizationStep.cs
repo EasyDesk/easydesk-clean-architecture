@@ -9,13 +9,16 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
 {
     private readonly IContextProvider _contextProvider;
-    private readonly IStaticAuthorizer _authorizer;
+    private readonly IEnumerable<IStaticAuthorizer<T>> _authorizers;
     private readonly IAuthorizationProvider _authorizationProvider;
 
-    public StaticAuthorizationStep(IContextProvider contextProvider, IStaticAuthorizer authorizer, IAuthorizationProvider authorizationProvider)
+    public StaticAuthorizationStep(
+        IContextProvider contextProvider,
+        IEnumerable<IStaticAuthorizer<T>> authorizers,
+        IAuthorizationProvider authorizationProvider)
     {
         _contextProvider = contextProvider;
-        _authorizer = authorizer;
+        _authorizers = authorizers;
         _authorizationProvider = authorizationProvider;
     }
 
@@ -37,8 +40,9 @@ public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
 
     private async Task<Result<R>> HandleAuthenticatedRequest(T request, AuthorizationInfo authInfo, NextPipelineStep<R> next)
     {
-        var isAuthorized = await _authorizer.IsAuthorized(request, authInfo);
-        return isAuthorized ? await next() : Errors.Forbidden();
+        return _authorizers.All(x => x.IsAuthorized(request, authInfo))
+            ? await next()
+            : Errors.Forbidden();
     }
 
     private async Task<Result<R>> HandleUnknownIdentityRequest(NextPipelineStep<R> next) =>

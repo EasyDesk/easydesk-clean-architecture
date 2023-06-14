@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
@@ -13,12 +14,15 @@ using NodaTime;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
-[RequireAnyOf(Permissions.CanEditPeople)]
 public record CreatePerson(
     string FirstName,
     string LastName,
     LocalDate DateOfBirth,
-    AddressDto Residence) : ICommandRequest<PersonDto>;
+    AddressDto Residence) : ICommandRequest<PersonDto>, IAuthorize
+{
+    public bool IsAuthorized(AuthorizationInfo auth) =>
+        auth.HasPermission(Permissions.CanEditPeople);
+}
 
 public class CreatePersonValidator : PimpedAbstractValidator<CreatePerson>
 {

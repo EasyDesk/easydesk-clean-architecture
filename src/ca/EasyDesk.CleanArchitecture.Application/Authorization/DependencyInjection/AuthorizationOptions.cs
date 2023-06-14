@@ -47,7 +47,7 @@ public sealed class AuthorizationOptions
 
     internal void Apply(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped<IStaticAuthorizer, DefaultStaticAuthorizer>();
+        services.AddScoped(typeof(IStaticAuthorizer<>), typeof(DefaultStaticAuthorizer<>));
         services.AddScoped<IAuthorizationProvider, DefaultAuthorizationProvider>();
         services.Decorate<IAuthorizationProvider, CachedAuthorizationProvider>();
         _configure?.Invoke(services, app);

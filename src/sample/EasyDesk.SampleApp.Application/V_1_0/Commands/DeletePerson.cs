@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mapping;
@@ -8,8 +9,11 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
-[RequireAnyOf(Permissions.CanEditPeople)]
-public record DeletePerson(Guid PersonId) : ICommandRequest<PersonDto>;
+public record DeletePerson(Guid PersonId) : ICommandRequest<PersonDto>, IAuthorize
+{
+    public bool IsAuthorized(AuthorizationInfo auth) =>
+        auth.HasPermission(Permissions.CanEditPeople);
+}
 
 public class DeletePersonHandler : MappingHandler<DeletePerson, Person, PersonDto>
 {

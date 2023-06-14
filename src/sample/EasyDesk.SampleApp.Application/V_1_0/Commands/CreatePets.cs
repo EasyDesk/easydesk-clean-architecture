@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Sagas.BulkOperations;
@@ -11,8 +12,7 @@ using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
-[RequireAnyOf(Permissions.CanEditPets)]
-public record CreatePets(IEnumerable<PetInfoDto> Pets, Guid PersonId) : ICommandRequest<CreatePetsResultDto>
+public record CreatePets(IEnumerable<PetInfoDto> Pets, Guid PersonId) : ICommandRequest<CreatePetsResultDto>, IAuthorize
 {
     public class Validation : PimpedAbstractValidator<CreatePets>
     {
@@ -22,6 +22,9 @@ public record CreatePets(IEnumerable<PetInfoDto> Pets, Guid PersonId) : ICommand
                 .NotEmpty();
         }
     }
+
+    public bool IsAuthorized(AuthorizationInfo auth) =>
+        auth.HasPermission(Permissions.CanEditPets);
 }
 
 public record CreatePetsResultDto(int Pets);

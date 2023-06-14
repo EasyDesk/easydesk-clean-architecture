@@ -1,18 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
-using EasyDesk.Commons.Collections;
-using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
-internal class DefaultStaticAuthorizer : IStaticAuthorizer
+public class DefaultStaticAuthorizer<T> : IStaticAuthorizer<T>
 {
-    public Task<bool> IsAuthorized<T>(T request, AuthorizationInfo authorizationInfo)
+    public bool IsAuthorized(T request, AuthorizationInfo authorizationInfo)
     {
-        var requirements = typeof(T)
-            .GetCustomAttributes()
-            .Where(a => a.GetType().IsAssignableTo(typeof(IStaticAuthorizationRequirement)))
-            .Cast<IStaticAuthorizationRequirement>();
-
-        return Task.FromResult(requirements.All(r => r.IsSatisfied(authorizationInfo)));
+        return request is not IAuthorize authorize || authorize.IsAuthorized(authorizationInfo);
     }
 }

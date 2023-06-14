@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
-public interface IStaticAuthorizationRequirement
+public interface IAuthorize
 {
-    bool IsSatisfied(AuthorizationInfo authorizationInfo);
+    bool IsAuthorized(AuthorizationInfo auth);
 }

@@ -8,57 +8,58 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
 
 public class DefaultStaticAuthorizerTests
 {
-    private const string A = "A";
-    private const string B = "B";
-    private const string C = "C";
-    private const string D = "D";
+    private enum TestPermissions
+    {
+        A,
+        B,
+        C,
+        D,
+    }
 
     private record RequestWithNoRequirements;
 
-    [RequireAnyOf(A, B)]
-    [RequireAnyOf(C)]
-    private record RequestWithRequirements;
+    private record RequestWithRequirements : IAuthorize
+    {
+        public bool IsAuthorized(AuthorizationInfo authorizationInfo)
+        {
+            return authorizationInfo.HasAnyPermissionAmong(TestPermissions.A, TestPermissions.B)
+                && authorizationInfo.HasPermission(TestPermissions.C);
+        }
+    }
 
     private readonly Identity _identity = new(IdentityId.New("identity"));
 
-    private readonly DefaultStaticAuthorizer _sut = new();
-
-    private async Task<bool> IsAuthorized<T>(params string[] permissions) where T : new() =>
-        await _sut.IsAuthorized(new T(), new AuthorizationInfo(_identity, permissions.Select(p => new Permission(p)).ToEquatableSet()));
-
-    private async Task ShouldNotBeAuthorized<T>(params string[] permissions) where T : new()
+    private bool IsAuthorized<T>(params TestPermissions[] permissions) where T : new()
     {
-        var result = await IsAuthorized<T>(permissions);
-        result.ShouldBe(false);
-    }
-
-    private async Task ShouldBeAuthorized<T>(params string[] permissions) where T : new()
-    {
-        var result = await IsAuthorized<T>(permissions);
-        result.ShouldBe(true);
+        return new DefaultStaticAuthorizer<T>()
+            .IsAuthorized(new T(), new AuthorizationInfo(_identity, permissions.Select(p => (Permission)p).ToEquatableSet()));
     }
 
     [Fact]
-    public async Task ShouldAuthorizeTheIdentityIfTheRequestHasNoRequirements()
+    public void ShouldAuthorizeTheIdentity_IfTheRequestHasNoRequirements()
     {
-        await ShouldBeAuthorized<RequestWithNoRequirements>();
+        IsAuthorized<RequestWithNoRequirements>()
+            .ShouldBeTrue();
     }
 
     [Fact]
-    public async Task ShouldAuthorizeTheIdentityIfTheyHaveTheCorrectPermissions()
+    public void ShouldAuthorizeTheIdentity_IfTheyHaveTheCorrectPermissions()
     {
-        await ShouldBeAuthorized<RequestWithRequirements>(A, C);
+        IsAuthorized<RequestWithRequirements>(TestPermissions.A, TestPermissions.C)
+            .ShouldBeTrue();
     }
 
     [Fact]
-    public async Task ShouldNotAuthorizeTheIdentityIfTheyDoNotHaveCorrectPermissions()
+    public void ShouldNotAuthorizeTheIdentity_IfTheyDoNotHaveCorrectPermissions()
     {
-        await ShouldNotBeAuthorized<RequestWithRequirements>(D);
+        IsAuthorized<RequestWithRequirements>(TestPermissions.D)
+            .ShouldBeFalse();
     }
 
     [Fact]
-    public async Task ShouldNotAuthorizeTheIdentityIfTheyDoHavePartiallyCorrectPermissions()
+    public void ShouldNotAuthorizeTheIdentity_IfTheyDoHavePartiallyCorrectPermissions()
     {
-        await ShouldNotBeAuthorized<RequestWithRequirements>(A, B);
+        IsAuthorized<RequestWithRequirements>(TestPermissions.A, TestPermissions.B)
+            .ShouldBeFalse();
     }
 }

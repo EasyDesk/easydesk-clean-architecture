@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
-public interface IStaticAuthorizer
+public interface IStaticAuthorizer<T>
 {
-    Task<bool> IsAuthorized<T>(T request, AuthorizationInfo authorizationInfo);
+    bool IsAuthorized(T request, AuthorizationInfo authorizationInfo);
 }
