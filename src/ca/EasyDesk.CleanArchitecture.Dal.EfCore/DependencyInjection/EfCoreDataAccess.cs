@@ -69,9 +69,9 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
         services.AddScoped<IInbox, EfCoreInbox>();
     }
 
-    public void AddAuthorizationInfoProvider(IServiceCollection services, AppDescription app)
+    public void AddUserPermissionsProvider(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped<IAuthorizationInfoProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
+        services.AddScoped<IUserPermissionsProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
     }
 
     public void AddRolesManagement(IServiceCollection services, AppDescription app)

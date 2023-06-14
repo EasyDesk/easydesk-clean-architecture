@@ -1,8 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
 public interface IStaticAuthorizer
 {
-    Task<bool> IsAuthorized<T>(T request, UserInfo userInfo);
+    Task<bool> IsAuthorized<T>(T request, AuthorizationInfo authorizationInfo);
 }

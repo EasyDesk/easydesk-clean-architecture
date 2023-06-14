@@ -6,7 +6,7 @@ public record Permission : ValueWrapper<string>
 {
     public const int MaxLength = 100;
 
-    public Permission(string? value) : base(value ?? throw new ArgumentNullException(nameof(value)))
+    public Permission(string value) : base(value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {

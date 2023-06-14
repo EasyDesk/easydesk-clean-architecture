@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using System.Reflection;
@@ -7,31 +8,36 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
 public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
 {
-    private readonly IStaticAuthorizer _authorizer;
     private readonly IContextProvider _contextProvider;
+    private readonly IStaticAuthorizer _authorizer;
+    private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
 
-    public StaticAuthorizationStep(IStaticAuthorizer authorizer, IContextProvider contextProvider)
+    public StaticAuthorizationStep(IContextProvider contextProvider, IStaticAuthorizer authorizer, IAuthorizationInfoProvider authorizationInfoProvider)
     {
-        _authorizer = authorizer;
         _contextProvider = contextProvider;
+        _authorizer = authorizer;
+        _authorizationInfoProvider = authorizationInfoProvider;
     }
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         return _contextProvider.CurrentContext switch
         {
-            ContextInfo.AuthenticatedRequest(var userInfo) => await HandleAuthenticatedRequest(request, userInfo, next),
-            ContextInfo.AnonymousRequest => await HandleUnknownUserRequest(next),
+            ContextInfo.Request => await HandleRequest(request, next),
             _ => await next()
         };
     }
 
-    private async Task<Result<R>> HandleAuthenticatedRequest(
-        T request,
-        UserInfo userInfo,
-        NextPipelineStep<R> next)
+    private async Task<Result<R>> HandleRequest(T request, NextPipelineStep<R> next)
     {
-        var isAuthorized = await _authorizer.IsAuthorized(request, userInfo);
+        return await _authorizationInfoProvider.GetAuthorizationInfo().ThenMatchAsync(
+            some: authInfo => HandleAuthenticatedRequest(request, authInfo, next),
+            none: () => HandleUnknownUserRequest(next));
+    }
+
+    private async Task<Result<R>> HandleAuthenticatedRequest(T request, AuthorizationInfo authInfo, NextPipelineStep<R> next)
+    {
+        var isAuthorized = await _authorizer.IsAuthorized(request, authInfo);
         return isAuthorized ? await next() : Errors.Forbidden();
     }
 

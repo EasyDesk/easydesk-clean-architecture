@@ -1,8 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using NSubstitute;
 using Shouldly;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -22,34 +20,21 @@ public class DefaultStaticAuthorizerTests
     private record RequestWithRequirements;
 
     private readonly UserInfo _userInfo = new(UserId.New("user"));
-    private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
 
-    public DefaultStaticAuthorizerTests()
+    private readonly DefaultStaticAuthorizer _sut = new();
+
+    private async Task<bool> IsAuthorized<T>(params string[] permissions) where T : new() =>
+        await _sut.IsAuthorized(new T(), new AuthorizationInfo(_userInfo, permissions.Select(p => new Permission(p)).ToEquatableSet()));
+
+    private async Task ShouldNotBeAuthorized<T>(params string[] permissions) where T : new()
     {
-        _authorizationInfoProvider = Substitute.For<IAuthorizationInfoProvider>();
-        _authorizationInfoProvider.GetAuthorizationInfoForUser(_userInfo).Returns(new AuthorizationInfo(Set<Permission>()));
-    }
-
-    private DefaultStaticAuthorizer CreateAuthorizer<T>() => new(_authorizationInfoProvider);
-
-    private async Task<bool> IsAuthorized<T>() where T : new() =>
-        await CreateAuthorizer<T>().IsAuthorized(new T(), _userInfo);
-
-    private void SetPermissions(params string[] permissions)
-    {
-        var permissionSet = permissions.Select(p => new Permission(p)).ToEquatableSet();
-        _authorizationInfoProvider.GetAuthorizationInfoForUser(_userInfo).Returns(new AuthorizationInfo(permissionSet));
-    }
-
-    private async Task ShouldNotBeAuthorized<T>() where T : new()
-    {
-        var result = await IsAuthorized<T>();
+        var result = await IsAuthorized<T>(permissions);
         result.ShouldBe(false);
     }
 
-    private async Task ShouldBeAuthorized<T>() where T : new()
+    private async Task ShouldBeAuthorized<T>(params string[] permissions) where T : new()
     {
-        var result = await IsAuthorized<T>();
+        var result = await IsAuthorized<T>(permissions);
         result.ShouldBe(true);
     }
 
@@ -62,21 +47,18 @@ public class DefaultStaticAuthorizerTests
     [Fact]
     public async Task ShouldAuthorizeTheUserIfTheyHaveTheCorrectPermissions()
     {
-        SetPermissions(A, C);
-        await ShouldBeAuthorized<RequestWithRequirements>();
+        await ShouldBeAuthorized<RequestWithRequirements>(A, C);
     }
 
     [Fact]
     public async Task ShouldNotAuthorizeTheUserIfTheyDoNotHaveCorrectPermissions()
     {
-        SetPermissions(D);
-        await ShouldNotBeAuthorized<RequestWithRequirements>();
+        await ShouldNotBeAuthorized<RequestWithRequirements>(D);
     }
 
     [Fact]
     public async Task ShouldNotAuthorizeTheUserIfTheyDoHavePartiallyCorrectPermissions()
     {
-        SetPermissions(A, B);
-        await ShouldNotBeAuthorized<RequestWithRequirements>();
+        await ShouldNotBeAuthorized<RequestWithRequirements>(A, B);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
@@ -6,6 +7,7 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using NSubstitute;
 using Shouldly;
+using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
 
@@ -18,8 +20,7 @@ public class StaticAuthorizationStepTests
 
     private readonly UserInfo _userInfo = new(UserId.New("user"));
     private readonly IContextProvider _contextProvider;
-    private readonly IStaticAuthorizer _authorizer;
-    private readonly TestRequest _request = new();
+    private readonly IAuthorizationInfoProvider _authorizationInfoProvider;
     private readonly NextPipelineStep<Nothing> _next;
 
     public StaticAuthorizationStepTests()
@@ -30,9 +31,12 @@ public class StaticAuthorizationStepTests
         _next = Substitute.For<NextPipelineStep<Nothing>>();
         _next().Returns(Ok);
 
-        _authorizer = Substitute.For<IStaticAuthorizer>();
-        _authorizer.IsAuthorized(_request, _userInfo).Returns(false);
+        _authorizationInfoProvider = Substitute.For<IAuthorizationInfoProvider>();
+        _authorizationInfoProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetUserInfo().Map(ToAuthorizationInfo));
     }
+
+    private AuthorizationInfo ToAuthorizationInfo(UserInfo userInfo) =>
+        new(userInfo, Set<Permission>());
 
     private async Task ShouldNotBeAuthorized<T>(Error error, bool authorizerResult = false) where T : IDispatchable<Nothing>, new()
     {
@@ -52,8 +56,8 @@ public class StaticAuthorizationStepTests
     {
         var request = new T();
         var authorizer = Substitute.For<IStaticAuthorizer>();
-        authorizer.IsAuthorized(request, _userInfo).Returns(authorizerResult);
-        var step = new StaticAuthorizationStep<T, Nothing>(authorizer, _contextProvider);
+        authorizer.IsAuthorized(request, ToAuthorizationInfo(_userInfo)).Returns(authorizerResult);
+        var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, authorizer, _authorizationInfoProvider);
         return await step.Run(request, _next);
     }
 

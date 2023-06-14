@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.Commons.Collections;
 using System.Collections.Immutable;
 
@@ -12,10 +11,10 @@ public sealed class RequireAnyOfAttribute : Attribute, IStaticAuthorizationRequi
 
     public RequireAnyOfAttribute(params object[] permissions)
     {
-        _permissions = permissions.Select(x => new Permission(x.ToString())).ToEquatableSet();
+        _permissions = permissions.Select(x => new Permission(x.ToString()!)).ToEquatableSet();
     }
 
-    public bool IsSatisfied(UserInfo userInfo, AuthorizationInfo authorizationInfo)
+    public bool IsSatisfied(AuthorizationInfo authorizationInfo)
     {
         return _permissions.Overlaps(authorizationInfo.Permissions);
     }

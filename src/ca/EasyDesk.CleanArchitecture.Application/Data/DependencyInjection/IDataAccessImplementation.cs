@@ -12,7 +12,7 @@ public interface IDataAccessImplementation
 
     void AddMessagingUtilities(IServiceCollection services, AppDescription app);
 
-    void AddAuthorizationInfoProvider(IServiceCollection services, AppDescription app);
+    void AddUserPermissionsProvider(IServiceCollection services, AppDescription app);
 
     void AddRolesManagement(IServiceCollection services, AppDescription app);
 

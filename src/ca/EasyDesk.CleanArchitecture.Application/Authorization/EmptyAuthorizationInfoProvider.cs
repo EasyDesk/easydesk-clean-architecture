@@ -6,6 +6,12 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 internal class EmptyAuthorizationInfoProvider : IAuthorizationInfoProvider
 {
-    public Task<AuthorizationInfo> GetAuthorizationInfoForUser(UserInfo userInfo) =>
-        Task.FromResult(new AuthorizationInfo(Set<Permission>()));
+    private readonly IContextProvider _contextProvider;
+
+    public EmptyAuthorizationInfoProvider(IContextProvider contextProvider)
+    {
+        _contextProvider = contextProvider;
+    }
+
+    public Task<Option<AuthorizationInfo>> GetAuthorizationInfo() => Task.FromResult(_contextProvider.GetUserInfo().Map(u => new AuthorizationInfo(u, Set<Permission>())));
 }
