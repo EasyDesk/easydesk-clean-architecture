@@ -16,7 +16,7 @@ public sealed class AuthorizationOptions
 
     private void DoNotUsePermissionsBasedAuth(IServiceCollection services, AppDescription app)
     {
-        services.AddSingleton<IAuthorizationProvider, EmptyAuthorizationProvider>();
+        services.AddSingleton<IIdentityPermissionsProvider, EmptyAuthorizationProvider>();
     }
 
     public AuthorizationOptions WithDynamicPermissions()
@@ -49,6 +49,7 @@ public sealed class AuthorizationOptions
     {
         services.AddScoped<IStaticAuthorizer, DefaultStaticAuthorizer>();
         services.AddScoped<IAuthorizationProvider, DefaultAuthorizationProvider>();
+        services.Decorate<IAuthorizationProvider, CachedAuthorizationProvider>();
         _configure?.Invoke(services, app);
     }
 }
