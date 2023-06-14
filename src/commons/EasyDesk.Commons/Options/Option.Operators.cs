@@ -44,7 +44,7 @@ public static partial class StaticImports
         some: async t => Some(await mapper(t)),
         none: () => Task.FromResult<Option<R>>(None));
 
-    public static Option<T> Filter<T>(this Option<T> option, Predicate<T> predicate) => option.Match(
+    public static Option<T> Filter<T>(this Option<T> option, Func<T, bool> predicate) => option.Match(
         some: t => predicate(t) ? option : None,
         none: () => None);
 
