@@ -16,4 +16,7 @@ public abstract class PimpedAbstractValidator<T> : AbstractValidator<T>
                 .OverridePropertyName(property.GetMember().Name));
         });
     }
+
+    public void RuleForOption<TProperty>(Expression<Func<T, Option<TProperty>>> property, IValidator<TProperty> validator) =>
+        RuleForOption(property, rules => rules.SetValidator(validator));
 }
