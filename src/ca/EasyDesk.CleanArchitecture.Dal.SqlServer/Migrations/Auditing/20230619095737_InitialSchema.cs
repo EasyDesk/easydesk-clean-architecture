@@ -23,7 +23,6 @@ public partial class InitialSchema : Migration
                 Type = table.Column<int>(type: "int", nullable: false),
                 Name = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
                 Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                Identity = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
                 Success = table.Column<bool>(type: "bit", nullable: false),
                 Instant = table.Column<DateTime>(type: "datetime2", nullable: false),
                 Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
@@ -34,21 +33,19 @@ public partial class InitialSchema : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "AuditIdentityAttributeModel",
+            name: "AuditIdentities",
             schema: "audit",
             columns: table => new
             {
-                Id = table.Column<long>(type: "bigint", nullable: false)
-                    .Annotation("SqlServer:Identity", "1, 1"),
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
-                Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                Identity = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AuditIdentityAttributeModel", x => x.Id);
+                table.PrimaryKey("PK_AuditIdentities", x => new { x.AuditRecordId, x.Name });
                 table.ForeignKey(
-                    name: "FK_AuditIdentityAttributeModel_AuditRecords_AuditRecordId",
+                    name: "FK_AuditIdentities_AuditRecords_AuditRecordId",
                     column: x => x.AuditRecordId,
                     principalSchema: "audit",
                     principalTable: "AuditRecords",
@@ -57,7 +54,7 @@ public partial class InitialSchema : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "AuditRecordPropertyModel",
+            name: "AuditProperties",
             schema: "audit",
             columns: table => new
             {
@@ -67,9 +64,9 @@ public partial class InitialSchema : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AuditRecordPropertyModel", x => new { x.AuditRecordId, x.Key });
+                table.PrimaryKey("PK_AuditProperties", x => new { x.AuditRecordId, x.Key });
                 table.ForeignKey(
-                    name: "FK_AuditRecordPropertyModel_AuditRecords_AuditRecordId",
+                    name: "FK_AuditProperties_AuditRecords_AuditRecordId",
                     column: x => x.AuditRecordId,
                     principalSchema: "audit",
                     principalTable: "AuditRecords",
@@ -77,11 +74,27 @@ public partial class InitialSchema : Migration
                     onDelete: ReferentialAction.Cascade);
             });
 
-        migrationBuilder.CreateIndex(
-            name: "IX_AuditIdentityAttributeModel_AuditRecordId",
+        migrationBuilder.CreateTable(
+            name: "AuditIdentityAttributes",
             schema: "audit",
-            table: "AuditIdentityAttributeModel",
-            column: "AuditRecordId");
+            columns: table => new
+            {
+                AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
+                Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                Key = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                Value = table.Column<string>(type: "nvarchar(450)", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("PK_AuditIdentityAttributes", x => new { x.AuditRecordId, x.Name, x.Key, x.Value });
+                table.ForeignKey(
+                    name: "FK_AuditIdentityAttributes_AuditIdentities_AuditRecordId_Name",
+                    columns: x => new { x.AuditRecordId, x.Name },
+                    principalSchema: "audit",
+                    principalTable: "AuditIdentities",
+                    principalColumns: new[] { "AuditRecordId", "Name" },
+                    onDelete: ReferentialAction.Cascade);
+            });
 
         migrationBuilder.CreateIndex(
             name: "IX_AuditRecords_Instant",
@@ -101,11 +114,15 @@ public partial class InitialSchema : Migration
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            name: "AuditIdentityAttributeModel",
+            name: "AuditIdentityAttributes",
             schema: "audit");
 
         migrationBuilder.DropTable(
-            name: "AuditRecordPropertyModel",
+            name: "AuditProperties",
+            schema: "audit");
+
+        migrationBuilder.DropTable(
+            name: "AuditIdentities",
             schema: "audit");
 
         migrationBuilder.DropTable(

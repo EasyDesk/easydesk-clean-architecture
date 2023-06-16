@@ -6,9 +6,9 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization;
 internal class DefaultAuthorizationProvider : IAuthorizationProvider
 {
     private readonly IContextProvider _contextProvider;
-    private readonly IIdentityPermissionsProvider _identityPermissionsProvider;
+    private readonly IAgentPermissionsProvider _identityPermissionsProvider;
 
-    public DefaultAuthorizationProvider(IContextProvider contextProvider, IIdentityPermissionsProvider identityPermissionsProvider)
+    public DefaultAuthorizationProvider(IContextProvider contextProvider, IAgentPermissionsProvider identityPermissionsProvider)
     {
         _contextProvider = contextProvider;
         _identityPermissionsProvider = identityPermissionsProvider;
@@ -17,9 +17,9 @@ internal class DefaultAuthorizationProvider : IAuthorizationProvider
     public async Task<Option<AuthorizationInfo>> GetAuthorizationInfo()
     {
         return await _contextProvider
-            .GetIdentity()
-            .MapAsync(u => _identityPermissionsProvider
-                .GetPermissionsForIdentity(u)
-                .Map(p => new AuthorizationInfo(u, p)));
+            .GetAgent()
+            .MapAsync(agent => _identityPermissionsProvider
+                .GetPermissionsForAgent(agent)
+                .Map(p => new AuthorizationInfo(agent, p)));
     }
 }

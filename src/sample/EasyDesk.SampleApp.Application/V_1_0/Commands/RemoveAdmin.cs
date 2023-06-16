@@ -25,7 +25,7 @@ public class RemoveAdminHandler : IHandler<RemoveAdmin>
 
     public async Task<Result<Nothing>> Handle(RemoveAdmin request)
     {
-        await _identityRolesManager.RevokeRolesToIdentity(_contextProvider.RequireIdentity().Id, Roles.Admin);
+        await _identityRolesManager.RevokeRolesToIdentity(_contextProvider.RequireAgent().Identity.Id, Roles.Admin);
         return Ok;
     }
 }

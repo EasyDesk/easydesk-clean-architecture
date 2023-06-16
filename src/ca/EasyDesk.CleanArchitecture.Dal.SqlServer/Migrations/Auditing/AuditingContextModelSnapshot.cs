@@ -18,7 +18,7 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("audit")
-            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("ProductVersion", "7.0.7")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -33,10 +33,6 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 
                 b.Property<string>("Description")
                     .HasColumnType("nvarchar(max)");
-
-                b.Property<string>("Identity")
-                    .HasMaxLength(1024)
-                    .HasColumnType("nvarchar(1024)");
 
                 b.Property<DateTime>("Instant")
                     .HasColumnType("datetime2");
@@ -70,33 +66,49 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordModel", b =>
             {
-                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditIdentityAttributeModel", "IdentityAttributes", b1 =>
+                b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditIdentityModel", "Identities", b1 =>
                     {
-                        b1.Property<long>("Id")
-                            .ValueGeneratedOnAdd()
-                            .HasColumnType("bigint");
-
-                        SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<long>("Id"));
-
                         b1.Property<long>("AuditRecordId")
                             .HasColumnType("bigint");
 
-                        b1.Property<string>("Key")
+                        b1.Property<string>("Name")
+                            .HasColumnType("nvarchar(450)");
+
+                        b1.Property<string>("Identity")
                             .IsRequired()
-                            .HasColumnType("nvarchar(max)");
+                            .HasMaxLength(1024)
+                            .HasColumnType("nvarchar(1024)");
 
-                        b1.Property<string>("Value")
-                            .IsRequired()
-                            .HasColumnType("nvarchar(max)");
+                        b1.HasKey("AuditRecordId", "Name");
 
-                        b1.HasKey("Id");
-
-                        b1.HasIndex("AuditRecordId");
-
-                        b1.ToTable("AuditIdentityAttributeModel", "audit");
+                        b1.ToTable("AuditIdentities", "audit");
 
                         b1.WithOwner()
                             .HasForeignKey("AuditRecordId");
+
+                        b1.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditIdentityAttributeModel", "IdentityAttributes", b2 =>
+                            {
+                                b2.Property<long>("AuditRecordId")
+                                    .HasColumnType("bigint");
+
+                                b2.Property<string>("Name")
+                                    .HasColumnType("nvarchar(450)");
+
+                                b2.Property<string>("Key")
+                                    .HasColumnType("nvarchar(450)");
+
+                                b2.Property<string>("Value")
+                                    .HasColumnType("nvarchar(450)");
+
+                                b2.HasKey("AuditRecordId", "Name", "Key", "Value");
+
+                                b2.ToTable("AuditIdentityAttributes", "audit");
+
+                                b2.WithOwner()
+                                    .HasForeignKey("AuditRecordId", "Name");
+                            });
+
+                        b1.Navigation("IdentityAttributes");
                     });
 
                 b.OwnsMany("EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model.AuditRecordPropertyModel", "Properties", b1 =>
@@ -113,13 +125,13 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 
                         b1.HasKey("AuditRecordId", "Key");
 
-                        b1.ToTable("AuditRecordPropertyModel", "audit");
+                        b1.ToTable("AuditProperties", "audit");
 
                         b1.WithOwner()
                             .HasForeignKey("AuditRecordId");
                     });
 
-                b.Navigation("IdentityAttributes");
+                b.Navigation("Identities");
 
                 b.Navigation("Properties");
             });

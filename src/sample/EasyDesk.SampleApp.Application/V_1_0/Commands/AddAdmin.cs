@@ -25,7 +25,7 @@ public class AddAdminHandler : IHandler<AddAdmin>
 
     public async Task<Result<Nothing>> Handle(AddAdmin request)
     {
-        await _identityRolesManager.GrantRolesToIdentity(_contextProvider.RequireIdentity().Id, Roles.Admin);
+        await _identityRolesManager.GrantRolesToIdentity(_contextProvider.RequireAgent().Identity.Id, Roles.Admin);
         return Ok;
     }
 }

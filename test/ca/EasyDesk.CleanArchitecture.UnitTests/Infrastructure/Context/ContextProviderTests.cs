@@ -8,19 +8,20 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Context;
 
 public class ContextProviderTests
 {
+    private const string IdentityName = "main";
     private static readonly IdentityId _identity = IdentityId.New("some-id");
 
     private readonly BasicContextProvider _sut;
     private readonly HttpContext _httpContext = new DefaultHttpContext();
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ContextProviderOptions _options = new();
+    private readonly ClaimsPrincipalParser<Agent> _agentParser = ClaimsPrincipalParsers.ForDefaultAgent();
 
     public ContextProviderTests()
     {
         _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         _httpContextAccessor.HttpContext.Returns(_httpContext);
 
-        _sut = new BasicContextProvider(_httpContextAccessor, _options);
+        _sut = new BasicContextProvider(_httpContextAccessor, _agentParser);
     }
 
     [Fact]
@@ -28,7 +29,9 @@ public class ContextProviderTests
     {
         _httpContext.SetupAuthenticatedIdentity(_identity);
 
-        _sut.GetIdentity().IsPresent.ShouldBeTrue();
-        _sut.CurrentContext.ShouldBe(new ContextInfo.AuthenticatedRequest(new(_identity)));
+        _sut.GetAgent().IsPresent.ShouldBeTrue();
+
+        var agent = Agent.FromSingleIdentity(_identity, name: IdentityName);
+        _sut.CurrentContext.ShouldBe(new ContextInfo.AuthenticatedRequest(agent));
     }
 }

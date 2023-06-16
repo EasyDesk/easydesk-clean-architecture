@@ -10,7 +10,7 @@ public record AuditRecordDto(
     AuditRecordType Type,
     string Name,
     Option<string> Description,
-    Option<IdentityDto> Identity,
+    Option<AgentDto> Agent,
     IImmutableDictionary<string, string> Properties,
     bool Success,
     Instant Instant) : IMappableFrom<AuditRecord, AuditRecordDto>
@@ -19,10 +19,16 @@ public record AuditRecordDto(
         Type: src.Type,
         Name: src.Name,
         Description: src.Description,
-        Identity: src.Identity.Map(IdentityDto.MapFrom),
+        Agent: src.Agent.Map(AgentDto.MapFrom),
         Properties: src.Properties,
         Success: src.Success,
         Instant: src.Instant);
+}
+
+public record AgentDto(IImmutableDictionary<string, IdentityDto> Identities) : IMappableFrom<Agent, AgentDto>
+{
+    public static AgentDto MapFrom(Agent src) => new(
+        src.Identities.ToImmutableDictionary(x => x.Key, x => IdentityDto.MapFrom(x.Value)));
 }
 
 public record IdentityDto(

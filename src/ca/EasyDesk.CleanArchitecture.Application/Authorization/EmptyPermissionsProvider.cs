@@ -5,8 +5,8 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-internal class EmptyAuthorizationProvider : IIdentityPermissionsProvider
+internal class EmptyPermissionsProvider : IAgentPermissionsProvider
 {
-    public Task<IImmutableSet<Permission>> GetPermissionsForIdentity(Identity identity) =>
+    public Task<IImmutableSet<Permission>> GetPermissionsForAgent(Agent agent) =>
         Task.FromResult(Set<Permission>());
 }

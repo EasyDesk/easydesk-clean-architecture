@@ -31,8 +31,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Infrastructure\Configuration\" />
-  </ItemGroup>
-
 </Project>

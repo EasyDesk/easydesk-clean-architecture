@@ -13,6 +13,12 @@ internal class AuditingContext : AbstractDbContext
 
     public DbSet<AuditRecordModel> AuditRecords { get; set; }
 
+    public DbSet<AuditRecordPropertyModel> AuditProperties { get; set; }
+
+    public DbSet<AuditIdentityModel> AuditIdentities { get; set; }
+
+    public DbSet<AuditIdentityAttributeModel> AuditIdentityAttributes { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(AuditModel.SchemaName);

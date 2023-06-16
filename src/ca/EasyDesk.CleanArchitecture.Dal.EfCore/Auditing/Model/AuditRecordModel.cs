@@ -18,8 +18,6 @@ internal class AuditRecordModel : IMultitenantEntity
 
     required public string? Description { get; set; }
 
-    required public string? Identity { get; set; }
-
     required public bool Success { get; set; }
 
     required public Instant Instant { get; set; }
@@ -28,7 +26,7 @@ internal class AuditRecordModel : IMultitenantEntity
 
     public ICollection<AuditRecordPropertyModel> Properties { get; set; } = new HashSet<AuditRecordPropertyModel>();
 
-    public ICollection<AuditIdentityAttributeModel> IdentityAttributes { get; set; } = new HashSet<AuditIdentityAttributeModel>();
+    public ICollection<AuditIdentityModel> Identities { get; set; } = new HashSet<AuditIdentityModel>();
 
     public sealed class Configuration : IEntityTypeConfiguration<AuditRecordModel>
     {
@@ -41,8 +39,6 @@ internal class AuditRecordModel : IMultitenantEntity
 
             builder.Property(x => x.Name).HasMaxLength(AuditModel.NameMaxLength);
 
-            builder.Property(x => x.Identity).HasMaxLength(IdentityId.MaxLength);
-
             builder.OwnsMany(x => x.Properties, child =>
             {
                 child.HasKey(x => new { x.AuditRecordId, x.Key });
@@ -50,11 +46,21 @@ internal class AuditRecordModel : IMultitenantEntity
                 child.WithOwner().HasForeignKey(x => x.AuditRecordId);
             });
 
-            builder.OwnsMany(x => x.IdentityAttributes, child =>
+            builder.OwnsMany(x => x.Identities, child =>
             {
-                child.HasKey(x => x.Id);
+                child.HasKey(x => new { x.AuditRecordId, x.Name });
+
+                child.Property(x => x.Identity)
+                    .HasMaxLength(IdentityId.MaxLength);
 
                 child.WithOwner().HasForeignKey(x => x.AuditRecordId);
+
+                child.OwnsMany(x => x.IdentityAttributes, grandChild =>
+                {
+                    grandChild.HasKey(x => new { x.AuditRecordId, x.Name, x.Key, x.Value });
+
+                    grandChild.WithOwner().HasForeignKey(x => new { x.AuditRecordId, x.Name });
+                });
             });
         }
     }
@@ -66,7 +72,6 @@ internal class AuditRecordModel : IMultitenantEntity
             Type = record.Type,
             Name = record.Name,
             Description = record.Description.OrElseNull(),
-            Identity = record.Identity.Map(u => u.Id).MapToString().OrElseNull(),
             Success = record.Success,
             Instant = record.Instant,
         };
@@ -80,17 +85,12 @@ internal class AuditRecordModel : IMultitenantEntity
             })
             .AddTo(model.Properties);
 
-        record.Identity.IfPresent(identity =>
+        record.Agent.IfPresent(agent =>
         {
-            identity
-                .Attributes
-                .Attributes
-                .SelectMany(a => a.Value.Select(v => new AuditIdentityAttributeModel
-                {
-                    Key = a.Key,
-                    Value = v,
-                }))
-                .AddTo(model.IdentityAttributes);
+            agent
+                .Identities
+                .Select(kv => AuditIdentityModel.FromIdentity(kv.Key, kv.Value))
+                .AddTo(model.Identities);
         });
 
         return model;
@@ -102,12 +102,11 @@ internal class AuditRecordModel : IMultitenantEntity
             Type,
             Name,
             Description.AsOption(),
-            Identity.AsOption().Map(id => new Identity(IdentityId.New(id), CreateAttributeCollection())),
+            Some(Identities)
+                .Filter(identities => identities.Any())
+                .Map(identities => Agent.FromIdentities(identities.Select(i => (i.Name, i.ToIdentity())))),
             Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
             Success,
             Instant);
     }
-
-    private AttributeCollection CreateAttributeCollection() =>
-        AttributeCollection.FromFlatKeyValuePairs(IdentityAttributes.Select(a => (a.Key, a.Value)));
 }

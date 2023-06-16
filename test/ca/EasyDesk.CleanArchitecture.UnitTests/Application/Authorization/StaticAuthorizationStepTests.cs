@@ -18,7 +18,7 @@ public class StaticAuthorizationStepTests
     [AllowUnknownIdentity]
     public record TestRequestWithUnknownIdentityAllowed : IDispatchable<Nothing>;
 
-    private readonly Identity _identity = new(IdentityId.New("identity"));
+    private readonly Agent _agent = Agent.FromSingleIdentity(IdentityId.New("identity"));
     private readonly IContextProvider _contextProvider;
     private readonly IAuthorizationProvider _authorizationProvider;
     private readonly NextPipelineStep<Nothing> _next;
@@ -32,11 +32,11 @@ public class StaticAuthorizationStepTests
         _next().Returns(Ok);
 
         _authorizationProvider = Substitute.For<IAuthorizationProvider>();
-        _authorizationProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetIdentity().Map(ToAuthorizationInfo));
+        _authorizationProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetAgent().Map(ToAuthorizationInfo));
     }
 
-    private AuthorizationInfo ToAuthorizationInfo(Identity identity) =>
-        new(identity, Set<Permission>());
+    private AuthorizationInfo ToAuthorizationInfo(Agent agent) =>
+        new(agent, Set<Permission>());
 
     private async Task ShouldNotBeAuthorized<T>(Error error, bool authorizerResult = false) where T : IDispatchable<Nothing>, new()
     {
@@ -56,12 +56,12 @@ public class StaticAuthorizationStepTests
     {
         var request = new T();
         var authorizer = Substitute.For<IStaticAuthorizer<T>>();
-        authorizer.IsAuthorized(request, ToAuthorizationInfo(_identity)).Returns(authorizerResult);
+        authorizer.IsAuthorized(request, ToAuthorizationInfo(_agent)).Returns(authorizerResult);
         var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, new[] { authorizer }, _authorizationProvider);
         return await step.Run(request, _next);
     }
 
-    private void Authenticate() => _contextProvider.CurrentContext.Returns(new ContextInfo.AuthenticatedRequest(_identity));
+    private void Authenticate() => _contextProvider.CurrentContext.Returns(new ContextInfo.AuthenticatedRequest(_agent));
 
     [Fact]
     public async Task ShouldAllowNonAuthenticatedIdentityIfRequestAllowsUnknownIdentity()

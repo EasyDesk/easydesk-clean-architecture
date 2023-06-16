@@ -1,23 +1,21 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Http;
 using Rebus.Extensions;
 using Rebus.Pipeline;
-using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
 internal sealed class BasicContextProvider : IContextProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ContextProviderOptions _options;
+    private readonly ClaimsPrincipalParser<Agent> _agentParser;
     private readonly Lazy<ContextInfo> _context;
     private readonly Lazy<CancellationToken> _cancellationToken;
 
-    public BasicContextProvider(IHttpContextAccessor httpContextAccessor, ContextProviderOptions options)
+    public BasicContextProvider(IHttpContextAccessor httpContextAccessor, ClaimsPrincipalParser<Agent> agentParser)
     {
         _httpContextAccessor = httpContextAccessor;
-        _options = options;
+        _agentParser = agentParser;
         _context = new(GetContextType);
         _cancellationToken = new(GetCancellationToken);
     }
@@ -29,29 +27,11 @@ internal sealed class BasicContextProvider : IContextProvider
     private ContextInfo GetContextType()
     {
         return MatchContext(
-            httpContext: c => c.User
-                .Identities
-                .Where(i => i.IsAuthenticated)
-                .SelectMany(i => i.FindFirst(ClaimTypes.NameIdentifier).AsOption())
-                .Select(c => c.Value)
-                .Select(id => new Identity(IdentityId.New(id), GetIdentityAttributes(c.User)))
-                .FirstOption()
-                .Match<ContextInfo>(
-                    some: identity => new ContextInfo.AuthenticatedRequest(identity),
-                    none: () => new ContextInfo.AnonymousRequest()),
+            httpContext: c => _agentParser(c.User).Match<ContextInfo>(
+                some: agent => new ContextInfo.AuthenticatedRequest(agent),
+                none: () => new ContextInfo.AnonymousRequest()),
             messageContext: _ => new ContextInfo.AsyncMessage(),
             other: () => new ContextInfo.Unknown());
-    }
-
-    private AttributeCollection GetIdentityAttributes(ClaimsPrincipal claimsPrincipal)
-    {
-        var pairs = claimsPrincipal
-            .Identities
-            .Where(i => i.IsAuthenticated)
-            .SelectMany(i => i.Claims)
-            .SelectMany(c => _options.ClaimToAttribute(c.Type).Map(a => (Key: a, c.Value)));
-
-        return AttributeCollection.FromFlatKeyValuePairs(pairs);
     }
 
     private CancellationToken GetCancellationToken()
@@ -78,17 +58,4 @@ internal sealed class BasicContextProvider : IContextProvider
 
         return other();
     }
-}
-
-public class ContextProviderOptions
-{
-    private readonly Dictionary<string, string> _claimToAttributes = new();
-
-    public ContextProviderOptions AddAttributeFromClaim(string claim, string attribute)
-    {
-        _claimToAttributes.Add(claim, attribute);
-        return this;
-    }
-
-    internal Option<string> ClaimToAttribute(string claim) => _claimToAttributes.GetOption(claim);
 }

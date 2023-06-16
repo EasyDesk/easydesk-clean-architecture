@@ -41,10 +41,11 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddApiVersioning()
         .AddMultitenancy(options => options
             .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
-        .ConfigureContextProvider(options => options
-            .AddAttributeFromClaim(ClaimTypes.Name, StandardAttributes.FirstName)
-            .AddAttributeFromClaim(ClaimTypes.Surname, StandardAttributes.LastName)
-            .AddAttributeFromClaim(ClaimTypes.Email, StandardAttributes.Email))
+        .SetAgentParser(agent => agent
+            .WithIdentity("main", ClaimTypes.NameIdentifier)
+                .WithAttribute(StandardAttributes.FirstName, ClaimTypes.Name)
+                .WithAttribute(StandardAttributes.LastName, ClaimTypes.Surname)
+                .WithAttribute(StandardAttributes.Email, ClaimTypes.Email))
         .AddAuditing()
         .AddAuthentication(options => options
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))

@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-internal class EfCoreAuthorizationManager : IIdentityPermissionsProvider, IIdentityRolesManager, IIdentityRolesProvider, IRolesToPermissionsMapper
+internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentityRolesManager, IAgentRolesProvider, IRolesToPermissionsMapper
 {
     private readonly AuthorizationContext _context;
 
@@ -18,13 +18,24 @@ internal class EfCoreAuthorizationManager : IIdentityPermissionsProvider, IIdent
         _context = context;
     }
 
-    private IQueryable<IdentityRoleModel> RolesByIdentity(IdentityId id) => _context
-        .IdentityRoles
-        .Where(u => u.Identity == id);
-
-    public async Task<IImmutableSet<Role>> GetRolesForIdentity(Identity identity)
+    private IQueryable<IdentityRoleModel> RolesByAgent(Agent agent)
     {
-        return await RolesByIdentity(identity.Id)
+        var identities = agent.Identities.Values.Select(x => x.Id.Value);
+        return _context
+            .IdentityRoles
+            .Where(u => identities.Contains(u.Identity));
+    }
+
+    private IQueryable<IdentityRoleModel> RolesByIdentity(IdentityId id)
+    {
+        return _context
+            .IdentityRoles
+            .Where(u => u.Identity == id);
+    }
+
+    public async Task<IImmutableSet<Role>> GetRolesForAgent(Agent agent)
+    {
+        return await RolesByAgent(agent)
             .Select(u => new Role(u.Role))
             .ToEquatableSetAsync();
     }
@@ -76,9 +87,9 @@ internal class EfCoreAuthorizationManager : IIdentityPermissionsProvider, IIdent
             .ToEquatableSetAsync();
     }
 
-    public async Task<IImmutableSet<Permission>> GetPermissionsForIdentity(Identity identity)
+    public async Task<IImmutableSet<Permission>> GetPermissionsForAgent(Agent agent)
     {
-        return await RolesByIdentity(identity.Id)
+        return await RolesByAgent(agent)
             .Join(_context.RolePermissions, u => u.Role, p => p.RoleId, (u, p) => p.PermissionName)
             .Distinct()
             .Select(p => new Permission(p))

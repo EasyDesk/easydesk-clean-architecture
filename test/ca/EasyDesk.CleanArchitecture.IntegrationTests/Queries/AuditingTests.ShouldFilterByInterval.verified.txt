@@ -3,18 +3,22 @@
     Type: CommandRequest,
     Name: CreatePet,
     Description: null,
-    Identity: {
-      Id: admin-id,
-      Attributes: {
-        email: [
-          johndoe@test.com
-        ],
-        firstName: [
-          John
-        ],
-        lastName: [
-          Doe
-        ]
+    Agent: {
+      Identities: {
+        main: {
+          Id: admin-id,
+          Attributes: {
+            email: [
+              johndoe@test.com
+            ],
+            firstName: [
+              John
+            ],
+            lastName: [
+              Doe
+            ]
+          }
+        }
       }
     },
     Properties: {
@@ -27,18 +31,22 @@
     Type: CommandRequest,
     Name: CreatePet,
     Description: null,
-    Identity: {
-      Id: admin-id,
-      Attributes: {
-        email: [
-          johndoe@test.com
-        ],
-        firstName: [
-          John
-        ],
-        lastName: [
-          Doe
-        ]
+    Agent: {
+      Identities: {
+        main: {
+          Id: admin-id,
+          Attributes: {
+            email: [
+              johndoe@test.com
+            ],
+            firstName: [
+              John
+            ],
+            lastName: [
+              Doe
+            ]
+          }
+        }
       }
     },
     Properties: {

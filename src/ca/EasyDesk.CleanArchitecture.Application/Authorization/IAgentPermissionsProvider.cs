@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-public interface IIdentityRolesProvider
+public interface IAgentPermissionsProvider
 {
-    Task<IImmutableSet<Role>> GetRolesForIdentity(Identity identity);
+    Task<IImmutableSet<Permission>> GetPermissionsForAgent(Agent agent);
 }

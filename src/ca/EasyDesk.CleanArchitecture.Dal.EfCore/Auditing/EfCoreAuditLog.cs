@@ -29,10 +29,8 @@ internal class EfCoreAuditLog : IAuditLog
             .Conditionally(query.MatchType, type => q => q.Where(r => r.Type == type))
             .Conditionally(query.MatchName, name => q => q.Where(r => r.Name == name))
             .Conditionally(query.IsSuccess, success => q => q.Where(r => r.Success == success))
-            .Conditionally(query.MatchIdentity, identity => q => q.Where(r => r.Identity == identity))
-            .Conditionally(query.IsAnonymous, anonymous => q => q.Where(anonymous
-                ? r => r.Identity == null
-                : r => r.Identity != null))
+            .Conditionally(query.MatchIdentity, identity => q => q.Where(r => r.Identities.Any(x => x.Identity == identity)))
+            .Conditionally(query.IsAnonymous, anonymous => q => q.Where(r => r.Identities.Any() != anonymous))
             .OrderBy(r => r.Instant)
             .ThenBy(r => r.Id)
             .Select(src => src.ToAuditRecord())

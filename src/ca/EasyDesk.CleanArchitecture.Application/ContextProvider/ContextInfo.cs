@@ -4,7 +4,7 @@ public abstract record ContextInfo
 {
     public abstract record Request : ContextInfo;
 
-    public record AuthenticatedRequest(Identity Identity) : Request;
+    public record AuthenticatedRequest(Agent Agent) : Request;
 
     public record AnonymousRequest : Request;
 

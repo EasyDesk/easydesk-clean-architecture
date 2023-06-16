@@ -33,9 +33,9 @@ public class AddAdminTests : SampleIntegrationTest
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
-        await WebService.WaitConditionUnderTenant<IIdentityRolesProvider>(
+        await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
             _tenantId,
-            async p => condition(await p.GetRolesForIdentity(new(_adminId))));
+            async p => condition(await p.GetRolesForAgent(Agent.FromSingleIdentity(_adminId))));
     }
 
     [Fact]

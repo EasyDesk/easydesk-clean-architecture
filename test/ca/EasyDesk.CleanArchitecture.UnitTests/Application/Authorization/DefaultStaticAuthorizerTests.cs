@@ -27,12 +27,12 @@ public class DefaultStaticAuthorizerTests
         }
     }
 
-    private readonly Identity _identity = new(IdentityId.New("identity"));
+    private readonly Agent _agent = Agent.FromSingleIdentity(IdentityId.New("identity"));
 
     private bool IsAuthorized<T>(params TestPermissions[] permissions) where T : new()
     {
         return new DefaultStaticAuthorizer<T>()
-            .IsAuthorized(new T(), new AuthorizationInfo(_identity, permissions.Select(p => (Permission)p).ToEquatableSet()));
+            .IsAuthorized(new T(), new AuthorizationInfo(_agent, permissions.Select(p => (Permission)p).ToEquatableSet()));
     }
 
     [Fact]

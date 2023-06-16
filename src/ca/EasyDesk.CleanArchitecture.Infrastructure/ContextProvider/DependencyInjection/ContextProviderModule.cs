@@ -32,6 +32,7 @@ public class ContextProviderModule : AppModule
         services.AddScoped<IContextProvider, BasicContextProvider>();
         services.TryAddScoped<ITenantProvider, PublicTenantProvider>();
         services.AddScoped<IContextResetter, BasicContextResetter>();
+        services.AddSingleton(options.AgentParser);
     }
 
     public override void BeforeServiceConfiguration(AppDescription app)
@@ -50,8 +51,8 @@ public static class ContextProviderModuleExtensions
         return builder.AddModule(new ContextProviderModule(configure));
     }
 
-    public static AppBuilder ConfigureContextProvider(this AppBuilder builder, Action<ContextProviderOptions> configure)
+    public static AppBuilder SetAgentParser(this AppBuilder builder, Action<AgentParserBuilder> configure)
     {
-        return builder.ConfigureModule<ContextProviderModule>(m => m.ConfigureOptions(configure));
+        return builder.ConfigureModule<ContextProviderModule>(m => m.ConfigureOptions(x => x.SetAgentParser(configure)));
     }
 }

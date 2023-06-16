@@ -15,7 +15,7 @@ public record AuditRecord(
     AuditRecordType Type,
     string Name,
     Option<string> Description,
-    Option<Identity> Identity,
+    Option<Agent> Agent,
     IImmutableDictionary<string, string> Properties,
     bool Success,
     Instant Instant);

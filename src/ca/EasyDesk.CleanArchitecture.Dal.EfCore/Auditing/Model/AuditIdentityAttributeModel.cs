@@ -2,9 +2,9 @@
 
 internal class AuditIdentityAttributeModel
 {
-    public long Id { get; set; }
-
     public long AuditRecordId { get; set; }
+
+    required public string Name { get; set; }
 
     required public string Key { get; set; }
 

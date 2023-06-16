@@ -111,19 +111,19 @@ public class CsvServiceTests
         }));
     }
 
-    [Fact(Skip = "https://github.com/JoshClose/CsvHelper/issues/2153")]
-    public async Task ShouldParseRecordsAutomatically()
-    {
-        var csv = """
-            String;Integer
-            A;1
-            ;2
-            C;
-            """;
-        await Verify(Parse(csv, row => row.GetRecord(new
-        {
-            String = default(Option<string>),
-            Integer = default(Option<int>),
-        })));
-    }
+    ////[Fact]
+    ////public async Task ShouldParseRecordsAutomatically()
+    ////{
+    ////    var csv = """
+    ////        String;Integer
+    ////        A;1
+    ////        ;2
+    ////        C;
+    ////        """;
+    ////    await Verify(Parse(csv, row => row.GetRecord(new
+    ////    {
+    ////        String = default(Option<string>),
+    ////        Integer = default(Option<int>),
+    ////    })));
+    ////}
 }

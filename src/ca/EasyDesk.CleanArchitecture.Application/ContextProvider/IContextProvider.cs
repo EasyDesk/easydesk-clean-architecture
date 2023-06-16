@@ -9,14 +9,14 @@ public interface IContextProvider
 
 public static class ContextProviderExtensions
 {
-    public static Option<Identity> GetIdentity(this IContextProvider contextProvider) =>
+    public static Option<Agent> GetAgent(this IContextProvider contextProvider) =>
         contextProvider.CurrentContext switch
         {
-            ContextInfo.AuthenticatedRequest(var info) => Some(info),
+            ContextInfo.AuthenticatedRequest(var agent) => Some(agent),
             _ => None,
         };
 
-    public static Identity RequireIdentity(this IContextProvider contextProvider) =>
-        contextProvider.GetIdentity().OrElseThrow(
+    public static Agent RequireAgent(this IContextProvider contextProvider) =>
+        contextProvider.GetAgent().OrElseThrow(
             () => new InvalidOperationException("Request context: request is not authenticated."));
 }

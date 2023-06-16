@@ -43,6 +43,6 @@ internal class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
 
     protected override Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
     {
-        return _jwtFacade.Validate(token, Options.Configuration.ConfigureBuilder).Map(x => new ClaimsPrincipal(x));
+        return _jwtFacade.Validate(token, Options.Configuration.ConfigureBuilder);
     }
 }

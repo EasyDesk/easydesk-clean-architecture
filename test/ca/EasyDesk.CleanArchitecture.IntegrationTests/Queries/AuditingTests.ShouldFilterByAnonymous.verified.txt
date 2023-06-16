@@ -4,7 +4,7 @@
       Type: Command,
       Name: CreateTenant,
       Description: null,
-      Identity: null,
+      Agent: null,
       Properties: {},
       Success: true,
       Instant: Instant_1
@@ -13,7 +13,7 @@
       Type: Command,
       Name: CreateBestFriend,
       Description: null,
-      Identity: null,
+      Agent: null,
       Properties: {},
       Success: true,
       Instant: Instant_1
@@ -24,18 +24,22 @@
       Type: CommandRequest,
       Name: AddAdmin,
       Description: null,
-      Identity: {
-        Id: admin-id,
-        Attributes: {
-          email: [
-            johndoe@test.com
-          ],
-          firstName: [
-            John
-          ],
-          lastName: [
-            Doe
-          ]
+      Agent: {
+        Identities: {
+          main: {
+            Id: admin-id,
+            Attributes: {
+              email: [
+                johndoe@test.com
+              ],
+              firstName: [
+                John
+              ],
+              lastName: [
+                Doe
+              ]
+            }
+          }
         }
       },
       Properties: {},
@@ -46,18 +50,22 @@
       Type: CommandRequest,
       Name: CreatePerson,
       Description: null,
-      Identity: {
-        Id: admin-id,
-        Attributes: {
-          email: [
-            johndoe@test.com
-          ],
-          firstName: [
-            John
-          ],
-          lastName: [
-            Doe
-          ]
+      Agent: {
+        Identities: {
+          main: {
+            Id: admin-id,
+            Attributes: {
+              email: [
+                johndoe@test.com
+              ],
+              firstName: [
+                John
+              ],
+              lastName: [
+                Doe
+              ]
+            }
+          }
         }
       },
       Properties: {},
