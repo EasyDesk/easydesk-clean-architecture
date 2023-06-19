@@ -70,7 +70,7 @@ public class DispatcherTests
         _stringHandler.Handle(_stringRequest).Returns(Success(StringValue));
     }
 
-    private Dispatcher CreateDispatcher(Action<IServiceCollection>? configure = null)
+    private IDispatcher CreateDispatcher(Action<IServiceCollection>? configure = null)
     {
         var services = new ServiceCollection();
         configure?.Invoke(services);
