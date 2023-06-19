@@ -18,8 +18,6 @@ public record Agent
 
     public IImmutableDictionary<string, Identity> Identities { get; }
 
-    public Identity SingleIdentity() => Identities.Values.Single();
-
     public Identity RequireIdentity(string name) => GetIdentity(name).OrElseThrow(() => new InvalidOperationException($"Missing required identity with name {name}."));
 
     private Option<Identity> GetIdentity(string name) => Identities.GetOption(name);

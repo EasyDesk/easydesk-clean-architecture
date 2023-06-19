@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.SampleApp.Application.Authorization;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
@@ -24,7 +25,7 @@ public class RemoveRolesHandler : IHandler<RemoveRoles>
 
     public async Task<Result<Nothing>> Handle(RemoveRoles request)
     {
-        await _identityRolesManager.RevokeAllRolesToIdentity(_contextProvider.RequireAgent().SingleIdentity().Id);
+        await _identityRolesManager.RevokeAllRolesToIdentity(_contextProvider.RequireAgent().MainIdentity().Id);
         return Ok;
     }
 }

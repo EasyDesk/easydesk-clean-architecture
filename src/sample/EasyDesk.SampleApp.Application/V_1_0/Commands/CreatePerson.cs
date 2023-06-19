@@ -53,7 +53,7 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDt
             new Name(command.FirstName),
             new Name(command.LastName),
             command.DateOfBirth,
-            AdminId.From(_contextProvider.RequireAgent().SingleIdentity().Id),
+            AdminId.From(_contextProvider.RequireAgent().MainIdentity().Id),
             command.Residence.ToDomainObject());
         _personRepository.Save(person);
 
