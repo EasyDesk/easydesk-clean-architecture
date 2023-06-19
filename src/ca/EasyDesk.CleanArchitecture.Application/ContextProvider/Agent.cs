@@ -20,7 +20,7 @@ public record Agent
 
     public Identity RequireIdentity(string name) => GetIdentity(name).OrElseThrow(() => new InvalidOperationException($"Missing required identity with name {name}."));
 
-    private Option<Identity> GetIdentity(string name) => Identities.GetOption(name);
+    public Option<Identity> GetIdentity(string name) => Identities.GetOption(name);
 
     public static Agent FromIdentities(IEnumerable<(string, Identity)> identities) =>
         new(identities.ToEquatableMap());
