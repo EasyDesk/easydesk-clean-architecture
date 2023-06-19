@@ -3,10 +3,7 @@
 public interface IDispatcher
 {
     Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper);
-}
 
-public static class DispatcherExtensions
-{
-    public static Task<Result<X>> Dispatch<X>(this IDispatcher dispatcher, IDispatchable<X> dispatchable) =>
-        dispatcher.Dispatch(dispatchable, x => Task.FromResult(x));
+    public Task<Result<X>> Dispatch<X>(IDispatchable<X> dispatchable) =>
+        Dispatch(dispatchable, x => Task.FromResult(x));
 }
