@@ -18,10 +18,11 @@ public record Agent
 
     public IImmutableDictionary<string, Identity> Identities { get; }
 
-    public Identity Identity => Identities
-        .Values
-        .SingleOption()
-        .OrElseThrow(() => new InvalidOperationException("Cannot access the main identity since the agent contains more than one."));
+    public Identity SingleIdentity() => Identities.Values.Single();
+
+    public Identity RequireIdentity(string name) => GetIdentity(name).OrElseThrow(() => new InvalidOperationException($"Missing required identity with name {name}."));
+
+    private Option<Identity> GetIdentity(string name) => Identities.GetOption(name);
 
     public static Agent FromIdentities(IEnumerable<(string, Identity)> identities) =>
         new(identities.ToEquatableMap());
