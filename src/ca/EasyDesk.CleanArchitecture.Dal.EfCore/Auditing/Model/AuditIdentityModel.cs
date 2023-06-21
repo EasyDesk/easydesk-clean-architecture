@@ -7,7 +7,7 @@ internal class AuditIdentityModel
 {
     public long AuditRecordId { get; set; }
 
-    required public string Name { get; set; }
+    required public string Realm { get; set; }
 
     required public string Identity { get; set; }
 
@@ -18,20 +18,20 @@ internal class AuditIdentityModel
     private AttributeCollection CreateAttributeCollection() =>
         AttributeCollection.FromFlatKeyValuePairs(IdentityAttributes.Select(a => (a.Key, a.Value)));
 
-    public static AuditIdentityModel FromIdentity(string name, Identity identity)
+    public static AuditIdentityModel FromIdentity(Realm realm, Identity identity)
     {
         var model = new AuditIdentityModel
         {
             Identity = identity.Id,
-            Name = name,
+            Realm = realm,
         };
 
         identity
             .Attributes
-            .Attributes
+            .AttributeMap
             .SelectMany(a => a.Value.Select(v => new AuditIdentityAttributeModel
             {
-                Name = name,
+                Realm = realm,
                 Key = a.Key,
                 Value = v,
             }))

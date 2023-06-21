@@ -1,11 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
+using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
@@ -13,18 +13,12 @@ using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 using Shouldly;
-using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class AuditingTests : SampleIntegrationTest
 {
-    private const string AdminFirstName = "John";
-    private const string AdminLastName = "Doe";
-    private const string AdminEmail = "johndoe@test.com";
-
     private static readonly TenantId _tenant = TenantId.New("tenant-id");
-    private static readonly IdentityId _adminId = IdentityId.New("admin-id");
 
     private Guid _personId;
     private int _initialAudits;
@@ -35,11 +29,7 @@ public class AuditingTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
-        .AuthenticateAs(
-            _adminId,
-            new Claim(ClaimTypes.Email, AdminEmail),
-            new Claim(ClaimTypes.Name, AdminFirstName),
-            new Claim(ClaimTypes.Surname, AdminLastName));
+        .AuthenticateAs(TestAgents.Admin);
 
     protected override async Task OnInitialization()
     {
@@ -116,7 +106,7 @@ public class AuditingTests : SampleIntegrationTest
     {
         var response = await Http
             .GetAudits()
-            .WithQuery("identity", _adminId)
+            .WithQuery("identity", TestAgents.Admin.MainIdentity().Id)
             .Send()
             .AsVerifiableEnumerable();
 

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
@@ -15,7 +14,6 @@ public class PaginationTests : SampleIntegrationTest
 {
     private const int InitialPopulationSize = 300;
     private static readonly TenantId _tenant = TenantId.New("test-tenant-a");
-    private static readonly IdentityId _adminId = IdentityId.New("test-admin-a");
 
     public PaginationTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -23,7 +21,7 @@ public class PaginationTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
-        .AuthenticateAs(_adminId);
+        .AuthenticateAs(TestAgents.Admin);
 
     protected override async Task OnInitialization()
     {

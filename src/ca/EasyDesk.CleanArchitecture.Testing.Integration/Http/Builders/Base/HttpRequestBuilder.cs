@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using NodaTime;
 using System.Collections.Immutable;
-using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
@@ -21,13 +20,7 @@ public abstract class HttpRequestBuilder
 
     public abstract HttpRequestBuilder NoTenant();
 
-    public abstract HttpRequestBuilder AuthenticateAs(IdentityId identityId, params Claim[] additionalClaims);
-
-    public abstract HttpRequestBuilder AuthenticateAs(IdentityId identityId, IEnumerable<Claim> additionalClaims);
-
-    public abstract HttpRequestBuilder Authenticate(params Claim[] claims);
-
-    public abstract HttpRequestBuilder Authenticate(IEnumerable<Claim> claims);
+    public abstract HttpRequestBuilder AuthenticateAs(Agent agent);
 
     public abstract HttpRequestBuilder NoAuthentication();
 
@@ -78,17 +71,8 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     public override B Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders) =>
         ConfigureRequest(r => r with { Headers = configureHeaders(r.Headers) });
 
-    public override B AuthenticateAs(IdentityId identityId, IEnumerable<Claim> additionalClaims) =>
-        Authenticate(additionalClaims.Prepend(new Claim(ClaimTypes.NameIdentifier, identityId)));
-
-    public override B AuthenticateAs(IdentityId identityId, params Claim[] additionalClaims) =>
-        AuthenticateAs(identityId, additionalClaims.AsEnumerable());
-
-    public override B Authenticate(IEnumerable<Claim> identity) =>
-        ConfigureRequest(r => _testHttpAuthentication.ConfigureAuthentication(r, identity));
-
-    public override B Authenticate(params Claim[] claims) =>
-        Authenticate(claims.AsEnumerable());
+    public override B AuthenticateAs(Agent agent) =>
+        ConfigureRequest(r => _testHttpAuthentication.ConfigureAuthentication(r, agent));
 
     public override B NoAuthentication() => ConfigureRequest(_testHttpAuthentication.RemoveAuthentication);
 

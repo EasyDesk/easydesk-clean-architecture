@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
@@ -6,7 +6,7 @@ public interface ITestHttpAuthentication
 {
     ImmutableHttpRequestMessage ConfigureAuthentication(
         ImmutableHttpRequestMessage message,
-        IEnumerable<Claim> identity);
+        Agent agent);
 
     ImmutableHttpRequestMessage RemoveAuthentication(
         ImmutableHttpRequestMessage message);
@@ -16,7 +16,7 @@ internal class NoAuthentication : ITestHttpAuthentication
 {
     public ImmutableHttpRequestMessage ConfigureAuthentication(
         ImmutableHttpRequestMessage message,
-        IEnumerable<Claim> identity) =>
+        Agent identity) =>
         message;
 
     public ImmutableHttpRequestMessage RemoveAuthentication(

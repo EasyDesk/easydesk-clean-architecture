@@ -60,12 +60,6 @@ public sealed class JwtGenerationBuilder
         return _descriptor;
     }
 
-    public JwtGenerationBuilder WithClaims(IEnumerable<Claim> claims) =>
-        NextStep(() => _claims.UnionWith(claims));
-
-    public JwtGenerationBuilder WithClaim(Claim claim) =>
-        NextStep(() => _claims.Add(claim));
-
     public JwtGenerationBuilder WithSigningCredentials(SigningCredentials signingCredentials) =>
         NextStep(() =>
         {

@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.Commons.Collections;
 using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
@@ -18,6 +19,6 @@ public static class ClaimsPrincipalParsers
         return builder.Build();
     }
 
-    public static ClaimsPrincipalParser<Agent> ForDefaultAgent() =>
-        ForAgent(x => x.WithIdentity(Agent.DefaultIdentityName, ClaimTypes.NameIdentifier));
+    public static ClaimsPrincipalParser<Agent> DefaultAgentParser() =>
+        cp => cp.Identities.Where(x => x.IsAuthenticated).FirstOption().Map(x => x.ToAgent());
 }

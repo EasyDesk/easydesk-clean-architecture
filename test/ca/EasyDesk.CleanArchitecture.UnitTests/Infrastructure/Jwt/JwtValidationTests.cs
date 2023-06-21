@@ -31,7 +31,7 @@ public class JwtValidationTests
 
         var generation = validation.ToJwtGenerationConfiguration();
 
-        var jwt = _jwtFacade.Create(new[] { new Claim("claim", "value") }, generation.ConfigureBuilder);
+        var jwt = _jwtFacade.Create(new(new[] { new Claim("claim", "value") }), generation.ConfigureBuilder);
 
         await Verify(jwt);
     }

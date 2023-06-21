@@ -7,7 +7,7 @@
       Agent: {
         Identities: {
           main: {
-            Id: admin-id,
+            Id: test-admin,
             Attributes: {
               email: [
                 johndoe@test.com
@@ -46,7 +46,7 @@
       Agent: {
         Identities: {
           main: {
-            Id: admin-id,
+            Id: test-admin,
             Attributes: {
               email: [
                 johndoe@test.com
@@ -72,7 +72,7 @@
       Agent: {
         Identities: {
           main: {
-            Id: admin-id,
+            Id: test-admin,
             Attributes: {
               email: [
                 johndoe@test.com

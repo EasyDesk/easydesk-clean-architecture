@@ -2,8 +2,10 @@
 
 namespace EasyDesk.SampleApp.Application.Authorization;
 
-public static class AgentExtensions
+public static class Agents
 {
+    public static Realm MainRealm => Realm.Default;
+
     public static Identity MainIdentity(this Agent agent) =>
-        agent.RequireIdentity(Agent.DefaultIdentityName);
+        agent.RequireIdentity(MainRealm);
 }

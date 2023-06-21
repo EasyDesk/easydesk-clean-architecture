@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
@@ -23,7 +22,6 @@ public class DeletePersonTests : SampleIntegrationTest
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
     private static readonly TenantId _tenant = TenantId.New("test-tenant");
-    private static readonly IdentityId _adminId = IdentityId.New("test-admin");
     private static readonly AddressDto _address = AddressDto.Create("somewhere");
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
@@ -33,7 +31,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
-        .AuthenticateAs(_adminId);
+        .AuthenticateAs(TestAgents.Admin);
 
     protected override async Task OnInitialization()
     {
@@ -132,7 +130,7 @@ public class DeletePersonTests : SampleIntegrationTest
         var person = await CreateTestPerson();
 
         var response = await DeletePerson(person.Id)
-            .AuthenticateAs(IdentityId.New("non-admin-id"))
+            .AuthenticateAs(TestAgents.OtherUser)
             .Send()
             .AsVerifiable();
 

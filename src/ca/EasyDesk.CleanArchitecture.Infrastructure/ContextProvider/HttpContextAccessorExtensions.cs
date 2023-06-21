@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
@@ -22,11 +21,9 @@ public static class HttpContextAccessorExtensions
         return httpContext;
     }
 
-    public static HttpContext SetupAuthenticatedIdentity(this HttpContext httpContext, IdentityId id)
+    public static HttpContext SetupAuthenticatedAgent(this HttpContext httpContext, Agent agent)
     {
-        httpContext.User = new(new ClaimsIdentity(
-            new[] { new Claim(ClaimTypes.NameIdentifier, id) },
-            "Custom"));
+        httpContext.User = new(agent.ToClaimsIdentity());
         return httpContext;
     }
 }

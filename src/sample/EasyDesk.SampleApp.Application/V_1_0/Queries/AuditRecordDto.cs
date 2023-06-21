@@ -28,7 +28,7 @@ public record AuditRecordDto(
 public record AgentDto(IImmutableDictionary<string, IdentityDto> Identities) : IMappableFrom<Agent, AgentDto>
 {
     public static AgentDto MapFrom(Agent src) => new(
-        src.Identities.ToImmutableDictionary(x => x.Key, x => IdentityDto.MapFrom(x.Value)));
+        src.Identities.ToImmutableDictionary(x => x.Key.Value, x => IdentityDto.MapFrom(x.Value)));
 }
 
 public record IdentityDto(
@@ -37,5 +37,5 @@ public record IdentityDto(
 {
     public static IdentityDto MapFrom(Identity src) => new(
         Id: src.Id,
-        Attributes: src.Attributes.Attributes);
+        Attributes: src.Attributes.AttributeMap);
 }

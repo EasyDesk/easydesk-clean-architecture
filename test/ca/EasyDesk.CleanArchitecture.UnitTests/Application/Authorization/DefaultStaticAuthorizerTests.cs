@@ -27,7 +27,7 @@ public class DefaultStaticAuthorizerTests
         }
     }
 
-    private readonly Agent _agent = Agent.FromSingleIdentity(IdentityId.New("identity"));
+    private readonly Agent _agent = Agent.FromSingleIdentity(Realm.Default, IdentityId.New("identity"));
 
     private bool IsAuthorized<T>(params TestPermissions[] permissions) where T : new()
     {

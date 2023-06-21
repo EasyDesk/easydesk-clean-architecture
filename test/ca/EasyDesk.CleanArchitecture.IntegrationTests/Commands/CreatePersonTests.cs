@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -20,7 +19,6 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class CreatePersonTests : SampleIntegrationTest
 {
     private static readonly TenantId _tenant = TenantId.New("test-tenant");
-    private static readonly IdentityId _adminId = IdentityId.New("test-admin");
 
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
@@ -34,7 +32,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
-        .AuthenticateAs(_adminId);
+        .AuthenticateAs(TestAgents.Admin);
 
     protected override async Task OnInitialization()
     {
@@ -127,7 +125,6 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await GetPerson(person.Id)
             .Tenant(otherTenant)
-            .AuthenticateAs(_adminId)
             .Send()
             .AsVerifiable();
 
@@ -145,7 +142,6 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await GetPerson(person.Id)
             .Headers(h => h.Replace(MultitenancyDefaults.TenantIdHttpHeader, otherTenant))
-            .AuthenticateAs(_adminId)
             .Send()
             .AsVerifiable();
 
@@ -163,7 +159,6 @@ public class CreatePersonTests : SampleIntegrationTest
 
         var response = await GetPerson(person.Id)
             .Tenant(otherTenant)
-            .AuthenticateAs(_adminId)
             .Send()
             .AsVerifiable();
 
@@ -285,7 +280,7 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task ShouldFailIfUnauthorized()
     {
         var response = await CreatePerson()
-            .AuthenticateAs(IdentityId.New("non-admin-id"))
+            .AuthenticateAs(TestAgents.OtherUser)
             .Send()
             .AsVerifiable();
 

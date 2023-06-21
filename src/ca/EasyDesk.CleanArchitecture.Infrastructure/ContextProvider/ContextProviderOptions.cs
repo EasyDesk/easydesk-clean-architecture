@@ -4,7 +4,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
 public class ContextProviderOptions
 {
-    public ClaimsPrincipalParser<Agent> AgentParser { get; set; } = ClaimsPrincipalParsers.ForDefaultAgent();
+    public ClaimsPrincipalParser<Agent> AgentParser { get; set; } = ClaimsPrincipalParsers.DefaultAgentParser();
 
     public void SetAgentParser(Action<AgentParserBuilder> configure)
     {

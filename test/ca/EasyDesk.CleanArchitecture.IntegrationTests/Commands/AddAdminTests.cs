@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -14,7 +13,6 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 public class AddAdminTests : SampleIntegrationTest
 {
     private static readonly TenantId _tenantId = TenantId.New("test-tenant");
-    private static readonly IdentityId _adminId = IdentityId.New("test-admin");
 
     public AddAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -22,7 +20,7 @@ public class AddAdminTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenantId)
-        .AuthenticateAs(_adminId);
+        .AuthenticateAs(TestAgents.Admin);
 
     protected override async Task OnInitialization()
     {
@@ -35,7 +33,7 @@ public class AddAdminTests : SampleIntegrationTest
     {
         await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
             _tenantId,
-            async p => condition(await p.GetRolesForAgent(Agent.FromSingleIdentity(_adminId))));
+            async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }
 
     [Fact]

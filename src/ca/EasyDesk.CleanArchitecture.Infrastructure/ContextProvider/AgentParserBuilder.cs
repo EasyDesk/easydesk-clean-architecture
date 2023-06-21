@@ -5,32 +5,32 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
 public class AgentParserBuilder
 {
-    private readonly IDictionary<string, IdentityParserBuilder> _identities =
-        new Dictionary<string, IdentityParserBuilder>();
+    private readonly IDictionary<Realm, IdentityParserBuilder> _identities =
+        new Dictionary<Realm, IdentityParserBuilder>();
 
-    private readonly ISet<string> _requiredIdentities = new HashSet<string>();
+    private readonly ISet<Realm> _requiredIdentities = new HashSet<Realm>();
 
     public IdentityParserBuilder WithIdentity(
-        string name,
+        Realm realm,
         ClaimsPrincipalParser<IdentityId> id,
         bool required = true)
     {
         var builder = new IdentityParserBuilder(id);
-        _identities.Add(name, builder);
+        _identities.Add(realm, builder);
         if (required)
         {
-            _requiredIdentities.Add(name);
+            _requiredIdentities.Add(realm);
         }
         return builder;
     }
 
     public IdentityParserBuilder WithIdentity(
-        string name,
+        Realm realm,
         string idClaim,
         bool required = true)
     {
         return WithIdentity(
-            name,
+            realm,
             ClaimsPrincipalParsers.ForClaim(idClaim).Map(IdentityId.New),
             required);
     }
@@ -40,7 +40,7 @@ public class AgentParserBuilder
         var identityParsers = _identities.Select(x => (x.Key, x.Value.Build())).ToList();
         return claimsPrincipal =>
         {
-            var identities = new List<(string, Identity)>();
+            var identities = new List<(Realm, Identity)>();
             foreach (var (name, parser) in identityParsers)
             {
                 var parsedIdentity = parser(claimsPrincipal);
@@ -56,5 +56,5 @@ public class AgentParserBuilder
         };
     }
 
-    private bool IsRequired(string name) => _requiredIdentities.Contains(name);
+    private bool IsRequired(Realm realm) => _requiredIdentities.Contains(realm);
 }

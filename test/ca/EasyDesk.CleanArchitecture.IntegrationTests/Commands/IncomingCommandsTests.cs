@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
@@ -47,9 +46,8 @@ public class IncomingCommandsTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(tenantId));
 
         await WebService.WaitUntilTenantExists(tenantId);
-        var adminId = IdentityId.New("test-admin-asd");
         await Http.AddAdmin()
-            .AuthenticateAs(adminId)
+            .AuthenticateAs(TestAgents.Admin)
             .Tenant(tenantId)
             .Send()
             .EnsureSuccess();
@@ -61,14 +59,14 @@ public class IncomingCommandsTests : SampleIntegrationTest
                 DateOfBirth: new LocalDate(1996, 2, 2),
                 Residence: AddressDto.Create("unknown")))
             .Tenant(tenantId)
-            .AuthenticateAs(adminId)
+            .AuthenticateAs(TestAgents.Admin)
             .Send()
             .AsData();
 
         await Http
             .GetOwnedPets(person.Id)
             .Tenant(tenantId)
-            .AuthenticateAs(adminId)
+            .AuthenticateAs(TestAgents.Admin)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
@@ -81,13 +79,13 @@ public class IncomingCommandsTests : SampleIntegrationTest
         await Http
             .GetOwnedPets(person.Id)
             .Tenant(tenantId)
-            .AuthenticateAs(adminId)
+            .AuthenticateAs(TestAgents.Admin)
             .PollUntil(pets => !pets.Any())
             .EnsureSuccess();
 
         var response = await Http.GetPerson(person.Id)
             .Tenant(tenantId)
-            .AuthenticateAs(adminId)
+            .AuthenticateAs(TestAgents.Admin)
             .PollWhile(w => w.IsSuccess())
             .AsVerifiable();
 

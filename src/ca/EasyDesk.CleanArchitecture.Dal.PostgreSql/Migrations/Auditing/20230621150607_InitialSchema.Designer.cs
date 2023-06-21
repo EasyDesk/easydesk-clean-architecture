@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Auditing;
 
 [DbContext(typeof(AuditingContext))]
-[Migration("20230619095734_InitialSchema")]
+[Migration("20230621150607_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -74,7 +74,7 @@ partial class InitialSchema
                         b1.Property<long>("AuditRecordId")
                             .HasColumnType("bigint");
 
-                        b1.Property<string>("Name")
+                        b1.Property<string>("Realm")
                             .HasColumnType("text");
 
                         b1.Property<string>("Identity")
@@ -82,7 +82,7 @@ partial class InitialSchema
                             .HasMaxLength(1024)
                             .HasColumnType("character varying(1024)");
 
-                        b1.HasKey("AuditRecordId", "Name");
+                        b1.HasKey("AuditRecordId", "Realm");
 
                         b1.ToTable("AuditIdentities", "audit");
 
@@ -94,7 +94,7 @@ partial class InitialSchema
                                 b2.Property<long>("AuditRecordId")
                                     .HasColumnType("bigint");
 
-                                b2.Property<string>("Name")
+                                b2.Property<string>("Realm")
                                     .HasColumnType("text");
 
                                 b2.Property<string>("Key")
@@ -103,12 +103,12 @@ partial class InitialSchema
                                 b2.Property<string>("Value")
                                     .HasColumnType("text");
 
-                                b2.HasKey("AuditRecordId", "Name", "Key", "Value");
+                                b2.HasKey("AuditRecordId", "Realm", "Key", "Value");
 
                                 b2.ToTable("AuditIdentityAttributes", "audit");
 
                                 b2.WithOwner()
-                                    .HasForeignKey("AuditRecordId", "Name");
+                                    .HasForeignKey("AuditRecordId", "Realm");
                             });
 
                         b1.Navigation("IdentityAttributes");

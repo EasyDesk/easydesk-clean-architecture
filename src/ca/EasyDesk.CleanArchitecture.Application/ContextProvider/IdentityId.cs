@@ -15,13 +15,15 @@ public record IdentityId : IValue<IdentityId, string>
 
     public static implicit operator string(IdentityId identityId) => identityId.Value;
 
-    public static Option<IdentityId> TryNew(string value) =>
-        value.Length > MaxLength
+    public static Option<IdentityId> TryNew(string value)
+    {
+        return string.IsNullOrEmpty(value) || value.Length > MaxLength
             ? None
             : Some(new IdentityId(value));
+    }
 
     public static IdentityId New(string value) => TryNew(value)
-        .OrElseThrow(() => new ArgumentException($"Identity id length must be less than or equal to {MaxLength}.", nameof(value)));
+        .OrElseThrow(() => new ArgumentException($"'{value} is not a valid identity ID.", nameof(value)));
 
     public override string ToString() => Value;
 

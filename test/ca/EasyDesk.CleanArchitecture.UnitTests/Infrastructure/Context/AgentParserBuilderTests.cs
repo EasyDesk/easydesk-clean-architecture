@@ -7,12 +7,15 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Context;
 
 public class AgentParserBuilderTests
 {
+    private readonly Realm _realmA = Realm.New("realmA");
+    private readonly Realm _realmB = Realm.New("realmB");
+
     [Fact]
     public void ShouldParseSingleIdentities()
     {
         var identityId = IdentityId.New("some-id");
         var parser = ClaimsPrincipalParsers.ForAgent(x => x
-            .WithIdentity(Agent.DefaultIdentityName, ClaimTypes.NameIdentifier)
+            .WithIdentity(_realmA, ClaimTypes.NameIdentifier)
                 .WithAttribute("x", "x")
                 .WithAttribute("y", "y"));
 
@@ -29,7 +32,7 @@ public class AgentParserBuilderTests
             ("x", "x-value"),
             ("y", "y-value"));
 
-        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(identity));
+        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(_realmA, identity));
     }
 
     [Fact]
@@ -39,10 +42,10 @@ public class AgentParserBuilderTests
         var identityIdB = IdentityId.New("id-B");
         var parser = ClaimsPrincipalParsers.ForAgent(x =>
         {
-            x.WithIdentity("identityA", "idA")
+            x.WithIdentity(_realmA, "idA")
                 .WithAttribute("x", "x")
                 .WithAttribute("y", "y");
-            x.WithIdentity("identityB", "idB");
+            x.WithIdentity(_realmB, "idB");
         });
 
         var claimsIdentity = new ClaimsIdentity(new[]
@@ -61,8 +64,8 @@ public class AgentParserBuilderTests
         var identityB = Identity.Create(identityIdB);
 
         parser(claimsPrincipal).ShouldContain(Agent.FromIdentities(
-            ("identityA", identityA),
-            ("identityB", identityB)));
+            (_realmA, identityA),
+            (_realmB, identityB)));
     }
 
     [Fact]
@@ -71,10 +74,10 @@ public class AgentParserBuilderTests
         var identityIdA = IdentityId.New("id-A");
         var parser = ClaimsPrincipalParsers.ForAgent(x =>
         {
-            x.WithIdentity("identityA", "idA")
+            x.WithIdentity(_realmA, "idA")
                 .WithAttribute("x", "x")
                 .WithAttribute("y", "y");
-            x.WithIdentity("identityB", "idB", required: false);
+            x.WithIdentity(_realmB, "idB", required: false);
         });
 
         var claimsIdentity = new ClaimsIdentity(new[]
@@ -90,8 +93,7 @@ public class AgentParserBuilderTests
             ("x", "x-value"),
             ("y", "y-value"));
 
-        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(
-            identityA, name: "identityA"));
+        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(_realmA, identityA));
     }
 
     [Fact]
@@ -99,7 +101,7 @@ public class AgentParserBuilderTests
     {
         var identityId = IdentityId.New("some-id");
         var parser = ClaimsPrincipalParsers.ForAgent(x => x
-            .WithIdentity(Agent.DefaultIdentityName, ClaimTypes.NameIdentifier)
+            .WithIdentity(_realmA, ClaimTypes.NameIdentifier)
                 .WithAttribute("x", "x")
                 .WithAttribute("y", "y"));
 
@@ -114,7 +116,7 @@ public class AgentParserBuilderTests
             identityId,
             ("x", "x-value"));
 
-        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(identity));
+        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(_realmA, identity));
     }
 
     [Fact]
@@ -122,10 +124,10 @@ public class AgentParserBuilderTests
     {
         var parser = ClaimsPrincipalParsers.ForAgent(x =>
         {
-            x.WithIdentity("identityA", "idA", required: false)
+            x.WithIdentity(_realmA, "idA", required: false)
                 .WithAttribute("x", "x")
                 .WithAttribute("y", "y");
-            x.WithIdentity("identityB", "idB", required: false);
+            x.WithIdentity(_realmB, "idB", required: false);
         });
 
         var claimsIdentity = new ClaimsIdentity(new[]

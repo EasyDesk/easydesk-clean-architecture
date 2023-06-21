@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -20,7 +19,6 @@ public class CreatePetTests : SampleIntegrationTest
     private const int BulkQuantity = 200;
     private const string Nickname = "Rex";
     private static readonly TenantId _tenant = TenantId.New("test-tenant");
-    private static readonly IdentityId _adminId = IdentityId.New("dog-friendly-admin");
 
     public CreatePetTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -28,7 +26,7 @@ public class CreatePetTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
-        .AuthenticateAs(_adminId);
+        .AuthenticateAs(TestAgents.Admin);
 
     protected override async Task OnInitialization()
     {
@@ -162,7 +160,7 @@ public class CreatePetTests : SampleIntegrationTest
 
         var response = await Http
             .CreatePet(person.Id, new(Nickname))
-            .AuthenticateAs(IdentityId.New("non-admin-id"))
+            .AuthenticateAs(TestAgents.OtherUser)
             .Send()
             .AsVerifiable();
 

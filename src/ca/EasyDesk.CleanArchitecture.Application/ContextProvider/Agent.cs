@@ -5,9 +5,7 @@ namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
 public record Agent
 {
-    public const string DefaultIdentityName = "main";
-
-    public Agent(IImmutableDictionary<string, Identity> identities)
+    public Agent(IImmutableDictionary<Realm, Identity> identities)
     {
         if (identities.Count == 0)
         {
@@ -16,24 +14,32 @@ public record Agent
         Identities = identities;
     }
 
-    public IImmutableDictionary<string, Identity> Identities { get; }
+    public IImmutableDictionary<Realm, Identity> Identities { get; }
 
-    public Identity RequireIdentity(string name) => GetIdentity(name).OrElseThrow(() => new InvalidOperationException($"Missing required identity with name {name}."));
+    public Identity RequireIdentity(Realm realm) => GetIdentity(realm)
+        .OrElseThrow(() => new InvalidOperationException($"Missing required identity with name {realm}."));
 
-    public Option<Identity> GetIdentity(string name) => Identities.GetOption(name);
+    public Option<Identity> GetIdentity(Realm realm) => Identities.GetOption(realm);
 
-    public static Agent FromIdentities(IEnumerable<(string, Identity)> identities) =>
+    public static Agent FromIdentities(IEnumerable<(Realm, Identity)> identities) =>
         new(identities.ToEquatableMap());
 
-    public static Agent FromIdentities(params (string, Identity)[] identities) =>
+    public static Agent FromIdentities(params (Realm, Identity)[] identities) =>
         FromIdentities(identities.AsEnumerable());
 
-    public static Agent FromSingleIdentity(Identity identity, string name = DefaultIdentityName) =>
-        FromIdentities(new[] { (name, identity) });
+    public static Agent FromSingleIdentity(Realm realm, Identity identity) =>
+        FromIdentities(new[] { (realm, identity) });
 
-    public static Agent FromSingleIdentity(IdentityId id, string name = DefaultIdentityName) =>
-        FromSingleIdentity(new Identity(id), name);
+    public static Agent FromSingleIdentity(Realm realm, IdentityId id) =>
+        FromSingleIdentity(realm, new Identity(id));
 
-    public static Agent FromSingleIdentity(IdentityId id, AttributeCollection attributes, string name = DefaultIdentityName) =>
-        FromSingleIdentity(new Identity(id, attributes), name);
+    public static Agent FromSingleIdentity(Realm realm, IdentityId id, AttributeCollection attributes) =>
+        FromSingleIdentity(realm, new Identity(id, attributes));
+
+    public static Agent Construct(Action<AgentBuilder> configure)
+    {
+        var builder = new AgentBuilder();
+        configure(builder);
+        return builder.Build();
+    }
 }

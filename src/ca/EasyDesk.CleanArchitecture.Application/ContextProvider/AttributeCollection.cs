@@ -4,15 +4,15 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
-public record AttributeCollection(IImmutableDictionary<string, IImmutableSet<string>> Attributes)
+public record AttributeCollection(IImmutableDictionary<string, IImmutableSet<string>> AttributeMap)
 {
     public static AttributeCollection Empty { get; } = new(Map<string, IImmutableSet<string>>());
 
-    public IImmutableSet<string> GetValues(string key) => Attributes
+    public IImmutableSet<string> GetValues(string key) => AttributeMap
         .GetOption(key)
         .OrElseGet(() => Set<string>());
 
-    public Option<string> GetSingle(string key) => Attributes
+    public Option<string> GetSingle(string key) => AttributeMap
         .GetOption(key)
         .FlatMap(v => v.FirstOption());
 

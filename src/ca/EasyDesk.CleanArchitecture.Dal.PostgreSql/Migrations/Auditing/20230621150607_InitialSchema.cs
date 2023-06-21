@@ -40,12 +40,12 @@ public partial class InitialSchema : Migration
             columns: table => new
             {
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
-                Name = table.Column<string>(type: "text", nullable: false),
+                Realm = table.Column<string>(type: "text", nullable: false),
                 Identity = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AuditIdentities", x => new { x.AuditRecordId, x.Name });
+                table.PrimaryKey("PK_AuditIdentities", x => new { x.AuditRecordId, x.Realm });
                 table.ForeignKey(
                     name: "FK_AuditIdentities_AuditRecords_AuditRecordId",
                     column: x => x.AuditRecordId,
@@ -82,19 +82,19 @@ public partial class InitialSchema : Migration
             columns: table => new
             {
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
-                Name = table.Column<string>(type: "text", nullable: false),
+                Realm = table.Column<string>(type: "text", nullable: false),
                 Key = table.Column<string>(type: "text", nullable: false),
                 Value = table.Column<string>(type: "text", nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AuditIdentityAttributes", x => new { x.AuditRecordId, x.Name, x.Key, x.Value });
+                table.PrimaryKey("PK_AuditIdentityAttributes", x => new { x.AuditRecordId, x.Realm, x.Key, x.Value });
                 table.ForeignKey(
-                    name: "FK_AuditIdentityAttributes_AuditIdentities_AuditRecordId_Name",
-                    columns: x => new { x.AuditRecordId, x.Name },
+                    name: "FK_AuditIdentityAttributes_AuditIdentities_AuditRecordId_Realm",
+                    columns: x => new { x.AuditRecordId, x.Realm },
                     principalSchema: "audit",
                     principalTable: "AuditIdentities",
-                    principalColumns: new[] { "AuditRecordId", "Name" },
+                    principalColumns: new[] { "AuditRecordId", "Realm" },
                     onDelete: ReferentialAction.Cascade);
             });
 

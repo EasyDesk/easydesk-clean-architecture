@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
@@ -22,7 +21,7 @@ public class IncomingEventTests : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req)
     {
-        req.Tenant(_tenant).AuthenticateAs(IdentityId.New("an-admin"));
+        req.Tenant(_tenant).AuthenticateAs(TestAgents.Admin);
     }
 
     protected override async Task OnInitialization()

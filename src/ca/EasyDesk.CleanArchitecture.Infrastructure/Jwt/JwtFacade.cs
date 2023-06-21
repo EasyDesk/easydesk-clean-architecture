@@ -13,24 +13,25 @@ public sealed class JwtFacade
         _clock = clock;
     }
 
-    public string Create(IEnumerable<Claim> claims, Action<JwtGenerationBuilder> configure) =>
-        Create(claims, out _, configure);
+    public string Create(ClaimsIdentity claimsIdentity, Action<JwtGenerationBuilder> configure) =>
+        Create(claimsIdentity, out _, configure);
 
-    public string Create(IEnumerable<Claim> claims, out JwtSecurityToken token, Action<JwtGenerationBuilder> configure)
+    public string Create(ClaimsIdentity claimsIdentity, out JwtSecurityToken token, Action<JwtGenerationBuilder> configure)
     {
-        var builder = new JwtGenerationBuilder(_clock.GetCurrentInstant()).WithClaims(claims);
+        var builder = new JwtGenerationBuilder(_clock.GetCurrentInstant());
         configure(builder);
         var descriptor = builder.Build();
+        descriptor.Subject = claimsIdentity;
 
         var handler = new JwtSecurityTokenHandler();
         token = handler.CreateJwtSecurityToken(descriptor);
         return handler.WriteToken(token);
     }
 
-    public Option<ClaimsPrincipal> Validate(string jwt, Action<JwtValidationBuilder> configure) =>
+    public Option<ClaimsIdentity> Validate(string jwt, Action<JwtValidationBuilder> configure) =>
         Validate(jwt, out _, configure);
 
-    public Option<ClaimsPrincipal> Validate(string jwt, out JwtSecurityToken? token, Action<JwtValidationBuilder> configure)
+    public Option<ClaimsIdentity> Validate(string jwt, out JwtSecurityToken? token, Action<JwtValidationBuilder> configure)
     {
         var builder = new JwtValidationBuilder(_clock);
         configure(builder);
@@ -41,7 +42,7 @@ public sealed class JwtFacade
         {
             var principal = handler.ValidateToken(jwt, parameters, out var genericToken);
             token = genericToken as JwtSecurityToken;
-            return Some(principal);
+            return Some(principal.Identities.Single());
         }
         catch
         {

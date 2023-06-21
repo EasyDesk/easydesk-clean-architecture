@@ -1,6 +1,5 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
@@ -9,7 +8,6 @@ using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.Dal.SqlServer;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
@@ -29,7 +27,6 @@ using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Rebus.Config;
-using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,11 +38,6 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddApiVersioning()
         .AddMultitenancy(options => options
             .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
-        .SetAgentParser(agent => agent
-            .WithIdentity("main", ClaimTypes.NameIdentifier)
-                .WithAttribute(StandardAttributes.FirstName, ClaimTypes.Name)
-                .WithAttribute(StandardAttributes.LastName, ClaimTypes.Surname)
-                .WithAttribute(StandardAttributes.Email, ClaimTypes.Email))
         .AddAuditing()
         .AddAuthentication(options => options
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
@@ -98,13 +90,13 @@ else
 
 await app.SetupDevelopment(async (services, logger) =>
 {
-    var adminId = IdentityId.FromRandomGuid();
+    var admin = Agent.FromSingleIdentity(Agents.MainRealm, IdentityId.FromRandomGuid());
     var tenantId = TenantId.FromRandomGuid();
-    var dispatcher = services.SetupSelfScopedRequestDispatcher(adminId, tenantId);
+    var dispatcher = services.SetupSelfScopedRequestDispatcher(admin, tenantId);
     await dispatcher.Dispatch(new CreateTenant(tenantId));
     await dispatcher.Dispatch(new AddAdmin());
-    logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, adminId);
-    services.LogForgedJwtForIdentity(adminId.ToString());
+    logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);
+    services.LogForgedJwt(admin);
 });
 
 app.UseHttpsRedirection();

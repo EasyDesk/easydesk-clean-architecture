@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi;
 using EasyDesk.Commons.Collections;
@@ -12,7 +14,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NodaTime;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
@@ -56,10 +57,7 @@ public static class JwtAuthenticationExtensions
         return options.AddScheme(schemeName, new JwtAuthenticationProvider(configureOptions));
     }
 
-    public static void LogForgedJwtForIdentity(this IServiceProvider serviceProvider, string identityId, string? schemeName = null) =>
-        serviceProvider.LogForgedJwt(new[] { new Claim(ClaimTypes.NameIdentifier, identityId) }, schemeName);
-
-    public static void LogForgedJwt(this IServiceProvider serviceProvider, IEnumerable<Claim> claims, string? schemeName = null)
+    public static void LogForgedJwt(this IServiceProvider serviceProvider, Agent agent, string? schemeName = null)
     {
         var authModuleOptions = serviceProvider.GetRequiredService<AuthenticationModuleOptions>();
         var scheme = schemeName ?? authModuleOptions.Schemes
@@ -72,7 +70,7 @@ public static class JwtAuthenticationExtensions
         var jwtConfiguration = serviceProvider.GetJwtConfigurationFromAuthScheme(scheme);
         var logger = serviceProvider.GetRequiredService<ILogger<JwtAuthenticationProvider>>();
         var jwtFacade = serviceProvider.GetRequiredService<JwtFacade>();
-        var jwt = jwtFacade.Create(claims, jwtConfiguration.ConfigureBuilder);
+        var jwt = jwtFacade.Create(agent.ToClaimsIdentity(), jwtConfiguration.ConfigureBuilder);
         logger.LogWarning("Forged JWT: {jwt}", jwt);
     }
 

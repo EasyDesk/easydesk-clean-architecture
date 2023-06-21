@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
@@ -21,7 +20,6 @@ internal class IntegrationTestExample : SampleIntegrationTest
     private const int PageSize = 10;
 
     private static readonly TenantId _tenant = TenantId.New("test-tenant-test");
-    private static readonly IdentityId _adminId = IdentityId.New("test-admin-test");
 
     public IntegrationTestExample(SampleAppTestsFixture factory) : base(factory)
     {
@@ -35,7 +33,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
-        .AuthenticateAs(_adminId);
+        .AuthenticateAs(TestAgents.Admin);
 
     protected override async Task OnInitialization()
     {

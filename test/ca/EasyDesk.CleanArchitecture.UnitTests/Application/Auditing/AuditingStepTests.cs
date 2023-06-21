@@ -105,11 +105,12 @@ public class AuditingStepTests
         var identityId = IdentityId.New("identity-id");
         return Matrix.Builder()
             .OptionAxis(
-                Agent.FromSingleIdentity(identityId),
-                Agent.FromSingleIdentity(identityId, AttributeCollection.FromFlatKeyValuePairs(
-                    ("name", "john"),
-                    ("role", "admin"),
-                    ("role", "user"))))
+                Agent.Construct(x => x.AddIdentity(Realm.Default, identityId)),
+                Agent.Construct(x => x
+                    .AddIdentity(Realm.Default, identityId)
+                    .AddAttribute("name", "john")
+                    .AddAttribute("role", "admin")
+                    .AddAttribute("role", "user")))
             .ResultAxis<Nothing>(builder => builder.Failure(TestError.Create()))
             .Build();
     }

@@ -48,7 +48,7 @@ internal class AuditRecordModel : IMultitenantEntity
 
             builder.OwnsMany(x => x.Identities, child =>
             {
-                child.HasKey(x => new { x.AuditRecordId, x.Name });
+                child.HasKey(x => new { x.AuditRecordId, x.Realm });
 
                 child.Property(x => x.Identity)
                     .HasMaxLength(IdentityId.MaxLength);
@@ -57,9 +57,9 @@ internal class AuditRecordModel : IMultitenantEntity
 
                 child.OwnsMany(x => x.IdentityAttributes, grandChild =>
                 {
-                    grandChild.HasKey(x => new { x.AuditRecordId, x.Name, x.Key, x.Value });
+                    grandChild.HasKey(x => new { x.AuditRecordId, x.Realm, x.Key, x.Value });
 
-                    grandChild.WithOwner().HasForeignKey(x => new { x.AuditRecordId, x.Name });
+                    grandChild.WithOwner().HasForeignKey(x => new { x.AuditRecordId, x.Realm });
                 });
             });
         }
@@ -104,7 +104,7 @@ internal class AuditRecordModel : IMultitenantEntity
             Description.AsOption(),
             Some(Identities)
                 .Filter(identities => identities.Any())
-                .Map(identities => Agent.FromIdentities(identities.Select(i => (i.Name, i.ToIdentity())))),
+                .Map(identities => Agent.FromIdentities(identities.Select(i => (Realm.New(i.Realm), i.ToIdentity())))),
             Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
             Success,
             Instant);

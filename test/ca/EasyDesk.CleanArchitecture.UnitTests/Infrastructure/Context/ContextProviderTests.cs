@@ -8,13 +8,12 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Context;
 
 public class ContextProviderTests
 {
-    private const string IdentityName = "main";
-    private static readonly IdentityId _identity = IdentityId.New("some-id");
+    private static readonly Agent _agent = Agent.FromSingleIdentity(Realm.Default, IdentityId.New("some-id"));
 
     private readonly BasicContextProvider _sut;
     private readonly HttpContext _httpContext = new DefaultHttpContext();
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ClaimsPrincipalParser<Agent> _agentParser = ClaimsPrincipalParsers.ForDefaultAgent();
+    private readonly ClaimsPrincipalParser<Agent> _agentParser = ClaimsPrincipalParsers.DefaultAgentParser();
 
     public ContextProviderTests()
     {
@@ -27,11 +26,8 @@ public class ContextProviderTests
     [Fact]
     public void ShouldDetectAuthentication_FromHttpContextAccessor()
     {
-        _httpContext.SetupAuthenticatedIdentity(_identity);
+        _httpContext.SetupAuthenticatedAgent(_agent);
 
-        _sut.GetAgent().IsPresent.ShouldBeTrue();
-
-        var agent = Agent.FromSingleIdentity(_identity, name: IdentityName);
-        _sut.CurrentContext.ShouldBe(new ContextInfo.AuthenticatedRequest(agent));
+        _sut.CurrentContext.ShouldBe(new ContextInfo.AuthenticatedRequest(_agent));
     }
 }
