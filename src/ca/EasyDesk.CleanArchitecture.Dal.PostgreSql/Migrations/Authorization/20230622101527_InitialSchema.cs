@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Authorization;
 
 /// <inheritdoc />
 public partial class InitialSchema : Migration
@@ -18,7 +18,7 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                Id = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                Id = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {
@@ -30,10 +30,11 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                Role = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                Identity = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                TenantFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                Role = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                Identity = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                Realm = table.Column<string>(type: "text", nullable: false),
+                TenantFk = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true)
             },
             constraints: table =>
             {
@@ -52,9 +53,9 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                RoleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                PermissionName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
             },
             constraints: table =>
             {

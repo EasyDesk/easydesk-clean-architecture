@@ -12,17 +12,20 @@ internal class IdentityRoleModel : IMultitenantEntity
 {
     required public string Role { get; set; }
 
+    required public string Realm { get; set; }
+
     required public string Identity { get; set; }
 
     public string? Tenant { get; set; }
 
     public string? TenantFk { get; set; }
 
-    public static IdentityRoleModel Create(string identity, string role) =>
+    public static IdentityRoleModel Create(Identity identity, string role) =>
         new()
         {
-            Identity = identity,
-            Role = role
+            Realm = identity.Realm,
+            Identity = identity.Id,
+            Role = role,
         };
 
     public sealed class Configuration : IEntityTypeConfiguration<IdentityRoleModel>

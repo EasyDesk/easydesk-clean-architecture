@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
@@ -20,17 +19,21 @@ internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentity
 
     private IQueryable<IdentityRoleModel> RolesByAgent(Agent agent)
     {
-        var identities = agent.Identities.Values.Select(x => x.Id.Value);
+        var predicate = agent
+            .Identities
+            .Values
+            .Select(i => PredicateBuilder.Create<IdentityRoleModel>(r => r.Identity == i.Id && r.Realm == i.Realm))
+            .Aggregate(PredicateBuilder.Or);
         return _context
             .IdentityRoles
-            .Where(u => identities.Contains(u.Identity));
+            .Where(predicate);
     }
 
-    private IQueryable<IdentityRoleModel> RolesByIdentity(IdentityId id)
+    private IQueryable<IdentityRoleModel> RolesByIdentity(Identity identity)
     {
         return _context
             .IdentityRoles
-            .Where(u => u.Identity == id);
+            .Where(u => u.Identity == identity.Id && u.Realm == identity.Realm);
     }
 
     public async Task<IImmutableSet<Role>> GetRolesForAgent(Agent agent)
@@ -40,24 +43,24 @@ internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentity
             .ToEquatableSetAsync();
     }
 
-    public async Task GrantRolesToIdentity(IdentityId identityId, IEnumerable<Role> roles)
+    public async Task GrantRolesToIdentity(Identity identity, IEnumerable<Role> roles)
     {
-        var currentRoleIds = await RolesByIdentity(identityId)
+        var currentRoleIds = await RolesByIdentity(identity)
             .Select(r => r.Role)
             .ToListAsync();
 
         var rolesToBeAdded = RoleIds(roles)
             .Except(currentRoleIds)
-            .Select(role => IdentityRoleModel.Create(identityId, role));
+            .Select(role => IdentityRoleModel.Create(identity, role));
 
         _context.IdentityRoles.AddRange(rolesToBeAdded);
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeRolesToIdentity(IdentityId id, IEnumerable<Role> roles)
+    public async Task RevokeRolesToIdentity(Identity identity, IEnumerable<Role> roles)
     {
         var roleIds = RoleIds(roles);
-        var rolesToBeRemoved = await RolesByIdentity(id)
+        var rolesToBeRemoved = await RolesByIdentity(identity)
             .Where(x => roleIds.Contains(x.Role))
             .ToListAsync();
 
@@ -65,16 +68,16 @@ internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentity
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeAllRolesToIdentity(IdentityId id)
+    public async Task RevokeAllRolesToIdentity(Identity identity)
     {
-        var rolesToBeRemoved = await RolesByIdentity(id)
+        var rolesToBeRemoved = await RolesByIdentity(identity)
             .ToListAsync();
 
         _context.IdentityRoles.RemoveRange(rolesToBeRemoved);
         await _context.SaveChangesAsync();
     }
 
-    private IEnumerable<string> RoleIds(IEnumerable<Role> roles) => roles.Select(ValueWrapperUtils.ToValue);
+    private IEnumerable<string> RoleIds(IEnumerable<Role> roles) => roles.Select(x => x.Value);
 
     public async Task<IImmutableSet<Permission>> MapRolesToPermissions(IEnumerable<Role> roles)
     {

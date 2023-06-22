@@ -4,11 +4,13 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
 public class IdentityParserBuilder
 {
+    private readonly Realm _realm;
     private readonly ClaimsPrincipalParser<IdentityId> _id;
     private readonly List<(string Name, ClaimsPrincipalParser<string> Parser)> _attributes = new();
 
-    public IdentityParserBuilder(ClaimsPrincipalParser<IdentityId> id)
+    public IdentityParserBuilder(Realm realm, ClaimsPrincipalParser<IdentityId> id)
     {
+        _realm = realm;
         _id = id;
     }
 
@@ -26,7 +28,7 @@ public class IdentityParserBuilder
         return _id(claimsPrincipal).Map(i =>
         {
             var flatAttributes = _attributes.SelectMany(a => a.Parser(claimsPrincipal).Map(x => (a.Name, x)));
-            return new Identity(i, AttributeCollection.FromFlatKeyValuePairs(flatAttributes));
+            return new Identity(_realm, i, AttributeCollection.FromFlatKeyValuePairs(flatAttributes));
         });
     };
 }

@@ -2,16 +2,16 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
 
 [DbContext(typeof(AuthorizationContext))]
-[Migration("20230614093353_InitialSchema")]
+[Migration("20230622101531_InitialSchema")]
 partial class InitialSchema
 {
     /// <inheritdoc />
@@ -20,30 +20,34 @@ partial class InitialSchema
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("auth")
-            .HasAnnotation("ProductVersion", "7.0.5")
-            .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            .HasAnnotation("ProductVersion", "7.0.7")
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.IdentityRoleModel", b =>
             {
                 b.Property<string>("Identity")
                     .HasMaxLength(1024)
-                    .HasColumnType("character varying(1024)");
+                    .HasColumnType("nvarchar(1024)");
 
                 b.Property<string>("Role")
                     .HasMaxLength(100)
-                    .HasColumnType("character varying(100)");
+                    .HasColumnType("nvarchar(100)");
 
                 b.Property<string>("Tenant")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("nvarchar(256)");
+
+                b.Property<string>("Realm")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
 
                 b.Property<string>("TenantFk")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("nvarchar(256)");
 
                 b.HasKey("Identity", "Role", "Tenant");
 
@@ -58,16 +62,16 @@ partial class InitialSchema
             {
                 b.Property<string>("RoleId")
                     .HasMaxLength(100)
-                    .HasColumnType("character varying(100)");
+                    .HasColumnType("nvarchar(100)");
 
                 b.Property<string>("PermissionName")
                     .HasMaxLength(100)
-                    .HasColumnType("character varying(100)");
+                    .HasColumnType("nvarchar(100)");
 
                 b.Property<string>("Tenant")
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("nvarchar(256)");
 
                 b.HasKey("RoleId", "PermissionName", "Tenant");
 
@@ -80,7 +84,7 @@ partial class InitialSchema
             {
                 b.Property<string>("Id")
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("nvarchar(256)");
 
                 b.HasKey("Id");
 

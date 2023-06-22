@@ -28,11 +28,12 @@ public class AgentParserBuilderTests
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
         var identity = Identity.Create(
+            _realmA,
             identityId,
             ("x", "x-value"),
             ("y", "y-value"));
 
-        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(_realmA, identity));
+        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(identity));
     }
 
     [Fact]
@@ -58,14 +59,15 @@ public class AgentParserBuilderTests
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
         var identityA = Identity.Create(
+            _realmA,
             identityIdA,
             ("x", "x-value"),
             ("y", "y-value"));
-        var identityB = Identity.Create(identityIdB);
+        var identityB = Identity.Create(
+            _realmB,
+            identityIdB);
 
-        parser(claimsPrincipal).ShouldContain(Agent.FromIdentities(
-            (_realmA, identityA),
-            (_realmB, identityB)));
+        parser(claimsPrincipal).ShouldContain(Agent.FromIdentities(identityA, identityB));
     }
 
     [Fact]
@@ -89,11 +91,12 @@ public class AgentParserBuilderTests
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
         var identityA = Identity.Create(
+            _realmA,
             identityIdA,
             ("x", "x-value"),
             ("y", "y-value"));
 
-        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(_realmA, identityA));
+        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(identityA));
     }
 
     [Fact]
@@ -113,10 +116,11 @@ public class AgentParserBuilderTests
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
         var identity = Identity.Create(
+            _realmA,
             identityId,
             ("x", "x-value"));
 
-        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(_realmA, identity));
+        parser(claimsPrincipal).ShouldContain(Agent.FromSingleIdentity(identity));
     }
 
     [Fact]

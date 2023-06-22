@@ -71,7 +71,7 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
                         b1.Property<long>("AuditRecordId")
                             .HasColumnType("bigint");
 
-                        b1.Property<string>("Realm")
+                        b1.Property<string>("IdentityRealm")
                             .HasColumnType("text");
 
                         b1.Property<string>("Identity")
@@ -79,7 +79,7 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
                             .HasMaxLength(1024)
                             .HasColumnType("character varying(1024)");
 
-                        b1.HasKey("AuditRecordId", "Realm");
+                        b1.HasKey("AuditRecordId", "IdentityRealm");
 
                         b1.ToTable("AuditIdentities", "audit");
 

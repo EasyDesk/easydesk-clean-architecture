@@ -2,11 +2,13 @@
 
 public class IdentityBuilder
 {
+    private readonly Realm _realm;
     private readonly IdentityId _id;
     private readonly ISet<(string, string)> _attributes = new HashSet<(string, string)>();
 
-    public IdentityBuilder(IdentityId id)
+    public IdentityBuilder(Realm realm, IdentityId id)
     {
+        _realm = realm;
         _id = id;
     }
 
@@ -16,5 +18,5 @@ public class IdentityBuilder
         return this;
     }
 
-    public Identity Build() => new(_id, AttributeCollection.FromFlatKeyValuePairs(_attributes));
+    public Identity Build() => new(_realm, _id, AttributeCollection.FromFlatKeyValuePairs(_attributes));
 }

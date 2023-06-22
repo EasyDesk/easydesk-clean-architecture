@@ -7,13 +7,13 @@ internal class AuditIdentityModel
 {
     public long AuditRecordId { get; set; }
 
-    required public string Realm { get; set; }
+    required public string IdentityRealm { get; set; }
 
     required public string Identity { get; set; }
 
     public ICollection<AuditIdentityAttributeModel> IdentityAttributes { get; set; } = new HashSet<AuditIdentityAttributeModel>();
 
-    public Identity ToIdentity() => new(IdentityId.New(Identity), CreateAttributeCollection());
+    public Identity ToIdentity() => new(Realm.New(IdentityRealm), IdentityId.New(Identity), CreateAttributeCollection());
 
     private AttributeCollection CreateAttributeCollection() =>
         AttributeCollection.FromFlatKeyValuePairs(IdentityAttributes.Select(a => (a.Key, a.Value)));
@@ -23,7 +23,7 @@ internal class AuditIdentityModel
         var model = new AuditIdentityModel
         {
             Identity = identity.Id,
-            Realm = realm,
+            IdentityRealm = realm,
         };
 
         identity

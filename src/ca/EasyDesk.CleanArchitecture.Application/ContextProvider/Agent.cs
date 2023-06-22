@@ -21,20 +21,20 @@ public record Agent
 
     public Option<Identity> GetIdentity(Realm realm) => Identities.GetOption(realm);
 
-    public static Agent FromIdentities(IEnumerable<(Realm, Identity)> identities) =>
-        new(identities.ToEquatableMap());
+    public static Agent FromIdentities(IEnumerable<Identity> identities) =>
+        new(identities.ToEquatableMap(x => x.Realm, x => x));
 
-    public static Agent FromIdentities(params (Realm, Identity)[] identities) =>
+    public static Agent FromIdentities(params Identity[] identities) =>
         FromIdentities(identities.AsEnumerable());
 
-    public static Agent FromSingleIdentity(Realm realm, Identity identity) =>
-        FromIdentities(new[] { (realm, identity) });
+    public static Agent FromSingleIdentity(Identity identity) =>
+        FromIdentities(identity);
 
     public static Agent FromSingleIdentity(Realm realm, IdentityId id) =>
-        FromSingleIdentity(realm, new Identity(id));
+        FromSingleIdentity(new Identity(realm, id));
 
     public static Agent FromSingleIdentity(Realm realm, IdentityId id, AttributeCollection attributes) =>
-        FromSingleIdentity(realm, new Identity(id, attributes));
+        FromSingleIdentity(new Identity(realm, id, attributes));
 
     public static Agent Construct(Action<AgentBuilder> configure)
     {

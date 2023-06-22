@@ -49,10 +49,10 @@ public static class AgentExtensions
     }
 
     public static Agent ConvertClaimToAgent(AgentClaimDto claim) =>
-        Agent.FromIdentities(claim.Select(x => (Realm.New(x.Key), ConvertClaimToIdentity(x.Value))));
+        Agent.FromIdentities(claim.Select(x => ConvertClaimToIdentity(x.Value, x.Key)));
 
-    public static Identity ConvertClaimToIdentity(IdentityClaimDto claim) =>
-        new(IdentityId.New(claim.Id), new(claim.Attributes.ToEquatableMap(x => x.Key, x => x.Value.ToEquatableSet())));
+    public static Identity ConvertClaimToIdentity(IdentityClaimDto claim, string realm) =>
+        new(Realm.New(realm), IdentityId.New(claim.Id), new(claim.Attributes.ToEquatableMap(x => x.Key, x => x.Value.ToEquatableSet())));
 
     private static string RequireClaim(this ClaimsIdentity claimsIdentity, string claimType)
     {

@@ -40,12 +40,12 @@ public partial class InitialSchema : Migration
             columns: table => new
             {
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
-                Realm = table.Column<string>(type: "text", nullable: false),
+                IdentityRealm = table.Column<string>(type: "text", nullable: false),
                 Identity = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_AuditIdentities", x => new { x.AuditRecordId, x.Realm });
+                table.PrimaryKey("PK_AuditIdentities", x => new { x.AuditRecordId, x.IdentityRealm });
                 table.ForeignKey(
                     name: "FK_AuditIdentities_AuditRecords_AuditRecordId",
                     column: x => x.AuditRecordId,
@@ -94,7 +94,7 @@ public partial class InitialSchema : Migration
                     columns: x => new { x.AuditRecordId, x.Realm },
                     principalSchema: "audit",
                     principalTable: "AuditIdentities",
-                    principalColumns: new[] { "AuditRecordId", "Realm" },
+                    principalColumns: new[] { "AuditRecordId", "IdentityRealm" },
                     onDelete: ReferentialAction.Cascade);
             });
 

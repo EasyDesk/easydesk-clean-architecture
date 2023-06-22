@@ -5,18 +5,18 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
 public interface IIdentityRolesManager
 {
-    Task GrantRolesToIdentity(IdentityId id, IEnumerable<Role> roles);
+    Task GrantRolesToIdentity(Identity identity, IEnumerable<Role> roles);
 
-    Task RevokeRolesToIdentity(IdentityId id, IEnumerable<Role> roles);
+    Task RevokeRolesToIdentity(Identity identity, IEnumerable<Role> roles);
 
-    Task RevokeAllRolesToIdentity(IdentityId id);
+    Task RevokeAllRolesToIdentity(Identity identity);
 }
 
 public static class IdentityRolesManagerExtensions
 {
-    public static Task GrantRolesToIdentity(this IIdentityRolesManager manager, IdentityId id, params Role[] roles) =>
-        manager.GrantRolesToIdentity(id, roles.AsEnumerable());
+    public static Task GrantRolesToIdentity(this IIdentityRolesManager manager, Identity identity, params Role[] roles) =>
+        manager.GrantRolesToIdentity(identity, roles.AsEnumerable());
 
-    public static Task RevokeRolesToIdentity(this IIdentityRolesManager manager, IdentityId id, params Role[] roles) =>
-        manager.RevokeRolesToIdentity(id, roles.AsEnumerable());
+    public static Task RevokeRolesToIdentity(this IIdentityRolesManager manager, Identity identity, params Role[] roles) =>
+        manager.RevokeRolesToIdentity(identity, roles.AsEnumerable());
 }

@@ -15,7 +15,7 @@ public class AgentParserBuilder
         ClaimsPrincipalParser<IdentityId> id,
         bool required = true)
     {
-        var builder = new IdentityParserBuilder(id);
+        var builder = new IdentityParserBuilder(realm, id);
         _identities.Add(realm, builder);
         if (required)
         {
@@ -40,7 +40,7 @@ public class AgentParserBuilder
         var identityParsers = _identities.Select(x => (x.Key, x.Value.Build())).ToList();
         return claimsPrincipal =>
         {
-            var identities = new List<(Realm, Identity)>();
+            var identities = new List<Identity>();
             foreach (var (name, parser) in identityParsers)
             {
                 var parsedIdentity = parser(claimsPrincipal);
@@ -48,7 +48,7 @@ public class AgentParserBuilder
                 {
                     return None;
                 }
-                parsedIdentity.IfPresent(i => identities.Add((name, i)));
+                parsedIdentity.IfPresent(i => identities.Add(i));
             }
             return Some(identities)
                 .Filter(i => i.Any())

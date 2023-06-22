@@ -8,7 +8,7 @@ public class AgentBuilder
 
     public IdentityBuilder AddIdentity(Realm realm, IdentityId id)
     {
-        var identityBuilder = new IdentityBuilder(id);
+        var identityBuilder = new IdentityBuilder(realm, id);
         _identities.Add(realm, identityBuilder);
         return identityBuilder;
     }
@@ -19,6 +19,6 @@ public class AgentBuilder
         {
             throw new InvalidOperationException("An agent must have at least one identity.");
         }
-        return Agent.FromIdentities(_identities.Select(x => (x.Key, x.Value.Build())));
+        return Agent.FromIdentities(_identities.Select(x => x.Value.Build()));
     }
 }
