@@ -29,11 +29,11 @@ internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentity
             .Where(predicate);
     }
 
-    private IQueryable<IdentityRoleModel> RolesByIdentity(Identity identity)
+    private IQueryable<IdentityRoleModel> RolesByIdentity(Realm realm, IdentityId id)
     {
         return _context
             .IdentityRoles
-            .Where(u => u.Identity == identity.Id && u.Realm == identity.Realm);
+            .Where(u => u.Identity == id && u.Realm == realm);
     }
 
     public async Task<IImmutableSet<Role>> GetRolesForAgent(Agent agent)
@@ -43,24 +43,24 @@ internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentity
             .ToEquatableSetAsync();
     }
 
-    public async Task GrantRolesToIdentity(Identity identity, IEnumerable<Role> roles)
+    public async Task GrantRoles(Realm realm, IdentityId id, IEnumerable<Role> roles)
     {
-        var currentRoleIds = await RolesByIdentity(identity)
+        var currentRoleIds = await RolesByIdentity(realm, id)
             .Select(r => r.Role)
             .ToListAsync();
 
         var rolesToBeAdded = RoleIds(roles)
             .Except(currentRoleIds)
-            .Select(role => IdentityRoleModel.Create(identity, role));
+            .Select(role => IdentityRoleModel.Create(realm, id, role));
 
         _context.IdentityRoles.AddRange(rolesToBeAdded);
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeRolesToIdentity(Identity identity, IEnumerable<Role> roles)
+    public async Task RevokeRoles(Realm realm, IdentityId id, IEnumerable<Role> roles)
     {
         var roleIds = RoleIds(roles);
-        var rolesToBeRemoved = await RolesByIdentity(identity)
+        var rolesToBeRemoved = await RolesByIdentity(realm, id)
             .Where(x => roleIds.Contains(x.Role))
             .ToListAsync();
 
@@ -68,9 +68,9 @@ internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentity
         await _context.SaveChangesAsync();
     }
 
-    public async Task RevokeAllRolesToIdentity(Identity identity)
+    public async Task RevokeAllRoles(Realm realm, IdentityId id)
     {
-        var rolesToBeRemoved = await RolesByIdentity(identity)
+        var rolesToBeRemoved = await RolesByIdentity(realm, id)
             .ToListAsync();
 
         _context.IdentityRoles.RemoveRange(rolesToBeRemoved);

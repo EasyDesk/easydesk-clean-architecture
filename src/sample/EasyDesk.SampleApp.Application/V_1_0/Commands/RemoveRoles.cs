@@ -25,7 +25,7 @@ public class RemoveRolesHandler : IHandler<RemoveRoles>
 
     public async Task<Result<Nothing>> Handle(RemoveRoles request)
     {
-        await _identityRolesManager.RevokeAllRolesToIdentity(_contextProvider.RequireAgent().MainIdentity());
+        await _identityRolesManager.RevokeAllRoles(_contextProvider.RequireAgent().MainIdentity());
         return Ok;
     }
 }

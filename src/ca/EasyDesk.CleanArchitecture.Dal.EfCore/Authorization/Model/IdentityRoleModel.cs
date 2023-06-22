@@ -20,11 +20,11 @@ internal class IdentityRoleModel : IMultitenantEntity
 
     public string? TenantFk { get; set; }
 
-    public static IdentityRoleModel Create(Identity identity, string role) =>
+    public static IdentityRoleModel Create(Realm realm, IdentityId id, string role) =>
         new()
         {
-            Realm = identity.Realm,
-            Identity = identity.Id,
+            Realm = realm,
+            Identity = id,
             Role = role,
         };
 
