@@ -4,9 +4,9 @@ internal class AuditIdentityAttributeModel
 {
     public long AuditRecordId { get; set; }
 
-    required public string Realm { get; set; }
+    public required string Realm { get; set; }
 
-    required public string Key { get; set; }
+    public required string Key { get; set; }
 
-    required public string Value { get; set; }
+    public required string Value { get; set; }
 }

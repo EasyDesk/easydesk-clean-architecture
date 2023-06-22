@@ -7,9 +7,9 @@ internal class AuditIdentityModel
 {
     public long AuditRecordId { get; set; }
 
-    required public string IdentityRealm { get; set; }
+    public required string IdentityRealm { get; set; }
 
-    required public string Identity { get; set; }
+    public required string Identity { get; set; }
 
     public ICollection<AuditIdentityAttributeModel> IdentityAttributes { get; set; } = new HashSet<AuditIdentityAttributeModel>();
 

@@ -15,21 +15,21 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonD
 {
     public Guid Id { get; set; }
 
-    required public string FirstName { get; set; }
+    public required string FirstName { get; set; }
 
-    required public string LastName { get; set; }
+    public required string LastName { get; set; }
 
     public LocalDate DateOfBirth { get; set; }
 
     public string? Tenant { get; set; }
 
-    required public string CreatedBy { get; set; }
+    public required string CreatedBy { get; set; }
 
     public ICollection<PetModel> Pets { get; set; } = new HashSet<PetModel>();
 
-    required public AddressModel Residence { get; set; }
+    public required AddressModel Residence { get; set; }
 
-    required public bool Approved { get; set; }
+    public required bool Approved { get; set; }
 
     public static Expression<Func<PersonModel, PersonDto>> Projection() => src => new PersonDto(
         src.Id,

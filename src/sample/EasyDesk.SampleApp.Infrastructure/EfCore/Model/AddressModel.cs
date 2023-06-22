@@ -6,23 +6,23 @@ namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 public class AddressModel
     : IValuePersistence<Address, AddressModel, Address>
 {
-    required public string? StreetType { get; set; }
+    public required string? StreetType { get; set; }
 
-    required public string StreetName { get; set; }
+    public required string StreetName { get; set; }
 
-    required public string? StreetNumber { get; set; }
+    public required string? StreetNumber { get; set; }
 
-    required public string? City { get; set; }
+    public required string? City { get; set; }
 
-    required public string? District { get; set; }
+    public required string? District { get; set; }
 
-    required public string? Province { get; set; }
+    public required string? Province { get; set; }
 
-    required public string? Region { get; set; }
+    public required string? Region { get; set; }
 
-    required public string? State { get; set; }
+    public required string? State { get; set; }
 
-    required public string? Country { get; set; }
+    public required string? Country { get; set; }
 
     public Address ToDomain() => new(
         StreetType: StreetType.AsOption().Map(n => new PlaceName(n)),

@@ -80,14 +80,14 @@ csharp_style_var_for_built_in_types = true:suggestion
 csharp_style_var_when_type_is_apparent = true:suggestion
 
 # Expression-bodied members
-csharp_style_expression_bodied_accessors = when_on_single_line
-csharp_style_expression_bodied_constructors = false
-csharp_style_expression_bodied_indexers = when_on_single_line
-csharp_style_expression_bodied_lambdas = true
-csharp_style_expression_bodied_local_functions = when_on_single_line
-csharp_style_expression_bodied_methods = when_on_single_line
-csharp_style_expression_bodied_operators = when_on_single_line
-csharp_style_expression_bodied_properties = when_on_single_line
+csharp_style_expression_bodied_accessors = when_on_single_line:silent
+csharp_style_expression_bodied_constructors = false:silent
+csharp_style_expression_bodied_indexers = when_on_single_line:silent
+csharp_style_expression_bodied_lambdas = true:silent
+csharp_style_expression_bodied_local_functions = when_on_single_line:silent
+csharp_style_expression_bodied_methods = when_on_single_line:silent
+csharp_style_expression_bodied_operators = when_on_single_line:silent
+csharp_style_expression_bodied_properties = when_on_single_line:silent
 
 # Pattern matching preferences
 csharp_style_pattern_matching_over_as_with_null_check = true
@@ -105,7 +105,7 @@ csharp_preferred_modifier_order = public,private,protected,internal,static,exter
 
 # Code-block preferences
 csharp_prefer_braces = true:warning
-csharp_prefer_simple_using_statement = false
+csharp_prefer_simple_using_statement = false:suggestion
 
 # Expression-level preferences
 csharp_prefer_simple_default_expression = true
@@ -334,3 +334,11 @@ dotnet_diagnostic.SA1408.severity=silent
 dotnet_diagnostic.CA2000.severity = suggestion
 dotnet_diagnostic.CA2202.severity = suggestion
 dotnet_diagnostic.CA2213.severity = suggestion
+csharp_style_prefer_method_group_conversion = true:silent
+csharp_style_prefer_top_level_statements = true:silent
+
+[*.{cs,vb}]
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+tab_width = 4
+indent_size = 4
+end_of_line = lf

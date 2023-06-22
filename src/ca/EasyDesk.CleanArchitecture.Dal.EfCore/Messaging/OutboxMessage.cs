@@ -7,11 +7,11 @@ internal class OutboxMessage
 {
     public int Id { get; set; }
 
-    required public byte[] Content { get; set; }
+    public required byte[] Content { get; set; }
 
-    required public byte[] Headers { get; set; }
+    public required byte[] Headers { get; set; }
 
-    required public string DestinationAddress { get; set; }
+    public required string DestinationAddress { get; set; }
 
     public sealed class Configuration : IEntityTypeConfiguration<OutboxMessage>
     {

@@ -12,15 +12,15 @@ internal class AuditRecordModel : IMultitenantEntity
 {
     public long Id { get; set; }
 
-    required public AuditRecordType Type { get; set; }
+    public required AuditRecordType Type { get; set; }
 
-    required public string Name { get; set; }
+    public required string Name { get; set; }
 
-    required public string? Description { get; set; }
+    public required string? Description { get; set; }
 
-    required public bool Success { get; set; }
+    public required bool Success { get; set; }
 
-    required public Instant Instant { get; set; }
+    public required Instant Instant { get; set; }
 
     public string? Tenant { get; set; }
 

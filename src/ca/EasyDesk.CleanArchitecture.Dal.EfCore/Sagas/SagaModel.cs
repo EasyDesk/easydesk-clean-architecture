@@ -6,9 +6,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 
 internal class SagaModel : IMultitenantEntity
 {
-    required public string Id { get; set; }
+    public required string Id { get; set; }
 
-    required public string Type { get; set; }
+    public required string Type { get; set; }
 
     public byte[] State { get; set; } = Array.Empty<byte>();
 

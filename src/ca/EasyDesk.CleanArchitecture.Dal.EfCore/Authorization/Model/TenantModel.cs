@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 
 public class TenantModel
 {
-    required public string Id { get; set; }
+    public required string Id { get; set; }
 
     public sealed class Configuration : IEntityTypeConfiguration<TenantModel>
     {

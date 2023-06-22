@@ -14,7 +14,7 @@ public class PetModel : IEntityPersistence<Pet, PetModel>, IWithHydration<int>, 
 {
     public int Id { get; set; }
 
-    required public string Nickname { get; set; }
+    public required string Nickname { get; set; }
 
     public Guid PersonId { get; set; }
 
