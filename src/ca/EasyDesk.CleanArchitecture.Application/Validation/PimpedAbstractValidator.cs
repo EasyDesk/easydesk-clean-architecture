@@ -19,12 +19,4 @@ public abstract class PimpedAbstractValidator<T> : AbstractValidator<T>
 
     public void RuleForOption<TProperty>(Expression<Func<T, Option<TProperty>>> property, IValidator<TProperty> validator) =>
         RuleForOption(property, rules => rules.SetValidator(validator));
-
-    public void RuleForEachOption<TProperty>(Expression<Func<T, IEnumerable<Option<TProperty>>>> properties, Func<IRuleBuilderOptions<T, TProperty>, IRuleBuilderOptions<T, TProperty>> rules)
-    {
-        var propertiesSelector = properties.Compile();
-        rules(RuleForEach(x => propertiesSelector(x).SelectMany(o => o))
-            .SetValidator(new InlineValidator<TProperty>())
-            .OverridePropertyName(properties.GetMember()?.Name ?? $"Every {typeof(TProperty).Name}"));
-    }
 }
