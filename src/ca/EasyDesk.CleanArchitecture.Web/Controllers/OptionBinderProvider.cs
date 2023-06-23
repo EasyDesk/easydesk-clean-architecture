@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Collections.Concurrent;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
@@ -20,6 +21,9 @@ internal class OptionBinderProvider : IModelBinderProvider
 
     private class OptionBinder : IModelBinder
     {
+        private static readonly ConcurrentDictionary<Type, Func<object, object>> _someFactoryCache = new();
+        private static readonly ConcurrentDictionary<Type, Func<object>> _noneFactoryCache = new();
+
         private readonly ModelMetadata _innerModelMetadata;
         private readonly IModelBinder _innerModelBinder;
 
@@ -31,22 +35,32 @@ internal class OptionBinderProvider : IModelBinderProvider
 
         private Type InnerType => _innerModelMetadata.ModelType;
 
-        private Option<T> InnerNone<T>() => NoneT<T>();
+        private static object InnerNone<T>() => NoneT<T>();
 
-        private Option<T> InnerSome<T>(T obj) => Some(obj);
+        private static object InnerSome<T>(object obj) => Some((T)obj);
 
-        private object EmptyOption() => GetType()
-            .GetMethod(nameof(InnerNone), BindingFlags.NonPublic | BindingFlags.Instance)!
-            .MakeGenericMethod(InnerType)
-            .Invoke(this, Array.Empty<object>())!;
+        private object EmptyOption()
+        {
+            var factory = _noneFactoryCache.GetOrAdd(InnerType, t =>
+            {
+                var method = GetType()
+                    .GetMethod(nameof(InnerNone), BindingFlags.NonPublic | BindingFlags.Static)!
+                    .MakeGenericMethod(t);
+                return (Func<object>)Delegate.CreateDelegate(typeof(Func<object>), method);
+            });
+            return factory();
+        }
 
         private object OptionWithSome(object obj)
         {
-            var method = GetType()
-                .GetMethod(nameof(InnerSome), BindingFlags.NonPublic | BindingFlags.Instance)!
-                .MakeGenericMethod(InnerType);
-            var arguments = new[] { obj };
-            return method.Invoke(this, arguments)!;
+            var factory = _someFactoryCache.GetOrAdd(InnerType, t =>
+            {
+                var method = GetType()
+                    .GetMethod(nameof(InnerSome), BindingFlags.NonPublic | BindingFlags.Static)!
+                    .MakeGenericMethod(t);
+                return (Func<object, object>)Delegate.CreateDelegate(typeof(Func<object, object>), method);
+            });
+            return factory(obj);
         }
 
         public async Task BindModelAsync(ModelBindingContext bindingContext)
