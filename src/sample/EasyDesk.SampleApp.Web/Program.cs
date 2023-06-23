@@ -90,7 +90,7 @@ else
 
 await app.SetupDevelopment(async (services, logger) =>
 {
-    var admin = Agent.FromSingleIdentity(Agents.MainRealm, IdentityId.FromRandomGuid());
+    var admin = Agent.FromSingleIdentity(Realms.MainRealm, IdentityId.FromRandomGuid());
     var tenantId = TenantId.FromRandomGuid();
     var dispatcher = services.SetupSelfScopedRequestDispatcher(admin, tenantId);
     await dispatcher.Dispatch(new CreateTenant(tenantId));

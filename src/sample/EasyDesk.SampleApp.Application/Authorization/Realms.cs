@@ -2,7 +2,7 @@
 
 namespace EasyDesk.SampleApp.Application.Authorization;
 
-public static class Agents
+public static class Realms
 {
     public static Realm MainRealm => Realm.Default;
 
