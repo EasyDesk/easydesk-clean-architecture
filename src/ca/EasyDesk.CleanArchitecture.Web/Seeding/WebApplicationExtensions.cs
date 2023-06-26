@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,26 +11,15 @@ namespace EasyDesk.CleanArchitecture.Web.Seeding;
 
 public static class WebApplicationExtensions
 {
-    public static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, AsyncAction<IServiceProvider> setupScope) =>
-        new AutoScopingDispatcher(services, setupScope);
-
-    public static IDispatcher SetupSelfScopedRequestDispatcher(this IServiceProvider services, Agent? agent = null, TenantId? tenantId = null) =>
+    public static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, ContextInfo? context = null, TenantId? tenantId = null) =>
         SetupSelfScopedDispatcher(services, services =>
         {
-            services.GetRequiredService<IHttpContextAccessor>().Setup(c =>
-            {
-                if (agent != null)
-                {
-                    c.SetupAuthenticatedAgent(agent);
-                }
-                if (tenantId != null)
-                {
-                    c.SetupTenant(tenantId);
-                }
-            });
+            var provider = services.GetRequiredService<OverridableContextProvider>();
+            context.AsOption().IfPresent(provider.OverrideContextInfo);
+            provider.OverrideTenantId(tenantId.AsOption().Map(x => x.Value));
         });
 
-    public static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, Action<IServiceProvider> setupScope) =>
+    private static IDispatcher SetupSelfScopedDispatcher(this IServiceProvider services, Action<IServiceProvider> setupScope) =>
         new AutoScopingDispatcher(services, x =>
         {
             setupScope(x);

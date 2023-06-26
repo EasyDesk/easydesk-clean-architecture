@@ -9,38 +9,31 @@ internal sealed class BasicContextProvider : IContextProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ClaimsPrincipalParser<Agent> _agentParser;
-    private readonly Lazy<ContextInfo> _context;
-    private readonly Lazy<CancellationToken> _cancellationToken;
+    private readonly ITenantReader _tenantReader;
 
-    public BasicContextProvider(IHttpContextAccessor httpContextAccessor, ClaimsPrincipalParser<Agent> agentParser)
+    public BasicContextProvider(IHttpContextAccessor httpContextAccessor, ClaimsPrincipalParser<Agent> agentParser, ITenantReader tenantReader)
     {
         _httpContextAccessor = httpContextAccessor;
         _agentParser = agentParser;
-        _context = new(GetContextType);
-        _cancellationToken = new(GetCancellationToken);
+        _tenantReader = tenantReader;
     }
 
-    public ContextInfo CurrentContext => _context.Value;
-
-    public CancellationToken CancellationToken => _cancellationToken.Value;
-
-    private ContextInfo GetContextType()
-    {
-        return MatchContext(
+    public ContextInfo CurrentContext => MatchContext(
             httpContext: c => _agentParser(c.User).Match<ContextInfo>(
                 some: agent => new ContextInfo.AuthenticatedRequest(agent),
                 none: () => new ContextInfo.AnonymousRequest()),
             messageContext: _ => new ContextInfo.AsyncMessage(),
             other: () => new ContextInfo.Unknown());
-    }
 
-    private CancellationToken GetCancellationToken()
-    {
-        return MatchContext(
+    public CancellationToken CancellationToken => MatchContext(
             httpContext: c => c.RequestAborted,
             messageContext: c => c.GetCancellationToken(),
             other: () => default);
-    }
+
+    public Option<string> TenantId => MatchContext(
+        httpContext: _tenantReader.ReadFromHttpContext,
+        messageContext: _tenantReader.ReadFromMessageContext,
+        other: () => None);
 
     private T MatchContext<T>(Func<HttpContext, T> httpContext, Func<IMessageContext, T> messageContext, Func<T> other)
     {

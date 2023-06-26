@@ -48,7 +48,7 @@ public static partial class Extensions
             .AddControllers(builder.Environment)
             .AddJsonSerialization()
             .AddDomainLayer()
-            .AddContextProvider()
+            .AddContextProvider(builder.Environment)
             .AddTimeManagement()
             .AddDispatching()
             .AddValidation();

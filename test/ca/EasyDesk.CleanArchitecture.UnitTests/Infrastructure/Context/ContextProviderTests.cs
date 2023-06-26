@@ -14,13 +14,18 @@ public class ContextProviderTests
     private readonly HttpContext _httpContext = new DefaultHttpContext();
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ClaimsPrincipalParser<Agent> _agentParser = ClaimsPrincipalParsers.DefaultAgentParser();
+    private readonly ITenantReader _tenantReader;
 
     public ContextProviderTests()
     {
         _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
         _httpContextAccessor.HttpContext.Returns(_httpContext);
 
-        _sut = new BasicContextProvider(_httpContextAccessor, _agentParser);
+        _tenantReader = Substitute.For<ITenantReader>();
+        _tenantReader.ReadFromHttpContext(_httpContext).Returns(None);
+        _tenantReader.ReadFromMessageContext(default!).ReturnsForAnyArgs(None);
+
+        _sut = new BasicContextProvider(_httpContextAccessor, _agentParser, _tenantReader);
     }
 
     [Fact]

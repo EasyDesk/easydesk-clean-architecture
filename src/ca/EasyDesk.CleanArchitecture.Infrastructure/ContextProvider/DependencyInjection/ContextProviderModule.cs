@@ -3,17 +3,21 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInjection;
 
 public class ContextProviderModule : AppModule
 {
+    private readonly IWebHostEnvironment _environment;
     private Action<ContextProviderOptions>? _configure;
 
-    public ContextProviderModule(Action<ContextProviderOptions>? configure = null)
+    public ContextProviderModule(IWebHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
     {
+        _environment = environment;
         _configure = configure;
     }
 
@@ -26,13 +30,23 @@ public class ContextProviderModule : AppModule
     {
         var options = new ContextProviderOptions();
         _configure?.Invoke(options);
-        services.AddSingleton(options);
+        services.AddSingleton(options.AgentParser);
 
         services.AddHttpContextAccessor();
-        services.AddScoped<IContextProvider, BasicContextProvider>();
+        if (_environment.IsDevelopment())
+        {
+            services.AddScoped<BasicContextProvider>();
+            services.AddScoped(sp => new OverridableContextProvider(sp.GetRequiredService<BasicContextProvider>()));
+            services.AddScoped<IContextProvider>(sp => sp.GetRequiredService<OverridableContextProvider>());
+        }
+        else
+        {
+            services.AddScoped<IContextProvider, BasicContextProvider>();
+        }
+        services.Decorate<IContextProvider, LazyContextProvider>();
         services.TryAddScoped<ITenantProvider, PublicTenantProvider>();
+        services.TryAddSingleton<ITenantReader, AlwaysPublicTenantReader>();
         services.AddScoped<IContextResetter, BasicContextResetter>();
-        services.AddSingleton(options.AgentParser);
     }
 
     public override void BeforeServiceConfiguration(AppDescription app)
@@ -46,9 +60,9 @@ public class ContextProviderModule : AppModule
 
 public static class ContextProviderModuleExtensions
 {
-    public static AppBuilder AddContextProvider(this AppBuilder builder, Action<ContextProviderOptions>? configure = null)
+    public static AppBuilder AddContextProvider(this AppBuilder builder, IWebHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
     {
-        return builder.AddModule(new ContextProviderModule(configure));
+        return builder.AddModule(new ContextProviderModule(environment, configure));
     }
 
     public static AppBuilder SetAgentParser(this AppBuilder builder, Action<AgentParserBuilder> configure)

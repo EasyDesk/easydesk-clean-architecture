@@ -1,21 +1,22 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 public sealed class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
 {
-    private readonly IContextTenantReader _contextTenantReader;
+    private readonly IContextProvider _contextProvider;
     private readonly IContextTenantInitializer _tenantInitializer;
     private readonly IMultitenancyManager _multitenancyManager;
     private readonly MultitenantPolicy _defaultPolicy;
 
     public MultitenancyManagementStep(
-        IContextTenantReader contextTenantReader,
+        IContextProvider contextProvider,
         IContextTenantInitializer tenantInitializer,
         IMultitenancyManager multitenancyManager,
         MultitenantPolicy defaultPolicy)
     {
-        _contextTenantReader = contextTenantReader;
+        _contextProvider = contextProvider;
         _tenantInitializer = tenantInitializer;
         _multitenancyManager = multitenancyManager;
         _defaultPolicy = defaultPolicy;
@@ -25,9 +26,7 @@ public sealed class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
     {
         var policy = GetPolicyForRequest(request);
 
-        var rawTenantId = _contextTenantReader.GetTenantId();
-
-        return await ValidateTenantId(rawTenantId)
+        return await ValidateTenantId(_contextProvider.TenantId)
             .FlatMapAsync(t => policy(t, _multitenancyManager))
             .ThenIfSuccess(_tenantInitializer.Initialize)
             .ThenFlatMapAsync(_ => next());

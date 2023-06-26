@@ -4,6 +4,8 @@ public interface IContextProvider
 {
     ContextInfo CurrentContext { get; }
 
+    Option<string> TenantId { get; }
+
     CancellationToken CancellationToken { get; }
 }
 
