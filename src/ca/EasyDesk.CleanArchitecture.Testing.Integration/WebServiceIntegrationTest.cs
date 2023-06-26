@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Json;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
@@ -16,6 +18,8 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     where T : WebServiceTestsFixture
 {
     private readonly IList<RebusTestBus> _buses = new List<RebusTestBus>();
+    private Option<TenantId> _currentTenant;
+    private Option<Agent> _currentAgent;
 
     protected WebServiceIntegrationTest(T fixture)
     {
@@ -42,11 +46,44 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     protected HttpTestHelper CreateHttpTestHelper()
     {
         var jsonSettings = WebService.Services.GetRequiredService<JsonSettingsConfigurator>();
-        return new(WebService.HttpClient, jsonSettings, GetHttpAuthentication(), ConfigureRequests);
+        return new(WebService.HttpClient, jsonSettings, GetHttpAuthentication(), ApplyDefaultRequestConfiguration);
+    }
+
+    private void ApplyDefaultRequestConfiguration(HttpRequestBuilder req)
+    {
+        _currentTenant.Match(
+            some: req.Tenant,
+            none: req.NoTenant);
+
+        _currentAgent.Match(
+            some: req.AuthenticateAs,
+            none: req.NoAuthentication);
+
+        ConfigureRequests(req);
     }
 
     protected virtual void ConfigureRequests(HttpRequestBuilder req)
     {
+    }
+
+    protected void AuthenticateAs(Agent agent)
+    {
+        _currentAgent = Some(agent);
+    }
+
+    protected void Anonymize()
+    {
+        _currentAgent = None;
+    }
+
+    protected void MoveToTenant(TenantId id)
+    {
+        _currentTenant = Some(id);
+    }
+
+    protected void MoveToPublicTenant()
+    {
+        _currentTenant = None;
     }
 
     protected virtual ITestHttpAuthentication GetHttpAuthentication() =>

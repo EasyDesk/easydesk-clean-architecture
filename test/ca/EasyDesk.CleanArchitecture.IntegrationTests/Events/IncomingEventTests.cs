@@ -29,6 +29,10 @@ public class IncomingEventTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
+
+        MoveToTenant(_tenant);
+        AuthenticateAs(TestAgents.Admin);
+
         await Http.AddAdmin().Send().EnsureSuccess();
 
         _person = await Http

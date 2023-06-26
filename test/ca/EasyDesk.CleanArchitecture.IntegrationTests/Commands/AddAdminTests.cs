@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
@@ -18,15 +17,13 @@ public class AddAdminTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(_tenantId)
-        .AuthenticateAs(TestAgents.Admin);
-
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(_tenantId));
         await WebService.WaitUntilTenantExists(_tenantId);
+
+        AuthenticateAs(TestAgents.Admin);
     }
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
@@ -39,6 +36,7 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldSucceed()
     {
+        MoveToTenant(_tenantId);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
@@ -47,7 +45,7 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldSucceed_WithPublicTenant()
     {
-        await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
+        await Http.AddAdmin().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }
@@ -55,8 +53,8 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldSucceed_WithPublicTenant_Again()
     {
-        await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
-        await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
+        await Http.AddAdmin().Send().EnsureSuccess();
+        await Http.AddAdmin().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }
@@ -64,6 +62,7 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReset_AfterTenantIsDeleted()
     {
+        MoveToTenant(_tenantId);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         var bus = NewBus();
@@ -76,7 +75,7 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldNotReset_AfterTenantIsDeleted_WithPublicRole()
     {
-        await Http.AddAdmin().NoTenant().Send().EnsureSuccess();
+        await Http.AddAdmin().Send().EnsureSuccess();
 
         var bus = NewBus();
         await bus.Send(new RemoveTenant(_tenantId));

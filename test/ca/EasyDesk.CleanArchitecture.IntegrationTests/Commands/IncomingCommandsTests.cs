@@ -45,10 +45,11 @@ public class IncomingCommandsTests : SampleIntegrationTest
         var bus = NewBus();
         await bus.Send(new CreateTenant(tenantId));
 
+        AuthenticateAs(TestAgents.Admin);
+        MoveToTenant(tenantId);
+
         await WebService.WaitUntilTenantExists(tenantId);
         await Http.AddAdmin()
-            .AuthenticateAs(TestAgents.Admin)
-            .Tenant(tenantId)
             .Send()
             .EnsureSuccess();
 
@@ -58,15 +59,11 @@ public class IncomingCommandsTests : SampleIntegrationTest
                 LastName: "Bar",
                 DateOfBirth: new LocalDate(1996, 2, 2),
                 Residence: AddressDto.Create("unknown")))
-            .Tenant(tenantId)
-            .AuthenticateAs(TestAgents.Admin)
             .Send()
             .AsData();
 
         await Http
             .GetOwnedPets(person.Id)
-            .Tenant(tenantId)
-            .AuthenticateAs(TestAgents.Admin)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
@@ -78,14 +75,10 @@ public class IncomingCommandsTests : SampleIntegrationTest
 
         await Http
             .GetOwnedPets(person.Id)
-            .Tenant(tenantId)
-            .AuthenticateAs(TestAgents.Admin)
             .PollUntil(pets => !pets.Any())
             .EnsureSuccess();
 
         var response = await Http.GetPerson(person.Id)
-            .Tenant(tenantId)
-            .AuthenticateAs(TestAgents.Admin)
             .PollWhile(w => w.IsSuccess())
             .AsVerifiable();
 

@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
@@ -21,15 +20,15 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
 
     protected abstract HttpSingleRequestExecutor<Nothing> RemoveAdmin();
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(_tenantId)
-        .AuthenticateAs(TestAgents.Admin);
-
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(_tenantId));
         await WebService.WaitUntilTenantExists(_tenantId);
+
+        MoveToTenant(_tenantId);
+        AuthenticateAs(TestAgents.Admin);
+
         await Http.AddAdmin().Send().EnsureSuccess();
         await WaitForConditionOnRoles(roles => roles.Contains(Roles.Admin));
     }

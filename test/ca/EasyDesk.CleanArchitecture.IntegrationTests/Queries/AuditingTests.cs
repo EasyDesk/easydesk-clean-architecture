@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.Authorization;
@@ -27,15 +26,15 @@ public class AuditingTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(_tenant)
-        .AuthenticateAs(TestAgents.Admin);
-
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(_tenant));
         _initialAudits++;
+
+        MoveToTenant(_tenant);
+        AuthenticateAs(TestAgents.Admin);
+
         await WebService.WaitUntilTenantExists(_tenant);
         await Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;

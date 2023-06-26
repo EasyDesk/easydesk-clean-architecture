@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
@@ -24,15 +23,15 @@ public class CreatePetTests : SampleIntegrationTest
     {
     }
 
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(_tenant)
-        .AuthenticateAs(TestAgents.Admin);
-
     protected override async Task OnInitialization()
     {
         var bus = NewBus();
         await bus.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
+
+        MoveToTenant(_tenant);
+        AuthenticateAs(TestAgents.Admin);
+
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 
