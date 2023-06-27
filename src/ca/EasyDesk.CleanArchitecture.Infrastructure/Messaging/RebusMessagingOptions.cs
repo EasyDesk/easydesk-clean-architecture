@@ -40,7 +40,7 @@ public sealed class RebusMessagingOptions
         return this;
     }
 
-    public RebusMessagingOptions AddKnownMessageTypesFromAssemblies(params Assembly[] assemblies)
+    public RebusMessagingOptions AddKnownMessageTypesFromAssemblies(IEnumerable<Assembly> assemblies)
     {
         var foundTypes = new AssemblyScanner()
             .FromAssemblies(assemblies)

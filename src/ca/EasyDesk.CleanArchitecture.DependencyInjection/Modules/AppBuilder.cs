@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using System.Collections.Immutable;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -6,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 public sealed class AppBuilder
 {
     private readonly ModulesCollection _modules = new();
-    private readonly Dictionary<CleanArchitectureLayer, Assembly> _layers = new();
+    private readonly Dictionary<CleanArchitectureLayer, IImmutableSet<Assembly>> _layers = new();
     private readonly string _assemblyPrefix;
     private string _serviceName;
 
@@ -22,21 +23,21 @@ public sealed class AppBuilder
         return this;
     }
 
-    public AppBuilder WithDomainLayer(Assembly domainLayer) =>
+    public AppBuilder WithDomainLayer(params Assembly[] domainLayer) =>
         WithLayer(CleanArchitectureLayer.Domain, domainLayer);
 
-    public AppBuilder WithApplicationLayer(Assembly applicationLayer) =>
+    public AppBuilder WithApplicationLayer(params Assembly[] applicationLayer) =>
         WithLayer(CleanArchitectureLayer.Application, applicationLayer);
 
-    public AppBuilder WithInfrastructureLayer(Assembly infrastructureLayer) =>
+    public AppBuilder WithInfrastructureLayer(params Assembly[] infrastructureLayer) =>
         WithLayer(CleanArchitectureLayer.Infrastructure, infrastructureLayer);
 
-    public AppBuilder WithWebLayer(Assembly webLayer) =>
+    public AppBuilder WithWebLayer(params Assembly[] webLayer) =>
         WithLayer(CleanArchitectureLayer.Web, webLayer);
 
-    private AppBuilder WithLayer(CleanArchitectureLayer layer, Assembly layerAssembly)
+    private AppBuilder WithLayer(CleanArchitectureLayer layer, params Assembly[] layerAssemblies)
     {
-        _layers[layer] = layerAssembly;
+        _layers[layer] = layerAssemblies.ToImmutableHashSet();
         return this;
     }
 

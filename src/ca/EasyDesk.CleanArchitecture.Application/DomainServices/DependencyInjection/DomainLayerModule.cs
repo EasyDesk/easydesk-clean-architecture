@@ -24,11 +24,13 @@ public class DomainLayerModule : AppModule
         services.AddScoped<IDomainEventNotifier>(provider => provider.GetRequiredService<DomainEventQueue>());
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
 
-        var applicationAssembly = app.GetLayerAssembly(CleanArchitectureLayer.Application);
-        var domainAssembly = app.GetLayerAssembly(CleanArchitectureLayer.Domain);
+        var applicationAssemblies = app.GetLayerAssemblies(CleanArchitectureLayer.Application);
+        var domainAssemblies = app.GetLayerAssemblies(CleanArchitectureLayer.Domain);
         services.RegisterImplementationsAsTransient(
             typeof(IDomainEventHandler<>),
-            s => s.FromAssemblies(applicationAssembly, domainAssembly));
+            s => s
+                .FromAssemblies(applicationAssemblies)
+                .FromAssemblies(domainAssemblies));
     }
 }
 

@@ -24,7 +24,7 @@ public class ApiVersioningModule : AppModule
     public override void BeforeServiceConfiguration(AppDescription app)
     {
         var supportedVersions = new AssemblyScanner()
-            .FromAssemblies(app.GetLayerAssembly(CleanArchitectureLayer.Web))
+            .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Web))
             .NonAbstract()
             .SubtypesOrImplementationsOf<AbstractController>()
             .FindTypes()

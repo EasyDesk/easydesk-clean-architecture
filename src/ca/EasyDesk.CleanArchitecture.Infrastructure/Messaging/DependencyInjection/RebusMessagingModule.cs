@@ -57,9 +57,11 @@ public class RebusMessagingModule : AppModule
                 .After(typeof(UnitOfWorkStep<,>));
         });
         app.RequireModule<JsonModule>();
-        Options.AddKnownMessageTypesFromAssemblies(
-            app.GetLayerAssembly(CleanArchitectureLayer.Application),
-            typeof(SagasModule).Assembly);
+
+        var assembliesToScan = app
+            .GetLayerAssemblies(CleanArchitectureLayer.Application)
+            .Append(typeof(SagasModule).Assembly);
+        Options.AddKnownMessageTypesFromAssemblies(assembliesToScan);
     }
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
@@ -166,7 +168,7 @@ public class RebusMessagingModule : AppModule
 
         services.AddHostedService<OutboxConsumer>();
         services.AddSingleton<OutboxFlushRequestsChannel>();
-        services.AddScoped((Func<IServiceProvider, OutboxFlusher>)(provider =>
+        services.AddScoped(provider =>
         {
             // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
             _ = provider.GetRequiredService<IBus>();
@@ -176,7 +178,7 @@ public class RebusMessagingModule : AppModule
                 provider.GetRequiredService<IUnitOfWorkProvider>(),
                 provider.GetRequiredService<IOutbox>(),
                 originalTransport.Value);
-        }));
+        });
     }
 }
 
