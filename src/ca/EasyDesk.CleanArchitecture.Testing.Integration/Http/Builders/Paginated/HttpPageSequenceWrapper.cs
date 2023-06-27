@@ -30,5 +30,13 @@ public sealed class HttpPageSequenceWrapper<T>
         }
     }
 
+    public async Task EnsureFailure()
+    {
+        foreach (var response in await GetResponse())
+        {
+            await response.EnsureFailure();
+        }
+    }
+
     private async Task<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> GetResponse() => await _response.Get();
 }

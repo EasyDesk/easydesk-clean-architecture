@@ -66,11 +66,24 @@ public class DeletePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFailIfThePersonDoesNotExist()
     {
-        var response = await DeletePerson(Guid.NewGuid())
+        var response = await DeletePerson(Guid.Parse("d9dac153-39d9-4128-89db-fc854ac4b96e"))
             .Send()
             .AsVerifiable();
 
         await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldNotEmitAnEvent_IfFailed()
+    {
+        var bus = NewBus();
+        await bus.Subscribe<PersonDeleted>();
+
+        await DeletePerson(Guid.Parse("d9dac153-39d9-4128-89db-fc854ac4b96e"))
+            .Send()
+            .EnsureFailure();
+
+        await bus.FailIfMessageIsReceivedWithin<PersonDeleted>();
     }
 
     [Fact]

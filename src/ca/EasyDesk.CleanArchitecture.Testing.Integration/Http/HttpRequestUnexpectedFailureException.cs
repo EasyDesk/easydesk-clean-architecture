@@ -2,13 +2,14 @@
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
-public class HttpRequestUnexpectedFailureException : Exception
+public abstract class HttpRequestUnexpectedResultException : Exception
 {
-    private HttpRequestUnexpectedFailureException(string message) : base(message)
+    protected HttpRequestUnexpectedResultException(ImmutableHttpResponseMessage response)
+        : base(GenerateMessage(response))
     {
     }
 
-    public static HttpRequestUnexpectedFailureException Create(ImmutableHttpResponseMessage response) => new(
+    public static string GenerateMessage(ImmutableHttpResponseMessage response) =>
         $$"""
         HttpRequest failed unexpectedly.
         -----<Response>-----
@@ -27,5 +28,19 @@ public class HttpRequestUnexpectedFailureException : Exception
         Content:
             {{response.RequestMessage.Content}}
         ---------<>---------
-        """);
+        """;
+}
+
+public class HttpRequestUnexpectedFailureException : HttpRequestUnexpectedResultException
+{
+    public HttpRequestUnexpectedFailureException(ImmutableHttpResponseMessage response) : base(response)
+    {
+    }
+}
+
+public class HttpRequestUnexpectedSuccessException : HttpRequestUnexpectedResultException
+{
+    public HttpRequestUnexpectedSuccessException(ImmutableHttpResponseMessage response) : base(response)
+    {
+    }
 }

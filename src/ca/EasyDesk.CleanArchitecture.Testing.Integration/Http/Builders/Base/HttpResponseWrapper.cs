@@ -22,7 +22,15 @@ public class HttpResponseWrapper<T, M>
     {
         if (!await IsSuccess())
         {
-            throw HttpRequestUnexpectedFailureException.Create(await GetResponse());
+            throw new HttpRequestUnexpectedFailureException(await GetResponse());
+        }
+    }
+
+    public async Task EnsureFailure()
+    {
+        if (await IsSuccess())
+        {
+            throw new HttpRequestUnexpectedSuccessException(await GetResponse());
         }
     }
 
