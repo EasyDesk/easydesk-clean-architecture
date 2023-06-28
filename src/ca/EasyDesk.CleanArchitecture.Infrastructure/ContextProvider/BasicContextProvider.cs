@@ -19,16 +19,16 @@ internal sealed class BasicContextProvider : IContextProvider
     }
 
     public ContextInfo CurrentContext => MatchContext(
-            httpContext: c => _agentParser(c.User).Match<ContextInfo>(
-                some: agent => new ContextInfo.AuthenticatedRequest(agent),
-                none: () => new ContextInfo.AnonymousRequest()),
-            messageContext: _ => new ContextInfo.AsyncMessage(),
-            other: () => new ContextInfo.Unknown());
+        httpContext: c => _agentParser(c.User).Match<ContextInfo>(
+            some: agent => new ContextInfo.AuthenticatedRequest(agent),
+            none: () => new ContextInfo.AnonymousRequest()),
+        messageContext: _ => new ContextInfo.AsyncMessage(),
+        other: () => new ContextInfo.Unknown());
 
     public CancellationToken CancellationToken => MatchContext(
-            httpContext: c => c.RequestAborted,
-            messageContext: c => c.GetCancellationToken(),
-            other: () => default);
+        httpContext: c => c.RequestAborted,
+        messageContext: c => c.GetCancellationToken(),
+        other: () => default);
 
     public Option<string> TenantId => MatchContext(
         httpContext: _tenantReader.ReadFromHttpContext,
