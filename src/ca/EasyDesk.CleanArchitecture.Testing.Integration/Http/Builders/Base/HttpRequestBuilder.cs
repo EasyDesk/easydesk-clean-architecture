@@ -63,10 +63,10 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         Headers(h => h.Replace(RestApiVersioning.VersionHeader, version.ToString()));
 
     public override B Tenant(TenantId tenantId) =>
-        Headers(h => h.Replace(MultitenancyDefaults.TenantIdHttpHeader, tenantId));
+        Headers(h => h.Replace(CommonTenantReaders.TenantIdHttpHeader, tenantId));
 
     public override B NoTenant() =>
-        Headers(h => h.Remove(MultitenancyDefaults.TenantIdHttpHeader));
+        Headers(h => h.Remove(CommonTenantReaders.TenantIdHttpHeader));
 
     public override B Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders) =>
         ConfigureRequest(r => r with { Headers = configureHeaders(r.Headers) });

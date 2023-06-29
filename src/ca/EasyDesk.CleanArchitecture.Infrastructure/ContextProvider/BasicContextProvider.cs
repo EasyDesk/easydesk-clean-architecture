@@ -1,21 +1,32 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Http;
 using Rebus.Extensions;
 using Rebus.Pipeline;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 
+public delegate Option<string> HttpRequestTenantReader(HttpContext httpContext, Option<Agent> agent);
+
+public delegate Option<string> AsyncMessageTenantReader(IMessageContext messageContext);
+
 internal sealed class BasicContextProvider : IContextProvider
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ClaimsPrincipalParser<Agent> _agentParser;
-    private readonly ITenantReader _tenantReader;
+    private readonly HttpRequestTenantReader _httpRequestTenantReader;
+    private readonly AsyncMessageTenantReader _asyncMessageTenantReader;
 
-    public BasicContextProvider(IHttpContextAccessor httpContextAccessor, ClaimsPrincipalParser<Agent> agentParser, ITenantReader tenantReader)
+    public BasicContextProvider(
+        IHttpContextAccessor httpContextAccessor,
+        ClaimsPrincipalParser<Agent> agentParser,
+        HttpRequestTenantReader httpRequestTenantReader,
+        AsyncMessageTenantReader asyncMessageTenantReader)
     {
         _httpContextAccessor = httpContextAccessor;
         _agentParser = agentParser;
-        _tenantReader = tenantReader;
+        _httpRequestTenantReader = httpRequestTenantReader;
+        _asyncMessageTenantReader = asyncMessageTenantReader;
     }
 
     public ContextInfo CurrentContext => MatchContext(
@@ -31,8 +42,8 @@ internal sealed class BasicContextProvider : IContextProvider
         other: () => default);
 
     public Option<string> TenantId => MatchContext(
-        httpContext: _tenantReader.ReadFromHttpContext,
-        messageContext: _tenantReader.ReadFromMessageContext,
+        httpContext: c => _httpRequestTenantReader(c, ParseAgent(c)),
+        messageContext: c => _asyncMessageTenantReader(c),
         other: () => None);
 
     private T MatchContext<T>(Func<HttpContext, T> httpContext, Func<IMessageContext, T> messageContext, Func<T> other)
@@ -51,4 +62,7 @@ internal sealed class BasicContextProvider : IContextProvider
 
         return other();
     }
+
+    private Option<Agent> ParseAgent(HttpContext context) =>
+        (Option<Agent>)context.Items.GetOrAdd(typeof(Agent), () => _agentParser(context.User))!;
 }

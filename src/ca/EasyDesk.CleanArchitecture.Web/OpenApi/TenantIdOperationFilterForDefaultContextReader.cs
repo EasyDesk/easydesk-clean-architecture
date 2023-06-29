@@ -15,13 +15,13 @@ internal class TenantIdOperationFilterForDefaultContextReader : IOperationFilter
             return;
         }
         operation.Parameters ??= new List<OpenApiParameter>();
-        if (!operation.Parameters.Any(p => p.Name.Equals(MultitenancyDefaults.TenantIdHttpQueryParam)))
+        if (!operation.Parameters.Any(p => p.Name.Equals(CommonTenantReaders.TenantIdHttpQueryParam)))
         {
             operation.Parameters.Add(new OpenApiParameter()
             {
-                Name = MultitenancyDefaults.TenantIdHttpQueryParam,
+                Name = CommonTenantReaders.TenantIdHttpQueryParam,
                 In = ParameterLocation.Query,
-                Description = $"Optional parameter alternative to setting the {MultitenancyDefaults.TenantIdHttpHeader} header for specifying the tenant id of the request, with lower priority than the header.",
+                Description = $"Optional parameter alternative to setting the {CommonTenantReaders.TenantIdHttpHeader} header for specifying the tenant id of the request, with lower priority than the header.",
                 Required = false,
                 AllowEmptyValue = true,
                 Schema = new OpenApiSchema()

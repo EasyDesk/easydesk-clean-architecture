@@ -140,7 +140,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .AsData();
 
         var response = await GetPerson(person.Id)
-            .Headers(h => h.Replace(MultitenancyDefaults.TenantIdHttpHeader, otherTenant))
+            .Headers(h => h.Replace(CommonTenantReaders.TenantIdHttpHeader, otherTenant))
             .Send()
             .AsVerifiable();
 

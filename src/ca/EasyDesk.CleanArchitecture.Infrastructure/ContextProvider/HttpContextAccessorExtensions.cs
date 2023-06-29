@@ -17,7 +17,7 @@ public static class HttpContextAccessorExtensions
 
     public static HttpContext SetupTenant(this HttpContext httpContext, TenantId tenantId)
     {
-        httpContext.Request.Headers[MultitenancyDefaults.TenantIdHttpHeader] = tenantId.Value;
+        httpContext.Request.Headers[CommonTenantReaders.TenantIdHttpHeader] = tenantId.Value;
         return httpContext;
     }
 

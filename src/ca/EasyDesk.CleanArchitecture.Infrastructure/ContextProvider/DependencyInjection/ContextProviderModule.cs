@@ -45,7 +45,8 @@ public class ContextProviderModule : AppModule
         }
         services.Decorate<IContextProvider, LazyContextProvider>();
         services.TryAddScoped<ITenantProvider, PublicTenantProvider>();
-        services.TryAddSingleton<ITenantReader, AlwaysPublicTenantReader>();
+        services.TryAddSingleton<HttpRequestTenantReader>((_, _) => None);
+        services.TryAddSingleton<AsyncMessageTenantReader>(_ => None);
         services.AddScoped<IContextResetter, BasicContextResetter>();
     }
 

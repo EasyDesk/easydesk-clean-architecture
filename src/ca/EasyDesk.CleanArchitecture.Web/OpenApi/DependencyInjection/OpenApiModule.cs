@@ -50,7 +50,7 @@ public class OpenApiModule : AppModule
             options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
-                Name = MultitenancyDefaults.TenantIdHttpHeader,
+                Name = CommonTenantReaders.TenantIdHttpHeader,
                 Description = "The tenant ID to be used for the request",
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "multitenancy"
