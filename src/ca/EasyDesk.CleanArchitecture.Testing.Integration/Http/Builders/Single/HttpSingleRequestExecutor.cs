@@ -22,10 +22,10 @@ public class HttpSingleRequestExecutor<T>
         _jsonSerializerSettings = jsonSerializerSettings;
     }
 
-    public HttpResponseWrapper<T, Nothing> PollUntil(Func<T, bool> predicate, Duration? interval, Duration? timeout = null) =>
+    public HttpResponseWrapper<T, Nothing> PollUntil(Func<T, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         PollUntil(async wrapped => predicate(await wrapped.AsData()), interval, timeout);
 
-    public HttpResponseWrapper<T, Nothing> PollWhile(Func<T, bool> predicate, Duration? interval, Duration? timeout = null) =>
+    public HttpResponseWrapper<T, Nothing> PollWhile(Func<T, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
         PollWhile(async wrapped => predicate(await wrapped.AsData()), interval, timeout);
 
     protected override async Task<ImmutableHttpResponseMessage> MakeRequest(CancellationToken timeoutToken)
