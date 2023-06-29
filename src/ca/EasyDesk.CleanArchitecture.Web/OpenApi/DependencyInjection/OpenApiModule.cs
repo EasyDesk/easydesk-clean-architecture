@@ -141,13 +141,13 @@ public static class SwaggerModuleExtensions
 
         app.UseSwagger(c =>
         {
-            c.RouteTemplate = "/openapi/swagger/{documentname}/swagger.json";
+            c.RouteTemplate = "openapi/swagger/{documentname}/swagger.json";
         });
         app.UseSwaggerUI(c =>
         {
             swaggerOptions.SwaggerGeneratorOptions.SwaggerDocs.ForEach(doc =>
             {
-                c.SwaggerEndpoint($"/openapi/swagger/{doc.Key}/swagger.json", doc.Value.Title);
+                c.SwaggerEndpoint($"./swagger/{doc.Key}/swagger.json", doc.Value.Title);
                 c.RoutePrefix = "openapi";
             });
         });
