@@ -1,3 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-public record UnknownIdentityError : Error;
+public record UnknownAgentError : Error;

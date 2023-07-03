@@ -88,7 +88,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         return error switch
         {
             NotFoundError => _controller.NotFound(body),
-            UnknownIdentityError => _controller.Unauthorized(body),
+            UnknownAgentError => _controller.Unauthorized(body),
             ForbiddenError => ActionResults.Forbidden(body),
             TenantNotFoundError
                 or InvalidTenantIdError

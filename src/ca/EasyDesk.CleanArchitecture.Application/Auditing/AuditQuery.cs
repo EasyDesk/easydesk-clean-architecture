@@ -8,7 +8,7 @@ public record AuditQuery
 
     public Option<string> MatchName { get; init; } = None;
 
-    public Option<string> MatchIdentity { get; init; } = None;
+    public Option<IdentityQuery> MatchIdentity { get; init; } = None;
 
     public Option<bool> IsAnonymous { get; init; } = None;
 

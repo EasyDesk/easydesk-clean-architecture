@@ -20,8 +20,8 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: "NotFound",
             Detail: "Unable to find the requested resource",
             Meta: Nothing.Value),
-        UnknownIdentityError => new(
-            Code: "UnknownIdentity",
+        UnknownAgentError => new(
+            Code: "UnknownAgent",
             Detail: "Missing authentication information on the given request",
             Meta: Nothing.Value),
         ForbiddenError(var reason) => new(

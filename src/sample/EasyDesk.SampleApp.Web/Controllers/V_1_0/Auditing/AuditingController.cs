@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Dto;
+using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
@@ -28,7 +30,7 @@ public class AuditingController : CleanArchitectureController
         var query = new AuditQuery
         {
             MatchName = name.AsOption(),
-            MatchIdentity = identity.AsOption(),
+            MatchIdentity = identity.AsOption().Map(i => new IdentityQuery(Realms.MainRealm, IdentityId.New(i))),
             IsAnonymous = anonymous.AsOption(),
             IsSuccess = success.AsOption(),
             MatchType = type.AsOption().Map(Enum.Parse<AuditRecordType>),

@@ -14,7 +14,7 @@ public static class AuthorizationProviderExtensions
     {
         return await provider
             .GetAuthorizationInfo()
-            .ThenOrElseError(() => new UnknownIdentityError())
+            .ThenOrElseError(() => new UnknownAgentError())
             .ThenFilterAsync(predicate, otherwise: _ => Errors.Forbidden());
     }
 

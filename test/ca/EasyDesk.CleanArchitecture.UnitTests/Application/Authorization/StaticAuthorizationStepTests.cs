@@ -15,7 +15,7 @@ public class StaticAuthorizationStepTests
 {
     public record TestRequest : IDispatchable<Nothing>;
 
-    [AllowUnknownIdentity]
+    [AllowUnknownAgent]
     public record TestRequestWithUnknownIdentityAllowed : IDispatchable<Nothing>;
 
     private readonly Agent _agent = Agent.FromSingleIdentity(Realm.Default, IdentityId.New("identity"));
@@ -86,7 +86,7 @@ public class StaticAuthorizationStepTests
     [Fact]
     public async Task ShouldNotAllowNonAuthenticatedIdentityIfTheRequestDoesNotAllowUnknownIdentitys()
     {
-        await ShouldNotBeAuthorized<TestRequest>(new UnknownIdentityError());
+        await ShouldNotBeAuthorized<TestRequest>(new UnknownAgentError());
     }
 
     [Fact]

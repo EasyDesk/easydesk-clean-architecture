@@ -35,7 +35,7 @@ public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
     {
         return await _authorizationProvider.GetAuthorizationInfo().ThenMatchAsync(
             some: authInfo => HandleAuthenticatedRequest(request, authInfo, next),
-            none: () => HandleUnknownIdentityRequest(next));
+            none: () => HandleUnknownAgentRequest(next));
     }
 
     private async Task<Result<R>> HandleAuthenticatedRequest(T request, AuthorizationInfo authInfo, NextPipelineStep<R> next)
@@ -45,8 +45,8 @@ public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
             : Errors.Forbidden();
     }
 
-    private async Task<Result<R>> HandleUnknownIdentityRequest(NextPipelineStep<R> next) =>
-        UnknownIdentityIsAllowed() ? await next() : new UnknownIdentityError();
+    private async Task<Result<R>> HandleUnknownAgentRequest(NextPipelineStep<R> next) =>
+        UnknownAgentIsAllowed() ? await next() : new UnknownAgentError();
 
-    private bool UnknownIdentityIsAllowed() => typeof(T).GetCustomAttribute<AllowUnknownIdentityAttribute>() is not null;
+    private bool UnknownAgentIsAllowed() => typeof(T).GetCustomAttribute<AllowUnknownAgentAttribute>() is not null;
 }
