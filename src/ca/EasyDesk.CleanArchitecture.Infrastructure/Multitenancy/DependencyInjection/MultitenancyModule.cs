@@ -49,5 +49,7 @@ public static class MultitenancyModuleExtensions
         return builder.AddModule(new MultitenancyModule(configure));
     }
 
+    public static Option<MultitenancyOptions> GetMultitenancyOptions(this AppDescription app) => app.GetModule<MultitenancyModule>().Map(m => m.Options);
+
     public static bool IsMultitenant(this AppDescription app) => app.HasModule<MultitenancyModule>();
 }

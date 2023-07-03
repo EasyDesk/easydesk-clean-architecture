@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -45,18 +46,23 @@ public class OpenApiModule : AppModule
 
     private void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)
     {
-        if (app.IsMultitenant() && _options.AddDefaultMultitenancyFilters)
-        {
-            options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
+        app.GetMultitenancyOptions()
+            .Filter(_ => _options.AddDefaultMultitenancyFilters)
+            .IfPresent(multitenancyOptions =>
             {
-                In = ParameterLocation.Header,
-                Name = CommonTenantReaders.TenantIdHttpHeader,
-                Description = "The tenant ID to be used for the request",
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "multitenancy"
+                if (multitenancyOptions.HttpRequestTenantReader == MultitenancyOptions.DefaultHttpRequestTenantReader)
+                {
+                    options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Name = CommonTenantReaders.TenantIdHttpHeader,
+                        Description = "The tenant ID to be used for the request",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "multitenancy"
+                    });
+                    options.OperationFilter<TenantIdOperationFilterForDefaultContextReader>();
+                }
             });
-            options.OperationFilter<TenantIdOperationFilterForDefaultContextReader>();
-        }
     }
 
     private void SetupSwaggerDocs(AppDescription app, SwaggerGenOptions options)

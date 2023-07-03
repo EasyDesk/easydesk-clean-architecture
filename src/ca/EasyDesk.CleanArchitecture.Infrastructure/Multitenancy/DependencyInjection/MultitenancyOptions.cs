@@ -6,11 +6,13 @@ namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 public sealed class MultitenancyOptions
 {
-    public HttpRequestTenantReader HttpRequestTenantReader { get; private set; } =
-        (c, _) => CommonTenantReaders.ReadFromHttpContext(c);
+    public static HttpRequestTenantReader DefaultHttpRequestTenantReader { get; } = (c, _) => CommonTenantReaders.ReadFromHttpContext(c);
 
-    public AsyncMessageTenantReader AsyncMessageTenantReader { get; private set; } =
-        CommonTenantReaders.ReadFromMessageContext;
+    public static AsyncMessageTenantReader DefaultAsyncMessageTenantReader { get; } = CommonTenantReaders.ReadFromMessageContext;
+
+    public HttpRequestTenantReader HttpRequestTenantReader { get; private set; } = DefaultHttpRequestTenantReader;
+
+    public AsyncMessageTenantReader AsyncMessageTenantReader { get; private set; } = DefaultAsyncMessageTenantReader;
 
     public MultitenantPolicy DefaultPolicy { get; private set; } =
         MultitenantPolicies.IgnoreAndUsePublic();
