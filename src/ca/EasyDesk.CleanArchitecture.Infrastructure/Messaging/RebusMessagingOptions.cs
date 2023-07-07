@@ -68,7 +68,7 @@ public sealed class RebusMessagingOptions
 
         configurer.Routing(r =>
         {
-            r.Register(_ => new OutgoingCommandRouter(endpoint));
+            r.Register(_ => new OutgoingCommandRouter(endpoint, ErrorQueueName));
         });
 
         configurer.Logging(l =>
