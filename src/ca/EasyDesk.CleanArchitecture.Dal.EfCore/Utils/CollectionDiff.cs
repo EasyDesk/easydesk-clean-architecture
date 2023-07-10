@@ -4,7 +4,7 @@ using EasyDesk.Commons.Collections;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
-public static class ConversionUtils
+public static class CollectionDiff
 {
     public static void ApplyChangesToCollection<D, P, K>(
         IEnumerable<D> src,
