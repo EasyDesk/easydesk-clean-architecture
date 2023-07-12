@@ -4,12 +4,12 @@
     "net7.0": {
       "Microsoft.EntityFrameworkCore.Design": {
         "type": "Direct",
-        "requested": "[7.0.8, )",
-        "resolved": "7.0.8",
-        "contentHash": "dG+QxTeRZhtEbsN+VXF2D5z6kT1/pOFRkSTXnggugqTz3p7qSceyLqJoyGZXI8l3YsmDywgD7yfxvcy0X8uZMA==",
+        "requested": "[7.0.9, )",
+        "resolved": "7.0.9",
+        "contentHash": "tWsa+spzKZAwHrUP6vYM1LLh0P89UMcldEjerFPPZb0LcI/ONQmh7ldK4Q8TeRuIiuXxYgRYPElSgxwLp14oug==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
-          "Microsoft.EntityFrameworkCore.Relational": "7.0.8",
+          "Microsoft.EntityFrameworkCore.Relational": "7.0.9",
           "Microsoft.Extensions.DependencyModel": "7.0.0",
           "Mono.TextTemplating": "2.2.1"
         }
@@ -83,15 +83,15 @@
       },
       "FluentValidation": {
         "type": "Transitive",
-        "resolved": "11.5.2",
-        "contentHash": "kj/hW/iusp2zq1Vt1YPLgDj6UG0DhoJXGkLwjLwm3j7vUtRF8DVA5vHJfItG3BxDjLWJUR2pvw8fK7rnuysZNA=="
+        "resolved": "11.6.0",
+        "contentHash": "DWKd0jHA33d7BXVWytSoN5Oafj9nYuiLUyyFoaUboOZZiaN5tlXdcJpkRbmrrWBUTWdSxjTwIoyUs38KSU/7OQ=="
       },
       "FluentValidation.DependencyInjectionExtensions": {
         "type": "Transitive",
-        "resolved": "11.5.2",
-        "contentHash": "ycibtdWdluIx0aTgQvO7Kjd5GjNRpD92z4/hEJc8u1luZ5ff1k0JpwPGmL+YFbPVYFk+A6gYIrVI4QdZfSJJdQ==",
+        "resolved": "11.6.0",
+        "contentHash": "3jyyy5VMzKsdGNzfBKtEYX3fd3YzSSzd7JEq7uJcqjqqkoCexT4khgTlNT8upXOeU6mT1MSW7H7OjvUG9W1bRw==",
         "dependencies": {
-          "FluentValidation": "11.5.2",
+          "FluentValidation": "11.6.0",
           "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
         }
       },
@@ -122,16 +122,16 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "UWGvF86d2q90e1ync37Yg+yg2GRSeSh9y/Q5YRFw42YfzTDQd0X6somujDFVc9HWn6zVB7osSZnxHMW8BwoRSA==",
+        "resolved": "7.0.9",
+        "contentHash": "sqrvj8x9e7i7QD+q4SJ0iR0rlA6az8WJl7oO5mS9lmgOaIwKKf8MEzcF5XWf/Yk6CA4akH3SnH0JB4+huKUPNg==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.15.1"
         }
       },
       "Microsoft.AspNetCore.JsonPatch": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "1nfhZ34Hw7H+t+uwkA0p1Q97amvjLGxhJJ6LK+0/qIblf2HlBQDTyhiSD2VIoHp0mo2rhoiubFk6o5rV3GQ1EQ==",
+        "resolved": "7.0.9",
+        "contentHash": "6iMRtYIQZj7gMC7iVotL9bZjCjnbV2ZkAAduKYHfV6v+WQhEjk0iEGSFNVh6N9rTCNTeZ2xVgv3xi675GwyDzQ==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
           "Newtonsoft.Json": "13.0.1"
@@ -139,10 +139,10 @@
       },
       "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "zpUnjjBMaGPIndirgmn6lj1TctrjUfSH/gveOhFi6gGcq76e2dGGzmVovugjdzdHuMvyQYxQup6Q/59KeTuBcA==",
+        "resolved": "7.0.9",
+        "contentHash": "dhAFLGV3RfK6BAbLYpTKcVch1hcyP2qDWNy7Pk2wGrQEO/yWbWwiR9c13hk5kGWcPMGeVMkcuftUo6OAHe2yIA==",
         "dependencies": {
-          "Microsoft.AspNetCore.JsonPatch": "7.0.8",
+          "Microsoft.AspNetCore.JsonPatch": "7.0.9",
           "Newtonsoft.Json": "13.0.1",
           "Newtonsoft.Json.Bson": "1.0.2"
         }
@@ -193,11 +193,11 @@
       },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "J4eNwnGsaEeudWGvgEO+n9u5XYfKb/QmMjLPH/T2xUBKzuZsJ7nyNoEtNDo3DhQqyDHPxf2fDSuUwSJQFEj6JQ==",
+        "resolved": "7.0.9",
+        "contentHash": "9YuCdQWuRAmYYHqwW1h5ukKMC1fmNvcVHdp3gb8zdHxwSQz7hkGpYOBEjm6dRXRmGRkpUyHL8rwUz4kd53Ev0A==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "7.0.8",
-          "Microsoft.EntityFrameworkCore.Analyzers": "7.0.8",
+          "Microsoft.EntityFrameworkCore.Abstractions": "7.0.9",
+          "Microsoft.EntityFrameworkCore.Analyzers": "7.0.9",
           "Microsoft.Extensions.Caching.Memory": "7.0.0",
           "Microsoft.Extensions.DependencyInjection": "7.0.0",
           "Microsoft.Extensions.Logging": "7.0.0"
@@ -205,30 +205,30 @@
       },
       "Microsoft.EntityFrameworkCore.Abstractions": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "4+Kj43oGUHPneA/uZurt9Nj9NZt8PBV0vMI+iKOUhmHXQKCkRUzpJaRKIZ1QLy8LiEL5D3/AIRfclgokdJnINQ=="
+        "resolved": "7.0.9",
+        "contentHash": "cfY6Fn7cnP/5pXndL8QYaey/B2nGn1fwze5aSaMJymmbqwqYzFiszHuWbsdVBCDYJc8ok7eB1m/nCc3/rltulQ=="
       },
       "Microsoft.EntityFrameworkCore.Analyzers": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "FSEFD1j4HerUaPyOZ0/NQjZZBkxqDSx2ZKEZXOz1aOQz7PY2f1D6ZuIBTLF8zAq11f058O2cl72GXVRMfwQ5iw=="
+        "resolved": "7.0.9",
+        "contentHash": "VvqFD3DdML6LhPCAR/lG2xNX66juylC8v57yUAAYnUSdEUOMRi3lNoT4OrNdG0rere3UOQPhvVl5FH2QdyoF8Q=="
       },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "C9NYwZdtAd0Ov2jQz4vNplifA/zmvn7BN6k7HrxRdbK4pdg18mFDQAedkJX2hGngNEMwssapzlRhsUSV0Q34rA==",
+        "resolved": "7.0.9",
+        "contentHash": "u7iN6cNd6SJUlpdk24JVIbkji/UbkEEQ7pXncTyT4eXXj+Hz2y4NSZFOAywPGcioIgX1YzbKWDiJhk7hjSFxBQ==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "7.0.8",
+          "Microsoft.EntityFrameworkCore": "7.0.9",
           "Microsoft.Extensions.Configuration.Abstractions": "7.0.0"
         }
       },
       "Microsoft.EntityFrameworkCore.SqlServer": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "w4mGjE/3XvulWqpY6hOGR3Z0oKINuYebO+S6ccQSZDFGrz3xBmPg0EenEpfs8rqFWHM4125nqA1NLProsDgDCw==",
+        "resolved": "7.0.9",
+        "contentHash": "19S5BWZBcaShhLWzePi9iOq+meKIgL+dDlS0NQgPOQapu3wb3So3ZL0xgPmmlyq3GLYvXiCmQsK3Yv3vXYaMTg==",
         "dependencies": {
           "Microsoft.Data.SqlClient": "5.0.2",
-          "Microsoft.EntityFrameworkCore.Relational": "7.0.8"
+          "Microsoft.EntityFrameworkCore.Relational": "7.0.9"
         }
       },
       "Microsoft.Extensions.ApiDescription.Server": {
@@ -895,8 +895,8 @@
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
-          "FluentValidation": "[11.5.2, )",
-          "FluentValidation.DependencyInjectionExtensions": "[11.5.2, )",
+          "FluentValidation": "[11.6.0, )",
+          "FluentValidation.DependencyInjectionExtensions": "[11.6.0, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.1, )",
           "Newtonsoft.Json": "[13.0.3, )",
@@ -909,7 +909,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore.Relational": "[7.0.8, )"
+          "Microsoft.EntityFrameworkCore.Relational": "[7.0.9, )"
         }
       },
       "easydesk.cleanarchitecture.dal.postgresql": {
@@ -925,7 +925,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
           "EntityFrameworkCore.SqlServer.NodaTime": "[6.0.9, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[7.0.8, )"
+          "Microsoft.EntityFrameworkCore.SqlServer": "[7.0.9, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {
@@ -950,7 +950,7 @@
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.9, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.8, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.9, )",
           "Rebus": "[7.1.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[4.0.0, )",
           "Rebus.ServiceProvider": "[9.0.0, )",
@@ -963,7 +963,7 @@
           "CsvHelper": "[30.0.1, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
           "MicroElements.Swashbuckle.NodaTime": "[4.0.1, )",
-          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[7.0.8, )",
+          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "[7.0.9, )",
           "Microsoft.AspNetCore.Mvc.Versioning": "[5.1.0, )",
           "Saunter": "[0.12.0, )",
           "Swashbuckle.AspNetCore": "[6.5.0, )",
