@@ -60,36 +60,42 @@ public sealed class JwtGenerationBuilder
         return _descriptor;
     }
 
-    public JwtGenerationBuilder WithSigningCredentials(SigningCredentials signingCredentials) =>
-        NextStep(() =>
-        {
-            _descriptor.SigningCredentials = signingCredentials;
-            _hasSigningCredentials = true;
-        });
-
-    public JwtGenerationBuilder WithLifetime(Duration lifetime) =>
-        NextStep(() =>
-        {
-            _descriptor.NotBefore = _descriptor.IssuedAt;
-            _descriptor.Expires = _descriptor.IssuedAt + lifetime.ToTimeSpan();
-            _hasLifetime = true;
-        });
-
-    public JwtGenerationBuilder WithIssuer(string issuer) =>
-        NextStep(() => _descriptor.Issuer = issuer);
-
-    public JwtGenerationBuilder WithAudience(string audience) =>
-        NextStep(() => _descriptor.Audience = audience);
-
-    public JwtGenerationBuilder WithEncryptingCredentials(EncryptingCredentials encryptingCredentials) =>
-        NextStep(() => _descriptor.EncryptingCredentials = encryptingCredentials);
-
-    public JwtGenerationBuilder WithCompressionAlgorithm(string compressionAlgorithm) =>
-        NextStep(() => _descriptor.CompressionAlgorithm = compressionAlgorithm);
-
-    private JwtGenerationBuilder NextStep(Action update)
+    public JwtGenerationBuilder WithSigningCredentials(SigningCredentials signingCredentials)
     {
-        update();
+        _descriptor.SigningCredentials = signingCredentials;
+        _hasSigningCredentials = true;
+        return this;
+    }
+
+    public JwtGenerationBuilder WithLifetime(Duration lifetime)
+    {
+        _descriptor.NotBefore = _descriptor.IssuedAt;
+        _descriptor.Expires = _descriptor.IssuedAt + lifetime.ToTimeSpan();
+        _hasLifetime = true;
+        return this;
+    }
+
+    public JwtGenerationBuilder WithIssuer(string issuer)
+    {
+        _descriptor.Issuer = issuer;
+        return this;
+    }
+
+    public JwtGenerationBuilder WithAudience(string audience)
+    {
+        _descriptor.Audience = audience;
+        return this;
+    }
+
+    public JwtGenerationBuilder WithEncryptingCredentials(EncryptingCredentials encryptingCredentials)
+    {
+        _descriptor.EncryptingCredentials = encryptingCredentials;
+        return this;
+    }
+
+    public JwtGenerationBuilder WithCompressionAlgorithm(string compressionAlgorithm)
+    {
+        _descriptor.CompressionAlgorithm = compressionAlgorithm;
         return this;
     }
 }

@@ -98,49 +98,60 @@ public sealed class JwtValidationBuilder
         return _parameters;
     }
 
-    public JwtValidationBuilder WithSignatureValidation(SecurityKey key) =>
-        NextStep(() =>
-        {
-            _parameters.ValidateIssuerSigningKey = true;
-            _parameters.IssuerSigningKey = key;
-            _hasSignatureValidation = true;
-        });
+    public JwtValidationBuilder WithSignatureValidation(SecurityKey key, params SecurityKey[] keys) =>
+        WithSignatureValidation(keys.Prepend(key));
 
-    public JwtValidationBuilder WithoutLifetimeValidation() =>
-        NextStep(() => _parameters.ValidateLifetime = false);
-
-    public JwtValidationBuilder WithIssuerValidation(IEnumerable<string> validIssuers) =>
-        NextStep(() =>
+    public JwtValidationBuilder WithSignatureValidation(IEnumerable<SecurityKey> keys)
+    {
+        if (keys.IsEmpty())
         {
-            _parameters.ValidIssuers = validIssuers;
-            _parameters.ValidateIssuer = true;
-        });
+            throw new ArgumentException($"Signature validation must have at least one key");
+        }
+
+        _parameters.ValidateIssuerSigningKey = true;
+        _parameters.IssuerSigningKeys = keys;
+        _hasSignatureValidation = true;
+        return this;
+    }
+
+    public JwtValidationBuilder WithoutLifetimeValidation()
+    {
+        _parameters.ValidateLifetime = false;
+        return this;
+    }
+
+    public JwtValidationBuilder WithIssuerValidation(IEnumerable<string> validIssuers)
+    {
+        _parameters.ValidIssuers = validIssuers;
+        _parameters.ValidateIssuer = true;
+        return this;
+    }
 
     public JwtValidationBuilder WithIssuerValidation(string validIssuer) =>
         WithIssuerValidation(Items(validIssuer));
 
-    public JwtValidationBuilder WithAudienceValidation(IEnumerable<string> validAudiences) =>
-        NextStep(() =>
-        {
-            _parameters.ValidAudiences = validAudiences;
-            _parameters.ValidateAudience = true;
-        });
+    public JwtValidationBuilder WithAudienceValidation(IEnumerable<string> validAudiences)
+    {
+        _parameters.ValidAudiences = validAudiences;
+        _parameters.ValidateAudience = true;
+        return this;
+    }
 
     public JwtValidationBuilder WithAudienceValidation(string validAudience) =>
         WithAudienceValidation(Items(validAudience));
 
-    public JwtValidationBuilder WithClockSkew(Duration skew) =>
-        NextStep(() => _parameters.ClockSkew = skew.ToTimeSpan());
+    public JwtValidationBuilder WithClockSkew(Duration skew)
+    {
+        _parameters.ClockSkew = skew.ToTimeSpan();
+        return this;
+    }
 
     public JwtValidationBuilder WithDecryption(SecurityKey key) =>
         WithDecryption(Items(key));
 
-    public JwtValidationBuilder WithDecryption(IEnumerable<SecurityKey> keys) =>
-        NextStep(() => _parameters.TokenDecryptionKeys = keys);
-
-    public JwtValidationBuilder NextStep(Action configureParameters)
+    public JwtValidationBuilder WithDecryption(IEnumerable<SecurityKey> keys)
     {
-        configureParameters();
+        _parameters.TokenDecryptionKeys = keys;
         return this;
     }
 }
