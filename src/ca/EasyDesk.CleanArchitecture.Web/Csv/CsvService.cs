@@ -19,7 +19,7 @@ public class CsvService
                 // Get by index.
                 if (args.HeaderNames == null || args.HeaderNames.Length == 0)
                 {
-                    throw new InvalidCsvLineException(args.Context, message, $"Field at index '{args.Index}'");
+                    throw new InvalidCsvLineException($"Field at index '{args.Index}'", message);
                 }
 
                 // Get by name.
@@ -27,10 +27,10 @@ public class CsvService
 
                 if (args.HeaderNames.Length == 1)
                 {
-                    throw new InvalidCsvLineException(args.Context, message, $"Field with name '{args.HeaderNames[0]}'{indexText}");
+                    throw new InvalidCsvLineException($"Field with name '{args.HeaderNames[0]}'{indexText}", message);
                 }
 
-                throw new InvalidCsvLineException(args.Context, message, $"Field containing names '{string.Join("' or '", args.HeaderNames)}'{indexText}");
+                throw new InvalidCsvLineException($"Field containing names '{string.Join("' or '", args.HeaderNames)}'{indexText}", message);
             },
         };
     }
@@ -99,19 +99,5 @@ public class CsvService
     public record InvalidCsvLine(long LineIndex, string Message, string? Field = null) : Error
     {
         public string DisplayMessage => $"Line {LineIndex}: {(Field is null ? string.Empty : Field + ' ')}{Message}";
-    }
-
-    private class InvalidCsvLineException : Exception
-    {
-        public InvalidCsvLineException(CsvContext context, string message, string field)
-            : base(message)
-        {
-            Context = context;
-            Field = field;
-        }
-
-        public CsvContext Context { get; }
-
-        public string Field { get; }
     }
 }

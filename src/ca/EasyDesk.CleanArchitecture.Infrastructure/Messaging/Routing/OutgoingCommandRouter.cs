@@ -11,9 +11,9 @@ internal class OutgoingCommandRouter : IRouter
 {
     private readonly RoutingContext _routingContext;
 
-    public OutgoingCommandRouter(RebusEndpoint endpoint)
+    public OutgoingCommandRouter(RebusEndpoint endpoint, string errorQueue)
     {
-        _routingContext = new(endpoint.InputQueueAddress);
+        _routingContext = new(endpoint.InputQueueAddress, errorQueue);
     }
 
     public Task<string?> GetDestinationAddress(Message message) =>

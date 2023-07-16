@@ -45,11 +45,11 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "11.4.1",
-        "contentHash": "dp1r41w+d8ufEkr1Mul02sBFRk/mmAPLu20d8A00/5oU5S8gX6VUpgqZWBiwwZ7/onakyFMtOufUg8XPUFDhHw==",
+        "resolved": "12.0.0",
+        "contentHash": "hNlvroApwjYdW3UYcjztpBJy82tXTsD9ivSkdZqgRRpw3p979iM6Uy5LYpCIpJ0eK1UqcQAuxTem7//rLpEpIg==",
         "dependencies": {
           "EmptyFiles": "4.4.0",
-          "System.Management": "6.0.1"
+          "System.Management": "6.0.2"
         }
       },
       "EmptyFiles": {
@@ -59,15 +59,15 @@
       },
       "FluentValidation": {
         "type": "Transitive",
-        "resolved": "11.5.2",
-        "contentHash": "kj/hW/iusp2zq1Vt1YPLgDj6UG0DhoJXGkLwjLwm3j7vUtRF8DVA5vHJfItG3BxDjLWJUR2pvw8fK7rnuysZNA=="
+        "resolved": "11.6.0",
+        "contentHash": "DWKd0jHA33d7BXVWytSoN5Oafj9nYuiLUyyFoaUboOZZiaN5tlXdcJpkRbmrrWBUTWdSxjTwIoyUs38KSU/7OQ=="
       },
       "FluentValidation.DependencyInjectionExtensions": {
         "type": "Transitive",
-        "resolved": "11.5.2",
-        "contentHash": "ycibtdWdluIx0aTgQvO7Kjd5GjNRpD92z4/hEJc8u1luZ5ff1k0JpwPGmL+YFbPVYFk+A6gYIrVI4QdZfSJJdQ==",
+        "resolved": "11.6.0",
+        "contentHash": "3jyyy5VMzKsdGNzfBKtEYX3fd3YzSSzd7JEq7uJcqjqqkoCexT4khgTlNT8upXOeU6mT1MSW7H7OjvUG9W1bRw==",
         "dependencies": {
-          "FluentValidation": "11.5.2",
+          "FluentValidation": "11.6.0",
           "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
         }
       },
@@ -82,8 +82,8 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "7.0.8",
-        "contentHash": "UWGvF86d2q90e1ync37Yg+yg2GRSeSh9y/Q5YRFw42YfzTDQd0X6somujDFVc9HWn6zVB7osSZnxHMW8BwoRSA==",
+        "resolved": "7.0.9",
+        "contentHash": "sqrvj8x9e7i7QD+q4SJ0iR0rlA6az8WJl7oO5mS9lmgOaIwKKf8MEzcF5XWf/Yk6CA4akH3SnH0JB4+huKUPNg==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "6.15.1"
         }
@@ -381,8 +381,8 @@
       },
       "System.Management": {
         "type": "Transitive",
-        "resolved": "6.0.1",
-        "contentHash": "10J1D0h/lioojphfJ4Fuh5ZUThT/xOVHdV9roGBittKKNP2PMjrvibEdbVTGZcPra1399Ja3tqIJLyQrc5Wmhg==",
+        "resolved": "6.0.2",
+        "contentHash": "s6c9x2Kghd+ncEDnT6ApYVOacDXr/Y57oSUSx6wjegMOfKxhtrXn3PdASPNU59y3kB9OJ1yb3l5k6uKr3bhqew==",
         "dependencies": {
           "System.CodeDom": "6.0.0"
         }
@@ -440,11 +440,11 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "20.4.0",
-        "contentHash": "gtZwE6ppNycNaCDozS9iMI6uY4jyZUK6yEaeyXqzNsF2aA0TcQRy5waIBoS3CHuuJDxVmYBRSkghkzH8S+1Fiw==",
+        "resolved": "20.5.0",
+        "contentHash": "zuKy2OvA0SYByFOW/Kp8U65XwkTRhZvBX/kgvgp4Jm6KmeJ2aTA8bc9inK0+bhlWU7duAHEEf8f9THIAPtFhBw==",
         "dependencies": {
           "Argon": "0.7.2",
-          "DiffEngine": "11.4.1",
+          "DiffEngine": "12.0.0",
           "EmptyFiles": "4.4.0",
           "SimpleInfoName": "2.1.1",
           "System.IO.Hashing": "7.0.0"
@@ -476,8 +476,8 @@
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
-          "FluentValidation": "[11.5.2, )",
-          "FluentValidation.DependencyInjectionExtensions": "[11.5.2, )",
+          "FluentValidation": "[11.6.0, )",
+          "FluentValidation.DependencyInjectionExtensions": "[11.6.0, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.1, )",
           "Newtonsoft.Json": "[13.0.3, )",
@@ -507,7 +507,7 @@
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[5.2.9, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.8, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.9, )",
           "Rebus": "[7.1.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[4.0.0, )",
           "Rebus.ServiceProvider": "[9.0.0, )",
@@ -538,7 +538,7 @@
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
           "NSubstitute": "[5.0.0, )",
           "Shouldly": "[4.2.1, )",
-          "Verify": "[20.4.0, )",
+          "Verify": "[20.5.0, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.1.0, )"
         }
