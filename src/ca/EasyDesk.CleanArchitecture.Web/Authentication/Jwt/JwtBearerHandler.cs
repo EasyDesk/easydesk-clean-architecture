@@ -46,6 +46,7 @@ internal class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
     {
         return _jwtFacade
             .Validate(token, Options.Configuration.ConfigureBuilder)
-            .Map(x => new ClaimsPrincipal(x));
+            .Map(x => new ClaimsPrincipal(x))
+            .Value;
     }
 }

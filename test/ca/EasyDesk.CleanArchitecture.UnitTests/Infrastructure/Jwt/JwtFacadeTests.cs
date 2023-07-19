@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+using EasyDesk.Testing.Assertions;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using NodaTime.Testing;
@@ -51,7 +52,7 @@ public class JwtFacadeTests
         var jwtWithoutHeader = jwt[jwt.IndexOf('.')..];
         var replacedHeader = Base64UrlEncoder.Encode($@"{{""alg"":""none"",""typ"":""jwt"",""kid"":""{KeyId}""}}");
         var forgedJwt = replacedHeader + jwtWithoutHeader;
-        _sut.Validate(forgedJwt, _configureDefaultValidation).ShouldBeEmpty();
+        _sut.Validate(forgedJwt, _configureDefaultValidation).ShouldBeFailure();
     }
 
     [Fact]
@@ -67,7 +68,7 @@ public class JwtFacadeTests
     [Fact]
     public void ShouldFailValidatingBadlyFormattedTokens()
     {
-        _sut.Validate("BADLY FORMATTED TOKEN", _configureDefaultValidation).ShouldBeEmpty();
+        _sut.Validate("BADLY FORMATTED TOKEN", _configureDefaultValidation).ShouldBeFailure();
     }
 
     [Fact]
@@ -75,7 +76,7 @@ public class JwtFacadeTests
     {
         var jwt = _sut.Create(_claimsIdentity, _configureJwtGeneration);
 
-        _sut.Validate(jwt, builder => builder.WithSignatureValidation(KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm", KeyId))).ShouldBeEmpty();
+        _sut.Validate(jwt, builder => builder.WithSignatureValidation(KeyUtils.KeyFromString("qwertyuiopasdfghjklzxcvbnm", KeyId))).ShouldBeFailure();
     }
 
     [Fact]
@@ -85,7 +86,7 @@ public class JwtFacadeTests
 
         AdvanceToPostExpiration();
 
-        _sut.Validate(jwt, _configureDefaultValidation).ShouldBeEmpty();
+        _sut.Validate(jwt, _configureDefaultValidation).ShouldBeFailure();
     }
 
     [Fact]
@@ -93,14 +94,14 @@ public class JwtFacadeTests
     {
         var jwt = _sut.Create(_claimsIdentity, _configureJwtGeneration);
 
-        _sut.Validate(jwt, _configureDefaultValidation).ShouldNotBeEmpty();
+        _sut.Validate(jwt, _configureDefaultValidation).ShouldBeSuccess();
     }
 
     [Fact]
     public void ShouldKeepTheOriginalClaimsAfterValidation()
     {
         var jwt = _sut.Create(_claimsIdentity, _configureJwtGeneration);
-        var identity = _sut.Validate(jwt, _configureDefaultValidation).Value;
+        var identity = _sut.Validate(jwt, _configureDefaultValidation).ReadValue();
         _claimsIdentity.Claims.ShouldBeSubsetOf(identity.Claims, _claimsComparer);
     }
 
@@ -112,7 +113,7 @@ public class JwtFacadeTests
         {
             _configureDefaultValidation(b);
             b.WithIssuerValidation("another-issuer");
-        }).ShouldBeEmpty();
+        }).ShouldBeFailure();
     }
 
     [Fact]
@@ -123,7 +124,7 @@ public class JwtFacadeTests
         {
             _configureDefaultValidation(b);
             b.WithAudienceValidation("another-audience");
-        }).ShouldBeEmpty();
+        }).ShouldBeFailure();
     }
 
     [Fact]
@@ -137,7 +138,7 @@ public class JwtFacadeTests
         {
             _configureDefaultValidation(b);
             b.WithoutLifetimeValidation();
-        }).ShouldNotBeEmpty();
+        }).ShouldBeSuccess();
     }
 
     [Fact]
@@ -151,7 +152,7 @@ public class JwtFacadeTests
             b.WithAudienceValidation(Audience).WithIssuerValidation(Issuer);
         });
 
-        result.ShouldNotBeEmpty();
+        result.ShouldBeSuccess();
     }
 
     private void AdvanceToPostExpiration()

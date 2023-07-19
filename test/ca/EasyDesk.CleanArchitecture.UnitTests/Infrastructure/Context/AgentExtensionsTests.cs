@@ -28,7 +28,7 @@ public class AgentExtensionsTests
             .WithSigningCredentials(new SigningCredentials(_key, SecurityAlgorithms.HmacSha256))
             .WithLifetime(Duration.FromDays(1)));
         var result = _jwtFacade.Validate(jwt, x => x.WithSignatureValidation(_key));
-        result.Map(x => x.ToAgent()).ShouldContain(agent);
+        result.Map(x => x.ToAgent()).ShouldBe(agent);
     }
 
     public static IEnumerable<object[]> Agents()

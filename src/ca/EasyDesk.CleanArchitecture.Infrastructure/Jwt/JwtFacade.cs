@@ -1,4 +1,6 @@
-﻿using NodaTime;
+﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using Microsoft.IdentityModel.Tokens;
+using NodaTime;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -28,10 +30,10 @@ public sealed class JwtFacade
         return handler.WriteToken(token);
     }
 
-    public Option<ClaimsIdentity> Validate(string jwt, Action<JwtValidationBuilder> configure) =>
+    public Result<ClaimsIdentity> Validate(string jwt, Action<JwtValidationBuilder> configure) =>
         Validate(jwt, out _, configure);
 
-    public Option<ClaimsIdentity> Validate(string jwt, out JwtSecurityToken? token, Action<JwtValidationBuilder> configure)
+    public Result<ClaimsIdentity> Validate(string jwt, out JwtSecurityToken? token, Action<JwtValidationBuilder> configure)
     {
         var builder = new JwtValidationBuilder(_clock);
         configure(builder);
@@ -42,12 +44,35 @@ public sealed class JwtFacade
         {
             var principal = handler.ValidateToken(jwt, parameters, out var genericToken);
             token = genericToken as JwtSecurityToken;
-            return Some(principal.Identities.Single());
+            return principal.Identities.Single();
         }
-        catch
+        catch (Exception ex)
         {
             token = null;
-            return None;
+
+            var message = ex switch
+            {
+                SecurityTokenMalformedException => Some("TokenMalformed"),
+                SecurityTokenDecryptionFailedException => Some("DecryptionFailed"),
+                SecurityTokenExpiredException => Some("TokenExpired"),
+                SecurityTokenInvalidAudienceException => Some("InvalidAudience"),
+                SecurityTokenInvalidIssuerException => Some("InvalidIssuer"),
+                SecurityTokenInvalidLifetimeException => Some("InvalidLifetime"),
+                SecurityTokenInvalidSignatureException => Some("InvalidSignature"),
+                SecurityTokenInvalidSigningKeyException => Some("InvalidSigningKey"),
+                SecurityTokenNoExpirationException => Some("NoExpiration"),
+                SecurityTokenNotYetValidException => Some("NotYetValid"),
+                SecurityTokenReplayAddFailedException => Some("ReplayAddFailed"),
+                SecurityTokenReplayDetectedException => Some("ReplayDetected"),
+                _ => None,
+            };
+
+            if (message.IsAbsent)
+            {
+                throw;
+            }
+
+            return Errors.Generic("Failed to validate JWT. Failure code: {reason}", message.Value);
         }
     }
 }
