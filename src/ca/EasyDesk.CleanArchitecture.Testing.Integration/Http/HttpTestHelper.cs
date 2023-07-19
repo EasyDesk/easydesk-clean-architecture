@@ -17,13 +17,13 @@ public class HttpTestHelper
     public HttpTestHelper(
         HttpClient httpClient,
         JsonSettingsConfigurator jsonSettingsConfigurator,
-        ITestHttpAuthentication httpAuthentication,
+        ITestHttpAuthentication? httpAuthentication = null,
         Action<HttpRequestBuilder>? configureRequest = null)
     {
         _httpClient = httpClient;
-        _httpAuthentication = httpAuthentication;
-        _configureRequest = configureRequest;
         _settings = jsonSettingsConfigurator.CreateSettings();
+        _httpAuthentication = httpAuthentication ?? new NoAuthentication();
+        _configureRequest = configureRequest;
     }
 
     public HttpSingleRequestExecutor<R> Get<R>(string requestUri) =>
