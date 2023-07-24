@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +18,11 @@ public class DataAccessModule : AppModule
     {
         app.ConfigureDispatchingPipeline(pipeline =>
         {
-            pipeline.AddStep(typeof(UnitOfWorkStep<,>));
+            pipeline
+                .AddStep(typeof(UnitOfWorkStep<,>));
+            pipeline
+                .AddStepAfterAll(typeof(SaveChangesStep<,>))
+                .After(typeof(DomainEventHandlingStep<,>));
             Implementation.ConfigurePipeline(pipeline);
         });
     }

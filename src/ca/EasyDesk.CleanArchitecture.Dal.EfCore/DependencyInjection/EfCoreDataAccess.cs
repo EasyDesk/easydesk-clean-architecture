@@ -38,24 +38,13 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
 
     public void ConfigurePipeline(PipelineBuilder pipeline)
     {
-        pipeline
-            .AddStep(typeof(SaveChangesStep<,>))
-            .After(typeof(UnitOfWorkStep<,>))
-            .After(typeof(InboxStep<>));
     }
 
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         _options.RegisterUtilityServices(services);
         AddDbContext<T>(services);
-        services.AddScoped<SaveChangesDelegate>(provider => async () =>
-        {
-            var dbContext = provider.GetRequiredService<T>();
-            if (dbContext.ChangeTracker.HasChanges())
-            {
-                await dbContext.SaveChangesAsync();
-            }
-        });
+        services.AddScoped<ISaveChangesHandler, EfCoreSaveChangesHandler<T>>();
         services.AddScoped<EfCoreUnitOfWorkProvider>();
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
 

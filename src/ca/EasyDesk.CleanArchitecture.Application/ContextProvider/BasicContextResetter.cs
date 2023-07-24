@@ -2,5 +2,7 @@
 
 public class BasicContextResetter : IContextResetter
 {
-    public Task ResetContext() => Task.CompletedTask;
+    public void ResetContext()
+    {
+    }
 }

@@ -14,7 +14,7 @@ public class ContextResetStep<T, R> : IPipelineStep<T, R>
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         var result = await next();
-        await _contextResetter.ResetContext();
+        _contextResetter.ResetContext();
         return result;
     }
 }

@@ -13,9 +13,9 @@ public class MultitenantContextResetter : IContextResetter
         _tenantNavigator = tenantNavigator;
     }
 
-    public async Task ResetContext()
+    public void ResetContext()
     {
         _tenantNavigator.MoveToContextTenant();
-        await _contextResetter.ResetContext();
+        _contextResetter.ResetContext();
     }
 }

@@ -2,5 +2,5 @@
 
 public interface IContextResetter
 {
-    Task ResetContext();
+    void ResetContext();
 }

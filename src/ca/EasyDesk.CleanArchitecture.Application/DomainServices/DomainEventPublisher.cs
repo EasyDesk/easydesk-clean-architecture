@@ -31,11 +31,12 @@ internal class DomainEventPublisher : IDomainEventPublisher
         where T : DomainEvent
     {
         var handlers = _serviceProvider.GetServices<IDomainEventHandler<T>>();
-        await _contextResetter.ResetContext();
         foreach (var handler in handlers)
         {
             var result = await handler.Handle(domainEvent);
-            await _contextResetter.ResetContext();
+
+            _contextResetter.ResetContext();
+
             if (result.IsFailure)
             {
                 return result;

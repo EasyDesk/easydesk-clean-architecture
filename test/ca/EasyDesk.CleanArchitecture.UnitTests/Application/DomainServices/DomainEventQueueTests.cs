@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.DomainServices;
+﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
 using NSubstitute;
@@ -15,13 +16,16 @@ public class DomainEventQueueTests
 
     private readonly DomainEventQueue _sut;
     private readonly IDomainEventPublisher _publisher;
+    private readonly ISaveChangesHandler _saveChangesHandler;
 
     public DomainEventQueueTests()
     {
         _publisher = Substitute.For<IDomainEventPublisher>();
         _publisher.Publish(default!).ReturnsForAnyArgs(Ok);
 
-        _sut = new(_publisher);
+        _saveChangesHandler = Substitute.For<ISaveChangesHandler>();
+
+        _sut = new(_publisher, _saveChangesHandler);
     }
 
     [Fact]
@@ -39,7 +43,7 @@ public class DomainEventQueueTests
     }
 
     [Fact]
-    public async Task ShouldStopPublishingEventsAsSoonAsOneEventHandlingFails()
+    public async Task ShouldStopPublishingEventsAsSoonAsOneHandlerFails()
     {
         _publisher.Publish(_event2).Returns(TestDomainError.Create());
 
