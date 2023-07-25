@@ -141,7 +141,7 @@ public static class SwaggerModuleExtensions
 
     public static bool HasOpenApi(this AppDescription app) => app.HasModule<OpenApiModule>();
 
-    public static void UseOpenApiModule(this WebApplication app)
+    public static void UseOpenApiModule(this WebApplication app, AppDescription appDescription)
     {
         var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
 
@@ -151,6 +151,7 @@ public static class SwaggerModuleExtensions
         });
         app.UseSwaggerUI(c =>
         {
+            c.DocumentTitle = $"{appDescription.Name} API";
             swaggerOptions.SwaggerGeneratorOptions.SwaggerDocs.ForEach(doc =>
             {
                 c.SwaggerEndpoint($"./swagger/{doc.Key}/swagger.json", doc.Value.Title);
