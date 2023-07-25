@@ -29,7 +29,7 @@ public class AsyncApiModule : AppModule
         {
             options.Middleware.Route = "/asyncapi/{document}/asyncapi.json";
             options.Middleware.UiBaseRoute = "/asyncapi/{document}/";
-            options.Middleware.UiTitle = $"AsyncApi :: {app.Name}";
+            options.Middleware.UiTitle = $"{app.Name} - AsyncAPI";
             _configure?.Invoke(options);
         });
         app.RequireModule<RebusMessagingModule>().Options.KnownMessageTypes

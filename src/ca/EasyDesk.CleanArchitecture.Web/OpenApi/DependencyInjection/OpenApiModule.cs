@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 
@@ -42,6 +43,7 @@ public class OpenApiModule : AppModule
 
             _options.ConfigureSwagger?.Invoke(options);
         });
+        services.Configure<SwaggerUIOptions>(c => c.DocumentTitle = $"{app.Name} - OpenAPI");
     }
 
     private void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)
@@ -82,7 +84,7 @@ public class OpenApiModule : AppModule
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
             {
                 Title = $"{app.Name} {version}",
-                Version = version
+                Version = version,
             }));
 
         options.OperationFilter<AddApiVersionParameterFilter>();
@@ -141,7 +143,7 @@ public static class SwaggerModuleExtensions
 
     public static bool HasOpenApi(this AppDescription app) => app.HasModule<OpenApiModule>();
 
-    public static void UseOpenApiModule(this WebApplication app, AppDescription appDescription)
+    public static void UseOpenApiModule(this WebApplication app)
     {
         var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
 
@@ -151,7 +153,6 @@ public static class SwaggerModuleExtensions
         });
         app.UseSwaggerUI(c =>
         {
-            c.DocumentTitle = $"{appDescription.Name} API";
             swaggerOptions.SwaggerGeneratorOptions.SwaggerDocs.ForEach(doc =>
             {
                 c.SwaggerEndpoint($"./swagger/{doc.Key}/swagger.json", doc.Value.Title);
