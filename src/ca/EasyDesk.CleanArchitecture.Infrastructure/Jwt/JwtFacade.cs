@@ -52,27 +52,21 @@ public sealed class JwtFacade
 
             var message = ex switch
             {
-                SecurityTokenMalformedException => Some("TokenMalformed"),
-                SecurityTokenDecryptionFailedException => Some("DecryptionFailed"),
-                SecurityTokenExpiredException => Some("TokenExpired"),
-                SecurityTokenInvalidAudienceException => Some("InvalidAudience"),
-                SecurityTokenInvalidIssuerException => Some("InvalidIssuer"),
-                SecurityTokenInvalidLifetimeException => Some("InvalidLifetime"),
-                SecurityTokenInvalidSignatureException => Some("InvalidSignature"),
-                SecurityTokenInvalidSigningKeyException => Some("InvalidSigningKey"),
-                SecurityTokenNoExpirationException => Some("NoExpiration"),
-                SecurityTokenNotYetValidException => Some("NotYetValid"),
-                SecurityTokenReplayAddFailedException => Some("ReplayAddFailed"),
-                SecurityTokenReplayDetectedException => Some("ReplayDetected"),
-                _ => None,
+                SecurityTokenDecryptionFailedException => "DecryptionFailed",
+                SecurityTokenExpiredException => "TokenExpired",
+                SecurityTokenInvalidAudienceException => "InvalidAudience",
+                SecurityTokenInvalidIssuerException => "InvalidIssuer",
+                SecurityTokenInvalidLifetimeException => "InvalidLifetime",
+                SecurityTokenInvalidSignatureException => "InvalidSignature",
+                SecurityTokenInvalidSigningKeyException => "InvalidSigningKey",
+                SecurityTokenNoExpirationException => "NoExpiration",
+                SecurityTokenNotYetValidException => "NotYetValid",
+                SecurityTokenReplayAddFailedException => "ReplayAddFailed",
+                SecurityTokenReplayDetectedException => "ReplayDetected",
+                _ => "TokenMalformed"
             };
 
-            if (message.IsAbsent)
-            {
-                throw;
-            }
-
-            return Errors.Generic("Failed to validate JWT. Failure code: {reason}", message.Value);
+            return Errors.Generic("Failed to validate JWT. Failure code: {reason}", message);
         }
     }
 }

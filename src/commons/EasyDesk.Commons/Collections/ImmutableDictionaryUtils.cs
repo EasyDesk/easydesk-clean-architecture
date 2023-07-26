@@ -25,11 +25,11 @@ public static class ImmutableDictionaryUtils
         this IImmutableDictionary<K, V> dictionary,
         K key,
         Func<V, V> mutation,
-        Func<V>? supplier = default)
+        Func<V> supplier)
         where K : notnull
     {
-        return dictionary.GetOption(key).Match(
-            some: v => dictionary.SetItem(key, mutation(v)),
-            none: () => supplier is null ? dictionary : dictionary.Add(key, supplier()));
+        return dictionary.SetItem(key, dictionary.GetOption(key).Match(
+            some: mutation,
+            none: supplier));
     }
 }

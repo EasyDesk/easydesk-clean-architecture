@@ -32,4 +32,15 @@ public static class DictionaryUtils
             return newValue;
         }
     }
+
+    public static void Update<K, V>(
+        this IDictionary<K, V> dictionary,
+        K key,
+        Func<V, V> mutation,
+        Func<V> supplier)
+    {
+        dictionary[key] = dictionary.GetOption(key).Match(
+            some: mutation,
+            none: supplier);
+    }
 }

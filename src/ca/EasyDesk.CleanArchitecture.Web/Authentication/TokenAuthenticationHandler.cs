@@ -14,7 +14,7 @@ public abstract class TokenAuthenticationOptions : AuthenticationSchemeOptions
     public TokenReader TokenReader { get; set; } = TokenReaders.Bearer();
 }
 
-public abstract class TokenAuthenticationHandler<T> : AuthenticationHandler<T>
+public abstract class TokenAuthenticationHandler<T> : AbstractAuthenticationHandler<T>
     where T : TokenAuthenticationOptions, new()
 {
     public TokenAuthenticationHandler(IOptionsMonitor<T> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
@@ -22,27 +22,15 @@ public abstract class TokenAuthenticationHandler<T> : AuthenticationHandler<T>
     {
     }
 
-    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    protected override Task<Option<Result<ClaimsPrincipal>>> Handle()
     {
         return Task.FromResult(GetAuthenticateResult());
     }
 
-    private AuthenticateResult GetAuthenticateResult()
+    private Option<Result<ClaimsPrincipal>> GetAuthenticateResult()
     {
-        var token = Options.TokenReader(Context);
-
-        if (token.IsAbsent)
-        {
-            return AuthenticateResult.NoResult();
-        }
-
-        var claimsPrincipal = GetClaimsPrincipalFromToken(token.Value);
-        return claimsPrincipal
-            .Map(principal => new AuthenticationTicket(principal, Scheme.Name))
-            .Match(
-                some: AuthenticateResult.Success,
-                none: () => AuthenticateResult.Fail("Invalid authorization header"));
+        return Options.TokenReader(Context).Map(GetClaimsPrincipalFromToken);
     }
 
-    protected abstract Option<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token);
+    protected abstract Result<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token);
 }
