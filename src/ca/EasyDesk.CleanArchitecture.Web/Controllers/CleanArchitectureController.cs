@@ -11,7 +11,7 @@ public abstract class CleanArchitectureController : AbstractController
 {
     protected T GetService<T>() where T : notnull => HttpContext.RequestServices.GetRequiredService<T>();
 
-    protected ActionResultBuilder<T, T, Nothing> Dispatch<T>(IDispatchable<T> request) =>
+    protected ActionResultBuilder<T, Nothing> Dispatch<T>(IDispatchable<T> request) =>
         Result(() => GetService<IDispatcher>().Dispatch(request), _ => Nothing.Value);
 
     protected ActionResultBuilder<IEnumerable<T>, PaginationMetaDto> DispatchWithPagination<T>(IDispatchable<IPageable<T>> request, PaginationDto pagination) =>
