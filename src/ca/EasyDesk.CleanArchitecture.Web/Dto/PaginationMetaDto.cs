@@ -5,8 +5,6 @@ public record PaginationMetaDto(
     int PageIndex,
     int PageSize)
 {
-    public static PaginationMetaDto FromResult<T>(Result<IEnumerable<T>> result, int pageSize, int pageIndex) =>
-        result.Match<PaginationMetaDto>(
-            success: t => new(Count: t.Count(), PageIndex: pageIndex, PageSize: pageSize),
-            failure: _ => new(Count: 0, PageIndex: pageIndex, PageSize: pageSize));
+    public static PaginationMetaDto FromResult(Result<int> count, int pageSize, int pageIndex) =>
+        new(Count: count.Value | 0, PageIndex: pageIndex, PageSize: pageSize);
 }

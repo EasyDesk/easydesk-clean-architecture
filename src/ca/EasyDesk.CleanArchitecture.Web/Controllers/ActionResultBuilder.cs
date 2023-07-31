@@ -110,24 +110,12 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         OnSuccess((body, result) => _controller.CreatedAtAction(actionName, controllerName, routeValues(result), body));
 }
 
-public class PaginatedActionResultBuilder<TDto> : ActionResultBuilder<IEnumerable<TDto>, IEnumerable<TDto>, PaginationMetaDto>
+public class ActionResultBuilder<TDto, TMeta> : ActionResultBuilder<TDto, TDto, TMeta>
 {
-    public PaginatedActionResultBuilder(
-        AsyncFunc<Result<IEnumerable<TDto>>> resultProvider,
-        Func<Result<IEnumerable<TDto>>, PaginationMetaDto> meta,
-        ControllerBase controller)
-        : base(resultProvider, It, meta, controller)
+    public ActionResultBuilder(
+        AsyncFunc<Result<TDto>> resultProvider,
+        Func<Result<TDto>, TMeta> meta,
+        ControllerBase controller) : base(resultProvider, It, meta, controller)
     {
-    }
-
-    public ActionResultBuilder<IEnumerable<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElement<TNewDto>(Func<TDto, TNewDto> mapper)
-    {
-        return Map(ts => ts.Select(mapper));
-    }
-
-    public ActionResultBuilder<IEnumerable<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElementTo<TNewDto>()
-        where TNewDto : IMappableFrom<TDto, TNewDto>
-    {
-        return Map(ts => ts.Select(TNewDto.MapFrom));
     }
 }

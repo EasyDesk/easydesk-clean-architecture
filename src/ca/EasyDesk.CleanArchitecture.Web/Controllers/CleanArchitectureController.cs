@@ -12,34 +12,33 @@ public abstract class CleanArchitectureController : AbstractController
     protected T GetService<T>() where T : notnull => HttpContext.RequestServices.GetRequiredService<T>();
 
     protected ActionResultBuilder<T, T, Nothing> Dispatch<T>(IDispatchable<T> request) =>
-        Result(() => GetService<IDispatcher>().Dispatch(request), It, _ => Nothing.Value);
+        Result(() => GetService<IDispatcher>().Dispatch(request), _ => Nothing.Value);
 
-    protected PaginatedActionResultBuilder<T> DispatchWithPagination<T>(IDispatchable<IPageable<T>> request, PaginationDto pagination)
+    protected ActionResultBuilder<IEnumerable<T>, PaginationMetaDto> DispatchWithPagination<T>(IDispatchable<IPageable<T>> request, PaginationDto pagination) =>
+         PaginatedResult((pageSize, pageIndex) => GetService<IDispatcher>().Dispatch(request).ThenMapAsync(p => p.GetPage(pageSize, pageIndex)), e => e.Count(), pagination);
+
+    protected ActionResultBuilder<TDto, PaginationMetaDto> PaginatedResult<TDto>(
+        PaginatedRequest<TDto> request,
+        Func<TDto, int> count,
+        PaginationDto pagination)
     {
         var paginationService = GetService<PaginationService>();
-        var pageIndex = paginationService.GetPageIndex(pagination.PageIndex.AsOption());
         var pageSize = paginationService.GetPageSize(pagination.PageSize.AsOption());
-        return PaginatedResult(() => GetService<IDispatcher>().Dispatch(request).ThenMapAsync(p => p.GetPage(pageSize, pageIndex)), pageIndex, pageSize);
+        var pageIndex = paginationService.GetPageIndex(pagination.PageIndex.AsOption());
+        return Result(() => request(pageSize, pageIndex), result => PaginationMetaDto.FromResult(result.Map(count), pageSize, pageIndex));
     }
 
-    protected ActionResultBuilder<TResult, TDto, TMeta> Result<TResult, TDto, TMeta>(
-        AsyncFunc<Result<TResult>> request,
-        Func<TResult, TDto> mapper,
-        Func<Result<TResult>, TMeta> meta) =>
-            new(request, mapper, meta, this);
-
-    protected PaginatedActionResultBuilder<TDto> PaginatedResult<TDto>(
-        AsyncFunc<Result<IEnumerable<TDto>>> request,
-        int pageIndex,
-        int pageSize) =>
-            new(request, result => PaginationMetaDto.FromResult(result, pageSize, pageIndex), this);
+    protected ActionResultBuilder<TDto, TMeta> Result<TDto, TMeta>(
+        AsyncFunc<Result<TDto>> request,
+        Func<Result<TDto>, TMeta> meta) =>
+            new(request, meta, this);
 
     protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Success<TDto>(TDto result) =>
-        Result<TDto, TDto, Nothing>(() => Task.FromResult(new Result<TDto>(result)), It, _ => Nothing.Value)
+        Result(() => Task.FromResult(new Result<TDto>(result)), _ => Nothing.Value)
             .ReturnOk();
 
     protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error) =>
-        Result<TDto, TDto, Nothing>(() => Task.FromResult(new Result<TDto>(error)), It, _ => Nothing.Value)
+        Result(() => Task.FromResult(new Result<TDto>(error)), _ => Nothing.Value)
             .ReturnOk();
 
     protected Task<ActionResult<ResponseDto<TDto, Nothing>>> Failure<TDto>(Error error, params Error[] secondaryErrors) =>
