@@ -71,25 +71,10 @@ public static class QueryableUtils
             _queryable = queryable;
         }
 
-        public async Task<int> GetTotalCount() => await _queryable.CountAsync();
+        public async Task<IEnumerable<T>> GetAll() => await _queryable.ToArrayAsync();
 
         public async Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex) =>
             await GetPageAsArray(pageSize, pageIndex);
-
-        public async IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
-        {
-            var index = 0;
-            T[] page;
-            do
-            {
-                page = await GetPageAsArray(pageSize, index);
-                if (page.Length > 0)
-                {
-                    yield return page;
-                }
-            }
-            while (page.Length == pageSize);
-        }
 
         private async Task<T[]> GetPageAsArray(int pageSize, int pageIndex)
         {

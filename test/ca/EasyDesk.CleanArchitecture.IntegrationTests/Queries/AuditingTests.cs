@@ -50,8 +50,7 @@ public class AuditingTests : SampleIntegrationTest
         await WebService.WaitConditionUnderPublicTenant<IAuditLog>(
             log => log
                 .Audit(new())
-                .GetAllItems(50)
-                .ToEnumerableAsync()
+                .GetAll()
                 .Map(e => e.Count() == _initialAudits));
     }
 
@@ -59,8 +58,7 @@ public class AuditingTests : SampleIntegrationTest
         WebService.WaitConditionUnderPublicTenant<IAuditLog>(
             log => log
                 .Audit(new())
-                .GetAllItems(50)
-                .ToEnumerableAsync()
+                .GetAll()
                 .Map(e => e.Count() == _initialAudits + newRecords));
 
     [Fact]
@@ -81,7 +79,7 @@ public class AuditingTests : SampleIntegrationTest
 
         await WebService.WaitConditionUnderTenant<IAuditLog>(
             tenantId,
-            log => log.Audit(new AuditQuery()).GetAllItems(1).Any());
+            log => log.Audit(new AuditQuery()).GetAll().Map(audits => audits.Any()));
 
         var response = await Http.GetAudits().Tenant(tenantId).Send().AsVerifiableEnumerable();
 

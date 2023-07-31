@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
 using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
@@ -111,23 +110,22 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         OnSuccess((body, result) => _controller.CreatedAtAction(actionName, controllerName, routeValues(result), body));
 }
 
-public class PaginatedActionResultBuilder<TDto> : ActionResultBuilder<PageInfo<TDto>, IEnumerable<TDto>, PaginationMetaDto>
+public class PaginatedActionResultBuilder<TDto> : ActionResultBuilder<IEnumerable<TDto>, IEnumerable<TDto>, PaginationMetaDto>
 {
     public PaginatedActionResultBuilder(
-        AsyncFunc<Result<PageInfo<TDto>>> resultProvider,
-        Func<PageInfo<TDto>, IEnumerable<TDto>> mapper,
-        Func<Result<PageInfo<TDto>>, PaginationMetaDto> meta,
+        AsyncFunc<Result<IEnumerable<TDto>>> resultProvider,
+        Func<Result<IEnumerable<TDto>>, PaginationMetaDto> meta,
         ControllerBase controller)
-        : base(resultProvider, mapper, meta, controller)
+        : base(resultProvider, It, meta, controller)
     {
     }
 
-    public ActionResultBuilder<PageInfo<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElement<TNewDto>(Func<TDto, TNewDto> mapper)
+    public ActionResultBuilder<IEnumerable<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElement<TNewDto>(Func<TDto, TNewDto> mapper)
     {
         return Map(ts => ts.Select(mapper));
     }
 
-    public ActionResultBuilder<PageInfo<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElementTo<TNewDto>()
+    public ActionResultBuilder<IEnumerable<TDto>, IEnumerable<TNewDto>, PaginationMetaDto> MapEachElementTo<TNewDto>()
         where TNewDto : IMappableFrom<TDto, TNewDto>
     {
         return Map(ts => ts.Select(TNewDto.MapFrom));

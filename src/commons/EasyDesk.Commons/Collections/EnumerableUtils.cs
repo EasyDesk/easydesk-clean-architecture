@@ -111,7 +111,7 @@ public static class EnumerableUtils
 
     public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> sequence)
     {
-        return sequence.SelectMany(x => x);
+        return sequence.SelectMany(It);
     }
 
     public static IEnumerable<T> Flatten<T>(this IEnumerable<Option<T>> sequence)

@@ -46,17 +46,13 @@ public sealed class HttpPaginatedRequestExecutor<T> :
             timeoutToken.ThrowIfCancellationRequested();
             var page = GetSinglePage(timeoutToken);
             var paginationMetadata = await page.AsMetadata();
-            var pageCount = paginationMetadata.PageCount;
+            var count = paginationMetadata.Count;
             var pageSize = paginationMetadata.PageSize;
             var pageIndex = paginationMetadata.PageIndex;
             await page.EnsureSuccess();
-            hasNextPage = false;
-            if (pageCount > 0 && pageSize > 0)
-            {
-                yield return page;
-                hasNextPage = pageIndex < pageCount;
-                this.SetPageIndex(pageIndex + 1);
-            }
+            hasNextPage = count >= pageSize;
+            yield return page;
+            this.SetPageIndex(pageIndex + 1);
         }
         while (hasNextPage);
         initialPageOption.Match(some: i => this.SetPageIndex(i), none: () => this.RemovePageIndex());
