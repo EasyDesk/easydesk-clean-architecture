@@ -15,17 +15,17 @@ public abstract class CleanArchitectureController : AbstractController
         Result(() => GetService<IDispatcher>().Dispatch(request), _ => Nothing.Value);
 
     protected ActionResultBuilder<IEnumerable<T>, PaginationMetaDto> DispatchWithPagination<T>(IDispatchable<IPageable<T>> request, PaginationDto pagination) =>
-         PaginatedResult((pageSize, pageIndex) => GetService<IDispatcher>().Dispatch(request).ThenMapAsync(p => p.GetPage(pageSize, pageIndex)), e => e.Count(), pagination);
+         PaginatedResult(page => GetService<IDispatcher>().Dispatch(request).ThenMapAsync(p => p.GetPage(page.Size, page.Index)), e => e.Count(), pagination);
 
     protected ActionResultBuilder<TDto, PaginationMetaDto> PaginatedResult<TDto>(
-        PaginatedRequest<TDto> request,
+        AsyncFunc<PageRequested, Result<TDto>> request,
         Func<TDto, int> count,
         PaginationDto pagination)
     {
         var paginationService = GetService<PaginationService>();
         var pageSize = paginationService.GetPageSize(pagination.PageSize.AsOption());
         var pageIndex = paginationService.GetPageIndex(pagination.PageIndex.AsOption());
-        return Result(() => request(pageSize, pageIndex), result => PaginationMetaDto.FromResult(result.Map(count), pageSize, pageIndex));
+        return Result(() => request(new(pageSize, pageIndex)), result => PaginationMetaDto.FromResult(result.Map(count), pageSize, pageIndex));
     }
 
     protected ActionResultBuilder<TDto, TMeta> Result<TDto, TMeta>(
