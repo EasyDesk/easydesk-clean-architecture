@@ -1,3 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Authorization;
 
-public record UnknownAgentError : Error;
+public record UnknownAgentError(string? Message = null) : Error;

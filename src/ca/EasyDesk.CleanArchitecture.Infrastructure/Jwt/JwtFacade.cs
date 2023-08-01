@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using System.IdentityModel.Tokens.Jwt;
@@ -66,7 +66,7 @@ public sealed class JwtFacade
                 _ => "TokenMalformed"
             };
 
-            return Errors.Generic("Failed to validate JWT. Failure code: {reason}", message);
+            return new UnknownAgentError($"Failed to validate JWT. Failure code: {message}");
         }
     }
 }
