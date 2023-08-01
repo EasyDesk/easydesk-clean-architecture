@@ -5,38 +5,41 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated
 
 public sealed class HttpPageSequenceWrapper<T>
 {
-    private readonly AsyncCache<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> _response;
+    private readonly AsyncCache<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> _response;
 
-    public HttpPageSequenceWrapper(AsyncFunc<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> responses)
+    public HttpPageSequenceWrapper(AsyncFunc<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> responses)
     {
         _response = new(responses);
     }
 
-    public async Task<IEnumerable<T>> AsVerifiableEnumerable()
-    {
-        var result = new List<T>();
-        foreach (var response in await GetResponse())
-        {
-            result.AddRange(await response.AsData());
-        }
-        return result;
-    }
-
     public async Task EnsureSuccess()
     {
-        foreach (var response in await GetResponse())
+        foreach (var page in await GetPages())
         {
-            await response.EnsureSuccess();
+            await page.EnsureSuccess();
         }
     }
 
     public async Task EnsureFailure()
     {
-        foreach (var response in await GetResponse())
+        foreach (var page in await GetPages())
         {
-            await response.EnsureFailure();
+            await page.EnsureFailure();
         }
     }
 
-    private async Task<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> GetResponse() => await _response.Get();
+    public async Task<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> GetPages() => await _response.Get();
+}
+
+public static class HttpPageSequenceWrapperExtensions
+{
+    public static async Task<IEnumerable<T>> AsVerifiableEnumerable<T>(this HttpPageSequenceWrapper<IEnumerable<T>> wrapper)
+    {
+        var result = new List<T>();
+        foreach (var page in await wrapper.GetPages())
+        {
+            result.AddRange(await page.AsData());
+        }
+        return result;
+    }
 }

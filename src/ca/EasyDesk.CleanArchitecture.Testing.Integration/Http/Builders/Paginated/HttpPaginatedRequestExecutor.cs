@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
 public sealed class HttpPaginatedRequestExecutor<T> :
-    HttpRequestExecutor<HttpPageSequenceWrapper<T>, IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>, HttpPaginatedRequestExecutor<T>>
+    HttpRequestExecutor<HttpPageSequenceWrapper<T>, IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>, HttpPaginatedRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerSettings _jsonSerializerSettings;
@@ -25,19 +25,13 @@ public sealed class HttpPaginatedRequestExecutor<T> :
         _jsonSerializerSettings = jsonSerializerSettings;
     }
 
-    public HttpPageSequenceWrapper<T> PollUntil(Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
-        PollUntil(async wrapped => predicate(await wrapped.AsVerifiableEnumerable()), interval, timeout);
-
-    public HttpPageSequenceWrapper<T> PollWhile(Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
-        PollWhile(async wrapped => predicate(await wrapped.AsVerifiableEnumerable()), interval, timeout);
-
-    private HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto> WrapSinglePage(AsyncFunc<ImmutableHttpResponseMessage> message) =>
+    private HttpResponseWrapper<T, PaginationMetaDto> WrapSinglePage(AsyncFunc<ImmutableHttpResponseMessage> message) =>
         new(message, _jsonSerializerSettings);
 
-    protected override Task<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> MakeRequest(CancellationToken timeoutToken) =>
+    protected override Task<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> MakeRequest(CancellationToken timeoutToken) =>
         EnumeratePages(timeoutToken).ToEnumerableAsync();
 
-    private async IAsyncEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>> EnumeratePages([EnumeratorCancellation] CancellationToken timeoutToken)
+    private async IAsyncEnumerable<HttpResponseWrapper<T, PaginationMetaDto>> EnumeratePages([EnumeratorCancellation] CancellationToken timeoutToken)
     {
         bool hasNextPage;
         var initialPageOption = PageIndex;
@@ -58,7 +52,7 @@ public sealed class HttpPaginatedRequestExecutor<T> :
         initialPageOption.Match(some: i => this.SetPageIndex(i), none: () => this.RemovePageIndex());
     }
 
-    public HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto> SinglePage(int? pageIndex = null, Duration? timeout = null)
+    public HttpResponseWrapper<T, PaginationMetaDto> SinglePage(int? pageIndex = null, Duration? timeout = null)
     {
         pageIndex.AsOption().IfPresent(i => this.SetPageIndex(i));
         var actualTimeout = timeout ?? Timeout;
@@ -66,7 +60,7 @@ public sealed class HttpPaginatedRequestExecutor<T> :
         return GetSinglePage(cts.Token);
     }
 
-    private HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto> GetSinglePage(CancellationToken timeoutToken)
+    private HttpResponseWrapper<T, PaginationMetaDto> GetSinglePage(CancellationToken timeoutToken)
     {
         var request = CreateRequest();
         var page = WrapSinglePage(async () =>
@@ -78,8 +72,17 @@ public sealed class HttpPaginatedRequestExecutor<T> :
         return page;
     }
 
-    protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpResponseWrapper<IEnumerable<T>, PaginationMetaDto>>> request) =>
+    protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> request) =>
         new(request);
 
     private Option<int> PageIndex => Query.GetOption(nameof(PaginationDto.PageIndex)).FlatMap(p => TryOption<string, int>(int.TryParse, p[0]));
+}
+
+public static class HttpPaginatedRequestExecutorExtensions
+{
+    public static HttpPageSequenceWrapper<IEnumerable<T>> PollUntil<T>(this HttpPaginatedRequestExecutor<IEnumerable<T>> executor, Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
+        executor.PollUntil(async wrapped => predicate(await wrapped.AsVerifiableEnumerable()), interval, timeout);
+
+    public static HttpPageSequenceWrapper<IEnumerable<T>> PollWhile<T>(this HttpPaginatedRequestExecutor<IEnumerable<T>> executor, Func<IEnumerable<T>, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
+        executor.PollWhile(async wrapped => predicate(await wrapped.AsVerifiableEnumerable()), interval, timeout);
 }

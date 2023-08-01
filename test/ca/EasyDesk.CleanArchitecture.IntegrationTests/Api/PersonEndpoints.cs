@@ -18,8 +18,8 @@ public static class PersonEndpoints
     public static HttpSingleRequestExecutor<PersonDto> GetPerson(this HttpTestHelper http, Guid id) =>
         http.Get<PersonDto>(PersonRoutes.GetPerson.WithRouteParam(nameof(id), id));
 
-    public static HttpPaginatedRequestExecutor<PersonDto> GetPeople(this HttpTestHelper http) =>
-        http.GetPaginated<PersonDto>(PersonRoutes.GetPeople);
+    public static HttpPaginatedRequestExecutor<IEnumerable<PersonDto>> GetPeople(this HttpTestHelper http) =>
+        http.GetPaginated<IEnumerable<PersonDto>>(PersonRoutes.GetPeople);
 
     public static HttpSingleRequestExecutor<Option<string>> GetOptionInQuery(this HttpTestHelper http, Option<string> parameter)
     {
