@@ -101,6 +101,9 @@ public class SagaRequestHandlerSelector<T, R, TId, TState>
 
     public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<R>> handler) where H : notnull =>
         HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
+
+    public void HandleWith<H>() where H : ISagaStepRequestHandler<T, R, TId, TState> =>
+        HandleWith(p => p.GetRequiredService<H>());
 }
 
 public class SagaEventCorrelationSelector<T, TId, TState>
@@ -180,6 +183,9 @@ public class SagaEventHandlerSelector<T, TId, TState>
 
     public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<Nothing>> handler) where H : notnull =>
         HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
+
+    public void HandleWith<H>() where H : ISagaStepEventHandler<T, TId, TState> =>
+        HandleWith(p => p.GetRequiredService<H>());
 }
 
 internal interface ISagaConfigurationSink<TId, TState>
