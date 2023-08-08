@@ -24,27 +24,29 @@ public sealed class SagaBuilder<TId, TState>
         new(_sink);
 }
 
-public abstract class SagaCorrelationSelector<T, R, TId, TState>
+public class SagaRequestCorrelationSelector<T, R, TId, TState>
+    where T : IDispatchable<R>
 {
-    internal SagaCorrelationSelector(ISagaConfigurationSink<TId, TState> sink)
+    internal SagaRequestCorrelationSelector(ISagaConfigurationSink<TId, TState> sink)
     {
         Sink = sink;
     }
 
     internal ISagaConfigurationSink<TId, TState> Sink { get; }
 
-    public abstract SagaHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty);
+    public SagaRequestHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
 }
 
-public abstract class SagaHandlerSelector<T, R, TId, TState>
+public class SagaRequestHandlerSelector<T, R, TId, TState>
+    where T : IDispatchable<R>
 {
-    internal SagaHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty)
+    internal SagaRequestHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty)
     {
         Sink = sink;
         CorrelationProperty = correlationProperty;
     }
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<IServiceProvider, TId, T, Result<TState>> initialState)
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<IServiceProvider, TId, T, Result<TState>> initialState)
     {
         Initializer = initialState;
         return this;
@@ -56,95 +58,128 @@ public abstract class SagaHandlerSelector<T, R, TId, TState>
 
     internal Func<T, TId> CorrelationProperty { get; }
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<TId, T, Result<TState>> initialState) =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<TId, T, Result<TState>> initialState) =>
         InitializeWith((_, i, r) => initialState(i, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<T, Result<TState>> initialState) =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<T, Result<TState>> initialState) =>
         InitializeWith((_, _, r) => initialState(r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TId, T, Result<TState>> initialState) where H : notnull =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TId, T, Result<TState>> initialState) where H : notnull =>
         InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, T, Result<TState>> initialState) where H : notnull =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, T, Result<TState>> initialState) where H : notnull =>
         InitializeWith<H>((h, _, r) => initialState(h, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, Result<TState>> initialState) where H : notnull =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, Result<TState>> initialState) where H : notnull =>
         InitializeWith<H>((h, _, _) => initialState(h));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<IServiceProvider, TId, T, Result<TState>> initialState) =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith(Func<IServiceProvider, TId, T, Result<TState>> initialState) =>
         InitializeWith((p, i, r) => Task.FromResult(initialState(p, i, r)));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<TId, T, TState> initialState) =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith(Func<TId, T, TState> initialState) =>
         InitializeWith((_, i, r) => initialState(i, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<T, TState> initialState) =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith(Func<T, TState> initialState) =>
         InitializeWith((_, _, r) => initialState(r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TId, T, TState> initialState) where H : notnull =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TId, T, TState> initialState) where H : notnull =>
         InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, T, TState> initialState) where H : notnull =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, T, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, r) => initialState(h, r));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TState> initialState) where H : notnull =>
+    public SagaRequestHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, _) => initialState(h));
 
-    public abstract void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler);
-
-    public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<R>> handler) where H : notnull =>
-        HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
-}
-
-public class SagaRequestCorrelationSelector<T, R, TId, TState> : SagaCorrelationSelector<T, R, TId, TState>
-    where T : IDispatchable<R>
-{
-    internal SagaRequestCorrelationSelector(ISagaConfigurationSink<TId, TState> sink) : base(sink)
-    {
-    }
-
-    public override SagaRequestHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
-}
-
-public class SagaRequestHandlerSelector<T, R, TId, TState> : SagaHandlerSelector<T, R, TId, TState>
-    where T : IDispatchable<R>
-{
-    internal SagaRequestHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty) : base(sink, correlationProperty)
-    {
-    }
-
-    public override void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler)
+    public void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler)
     {
         Sink.RegisterConfiguration<T, R>(new(CorrelationProperty, handler, Initializer));
     }
 
     public void HandleWith(Func<IServiceProvider, ISagaStepRequestHandler<T, R, TId, TState>> handlerFactory) =>
         HandleWith((p, r, c) => handlerFactory(p).Handle(r, c));
+
+    public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<R>> handler) where H : notnull =>
+        HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
 }
 
-public class SagaEventCorrelationSelector<T, TId, TState> : SagaCorrelationSelector<T, Nothing, TId, TState>
+public class SagaEventCorrelationSelector<T, TId, TState>
     where T : DomainEvent
 {
-    internal SagaEventCorrelationSelector(ISagaConfigurationSink<TId, TState> sink) : base(sink)
+    internal SagaEventCorrelationSelector(ISagaConfigurationSink<TId, TState> sink)
     {
+        Sink = sink;
     }
 
-    public override SagaEventHandlerSelector<T, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
+    internal ISagaConfigurationSink<TId, TState> Sink { get; }
+
+    public SagaEventHandlerSelector<T, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
 }
 
-public class SagaEventHandlerSelector<T, TId, TState> : SagaHandlerSelector<T, Nothing, TId, TState>
+public class SagaEventHandlerSelector<T, TId, TState>
     where T : DomainEvent
 {
-    internal SagaEventHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty) : base(sink, correlationProperty)
+    internal SagaEventHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty)
     {
+        Sink = sink;
+        CorrelationProperty = correlationProperty;
     }
 
-    public override void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<Nothing>> handler)
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith(AsyncFunc<IServiceProvider, TId, T, Result<TState>> initialState)
+    {
+        Initializer = initialState;
+        return this;
+    }
+
+    internal AsyncFunc<IServiceProvider, TId, T, Result<TState>> Initializer { get; set; } = (_, _, _) => Task.FromResult(Failure<TState>(Errors.Generic("Unable to start saga with event of type {eventType}", typeof(T).Name)));
+
+    internal ISagaConfigurationSink<TId, TState> Sink { get; }
+
+    internal Func<T, TId> CorrelationProperty { get; }
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith(AsyncFunc<TId, T, Result<TState>> initialState) =>
+        InitializeWith((_, i, r) => initialState(i, r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith(AsyncFunc<T, Result<TState>> initialState) =>
+        InitializeWith((_, _, r) => initialState(r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith<H>(AsyncFunc<H, TId, T, Result<TState>> initialState) where H : notnull =>
+        InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith<H>(AsyncFunc<H, T, Result<TState>> initialState) where H : notnull =>
+        InitializeWith<H>((h, _, r) => initialState(h, r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith<H>(AsyncFunc<H, Result<TState>> initialState) where H : notnull =>
+        InitializeWith<H>((h, _, _) => initialState(h));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith(Func<IServiceProvider, TId, T, Result<TState>> initialState) =>
+        InitializeWith((p, i, r) => Task.FromResult(initialState(p, i, r)));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith(Func<TId, T, TState> initialState) =>
+        InitializeWith((_, i, r) => initialState(i, r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith(Func<T, TState> initialState) =>
+        InitializeWith((_, _, r) => initialState(r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith<H>(Func<H, TId, T, TState> initialState) where H : notnull =>
+        InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith<H>(Func<H, T, TState> initialState) where H : notnull =>
+        InitializeWith<H>((h, _, r) => initialState(h, r));
+
+    public SagaEventHandlerSelector<T, TId, TState> InitializeWith<H>(Func<H, TState> initialState) where H : notnull =>
+        InitializeWith<H>((h, _, _) => initialState(h));
+
+    public void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<Nothing>> handler)
     {
         Sink.RegisterConfiguration<T>(new(CorrelationProperty, handler, Initializer));
     }
 
     public void HandleWith(Func<IServiceProvider, ISagaStepEventHandler<T, TId, TState>> handlerFactory) =>
         HandleWith((p, r, c) => handlerFactory(p).Handle(r, c));
+
+    public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<Nothing>> handler) where H : notnull =>
+        HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
 }
 
 internal interface ISagaConfigurationSink<TId, TState>
