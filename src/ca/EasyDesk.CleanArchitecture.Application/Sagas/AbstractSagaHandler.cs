@@ -1,19 +1,17 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-internal class SagaHandler<T, R, TId, TState> : IHandler<T, R>
-    where T : IDispatchable<R>
+internal abstract class AbstractSagaHandler<T, R, TId, TState>
 {
     private readonly ISagaManager _sagaManager;
     private readonly IServiceProvider _serviceProvider;
-    private readonly SagaRequestConfiguration<T, R, TId, TState> _configuration;
+    private readonly SagaStepConfiguration<T, R, TId, TState> _configuration;
 
-    public SagaHandler(
+    public AbstractSagaHandler(
         ISagaManager sagaManager,
         IServiceProvider serviceProvider,
-        SagaRequestConfiguration<T, R, TId, TState> configuration)
+        SagaStepConfiguration<T, R, TId, TState> configuration)
     {
         _sagaManager = sagaManager;
         _serviceProvider = serviceProvider;

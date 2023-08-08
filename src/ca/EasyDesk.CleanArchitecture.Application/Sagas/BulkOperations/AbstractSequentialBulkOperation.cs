@@ -57,14 +57,14 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
 
     public static void ConfigureSaga(SagaBuilder<string, BulkOperationState<TResult, TWork>> saga)
     {
-        saga.On<TStartCommand, TResult>()
+        saga.OnRequest<TStartCommand, TResult>()
             .CorrelateWith(_ => Id)
             .InitializeWith<TSelf>((controller, id, command) => controller
                 .Prepare(command)
                 .ThenMap(rs => new BulkOperationState<TResult, TWork>(rs.Item1, rs.Item2)))
             .HandleWith<TSelf>((c, _, s) => c.Start(s));
 
-        saga.On<TBatchCommand>()
+        saga.OnRequest<TBatchCommand>()
             .CorrelateWith(_ => Id)
             .HandleWith<TSelf>((c, b, s) => c.Handle(b, s));
     }

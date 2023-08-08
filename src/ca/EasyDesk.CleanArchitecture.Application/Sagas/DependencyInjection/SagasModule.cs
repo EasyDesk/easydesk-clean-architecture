@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,7 +50,13 @@ public class SagasModule : AppModule
         public void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration) where T : IDispatchable<R>
         {
             _services.AddSingleton(configuration);
-            _services.AddTransient<IHandler<T, R>, SagaHandler<T, R, TId, TState>>();
+            _services.AddTransient<IHandler<T, R>, SagaRequestHandler<T, R, TId, TState>>();
+        }
+
+        public void RegisterConfiguration<T>(SagaEventConfiguration<T, TId, TState> configuration) where T : DomainEvent
+        {
+            _services.AddSingleton(configuration);
+            _services.AddTransient<IDomainEventHandler<T>, SagaEventHandler<T, TId, TState>>();
         }
     }
 }

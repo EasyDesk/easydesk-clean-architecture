@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
@@ -13,47 +14,52 @@ public sealed class SagaBuilder<TId, TState>
         _sink = sink;
     }
 
-    public SagaCorrelationSelector<T, R, TId, TState> On<T, R>() where T : IDispatchable<R> =>
+    public SagaRequestCorrelationSelector<T, R, TId, TState> OnRequest<T, R>() where T : IDispatchable<R> =>
         new(_sink);
 
-    public SagaCorrelationSelector<T, Nothing, TId, TState> On<T>() where T : IDispatchable<Nothing> =>
-        On<T, Nothing>();
+    public SagaRequestCorrelationSelector<T, Nothing, TId, TState> OnRequest<T>() where T : IDispatchable<Nothing> =>
+        new(_sink);
+
+    public SagaEventCorrelationSelector<T, TId, TState> OnEvent<T>() where T : DomainEvent =>
+        new(_sink);
 }
 
-public sealed class SagaCorrelationSelector<T, R, TId, TState>
-    where T : IDispatchable<R>
+public abstract class SagaCorrelationSelector<T, R, TId, TState>
 {
-    private readonly ISagaConfigurationSink<TId, TState> _sink;
-
     internal SagaCorrelationSelector(ISagaConfigurationSink<TId, TState> sink)
     {
-        _sink = sink;
+        Sink = sink;
     }
 
-    public SagaHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) =>
-        new(_sink, correlationProperty);
+    internal ISagaConfigurationSink<TId, TState> Sink { get; }
+
+    public SagaHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty)
+    {
+        return Next(correlationProperty);
+    }
+
+    internal abstract SagaHandlerSelector<T, R, TId, TState> Next(Func<T, TId> correlationProperty);
 }
 
-public sealed class SagaHandlerSelector<T, R, TId, TState>
-    where T : IDispatchable<R>
+public abstract class SagaHandlerSelector<T, R, TId, TState>
 {
-    private readonly ISagaConfigurationSink<TId, TState> _sink;
-    private readonly Func<T, TId> _correlationProperty;
-    private AsyncFunc<IServiceProvider, TId, T, Result<TState>> _initializer = (_, _, _) => Task.FromResult(Failure<TState>(Errors.Generic("Unable to start saga with request of type {requestType}", typeof(T).Name)));
-
-    internal SagaHandlerSelector(
-        ISagaConfigurationSink<TId, TState> sink,
-        Func<T, TId> correlationProperty)
+    internal SagaHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty)
     {
-        _sink = sink;
-        _correlationProperty = correlationProperty;
+        Sink = sink;
+        CorrelationProperty = correlationProperty;
     }
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<IServiceProvider, TId, T, Result<TState>> initialState)
     {
-        _initializer = initialState;
+        Initializer = initialState;
         return this;
     }
+
+    internal AsyncFunc<IServiceProvider, TId, T, Result<TState>> Initializer { get; set; } = (_, _, _) => Task.FromResult(Failure<TState>(Errors.Generic("Unable to start saga with request of type {requestType}", typeof(T).Name)));
+
+    internal ISagaConfigurationSink<TId, TState> Sink { get; }
+
+    internal Func<T, TId> CorrelationProperty { get; }
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<TId, T, Result<TState>> initialState) =>
         InitializeWith((_, i, r) => initialState(i, r));
@@ -88,23 +94,69 @@ public sealed class SagaHandlerSelector<T, R, TId, TState>
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, _) => initialState(h));
 
-    public void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler)
-    {
-        _sink.RegisterConfiguration<T, R>(new(_correlationProperty, handler, _initializer));
-    }
+    public abstract void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler);
 
     public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<R>> handler) where H : notnull =>
         HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
+}
 
-    public void HandleWith(Func<IServiceProvider, ISagaStepHandler<T, R, TId, TState>> handlerFactory) =>
+public class SagaRequestCorrelationSelector<T, R, TId, TState> : SagaCorrelationSelector<T, R, TId, TState>
+    where T : IDispatchable<R>
+{
+    internal SagaRequestCorrelationSelector(ISagaConfigurationSink<TId, TState> sink) : base(sink)
+    {
+    }
+
+    internal override SagaRequestHandlerSelector<T, R, TId, TState> Next(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
+}
+
+public class SagaRequestHandlerSelector<T, R, TId, TState> : SagaHandlerSelector<T, R, TId, TState>
+    where T : IDispatchable<R>
+{
+    internal SagaRequestHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty) : base(sink, correlationProperty)
+    {
+    }
+
+    public override void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler)
+    {
+        Sink.RegisterConfiguration<T, R>(new(CorrelationProperty, handler, Initializer));
+    }
+
+    public void HandleWith(Func<IServiceProvider, ISagaStepRequestHandler<T, R, TId, TState>> handlerFactory) =>
         HandleWith((p, r, c) => handlerFactory(p).Handle(r, c));
+}
 
-    public void HandleWith<H>() where H : ISagaStepHandler<T, R, TId, TState> =>
-        HandleWith(p => p.GetRequiredService<H>());
+public class SagaEventCorrelationSelector<T, TId, TState> : SagaCorrelationSelector<T, Nothing, TId, TState>
+    where T : DomainEvent
+{
+    internal SagaEventCorrelationSelector(ISagaConfigurationSink<TId, TState> sink) : base(sink)
+    {
+    }
+
+    internal override SagaEventHandlerSelector<T, TId, TState> Next(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
+}
+
+public class SagaEventHandlerSelector<T, TId, TState> : SagaHandlerSelector<T, Nothing, TId, TState>
+    where T : DomainEvent
+{
+    internal SagaEventHandlerSelector(ISagaConfigurationSink<TId, TState> sink, Func<T, TId> correlationProperty) : base(sink, correlationProperty)
+    {
+    }
+
+    public override void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<Nothing>> handler)
+    {
+        Sink.RegisterConfiguration<T>(new(CorrelationProperty, handler, Initializer));
+    }
+
+    public void HandleWith(Func<IServiceProvider, ISagaStepEventHandler<T, TId, TState>> handlerFactory) =>
+        HandleWith((p, r, c) => handlerFactory(p).Handle(r, c));
 }
 
 internal interface ISagaConfigurationSink<TId, TState>
 {
     void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration)
         where T : IDispatchable<R>;
+
+    void RegisterConfiguration<T>(SagaEventConfiguration<T, TId, TState> configuration)
+        where T : DomainEvent;
 }
