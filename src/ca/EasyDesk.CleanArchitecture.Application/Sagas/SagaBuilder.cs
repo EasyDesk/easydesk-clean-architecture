@@ -33,12 +33,7 @@ public abstract class SagaCorrelationSelector<T, R, TId, TState>
 
     internal ISagaConfigurationSink<TId, TState> Sink { get; }
 
-    public SagaHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty)
-    {
-        return Next(correlationProperty);
-    }
-
-    internal abstract SagaHandlerSelector<T, R, TId, TState> Next(Func<T, TId> correlationProperty);
+    public abstract SagaHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty);
 }
 
 public abstract class SagaHandlerSelector<T, R, TId, TState>
@@ -107,7 +102,7 @@ public class SagaRequestCorrelationSelector<T, R, TId, TState> : SagaCorrelation
     {
     }
 
-    internal override SagaRequestHandlerSelector<T, R, TId, TState> Next(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
+    public override SagaRequestHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
 }
 
 public class SagaRequestHandlerSelector<T, R, TId, TState> : SagaHandlerSelector<T, R, TId, TState>
@@ -133,7 +128,7 @@ public class SagaEventCorrelationSelector<T, TId, TState> : SagaCorrelationSelec
     {
     }
 
-    internal override SagaEventHandlerSelector<T, TId, TState> Next(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
+    public override SagaEventHandlerSelector<T, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) => new(Sink, correlationProperty);
 }
 
 public class SagaEventHandlerSelector<T, TId, TState> : SagaHandlerSelector<T, Nothing, TId, TState>
