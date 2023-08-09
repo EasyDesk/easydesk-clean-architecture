@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Application.Sagas.Builder;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas.BulkOperations;
 

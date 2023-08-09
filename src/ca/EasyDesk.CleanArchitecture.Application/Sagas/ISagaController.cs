@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
+﻿using EasyDesk.CleanArchitecture.Application.Sagas.Builder;
+
+namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 public interface ISagaController<TId, TState>
 {

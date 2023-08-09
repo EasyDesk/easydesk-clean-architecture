@@ -28,7 +28,8 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         AsyncFunc<Result<TResult>> resultProvider,
         Func<TResult, TDto> mapper,
         Func<Result<TResult>, TMeta> meta,
-        ControllerBase controller) : this(resultProvider, mapper, meta, controller, List<ErrorHandler>())
+        ControllerBase controller)
+        : this(resultProvider, mapper, meta, controller, List<ErrorHandler>())
     {
     }
 

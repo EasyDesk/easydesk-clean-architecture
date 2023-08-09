@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
-public abstract class SagaStepConfiguration<T, R, TId, TState>
+public class SagaStepConfiguration<T, R, TId, TState>
 {
     private readonly Func<T, TId> _sagaIdProperty;
     private readonly AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> _handler;
@@ -23,4 +23,19 @@ public abstract class SagaStepConfiguration<T, R, TId, TState>
 
     public Task<Result<TState>> InitializeSaga(IServiceProvider provider, TId sagaId, T request) =>
         _sagaInitializer(provider, sagaId, request);
+}
+
+public class SagaStepConfiguration<T, TId, TState> : SagaStepConfiguration<T, Nothing, TId, TState>
+{
+    public SagaStepConfiguration(
+        Func<T, TId> sagaIdProperty,
+        AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<Nothing>> handler,
+        AsyncFunc<IServiceProvider, TId, T, Result<TState>> sagaInitializer,
+        bool ignoreClosedSaga)
+        : base(sagaIdProperty, handler, sagaInitializer)
+    {
+        IgnoreClosedSaga = ignoreClosedSaga;
+    }
+
+    public bool IgnoreClosedSaga { get; }
 }

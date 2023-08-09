@@ -18,10 +18,20 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
         _configuration = configuration;
     }
 
+    public virtual Option<Result<R>> IgnoreMissingSaga() => None;
+
     public async Task<Result<R>> Handle(T request)
     {
         var sagaId = _configuration.GetSagaId(request);
         var existingSaga = await _sagaManager.Find<TId, TState>(sagaId);
+        if (existingSaga.IsAbsent)
+        {
+            var ignoreMissingSaga = IgnoreMissingSaga();
+            if (ignoreMissingSaga)
+            {
+                return ignoreMissingSaga.Value;
+            }
+        }
         var saga = existingSaga.OrElseError(Errors.NotFound) || await GetNewSagaIfPossible(sagaId, request);
         return await saga.FlatMapAsync(s => HandleSaga(request, sagaId, s.State, s.Reference, existingSaga.IsAbsent));
     }
@@ -36,8 +46,7 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
 
     private async Task<Result<(ISagaReference<TState> Reference, TState State)>> GetNewSagaIfPossible(TId sagaId, T request)
     {
-        var state = await _configuration
-            .InitializeSaga(_serviceProvider, sagaId, request);
+        var state = await _configuration.InitializeSaga(_serviceProvider, sagaId, request);
         return state.Map(s => (_sagaManager.CreateNew<TId, TState>(sagaId), s));
     }
 
@@ -52,4 +61,20 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
             await sagaReference.Save(context.State);
         }
     }
+}
+
+internal abstract class AbstractSagaHandler<T, TId, TState> : AbstractSagaHandler<T, Nothing, TId, TState>
+{
+    private readonly SagaStepConfiguration<T, TId, TState> _configuration;
+
+    protected AbstractSagaHandler(
+        ISagaManager sagaManager,
+        IServiceProvider serviceProvider,
+        SagaStepConfiguration<T, TId, TState> configuration)
+        : base(sagaManager, serviceProvider, configuration)
+    {
+        _configuration = configuration;
+    }
+
+    public override Option<Result<Nothing>> IgnoreMissingSaga() => _configuration.IgnoreClosedSaga ? Some(Ok) : base.IgnoreMissingSaga();
 }
