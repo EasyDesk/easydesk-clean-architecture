@@ -38,4 +38,7 @@ public static class MatrixBuilderExtensions
 
     public static MatrixBuilder OptionAxis<T>(this MatrixBuilder matrixBuilder, T item, params T[] otherItems) =>
         matrixBuilder.OptionAxis(otherItems.Prepend(item));
+
+    public static MatrixBuilder Filter(this MatrixBuilder matrixBuilder, Func<object?[], bool> predicate) =>
+        matrixBuilder.Filter(new Func<IEnumerable<object?>, bool>(x => predicate(x.ToArray())));
 }
