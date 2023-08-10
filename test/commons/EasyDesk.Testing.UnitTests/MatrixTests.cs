@@ -68,6 +68,26 @@ public class MatrixTests
     }
 
     [Fact]
+    public void ShouldFilterAtDeepLevelsUsingArrays()
+    {
+        var result = Matrix.Builder()
+            .Axis(0, 1)
+            .Axis(0, 1)
+            .Axis(0, 1)
+            .Filter(x => (int)x[0]! + (int)x[1]! + (int)x[2]! == 1)
+            .Axis(2)
+            .Build()
+            .ToList();
+
+        var expected = Items(
+            new object[] { 1, 0, 0, 2 },
+            new object[] { 0, 1, 0, 2 },
+            new object[] { 0, 0, 1, 2 });
+
+        result.ShouldBe(expected, _comparer, ignoreOrder: true);
+    }
+
+    [Fact]
     public void EnumerableAxis()
     {
         var result = Matrix.Builder()
