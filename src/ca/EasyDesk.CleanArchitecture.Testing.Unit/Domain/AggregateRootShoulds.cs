@@ -10,4 +10,14 @@ public static class AggregateRootShoulds
     {
         entity.EmittedEvents().ShouldContain(expected);
     }
+
+    public static void ShouldNotHaveEmitted(this Entity entity, DomainEvent expected)
+    {
+        entity.EmittedEvents().ShouldNotContain(expected);
+    }
+
+    public static void ShouldNotHaveEmitted<T>(this Entity entity) where T : DomainEvent
+    {
+        entity.EmittedEvents().ShouldNotContain(e => e is T);
+    }
 }
