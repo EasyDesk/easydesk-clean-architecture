@@ -8,6 +8,7 @@
     ErrorCode: NotEmptyValidator,
     FormattedMessagePlaceholderValues: {
       PropertyName: tested-property,
+      PropertyPath: tested-property,
       PropertyValue: 
     }
   }

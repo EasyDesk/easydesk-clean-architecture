@@ -10,6 +10,7 @@
       ComparisonProperty: ,
       ComparisonValue: 0,
       PropertyName: Number,
+      PropertyPath: Number,
       PropertyValue: -1
     }
   },
@@ -24,6 +25,7 @@
       MaxLength: 5,
       MinLength: 0,
       PropertyName: tested-property,
+      PropertyPath: tested-property,
       PropertyValue: 123456,
       TotalLength: 6
     }

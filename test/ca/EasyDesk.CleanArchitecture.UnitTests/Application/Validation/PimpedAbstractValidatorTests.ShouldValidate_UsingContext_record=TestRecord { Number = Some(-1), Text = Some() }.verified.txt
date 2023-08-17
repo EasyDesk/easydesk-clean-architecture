@@ -10,6 +10,7 @@
       ComparisonProperty: ,
       ComparisonValue: 0,
       PropertyName: Number,
+      PropertyPath: Number,
       PropertyValue: -1
     }
   },
@@ -22,6 +23,7 @@
     ErrorCode: NotEmptyValidator,
     FormattedMessagePlaceholderValues: {
       PropertyName: tested-property,
+      PropertyPath: tested-property,
       PropertyValue: 
     }
   }

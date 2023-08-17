@@ -10,6 +10,7 @@
       ComparisonProperty: ,
       ComparisonValue: 0,
       PropertyName: Number,
+      PropertyPath: Number,
       PropertyValue: -1
     }
   }
