@@ -47,7 +47,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(tenantId));
 
         AuthenticateAs(TestAgents.Admin);
-        MoveToTenant(tenantId);
+        TenantNavigator.MoveToTenant(tenantId);
 
         await WebService.WaitUntilTenantExists(tenantId);
         await Http.AddAdmin()

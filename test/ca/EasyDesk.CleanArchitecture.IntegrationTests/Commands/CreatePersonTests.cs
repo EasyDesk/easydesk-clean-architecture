@@ -36,7 +36,7 @@ public class CreatePersonTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
-        MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(_tenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -108,7 +108,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        MoveToNoTenant();
+        TenantNavigator.MoveToContextTenant();
 
         await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
@@ -123,7 +123,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        MoveToTenant(PersonCreated.EmittedWithTenant);
+        TenantNavigator.MoveToTenant(PersonCreated.EmittedWithTenant);
 
         await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }

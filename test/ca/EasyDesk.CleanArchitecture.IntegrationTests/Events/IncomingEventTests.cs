@@ -31,7 +31,7 @@ public class IncomingEventTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
-        MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(_tenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -57,7 +57,7 @@ public class IncomingEventTests : SampleIntegrationTest
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
         var bus = NewBus("pet-freedom-service");
-        MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(_tenant);
         await bus.Publish(new PetFreedomDayEvent());
         await Http.GetOwnedPets(_person!.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }

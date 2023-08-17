@@ -33,7 +33,7 @@ public class AuditingTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(_tenant));
         _initialAudits++;
 
-        MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(_tenant);
         AuthenticateAs(TestAgents.Admin);
 
         await WebService.WaitUntilTenantExists(_tenant);

@@ -20,7 +20,6 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 {
     private readonly IList<RebusTestBus> _buses = new List<RebusTestBus>();
     private Option<Agent> _currentAgent;
-    private readonly TestTenantNavigator _tenantNavigator = new();
 
     protected WebServiceIntegrationTest(T fixture)
     {
@@ -37,9 +36,11 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected FakeClock Clock => Fixture.Clock;
 
+    protected ITenantNavigator TenantNavigator { get; } = new TestTenantNavigator();
+
     protected ITestBus NewBus(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        var bus = RebusTestBus.CreateFromServices(WebService.Services, _tenantNavigator, inputQueueAddress, defaultTimeout);
+        var bus = RebusTestBus.CreateFromServices(WebService.Services, TenantNavigator, inputQueueAddress, defaultTimeout);
         _buses.Add(bus);
         return bus;
     }
@@ -52,7 +53,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     private void ApplyDefaultRequestConfiguration(HttpRequestBuilder req)
     {
-        _tenantNavigator.Tenant.Id.Match(
+        TenantNavigator.Tenant.Id.Match(
             some: req.Tenant,
             none: req.NoTenant);
 
@@ -75,21 +76,6 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     protected void Anonymize()
     {
         _currentAgent = None;
-    }
-
-    protected void MoveToTenant(TenantId id)
-    {
-        _tenantNavigator.MoveToTenant(id);
-    }
-
-    public void MoveToPublic()
-    {
-        _tenantNavigator.MoveToPublic();
-    }
-
-    public void MoveToNoTenant()
-    {
-        _tenantNavigator.MoveToContextTenant();
     }
 
     protected virtual ITestHttpAuthentication GetHttpAuthentication() =>
