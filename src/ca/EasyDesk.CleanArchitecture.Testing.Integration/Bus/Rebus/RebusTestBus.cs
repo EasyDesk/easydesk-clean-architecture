@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.Commons.Collections;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
@@ -20,16 +21,19 @@ public sealed class RebusTestBus : ITestBus
 {
     private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
 
+    private record ReceivedMessage(IMessage Message, Option<TenantId> Tenant);
+
     private readonly IBus _bus;
     private readonly ISet<Type> _subscriptions = new HashSet<Type>();
-    private readonly Channel<IMessage> _messages = Channel.CreateUnbounded<IMessage>();
-    private readonly IList<IMessage> _deadLetter = new List<IMessage>();
+    private readonly Channel<ReceivedMessage> _messages = Channel.CreateUnbounded<ReceivedMessage>();
+    private readonly IList<ReceivedMessage> _deadLetter = new List<ReceivedMessage>();
+    private readonly ITenantNavigator _tenantNavigator;
     private readonly Duration _timeout;
     private readonly BuiltinHandlerActivator _handlerActivator;
-    private readonly TestTenantManager _tenantManager = new();
 
-    public RebusTestBus(Action<RebusConfigurer> configureRebus, Duration? timeout = null)
+    public RebusTestBus(Action<RebusConfigurer> configureRebus, ITenantNavigator tenantNavigator, Duration? timeout = null)
     {
+        _tenantNavigator = tenantNavigator;
         _timeout = timeout ?? _defaultTimeout;
 
         _handlerActivator = new BuiltinHandlerActivator();
@@ -42,7 +46,7 @@ public sealed class RebusTestBus : ITestBus
             o.Decorate<IPipeline>(c =>
             {
                 return new PipelineStepConcatenator(c.Get<IPipeline>())
-                    .OnSend(new TestTenantManagementStep(_tenantManager), PipelineAbsolutePosition.Front);
+                    .OnSend(new TestTenantManagementStep(_tenantNavigator), PipelineAbsolutePosition.Front);
             });
         });
         _bus = configurer.Start();
@@ -60,46 +64,35 @@ public sealed class RebusTestBus : ITestBus
         _subscriptions.Remove(typeof(T));
     }
 
-    public Task Defer<T>(T message, Duration delay, TenantId tenant) where T : ICommand => Defer(message, delay, tenant.AsSome());
-
-    public Task Publish<T>(T message, TenantId tenant) where T : IEvent => Publish(message, tenant.AsSome());
-
-    public Task Send<T>(T message, TenantId tenant) where T : ICommand => Send(message, tenant.AsSome());
-
-    public Task Defer<T>(T message, Duration delay) where T : ICommand => Defer(message, delay, None);
-
-    public Task Publish<T>(T message) where T : IEvent => Publish(message, None);
-
-    public Task Send<T>(T message) where T : ICommand => Send(message, None);
-
-    private async Task Publish<T>(T message, Option<TenantId> tenant = default) where T : IEvent
+    public async Task Publish<T>(T message) where T : IEvent
     {
-        _tenantManager.TenantInfo = tenant.Map(TenantInfo.Tenant).OrElse(TenantInfo.Public);
         await _bus.Publish(message);
     }
 
-    private async Task Send<T>(T message, Option<TenantId> tenant = default) where T : ICommand
+    public async Task Send<T>(T message) where T : ICommand
     {
-        _tenantManager.TenantInfo = tenant.Map(TenantInfo.Tenant).OrElse(TenantInfo.Public);
         await _bus.Send(message);
     }
 
-    private async Task Defer<T>(T message, Duration delay, Option<TenantId> tenant = default) where T : ICommand
+    public async Task Defer<T>(T message, Duration delay) where T : ICommand
     {
-        _tenantManager.TenantInfo = tenant.Map(TenantInfo.Tenant).OrElse(TenantInfo.Public);
         await _bus.Defer(delay.ToTimeSpan(), message);
     }
 
     private async Task Handler(IMessage message) =>
-        await _messages.Writer.WriteAsync(message);
+        await _messages.Writer.WriteAsync(new(message, CommonTenantReaders.ReadFromMessageContext(MessageContext.Current).Map(TenantId.New)));
 
     public async Task<T> WaitForMessageOrFail<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
     {
-        var deadLetterMessage = _deadLetter.SelectMany(x => ValidateMessage(x, predicate)).FirstOption();
+        var deadLetterMessage = _deadLetter
+            .Select(m => ValidateMessage(m, predicate))
+            .ZipWithIndex()
+            .SelectMany(x => x.Item.Map(v => (x.Index, Item: v)))
+            .FirstOption();
         if (deadLetterMessage.IsPresent)
         {
-            _deadLetter.Remove(deadLetterMessage.Value);
-            return deadLetterMessage.Value;
+            _deadLetter.RemoveAt(deadLetterMessage.Value.Index);
+            return deadLetterMessage.Value.Item;
         }
 
         var actualTimeout = timeout ?? _timeout;
@@ -129,8 +122,11 @@ public sealed class RebusTestBus : ITestBus
         }
     }
 
-    private Option<T> ValidateMessage<T>(IMessage message, Func<T, bool> predicate) =>
-        message is T t && predicate(t) ? Some(t) : None;
+    private Option<T> ValidateMessage<T>(ReceivedMessage receivedMessage, Func<T, bool> predicate) =>
+        _tenantNavigator.ContextTenant.Match(some: tenant => receivedMessage.Tenant == tenant.Id, none: () => true)
+        && receivedMessage.Message is T t
+        && predicate(t)
+        ? Some(t) : None;
 
     public async ValueTask DisposeAsync()
     {
@@ -144,7 +140,11 @@ public sealed class RebusTestBus : ITestBus
         GC.SuppressFinalize(this);
     }
 
-    public static RebusTestBus CreateFromServices(IServiceProvider serviceProvider, string? inputQueueAddress = null, Duration? defaultTimeout = null)
+    public static RebusTestBus CreateFromServices(
+        IServiceProvider serviceProvider,
+        ITenantNavigator testTenantNavigator,
+        string? inputQueueAddress = null,
+        Duration? defaultTimeout = null)
     {
         var options = serviceProvider.GetRequiredService<RebusMessagingOptions>();
         var serviceEndpoint = serviceProvider.GetRequiredService<RebusEndpoint>();
@@ -155,6 +155,7 @@ public sealed class RebusTestBus : ITestBus
                 options.Apply(serviceProvider, helperEndpoint, rebus);
                 rebus.Routing(r => r.Decorate(c => new TestRouterWrapper(c.Get<IRouter>(), serviceEndpoint)));
             },
+            testTenantNavigator,
             defaultTimeout);
     }
 
@@ -178,10 +179,5 @@ public sealed class RebusTestBus : ITestBus
             context.Load<ITransactionContext>().SetServiceProvider(_serviceProvider);
             await _inner.Process(context, next);
         }
-    }
-
-    private class TestTenantManager : ITenantProvider
-    {
-        public TenantInfo TenantInfo { get; set; } = TenantInfo.Public;
     }
 }

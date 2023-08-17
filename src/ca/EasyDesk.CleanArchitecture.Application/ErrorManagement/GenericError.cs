@@ -27,7 +27,7 @@ public partial record GenericError(string Message, IImmutableDictionary<string, 
         var contentInsideBraces = GetGroup(match, 1);
 
         var (name, format) = ParseContentInsideBraces(contentInsideBraces);
-        var value = paramMap.GetOrAdd(name, () => argsQueue.Dequeue());
+        var value = paramMap.GetOrAdd(name, argsQueue.Dequeue);
 
         var formatString = format.Match(
             some: f => $"{{0:{f}}}",

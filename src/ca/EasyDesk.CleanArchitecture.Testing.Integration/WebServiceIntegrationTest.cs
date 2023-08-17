@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -18,8 +19,8 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     where T : WebServiceTestsFixture
 {
     private readonly IList<RebusTestBus> _buses = new List<RebusTestBus>();
-    private Option<TenantId> _currentTenant;
     private Option<Agent> _currentAgent;
+    private readonly TestTenantNavigator _tenantNavigator = new();
 
     protected WebServiceIntegrationTest(T fixture)
     {
@@ -38,7 +39,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected ITestBus NewBus(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        var bus = RebusTestBus.CreateFromServices(WebService.Services, inputQueueAddress, defaultTimeout);
+        var bus = RebusTestBus.CreateFromServices(WebService.Services, _tenantNavigator, inputQueueAddress, defaultTimeout);
         _buses.Add(bus);
         return bus;
     }
@@ -51,7 +52,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     private void ApplyDefaultRequestConfiguration(HttpRequestBuilder req)
     {
-        _currentTenant.Match(
+        _tenantNavigator.Tenant.Id.Match(
             some: req.Tenant,
             none: req.NoTenant);
 
@@ -78,12 +79,17 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected void MoveToTenant(TenantId id)
     {
-        _currentTenant = Some(id);
+        _tenantNavigator.MoveToTenant(id);
     }
 
-    protected void MoveToPublicTenant()
+    public void MoveToPublic()
     {
-        _currentTenant = None;
+        _tenantNavigator.MoveToPublic();
+    }
+
+    public void MoveToNoTenant()
+    {
+        _tenantNavigator.MoveToContextTenant();
     }
 
     protected virtual ITestHttpAuthentication GetHttpAuthentication() =>

@@ -75,7 +75,7 @@ public class ResultTests
     [Fact]
     public void ReadError_ShouldThrow_ForSuccessfulResults()
     {
-        Should.Throw<InvalidOperationException>(() => Success.ReadError());
+        Should.Throw<InvalidOperationException>(Success.ReadError);
     }
 
     [Fact]

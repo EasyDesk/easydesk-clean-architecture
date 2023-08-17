@@ -67,7 +67,7 @@ public class AbstractDbContext : DbContext
 
         queryFilters.AddFilter<E>(x => x.Tenant == PublicTenantName
             || x.Tenant == GetCurrentTenantAsString()
-            || this.GetService<ITenantProvider>().TenantInfo.IsPublic);
+            || this.GetService<ITenantProvider>().Tenant.IsPublic);
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -78,7 +78,7 @@ public class AbstractDbContext : DbContext
     }
 
     private string GetCurrentTenantAsString() =>
-        this.GetService<ITenantProvider>().TenantInfo.Id.Map(t => t.Value).OrElse(PublicTenantName);
+        this.GetService<ITenantProvider>().Tenant.Id.Map(t => t.Value).OrElse(PublicTenantName);
 
     public class TenantIdGenerator : ValueGenerator
     {

@@ -71,7 +71,7 @@ public class UnitOfWorkBaseTests
         _transaction.Commit().Throws<Exception>();
 
         _sut.AfterCommit.Subscribe(handler);
-        await Should.ThrowAsync<Exception>(() => _sut.Commit());
+        await Should.ThrowAsync<Exception>(_sut.Commit);
 
         await handler.DidNotReceiveWithAnyArgs()(default);
     }
@@ -81,7 +81,7 @@ public class UnitOfWorkBaseTests
     {
         await _sut.Commit();
 
-        await Should.ThrowAsync<InvalidOperationException>(() => _sut.Commit());
+        await Should.ThrowAsync<InvalidOperationException>(_sut.Commit);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class UnitOfWorkBaseTests
     {
         await _sut.Rollback();
 
-        await Should.ThrowAsync<InvalidOperationException>(() => _sut.Commit());
+        await Should.ThrowAsync<InvalidOperationException>(_sut.Commit);
     }
 
     [Fact]

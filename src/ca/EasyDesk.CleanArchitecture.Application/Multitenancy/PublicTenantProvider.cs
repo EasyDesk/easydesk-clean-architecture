@@ -2,5 +2,5 @@
 
 public class PublicTenantProvider : ITenantProvider
 {
-    public TenantInfo TenantInfo => TenantInfo.Public;
+    public TenantInfo Tenant => TenantInfo.Public;
 }

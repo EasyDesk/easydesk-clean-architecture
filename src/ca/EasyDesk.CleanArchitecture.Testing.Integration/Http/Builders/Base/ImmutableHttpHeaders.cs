@@ -23,7 +23,7 @@ public record class ImmutableHttpHeaders(
                 header,
                 Dictionary
                     .GetOption(header)
-                    .OrElseGet(() => Enumerable.Empty<string>())
+                    .OrElseGet(Enumerable.Empty<string>)
                     .Append(value)));
 
     public ImmutableHttpHeaders Remove(string header) =>

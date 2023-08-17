@@ -44,7 +44,7 @@ public record class ImmutableHttpContent(
         ContentHeaders.Dictionary
         .GetOption(HeaderNames.ContentType)
         .FlatMap(e => e.FirstOption())
-        .Map(m => MediaTypeHeaderValue.Parse(m));
+        .Map(MediaTypeHeaderValue.Parse);
 
     public Option<Encoding> TextEncoding =>
         ContentHeaders.Dictionary

@@ -18,8 +18,8 @@ public class PetCreatedHandler : IDomainEventHandler<PetCreatedEvent>
 
     public Task<Result<Nothing>> Handle(PetCreatedEvent ev)
     {
-        var tenant = _tenantProvider.TenantInfo;
-        var contextTenant = _tenantNavigator.ContextTenantInfo.Value;
+        var tenant = _tenantProvider.Tenant;
+        var contextTenant = _tenantNavigator.ContextTenant.Value;
         if (tenant != contextTenant)
         {
             return Task.FromResult<Result<Nothing>>(Errors.Generic("Domain handler tenant {tenant} doesn't match context tenant {contextTenant}.", tenant, contextTenant));

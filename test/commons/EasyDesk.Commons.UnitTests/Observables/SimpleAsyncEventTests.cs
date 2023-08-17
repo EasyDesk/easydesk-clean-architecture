@@ -69,6 +69,6 @@ public class SimpleAsyncEventTests
         var subscription = _sut.Subscribe(_ => { });
         subscription.Unsubscribe();
 
-        Should.Throw<InvalidOperationException>(() => subscription.Unsubscribe());
+        Should.Throw<InvalidOperationException>(subscription.Unsubscribe);
     }
 }
