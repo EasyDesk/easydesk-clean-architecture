@@ -149,24 +149,17 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
             .Build();
     }
 
-    private void MoveTo(Option<TenantInfo> context) =>
-        context.Match(
-            none: _tenantNavigator.MoveToContextTenant,
-            some: tenant => tenant.Id.Match(
-                none: _tenantNavigator.MoveToPublic,
-                some: _tenantNavigator.MoveToTenant));
-
     [Theory]
     [MemberData(nameof(TenantActions))]
     public async Task ShouldFilterCommandInTenant(Option<TenantInfo> before, Option<TenantInfo> after)
     {
         var command = new Command(7);
-        MoveTo(before);
+        _tenantNavigator.MoveTo(before);
         var sendWithTenant = _tenantNavigator.Tenant;
 
         await _sender.Send(command);
 
-        MoveTo(after);
+        _tenantNavigator.MoveTo(after);
         var receiveWithTenantContext = _tenantNavigator.ContextTenant;
 
         if (receiveWithTenantContext.All(tenant => tenant == sendWithTenant))
@@ -186,12 +179,12 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         await _receiver.Subscribe<Event>();
 
         var ev = new Event(11);
-        MoveTo(before);
+        _tenantNavigator.MoveTo(before);
         var sendWithTenant = _tenantNavigator.Tenant;
 
         await _sender.Publish(ev);
 
-        MoveTo(after);
+        _tenantNavigator.MoveTo(after);
         var receiveWithTenantContext = _tenantNavigator.ContextTenant;
 
         if (receiveWithTenantContext.All(tenant => tenant == sendWithTenant))

@@ -108,6 +108,23 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
+        MoveToNoTenant();
+
+        await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
+    }
+
+    [Fact]
+    public async Task ShouldEmitAnEventUnderSpecificTenant()
+    {
+        var bus = NewBus();
+        await bus.Subscribe<PersonCreated>();
+
+        var person = await CreatePerson()
+            .Send()
+            .AsData();
+
+        MoveToTenant(PersonCreated.EmittedWithTenant);
+
         await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
 
