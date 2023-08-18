@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
 using EasyDesk.Commons.Collections;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
@@ -27,11 +28,11 @@ public sealed class RebusTestBus : ITestBus
     private readonly ISet<Type> _subscriptions = new HashSet<Type>();
     private readonly Channel<ReceivedMessage> _messages = Channel.CreateUnbounded<ReceivedMessage>();
     private readonly IList<ReceivedMessage> _deadLetter = new List<ReceivedMessage>();
-    private readonly ITenantNavigator _tenantNavigator;
+    private readonly ITestTenantNavigator _tenantNavigator;
     private readonly Duration _timeout;
     private readonly BuiltinHandlerActivator _handlerActivator;
 
-    public RebusTestBus(Action<RebusConfigurer> configureRebus, ITenantNavigator tenantNavigator, Duration? timeout = null)
+    public RebusTestBus(Action<RebusConfigurer> configureRebus, ITestTenantNavigator tenantNavigator, Duration? timeout = null)
     {
         _tenantNavigator = tenantNavigator;
         _timeout = timeout ?? _defaultTimeout;
@@ -123,7 +124,7 @@ public sealed class RebusTestBus : ITestBus
     }
 
     private Option<T> ValidateMessage<T>(ReceivedMessage receivedMessage, Func<T, bool> predicate) =>
-        _tenantNavigator.ContextTenant.Match(some: tenant => receivedMessage.Tenant == tenant.Id, none: () => true)
+        (_tenantNavigator.IsMultitenancyIgnored || _tenantNavigator.Tenant.Id == receivedMessage.Tenant)
         && receivedMessage.Message is T t
         && predicate(t)
         ? Some(t) : None;
@@ -142,7 +143,7 @@ public sealed class RebusTestBus : ITestBus
 
     public static RebusTestBus CreateFromServices(
         IServiceProvider serviceProvider,
-        ITenantNavigator testTenantNavigator,
+        ITestTenantNavigator testTenantNavigator,
         string? inputQueueAddress = null,
         Duration? defaultTimeout = null)
     {

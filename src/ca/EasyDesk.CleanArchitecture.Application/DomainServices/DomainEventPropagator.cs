@@ -10,11 +10,11 @@ public sealed class DomainEventPropagator<M, D> : IDomainEventHandler<D>
     where D : DomainEvent
 {
     private readonly IEventPublisher _publisher;
-    private readonly ITenantNavigator? _tenantNavigator;
+    private readonly IContextTenantNavigator? _tenantNavigator;
 
     public DomainEventPropagator(
         IEventPublisher publisher,
-        ITenantNavigator? tenantNavigator = null)
+        IContextTenantNavigator? tenantNavigator = null)
     {
         _publisher = publisher;
         _tenantNavigator = tenantNavigator;

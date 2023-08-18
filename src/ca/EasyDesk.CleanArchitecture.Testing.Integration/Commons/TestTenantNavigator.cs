@@ -2,24 +2,26 @@
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Commons;
 
-public class TestTenantNavigator : ITenantNavigator
+public class TestTenantNavigator : ITestTenantNavigator
 {
-    public Option<TenantInfo> ContextTenant { get; private set; } = None;
+    private Option<TenantInfo> _overriddenTenant = None;
 
-    public TenantInfo Tenant => ContextTenant | TenantInfo.Public;
+    public TenantInfo Tenant => _overriddenTenant | TenantInfo.Public;
+
+    public bool IsMultitenancyIgnored => _overriddenTenant.IsAbsent;
 
     public void MoveToTenant(TenantId id)
     {
-        ContextTenant = Some(TenantInfo.Tenant(id));
+        _overriddenTenant = Some(TenantInfo.Tenant(id));
     }
 
     public void MoveToPublic()
     {
-        ContextTenant = Some(TenantInfo.Public);
+        _overriddenTenant = Some(TenantInfo.Public);
     }
 
-    public void MoveToContextTenant()
+    public void IgnoreMultitenancy()
     {
-        ContextTenant = None;
+        _overriddenTenant = None;
     }
 }

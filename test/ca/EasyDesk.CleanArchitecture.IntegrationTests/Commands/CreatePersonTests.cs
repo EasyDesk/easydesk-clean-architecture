@@ -108,7 +108,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        TenantNavigator.MoveToContextTenant();
+        TenantNavigator.IgnoreMultitenancy();
 
         await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }

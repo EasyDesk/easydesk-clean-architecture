@@ -31,6 +31,7 @@ public class MultitenancyModule : AppModule
         services.AddScoped<TenantService>();
         services.AddScoped<IContextTenantInitializer>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<ITenantNavigator>(p => p.GetRequiredService<TenantService>());
+        services.AddScoped<IContextTenantNavigator>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<ITenantProvider>(p => p.GetRequiredService<ITenantNavigator>());
         services.Decorate<IContextResetter, MultitenantContextResetter>();
 

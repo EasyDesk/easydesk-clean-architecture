@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
@@ -36,7 +35,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected FakeClock Clock => Fixture.Clock;
 
-    protected ITenantNavigator TenantNavigator { get; } = new TestTenantNavigator();
+    protected ITestTenantNavigator TenantNavigator { get; } = new TestTenantNavigator();
 
     protected ITestBus NewBus(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {

@@ -47,7 +47,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     private readonly ITestBus _sender;
     private readonly ITestBus _receiver;
 
-    private readonly ITenantNavigator _tenantNavigator = new TestTenantNavigator();
+    private readonly ITestTenantNavigator _tenantNavigator = new TestTenantNavigator();
 
     public RebusTestBusTests(RabbitMqContainerFixture rabbitMqContainerFixture)
     {
@@ -154,13 +154,13 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     public async Task ShouldFilterCommandInTenant(Option<TenantInfo> before, Option<TenantInfo> after)
     {
         var command = new Command(7);
-        _tenantNavigator.MoveTo(before);
+        _tenantNavigator.MoveToOrIgnore(before);
         var sendWithTenant = _tenantNavigator.Tenant;
 
         await _sender.Send(command);
 
-        _tenantNavigator.MoveTo(after);
-        var receiveWithTenantContext = _tenantNavigator.ContextTenant;
+        _tenantNavigator.MoveToOrIgnore(after);
+        var receiveWithTenantContext = after;
 
         if (receiveWithTenantContext.All(tenant => tenant == sendWithTenant))
         {
@@ -179,13 +179,13 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         await _receiver.Subscribe<Event>();
 
         var ev = new Event(11);
-        _tenantNavigator.MoveTo(before);
+        _tenantNavigator.MoveToOrIgnore(before);
         var sendWithTenant = _tenantNavigator.Tenant;
 
         await _sender.Publish(ev);
 
-        _tenantNavigator.MoveTo(after);
-        var receiveWithTenantContext = _tenantNavigator.ContextTenant;
+        _tenantNavigator.MoveToOrIgnore(after);
+        var receiveWithTenantContext = after;
 
         if (receiveWithTenantContext.All(tenant => tenant == sendWithTenant))
         {
