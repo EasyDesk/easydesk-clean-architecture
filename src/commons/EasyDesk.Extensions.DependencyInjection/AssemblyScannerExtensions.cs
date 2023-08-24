@@ -23,6 +23,7 @@ public static class AssemblyScannerExtensions
         var types = scan(new AssemblyScanner())
             .SubtypesOrImplementationsOf(interfaceType)
             .NonAbstract()
+            .NonGeneric()
             .FindTypes();
         if (interfaceType.IsGenericTypeDefinition)
         {

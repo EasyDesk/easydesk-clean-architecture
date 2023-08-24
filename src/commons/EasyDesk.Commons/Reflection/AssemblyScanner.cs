@@ -25,6 +25,9 @@ public class AssemblyScanner
     public AssemblyScanner NonAbstract() =>
         Where(t => !(t.IsAbstract || t.IsInterface));
 
+    public AssemblyScanner NonGeneric() =>
+        Where(t => !t.IsGenericType);
+
     public AssemblyScanner SubtypesOrImplementationsOf<T>() =>
         SubtypesOrImplementationsOf(typeof(T));
 
