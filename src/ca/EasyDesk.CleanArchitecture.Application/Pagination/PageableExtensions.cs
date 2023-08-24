@@ -15,15 +15,17 @@ public static class PageableExtensions
             _mapper = mapper;
         }
 
-        public Task<int> GetTotalCount() => _source.GetTotalCount();
+        public async Task<IEnumerable<R>> GetAll()
+        {
+            var items = await _source.GetAll();
+            return items.Select(_mapper);
+        }
 
         public async Task<IEnumerable<R>> GetPage(int pageSize, int pageIndex)
         {
             var page = await _source.GetPage(pageSize, pageIndex);
             return page.Select(_mapper);
         }
-
-        public IAsyncEnumerable<IEnumerable<R>> GetAllPages(int pageSize) => _source.GetAllPages(pageSize).Select(p => p.Select(_mapper));
     }
 
     public static IPageable<R> Map<T, R>(this IPageable<T> source, Func<T, R> mapper) => new MappedPageable<T, R>(source, mapper);

@@ -8,7 +8,7 @@ public sealed class TenantManagementStep : IOutgoingStep
 {
     public async Task Process(OutgoingStepContext context, Func<Task> next)
     {
-        context.GetService<ITenantProvider>().TenantInfo.Id.IfPresent(tenantId =>
+        context.GetService<ITenantProvider>().Tenant.Id.IfPresent(tenantId =>
         {
             context.Load<Message>().Headers.Add(MultitenantMessagingUtils.TenantIdHeader, tenantId);
         });

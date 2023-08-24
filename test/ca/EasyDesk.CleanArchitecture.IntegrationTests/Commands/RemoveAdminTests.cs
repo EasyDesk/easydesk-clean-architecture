@@ -26,7 +26,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(_tenantId));
         await WebService.WaitUntilTenantExists(_tenantId);
 
-        MoveToTenant(_tenantId);
+        TenantNavigator.MoveToTenant(_tenantId);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

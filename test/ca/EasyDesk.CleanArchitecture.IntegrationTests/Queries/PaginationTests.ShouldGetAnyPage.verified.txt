@@ -195,10 +195,9 @@
     ],
     Errors: [],
     Meta: {
+      Count: 10,
       PageIndex: 1,
-      PageSize: 10,
-      TotalCount: 300,
-      PageCount: 30
+      PageSize: 10
     }
   }
 }

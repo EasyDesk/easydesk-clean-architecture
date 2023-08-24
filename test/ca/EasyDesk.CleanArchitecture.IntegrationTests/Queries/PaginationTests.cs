@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
@@ -25,7 +26,7 @@ public class PaginationTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
-        MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(_tenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

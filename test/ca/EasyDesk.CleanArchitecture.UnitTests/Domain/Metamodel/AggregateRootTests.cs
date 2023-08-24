@@ -27,6 +27,7 @@ public class AggregateRootTests
     {
         _sut.NotifyCreation();
         _sut.ShouldHaveEmitted(ToEvent(1));
+        _sut.ShouldNotHaveEmitted(ToEvent(2));
     }
 
     [Fact]
@@ -34,5 +35,12 @@ public class AggregateRootTests
     {
         _sut.NotifyRemoval();
         _sut.ShouldHaveEmitted(ToEvent(2));
+        _sut.ShouldNotHaveEmitted(ToEvent(1));
+    }
+
+    [Fact]
+    public void EmittedEvents_ShouldStartEmpty()
+    {
+        _sut.ShouldNotHaveEmitted<Event>();
     }
 }

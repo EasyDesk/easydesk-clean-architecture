@@ -14,7 +14,7 @@ public class QuantityWrapperTests
         public TestQuantityWrapper(int value) : base(value)
         {
             DomainConstraints.Check()
-                .IfNot(value != 0, () => TestDomainError.Create())
+                .IfNot(value != 0, TestDomainError.Create)
                 .ThrowException();
         }
     }

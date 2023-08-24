@@ -1,6 +1,4 @@
-﻿using EasyDesk.Commons.Collections;
-
-namespace EasyDesk.CleanArchitecture.Application.Pagination;
+﻿namespace EasyDesk.CleanArchitecture.Application.Pagination;
 
 public static class Pageable
 {
@@ -15,7 +13,7 @@ public static class Pageable
             _items = items;
         }
 
-        public Task<int> GetTotalCount() => Task.FromResult(_items.Count());
+        public Task<IEnumerable<T>> GetAll() => Task.FromResult(_items);
 
         public Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex)
         {
@@ -38,31 +36,5 @@ public static class Pageable
                 .ToList()
                 .AsEnumerable());
         }
-
-        public IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize)
-        {
-            return _items
-                .Chunk(pageSize)
-                .Cast<IEnumerable<T>>()
-                .ToAsyncEnumerable();
-        }
-    }
-
-    public static async IAsyncEnumerable<T> GetAllItems<T>(this IPageable<T> pageable, int pageSize)
-    {
-        await foreach (var page in pageable.GetAllPages(pageSize))
-        {
-            foreach (var item in page)
-            {
-                yield return item;
-            }
-        }
-    }
-
-    public static async Task<PageInfo<T>> GetPageInfo<T>(this IPageable<T> pageable, int pageSize, int pageIndex)
-    {
-        var page = await pageable.GetPage(pageSize, pageIndex);
-        var totalCount = await pageable.GetTotalCount();
-        return new(page, totalCount, pageSize, pageIndex);
     }
 }

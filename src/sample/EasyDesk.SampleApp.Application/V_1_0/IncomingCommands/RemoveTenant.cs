@@ -34,7 +34,7 @@ public class RemoveTenantHandler : IHandler<RemoveTenant>
     {
         await _petRepository.RemoveAll();
         await _personRepository.RemoveAll();
-        await _multitenancyManager.RemoveTenant(_tenantProvider.TenantInfo.Id.Value);
+        await _multitenancyManager.RemoveTenant(_tenantProvider.Tenant.Id.Value);
         return Ok;
     }
 }

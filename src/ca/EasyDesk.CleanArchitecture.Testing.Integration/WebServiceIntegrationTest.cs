@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -18,7 +18,6 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     where T : WebServiceTestsFixture
 {
     private readonly IList<RebusTestBus> _buses = new List<RebusTestBus>();
-    private Option<TenantId> _currentTenant;
     private Option<Agent> _currentAgent;
 
     protected WebServiceIntegrationTest(T fixture)
@@ -36,9 +35,11 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected FakeClock Clock => Fixture.Clock;
 
+    protected ITestTenantNavigator TenantNavigator { get; } = new TestTenantNavigator();
+
     protected ITestBus NewBus(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        var bus = RebusTestBus.CreateFromServices(WebService.Services, inputQueueAddress, defaultTimeout);
+        var bus = RebusTestBus.CreateFromServices(WebService.Services, TenantNavigator, inputQueueAddress, defaultTimeout);
         _buses.Add(bus);
         return bus;
     }
@@ -51,7 +52,7 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     private void ApplyDefaultRequestConfiguration(HttpRequestBuilder req)
     {
-        _currentTenant.Match(
+        TenantNavigator.Tenant.Id.Match(
             some: req.Tenant,
             none: req.NoTenant);
 
@@ -74,16 +75,6 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     protected void Anonymize()
     {
         _currentAgent = None;
-    }
-
-    protected void MoveToTenant(TenantId id)
-    {
-        _currentTenant = Some(id);
-    }
-
-    protected void MoveToPublicTenant()
-    {
-        _currentTenant = None;
     }
 
     protected virtual ITestHttpAuthentication GetHttpAuthentication() =>

@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.CleanArchitecture.Application.Sagas.Builder;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,10 +48,22 @@ public class SagasModule : AppModule
             _services = services;
         }
 
-        public void RegisterConfiguration<T, R>(SagaRequestConfiguration<T, R, TId, TState> configuration) where T : IDispatchable<R>
+        public void RegisterRequestConfiguration<T, R>(SagaStepConfiguration<T, R, TId, TState> configuration) where T : IDispatchable<R>
         {
             _services.AddSingleton(configuration);
-            _services.AddTransient<IHandler<T, R>, SagaHandler<T, R, TId, TState>>();
+            _services.AddTransient<IHandler<T, R>, SagaRequestHandler<T, R, TId, TState>>();
+        }
+
+        public void RegisterRequestConfiguration<T>(SagaStepConfiguration<T, TId, TState> configuration) where T : IDispatchable<Nothing>
+        {
+            _services.AddSingleton(configuration);
+            _services.AddTransient<IHandler<T, Nothing>, SagaRequestHandler<T, TId, TState>>();
+        }
+
+        public void RegisterEventConfiguration<T>(SagaStepConfiguration<T, TId, TState> configuration) where T : DomainEvent
+        {
+            _services.AddSingleton(configuration);
+            _services.AddTransient<IDomainEventHandler<T>, SagaEventHandler<T, TId, TState>>();
         }
     }
 }

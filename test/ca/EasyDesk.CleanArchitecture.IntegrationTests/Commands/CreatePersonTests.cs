@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
@@ -35,7 +36,7 @@ public class CreatePersonTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
-        MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(_tenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -106,6 +107,23 @@ public class CreatePersonTests : SampleIntegrationTest
         var person = await CreatePerson()
             .Send()
             .AsData();
+
+        TenantNavigator.IgnoreMultitenancy();
+
+        await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
+    }
+
+    [Fact]
+    public async Task ShouldEmitAnEventUnderSpecificTenant()
+    {
+        var bus = NewBus();
+        await bus.Subscribe<PersonCreated>();
+
+        var person = await CreatePerson()
+            .Send()
+            .AsData();
+
+        TenantNavigator.MoveToTenant(PersonCreated.EmittedWithTenant);
 
         await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
     }

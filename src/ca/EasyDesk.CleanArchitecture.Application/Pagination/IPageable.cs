@@ -2,9 +2,7 @@
 
 public interface IPageable<T>
 {
-    Task<int> GetTotalCount();
-
     Task<IEnumerable<T>> GetPage(int pageSize, int pageIndex);
 
-    IAsyncEnumerable<IEnumerable<T>> GetAllPages(int pageSize);
+    Task<IEnumerable<T>> GetAll();
 }

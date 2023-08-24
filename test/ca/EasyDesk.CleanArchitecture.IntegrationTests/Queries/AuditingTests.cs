@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.Authorization;
@@ -32,7 +33,7 @@ public class AuditingTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(_tenant));
         _initialAudits++;
 
-        MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(_tenant);
         AuthenticateAs(TestAgents.Admin);
 
         await WebService.WaitUntilTenantExists(_tenant);
@@ -50,8 +51,7 @@ public class AuditingTests : SampleIntegrationTest
         await WebService.WaitConditionUnderPublicTenant<IAuditLog>(
             log => log
                 .Audit(new())
-                .GetAllItems(50)
-                .ToEnumerableAsync()
+                .GetAll()
                 .Map(e => e.Count() == _initialAudits));
     }
 
@@ -59,8 +59,7 @@ public class AuditingTests : SampleIntegrationTest
         WebService.WaitConditionUnderPublicTenant<IAuditLog>(
             log => log
                 .Audit(new())
-                .GetAllItems(50)
-                .ToEnumerableAsync()
+                .GetAll()
                 .Map(e => e.Count() == _initialAudits + newRecords));
 
     [Fact]
@@ -81,7 +80,7 @@ public class AuditingTests : SampleIntegrationTest
 
         await WebService.WaitConditionUnderTenant<IAuditLog>(
             tenantId,
-            log => log.Audit(new AuditQuery()).GetAllItems(1).Any());
+            log => log.Audit(new AuditQuery()).GetAll().Map(audits => audits.Any()));
 
         var response = await Http.GetAudits().Tenant(tenantId).Send().AsVerifiableEnumerable();
 

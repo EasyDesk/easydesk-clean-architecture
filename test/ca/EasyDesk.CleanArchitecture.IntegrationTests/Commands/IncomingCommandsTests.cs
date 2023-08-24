@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
@@ -46,7 +47,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
         await bus.Send(new CreateTenant(tenantId));
 
         AuthenticateAs(TestAgents.Admin);
-        MoveToTenant(tenantId);
+        TenantNavigator.MoveToTenant(tenantId);
 
         await WebService.WaitUntilTenantExists(tenantId);
         await Http.AddAdmin()

@@ -2,17 +2,9 @@
 
 public interface ITenantNavigator : ITenantProvider
 {
-    Option<TenantInfo> ContextTenantInfo { get; }
-
-    void MoveToContextTenant();
-
     void MoveToTenant(TenantId id);
 
     void MoveToPublic();
-}
-
-public interface ITenantScope : IDisposable
-{
 }
 
 public static class TenantNavigatorExtensions
@@ -30,4 +22,7 @@ public static class TenantNavigatorExtensions
         navigator.MoveToTenant(id);
         return Ok;
     }
+
+    public static void MoveTo(this ITenantNavigator navigator, TenantInfo tenantInfo) =>
+        tenantInfo.Id.Match(some: navigator.MoveToTenant, none: navigator.MoveToPublic);
 }

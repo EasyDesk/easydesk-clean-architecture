@@ -45,21 +45,21 @@ public class TenantServiceTests
     [Fact]
     public void TenantInfo_ShouldThrow_IfUsedWithoutInitialization()
     {
-        Should.Throw<InvalidOperationException>(() => _sut.TenantInfo);
+        Should.Throw<InvalidOperationException>(() => _sut.Tenant);
     }
 
     [Fact]
     public void TenantInfo_ShouldReturnTheCorrectTenantInfoAfterInitialization_WithTenant()
     {
         _sut.Initialize(_tenantInfo);
-        _sut.TenantInfo.ShouldBe(_tenantInfo);
+        _sut.Tenant.ShouldBe(_tenantInfo);
     }
 
     [Fact]
     public void TenantInfo_ShouldReturnTheCorrectTenantInfoAfterInitialization_WithPublic()
     {
         _sut.Initialize(TenantInfo.Public);
-        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+        _sut.Tenant.ShouldBe(TenantInfo.Public);
     }
 
     [Fact]
@@ -67,7 +67,7 @@ public class TenantServiceTests
     {
         _sut.Initialize(TenantInfo.Public);
         _sut.MoveToTenant(_tenantId);
-        _sut.TenantInfo.ShouldBe(_tenantInfo);
+        _sut.Tenant.ShouldBe(_tenantInfo);
     }
 
     [Fact]
@@ -75,20 +75,20 @@ public class TenantServiceTests
     {
         _sut.Initialize(_tenantInfo);
         _sut.MoveToPublic();
-        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+        _sut.Tenant.ShouldBe(TenantInfo.Public);
     }
 
     [Fact]
     public void ShouldSuceed_WithMoveChain()
     {
         _sut.Initialize(_tenantInfo);
-        _sut.TenantInfo.ShouldBe(_tenantInfo);
+        _sut.Tenant.ShouldBe(_tenantInfo);
         _sut.MoveToPublic();
-        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+        _sut.Tenant.ShouldBe(TenantInfo.Public);
         _sut.MoveToTenant(_tenantId);
-        _sut.TenantInfo.ShouldBe(TenantInfo.Tenant(_tenantId));
+        _sut.Tenant.ShouldBe(TenantInfo.Tenant(_tenantId));
         _sut.MoveToPublic();
-        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+        _sut.Tenant.ShouldBe(TenantInfo.Public);
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class TenantServiceTests
         _sut.Initialize(_tenantInfo);
         _sut.MoveToPublic();
         _sut.MoveToContextTenant();
-        _sut.TenantInfo.ShouldBe(_tenantInfo);
+        _sut.Tenant.ShouldBe(_tenantInfo);
     }
 
     [Fact]
@@ -106,6 +106,6 @@ public class TenantServiceTests
         _sut.Initialize(TenantInfo.Public);
         _sut.MoveToTenant(_tenantId);
         _sut.MoveToContextTenant();
-        _sut.TenantInfo.ShouldBe(TenantInfo.Public);
+        _sut.Tenant.ShouldBe(TenantInfo.Public);
     }
 }

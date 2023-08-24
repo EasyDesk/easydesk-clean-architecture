@@ -22,7 +22,7 @@ public class CreateTenantHandler : IHandler<CreateTenant>
 
     public async Task<Result<Nothing>> Handle(CreateTenant request)
     {
-        await _multitenancyManager.AddTenant(_tenantProvider.TenantInfo.Id.Value);
+        await _multitenancyManager.AddTenant(_tenantProvider.Tenant.Id.Value);
         return Ok;
     }
 }

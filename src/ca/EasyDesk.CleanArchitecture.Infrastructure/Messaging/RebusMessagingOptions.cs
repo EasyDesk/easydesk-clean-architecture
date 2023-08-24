@@ -57,6 +57,9 @@ public sealed class RebusMessagingOptions
         return this;
     }
 
+    public RebusMessagingOptions ConfigureRebus(Action<RebusConfigurer> configurationAction) =>
+        ConfigureRebus((_, c) => configurationAction(c));
+
     public RebusMessagingOptions ConfigureRebusOptions(Action<OptionsConfigurer> configurationAction) =>
         ConfigureRebus((_, c) => c.Options(configurationAction));
 

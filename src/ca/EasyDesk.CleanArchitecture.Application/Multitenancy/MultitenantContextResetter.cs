@@ -5,9 +5,9 @@ namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 public class MultitenantContextResetter : IContextResetter
 {
     private readonly IContextResetter _contextResetter;
-    private readonly ITenantNavigator _tenantNavigator;
+    private readonly IContextTenantNavigator _tenantNavigator;
 
-    public MultitenantContextResetter(IContextResetter contextResetter, ITenantNavigator tenantNavigator)
+    public MultitenantContextResetter(IContextResetter contextResetter, IContextTenantNavigator tenantNavigator)
     {
         _contextResetter = contextResetter;
         _tenantNavigator = tenantNavigator;

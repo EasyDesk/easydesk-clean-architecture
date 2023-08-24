@@ -36,7 +36,7 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldSucceed()
     {
-        MoveToTenant(_tenantId);
+        TenantNavigator.MoveToTenant(_tenantId);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
@@ -62,7 +62,7 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReset_AfterTenantIsDeleted()
     {
-        MoveToTenant(_tenantId);
+        TenantNavigator.MoveToTenant(_tenantId);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         var bus = NewBus();

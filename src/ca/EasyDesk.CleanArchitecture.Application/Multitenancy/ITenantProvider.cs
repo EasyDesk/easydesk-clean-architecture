@@ -2,5 +2,5 @@
 
 public interface ITenantProvider
 {
-    TenantInfo TenantInfo { get; }
+    TenantInfo Tenant { get; }
 }

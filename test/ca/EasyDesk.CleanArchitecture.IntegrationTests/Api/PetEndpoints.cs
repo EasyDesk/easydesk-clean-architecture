@@ -35,6 +35,6 @@ public static class PetEndpoints
             ImmutableHttpContent.From(multipartFormContent).Result); // there is no synchronous way of serializing a MultipartFormDataContent
     }
 
-    public static HttpPaginatedRequestExecutor<PetDto> GetOwnedPets(this HttpTestHelper http, Guid personId) =>
-        http.GetPaginated<PetDto>(PetsRoutes.GetOwnedPets.WithRouteParam(nameof(personId), personId));
+    public static HttpPaginatedRequestExecutor<IEnumerable<PetDto>> GetOwnedPets(this HttpTestHelper http, Guid personId) =>
+        http.GetPaginated<IEnumerable<PetDto>>(PetsRoutes.GetOwnedPets.WithRouteParam(nameof(personId), personId));
 }

@@ -7,6 +7,6 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Api;
 
 public static class AuditingEndpoints
 {
-    public static HttpPaginatedRequestExecutor<AuditRecordDto> GetAudits(this HttpTestHelper http) =>
-        http.GetPaginated<AuditRecordDto>(AuditingRoutes.GetAudits);
+    public static HttpPaginatedRequestExecutor<IEnumerable<AuditRecordDto>> GetAudits(this HttpTestHelper http) =>
+        http.GetPaginated<IEnumerable<AuditRecordDto>>(AuditingRoutes.GetAudits);
 }

@@ -17,6 +17,6 @@ internal class OutOfProcessAuditStorage : IAuditStorage
 
     public async Task StoreAudit(AuditRecord record)
     {
-        await _auditsChannel.WriteAsync((record, _tenantProvider.TenantInfo));
+        await _auditsChannel.WriteAsync((record, _tenantProvider.Tenant));
     }
 }

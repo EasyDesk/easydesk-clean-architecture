@@ -1,23 +1,23 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-public class TenantService : ITenantNavigator, IContextTenantInitializer
+public class TenantService : IContextTenantNavigator, IContextTenantInitializer
 {
     private Option<TenantInfo> _overriddenTenantInfo = None;
 
     public void Initialize(TenantInfo tenantInfo)
     {
-        if (ContextTenantInfo.IsPresent)
+        if (ContextTenant.IsPresent)
         {
             throw new InvalidOperationException("Trying to initialize tenant after it was already initialized");
         }
 
-        ContextTenantInfo = Some(tenantInfo);
+        ContextTenant = Some(tenantInfo);
     }
 
-    public Option<TenantInfo> ContextTenantInfo { get; private set; } = None;
+    public Option<TenantInfo> ContextTenant { get; private set; } = None;
 
-    public TenantInfo TenantInfo => _overriddenTenantInfo.OrElse(
-        ContextTenantInfo.OrElseThrow(() => new InvalidOperationException("Accessing tenant before initialization")));
+    public TenantInfo Tenant => _overriddenTenantInfo.OrElse(
+        ContextTenant.OrElseThrow(() => new InvalidOperationException("Accessing tenant before initialization")));
 
     public void MoveToTenant(TenantId id) => MoveToTenantInfo(Some(TenantInfo.Tenant(id)));
 
@@ -27,7 +27,7 @@ public class TenantService : ITenantNavigator, IContextTenantInitializer
 
     private void MoveToTenantInfo(Option<TenantInfo> tenantInfo)
     {
-        if (ContextTenantInfo.IsAbsent)
+        if (ContextTenant.IsAbsent)
         {
             throw new InvalidOperationException("Trying to move to a different tenant before initialization");
         }

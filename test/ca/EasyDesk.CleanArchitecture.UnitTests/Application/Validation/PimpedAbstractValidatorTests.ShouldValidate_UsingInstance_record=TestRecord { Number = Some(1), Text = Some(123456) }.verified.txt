@@ -10,6 +10,7 @@
       MaxLength: 5,
       MinLength: 0,
       PropertyName: tested-property,
+      PropertyPath: tested-property,
       PropertyValue: 123456,
       TotalLength: 6
     }
