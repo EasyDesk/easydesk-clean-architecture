@@ -32,20 +32,26 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
 
     private IQueryable<TPersistence> InitialQuery() => WrapInitialQuery(DbSet);
 
-    protected IAggregateView<TAggregate> Find(QueryWrapper<TPersistence> queryWrapper) =>
-        new EfCoreAggregateView<TAggregate, TPersistence>(queryWrapper(InitialQuery()), Tracker);
-
     protected IAggregateView<TAggregate> Find(Expression<Func<TPersistence, bool>> predicate) =>
         Find(q => q.Where(predicate));
 
-    protected async Task<IEnumerable<TAggregate>> GetMany(QueryWrapper<TPersistence> queryWrapper)
-    {
-        var persistenceModels = await queryWrapper(InitialQuery()).ToListAsync();
-        return persistenceModels.Select(Tracker.TrackFromPersistenceModel);
-    }
+    protected IAggregateView<TAggregate> Find(QueryWrapper<TPersistence> queryWrapper) =>
+        Find(queryWrapper(InitialQuery()));
+
+    protected IAggregateView<TAggregate> Find(IQueryable<TPersistence> query) =>
+        new EfCoreAggregateView<TAggregate, TPersistence>(query, Tracker);
 
     protected async Task<IEnumerable<TAggregate>> GetMany(Expression<Func<TPersistence, bool>> predicate) =>
         await GetMany(q => q.Where(predicate));
+
+    protected async Task<IEnumerable<TAggregate>> GetMany(QueryWrapper<TPersistence> queryWrapper) =>
+        await GetMany(queryWrapper(InitialQuery()));
+
+    protected async Task<IEnumerable<TAggregate>> GetMany(IQueryable<TPersistence> query)
+    {
+        var persistenceModels = await query.ToListAsync();
+        return persistenceModels.Select(Tracker.TrackFromPersistenceModel);
+    }
 
     public void Save(TAggregate aggregate)
     {
