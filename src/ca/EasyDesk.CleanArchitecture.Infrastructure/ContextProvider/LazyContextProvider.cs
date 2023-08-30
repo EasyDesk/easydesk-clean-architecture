@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 

@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 

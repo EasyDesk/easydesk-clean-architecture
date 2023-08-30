@@ -1,4 +1,7 @@
-﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+﻿using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Tasks;
+
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public sealed class AsyncCache<T>
 {

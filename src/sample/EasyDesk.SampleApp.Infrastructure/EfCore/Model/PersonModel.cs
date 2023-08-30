@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;

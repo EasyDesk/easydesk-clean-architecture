@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Results;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 

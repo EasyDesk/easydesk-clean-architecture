@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Routing;
+using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

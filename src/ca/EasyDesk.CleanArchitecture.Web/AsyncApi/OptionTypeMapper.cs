@@ -1,4 +1,5 @@
-﻿using NJsonSchema;
+﻿using EasyDesk.Commons.Options;
+using NJsonSchema;
 using NJsonSchema.Generation.TypeMappers;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;

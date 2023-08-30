@@ -1,7 +1,6 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
@@ -9,6 +8,7 @@ using EasyDesk.CleanArchitecture.Dal.SqlServer;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;

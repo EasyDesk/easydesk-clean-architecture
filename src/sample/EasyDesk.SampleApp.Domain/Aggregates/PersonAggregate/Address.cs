@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 public record Address(
     Option<PlaceName> StreetType,

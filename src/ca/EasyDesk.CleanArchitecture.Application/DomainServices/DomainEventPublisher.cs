@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Results;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.Commons.Results;
 using System.Diagnostics;
 
 namespace EasyDesk.SampleApp.Application.V_1_1.AsyncCommands;

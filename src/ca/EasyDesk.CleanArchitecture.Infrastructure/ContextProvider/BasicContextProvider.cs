@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using Microsoft.AspNetCore.Http;
 using Rebus.Extensions;
 using Rebus.Pipeline;

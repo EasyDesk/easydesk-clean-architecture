@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.Commons.Results;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;

@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Pagination;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Queries;
 

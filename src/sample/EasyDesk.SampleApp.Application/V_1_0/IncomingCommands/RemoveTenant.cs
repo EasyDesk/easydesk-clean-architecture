@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 

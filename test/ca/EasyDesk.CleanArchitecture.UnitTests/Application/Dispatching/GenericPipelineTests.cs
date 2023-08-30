@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.Commons.Results;
 using NSubstitute;
 using Shouldly;
 using static EasyDesk.Commons.Collections.EnumerableUtils;

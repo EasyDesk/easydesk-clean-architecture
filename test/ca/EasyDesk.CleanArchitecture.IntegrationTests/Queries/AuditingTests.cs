@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;

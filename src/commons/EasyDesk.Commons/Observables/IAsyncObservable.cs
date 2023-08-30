@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.Commons.Observables;
+﻿using EasyDesk.Commons.Tasks;
+
+namespace EasyDesk.Commons.Observables;
 
 public interface IAsyncObservable<out T>
 {

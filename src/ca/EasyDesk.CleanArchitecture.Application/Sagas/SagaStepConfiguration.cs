@@ -1,4 +1,7 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
+﻿using EasyDesk.Commons.Results;
+using EasyDesk.Commons.Tasks;
+
+namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 public class SagaStepConfiguration<T, R, TId, TState>
 {

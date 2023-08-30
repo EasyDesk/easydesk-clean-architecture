@@ -1,4 +1,7 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using EasyDesk.Commons.Results;
+using EasyDesk.Commons.Tasks;
+
+namespace EasyDesk.CleanArchitecture.Application.Dispatching;
 
 public interface IDispatcher
 {

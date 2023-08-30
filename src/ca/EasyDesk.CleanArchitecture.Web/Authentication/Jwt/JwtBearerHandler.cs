@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+using EasyDesk.Commons.Results;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

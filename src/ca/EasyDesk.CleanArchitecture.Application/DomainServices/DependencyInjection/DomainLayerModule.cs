@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
-using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;

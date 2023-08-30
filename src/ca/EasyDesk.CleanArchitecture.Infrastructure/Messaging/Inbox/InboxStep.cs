@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.Commons.Results;
 using Rebus.Bus;
 using Rebus.Pipeline;
 

@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Infrastructure.Versioning;
+﻿using EasyDesk.Commons.Comparers;
+
+namespace EasyDesk.CleanArchitecture.Infrastructure.Versioning;
 
 public record ApiVersion(uint Major, uint Minor = 0) : IComparable<ApiVersion>
 {

@@ -1,7 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Results;
 using System.Text;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;

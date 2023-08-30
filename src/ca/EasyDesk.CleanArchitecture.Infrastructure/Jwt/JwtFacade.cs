@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+using EasyDesk.Commons.Results;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using System.IdentityModel.Tokens.Jwt;

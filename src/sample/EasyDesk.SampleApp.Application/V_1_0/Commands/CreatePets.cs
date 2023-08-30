@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Application.Sagas.BulkOperations;
 using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 using FluentValidation;

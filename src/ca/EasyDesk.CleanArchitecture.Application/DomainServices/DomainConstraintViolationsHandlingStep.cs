@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 

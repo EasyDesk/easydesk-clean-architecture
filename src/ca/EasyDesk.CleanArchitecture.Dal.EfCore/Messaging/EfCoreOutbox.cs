@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
+using EasyDesk.Commons.Options;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using NodaTime;

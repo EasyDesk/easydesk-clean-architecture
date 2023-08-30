@@ -1,9 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;

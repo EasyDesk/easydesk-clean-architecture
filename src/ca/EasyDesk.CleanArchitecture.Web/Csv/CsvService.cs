@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Web.Csv;
 

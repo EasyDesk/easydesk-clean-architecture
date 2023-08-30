@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using EasyDesk.Commons.Options;
+using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using System.Security.Claims;
 

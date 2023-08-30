@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.Commons.Results;
 using EasyDesk.Testing.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 

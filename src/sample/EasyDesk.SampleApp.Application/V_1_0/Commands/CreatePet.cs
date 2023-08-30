@@ -7,6 +7,7 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;

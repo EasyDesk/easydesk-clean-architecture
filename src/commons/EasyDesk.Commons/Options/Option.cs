@@ -1,6 +1,7 @@
-﻿using System.Collections;
+﻿using EasyDesk.Commons.Tasks;
+using System.Collections;
 
-namespace EasyDesk.Commons;
+namespace EasyDesk.Commons.Options;
 
 public readonly record struct NoneOption
 {

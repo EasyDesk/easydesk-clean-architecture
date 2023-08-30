@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.Commons.Results;
 using NSubstitute;
 using Shouldly;
 using static EasyDesk.Commons.Collections.ImmutableCollections;

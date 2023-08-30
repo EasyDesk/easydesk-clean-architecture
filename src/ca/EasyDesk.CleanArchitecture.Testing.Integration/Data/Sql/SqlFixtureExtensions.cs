@@ -1,6 +1,7 @@
 ﻿using DotNet.Testcontainers.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.Commons.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Respawn;
 using System.Data.Common;

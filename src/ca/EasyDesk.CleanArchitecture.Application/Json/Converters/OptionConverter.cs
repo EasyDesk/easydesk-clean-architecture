@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using EasyDesk.Commons.Options;
+using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 

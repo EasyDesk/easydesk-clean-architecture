@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.Testing.Errors;
+﻿using EasyDesk.Commons.Results;
+
+namespace EasyDesk.Testing.Errors;
 
 public record TestError(string Code) : Error
 {

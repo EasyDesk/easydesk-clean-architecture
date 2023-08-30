@@ -1,10 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
+using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;

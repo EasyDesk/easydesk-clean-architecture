@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.Configuration;
 using Rebus.Retry.FailFast;
 

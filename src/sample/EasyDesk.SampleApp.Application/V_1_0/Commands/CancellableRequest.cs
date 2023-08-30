@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using NodaTime;
 

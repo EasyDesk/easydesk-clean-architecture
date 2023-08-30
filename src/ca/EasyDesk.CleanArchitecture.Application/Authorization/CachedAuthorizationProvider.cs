@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization;
 

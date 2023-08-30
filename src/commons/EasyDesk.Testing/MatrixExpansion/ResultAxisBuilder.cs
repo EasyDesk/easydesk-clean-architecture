@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.Testing.MatrixExpansion;
+﻿using EasyDesk.Commons.Results;
+
+namespace EasyDesk.Testing.MatrixExpansion;
 
 public class ResultAxisBuilder<T>
 {

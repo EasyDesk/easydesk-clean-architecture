@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
+using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Threading.Channels;

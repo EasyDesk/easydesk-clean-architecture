@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.Commons.Results;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;

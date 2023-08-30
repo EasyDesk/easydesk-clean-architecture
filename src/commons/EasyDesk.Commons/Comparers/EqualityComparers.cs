@@ -1,6 +1,6 @@
 ﻿using EasyDesk.Commons.Utils;
 
-namespace EasyDesk.Commons;
+namespace EasyDesk.Commons.Comparers;
 
 public static class EqualityComparers
 {
@@ -11,7 +11,7 @@ public static class EqualityComparers
     {
         IEnumerable<object> PropertyValues(T t) => properties.Select(p => p(t));
 
-        bool Equals(T left, T right) => Enumerable.SequenceEqual(PropertyValues(left), PropertyValues(right));
+        bool Equals(T left, T right) => PropertyValues(left).SequenceEqual(PropertyValues(right));
 
         int HashCode(T t) => PropertyValues(t).CombineHashCodes();
 
@@ -29,7 +29,7 @@ public static class EqualityComparers
             _hashCode = hashCode;
         }
 
-        public bool Equals(T? x, T? y) => ReferenceEquals(x, y) || (x is not null && y is not null && _equals(x, y));
+        public bool Equals(T? x, T? y) => ReferenceEquals(x, y) || x is not null && y is not null && _equals(x, y);
 
         public int GetHashCode(T obj) => _hashCode(obj);
     }

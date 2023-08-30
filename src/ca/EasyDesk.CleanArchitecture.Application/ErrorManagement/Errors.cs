@@ -1,4 +1,5 @@
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 

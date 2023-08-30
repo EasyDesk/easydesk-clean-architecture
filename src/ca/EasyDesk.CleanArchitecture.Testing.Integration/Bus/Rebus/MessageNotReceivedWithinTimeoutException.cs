@@ -1,6 +1,6 @@
 ﻿using NodaTime;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
 public sealed class MessageNotReceivedWithinTimeoutException : Exception
 {

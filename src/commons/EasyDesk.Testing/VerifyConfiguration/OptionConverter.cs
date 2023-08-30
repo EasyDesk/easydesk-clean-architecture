@@ -1,4 +1,5 @@
 ﻿using Argon;
+using EasyDesk.Commons.Options;
 
 namespace EasyDesk.Testing.VerifyConfiguration;
 

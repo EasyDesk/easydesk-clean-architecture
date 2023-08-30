@@ -1,8 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
+using EasyDesk.Commons.Options;
 
-namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 
 public sealed class MultitenancyOptions
 {

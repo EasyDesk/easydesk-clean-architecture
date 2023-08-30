@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.Commons;
+﻿namespace EasyDesk.Commons.Tasks;
 
 public static class TaskUtils
 {

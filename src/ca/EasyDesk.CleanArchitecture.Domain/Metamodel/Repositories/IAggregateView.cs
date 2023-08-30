@@ -1,4 +1,7 @@
-﻿namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
+﻿using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Results;
+
+namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 
 public interface IAggregateView<T>
 {

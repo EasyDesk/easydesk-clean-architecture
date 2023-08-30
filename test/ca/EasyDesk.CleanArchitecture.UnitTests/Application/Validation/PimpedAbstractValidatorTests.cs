@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Validation;
+using EasyDesk.Commons.Options;
 using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Validation;

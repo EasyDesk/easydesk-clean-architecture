@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using System.Collections;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;

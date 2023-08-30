@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using EasyDesk.Commons.Results;
+
+namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
 public interface IPipelineStep<in T, R>
 {

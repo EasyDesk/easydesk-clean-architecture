@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Abstractions;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;

@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate.Events;
 
 namespace EasyDesk.SampleApp.Application.DomainEvents;

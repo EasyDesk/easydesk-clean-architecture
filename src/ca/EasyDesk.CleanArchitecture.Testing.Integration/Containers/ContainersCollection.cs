@@ -1,6 +1,7 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
+using EasyDesk.Commons.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 

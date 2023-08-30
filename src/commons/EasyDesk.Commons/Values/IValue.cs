@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.Commons.Values;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.Commons.Values;
 
 public interface IValue<TSelf, TWrapped>
     where TSelf : IValue<TSelf, TWrapped>

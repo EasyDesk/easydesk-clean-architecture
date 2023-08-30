@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 

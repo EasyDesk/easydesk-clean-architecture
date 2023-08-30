@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using EasyDesk.Commons.Options;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.DependencyInjection;
+namespace EasyDesk.Extensions.DependencyInjection;
 
 public static class ServiceProviderExtensions
 {

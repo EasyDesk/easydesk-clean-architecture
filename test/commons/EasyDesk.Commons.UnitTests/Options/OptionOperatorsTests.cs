@@ -1,4 +1,6 @@
-﻿using NSubstitute;
+﻿using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Tasks;
+using NSubstitute;
 using Shouldly;
 using Xunit;
 

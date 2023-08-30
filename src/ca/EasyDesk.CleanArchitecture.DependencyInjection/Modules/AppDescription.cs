@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 using System.Reflection;

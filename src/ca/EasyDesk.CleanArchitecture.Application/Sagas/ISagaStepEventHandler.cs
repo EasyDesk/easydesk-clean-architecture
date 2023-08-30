@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 

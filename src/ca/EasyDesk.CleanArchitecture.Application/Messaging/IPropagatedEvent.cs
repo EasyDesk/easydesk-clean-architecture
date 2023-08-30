@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Application.Messaging;
 

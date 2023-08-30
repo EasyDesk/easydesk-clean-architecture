@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 

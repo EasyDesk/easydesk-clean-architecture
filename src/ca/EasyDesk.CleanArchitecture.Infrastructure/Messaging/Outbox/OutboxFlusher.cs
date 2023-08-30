@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.Commons.Options;
 using Rebus.Transport;
 using System.Diagnostics;
 

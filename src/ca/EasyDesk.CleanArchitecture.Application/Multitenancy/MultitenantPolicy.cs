@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.Commons.Results;
+
+namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 public delegate Task<Result<TenantInfo>> MultitenantPolicy(
     TenantInfo contextTenantInfo,

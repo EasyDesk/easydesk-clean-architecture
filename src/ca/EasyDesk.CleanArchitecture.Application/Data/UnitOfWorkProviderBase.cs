@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Data;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public abstract class UnitOfWorkProviderBase<T> : IUnitOfWorkProvider
     where T : IUnitOfWork

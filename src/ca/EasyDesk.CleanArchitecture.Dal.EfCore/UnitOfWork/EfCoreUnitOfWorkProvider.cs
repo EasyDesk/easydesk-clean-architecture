@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.Commons.Options;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Data.Common;

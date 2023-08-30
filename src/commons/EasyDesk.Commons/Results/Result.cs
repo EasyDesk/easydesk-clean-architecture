@@ -1,4 +1,7 @@
-﻿namespace EasyDesk.Commons;
+﻿using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Tasks;
+
+namespace EasyDesk.Commons.Results;
 
 public readonly record struct Result<T>
 {

@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using EasyDesk.Commons.Results;
+
+namespace EasyDesk.CleanArchitecture.Application.Dispatching;
 
 public interface IHandler<T, R>
     where T : IDispatchable<R>

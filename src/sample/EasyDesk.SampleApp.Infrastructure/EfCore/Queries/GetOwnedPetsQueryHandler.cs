@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using EasyDesk.SampleApp.Infrastructure.EfCore.Model;

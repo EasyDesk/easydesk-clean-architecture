@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using EasyDesk.Commons.Options;
+using FluentValidation;
 using FluentValidation.Internal;
 using System.Linq.Expressions;
 

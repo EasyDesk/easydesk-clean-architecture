@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using Microsoft.Net.Http.Headers;
 using System.Net.Http.Headers;
 

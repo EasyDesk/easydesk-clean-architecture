@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Commons.Polling;
+using EasyDesk.Commons.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 

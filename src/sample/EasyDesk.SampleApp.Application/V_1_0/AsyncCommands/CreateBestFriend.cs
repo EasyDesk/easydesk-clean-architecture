@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Domain.Model;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.AsyncCommands;

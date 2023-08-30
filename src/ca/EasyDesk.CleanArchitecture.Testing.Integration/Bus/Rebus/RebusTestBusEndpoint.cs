@@ -1,15 +1,17 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rebus.Activation;
 using Rebus.Bus;
 using Rebus.Config;
+using Rebus.Messages;
 using Rebus.Pipeline;
 using Rebus.Routing;
 using Rebus.Transport;
@@ -22,12 +24,10 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
 {
     private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
 
-    private record ReceivedMessage(IMessage Message, Option<TenantId> Tenant);
-
     private readonly IBus _bus;
     private readonly ISet<Type> _subscriptions = new HashSet<Type>();
-    private readonly Channel<ReceivedMessage> _messages = Channel.CreateUnbounded<ReceivedMessage>();
-    private readonly IList<ReceivedMessage> _deadLetter = new List<ReceivedMessage>();
+    private readonly Channel<Message> _messages = Channel.CreateUnbounded<Message>();
+    private readonly IList<Message> _deadLetter = new List<Message>();
     private readonly ITestTenantNavigator _tenantNavigator;
     private readonly Duration _timeout;
     private readonly BuiltinHandlerActivator _handlerActivator;
@@ -81,19 +81,24 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     }
 
     private async Task Handler(IMessage message) =>
-        await _messages.Writer.WriteAsync(new(message, CommonTenantReaders.ReadFromMessageContext(MessageContext.Current).Map(TenantId.New)));
+        await _messages.Writer.WriteAsync(MessageContext.Current.Message);
 
     public async Task<T> WaitForMessageOrFail<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
     {
+        var (message, _) = await WaitForMessageAndHeadersOrFail(predicate, timeout);
+        return message;
+    }
+
+    public async Task<(T Message, IDictionary<string, string> Headers)> WaitForMessageAndHeadersOrFail<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
+    {
         var deadLetterMessage = _deadLetter
-            .Select(m => ValidateMessage(m, predicate))
             .ZipWithIndex()
-            .SelectMany(x => x.Item.Map(v => (x.Index, Item: v)))
+            .SelectMany(x => ValidateMessage(x.Item, predicate).Map(v => (x.Index, Message: v, x.Item.Headers)))
             .FirstOption();
         if (deadLetterMessage.IsPresent)
         {
             _deadLetter.RemoveAt(deadLetterMessage.Value.Index);
-            return deadLetterMessage.Value.Item;
+            return (deadLetterMessage.Value.Message, deadLetterMessage.Value.Headers);
         }
 
         var actualTimeout = timeout ?? _timeout;
@@ -110,7 +115,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
                 var validatedMessage = ValidateMessage(message, predicate);
                 if (validatedMessage.IsPresent)
                 {
-                    return validatedMessage.Value;
+                    return (validatedMessage.Value, message.Headers);
                 }
                 _deadLetter.Add(message);
             }
@@ -123,9 +128,25 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         }
     }
 
-    private Option<T> ValidateMessage<T>(ReceivedMessage receivedMessage, Func<T, bool> predicate) =>
-        (_tenantNavigator.IsMultitenancyIgnored || _tenantNavigator.Tenant.Id == receivedMessage.Tenant)
-        && receivedMessage.Message is T t
+    public async Task FailIfMessageIsReceivedWithin<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
+    {
+        IMessage message;
+        IDictionary<string, string> headers;
+        try
+        {
+            (message, headers) = await WaitForMessageAndHeadersOrFail(predicate, timeout);
+        }
+        catch (MessageNotReceivedWithinTimeoutException)
+        {
+            return;
+        }
+
+        throw new UnexpectedMessageReceivedException(typeof(T), message, headers);
+    }
+
+    private Option<T> ValidateMessage<T>(Message message, Func<T, bool> predicate) =>
+        (_tenantNavigator.IsMultitenancyIgnored || _tenantNavigator.Tenant.Id == message.Headers.GetOption(MultitenantMessagingUtils.TenantIdHeader).Map(TenantId.New))
+        && message.Body is T t
         && predicate(t)
         ? Some(t) : None;
 

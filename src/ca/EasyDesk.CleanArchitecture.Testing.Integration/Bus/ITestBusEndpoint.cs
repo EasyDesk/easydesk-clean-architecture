@@ -17,25 +17,13 @@ public interface ITestBusEndpoint : IAsyncDisposable
 
     Task<T> WaitForMessageOrFail<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage;
 
+    Task FailIfMessageIsReceivedWithin<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage;
+
     public async Task<T> WaitForMessageOrFail<T>(T message, Duration? timeout = null) where T : IMessage =>
         await WaitForMessageOrFail<T>(x => x.Equals(message), timeout);
 
     public async Task<T> WaitForMessageOrFail<T>(Duration? timeout = null) where T : IMessage =>
         await WaitForMessageOrFail<T>(_ => true, timeout);
-
-    public async Task FailIfMessageIsReceivedWithin<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
-    {
-        try
-        {
-            await WaitForMessageOrFail(predicate, timeout);
-        }
-        catch (MessageNotReceivedWithinTimeoutException)
-        {
-            return;
-        }
-
-        throw new UnexpectedMessageReceivedException(typeof(T));
-    }
 
     public async Task FailIfMessageIsReceivedWithin<T>(T message, Duration? timeout = null) where T : IMessage =>
         await FailIfMessageIsReceivedWithin<T>(m => m.Equals(message), timeout);

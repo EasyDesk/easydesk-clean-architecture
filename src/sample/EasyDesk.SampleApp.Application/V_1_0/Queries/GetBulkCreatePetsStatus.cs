@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Sagas;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Queries;

@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.Commons.Collections;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.Commons.Collections;
 
 public static class DictionaryUtils
 {

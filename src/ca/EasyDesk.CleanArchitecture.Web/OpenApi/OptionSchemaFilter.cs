@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using EasyDesk.Commons.Options;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;

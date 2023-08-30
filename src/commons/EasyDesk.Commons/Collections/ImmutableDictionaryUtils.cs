@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Options;
+using System.Collections.Immutable;
 
 namespace EasyDesk.Commons.Collections;
 

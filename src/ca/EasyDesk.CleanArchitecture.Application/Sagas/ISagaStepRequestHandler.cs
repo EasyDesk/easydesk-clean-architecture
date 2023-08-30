@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 

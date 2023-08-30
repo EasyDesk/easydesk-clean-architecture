@@ -2,10 +2,12 @@
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Application.Multitenancy.DependencyInjection;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 
 public class MultitenancyModule : AppModule
 {

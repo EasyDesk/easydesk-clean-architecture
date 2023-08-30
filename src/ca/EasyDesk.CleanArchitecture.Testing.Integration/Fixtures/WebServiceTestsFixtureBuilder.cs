@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.Commons.Observables;
+using EasyDesk.Commons.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 

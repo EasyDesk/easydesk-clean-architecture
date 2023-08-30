@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using Microsoft.AspNetCore.Http;
 using Rebus.Pipeline;
 

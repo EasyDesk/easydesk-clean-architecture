@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
 
 namespace EasyDesk.SampleApp.Application.IncomingEvents;

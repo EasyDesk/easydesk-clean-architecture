@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Dto;
+using EasyDesk.Commons.Tasks;
 using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;

@@ -1,4 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 

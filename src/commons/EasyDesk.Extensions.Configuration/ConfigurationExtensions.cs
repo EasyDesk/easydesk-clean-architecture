@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using EasyDesk.Commons.Options;
+using Microsoft.Extensions.Configuration;
 
 namespace EasyDesk.Extensions.Configuration;
 

@@ -1,4 +1,5 @@
-﻿using Rebus.Messages;
+﻿using EasyDesk.Commons.Options;
+using Rebus.Messages;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 

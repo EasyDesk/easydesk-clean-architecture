@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Sagas;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 public interface ISagaManager
 {

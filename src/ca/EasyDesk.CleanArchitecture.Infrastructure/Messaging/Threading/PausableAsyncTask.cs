@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
+using EasyDesk.Commons.Tasks;
 using Microsoft.Extensions.Logging;
 using Rebus.Threading;
 

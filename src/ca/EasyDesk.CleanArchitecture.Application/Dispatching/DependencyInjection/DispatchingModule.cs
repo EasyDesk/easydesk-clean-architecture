@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

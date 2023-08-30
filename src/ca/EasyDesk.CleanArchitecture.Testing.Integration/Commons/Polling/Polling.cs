@@ -1,4 +1,5 @@
-﻿using NodaTime;
+﻿using EasyDesk.Commons.Tasks;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Commons.Polling;
 

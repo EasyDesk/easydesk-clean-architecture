@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
+using EasyDesk.Commons.Options;
 using EasyDesk.Testing.MatrixExpansion;
 using NodaTime;
 using Rebus.Config;

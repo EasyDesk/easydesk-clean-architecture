@@ -8,6 +8,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Testing;

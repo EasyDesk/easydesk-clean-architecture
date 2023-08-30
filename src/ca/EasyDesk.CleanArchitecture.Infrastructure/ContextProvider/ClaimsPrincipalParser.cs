@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using EasyDesk.Commons.Options;
+using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 

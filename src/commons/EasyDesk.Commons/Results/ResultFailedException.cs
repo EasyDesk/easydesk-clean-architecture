@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.Commons;
+﻿namespace EasyDesk.Commons.Results;
 
 public sealed class ResultFailedException : Exception
 {

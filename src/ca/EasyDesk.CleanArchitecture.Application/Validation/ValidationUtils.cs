@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.Commons.Results;
 using FluentValidation;
-using static EasyDesk.Commons.ComparisonUtils;
+using static EasyDesk.Commons.Comparers.ComparisonUtils;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 

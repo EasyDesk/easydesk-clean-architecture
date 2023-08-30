@@ -16,6 +16,7 @@ using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
+using EasyDesk.Commons.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;

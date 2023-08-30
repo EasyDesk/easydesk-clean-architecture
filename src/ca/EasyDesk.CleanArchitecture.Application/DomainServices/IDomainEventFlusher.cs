@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.DomainServices;
+﻿using EasyDesk.Commons.Results;
+
+namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
 public interface IDomainEventFlusher
 {

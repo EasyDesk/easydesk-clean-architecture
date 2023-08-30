@@ -6,7 +6,7 @@ using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace EasyDesk.SampleApp.Infrastructure.DataAccess.Repositories;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Repositories;
 
 public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, SampleAppContext>, IPersonRepository
 {

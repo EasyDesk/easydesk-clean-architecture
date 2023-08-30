@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
 public static class StandardAttributes
 {

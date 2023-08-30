@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Web.Dto;
+﻿using EasyDesk.Commons.Results;
+
+namespace EasyDesk.CleanArchitecture.Web.Dto;
 
 public record PaginationMetaDto(
     int Count,

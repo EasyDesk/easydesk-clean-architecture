@@ -2,7 +2,7 @@
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.DependencyInjection;
+namespace EasyDesk.Extensions.DependencyInjection;
 
 public static class AssemblyScannerExtensions
 {

@@ -1,4 +1,8 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Data;
+﻿using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Results;
+using EasyDesk.Commons.Tasks;
+
+namespace EasyDesk.CleanArchitecture.Application.Data;
 
 public interface IUnitOfWorkProvider
 {

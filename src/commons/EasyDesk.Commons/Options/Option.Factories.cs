@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.Commons;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.Commons;
 
 public static partial class StaticImports
 {

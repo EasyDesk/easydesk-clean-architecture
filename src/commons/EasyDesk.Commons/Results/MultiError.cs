@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace EasyDesk.Commons;
+namespace EasyDesk.Commons.Results;
 
 public record MultiError : Error
 {

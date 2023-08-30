@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.Commons.Results;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Shouldly;

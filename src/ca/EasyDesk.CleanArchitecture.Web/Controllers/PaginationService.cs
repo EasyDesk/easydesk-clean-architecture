@@ -1,4 +1,6 @@
-﻿namespace EasyDesk.CleanArchitecture.Web.Controllers;
+﻿using EasyDesk.Commons.Options;
+
+namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
 public sealed class PaginationService
 {

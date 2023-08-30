@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using EasyDesk.Commons.Options;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDesk.Commons;
 

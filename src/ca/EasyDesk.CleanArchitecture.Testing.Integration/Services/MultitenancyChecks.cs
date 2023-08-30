@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.Commons.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
