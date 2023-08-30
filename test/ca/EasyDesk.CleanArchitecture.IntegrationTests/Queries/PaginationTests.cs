@@ -22,8 +22,7 @@ public class PaginationTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(_tenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
         TenantNavigator.MoveToTenant(_tenant);

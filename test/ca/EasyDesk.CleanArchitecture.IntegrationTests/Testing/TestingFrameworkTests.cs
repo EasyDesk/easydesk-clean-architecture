@@ -30,7 +30,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
 
     public HttpTestHelper GetHttp() => Http;
 
-    public ITestBus GetNewBus(string? inputQueue = null) => NewBus(inputQueue);
+    public ITestBusEndpoint GetNewBusEndpoint(string? inputQueue = null) => NewBusEndpoint(inputQueue);
 
     protected override void ConfigureRequests(HttpRequestBuilder req) => req
         .Tenant(_tenant)
@@ -38,8 +38,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(_tenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
         TenantNavigator.MoveToTenant(_tenant);

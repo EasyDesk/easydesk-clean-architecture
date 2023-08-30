@@ -16,8 +16,8 @@ public class CancellationTests : SampleIntegrationTest
     {
         var waitTime = Duration.FromSeconds(5);
         var timeout = Duration.FromSeconds(1);
-        var bus = NewBus();
-        await bus.Subscribe<CancellationFailed>();
+
+        await DefaultBusEndpoint.Subscribe<CancellationFailed>();
 
         await Should.ThrowAsync<TaskCanceledException>(async () =>
         {
@@ -29,7 +29,7 @@ public class CancellationTests : SampleIntegrationTest
                 .AsVerifiable();
         });
 
-        await bus.FailIfMessageIsReceivedWithin<CancellationFailed>(waitTime + Duration.FromSeconds(10));
+        await DefaultBusEndpoint.FailIfMessageIsReceivedWithin<CancellationFailed>(waitTime + Duration.FromSeconds(10));
     }
 
     [Fact]
@@ -37,8 +37,7 @@ public class CancellationTests : SampleIntegrationTest
     {
         var waitTime = Duration.FromSeconds(1);
         var timeout = Duration.FromSeconds(15);
-        var bus = NewBus();
-        await bus.Subscribe<CancellationFailed>();
+        await DefaultBusEndpoint.Subscribe<CancellationFailed>();
 
         var response = await Http
             .Post<Nothing, Nothing>(CancellationRoutes.CancellableRequest, Nothing.Value)
@@ -47,7 +46,7 @@ public class CancellationTests : SampleIntegrationTest
             .Send()
             .AsVerifiable();
 
-        await bus.WaitForMessageOrFail<CancellationFailed>();
+        await DefaultBusEndpoint.WaitForMessageOrFail<CancellationFailed>();
 
         await Verify(response);
     }

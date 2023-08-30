@@ -32,8 +32,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(_tenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
         TenantNavigator.MoveToTenant(_tenant);
@@ -101,8 +100,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldEmitAnEvent()
     {
-        var bus = NewBus();
-        await bus.Subscribe<PersonCreated>();
+        await DefaultBusEndpoint.Subscribe<PersonCreated>();
 
         var person = await CreatePerson()
             .Send()
@@ -110,14 +108,13 @@ public class CreatePersonTests : SampleIntegrationTest
 
         TenantNavigator.IgnoreMultitenancy();
 
-        await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
+        await DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
 
     [Fact]
     public async Task ShouldEmitAnEventUnderSpecificTenant()
     {
-        var bus = NewBus();
-        await bus.Subscribe<PersonCreated>();
+        await DefaultBusEndpoint.Subscribe<PersonCreated>();
 
         var person = await CreatePerson()
             .Send()
@@ -125,15 +122,14 @@ public class CreatePersonTests : SampleIntegrationTest
 
         TenantNavigator.MoveToTenant(PersonCreated.EmittedWithTenant);
 
-        await bus.WaitForMessageOrFail(new PersonCreated(person.Id));
+        await DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
 
     [Fact]
     public async Task ShouldBeMultitenant()
     {
         var otherTenant = TenantId.New("other-tenant");
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(otherTenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(otherTenant));
         await WebService.WaitUntilTenantExists(otherTenant);
 
         var person = await CreatePerson()
@@ -282,7 +278,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldCreateThePersonsPassport()
     {
-        var bus = NewBus(OtherServicesEndpoints.PassportService);
+        var bus = NewBusEndpoint(OtherServicesEndpoints.PassportService);
 
         var person = await CreatePerson().Send().AsData();
 

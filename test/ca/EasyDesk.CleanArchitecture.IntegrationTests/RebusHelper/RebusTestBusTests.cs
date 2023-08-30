@@ -44,8 +44,8 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     private static readonly Duration _computationSlack = Duration.FromMilliseconds(500);
 
     private readonly string _rabbitMqConnection;
-    private readonly ITestBus _sender;
-    private readonly ITestBus _receiver;
+    private readonly ITestBusEndpoint _sender;
+    private readonly ITestBusEndpoint _receiver;
 
     private readonly ITestTenantNavigator _tenantNavigator = new TestTenantNavigator();
 
@@ -56,9 +56,9 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         _receiver = CreateBus(ReceiverAddress);
     }
 
-    private RebusTestBus CreateBus(string endpoint)
+    private RebusTestBusEndpoint CreateBus(string endpoint)
     {
-        return new RebusTestBus(
+        return new RebusTestBusEndpoint(
             rebus => rebus
                 .Transport(t => t.UseRabbitMq(_rabbitMqConnection, endpoint))
                 .Routing(r => r.TypeBased().MapFallback(ReceiverAddress)),

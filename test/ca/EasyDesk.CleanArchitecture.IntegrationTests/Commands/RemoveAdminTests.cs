@@ -22,8 +22,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(_tenantId));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenantId));
         await WebService.WaitUntilTenantExists(_tenantId);
 
         TenantNavigator.MoveToTenant(_tenantId);

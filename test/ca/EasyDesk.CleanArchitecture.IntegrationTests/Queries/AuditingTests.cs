@@ -29,8 +29,7 @@ public class AuditingTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(_tenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
         _initialAudits++;
 
         TenantNavigator.MoveToTenant(_tenant);
@@ -73,9 +72,8 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldAuditCommands()
     {
-        var bus = NewBus();
         var tenantId = TenantId.New("new-tenant");
-        await bus.Send(new CreateTenant(tenantId.Value));
+        await DefaultBusEndpoint.Send(new CreateTenant(tenantId.Value));
         await WebService.WaitUntilTenantExists(tenantId);
 
         await WebService.WaitConditionUnderTenant<IAuditLog>(

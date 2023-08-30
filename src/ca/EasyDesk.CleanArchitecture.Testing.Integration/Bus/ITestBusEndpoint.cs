@@ -3,7 +3,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 
-public interface ITestBus : IAsyncDisposable
+public interface ITestBusEndpoint : IAsyncDisposable
 {
     Task Subscribe<T>() where T : IEvent;
 

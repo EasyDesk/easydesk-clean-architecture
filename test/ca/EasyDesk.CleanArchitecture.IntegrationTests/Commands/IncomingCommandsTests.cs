@@ -18,8 +18,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
     public async Task CreateTenant_ShouldSucceed()
     {
         var tenantName = "test-tenant-asd";
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(tenantName));
+        await DefaultBusEndpoint.Send(new CreateTenant(tenantName));
 
         await WebService.WaitUntilTenantExists(TenantId.New(tenantName));
     }
@@ -28,13 +27,12 @@ public class IncomingCommandsTests : SampleIntegrationTest
     public async Task RemoveTenant_ShouldSucceed()
     {
         var tenantName = "test-tenant-qwe";
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(tenantName));
+        await DefaultBusEndpoint.Send(new CreateTenant(tenantName));
 
         var tenantId = TenantId.New(tenantName);
         await WebService.WaitUntilTenantExists(tenantId);
 
-        await bus.Send(new RemoveTenant(tenantName));
+        await DefaultBusEndpoint.Send(new RemoveTenant(tenantName));
 
         await WebService.WaitUntilTenantDoesNotExist(tenantId);
     }
@@ -43,8 +41,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
     public async Task RemoveTenant_ShouldDeleteEntities()
     {
         var tenantId = TenantId.New("test-tenant-qwe");
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(tenantId));
+        await DefaultBusEndpoint.Send(new CreateTenant(tenantId));
 
         AuthenticateAs(TestAgents.Admin);
         TenantNavigator.MoveToTenant(tenantId);
@@ -68,10 +65,10 @@ public class IncomingCommandsTests : SampleIntegrationTest
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        await bus.Send(new RemoveTenant(tenantId));
+        await DefaultBusEndpoint.Send(new RemoveTenant(tenantId));
         await WebService.WaitUntilTenantDoesNotExist(tenantId);
 
-        await bus.Send(new CreateTenant(tenantId));
+        await DefaultBusEndpoint.Send(new CreateTenant(tenantId));
         await WebService.WaitUntilTenantExists(tenantId);
 
         await Http

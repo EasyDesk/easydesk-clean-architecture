@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
@@ -17,19 +18,22 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration;
 public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
     where T : WebServiceTestsFixture
 {
-    private readonly IList<RebusTestBus> _buses = new List<RebusTestBus>();
+    private readonly IList<ITestBusEndpoint> _busEndpoints = new List<ITestBusEndpoint>();
     private Option<Agent> _currentAgent;
+    private HttpTestHelper? _http;
+    private readonly Lazy<ITestBusEndpoint> _defaultBusEndpoint;
+    private readonly Lazy<ITestBusEndpoint> _errorBusEndpoint;
 
     protected WebServiceIntegrationTest(T fixture)
     {
         Fixture = fixture;
+        _defaultBusEndpoint = new(() => NewBusEndpoint());
+        _errorBusEndpoint = new(() => NewBusEndpoint(WebService.Services.GetRequiredService<RebusMessagingOptions>().ErrorQueueName));
     }
 
     protected T Fixture { get; }
 
     protected ITestWebService WebService => Fixture.WebService;
-
-    private HttpTestHelper? _http;
 
     protected HttpTestHelper Http => _http!;
 
@@ -37,11 +41,15 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     protected ITestTenantNavigator TenantNavigator { get; } = new TestTenantNavigator();
 
-    protected ITestBus NewBus(string? inputQueueAddress = null, Duration? defaultTimeout = null)
+    protected ITestBusEndpoint DefaultBusEndpoint => _defaultBusEndpoint.Value;
+
+    protected ITestBusEndpoint ErrorBusEndpoint => _errorBusEndpoint.Value;
+
+    protected ITestBusEndpoint NewBusEndpoint(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        var bus = RebusTestBus.CreateFromServices(WebService.Services, TenantNavigator, inputQueueAddress, defaultTimeout);
-        _buses.Add(bus);
-        return bus;
+        var busEndpoint = RebusTestBusEndpoint.CreateFromServices(WebService.Services, TenantNavigator, inputQueueAddress, defaultTimeout);
+        _busEndpoints.Add(busEndpoint);
+        return busEndpoint;
     }
 
     protected HttpTestHelper CreateHttpTestHelper()
@@ -90,11 +98,11 @@ public abstract class WebServiceIntegrationTest<T> : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        foreach (var bus in _buses)
+        foreach (var bus in _busEndpoints)
         {
             await bus.DisposeAsync();
         }
-        _buses.Clear();
+        _busEndpoints.Clear();
         await Fixture.ResetAsync(CancellationToken.None);
         await OnDisposal();
     }

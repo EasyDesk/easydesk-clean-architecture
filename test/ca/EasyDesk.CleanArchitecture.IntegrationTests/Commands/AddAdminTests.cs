@@ -19,8 +19,7 @@ public class AddAdminTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(_tenantId));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenantId));
         await WebService.WaitUntilTenantExists(_tenantId);
 
         AuthenticateAs(TestAgents.Admin);
@@ -65,9 +64,8 @@ public class AddAdminTests : SampleIntegrationTest
         TenantNavigator.MoveToTenant(_tenantId);
         await Http.AddAdmin().Send().EnsureSuccess();
 
-        var bus = NewBus();
-        await bus.Send(new RemoveTenant(_tenantId));
-        await bus.Send(new CreateTenant(_tenantId));
+        await DefaultBusEndpoint.Send(new RemoveTenant(_tenantId));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenantId));
 
         await WaitForConditionOnRoles(r => !r.Contains(Roles.Admin));
     }
@@ -77,9 +75,8 @@ public class AddAdminTests : SampleIntegrationTest
     {
         await Http.AddAdmin().Send().EnsureSuccess();
 
-        var bus = NewBus();
-        await bus.Send(new RemoveTenant(_tenantId));
-        await bus.Send(new CreateTenant(_tenantId));
+        await DefaultBusEndpoint.Send(new RemoveTenant(_tenantId));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenantId));
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }

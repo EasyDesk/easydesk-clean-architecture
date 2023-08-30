@@ -30,8 +30,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        var bus = NewBus();
-        await bus.Send(new CreateTenant(_tenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
         await WebService.WaitUntilTenantExists(_tenant);
 
         TenantNavigator.MoveToTenant(_tenant);
@@ -76,21 +75,19 @@ public class DeletePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldNotEmitAnEvent_IfFailed()
     {
-        var bus = NewBus();
-        await bus.Subscribe<PersonDeleted>();
+        await DefaultBusEndpoint.Subscribe<PersonDeleted>();
 
         await DeletePerson(Guid.Parse("d9dac153-39d9-4128-89db-fc854ac4b96e"))
             .Send()
             .EnsureFailure();
 
-        await bus.FailIfMessageIsReceivedWithin<PersonDeleted>();
+        await DefaultBusEndpoint.FailIfMessageIsReceivedWithin<PersonDeleted>();
     }
 
     [Fact]
     public async Task ShouldEmitAnEvent()
     {
-        var bus = NewBus();
-        await bus.Subscribe<PersonDeleted>();
+        await DefaultBusEndpoint.Subscribe<PersonDeleted>();
 
         var person = await CreateTestPerson();
 
@@ -98,7 +95,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        await bus.WaitForMessageOrFail(new PersonDeleted(person.Id));
+        await DefaultBusEndpoint.WaitForMessageOrFail(new PersonDeleted(person.Id));
     }
 
     [Fact]

@@ -18,7 +18,7 @@ using System.Threading.Channels;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
-public sealed class RebusTestBus : ITestBus
+public sealed class RebusTestBusEndpoint : ITestBusEndpoint
 {
     private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
 
@@ -32,7 +32,7 @@ public sealed class RebusTestBus : ITestBus
     private readonly Duration _timeout;
     private readonly BuiltinHandlerActivator _handlerActivator;
 
-    public RebusTestBus(Action<RebusConfigurer> configureRebus, ITestTenantNavigator tenantNavigator, Duration? timeout = null)
+    public RebusTestBusEndpoint(Action<RebusConfigurer> configureRebus, ITestTenantNavigator tenantNavigator, Duration? timeout = null)
     {
         _tenantNavigator = tenantNavigator;
         _timeout = timeout ?? _defaultTimeout;
@@ -141,7 +141,7 @@ public sealed class RebusTestBus : ITestBus
         GC.SuppressFinalize(this);
     }
 
-    public static RebusTestBus CreateFromServices(
+    public static RebusTestBusEndpoint CreateFromServices(
         IServiceProvider serviceProvider,
         ITestTenantNavigator testTenantNavigator,
         string? inputQueueAddress = null,
@@ -150,7 +150,7 @@ public sealed class RebusTestBus : ITestBus
         var options = serviceProvider.GetRequiredService<RebusMessagingOptions>();
         var serviceEndpoint = serviceProvider.GetRequiredService<RebusEndpoint>();
         var helperEndpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
-        return new RebusTestBus(
+        return new RebusTestBusEndpoint(
             rebus =>
             {
                 options.Apply(serviceProvider, helperEndpoint, rebus);
