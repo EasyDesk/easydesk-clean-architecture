@@ -14,8 +14,8 @@ public static class Errors
 
     public static ForbiddenError Forbidden(string? message = null) => new(message ?? "Not authorized");
 
-    public static InputValidationError InvalidInput(string propertyName, string errorMessage) =>
+    public static InvalidInputError InvalidInput(string propertyName, string errorMessage) =>
         new(propertyName, errorMessage);
 
-    public static GenericError Generic(string message, params object[] args) => GenericError.Create(message, args);
+    public static GenericError Generic(string code, string message, params object[] args) => GenericError.Create(code, message, args);
 }

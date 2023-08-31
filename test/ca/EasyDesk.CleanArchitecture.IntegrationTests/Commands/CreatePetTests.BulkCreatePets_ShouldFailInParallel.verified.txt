@@ -15,7 +15,7 @@
       Data: null,
       Errors: [
         {
-          Code: Generic,
+          Code: BulkConcurrency,
           Detail: Another bulk operation of type BulkCreatePets is already in progress.,
           Meta: {
             operationType: BulkCreatePets

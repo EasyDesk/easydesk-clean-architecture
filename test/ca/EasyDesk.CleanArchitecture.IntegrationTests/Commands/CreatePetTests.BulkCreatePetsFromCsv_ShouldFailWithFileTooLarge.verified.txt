@@ -5,9 +5,10 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: File exceeds maximum upload size of 4096kB.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: File exceeds maximum upload size of 4096kB.
         }
       }
     ],

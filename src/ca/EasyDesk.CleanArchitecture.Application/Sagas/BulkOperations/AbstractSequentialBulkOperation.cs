@@ -31,7 +31,7 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
     {
         if (!context.IsNew)
         {
-            return Errors.Generic("Another bulk operation of type {operationType} is already in progress.", typeof(TSelf).Name);
+            return Errors.Generic("BulkConcurrency", "Another bulk operation of type {operationType} is already in progress.", typeof(TSelf).Name);
         }
         return await RequestNextBatchComputation(context);
     }

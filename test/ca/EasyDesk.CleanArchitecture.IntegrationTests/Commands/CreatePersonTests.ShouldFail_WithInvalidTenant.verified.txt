@@ -4,9 +4,11 @@
     Data: null,
     Errors: [
       {
-        Code: InvalidTenant,
+        Code: InvalidTenantId,
         Detail: The provided tenant is invalid,
-        Meta: {}
+        Meta: {
+          rawTenantId: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        }
       }
     ],
     Meta: {}

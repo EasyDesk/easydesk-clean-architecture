@@ -5,9 +5,10 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: 'Street Name' must not be empty.,
+        Detail: Validation for property 'Residence.StreetName' failed,
         Meta: {
-          propertyName: Residence.StreetName
+          propertyName: Residence.StreetName,
+          errorMessage: 'Street Name' must not be empty.
         }
       }
     ],

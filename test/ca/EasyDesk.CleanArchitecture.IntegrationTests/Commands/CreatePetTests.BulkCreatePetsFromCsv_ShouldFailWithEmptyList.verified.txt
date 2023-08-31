@@ -5,9 +5,10 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: 'Pets' must not be empty.,
+        Detail: Validation for property 'Pets' failed,
         Meta: {
-          propertyName: Pets
+          propertyName: Pets,
+          errorMessage: 'Pets' must not be empty.
         }
       }
     ],

@@ -5,9 +5,10 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: Line 1: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 1: Field with name 'Nickname' does not exist.
         }
       }
     ],

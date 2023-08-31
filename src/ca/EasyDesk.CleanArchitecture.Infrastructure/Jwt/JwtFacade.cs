@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Commons.Results;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
@@ -6,6 +6,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+
+public record InvalidJwt(string Message) : ApplicationError
+{
+    public override string GetDetail() => "The given JWT is not valid";
+}
 
 public sealed class JwtFacade
 {
@@ -67,7 +72,7 @@ public sealed class JwtFacade
                 _ => "TokenMalformed"
             };
 
-            return new UnknownAgentError($"Failed to validate JWT. Failure code: {message}");
+            return new InvalidJwt(message);
         }
     }
 }

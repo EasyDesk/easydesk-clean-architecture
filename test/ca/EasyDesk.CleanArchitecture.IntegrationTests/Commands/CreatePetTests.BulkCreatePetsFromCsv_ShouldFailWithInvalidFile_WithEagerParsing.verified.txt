@@ -5,142 +5,162 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: Line 2: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 2: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 3: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 3: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 4: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 4: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 5: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 5: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 6: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 6: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 7: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 7: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 8: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 8: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 9: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 9: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 10: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 10: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 11: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 11: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 12: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 12: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 13: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 13: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 14: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 14: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 15: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 15: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 16: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 16: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 17: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 17: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 18: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 18: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 19: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 19: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 20: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 20: Field with name 'Nickname' does not exist.
         }
       },
       {
         Code: InvalidInput,
-        Detail: Line 1: Field with name 'Nickname' does not exist.,
+        Detail: Validation for property 'petListCsv' failed,
         Meta: {
-          propertyName: petListCsv
+          propertyName: petListCsv,
+          errorMessage: Line 1: Field with name 'Nickname' does not exist.
         }
       }
     ],

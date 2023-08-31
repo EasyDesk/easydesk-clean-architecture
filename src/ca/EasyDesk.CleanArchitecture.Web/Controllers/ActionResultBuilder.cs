@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Dto;
@@ -93,14 +92,10 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
             NotFoundError => _controller.NotFound(body),
             UnknownAgentError => _controller.Unauthorized(body),
             ForbiddenError => ActionResults.Forbidden(body),
-            TenantNotFoundError
-                or InvalidTenantIdError
-                or MissingTenantError
-                or MultitenancyNotSupportedError => _controller.BadRequest(body),
-            DomainError
-                or InputValidationError
+            ApplicationError
+                or DomainError
                 or GenericError => _controller.BadRequest(body),
-            _ => ActionResults.InternalServerError(body)
+            _ => ActionResults.InternalServerError(body),
         };
     }
 

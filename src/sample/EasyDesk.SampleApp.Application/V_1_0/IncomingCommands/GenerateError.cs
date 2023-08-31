@@ -28,7 +28,7 @@ public class GenerateError2Handler : IHandler<GenerateError2>
 {
     public Task<Result<Nothing>> Handle(GenerateError2 request)
     {
-        return Task.FromResult(Failure<Nothing>(Errors.Generic("Deliberately returning error")));
+        return Task.FromResult(Failure<Nothing>(Errors.Generic("Error", "Deliberately returning error")));
     }
 }
 

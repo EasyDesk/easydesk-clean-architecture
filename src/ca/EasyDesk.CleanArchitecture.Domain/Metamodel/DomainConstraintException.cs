@@ -7,7 +7,6 @@ public sealed class DomainConstraintException : Exception
     public DomainConstraintException(params DomainError[] errors)
         : this(errors.AsEnumerable())
     {
-
     }
 
     public DomainConstraintException(IEnumerable<DomainError> errors)

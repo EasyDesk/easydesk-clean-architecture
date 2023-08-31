@@ -2,4 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
-public record InputValidationError(string PropertyName, string ErrorMessage) : Error;
+public abstract record ApplicationError : Error
+{
+    public abstract string GetDetail();
+}

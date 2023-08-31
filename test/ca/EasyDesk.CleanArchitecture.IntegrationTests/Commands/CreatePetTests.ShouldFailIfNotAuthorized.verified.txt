@@ -5,8 +5,10 @@
     Errors: [
       {
         Code: Forbidden,
-        Detail: Forbidden: Not authorized,
-        Meta: {}
+        Detail: Missing permissions to access requested resources,
+        Meta: {
+          reason: Not authorized
+        }
       }
     ],
     Meta: {}

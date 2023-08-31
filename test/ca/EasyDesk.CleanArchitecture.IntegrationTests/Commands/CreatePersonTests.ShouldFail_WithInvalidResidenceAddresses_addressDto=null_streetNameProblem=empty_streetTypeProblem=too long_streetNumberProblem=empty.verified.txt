@@ -5,23 +5,26 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: The length of 'Street Type' must be 100 characters or fewer. You entered 101 characters.,
+        Detail: Validation for property 'Residence.StreetType' failed,
         Meta: {
-          propertyName: Residence.StreetType
+          propertyName: Residence.StreetType,
+          errorMessage: The length of 'Street Type' must be 100 characters or fewer. You entered 101 characters.
         }
       },
       {
         Code: InvalidInput,
-        Detail: 'Street Number' must not be empty.,
+        Detail: Validation for property 'Residence.StreetNumber' failed,
         Meta: {
-          propertyName: Residence.StreetNumber
+          propertyName: Residence.StreetNumber,
+          errorMessage: 'Street Number' must not be empty.
         }
       },
       {
         Code: InvalidInput,
-        Detail: 'Street Name' must not be empty.,
+        Detail: Validation for property 'Residence.StreetName' failed,
         Meta: {
-          propertyName: Residence.StreetName
+          propertyName: Residence.StreetName,
+          errorMessage: 'Street Name' must not be empty.
         }
       }
     ],

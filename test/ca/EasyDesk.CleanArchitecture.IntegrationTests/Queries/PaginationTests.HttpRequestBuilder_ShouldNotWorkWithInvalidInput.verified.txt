@@ -5,16 +5,18 @@
     Errors: [
       {
         Code: InvalidInput,
-        Detail: The value 'foo' is not valid.,
+        Detail: Validation for property 'PageSize' failed,
         Meta: {
-          propertyName: PageSize
+          propertyName: PageSize,
+          errorMessage: The value 'foo' is not valid.
         }
       },
       {
         Code: InvalidInput,
-        Detail: The value 'bar' is not valid.,
+        Detail: Validation for property 'PageIndex' failed,
         Meta: {
-          propertyName: PageIndex
+          propertyName: PageIndex,
+          errorMessage: The value 'bar' is not valid.
         }
       }
     ],
