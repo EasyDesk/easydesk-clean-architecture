@@ -1,10 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Versioning;
-using EasyDesk.Commons.Collections;
+﻿using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
-namespace EasyDesk.CleanArchitecture.Web.Versioning;
+namespace EasyDesk.CleanArchitecture.Application.Versioning;
 
 public static class ApiVersioningUtils
 {

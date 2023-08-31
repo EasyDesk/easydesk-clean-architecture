@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Versioning;
+﻿using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;

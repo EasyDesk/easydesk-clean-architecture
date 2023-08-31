@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
@@ -51,7 +52,8 @@ public static partial class Extensions
             .AddContextProvider(builder.Environment)
             .AddTimeManagement()
             .AddDispatching()
-            .AddValidation();
+            .AddValidation()
+            .AddErrorManagement();
 
         configure?.Invoke(appBuilder);
 

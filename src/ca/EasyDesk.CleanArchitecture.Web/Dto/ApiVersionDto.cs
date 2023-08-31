@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Versioning;
+﻿using EasyDesk.CleanArchitecture.Application.Versioning;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 

@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Web.Versioning;
+﻿using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.Commons.Collections;
 using Rebus.Serialization;
 using Rebus.Topic;

@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using EasyDesk.CleanArchitecture.Web.Versioning;
+﻿using EasyDesk.CleanArchitecture.Application.Versioning;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using Saunter;
 using Saunter.AsyncApiSchema.v2;
 using Saunter.Generation;

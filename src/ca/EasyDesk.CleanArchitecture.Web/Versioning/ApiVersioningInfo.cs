@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Versioning;
+﻿using EasyDesk.CleanArchitecture.Application.Versioning;
 using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Web.Versioning;

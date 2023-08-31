@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using EasyDesk.CleanArchitecture.Application.Versioning;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;

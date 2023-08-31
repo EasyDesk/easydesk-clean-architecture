@@ -1,10 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using MicroElements.Swashbuckle.NodaTime;

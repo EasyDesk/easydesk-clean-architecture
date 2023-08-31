@@ -1,7 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using EasyDesk.CleanArchitecture.Application.Versioning;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
