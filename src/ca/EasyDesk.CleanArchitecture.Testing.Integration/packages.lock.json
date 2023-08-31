@@ -66,6 +66,18 @@
           "System.Text.Json": "6.0.8"
         }
       },
+      "Verify.Xunit": {
+        "type": "Direct",
+        "requested": "[20.8.0, )",
+        "resolved": "20.8.0",
+        "contentHash": "F3/l3dSf41nzr8Fv1mrK1kA1xd5iDClKktc3vPpEKiqCfQ4tfHWHAEDuRHRXTgHAHBghRIB71AyhwNEG/hidSA==",
+        "dependencies": {
+          "EmptyFiles": "4.5.0",
+          "Verify": "20.8.0",
+          "xunit.abstractions": "2.0.3",
+          "xunit.extensibility.execution": "2.5.0"
+        }
+      },
       "xunit.extensibility.core": {
         "type": "Direct",
         "requested": "[2.5.0, )",
@@ -1883,6 +1895,15 @@
         "type": "Transitive",
         "resolved": "2.0.3",
         "contentHash": "pot1I4YOxlWjIb5jmwvvQNbTrZ3lJQ+jUGkGjWE3hEFM0l5gOnBWS+H3qsex68s5cO52g+44vpGzhAt+42vwKg=="
+      },
+      "xunit.extensibility.execution": {
+        "type": "Transitive",
+        "resolved": "2.5.0",
+        "contentHash": "7+v2Bvp+1ew1iMGQVb1glICi8jcNdHbRUX6Ru0dmJBViGdjiS7kyqcX2VxleQhFbKNi+WF0an7/TeTXD283RlQ==",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "xunit.extensibility.core": "[2.5.0]"
+        }
       },
       "easydesk.cleanarchitecture.application": {
         "type": "Project",

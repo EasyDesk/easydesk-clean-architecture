@@ -50,83 +50,69 @@ public class PaginationTests : SampleIntegrationTest
     [Fact]
     public async Task DefaultPageSize_ShouldBeConfigurable()
     {
-        var response = await Http
+        await Http
             .GetPeople()
             .SinglePage()
-            .AsVerifiable();
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldGetAnyPage()
     {
-        var response = await Http
+        await Http
             .GetPeople()
             .SinglePage(1)
-            .AsVerifiable();
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task MaxPageSize_ShouldBeConfigurable()
     {
-        var response = await GetPeople(int.MaxValue)
+        await GetPeople(int.MaxValue)
             .Send()
-            .AsVerifiable();
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task MinPageSize_ShouldBeOne()
     {
-        var response = await GetPeople(int.MinValue)
+        await GetPeople(int.MinValue)
             .Send()
-            .AsVerifiable();
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task HttpRequestBuilder_ShouldWorkWithAnyPageSize()
     {
-        var response = await Http.GetPeople().SetPageSize(1).Send().AsVerifiableEnumerable();
-
-        await Verify(response);
+        await Http.GetPeople().SetPageSize(1).Send().Verify();
     }
 
     [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSize()
     {
-        var response = await Http.GetPeople().SetPageIndex(3).SetPageSize(5).Send().AsVerifiableEnumerable();
-
-        await Verify(response);
+        await Http.GetPeople().SetPageIndex(3).SetPageSize(5).Send().Verify();
     }
 
     [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSizeEvenIfOutOfBounds()
     {
-        var response = await Http.GetPeople().SetPageIndex(int.MaxValue).SetPageSize(int.MaxValue).Send().AsVerifiableEnumerable();
-
-        await Verify(response);
+        await Http.GetPeople().SetPageIndex(int.MaxValue).SetPageSize(int.MaxValue).Send().Verify();
     }
 
     [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSizeEvenIfOutOfBoundsInNegative()
     {
-        var response = await Http.GetPeople().SetPageIndex(int.MinValue).SetPageSize(int.MinValue).Send().AsVerifiableEnumerable();
-
-        await Verify(response);
+        await Http.GetPeople().SetPageIndex(int.MinValue).SetPageSize(int.MinValue).Send().Verify();
     }
 
     [Fact]
     public async Task HttpRequestBuilder_ShouldNotWorkWithInvalidInput()
     {
-        var response = await Http
-        .GetPeople()
-        .SetPageSize("foo")
-        .SetPageIndex("bar")
-        .SinglePage()
-        .AsVerifiable();
-
-        await Verify(response);
+        await Http
+            .GetPeople()
+            .SetPageSize("foo")
+            .SetPageIndex("bar")
+            .SinglePage()
+            .Verify();
     }
 }

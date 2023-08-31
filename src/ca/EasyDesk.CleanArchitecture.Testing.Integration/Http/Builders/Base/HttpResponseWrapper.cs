@@ -67,3 +67,14 @@ public class HttpResponseWrapper<T, M>
 
     public async Task<bool> Check(Func<T, bool> condition) => await IsSuccess() && condition(await AsData());
 }
+
+public static class HttpResponseWrapperExtensions
+{
+    public static async Task Verify<T, M>(this HttpResponseWrapper<T, M> wrapper, Action<SettingsTask>? configure = null)
+    {
+        var response = await wrapper.AsVerifiable();
+        var settingsTask = Verifier.Verify(response);
+        configure?.Invoke(settingsTask);
+        await settingsTask;
+    }
+}

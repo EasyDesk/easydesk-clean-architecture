@@ -43,4 +43,12 @@ public static class HttpPageSequenceWrapperExtensions
         }
         return result;
     }
+
+    public static async Task Verify<T>(this HttpPageSequenceWrapper<IEnumerable<T>> wrapper, Action<SettingsTask>? configure = null)
+    {
+        var response = await wrapper.AsVerifiableEnumerable();
+        var settingsTask = Verifier.Verify(response);
+        configure?.Invoke(settingsTask);
+        await settingsTask;
+    }
 }

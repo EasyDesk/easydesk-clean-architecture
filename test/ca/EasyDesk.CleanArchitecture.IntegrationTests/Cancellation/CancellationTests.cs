@@ -1,4 +1,5 @@
-﻿using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Cancellation;
 using NodaTime;
 using Shouldly;
@@ -39,15 +40,13 @@ public class CancellationTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(15);
         await DefaultBusEndpoint.Subscribe<CancellationFailed>();
 
-        var response = await Http
+        await Http
             .Post<Nothing, Nothing>(CancellationRoutes.CancellableRequest, Nothing.Value)
             .WithQuery("waitTime", waitTime.ToString())
             .WithTimeout(timeout)
             .Send()
-            .AsVerifiable();
+            .Verify();
 
         await DefaultBusEndpoint.WaitForMessageOrFail<CancellationFailed>();
-
-        await Verify(response);
     }
 }
