@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Options;
-using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
@@ -13,8 +12,6 @@ public class TestController : CleanArchitectureController
     public const string TestOptionInQueryObject = Base + "query/object";
 
     public const string TestOptionInQuery = Base + "query";
-
-    public const string TestDomainError = Base + "domain/error";
 
     /*
     public record TestOptionBinding(Option<string> String);
@@ -30,12 +27,5 @@ public class TestController : CleanArchitectureController
     public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetPerson([FromQuery] Option<string> value)
     {
         return Success(value);
-    }
-
-    [HttpGet(TestDomainError)]
-    public async Task<ActionResult<ResponseDto<Nothing, Nothing>>> GetTestDomainError()
-    {
-        return await Dispatch(new GetTestDomainError())
-            .ReturnOk();
     }
 }

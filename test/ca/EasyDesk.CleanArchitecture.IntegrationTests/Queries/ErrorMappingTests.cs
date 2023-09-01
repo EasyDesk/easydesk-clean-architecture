@@ -12,8 +12,7 @@ public class ErrorMappingTests : SampleIntegrationTest
     public async Task ShouldMapErrorForV_1_0()
     {
         var response = await Http
-            .Get<Nothing>(TestController.TestDomainError)
-            .WithApiVersion(new(1, 0))
+            .Get<Nothing>(TestErrorController.V10)
             .Send()
             .AsVerifiable();
 
@@ -24,8 +23,18 @@ public class ErrorMappingTests : SampleIntegrationTest
     public async Task ShouldMapErrorForV_1_1()
     {
         var response = await Http
-            .Get<Nothing>(TestController.TestDomainError)
-            .WithApiVersion(new(1, 1))
+            .Get<Nothing>(TestErrorController.V11)
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldMapUnversionedError()
+    {
+        var response = await Http
+            .Get<Nothing>(TestErrorController.Unversioned)
             .Send()
             .AsVerifiable();
 
