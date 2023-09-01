@@ -1928,6 +1928,14 @@
           "System.IdentityModel.Tokens.Jwt": "[6.32.1, )"
         }
       },
+      "easydesk.cleanarchitecture.testing.unit": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
+          "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
+          "EasyDesk.Testing": "[1.0.0, )"
+        }
+      },
       "easydesk.cleanarchitecture.web": {
         "type": "Project",
         "dependencies": {

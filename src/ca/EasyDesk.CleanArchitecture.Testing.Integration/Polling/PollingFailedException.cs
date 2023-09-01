@@ -1,6 +1,6 @@
 ﻿using NodaTime;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Commons.Polling;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Polling;
 
 public sealed class PollingFailedException : Exception
 {

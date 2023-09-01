@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\commons\EasyDesk.Testing\EasyDesk.Testing.csproj" />
+    <ProjectReference Include="..\EasyDesk.CleanArchitecture.Testing.Unit\EasyDesk.CleanArchitecture.Testing.Unit.csproj" />
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Web\EasyDesk.CleanArchitecture.Web.csproj" />
   </ItemGroup>
 

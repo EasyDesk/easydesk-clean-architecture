@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Commons.Options;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Commons;
+namespace EasyDesk.CleanArchitecture.Testing.Unit.Commons;
 
 public interface ITestTenantNavigator : ITenantNavigator
 {

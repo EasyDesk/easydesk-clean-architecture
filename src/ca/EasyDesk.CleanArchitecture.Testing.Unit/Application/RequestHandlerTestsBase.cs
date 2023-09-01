@@ -20,5 +20,5 @@ public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse> : D
 
     protected THandler CreateHandler() => Service<THandler>();
 
-    protected Task<Result<TResponse>> Send(TRequest request) => CreateHandler().Handle(request);
+    protected Task<Result<TResponse>> Handle(TRequest request) => CreateHandler().Handle(request);
 }

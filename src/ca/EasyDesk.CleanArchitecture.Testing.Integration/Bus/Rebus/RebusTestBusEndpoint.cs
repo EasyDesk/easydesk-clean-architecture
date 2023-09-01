@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
-using EasyDesk.CleanArchitecture.Testing.Integration.Commons;
+using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;

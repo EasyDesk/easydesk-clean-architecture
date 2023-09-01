@@ -2228,13 +2228,21 @@
       "easydesk.cleanarchitecture.testing.integration": {
         "type": "Project",
         "dependencies": {
+          "EasyDesk.CleanArchitecture.Testing.Unit": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Web": "[1.0.0, )",
-          "EasyDesk.Testing": "[1.0.0, )",
           "Microsoft.AspNetCore.Mvc.Testing": "[7.0.10, )",
           "NodaTime.Testing": "[3.1.9, )",
           "Respawn": "[6.1.0, )",
           "Testcontainers": "[3.4.0, )",
           "xunit.extensibility.core": "[2.5.0, )"
+        }
+      },
+      "easydesk.cleanarchitecture.testing.unit": {
+        "type": "Project",
+        "dependencies": {
+          "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
+          "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
+          "EasyDesk.Testing": "[1.0.0, )"
         }
       },
       "easydesk.cleanarchitecture.web": {
