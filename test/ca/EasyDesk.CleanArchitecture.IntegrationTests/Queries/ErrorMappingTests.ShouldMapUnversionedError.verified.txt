@@ -1,1 +1,16 @@
-﻿
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: TestApplication,
+        Detail: Unversioned test application error,
+        Meta: {
+          content: Test domain error content
+        }
+      }
+    ],
+    Meta: {}
+  }
+}
