@@ -67,7 +67,10 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
             throw new Exception($"Invalid DB provider: {provider}");
     }
 
-    config.AddRebusMessaging("sample", (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e));
+    config.AddRebusMessaging(
+        "sample",
+        (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e));
+
 
     config.ConfigureModule<ControllersModule>(m =>
     {

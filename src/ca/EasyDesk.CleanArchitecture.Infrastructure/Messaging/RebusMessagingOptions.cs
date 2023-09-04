@@ -13,6 +13,7 @@ using Rebus.Retry.Simple;
 using Rebus.Serialization;
 using Rebus.Serialization.Json;
 using Rebus.Time;
+using Rebus.Timeouts;
 using Rebus.Topic;
 using Rebus.Workers.TplBased;
 using System.Collections.Immutable;
@@ -34,6 +35,8 @@ public sealed class RebusMessagingOptions
     public string ErrorQueueName { get; set; } = SimpleRetryStrategySettings.DefaultErrorQueueName;
 
     public IImmutableSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
+
+    public bool DeferredMessagesEnabled { get; private set; } = false;
 
     public RebusMessagingOptions AddKnownMessageTypes(IEnumerable<Type> types)
     {
@@ -62,7 +65,13 @@ public sealed class RebusMessagingOptions
         ConfigureRebus((_, c) => configurationAction(c));
 
     public RebusMessagingOptions ConfigureRebusOptions(Action<OptionsConfigurer> configurationAction) =>
-        ConfigureRebus((_, c) => c.Options(configurationAction));
+        ConfigureRebus(c => c.Options(configurationAction));
+
+    public RebusMessagingOptions EnableDeferredMessages(Action<StandardConfigurer<ITimeoutManager>> configurationAction)
+    {
+        DeferredMessagesEnabled = true;
+        return ConfigureRebus(c => c.Timeouts(configurationAction));
+    }
 
     public void Apply(IServiceProvider serviceProvider, RebusEndpoint endpoint, RebusConfigurer configurer)
     {
