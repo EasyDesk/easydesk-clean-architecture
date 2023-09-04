@@ -71,7 +71,6 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         "sample",
         (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e));
 
-
     config.ConfigureModule<ControllersModule>(m =>
     {
         var section = builder.Configuration.GetSectionAsOption("Pagination");
