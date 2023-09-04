@@ -50,6 +50,38 @@ public class MatrixTests
     }
 
     [Fact]
+    public void ShouldMergeWithFlatAxis()
+    {
+        var result = Matrix.Builder()
+            .Axis(0, 1)
+            .Axis("a", "b")
+            .Axis(true, false)
+            .FlatAxis(Matrix.Builder().Axis(0.1, 0.2).Axis(default(object)).Build())
+            .Build()
+            .ToList();
+
+        var expected = Items(
+            new object?[] { 0, "a", true, 0.1, null },
+            new object?[] { 0, "a", false, 0.1, null },
+            new object?[] { 0, "b", true, 0.1, null },
+            new object?[] { 0, "b", false, 0.1, null },
+            new object?[] { 1, "a", true, 0.1, null },
+            new object?[] { 1, "a", false, 0.1, null },
+            new object?[] { 1, "b", true, 0.1, null },
+            new object?[] { 1, "b", false, 0.1, null },
+            new object?[] { 0, "a", true, 0.2, null },
+            new object?[] { 0, "a", false, 0.2, null },
+            new object?[] { 0, "b", true, 0.2, null },
+            new object?[] { 0, "b", false, 0.2, null },
+            new object?[] { 1, "a", true, 0.2, null },
+            new object?[] { 1, "a", false, 0.2, null },
+            new object?[] { 1, "b", true, 0.2, null },
+            new object?[] { 1, "b", false, 0.2, null });
+
+        result.ShouldBe(expected, _comparer, ignoreOrder: true);
+    }
+
+    [Fact]
     public void ShouldFilterAtDeepLevels()
     {
         var result = Matrix.Builder()

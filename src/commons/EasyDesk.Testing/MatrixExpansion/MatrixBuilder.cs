@@ -12,12 +12,23 @@ public class MatrixBuilder
         return this;
     }
 
+    private MatrixBuilder FlatAddAxis(IEnumerable<object?[]> axis)
+    {
+        _matrix = FlatCartesianProduct(axis);
+        return this;
+    }
+
     private IEnumerable<IEnumerable<object?>> CartesianProduct(IEnumerable<object?> newAxis) =>
         _matrix.SelectMany(record => newAxis.Select(element => record.Append(element)));
+
+    private IEnumerable<IEnumerable<object?>> FlatCartesianProduct(IEnumerable<object?[]> newAxis) =>
+        _matrix.SelectMany(record => newAxis.Select(element => record.Concat(element)));
 
     public MatrixBuilder Axis<T>(IEnumerable<T> items) => AddAxis(items.Cast<object?>().ToList());
 
     public MatrixBuilder Axis<T>(params T[] items) => Axis(items.AsEnumerable());
+
+    public MatrixBuilder FlatAxis(IEnumerable<object?[]> items) => FlatAddAxis(items);
 
     public MatrixBuilder Filter(Func<IEnumerable<object?>, bool> predicate)
     {
