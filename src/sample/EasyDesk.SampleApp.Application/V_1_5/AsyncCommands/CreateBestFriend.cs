@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.Commons.Results;
 using System.Diagnostics;
 
-namespace EasyDesk.SampleApp.Application.V_1_1.AsyncCommands;
+namespace EasyDesk.SampleApp.Application.V_1_5.AsyncCommands;
 
 public record CreateBestFriend(Guid PersonId, string PersonName) : IOutgoingCommand, IIncomingCommand
 {

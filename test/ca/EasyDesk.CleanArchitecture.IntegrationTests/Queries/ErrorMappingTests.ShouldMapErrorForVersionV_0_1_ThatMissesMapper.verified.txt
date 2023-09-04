@@ -5,7 +5,7 @@
     Errors: [
       {
         Code: TestApplication,
-        Detail: Test application error v1.1,
+        Detail: Unversioned test application error,
         Meta: {
           content: Test domain error content
         }
