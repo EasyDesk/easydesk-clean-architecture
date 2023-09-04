@@ -28,6 +28,9 @@ public class SagasModule : AppModule
             .ForEach(m => m.Invoke(this, configureSagaArgs));
 
         app.RequireModule<DataAccessModule>().Implementation.AddSagas(services, app);
+
+        services.AddScoped(typeof(ISagaCoordinator<,>), typeof(SagaCoordinator<,>));
+        services.AddScoped<SagaSaver>();
     }
 
     private void ConfigureSaga<TId, TState, TController>(IServiceCollection services)

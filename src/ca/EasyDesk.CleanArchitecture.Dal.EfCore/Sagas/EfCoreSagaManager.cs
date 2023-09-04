@@ -56,6 +56,8 @@ internal class EfCoreSagaManager : ISagaManager
 
     private ISagaReference<TState> CreateReferenceFromSagaModel<TState>(SagaModel sagaModel) =>
         new EfCoreSagaReference<TState>(sagaModel, _context, _serializer);
+
+    public async Task SaveAll() => await _context.SaveChangesAsync();
 }
 
 internal class EfCoreSagaReference<TState> : ISagaReference<TState>
@@ -71,18 +73,14 @@ internal class EfCoreSagaReference<TState> : ISagaReference<TState>
         _serializer = serializer;
     }
 
-    public async Task Save(TState state)
+    public void UpdateState(TState state)
     {
         _sagaModel.State = _serializer.SerializeToBsonBytes(state);
         _sagaModel.Version++;
-
-        await _context.SaveChangesAsync();
     }
 
-    public async Task Delete()
+    public void Delete()
     {
         _context.Sagas.Remove(_sagaModel);
-
-        await _context.SaveChangesAsync();
     }
 }

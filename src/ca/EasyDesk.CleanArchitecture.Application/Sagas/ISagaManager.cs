@@ -9,4 +9,6 @@ public interface ISagaManager
     Task<bool> IsInProgress<TId, TState>(TId id);
 
     ISagaReference<TState> CreateNew<TId, TState>(TId id);
+
+    Task SaveAll();
 }

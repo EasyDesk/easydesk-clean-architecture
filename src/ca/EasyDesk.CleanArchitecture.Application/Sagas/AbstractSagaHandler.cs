@@ -6,16 +6,16 @@ namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
 internal abstract class AbstractSagaHandler<T, R, TId, TState>
 {
-    private readonly ISagaManager _sagaManager;
+    private readonly ISagaCoordinator<TId, TState> _coordinator;
     private readonly IServiceProvider _serviceProvider;
     private readonly SagaStepConfiguration<T, R, TId, TState> _configuration;
 
     public AbstractSagaHandler(
-        ISagaManager sagaManager,
+        ISagaCoordinator<TId, TState> coordinator,
         IServiceProvider serviceProvider,
         SagaStepConfiguration<T, R, TId, TState> configuration)
     {
-        _sagaManager = sagaManager;
+        _coordinator = coordinator;
         _serviceProvider = serviceProvider;
         _configuration = configuration;
     }
@@ -25,8 +25,8 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
     public async Task<Result<R>> Handle(T request)
     {
         var sagaId = _configuration.GetSagaId(request);
-        var existingSaga = await _sagaManager.Find<TId, TState>(sagaId);
-        if (existingSaga.IsAbsent)
+        var existingSagaState = await _coordinator.FindSaga(sagaId);
+        if (existingSagaState.IsAbsent)
         {
             var ignoreMissingSaga = IgnoreMissingSaga();
             if (ignoreMissingSaga)
@@ -34,33 +34,34 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
                 return ignoreMissingSaga.Value;
             }
         }
-        var saga = existingSaga.OrElseError(Errors.NotFound) || await GetNewSagaIfPossible(sagaId, request);
-        return await saga.FlatMapAsync(s => HandleSaga(request, sagaId, s.State, s.Reference, existingSaga.IsAbsent));
+        var saga = existingSagaState.OrElseError(Errors.NotFound) || await GetNewSagaIfPossible(sagaId, request);
+        return await saga.FlatMapAsync(s => HandleSaga(request, sagaId, s, existingSagaState.IsAbsent));
     }
 
-    private async Task<Result<R>> HandleSaga(T request, TId id, TState state, ISagaReference<TState> sagaReference, bool isNew)
+    private async Task<Result<R>> HandleSaga(T request, TId id, TState state, bool isNew)
     {
         var context = new SagaContext<TId, TState>(id, state, isNew);
         return await _configuration
             .HandleStep(_serviceProvider, request, context)
-            .ThenIfSuccessAsync(_ => HandleSagaState(sagaReference, context));
+            .ThenIfSuccess(_ => HandleSagaState(id, context));
     }
 
-    private async Task<Result<(ISagaReference<TState> Reference, TState State)>> GetNewSagaIfPossible(TId sagaId, T request)
+    private async Task<Result<TState>> GetNewSagaIfPossible(TId sagaId, T request)
     {
-        var state = await _configuration.InitializeSaga(_serviceProvider, sagaId, request);
-        return state.Map(s => (_sagaManager.CreateNew<TId, TState>(sagaId), s));
+        return await _configuration
+            .InitializeSaga(_serviceProvider, sagaId, request)
+            .ThenIfSuccess(s => _coordinator.CreateNew(sagaId, s));
     }
 
-    private static async Task HandleSagaState(ISagaReference<TState> sagaReference, SagaContext<TId, TState> context)
+    private void HandleSagaState(TId id, SagaContext<TId, TState> context)
     {
         if (context.IsComplete)
         {
-            await sagaReference.Delete();
+            _coordinator.CompleteSaga(id);
         }
         else
         {
-            await sagaReference.Save(context.State);
+            _coordinator.SaveState(id, context.State);
         }
     }
 }
@@ -70,10 +71,10 @@ internal abstract class AbstractSagaHandler<T, TId, TState> : AbstractSagaHandle
     private readonly SagaStepConfiguration<T, TId, TState> _configuration;
 
     protected AbstractSagaHandler(
-        ISagaManager sagaManager,
+        ISagaCoordinator<TId, TState> coordinator,
         IServiceProvider serviceProvider,
         SagaStepConfiguration<T, TId, TState> configuration)
-        : base(sagaManager, serviceProvider, configuration)
+        : base(coordinator, serviceProvider, configuration)
     {
         _configuration = configuration;
     }

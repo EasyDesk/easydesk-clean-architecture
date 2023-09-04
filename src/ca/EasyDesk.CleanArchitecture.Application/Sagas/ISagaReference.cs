@@ -2,7 +2,7 @@
 
 public interface ISagaReference<TState>
 {
-    Task Save(TState state);
+    void UpdateState(TState state);
 
-    Task Delete();
+    void Delete();
 }
