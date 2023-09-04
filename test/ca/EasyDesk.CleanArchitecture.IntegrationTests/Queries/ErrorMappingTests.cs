@@ -20,10 +20,10 @@ public class ErrorMappingTests : SampleIntegrationTest
     }
 
     [Fact]
-    public async Task ShouldMapErrorForV_1_1()
+    public async Task ShouldMapErrorForV_1_5()
     {
         var response = await Http
-            .Get<Nothing>(TestErrorController.V11)
+            .Get<Nothing>(TestErrorController.V15)
             .Send()
             .AsVerifiable();
 
@@ -35,6 +35,28 @@ public class ErrorMappingTests : SampleIntegrationTest
     {
         var response = await Http
             .Get<Nothing>(TestErrorController.Unversioned)
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldMapErrorForVersionV_0_1_ThatMissesMapper()
+    {
+        var response = await Http
+            .Get<Nothing>(TestErrorController.V01)
+            .Send()
+            .AsVerifiable();
+
+        await Verify(response);
+    }
+
+    [Fact]
+    public async Task ShouldMapErrorForV_1_1_ThatMissesMapper()
+    {
+        var response = await Http
+            .Get<Nothing>(TestErrorController.V11)
             .Send()
             .AsVerifiable();
 
