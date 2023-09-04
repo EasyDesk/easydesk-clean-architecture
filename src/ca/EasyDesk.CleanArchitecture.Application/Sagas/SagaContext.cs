@@ -2,8 +2,11 @@
 
 public class SagaContext<TId, TState>
 {
-    public SagaContext(TId id, TState state, bool isNew)
+    private readonly ISagaReference<TState> _reference;
+
+    internal SagaContext(ISagaReference<TState> reference, TId id, TState state, bool isNew)
     {
+        _reference = reference;
         Id = id;
         State = state;
         IsNew = isNew;
@@ -27,5 +30,17 @@ public class SagaContext<TId, TState>
     {
         IsComplete = true;
         return this;
+    }
+
+    internal void ApplyChanges()
+    {
+        if (IsComplete)
+        {
+            _reference.Delete();
+        }
+        else
+        {
+            _reference.UpdateState(State);
+        }
     }
 }

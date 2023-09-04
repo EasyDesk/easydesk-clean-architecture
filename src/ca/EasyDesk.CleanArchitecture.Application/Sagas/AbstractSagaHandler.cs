@@ -25,8 +25,8 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
     public async Task<Result<R>> Handle(T request)
     {
         var sagaId = _configuration.GetSagaId(request);
-        var existingSagaState = await _coordinator.FindSaga(sagaId);
-        if (existingSagaState.IsAbsent)
+        var existingSaga = await _coordinator.FindSaga(sagaId);
+        if (existingSaga.IsAbsent)
         {
             var ignoreMissingSaga = IgnoreMissingSaga();
             if (ignoreMissingSaga)
@@ -34,35 +34,15 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
                 return ignoreMissingSaga.Value;
             }
         }
-        var saga = existingSagaState.OrElseError(Errors.NotFound) || await GetNewSagaIfPossible(sagaId, request);
-        return await saga.FlatMapAsync(s => HandleSaga(request, sagaId, s, existingSagaState.IsAbsent));
+        var context = existingSaga.OrElseError(Errors.NotFound) || await GetNewSagaIfPossible(sagaId, request);
+        return await context.FlatMapAsync(c => _configuration.HandleStep(_serviceProvider, request, c));
     }
 
-    private async Task<Result<R>> HandleSaga(T request, TId id, TState state, bool isNew)
-    {
-        var context = new SagaContext<TId, TState>(id, state, isNew);
-        return await _configuration
-            .HandleStep(_serviceProvider, request, context)
-            .ThenIfSuccess(_ => HandleSagaState(id, context));
-    }
-
-    private async Task<Result<TState>> GetNewSagaIfPossible(TId sagaId, T request)
+    private async Task<Result<SagaContext<TId, TState>>> GetNewSagaIfPossible(TId sagaId, T request)
     {
         return await _configuration
             .InitializeSaga(_serviceProvider, sagaId, request)
-            .ThenIfSuccess(s => _coordinator.CreateNew(sagaId, s));
-    }
-
-    private void HandleSagaState(TId id, SagaContext<TId, TState> context)
-    {
-        if (context.IsComplete)
-        {
-            _coordinator.CompleteSaga(id);
-        }
-        else
-        {
-            _coordinator.SaveState(id, context.State);
-        }
+            .ThenMap(s => _coordinator.CreateNew(sagaId, s));
     }
 }
 

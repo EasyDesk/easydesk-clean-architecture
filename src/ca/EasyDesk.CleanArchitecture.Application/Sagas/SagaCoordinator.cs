@@ -6,44 +6,35 @@ namespace EasyDesk.CleanArchitecture.Application.Sagas;
 internal class SagaCoordinator<TId, TState> : ISagaCoordinator<TId, TState>
     where TId : notnull
 {
-    private readonly Dictionary<TId, (ISagaReference<TState> Reference, TState State)> _ongoingSagas = new();
+    private readonly Dictionary<TId, SagaContext<TId, TState>> _ongoingSagas = new();
     private readonly ISagaManager _sagaManager;
-    private readonly SagaSaver _sagaSaver;
+    private readonly SagaRegistry _sagaRegistry;
 
-    public SagaCoordinator(ISagaManager sagaManager, SagaSaver sagaSaver)
+    public SagaCoordinator(ISagaManager sagaManager, SagaRegistry sagaRegistry)
     {
         _sagaManager = sagaManager;
-        _sagaSaver = sagaSaver;
+        _sagaRegistry = sagaRegistry;
     }
 
-    public async Task<Option<TState>> FindSaga(TId id)
+    public async Task<Option<SagaContext<TId, TState>>> FindSaga(TId id)
     {
-        return await _ongoingSagas.GetOption(id).MatchAsync(
-            some: s => Task.FromResult(Some(s.State)),
-            none: () => _sagaManager
-                .Find<TId, TState>(id)
-                .ThenIfPresent(x => _ongoingSagas.Add(id, x))
-                .ThenMap(x => x.State));
+        return await _ongoingSagas.GetOption(id).Map(Some).OrElseGetAsync(() => _sagaManager
+            .Find<TId, TState>(id)
+            .ThenMap(x => new SagaContext<TId, TState>(x.Reference, id, x.State, isNew: false))
+            .ThenIfPresent(x => RegisterNewSaga(id, x)));
     }
 
-    public void CreateNew(TId id, TState state)
+    public SagaContext<TId, TState> CreateNew(TId id, TState state)
     {
         var sagaReference = _sagaManager.CreateNew<TId, TState>(id);
-        _ongoingSagas.Add(id, (sagaReference, state));
+        var context = new SagaContext<TId, TState>(sagaReference, id, state, isNew: true);
+        RegisterNewSaga(id, context);
+        return context;
     }
 
-    public void SaveState(TId id, TState state)
+    private void RegisterNewSaga(TId id, SagaContext<TId, TState> context)
     {
-        var reference = _ongoingSagas[id].Reference;
-        _ongoingSagas[id] = (reference, state);
-        reference.UpdateState(state);
-        _sagaSaver.ScheduleSave();
-    }
-
-    public void CompleteSaga(TId id)
-    {
-        _ongoingSagas[id].Reference.Delete();
-        _ongoingSagas.Remove(id);
-        _sagaSaver.ScheduleSave();
+        _ongoingSagas.Add(id, context);
+        _sagaRegistry.RegisterNewSaga(context);
     }
 }

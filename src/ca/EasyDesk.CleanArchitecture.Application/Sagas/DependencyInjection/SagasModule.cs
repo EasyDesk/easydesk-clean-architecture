@@ -30,7 +30,7 @@ public class SagasModule : AppModule
         app.RequireModule<DataAccessModule>().Implementation.AddSagas(services, app);
 
         services.AddScoped(typeof(ISagaCoordinator<,>), typeof(SagaCoordinator<,>));
-        services.AddScoped<SagaSaver>();
+        services.AddScoped<SagaRegistry>();
     }
 
     private void ConfigureSaga<TId, TState, TController>(IServiceCollection services)
