@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Hydration;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;

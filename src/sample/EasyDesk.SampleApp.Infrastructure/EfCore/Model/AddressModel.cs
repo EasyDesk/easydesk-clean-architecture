@@ -3,8 +3,7 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
-public class AddressModel
-    : IValuePersistence<Address, AddressModel, Address>
+public class AddressModel : IEntityPersistence<Address, AddressModel>
 {
     public required string? StreetType { get; set; }
 

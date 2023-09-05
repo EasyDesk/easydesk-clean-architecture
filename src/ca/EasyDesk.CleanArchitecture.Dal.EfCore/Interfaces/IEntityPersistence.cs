@@ -1,11 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces.Abstractions;
+﻿namespace EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
-
-public interface IEntityPersistence<TDomain, TPersistence>
-    : IMutablePersistence<TDomain>,
-    IPersistenceModel<TDomain, TPersistence>
-    where TPersistence : IMutablePersistence<TDomain>,
-    IPersistenceModel<TDomain, TPersistence>
+public interface IEntityPersistence<TDomain, TPersistence> :
+    IDomainToPersistence<TDomain, TPersistence>,
+    IPersistenceToDomain<TDomain>,
+    IMutableEntity<TDomain, TPersistence>
+    where TPersistence : IEntityPersistence<TDomain, TPersistence>
 {
 }
