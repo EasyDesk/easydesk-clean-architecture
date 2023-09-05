@@ -5,12 +5,12 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Validation;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
-using FluentValidation;
 using NodaTime;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
@@ -29,8 +29,8 @@ public class CreatePersonValidator : PimpedAbstractValidator<CreatePerson>
 {
     public CreatePersonValidator()
     {
-        RuleFor(x => x.FirstName).NotEmpty();
-        RuleFor(x => x.LastName).NotEmpty();
+        RuleFor(x => x.FirstName).MustBeValid().For<Name>();
+        RuleFor(x => x.LastName).MustBeValid().For<Name>();
         RuleFor(x => x.Residence).SetValidator(new AddressDtoValidator());
     }
 }
@@ -58,7 +58,7 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDt
             command.Residence.ToDomainObject());
         _personRepository.Save(person);
 
-        _tenantNavigator.MoveToTenant(TenantId.New("a-tenant-that-does-not-exists"));
+        _tenantNavigator.MoveToTenant(new TenantId("a-tenant-that-does-not-exists"));
         return Task.FromResult<Result<Person>>(person);
     }
 }

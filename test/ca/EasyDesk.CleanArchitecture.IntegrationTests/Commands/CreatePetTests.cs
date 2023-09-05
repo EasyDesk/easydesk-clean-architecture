@@ -18,7 +18,7 @@ public class CreatePetTests : SampleIntegrationTest
 {
     private const int BulkQuantity = 200;
     private const string Nickname = "Rex";
-    private static readonly TenantId _tenant = TenantId.New("test-tenant");
+    private static readonly TenantId _tenant = new("test-tenant");
 
     public CreatePetTests(SampleAppTestsFixture fixture) : base(fixture)
     {

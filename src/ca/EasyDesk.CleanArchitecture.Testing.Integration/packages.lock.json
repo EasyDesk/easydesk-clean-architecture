@@ -1890,7 +1890,6 @@
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
-          "FluentValidation": "[11.7.1, )",
           "FluentValidation.DependencyInjectionExtensions": "[11.7.1, )",
           "Microsoft.Extensions.Hosting.Abstractions": "[7.0.0, )",
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.1, )",
@@ -1912,6 +1911,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
+          "FluentValidation": "[11.7.1, )",
           "NodaTime": "[3.1.9, )"
         }
       },

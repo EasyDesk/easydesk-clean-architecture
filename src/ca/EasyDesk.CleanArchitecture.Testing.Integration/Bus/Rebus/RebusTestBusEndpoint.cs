@@ -145,7 +145,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     }
 
     private Option<T> ValidateMessage<T>(Message message, Func<T, bool> predicate) =>
-        (_tenantNavigator.IsMultitenancyIgnored || _tenantNavigator.Tenant.Id == message.Headers.GetOption(MultitenantMessagingUtils.TenantIdHeader).Map(TenantId.New))
+        (_tenantNavigator.IsMultitenancyIgnored || _tenantNavigator.Tenant.Id == message.Headers.GetOption(MultitenantMessagingUtils.TenantIdHeader).Map(id => new TenantId(id)))
         && message.Body is T t
         && predicate(t)
         ? Some(t) : None;

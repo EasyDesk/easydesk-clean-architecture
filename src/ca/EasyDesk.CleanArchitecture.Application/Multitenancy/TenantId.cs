@@ -1,47 +1,35 @@
-﻿using EasyDesk.Commons.Options;
-using EasyDesk.Commons.Values;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
+using EasyDesk.Commons.Options;
+using FluentValidation;
 using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
-public record TenantId : IValue<TenantId, string>
+public record TenantId : PureValue<string, TenantId>, IValue<string>
 {
     public const int MaxLength = 256;
 
-    private TenantId(string value)
+    private TenantId(string value, bool process) : base(value, process)
     {
-        Value = value;
     }
 
-    public string Value { get; }
+    public TenantId(string value) : base(value)
+    {
+    }
 
-    public static TenantId New(string value) =>
-        TryNew(value).OrElseThrow(() => new ArgumentException($"TenantId '{value}' has invalid format", nameof(value)));
-
-    public static TenantId FromGuid(Guid value) => New(value.ToString());
+    public static TenantId FromGuid(Guid value) => new(value.ToString(), process: false);
 
     public static TenantId FromRandomGuid() => FromGuid(Guid.NewGuid());
 
-    public static Option<TenantId> TryNew(string value)
-    {
-        if (!IsValidTenantId(value))
-        {
-            return None;
-        }
+    public static Option<TenantId> TryCreate(string value) =>
+        IValue<string>.Companion<TenantId>.ProcessAndValidateToOption(value)
+            .Map(id => new TenantId(value, process: false));
 
-        return Some(new TenantId(value));
-    }
-
-    private static bool IsValidTenantId(string value)
-    {
-        return !string.IsNullOrWhiteSpace(value)
-            && value.Length <= MaxLength
-            && TenantIdRegex.Instance().IsMatch(value);
-    }
-
-    public static implicit operator string(TenantId tenantId) => tenantId.Value;
-
-    public override string ToString() => Value;
+    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) => rules
+        .NotEmptyOrWhiteSpace()
+        .MaximumLength(MaxLength)
+        .DependentRules(() => rules.Matches(TenantIdRegex.Instance()));
 }
 
 public static partial class TenantIdRegex

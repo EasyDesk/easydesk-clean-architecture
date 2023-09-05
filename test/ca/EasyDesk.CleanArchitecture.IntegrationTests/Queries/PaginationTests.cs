@@ -14,7 +14,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 public class PaginationTests : SampleIntegrationTest
 {
     private const int InitialPopulationSize = 300;
-    private static readonly TenantId _tenant = TenantId.New("test-tenant-a");
+    private static readonly TenantId _tenant = new("test-tenant-a");
 
     public PaginationTests(SampleAppTestsFixture fixture) : base(fixture)
     {

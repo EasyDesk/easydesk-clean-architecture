@@ -30,7 +30,7 @@ public class AuditingController : CleanArchitectureController
         var query = new AuditQuery
         {
             MatchName = name.AsOption(),
-            MatchIdentity = identity.AsOption().Map(i => new IdentityQuery(Realms.MainRealm, IdentityId.New(i))),
+            MatchIdentity = identity.AsOption().Map(i => new IdentityQuery(Realms.MainRealm, new IdentityId(i))),
             IsAnonymous = anonymous.AsOption(),
             IsSuccess = success.AsOption(),
             MatchType = type.AsOption().Map(Enum.Parse<AuditRecordType>),

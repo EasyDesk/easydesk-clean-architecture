@@ -21,6 +21,9 @@ public record CreatePets(IEnumerable<PetInfoDto> Pets, Guid PersonId) : ICommand
         {
             RuleFor(x => x.Pets)
                 .NotEmpty();
+
+            RuleForEach(x => x.Pets)
+                .SetValidator(new PetInfoDtoValidator());
         }
     }
 

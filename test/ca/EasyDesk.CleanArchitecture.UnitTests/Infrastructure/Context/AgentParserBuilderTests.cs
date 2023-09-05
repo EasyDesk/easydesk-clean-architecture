@@ -7,13 +7,13 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Context;
 
 public class AgentParserBuilderTests
 {
-    private readonly Realm _realmA = Realm.New("realmA");
-    private readonly Realm _realmB = Realm.New("realmB");
+    private readonly Realm _realmA = new("realmA");
+    private readonly Realm _realmB = new("realmB");
 
     [Fact]
     public void ShouldParseSingleIdentities()
     {
-        var identityId = IdentityId.New("some-id");
+        var identityId = new IdentityId("some-id");
         var parser = ClaimsPrincipalParsers.ForAgent(x => x
             .WithIdentity(_realmA, ClaimTypes.NameIdentifier)
                 .WithAttribute("x", "x")
@@ -39,8 +39,8 @@ public class AgentParserBuilderTests
     [Fact]
     public void ShouldParseMultipleIdentities()
     {
-        var identityIdA = IdentityId.New("id-A");
-        var identityIdB = IdentityId.New("id-B");
+        var identityIdA = new IdentityId("id-A");
+        var identityIdB = new IdentityId("id-B");
         var parser = ClaimsPrincipalParsers.ForAgent(x =>
         {
             x.WithIdentity(_realmA, "idA")
@@ -73,7 +73,7 @@ public class AgentParserBuilderTests
     [Fact]
     public void ShouldSucceedWithMissingOptionalIdentity()
     {
-        var identityIdA = IdentityId.New("id-A");
+        var identityIdA = new IdentityId("id-A");
         var parser = ClaimsPrincipalParsers.ForAgent(x =>
         {
             x.WithIdentity(_realmA, "idA")
@@ -102,7 +102,7 @@ public class AgentParserBuilderTests
     [Fact]
     public void ShouldIgnoreMissingAttributes()
     {
-        var identityId = IdentityId.New("some-id");
+        var identityId = new IdentityId("some-id");
         var parser = ClaimsPrincipalParsers.ForAgent(x => x
             .WithIdentity(_realmA, ClaimTypes.NameIdentifier)
                 .WithAttribute("x", "x")

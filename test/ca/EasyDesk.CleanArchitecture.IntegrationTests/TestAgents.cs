@@ -8,7 +8,7 @@ public static class TestAgents
     public static Agent Admin { get; } = Agent.Construct(agent =>
     {
         agent
-            .AddIdentity(Realms.MainRealm, IdentityId.New("test-admin"))
+            .AddIdentity(Realms.MainRealm, new IdentityId("test-admin"))
             .AddAttribute(StandardAttributes.FirstName, "John")
             .AddAttribute(StandardAttributes.LastName, "Doe")
             .AddAttribute(StandardAttributes.Email, "johndoe@test.com");
@@ -17,7 +17,7 @@ public static class TestAgents
     public static Agent OtherUser { get; } = Agent.Construct(agent =>
     {
         agent
-            .AddIdentity(Realms.MainRealm, IdentityId.New("test-user"))
+            .AddIdentity(Realms.MainRealm, new IdentityId("test-user"))
             .AddAttribute(StandardAttributes.FirstName, "Carl")
             .AddAttribute(StandardAttributes.LastName, "Smith")
             .AddAttribute(StandardAttributes.Email, "carlsmith@test.com");

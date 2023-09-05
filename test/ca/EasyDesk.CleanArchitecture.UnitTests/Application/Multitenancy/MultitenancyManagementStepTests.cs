@@ -20,7 +20,7 @@ public class MultitenancyManagementStepTests
     }
 
     private const string InvalidTenantId = "###invalid###";
-    private static readonly TenantId _tenantId = TenantId.New("test-tenant");
+    private static readonly TenantId _tenantId = new("test-tenant");
 
     private readonly IContextProvider _contextProvider;
     private readonly IMultitenancyManager _multitenancyManager;

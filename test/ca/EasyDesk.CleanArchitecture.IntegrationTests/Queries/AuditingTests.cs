@@ -19,7 +19,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class AuditingTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenant = TenantId.New("tenant-id");
+    private static readonly TenantId _tenant = new("tenant-id");
 
     private Guid _personId;
     private int _initialAudits;
@@ -73,7 +73,7 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldAuditCommands()
     {
-        var tenantId = TenantId.New("new-tenant");
+        var tenantId = new TenantId("new-tenant");
         await DefaultBusEndpoint.Send(new CreateTenant(tenantId.Value));
         await WebService.WaitUntilTenantExists(tenantId);
 

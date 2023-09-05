@@ -18,7 +18,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class CreatePersonTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenant = TenantId.New("test-tenant");
+    private static readonly TenantId _tenant = new("test-tenant");
 
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
@@ -128,7 +128,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldBeMultitenant()
     {
-        var otherTenant = TenantId.New("other-tenant");
+        var otherTenant = new TenantId("other-tenant");
         await DefaultBusEndpoint.Send(new CreateTenant(otherTenant));
         await WebService.WaitUntilTenantExists(otherTenant);
 
@@ -164,7 +164,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFail_WithNonExistingTenant()
     {
-        var otherTenant = TenantId.New("other-tenant");
+        var otherTenant = new TenantId("other-tenant");
 
         var person = await CreatePerson()
             .Send()

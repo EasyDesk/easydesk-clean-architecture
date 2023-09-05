@@ -6,13 +6,13 @@ using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Validation;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
-using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
@@ -24,11 +24,19 @@ public record CreatePet(PetInfoDto Pet, Guid PersonId) : ICommandRequest<PetDto>
 
 public record PetInfoDto(string Nickname);
 
+public class PetInfoDtoValidator : PimpedAbstractValidator<PetInfoDto>
+{
+    public PetInfoDtoValidator()
+    {
+        RuleFor(x => x.Nickname).MustBeValid().For<Name>();
+    }
+}
+
 public class CreatePetValidator : PimpedAbstractValidator<CreatePet>
 {
     public CreatePetValidator()
     {
-        RuleFor(x => x.Pet.Nickname).NotEmpty();
+        RuleFor(x => x.Pet).SetValidator(new PetInfoDtoValidator());
     }
 }
 
@@ -61,7 +69,7 @@ public class CreatePetHandler : IHandler<CreatePet, PetDto>
             .ThenIfSuccessAsync(_petRepository.SaveAndHydrate)
             .ThenMap(PetDto.MapFrom);
 
-        _tenantNavigator.MoveToTenant(TenantId.New("a-tenant-that-should-not-exist"));
+        _tenantNavigator.MoveToTenant(new TenantId("a-tenant-that-should-not-exist"));
 
         return result;
     }

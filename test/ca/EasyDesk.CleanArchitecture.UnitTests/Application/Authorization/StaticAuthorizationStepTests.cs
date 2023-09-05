@@ -19,7 +19,7 @@ public class StaticAuthorizationStepTests
     [AllowUnknownAgent]
     public record TestRequestWithUnknownIdentityAllowed : IDispatchable<Nothing>;
 
-    private readonly Agent _agent = Agent.FromSingleIdentity(Realm.Default, IdentityId.New("identity"));
+    private readonly Agent _agent = Agent.FromSingleIdentity(Realm.Default, new IdentityId("identity"));
     private readonly IContextProvider _contextProvider;
     private readonly IAuthorizationProvider _authorizationProvider;
     private readonly NextPipelineStep<Nothing> _next;

@@ -11,7 +11,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class AddAdminTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenantId = TenantId.New("test-tenant");
+    private static readonly TenantId _tenantId = new("test-tenant");
 
     public AddAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {

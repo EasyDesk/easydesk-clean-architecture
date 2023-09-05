@@ -33,10 +33,10 @@ public class AgentExtensionsTests
 
     public static IEnumerable<object[]> Agents()
     {
-        var realmA = Realm.New("realmA");
-        var realmB = Realm.New("realmB");
-        var idA = IdentityId.New("AAAA");
-        var idB = IdentityId.New("BBBB");
+        var realmA = new Realm("realmA");
+        var realmB = new Realm("realmB");
+        var idA = new IdentityId("AAAA");
+        var idB = new IdentityId("BBBB");
         yield return new[]
         {
             Agent.Construct(x => x.AddIdentity(realmA, idA))

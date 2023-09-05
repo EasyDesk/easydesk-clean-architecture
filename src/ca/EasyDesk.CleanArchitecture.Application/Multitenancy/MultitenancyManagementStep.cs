@@ -35,7 +35,7 @@ public sealed class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
     }
 
     private Result<TenantInfo> ValidateTenantId(Option<string> rawTenantId) => rawTenantId.Match(
-        some: t => TenantId.TryNew(t).OrElseError(() => new InvalidTenantIdError(t)).Map(TenantInfo.Tenant),
+        some: t => TenantId.TryCreate(t).OrElseError(() => new InvalidTenantIdError(t)).Map(TenantInfo.Tenant),
         none: () => Success(TenantInfo.Public));
 
     private MultitenantPolicy GetPolicyForRequest(T request) => request switch

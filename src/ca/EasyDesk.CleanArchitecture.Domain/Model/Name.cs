@@ -1,16 +1,16 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
+using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.Domain.Model;
 
-public record Name : ValueWrapper<string>
+public record Name : PureValue<string, Name>, IValue<string>
 {
-    public Name(string name) : base(name.Trim())
+    public Name(string value) : base(value)
     {
-        DomainConstraints.Check()
-            .If(string.IsNullOrWhiteSpace(Value), () => new EmptyName())
-            .ThrowException();
     }
-}
 
-public record EmptyName : DomainError;
+    public static string Process(string value) => value.Trim();
+
+    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) => rules.NotEmptyOrWhiteSpace();
+}

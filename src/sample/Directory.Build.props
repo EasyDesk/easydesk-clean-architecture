@@ -3,7 +3,7 @@
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..\'))" />
 
   <ItemGroup>
-	  <Using Static="true" Include="EasyDesk.CleanArchitecture.Domain.Metamodel.Values.ValueWrapperUtils"/>
+	  <Using Static="true" Include="EasyDesk.CleanArchitecture.Domain.Metamodel.Values.ValueUtils"/>
   </ItemGroup>
 
   <ItemGroup>

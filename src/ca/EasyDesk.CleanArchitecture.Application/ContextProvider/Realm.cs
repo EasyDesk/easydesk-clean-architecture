@@ -1,30 +1,19 @@
-﻿using EasyDesk.Commons.Options;
-using EasyDesk.Commons.Values;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
+using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
-public record Realm : IValue<Realm, string>
+public record Realm : PureValue<string, Realm>, IValue<string>
 {
     public const int MaxLength = 1024;
 
-    public static Realm Default { get; } = New("main");
+    public static Realm Default { get; } = new("main");
 
-    private Realm(string value)
+    public Realm(string value) : base(value)
     {
-        Value = value;
     }
 
-    public static Realm New(string value) => TryNew(value)
-        .OrElseThrow(() => new ArgumentException($"'{value}' is not a valid Realm.", nameof(value)));
-
-    public static Option<Realm> TryNew(string value)
-    {
-        return string.IsNullOrEmpty(value) || value.Length > MaxLength
-            ? None
-            : Some(new Realm(value));
-    }
-
-    public static implicit operator string(Realm realm) => realm.Value;
-
-    public string Value { get; }
+    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) =>
+        rules.NotEmptyOrWhiteSpace().MaximumLength(MaxLength);
 }

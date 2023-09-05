@@ -8,7 +8,7 @@ namespace EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 
 public record PersonCreated(Guid PersonId) : IOutgoingEvent, IPropagatedEvent<PersonCreated, PersonCreatedEvent>
 {
-    public static readonly TenantId EmittedWithTenant = TenantId.New("asdqwe-test");
+    public static readonly TenantId EmittedWithTenant = new("asdqwe-test");
 
     public static PersonCreated ToMessage(PersonCreatedEvent ev) => new(ev.Person.Id);
 

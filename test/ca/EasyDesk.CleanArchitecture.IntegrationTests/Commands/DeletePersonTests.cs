@@ -20,7 +20,7 @@ public class DeletePersonTests : SampleIntegrationTest
 {
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
-    private static readonly TenantId _tenant = TenantId.New("test-tenant");
+    private static readonly TenantId _tenant = new("test-tenant");
     private static readonly AddressDto _address = AddressDto.Create("somewhere");
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 

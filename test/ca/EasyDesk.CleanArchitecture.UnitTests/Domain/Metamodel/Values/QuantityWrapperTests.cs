@@ -1,6 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
-using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+using FluentValidation;
 using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values;
@@ -9,14 +8,15 @@ public class QuantityWrapperTests
 {
     private static readonly int _innerValue = 5;
 
-    private record TestQuantityWrapper : QuantityWrapper<int, TestQuantityWrapper>
+    private record TestQuantityWrapper : Quantity<int, TestQuantityWrapper>, IValue<int>
     {
         public TestQuantityWrapper(int value) : base(value)
         {
-            DomainConstraints.Check()
-                .IfNot(value != 0, TestDomainError.Create)
-                .ThrowException();
         }
+
+        public int Value => InnerValue;
+
+        public static IRuleBuilder<X, int> Validate<X>(IRuleBuilder<X, int> rules) => rules.NotEqual(0);
     }
 
     private readonly TestQuantityWrapper _sut = new(_innerValue);
@@ -24,8 +24,8 @@ public class QuantityWrapperTests
     [Fact]
     public void Validate_ShouldThrowException_WithWrongValue()
     {
-        var exception = Should.Throw<DomainConstraintException>(() => new TestQuantityWrapper(0));
-        exception.DomainErrors.ShouldHaveSingleItem().ShouldBe(TestDomainError.Create());
+        var exception = Should.Throw<ValidationException>(() => new TestQuantityWrapper(0));
+        exception.Errors.ShouldHaveSingleItem();
     }
 
     [Fact]

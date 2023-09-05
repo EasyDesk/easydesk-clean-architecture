@@ -13,7 +13,7 @@ internal class AuditIdentityModel
 
     public ICollection<AuditIdentityAttributeModel> IdentityAttributes { get; set; } = new HashSet<AuditIdentityAttributeModel>();
 
-    public Identity ToIdentity() => new(Realm.New(IdentityRealm), IdentityId.New(Identity), CreateAttributeCollection());
+    public Identity ToIdentity() => new(new Realm(IdentityRealm), new IdentityId(Identity), CreateAttributeCollection());
 
     private AttributeCollection CreateAttributeCollection() =>
         AttributeCollection.FromFlatKeyValuePairs(IdentityAttributes.Select(a => (a.Key, a.Value)));

@@ -104,7 +104,7 @@ public class AuditingStepTests
 
     public static IEnumerable<object?[]> AuditData()
     {
-        var identityId = IdentityId.New("identity-id");
+        var identityId = new IdentityId("identity-id");
         return Matrix.Builder()
             .OptionAxis(
                 Agent.Construct(x => x.AddIdentity(Realm.Default, identityId)),

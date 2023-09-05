@@ -12,7 +12,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenantId = TenantId.New("test-tenant-kjd");
+    private static readonly TenantId _tenantId = new("test-tenant-kjd");
 
     protected AbstractRemoveAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {

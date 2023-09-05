@@ -13,7 +13,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Events;
 
 public class IncomingEventTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenant = TenantId.New("a-tenant");
+    private static readonly TenantId _tenant = new("a-tenant");
     private PersonDto? _person;
 
     public IncomingEventTests(SampleAppTestsFixture factory) : base(factory)

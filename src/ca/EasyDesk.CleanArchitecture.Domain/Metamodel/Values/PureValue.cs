@@ -8,12 +8,20 @@
 /// thanks to the implicit conversion.
 /// </summary>
 /// <typeparam name="T">The wrapped value type.</typeparam>
-public abstract record ValueWrapper<T> : AbstractValueWrapper<T>
+/// <typeparam name="TSelf">The type extending this record.</typeparam>
+public abstract record PureValue<T, TSelf> : AbstractValue<T, TSelf>
     where T : notnull, IEquatable<T>
+    where TSelf : PureValue<T, TSelf>, IValue<T>
 {
-    protected ValueWrapper(T value) : base(value)
+    protected PureValue(T value) : base(value)
     {
     }
 
-    public static implicit operator T(ValueWrapper<T> wrapper) => wrapper.Value;
+    protected PureValue(T value, bool process) : base(value, process)
+    {
+    }
+
+    public T Value => InnerValue;
+
+    public static implicit operator T(PureValue<T, TSelf> wrapper) => wrapper.Value;
 }

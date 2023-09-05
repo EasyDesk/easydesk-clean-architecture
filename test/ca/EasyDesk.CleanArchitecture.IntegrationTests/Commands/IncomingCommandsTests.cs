@@ -20,7 +20,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
         var tenantName = "test-tenant-asd";
         await DefaultBusEndpoint.Send(new CreateTenant(tenantName));
 
-        await WebService.WaitUntilTenantExists(TenantId.New(tenantName));
+        await WebService.WaitUntilTenantExists(new TenantId(tenantName));
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
         var tenantName = "test-tenant-qwe";
         await DefaultBusEndpoint.Send(new CreateTenant(tenantName));
 
-        var tenantId = TenantId.New(tenantName);
+        var tenantId = new TenantId(tenantName);
         await WebService.WaitUntilTenantExists(tenantId);
 
         await DefaultBusEndpoint.Send(new RemoveTenant(tenantName));
@@ -40,7 +40,7 @@ public class IncomingCommandsTests : SampleIntegrationTest
     [Fact]
     public async Task RemoveTenant_ShouldDeleteEntities()
     {
-        var tenantId = TenantId.New("test-tenant-qwe");
+        var tenantId = new TenantId("test-tenant-qwe");
         await DefaultBusEndpoint.Send(new CreateTenant(tenantId));
 
         AuthenticateAs(TestAgents.Admin);

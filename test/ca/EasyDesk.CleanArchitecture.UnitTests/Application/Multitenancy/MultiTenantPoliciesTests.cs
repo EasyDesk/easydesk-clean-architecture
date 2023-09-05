@@ -6,9 +6,9 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Multitenancy;
 
 public class MultiTenantPoliciesTests
 {
-    private static readonly TenantId _tenantId = TenantId.New("test-tenant-id");
-    private static readonly TenantId _tenantId2 = TenantId.New("test-tenant-id2");
-    private static readonly TenantId _nonExistentId = TenantId.New("test-tenant-id-nope");
+    private static readonly TenantId _tenantId = new("test-tenant-id");
+    private static readonly TenantId _tenantId2 = new("test-tenant-id2");
+    private static readonly TenantId _nonExistentId = new("test-tenant-id-nope");
     private readonly IMultitenancyManager _multitenancyManager;
 
     public MultiTenantPoliciesTests()

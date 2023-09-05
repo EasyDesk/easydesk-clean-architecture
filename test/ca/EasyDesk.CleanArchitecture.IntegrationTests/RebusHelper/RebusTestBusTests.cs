@@ -143,7 +143,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
     public static IEnumerable<object?[]> TenantActions()
     {
-        var axis = new TenantInfo[] { TenantInfo.Tenant(TenantId.New("a")), TenantInfo.Tenant(TenantId.New("b")), TenantInfo.Public };
+        var axis = new TenantInfo[] { TenantInfo.Tenant(new TenantId("a")), TenantInfo.Tenant(new TenantId("b")), TenantInfo.Public };
         return Matrix.Builder()
             .OptionAxis<TenantInfo>(axis)
             .OptionAxis<TenantInfo>(axis)

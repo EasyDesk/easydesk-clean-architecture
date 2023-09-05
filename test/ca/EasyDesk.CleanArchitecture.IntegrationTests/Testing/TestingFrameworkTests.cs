@@ -20,7 +20,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
     private const int Count = 50;
     private const int PageSize = 10;
 
-    private static readonly TenantId _tenant = TenantId.New("test-tenant-test");
+    private static readonly TenantId _tenant = new("test-tenant-test");
 
     public IntegrationTestExample(SampleAppTestsFixture factory) : base(factory)
     {

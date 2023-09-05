@@ -31,7 +31,7 @@ public class AgentParserBuilder
     {
         return WithIdentity(
             realm,
-            ClaimsPrincipalParsers.ForClaim(idClaim).Map(IdentityId.New),
+            ClaimsPrincipalParsers.ForClaim(idClaim).Map(id => new IdentityId(id)),
             required);
     }
 

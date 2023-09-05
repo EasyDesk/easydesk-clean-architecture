@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
 using EasyDesk.CleanArchitecture.Application.Validation;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
 using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
-using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Dto;
 
@@ -64,19 +64,14 @@ public class AddressDtoValidator : PimpedAbstractValidator<AddressDto>
 {
     public AddressDtoValidator()
     {
-        RuleFor(x => x.StreetName)
-            .NotEmpty()
-            .MaximumLength(PlaceName.MaxLength);
-        IRuleBuilderOptions<AddressDto, string> ValidatePlaceName(IRuleBuilderOptions<AddressDto, string> builder) => builder
-            .NotEmpty()
-            .MaximumLength(PlaceName.MaxLength);
-        RuleForOption(x => x.StreetType, ValidatePlaceName);
-        RuleForOption(x => x.StreetNumber, ValidatePlaceName);
-        RuleForOption(x => x.City, ValidatePlaceName);
-        RuleForOption(x => x.District, ValidatePlaceName);
-        RuleForOption(x => x.Province, ValidatePlaceName);
-        RuleForOption(x => x.Region, ValidatePlaceName);
-        RuleForOption(x => x.State, ValidatePlaceName);
-        RuleForOption(x => x.Country, ValidatePlaceName);
+        RuleFor(x => x.StreetName).MustBeValid().For<PlaceName>();
+        RuleForOption(x => x.StreetType, r => r.MustBeValid().For<PlaceName>());
+        RuleForOption(x => x.StreetNumber, r => r.MustBeValid().For<PlaceName>());
+        RuleForOption(x => x.City, r => r.MustBeValid().For<PlaceName>());
+        RuleForOption(x => x.District, r => r.MustBeValid().For<PlaceName>());
+        RuleForOption(x => x.Province, r => r.MustBeValid().For<PlaceName>());
+        RuleForOption(x => x.Region, r => r.MustBeValid().For<PlaceName>());
+        RuleForOption(x => x.State, r => r.MustBeValid().For<PlaceName>());
+        RuleForOption(x => x.Country, r => r.MustBeValid().For<PlaceName>());
     }
 }

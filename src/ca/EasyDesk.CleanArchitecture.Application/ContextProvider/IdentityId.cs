@@ -1,34 +1,21 @@
-﻿using EasyDesk.Commons.Options;
-using EasyDesk.Commons.Values;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
+using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
-public record IdentityId : IValue<IdentityId, string>
+public record IdentityId : PureValue<string, IdentityId>, IValue<string>
 {
     public const int MaxLength = 1024;
 
-    private IdentityId(string value)
+    public IdentityId(string value) : base(value)
     {
-        Value = value;
     }
 
-    public string Value { get; }
-
-    public static implicit operator string(IdentityId identityId) => identityId.Value;
-
-    public static Option<IdentityId> TryNew(string value)
-    {
-        return string.IsNullOrEmpty(value) || value.Length > MaxLength
-            ? None
-            : Some(new IdentityId(value));
-    }
-
-    public static IdentityId New(string value) => TryNew(value)
-        .OrElseThrow(() => new ArgumentException($"'{value} is not a valid identity ID.", nameof(value)));
-
-    public override string ToString() => Value;
-
-    public static IdentityId FromGuid(Guid value) => New(value.ToString());
+    public static IdentityId FromGuid(Guid value) => new(value.ToString());
 
     public static IdentityId FromRandomGuid() => FromGuid(Guid.NewGuid());
+
+    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) =>
+        rules.NotEmptyOrWhiteSpace().MaximumLength(MaxLength);
 }

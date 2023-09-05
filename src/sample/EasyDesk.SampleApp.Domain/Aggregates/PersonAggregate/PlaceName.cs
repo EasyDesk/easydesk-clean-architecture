@@ -1,9 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
+using FluentValidation;
 
 namespace EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 
-public record PlaceName : ValueWrapper<string>
+public record PlaceName : PureValue<string, PlaceName>, IValue<string>
 {
     public const int MaxLength = 100;
 
@@ -13,9 +14,9 @@ public record PlaceName : ValueWrapper<string>
 
     public PlaceName(string value) : base(value)
     {
-        DomainConstraints.Check()
-            .If(string.IsNullOrWhiteSpace(value), () => new EmptyPlaceName())
-            .IfNot(value.Length < MaxLength, () => new PlaceNameTooLong(value.Length, MaxLength))
-            .ThrowException();
     }
+
+    public static string Process(string value) => value.Trim();
+
+    public static IRuleBuilder<T, string> Validate<T>(IRuleBuilder<T, string> value) => value.NotEmpty().MaximumLength(MaxLength);
 }
