@@ -23,7 +23,8 @@ public class ValueWrapperTests
     public void Validate_ShouldThrowException_WithWrongValue()
     {
         var exception = Should.Throw<ValidationException>(() => new TestValueWrapper(0));
-        exception.Errors.ShouldHaveSingleItem();
+        var error = exception.Errors.ShouldHaveSingleItem();
+        error.PropertyName.ShouldBe(nameof(TestValueWrapper.Value));
     }
 
     [Fact]
