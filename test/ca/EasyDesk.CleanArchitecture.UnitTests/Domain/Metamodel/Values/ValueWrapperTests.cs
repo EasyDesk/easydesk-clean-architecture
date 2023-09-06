@@ -8,13 +8,23 @@ public class ValueWrapperTests
 {
     private static readonly int _innerValue = 5;
 
+    private class TestException : Exception
+    {
+        public TestException(string message) : base(message)
+        {
+        }
+    }
+
     private record TestValueWrapper : PureValue<int, TestValueWrapper>, IValue<int>
     {
         public TestValueWrapper(int value) : base(value)
         {
         }
 
-        public static IRuleBuilder<X, int> ValidationRules<X>(IRuleBuilder<X, int> rules) => rules.NotEqual(0);
+        public static IRuleBuilder<X, int> ValidationRules<X>(IRuleBuilder<X, int> rules) => rules
+            .NotEqual(0)
+            .NotEqual(-1000)
+            .DependentRules(() => rules.Must(x => x != -1000 ? true : throw new TestException("This exception should almost never be thrown")));
     }
 
     private readonly TestValueWrapper _sut = new(_innerValue);
@@ -44,5 +54,11 @@ public class ValueWrapperTests
     {
         int value = _sut;
         value.ShouldBe(_innerValue);
+    }
+
+    [Fact]
+    public void ShouldInvokeDependendRules_WhenConditionsAreSatisfied()
+    {
+        Should.Throw<TestException>(() => new TestValueWrapper(-1000));
     }
 }
