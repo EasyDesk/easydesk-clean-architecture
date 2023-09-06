@@ -16,6 +16,6 @@ public record IdentityId : PureValue<string, IdentityId>, IValue<string>
 
     public static IdentityId FromRandomGuid() => FromGuid(Guid.NewGuid());
 
-    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) =>
+    public static IRuleBuilder<X, string> ValidationRules<X>(IRuleBuilder<X, string> rules) =>
         rules.NotEmptyOrWhiteSpace().MaximumLength(MaxLength);
 }

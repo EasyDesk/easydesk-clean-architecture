@@ -11,7 +11,7 @@ public record Email : PureValue<string, Email>, IValue<string>
     {
     }
 
-    public static string Process(string value) => value.Trim().ToLower();
-
-    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) => rules.MaximumLength(MaxLength).EmailAddress();
+    public static IRuleBuilder<X, string> ValidationRules<X>(IRuleBuilder<X, string> rules) => rules
+        .MaximumLength(MaxLength)
+        .EmailAddress();
 }

@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.Application.Validation;
 
 public abstract class PimpedAbstractValidator<T> : AbstractValidator<T>
 {
-    public void RuleForOption<TProperty>(Expression<Func<T, Option<TProperty>>> property, Func<IRuleBuilderOptions<T, TProperty>, IRuleBuilderOptions<T, TProperty>> rules)
+    public void RuleForOption<TProperty>(Expression<Func<T, Option<TProperty>>> property, Func<IRuleBuilderOptions<T, TProperty>, IRuleBuilder<T, TProperty>> rules)
     {
         var propertySelector = property.Compile();
         When(x => propertySelector(x).IsPresent, () =>

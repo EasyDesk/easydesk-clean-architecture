@@ -14,6 +14,6 @@ public record Realm : PureValue<string, Realm>, IValue<string>
     {
     }
 
-    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) =>
+    public static IRuleBuilder<X, string> ValidationRules<X>(IRuleBuilder<X, string> rules) =>
         rules.NotEmptyOrWhiteSpace().MaximumLength(MaxLength);
 }

@@ -16,7 +16,7 @@ public class QuantityWrapperTests
 
         public int Value => InnerValue;
 
-        public static IRuleBuilder<X, int> Validate<X>(IRuleBuilder<X, int> rules) => rules.NotEqual(0);
+        public static IRuleBuilder<X, int> ValidationRules<X>(IRuleBuilder<X, int> rules) => rules.NotEqual(0);
     }
 
     private readonly TestQuantityWrapper _sut = new(_innerValue);

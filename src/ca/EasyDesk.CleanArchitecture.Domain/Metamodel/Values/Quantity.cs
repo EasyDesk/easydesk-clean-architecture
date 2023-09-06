@@ -17,7 +17,7 @@ public abstract record Quantity<T, TSelf> : AbstractValue<T, TSelf>, IComparable
     {
     }
 
-    protected Quantity(T value, bool process) : base(value, process)
+    protected Quantity(T value, bool validate) : base(value, validate)
     {
     }
 

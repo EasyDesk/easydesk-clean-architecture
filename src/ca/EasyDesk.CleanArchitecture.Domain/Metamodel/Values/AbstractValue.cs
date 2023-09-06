@@ -6,15 +6,15 @@ public abstract record AbstractValue<T, TSelf>
 {
     protected T InnerValue { get; }
 
-    protected AbstractValue(T value) : this(value, process: true)
+    protected AbstractValue(T value) : this(value, validate: true)
     {
     }
 
-    protected AbstractValue(T value, bool process)
+    protected AbstractValue(T value, bool validate)
     {
-        if (process)
+        if (validate)
         {
-            InnerValue = IValue<T>.Companion<TSelf>.ProcessAndValidate(value);
+            InnerValue = IValue<T>.Companion<TSelf>.Validate(value);
         }
         else
         {

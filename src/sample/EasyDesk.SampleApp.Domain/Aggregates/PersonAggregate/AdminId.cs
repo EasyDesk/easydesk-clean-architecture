@@ -11,5 +11,5 @@ public record AdminId : PureValue<string, AdminId>, IValue<string>
 
     public static AdminId From(string id) => new(id);
 
-    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) => rules;
+    public static IRuleBuilder<X, string> ValidationRules<X>(IRuleBuilder<X, string> rules) => rules;
 }

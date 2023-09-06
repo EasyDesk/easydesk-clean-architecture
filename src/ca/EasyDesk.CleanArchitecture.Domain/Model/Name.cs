@@ -10,7 +10,5 @@ public record Name : PureValue<string, Name>, IValue<string>
     {
     }
 
-    public static string Process(string value) => value.Trim();
-
-    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) => rules.NotEmptyOrWhiteSpace();
+    public static IRuleBuilder<X, string> ValidationRules<X>(IRuleBuilder<X, string> rules) => rules.NotEmptyOrWhiteSpace();
 }

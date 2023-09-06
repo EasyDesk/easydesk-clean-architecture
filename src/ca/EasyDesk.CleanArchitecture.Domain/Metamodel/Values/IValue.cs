@@ -1,38 +1,33 @@
-﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
-using EasyDesk.Commons.Options;
+﻿using EasyDesk.Commons.Options;
 using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values;
 
 public interface IValue<T> where T : notnull
 {
-    static virtual T Process(T value) => value;
-
-    static abstract IRuleBuilder<X, T> Validate<X>(IRuleBuilder<X, T> rules);
+    static abstract IRuleBuilder<X, T> ValidationRules<X>(IRuleBuilder<X, T> rules);
 
     public static class Companion<TSelf>
         where TSelf : IValue<T>
     {
-        private static readonly IValidator<T> _rawValueValidator;
+        private static readonly IValidator<T> _processedValueValidator;
 
         static Companion()
         {
             var validator = new InlineValidator<T>();
-            TSelf.Validate(validator.RuleFor(x => x));
-            _rawValueValidator = validator;
+            TSelf.ValidationRules(validator.RuleFor(x => x));
+            _processedValueValidator = validator;
         }
 
-        public static T ProcessAndValidate(T value)
+        public static T Validate(T value)
         {
-            var processed = TSelf.Process(value);
-            _rawValueValidator.ValidateAndThrow(processed);
-            return processed;
+            _processedValueValidator.ValidateAndThrow(value);
+            return value;
         }
 
-        public static Option<T> ProcessAndValidateToOption(T value) =>
-            TSelf.Process(value).AsSome().Filter(v => _rawValueValidator.Validate(v).IsValid);
+        public static Option<T> ValidateToOption(T value) =>
+            Some(value).Filter(v => _processedValueValidator.Validate(v).IsValid);
 
-        public static IRuleBuilderOptions<X, T> ProcessAndValidate<X>(IRuleBuilder<X, T> rules) =>
-            rules.Transform(TSelf.Process).SetValidator(_rawValueValidator);
+        public static IRuleBuilder<X, T> ValidationRules<X>(IRuleBuilder<X, T> rules) => TSelf.ValidationRules(rules);
     }
 }

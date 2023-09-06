@@ -12,7 +12,7 @@ public record Role : PureValue<string, Role>, IValue<string>
     {
     }
 
-    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) =>
+    public static IRuleBuilder<X, string> ValidationRules<X>(IRuleBuilder<X, string> rules) =>
         rules.MaximumLength(MaxLength).NotEmptyOrWhiteSpace();
 
     public static implicit operator Role(Enum value) => new(value.ToString());

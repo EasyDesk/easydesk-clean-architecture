@@ -17,7 +17,7 @@ public abstract record PureValue<T, TSelf> : AbstractValue<T, TSelf>
     {
     }
 
-    protected PureValue(T value, bool process) : base(value, process)
+    protected PureValue(T value, bool validate) : base(value, validate)
     {
     }
 

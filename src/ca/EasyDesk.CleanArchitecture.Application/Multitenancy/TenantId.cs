@@ -10,7 +10,7 @@ public record TenantId : PureValue<string, TenantId>, IValue<string>
 {
     public const int MaxLength = 256;
 
-    private TenantId(string value, bool process) : base(value, process)
+    private TenantId(string value, bool validate) : base(value, validate)
     {
     }
 
@@ -18,15 +18,15 @@ public record TenantId : PureValue<string, TenantId>, IValue<string>
     {
     }
 
-    public static TenantId FromGuid(Guid value) => new(value.ToString(), process: false);
+    public static TenantId FromGuid(Guid value) => new(value.ToString(), validate: false);
 
     public static TenantId FromRandomGuid() => FromGuid(Guid.NewGuid());
 
     public static Option<TenantId> TryCreate(string value) =>
-        IValue<string>.Companion<TenantId>.ProcessAndValidateToOption(value)
-            .Map(id => new TenantId(value, process: false));
+        IValue<string>.Companion<TenantId>.ValidateToOption(value)
+            .Map(id => new TenantId(value, validate: false));
 
-    public static IRuleBuilder<X, string> Validate<X>(IRuleBuilder<X, string> rules) => rules
+    public static IRuleBuilder<X, string> ValidationRules<X>(IRuleBuilder<X, string> rules) => rules
         .NotEmptyOrWhiteSpace()
         .MaximumLength(MaxLength)
         .DependentRules(() => rules.Matches(TenantIdRegex.Instance()));
