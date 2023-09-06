@@ -101,10 +101,10 @@
       },
       "NodaTime.Serialization.JsonNet": {
         "type": "Transitive",
-        "resolved": "3.0.1",
-        "contentHash": "bmw+ElaOr21HZQQVYWZKgqs0QpSb/rJcJxem3Ok6YWAdenqOi0PS2hIkvlh+QJfsl2X3VJcla9Rhya/N3JnweA==",
+        "resolved": "3.1.0",
+        "contentHash": "eEr9lXUz50TYr4rpeJG4TDAABkpxjIKr5mDSi/Zav8d6Njy6fH7x4ZtNwWFj0Vd+vIvEZNrHFQ4Gfy8j4BqRGg==",
         "dependencies": {
-          "Newtonsoft.Json": "13.0.1",
+          "Newtonsoft.Json": "13.0.3",
           "NodaTime": "[3.0.0, 4.0.0)"
         }
       },
@@ -165,7 +165,7 @@
           "Microsoft.Extensions.Logging.Abstractions": "[7.0.1, )",
           "Newtonsoft.Json": "[13.0.3, )",
           "Newtonsoft.Json.Bson": "[1.0.2, )",
-          "NodaTime.Serialization.JsonNet": "[3.0.1, )"
+          "NodaTime.Serialization.JsonNet": "[3.1.0, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {

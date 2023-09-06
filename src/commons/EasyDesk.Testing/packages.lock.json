@@ -51,12 +51,12 @@
       },
       "Verify": {
         "type": "Direct",
-        "requested": "[20.8.0, )",
-        "resolved": "20.8.0",
-        "contentHash": "kYPI2JIciAtVbg2rolghd7lqLz+8FqCPbuAn+zw4mK07SIawHxEHxKDUDJf79LHWYy54etidQLpbGEQSWpH9wg==",
+        "requested": "[21.0.0, )",
+        "resolved": "21.0.0",
+        "contentHash": "vkMvtKcK6jhPtHHEhl2Uq+o88sA2QNXK2NVmpF2rB9B7bu2zRuZvUFO0uEIP42x4bYTR2MfPXXEUGXSDXs7F7Q==",
         "dependencies": {
           "Argon": "0.7.2",
-          "DiffEngine": "12.2.0",
+          "DiffEngine": "12.2.1",
           "EmptyFiles": "4.5.0",
           "SimpleInfoName": "2.1.1",
           "System.IO.Hashing": "7.0.0"
@@ -108,11 +108,11 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "12.2.0",
-        "contentHash": "Lqmm5KCNhP2l1p6i8Skzp01ym4CikoO4kjfHiHe/zPXLkcKUcdhcZ9nIpX6fsrxMqwZFYjWQFzjAMRMvYBq48Q==",
+        "resolved": "12.2.1",
+        "contentHash": "vFnI/YI5t7TG2gR/DZUiBluD9F0mQ7m9p2oW9O/pYzAui5Sngsp92W2KzM2PRlgXV2+utSpd+WCkkhx21ilq+w==",
         "dependencies": {
           "EmptyFiles": "4.5.0",
-          "System.Management": "7.0.2"
+          "System.Management": "6.0.2"
         }
       },
       "EmptyFiles": {
@@ -160,8 +160,8 @@
       },
       "System.CodeDom": {
         "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A=="
+        "resolved": "6.0.0",
+        "contentHash": "CPc6tWO1LAer3IzfZufDBRL+UZQcj5uS207NHALQzP84Vp/z6wF0Aa0YZImOQY8iStY0A2zI/e3ihKNPfUm8XA=="
       },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
@@ -175,10 +175,10 @@
       },
       "System.Management": {
         "type": "Transitive",
-        "resolved": "7.0.2",
-        "contentHash": "/qEUN91mP/MUQmJnM5y5BdT7ZoPuVrtxnFlbJ8a3kBJGhe2wCzBfnPFtK2wTtEEcf3DMGR9J00GZZfg6HRI6yA==",
+        "resolved": "6.0.2",
+        "contentHash": "s6c9x2Kghd+ncEDnT6ApYVOacDXr/Y57oSUSx6wjegMOfKxhtrXn3PdASPNU59y3kB9OJ1yb3l5k6uKr3bhqew==",
         "dependencies": {
-          "System.CodeDom": "7.0.0"
+          "System.CodeDom": "6.0.0"
         }
       },
       "System.Runtime.CompilerServices.Unsafe": {
