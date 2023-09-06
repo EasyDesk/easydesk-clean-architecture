@@ -8,7 +8,13 @@
         Detail: Validation for property 'Residence.StreetType' failed,
         Meta: {
           propertyName: Residence.StreetType,
-          errorMessage: 'Street Type' must not be empty.
+          errorCode: NotEmpty,
+          errorMessage: 'Street Type' must not be empty.,
+          parameters: {
+            PropertyName: Street Type,
+            PropertyPath: Residence.StreetType,
+            PropertyValue: 
+          }
         }
       },
       {
@@ -16,7 +22,13 @@
         Detail: Validation for property 'Residence.StreetNumber' failed,
         Meta: {
           propertyName: Residence.StreetNumber,
-          errorMessage: 'Street Number' must not be empty.
+          errorCode: NotEmpty,
+          errorMessage: 'Street Number' must not be empty.,
+          parameters: {
+            PropertyName: Street Number,
+            PropertyPath: Residence.StreetNumber,
+            PropertyValue: 
+          }
         }
       },
       {
@@ -24,7 +36,13 @@
         Detail: Validation for property 'Residence.StreetName' failed,
         Meta: {
           propertyName: Residence.StreetName,
-          errorMessage: 'Street Name' must not be empty.
+          errorCode: NotEmpty,
+          errorMessage: 'Street Name' must not be empty.,
+          parameters: {
+            PropertyName: Street Name,
+            PropertyPath: Residence.StreetName,
+            PropertyValue: 
+          }
         }
       }
     ],

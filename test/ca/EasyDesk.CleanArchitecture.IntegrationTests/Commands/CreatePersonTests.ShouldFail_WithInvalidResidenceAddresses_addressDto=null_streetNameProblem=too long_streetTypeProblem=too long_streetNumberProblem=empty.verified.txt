@@ -8,7 +8,16 @@
         Detail: Validation for property 'Residence.StreetType' failed,
         Meta: {
           propertyName: Residence.StreetType,
-          errorMessage: The length of 'Street Type' must be 100 characters or fewer. You entered 101 characters.
+          errorCode: MaximumLength,
+          errorMessage: The length of 'Street Type' must be 100 characters or fewer. You entered 101 characters.,
+          parameters: {
+            MaxLength: 100,
+            MinLength: 0,
+            PropertyName: Street Type,
+            PropertyPath: Residence.StreetType,
+            PropertyValue: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+            TotalLength: 101
+          }
         }
       },
       {
@@ -16,7 +25,13 @@
         Detail: Validation for property 'Residence.StreetNumber' failed,
         Meta: {
           propertyName: Residence.StreetNumber,
-          errorMessage: 'Street Number' must not be empty.
+          errorCode: NotEmpty,
+          errorMessage: 'Street Number' must not be empty.,
+          parameters: {
+            PropertyName: Street Number,
+            PropertyPath: Residence.StreetNumber,
+            PropertyValue: 
+          }
         }
       },
       {
@@ -24,7 +39,16 @@
         Detail: Validation for property 'Residence.StreetName' failed,
         Meta: {
           propertyName: Residence.StreetName,
-          errorMessage: The length of 'Street Name' must be 100 characters or fewer. You entered 101 characters.
+          errorCode: MaximumLength,
+          errorMessage: The length of 'Street Name' must be 100 characters or fewer. You entered 101 characters.,
+          parameters: {
+            MaxLength: 100,
+            MinLength: 0,
+            PropertyName: Street Name,
+            PropertyPath: Residence.StreetName,
+            PropertyValue: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa,
+            TotalLength: 101
+          }
         }
       }
     ],

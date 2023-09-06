@@ -21,8 +21,9 @@ internal class BadRequestFilter : IResultFilter
                 ResponseDto<Nothing, Nothing>.FromErrors(
                     errorsSource.Errors
                         .Select(errorSource =>
-                            new InvalidInputError(
+                            Errors.InvalidInput(
                                 errorSource.Key,
+                                "InvalidValue",
                                 errorSource.Value.ConcatStrings("\n")))
                         .Select(ErrorDto.FromError),
                     Nothing.Value));

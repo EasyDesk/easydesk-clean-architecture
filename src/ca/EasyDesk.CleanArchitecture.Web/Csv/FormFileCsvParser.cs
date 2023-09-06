@@ -30,20 +30,20 @@ public class FormFileCsvParser
         propertyName ??= formFile.FileName;
         if (!formFile.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
         {
-            return Errors.InvalidInput(propertyName, "File is not a CSV.");
+            return Errors.InvalidInput(propertyName, "Csv.InvalidExtension", "File is not a CSV.");
         }
         if (formFile.Length > DefaultMaxUploadSize)
         {
-            return Errors.InvalidInput(propertyName, $"File exceeds maximum upload size of {maxSize / 1024}kB.");
+            return Errors.InvalidInput(propertyName, "Csv.FileTooLarge", $"File exceeds maximum upload size of {maxSize / 1024}kB.");
         }
         var contentType = new ContentType(formFile.ContentType);
         if (contentType.MediaType != "text/csv")
         {
-            return Errors.InvalidInput(propertyName, $"File should be in CSV format and have text/csv as content type.");
+            return Errors.InvalidInput(propertyName, "Csv.InvalidContentType", $"File should be in CSV format and have text/csv as content type.");
         }
         return Success(Parse(formFile, converter, configureContext).Select(r => r.MapError(e => e switch
         {
-            InvalidCsvLine x => Errors.InvalidInput(propertyName, x.DisplayMessage),
+            InvalidCsvLine x => Errors.InvalidInput(propertyName, "Csv.InvalidFormat", x.DisplayMessage),
             _ => e
         })).EnumerateOnce());
     }

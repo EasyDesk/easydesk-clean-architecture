@@ -8,7 +8,9 @@
         Detail: Validation for property 'petListCsv' failed,
         Meta: {
           propertyName: petListCsv,
-          errorMessage: File exceeds maximum upload size of 4096kB.
+          errorCode: Csv.FileTooLarge,
+          errorMessage: File exceeds maximum upload size of 4096kB.,
+          parameters: {}
         }
       }
     ],

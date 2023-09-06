@@ -8,7 +8,9 @@
         Detail: Validation for property 'PageSize' failed,
         Meta: {
           propertyName: PageSize,
-          errorMessage: The value 'foo' is not valid.
+          errorCode: InvalidValue,
+          errorMessage: The value 'foo' is not valid.,
+          parameters: {}
         }
       },
       {
@@ -16,7 +18,9 @@
         Detail: Validation for property 'PageIndex' failed,
         Meta: {
           propertyName: PageIndex,
-          errorMessage: The value 'bar' is not valid.
+          errorCode: InvalidValue,
+          errorMessage: The value 'bar' is not valid.,
+          parameters: {}
         }
       }
     ],
