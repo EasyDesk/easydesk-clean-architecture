@@ -3,7 +3,7 @@
 public interface IEntityPersistence<TDomain, TPersistence> :
     IDomainToPersistence<TDomain, TPersistence>,
     IPersistenceToDomain<TDomain>,
-    IMutableEntity<TDomain, TPersistence>
+    IMutableEntity<TDomain>
     where TPersistence : IEntityPersistence<TDomain, TPersistence>
 {
 }

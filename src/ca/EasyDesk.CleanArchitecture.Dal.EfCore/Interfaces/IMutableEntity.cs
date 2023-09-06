@@ -1,7 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
 
-public interface IMutableEntity<TDomain, TPersistence>
-    where TPersistence : IMutableEntity<TDomain, TPersistence>
+public interface IMutableEntity<TDomain>
 {
     void ApplyChanges(TDomain origin);
 }
