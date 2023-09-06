@@ -21,6 +21,9 @@ public class AuthorizationModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline =>
         {
             pipeline
+                .AddStepBeforeAll(typeof(HandleUnknownAgentStep<,>));
+
+            pipeline
                 .AddStep(typeof(StaticAuthorizationStep<,>))
                 .After(typeof(UnitOfWorkStep<,>))
                 .After(typeof(MultitenancyManagementStep<,>));

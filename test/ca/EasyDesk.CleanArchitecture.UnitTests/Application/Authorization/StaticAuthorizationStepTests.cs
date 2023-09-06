@@ -16,24 +16,17 @@ public class StaticAuthorizationStepTests
 {
     public record TestRequest : IDispatchable<Nothing>;
 
-    [AllowUnknownAgent]
-    public record TestRequestWithUnknownIdentityAllowed : IDispatchable<Nothing>;
-
     private readonly Agent _agent = Agent.FromSingleIdentity(Realm.Default, new IdentityId("identity"));
-    private readonly IContextProvider _contextProvider;
     private readonly IAuthorizationProvider _authorizationProvider;
     private readonly NextPipelineStep<Nothing> _next;
 
     public StaticAuthorizationStepTests()
     {
-        _contextProvider = Substitute.For<IContextProvider>();
-        _contextProvider.CurrentContext.Returns(new ContextInfo.AnonymousRequest());
-
         _next = Substitute.For<NextPipelineStep<Nothing>>();
         _next().Returns(Ok);
 
         _authorizationProvider = Substitute.For<IAuthorizationProvider>();
-        _authorizationProvider.GetAuthorizationInfo().Returns(_ => _contextProvider.GetAgent().Map(ToAuthorizationInfo));
+        _authorizationProvider.GetAuthorizationInfo().Returns(None);
     }
 
     private AuthorizationInfo ToAuthorizationInfo(Agent agent) =>
@@ -58,24 +51,11 @@ public class StaticAuthorizationStepTests
         var request = new T();
         var authorizer = Substitute.For<IStaticAuthorizer<T>>();
         authorizer.IsAuthorized(request, ToAuthorizationInfo(_agent)).Returns(authorizerResult);
-        var step = new StaticAuthorizationStep<T, Nothing>(_contextProvider, new[] { authorizer }, _authorizationProvider);
+        var step = new StaticAuthorizationStep<T, Nothing>(new[] { authorizer }, _authorizationProvider);
         return await step.Run(request, _next);
     }
 
-    private void Authenticate() => _contextProvider.CurrentContext.Returns(new ContextInfo.AuthenticatedRequest(_agent));
-
-    [Fact]
-    public async Task ShouldAllowNonAuthenticatedIdentityIfRequestAllowsUnknownIdentity()
-    {
-        await ShouldBeAuthorized<TestRequestWithUnknownIdentityAllowed>();
-    }
-
-    [Fact]
-    public async Task ShouldAllowAuthenticatedIdentityIfRequestAllowsUnknownIdentity()
-    {
-        Authenticate();
-        await ShouldBeAuthorized<TestRequestWithUnknownIdentityAllowed>(authorizerResult: true);
-    }
+    private void Authenticate() => _authorizationProvider.GetAuthorizationInfo().Returns(Some(ToAuthorizationInfo(_agent)));
 
     [Fact]
     public async Task ShouldAllowAuthenticatedIdentityIfTheyAreAuthorized()
@@ -85,9 +65,9 @@ public class StaticAuthorizationStepTests
     }
 
     [Fact]
-    public async Task ShouldNotAllowNonAuthenticatedIdentityIfTheRequestDoesNotAllowUnknownIdentitys()
+    public async Task ShouldAllowNonAuthenticatedIdentity()
     {
-        await ShouldNotBeAuthorized<TestRequest>(new UnknownAgentError());
+        await ShouldBeAuthorized<TestRequest>(authorizerResult: true);
     }
 
     [Fact]
