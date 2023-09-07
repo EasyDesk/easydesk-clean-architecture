@@ -15,7 +15,7 @@ public record AddressDto(
     Option<string> Province,
     Option<string> Region,
     Option<string> State,
-    Option<string> Country) : IObjectValue<AddressDto, Address>
+    Option<string> Country) : IObjectValue<AddressDto, Address>, IValidate<AddressDto>
 {
     public static AddressDto Create(
         string streetName,
@@ -58,20 +58,17 @@ public record AddressDto(
         Region: address.Region.Map(ToValue),
         State: address.State.Map(ToValue),
         Country: address.Country.Map(ToValue));
-}
 
-public class AddressDtoValidator : PimpedAbstractValidator<AddressDto>
-{
-    public AddressDtoValidator()
+    public static void ValidationRules(PimpedInlineValidator<AddressDto> validator)
     {
-        RuleFor(x => x.StreetName).MustBeValid().For<PlaceName>();
-        RuleForOption(x => x.StreetType, r => r.MustBeValid().For<PlaceName>());
-        RuleForOption(x => x.StreetNumber, r => r.MustBeValid().For<PlaceName>());
-        RuleForOption(x => x.City, r => r.MustBeValid().For<PlaceName>());
-        RuleForOption(x => x.District, r => r.MustBeValid().For<PlaceName>());
-        RuleForOption(x => x.Province, r => r.MustBeValid().For<PlaceName>());
-        RuleForOption(x => x.Region, r => r.MustBeValid().For<PlaceName>());
-        RuleForOption(x => x.State, r => r.MustBeValid().For<PlaceName>());
-        RuleForOption(x => x.Country, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleFor(x => x.StreetName).MustBeValid().For<PlaceName>();
+        validator.RuleForOption(x => x.StreetType, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleForOption(x => x.StreetNumber, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleForOption(x => x.City, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleForOption(x => x.District, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleForOption(x => x.Province, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleForOption(x => x.Region, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleForOption(x => x.State, r => r.MustBeValid().For<PlaceName>());
+        validator.RuleForOption(x => x.Country, r => r.MustBeValid().For<PlaceName>());
     }
 }

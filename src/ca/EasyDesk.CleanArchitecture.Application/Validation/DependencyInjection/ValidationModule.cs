@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.Commons.Collections;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 
@@ -16,6 +18,26 @@ public class ValidationModule : AppModule
     {
         ValidatorOptions.Global.LanguageManager.Enabled = false;
         services.AddValidatorsFromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application));
+
+        var registrationMethod = GetType()
+            .GetMethod(nameof(RegisterValidatorForValidatableObject), BindingFlags.Static | BindingFlags.NonPublic)!;
+
+        new Commons.Reflection.AssemblyScanner()
+            .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application))
+            .SubtypesOrImplementationsOf(typeof(IValidate<>))
+            .NonGeneric()
+            .FindTypes()
+            .SelectMany(x => x.GetInterfaces())
+            .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidate<>))
+            .ForEach(i => registrationMethod
+                .MakeGenericMethod(i.GetGenericArguments()[0])
+                .Invoke(null, new object[] { services }));
+    }
+
+    private static void RegisterValidatorForValidatableObject<T>(IServiceCollection services)
+        where T : IValidate<T>
+    {
+        services.AddSingleton(IValidate<T>.Validator);
     }
 }
 

@@ -7,7 +7,7 @@ public static partial class StringValidationExtensions
 {
     public static IRuleBuilderOptions<T, string> NotEmptyOrWhiteSpace<T>(this IRuleBuilder<T, string> rules) => rules
         .Must(s => !string.IsNullOrWhiteSpace(s))
-        .WithMessage("'{PropertyName}' is white space.")
+        .WithMessage("'{PropertyName}' is empty or white space.")
         .WithErrorCode("NotEmptyOrWhitespace");
 
     public static IRuleBuilderOptions<T, string> AlphanumericCode<T>(this IRuleBuilder<T, string> rules) => rules

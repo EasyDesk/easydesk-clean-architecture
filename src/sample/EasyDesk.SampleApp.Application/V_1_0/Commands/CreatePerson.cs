@@ -19,19 +19,16 @@ public record CreatePerson(
     string FirstName,
     string LastName,
     LocalDate DateOfBirth,
-    AddressDto Residence) : ICommandRequest<PersonDto>, IAuthorize
+    AddressDto Residence) : ICommandRequest<PersonDto>, IAuthorize, IValidate<CreatePerson>
 {
     public bool IsAuthorized(AuthorizationInfo auth) =>
         auth.HasPermission(Permissions.CanEditPeople);
-}
 
-public class CreatePersonValidator : PimpedAbstractValidator<CreatePerson>
-{
-    public CreatePersonValidator()
+    public static void ValidationRules(PimpedInlineValidator<CreatePerson> validator)
     {
-        RuleFor(x => x.FirstName).MustBeValid().For<Name>();
-        RuleFor(x => x.LastName).MustBeValid().For<Name>();
-        RuleFor(x => x.Residence).SetValidator(new AddressDtoValidator());
+        validator.RuleFor(x => x.FirstName).MustBeValid().For<Name>();
+        validator.RuleFor(x => x.LastName).MustBeValid().For<Name>();
+        validator.RuleFor(x => x.Residence).MustBeImplicitlyValid();
     }
 }
 

@@ -30,4 +30,10 @@ public static class ValidationUtils
     {
         return Validate(value, validators.AsEnumerable());
     }
+
+    public static IRuleBuilderOptions<T, P> MustBeImplicitlyValid<T, P>(this IRuleBuilder<T, P> rules)
+        where P : IValidate<P>
+    {
+        return rules.SetValidator(IValidate<P>.Validator);
+    }
 }
