@@ -29,10 +29,10 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
     });
 
     public W PollWhile(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
-        PollWrapper((p, cond) => p.PollWhile(cond), predicate, interval, timeout);
+        PollWrapper((p, cond) => p.While(cond), predicate, interval, timeout);
 
     public W PollUntil(AsyncFunc<W, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
-        PollWrapper((p, cond) => p.PollUntil(cond), predicate, interval, timeout);
+        PollWrapper((p, cond) => p.Until(cond), predicate, interval, timeout);
 
     private W PollWrapper(
         AsyncFunc<Polling<I>, AsyncFunc<I, bool>, I> pollingType,
@@ -43,7 +43,10 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
         {
             var actualTimeout = timeout ?? Timeout;
             var actualInterval = interval ?? _defaultPollingInterval;
-            var polling = new Polling<I>(token => MakeRequest(token), actualTimeout, actualInterval);
+            var polling = Poll
+                .Async(token => MakeRequest(token))
+                .WithTimeout(actualTimeout)
+                .WithInterval(actualInterval);
             return await pollingType(polling, i => predicate(Wrap(() => Task.FromResult(i))));
         });
 }

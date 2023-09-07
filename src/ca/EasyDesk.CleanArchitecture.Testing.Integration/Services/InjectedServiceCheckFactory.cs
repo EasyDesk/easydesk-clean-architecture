@@ -19,11 +19,11 @@ public static class InjectedServiceCheckFactory<TService>
     {
         await using (var scope = serviceProvider.CreateAsyncScope())
         {
-            var polling = new Polling<TService>(
-                _ => Task.FromResult(scope.ServiceProvider.GetRequiredService<TService>()),
-                timeout ?? _defaultPollTimeout,
-                interval ?? _defaultQueryInterval);
-            await polling.PollUntil(predicate);
+            var polling = Poll
+                .Sync(scope.ServiceProvider.GetRequiredService<TService>)
+                .WithTimeout(timeout ?? _defaultPollTimeout)
+                .WithInterval(interval ?? _defaultQueryInterval);
+            await polling.Until(predicate);
         }
     }
 
@@ -33,17 +33,17 @@ public static class InjectedServiceCheckFactory<TService>
         Duration? timeout = null,
         Duration? interval = null)
     {
-        var polling = new Polling<bool>(
-            async token =>
+        var polling = Poll
+            .Async(async token =>
             {
                 await using (var scope = serviceProvider.CreateAsyncScope())
                 {
                     var service = scope.ServiceProvider.GetRequiredService<TService>();
                     return await predicate(service);
                 }
-            },
-            timeout ?? _defaultPollTimeout,
-            interval ?? _defaultQueryInterval);
-        await polling.PollUntil(It);
+            })
+            .WithTimeout(timeout ?? _defaultPollTimeout)
+            .WithInterval(interval ?? _defaultQueryInterval);
+        await polling.Until(It);
     }
 }

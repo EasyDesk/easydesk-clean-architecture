@@ -3,15 +3,22 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Polling;
 
+public static class Poll
+{
+    public static Polling<T> Async<T>(AsyncFunc<CancellationToken, T> poller) => new(poller);
+
+    public static Polling<T> Sync<T>(Func<T> poller) => Async(_ => Task.FromResult(poller()));
+}
+
 public sealed class Polling<T>
 {
     public static readonly Duration DefaultTimeout = Duration.FromSeconds(10);
     public static readonly Duration DefaultInterval = Duration.FromMilliseconds(200);
     private readonly AsyncFunc<CancellationToken, T> _poller;
-    private readonly Duration _timeout;
-    private readonly Duration _interval;
+    private Duration _timeout;
+    private Duration _interval;
 
-    public Polling(
+    internal Polling(
         AsyncFunc<CancellationToken, T> poller,
         Duration? timeout = null,
         Duration? interval = null)
@@ -21,7 +28,19 @@ public sealed class Polling<T>
         _interval = interval ?? DefaultInterval;
     }
 
-    public async Task<T> PollWhile(AsyncFunc<T, bool> predicate)
+    public Polling<T> WithTimeout(Duration timeout)
+    {
+        _timeout = timeout;
+        return this;
+    }
+
+    public Polling<T> WithInterval(Duration interval)
+    {
+        _interval = interval;
+        return this;
+    }
+
+    public async Task<T> While(AsyncFunc<T, bool> predicate)
     {
         using var cts = new CancellationTokenSource(_timeout.ToTimeSpan());
         var attempts = 1;
@@ -44,14 +63,14 @@ public sealed class Polling<T>
         }
     }
 
-    public Task<T> PollWhile(Func<T, bool> predicate) =>
-        PollWhile(t => Task.FromResult(predicate(t)));
+    public Task<T> While(Func<T, bool> predicate) =>
+        While(t => Task.FromResult(predicate(t)));
 
-    public Task<T> PollUntil(AsyncFunc<T, bool> cond) =>
-        PollWhile(async r => !await cond(r));
+    public Task<T> Until(AsyncFunc<T, bool> cond) =>
+        While(async r => !await cond(r));
 
-    public Task<T> PollUntil(Func<T, bool> cond) =>
-        PollUntil(r => Task.FromResult(cond(r)));
+    public Task<T> Until(Func<T, bool> cond) =>
+        Until(r => Task.FromResult(cond(r)));
 
     public Polling<R> Map<R>(Func<T, R> mapper) =>
         new(async token => mapper(await _poller(token)), _timeout, _interval);
