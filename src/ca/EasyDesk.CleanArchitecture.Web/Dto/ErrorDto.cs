@@ -17,7 +17,7 @@ public record ErrorDto(string Code, string Detail, object Meta)
     public static ErrorDto FromError(Error error) => error switch
     {
         ApplicationError e => new(
-            Code: e.GetType().Name.RemoveSuffix("Error"),
+            Code: e.GetType().Name.RemoveSuffix("Dto").RemoveSuffix("Error"),
             Detail: e.GetDetail(),
             Meta: e),
         DomainError => new(
