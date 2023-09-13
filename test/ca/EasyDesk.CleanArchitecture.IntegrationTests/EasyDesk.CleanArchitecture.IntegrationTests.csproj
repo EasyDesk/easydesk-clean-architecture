@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <RootFolder>..\..\..</RootFolder>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.11" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
     <PackageReference Include="Testcontainers.MsSql" Version="3.4.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="3.4.0" />
