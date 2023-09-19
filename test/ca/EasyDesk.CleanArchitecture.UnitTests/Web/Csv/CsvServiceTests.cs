@@ -112,6 +112,20 @@ public class CsvServiceTests
         }));
     }
 
+    [Fact]
+    public async Task ShouldFail_IfRequiredColumnIsMissing()
+    {
+        var csv = """
+            String;Integer
+            A;1
+            B;2
+            """;
+        await Verify(SafeParse(csv, row => new
+        {
+            X = row.GetRequiredField<bool>("Invalid"),
+        }));
+    }
+
     ////[Fact]
     ////public async Task ShouldParseRecordsAutomatically()
     ////{

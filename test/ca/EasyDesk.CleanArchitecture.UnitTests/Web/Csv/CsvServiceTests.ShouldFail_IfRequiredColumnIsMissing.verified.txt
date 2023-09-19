@@ -1,0 +1,30 @@
+﻿[
+  {
+    IsSuccess: false,
+    IsFailure: true,
+    Value: null,
+    Error: {
+      Error: InvalidCsvLine,
+      Meta: {
+        LineIndex: 1,
+        Message: does not exist.,
+        Field: Field with name 'Invalid',
+        DisplayMessage: Line 1: Field with name 'Invalid' does not exist.
+      }
+    }
+  },
+  {
+    IsSuccess: false,
+    IsFailure: true,
+    Value: null,
+    Error: {
+      Error: InvalidCsvLine,
+      Meta: {
+        LineIndex: 2,
+        Message: does not exist.,
+        Field: Field with name 'Invalid',
+        DisplayMessage: Line 2: Field with name 'Invalid' does not exist.
+      }
+    }
+  }
+]
