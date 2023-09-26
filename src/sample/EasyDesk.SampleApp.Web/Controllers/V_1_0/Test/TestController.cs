@@ -7,11 +7,13 @@ namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
 
 public class TestController : CleanArchitectureController
 {
-    public const string Base = "test/";
+    public const string Base = "test";
 
-    public const string TestOptionInQueryObject = Base + "query/object";
+    public const string TestOptionInQueryObject = Base + "/query/object";
 
-    public const string TestOptionInQuery = Base + "query";
+    public const string TestOptionInQuery = Base + "/query";
+
+    public const string ThrowException = Base + "/exception";
 
     /*
     public record TestOptionBinding(Option<string> String);
@@ -24,8 +26,14 @@ public class TestController : CleanArchitectureController
     */
 
     [HttpGet(TestOptionInQuery)]
-    public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetPerson([FromQuery] Option<string> value)
+    public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetValueFromQuery([FromQuery] Option<string> value)
     {
         return Success(value);
+    }
+
+    [HttpGet(ThrowException)]
+    public Task<ActionResult<ResponseDto<Nothing, Nothing>>> ThrowTestException([FromQuery] Option<string> value)
+    {
+        throw new Exception("Throwing test exception");
     }
 }

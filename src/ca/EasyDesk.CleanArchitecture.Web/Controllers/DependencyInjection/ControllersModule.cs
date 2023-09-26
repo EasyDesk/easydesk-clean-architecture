@@ -52,6 +52,7 @@ public class ControllersModule : AppModule
     protected void DefaultMvcConfiguration(MvcOptions options)
     {
         options.Filters.Add<FailedAuthenticationFilter>();
+        options.Filters.Add<ExceptionLoggingFilter>();
         if (_environment.IsProduction())
         {
             options.Filters.Add<UnhandledExceptionsFilter>();
