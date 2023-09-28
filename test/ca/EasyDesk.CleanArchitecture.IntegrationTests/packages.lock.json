@@ -190,15 +190,6 @@
         "resolved": "4.5.0",
         "contentHash": "utFjtKV+vPFPuOwSap9SH98RvdFGPW/xLlIkquj8qDQ+91P8P5V3+71in/lM0iSIYaeIDVhMFEOmxOxdSQf6Aw=="
       },
-      "EntityFrameworkCore.SqlServer.NodaTime": {
-        "type": "Transitive",
-        "resolved": "6.0.9",
-        "contentHash": "snnl7OFJB9HFz24i1rF+W5aBHfnz1y+2KQaYfRwgpjQp1LYg4/Qa3ctKUgSnYhn9nWPl3vx83YrM8EercElTLw==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.9",
-          "NodaTime": "3.1.2"
-        }
-      },
       "FluentValidation": {
         "type": "Transitive",
         "resolved": "11.7.1",
@@ -212,6 +203,11 @@
           "FluentValidation": "11.7.1",
           "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
         }
+      },
+      "JetBrains.Annotations": {
+        "type": "Transitive",
+        "resolved": "2022.1.0",
+        "contentHash": "ASfpoFJxiRsC9Xc4TWuPM41Zb/gl64xwfMOhnOZ3RnVWGYIZchjpWQV5zshJgoc/ZxVtgjaF7b577lURj7E6ig=="
       },
       "MicroElements.Swashbuckle.NodaTime": {
         "type": "Transitive",
@@ -1156,6 +1152,16 @@
         "type": "Transitive",
         "resolved": "2.1.1",
         "contentHash": "0FkAdjkNjtEdSCt2/b6z5gd971bmTCXhRHqi8kH5Z/gV/XV/LmKeHrUmnBZffhPH91LUyaw3pzmQROTs4zNfGw=="
+      },
+      "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": {
+        "type": "Transitive",
+        "resolved": "7.1.0",
+        "contentHash": "7xEE+NQahIYawk+4fMdhpL8Brn+Rv9ZxyLsrc+a2RA/nzPGj2i8s0yS6z8WC1b++lNeRWFOeYyCOWm3n5WL1bw==",
+        "dependencies": {
+          "JetBrains.Annotations": "2022.1.0",
+          "Microsoft.EntityFrameworkCore.SqlServer": "7.0.0",
+          "NodaTime": "3.0.0"
+        }
       },
       "SSH.NET": {
         "type": "Transitive",
@@ -2191,8 +2197,8 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
-          "EntityFrameworkCore.SqlServer.NodaTime": "[6.0.9, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[7.0.10, )"
+          "Microsoft.EntityFrameworkCore.SqlServer": "[7.0.10, )",
+          "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": "[7.1.0, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {

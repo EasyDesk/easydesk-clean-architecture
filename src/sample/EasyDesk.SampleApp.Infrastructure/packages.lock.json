@@ -39,15 +39,6 @@
           "System.Threading.Tasks.Extensions": "4.5.4"
         }
       },
-      "EntityFrameworkCore.SqlServer.NodaTime": {
-        "type": "Transitive",
-        "resolved": "6.0.9",
-        "contentHash": "snnl7OFJB9HFz24i1rF+W5aBHfnz1y+2KQaYfRwgpjQp1LYg4/Qa3ctKUgSnYhn9nWPl3vx83YrM8EercElTLw==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.9",
-          "NodaTime": "3.1.2"
-        }
-      },
       "FluentValidation": {
         "type": "Transitive",
         "resolved": "11.7.1",
@@ -61,6 +52,11 @@
           "FluentValidation": "11.7.1",
           "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
         }
+      },
+      "JetBrains.Annotations": {
+        "type": "Transitive",
+        "resolved": "2022.1.0",
+        "contentHash": "ASfpoFJxiRsC9Xc4TWuPM41Zb/gl64xwfMOhnOZ3RnVWGYIZchjpWQV5zshJgoc/ZxVtgjaF7b577lURj7E6ig=="
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Transitive",
@@ -474,6 +470,16 @@
           "Microsoft.Extensions.DependencyModel": "6.0.0"
         }
       },
+      "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": {
+        "type": "Transitive",
+        "resolved": "7.1.0",
+        "contentHash": "7xEE+NQahIYawk+4fMdhpL8Brn+Rv9ZxyLsrc+a2RA/nzPGj2i8s0yS6z8WC1b++lNeRWFOeYyCOWm3n5WL1bw==",
+        "dependencies": {
+          "JetBrains.Annotations": "2022.1.0",
+          "Microsoft.EntityFrameworkCore.SqlServer": "7.0.0",
+          "NodaTime": "3.0.0"
+        }
+      },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
         "resolved": "1.2.0.507",
@@ -745,8 +751,8 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
-          "EntityFrameworkCore.SqlServer.NodaTime": "[6.0.9, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[7.0.10, )"
+          "Microsoft.EntityFrameworkCore.SqlServer": "[7.0.10, )",
+          "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": "[7.1.0, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {

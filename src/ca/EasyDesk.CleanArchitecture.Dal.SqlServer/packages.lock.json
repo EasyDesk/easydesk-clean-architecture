@@ -2,16 +2,6 @@
   "version": 1,
   "dependencies": {
     "net7.0": {
-      "EntityFrameworkCore.SqlServer.NodaTime": {
-        "type": "Direct",
-        "requested": "[6.0.9, )",
-        "resolved": "6.0.9",
-        "contentHash": "snnl7OFJB9HFz24i1rF+W5aBHfnz1y+2KQaYfRwgpjQp1LYg4/Qa3ctKUgSnYhn9nWPl3vx83YrM8EercElTLw==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.9",
-          "NodaTime": "3.1.2"
-        }
-      },
       "Microsoft.EntityFrameworkCore.Design": {
         "type": "Direct",
         "requested": "[7.0.10, )",
@@ -42,6 +32,17 @@
         "dependencies": {
           "Microsoft.Build.Tasks.Git": "1.1.1",
           "Microsoft.SourceLink.Common": "1.1.1"
+        }
+      },
+      "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": {
+        "type": "Direct",
+        "requested": "[7.1.0, )",
+        "resolved": "7.1.0",
+        "contentHash": "7xEE+NQahIYawk+4fMdhpL8Brn+Rv9ZxyLsrc+a2RA/nzPGj2i8s0yS6z8WC1b++lNeRWFOeYyCOWm3n5WL1bw==",
+        "dependencies": {
+          "JetBrains.Annotations": "2022.1.0",
+          "Microsoft.EntityFrameworkCore.SqlServer": "7.0.0",
+          "NodaTime": "3.0.0"
         }
       },
       "StyleCop.Analyzers": {
@@ -99,6 +100,11 @@
         "type": "Transitive",
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
+      },
+      "JetBrains.Annotations": {
+        "type": "Transitive",
+        "resolved": "2022.1.0",
+        "contentHash": "ASfpoFJxiRsC9Xc4TWuPM41Zb/gl64xwfMOhnOZ3RnVWGYIZchjpWQV5zshJgoc/ZxVtgjaF7b577lURj7E6ig=="
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Transitive",
