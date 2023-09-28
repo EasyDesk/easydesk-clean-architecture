@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <UserSecretsId>64e5efa6-d6b6-4364-8d72-b66b41b5ced9</UserSecretsId>
@@ -12,7 +12,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Rebus.RabbitMq" Version="8.1.0" />
+    <PackageReference Include="Rebus.RabbitMq" Version="8.1.1" />
   </ItemGroup>
 
   <ItemGroup>
