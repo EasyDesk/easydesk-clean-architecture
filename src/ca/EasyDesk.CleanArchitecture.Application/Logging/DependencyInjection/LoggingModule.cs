@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Application.Logging.DependencyInjection;
 
 public class LoggingModule : AppModule
 {
-    private Action<LoggingConfiguration>? _configure;
+    private readonly Action<LoggingConfiguration>? _configure;
 
     public LoggingModule(Action<LoggingConfiguration>? configure = null)
     {
