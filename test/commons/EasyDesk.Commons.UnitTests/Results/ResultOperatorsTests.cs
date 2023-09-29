@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Testing.Errors;
@@ -559,5 +560,33 @@ public class ResultOperatorsTests
         var result = Enumerable.Empty<Result<Nothing>>().CatchAllFailures();
         result.IsSuccess.ShouldBeTrue();
         result.ReadValue().ShouldBeEmpty();
+    }
+
+    public static IEnumerable<object?[]> SingleOptionOrErrorTestCases()
+    {
+        yield return new object?[]
+        {
+            EnumerableUtils.Items<int>(),
+            Success(NoneT<int>()),
+        };
+
+        yield return new object?[]
+        {
+            EnumerableUtils.Items(1),
+            Success(Some(1)),
+        };
+
+        yield return new object?[]
+        {
+            EnumerableUtils.Items(3, 4),
+            Failure<Option<int>>(_error),
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(SingleOptionOrErrorTestCases))]
+    public void SingleOptionOrErrorTests(IEnumerable<int> enumerable, Result<Option<int>> result)
+    {
+        enumerable.SingleOptionOrError(() => _error).ShouldBe(result);
     }
 }
