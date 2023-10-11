@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Comparers;
 using EasyDesk.Commons.Results;
-using EasyDesk.SampleApp.Application.V_1_0.AsyncCommands;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate.Events;
 using NodaTime;
 
@@ -25,7 +24,6 @@ public class PersonCreatedHandler : IDomainEventHandler<PersonCreatedEvent>
 
     public async Task<Result<Nothing>> Handle(PersonCreatedEvent ev)
     {
-        await _sender.Send(new CreateBestFriend(ev.Person.Id, ev.Person.FirstName));
         if (ev.Person.DateOfBirth.IsLessThan(new LocalDate(2000, 1, 1)))
         {
             await _sender.Send(new CreatePassport(ev.Person.Id, ev.Person.FirstName, ev.Person.LastName, ev.Person.DateOfBirth));

@@ -6,14 +6,14 @@ using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-public sealed class DomainEventPropagator<M, D> : IDomainEventHandler<D>
+public sealed class PropagateEvent<M, D> : IDomainEventHandler<D>
     where M : IPropagatedEvent<M, D>, IOutgoingEvent
     where D : DomainEvent
 {
     private readonly IEventPublisher _publisher;
     private readonly IContextTenantNavigator? _tenantNavigator;
 
-    public DomainEventPropagator(
+    public PropagateEvent(
         IEventPublisher publisher,
         IContextTenantNavigator? tenantNavigator = null)
     {
