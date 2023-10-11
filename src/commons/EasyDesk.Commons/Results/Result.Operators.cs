@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
 using System.Collections.Immutable;
@@ -90,4 +91,21 @@ public static partial class StaticImports
         .Map(l => new MultiError(l[0], l.GetRange(1, l.Count - 1)))
         .Map(Failure<IEnumerable<T>>)
         .OrElseGet(() => Success(enumerable.Select(r => r.ReadValue())));
+
+    public static Result<Option<T>> SingleOptionOrError<T>(this IEnumerable<T> enumerable, Func<Error> otherwise)
+    {
+        using (var enumerator = enumerable.GetEnumerator())
+        {
+            if (!enumerator.MoveNext())
+            {
+                return NoneT<T>();
+            }
+            var itemToReturn = enumerator.Current;
+            if (enumerator.MoveNext())
+            {
+                return otherwise();
+            }
+            return Some(itemToReturn);
+        }
+    }
 }
