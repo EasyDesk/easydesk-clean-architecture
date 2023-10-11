@@ -1,11 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 
@@ -14,7 +11,6 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 public class PaginationTests : SampleIntegrationTest
 {
     private const int InitialPopulationSize = 300;
-    private static readonly TenantId _tenant = new("test-tenant-a");
 
     public PaginationTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -22,10 +18,7 @@ public class PaginationTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
-        await WebService.WaitUntilTenantExists(_tenant);
-
-        TenantNavigator.MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

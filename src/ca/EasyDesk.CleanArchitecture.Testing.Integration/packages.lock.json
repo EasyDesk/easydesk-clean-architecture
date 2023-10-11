@@ -66,6 +66,15 @@
           "System.Text.Json": "6.0.8"
         }
       },
+      "Testcontainers.MsSql": {
+        "type": "Direct",
+        "requested": "[3.5.0, )",
+        "resolved": "3.5.0",
+        "contentHash": "JQX35Uf5Rsnxeq2yh6PDM67qbpJtXvgo7GgASXfZZotIJawlgwfayXUyDzrlh6pJhhQPHWmecHTLW75i9/0FTw==",
+        "dependencies": {
+          "Testcontainers": "3.5.0"
+        }
+      },
       "xunit.extensibility.core": {
         "type": "Direct",
         "requested": "[2.5.1, )",

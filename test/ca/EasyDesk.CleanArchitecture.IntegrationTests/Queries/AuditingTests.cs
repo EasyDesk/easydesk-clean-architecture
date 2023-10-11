@@ -19,8 +19,6 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class AuditingTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenant = new("tenant-id");
-
     private Guid _personId;
     private int _initialAudits;
 
@@ -30,13 +28,11 @@ public class AuditingTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
-        _initialAudits++;
+        _initialAudits = Fixture.TestData.OperationsRun;
 
-        TenantNavigator.MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
-        await WebService.WaitUntilTenantExists(_tenant);
         await Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;
 

@@ -1,11 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -20,7 +17,6 @@ public class DeletePersonTests : SampleIntegrationTest
 {
     private const string FirstName = "Foo";
     private const string LastName = "Bar";
-    private static readonly TenantId _tenant = new("test-tenant");
     private static readonly AddressDto _address = AddressDto.Create("somewhere");
     private static readonly LocalDate _dateOfBirth = new(1996, 2, 2);
 
@@ -30,10 +26,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
-        await WebService.WaitUntilTenantExists(_tenant);
-
-        TenantNavigator.MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

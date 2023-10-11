@@ -1,14 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
+using EasyDesk.CleanArchitecture.Testing.Integration.Lifetime;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
-using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
@@ -20,28 +17,13 @@ internal class IntegrationTestExample : SampleIntegrationTest
     private const int Count = 50;
     private const int PageSize = 10;
 
-    private static readonly TenantId _tenant = new("test-tenant-test");
-
     public IntegrationTestExample(SampleAppTestsFixture factory) : base(factory)
     {
     }
 
-    public ITestWebService GetService() => WebService;
-
-    public HttpTestHelper GetHttp() => Http;
-
-    public ITestBusEndpoint GetNewBusEndpoint(string? inputQueue = null) => NewBusEndpoint(inputQueue);
-
-    protected override void ConfigureRequests(HttpRequestBuilder req) => req
-        .Tenant(_tenant)
-        .AuthenticateAs(TestAgents.Admin);
-
     protected override async Task OnInitialization()
     {
-        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
-        await WebService.WaitUntilTenantExists(_tenant);
-
-        TenantNavigator.MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -50,25 +32,23 @@ internal class IntegrationTestExample : SampleIntegrationTest
     public HttpSingleRequestExecutor<PersonDto> CreatePerson(int id) => Http
         .CreatePerson(new($"FirstName_{id}", $"LastName_{id}", new LocalDate(1997, 1, 1).PlusDays(id), AddressDto.Create("a place")));
 
-    public static async Task CreateAndCheckPeopleAndPets(IntegrationTestExample integrationTest, bool skipWaits = false)
+    public async Task CreateAndCheckPeopleAndPets(bool skipWaits = false)
     {
-        var http = integrationTest.GetHttp();
-        var webService = integrationTest.GetService();
         for (var i = 0; i < Count; i++)
         {
-            await integrationTest.CreatePerson(i)
+            await CreatePerson(i)
                 .Send()
                 .EnsureSuccess();
         }
         if (!skipWaits)
         {
-            await http
+            await Http
                 .GetPeople()
                 .SetPageSize(PageSize)
                 .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
                 .EnsureSuccess();
-            await webService.WaitConditionUnderTenant<SampleAppContext>(
-                _tenant,
+            await WebService.WaitConditionUnderTenant<SampleAppContext>(
+                Fixture.TestData.TestTenant,
                 async context => await context.Pets.CountAsync() == Count);
         }
     }
@@ -76,77 +56,75 @@ internal class IntegrationTestExample : SampleIntegrationTest
 
 public class TestFixtureLifecycleTests
 {
+    private async Task UsingFixture(AsyncAction<SampleAppTestsFixture> action) =>
+        await AsyncLifetime.UsingAsyncLifetime(() => new SampleAppTestsFixture(), action);
+
+    private async Task RunTest(SampleAppTestsFixture fixture, bool skipWaits = false)
+    {
+        await AsyncLifetime.UsingAsyncLifetime(() => new IntegrationTestExample(fixture), async integrationTest =>
+        {
+            await integrationTest.CreateAndCheckPeopleAndPets(skipWaits);
+        });
+    }
+
     [Fact]
     public async Task TestFixtureLifecycle()
     {
-        await using var fixture = new SampleAppTestsFixture();
-        await fixture.InitializeAsync();
-        for (var ii = 0; ii < 10; ii++)
+        await UsingFixture(async fixture =>
         {
-            await using var integrationTest = new IntegrationTestExample(fixture);
-            await integrationTest.InitializeAsync();
-            await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest);
-        }
+            for (var i = 0; i < 5; i++)
+            {
+                await RunTest(fixture);
+            }
+        });
     }
-}
 
-public class TestFixtureLifecycleTests_SkippingWaits
-{
     [Fact]
     public async Task TestFixtureLifecycle_SkippingWaits()
     {
-        await using var fixture = new SampleAppTestsFixture();
-        await fixture.InitializeAsync();
-        for (var ii = 0; ii < 10; ii++)
+        await UsingFixture(async fixture =>
         {
-            await using var integrationTest = new IntegrationTestExample(fixture);
-            await integrationTest.InitializeAsync();
-            await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest, skipWaits: true);
-        }
+            for (var i = 0; i < 5; i++)
+            {
+                await RunTest(fixture, skipWaits: true);
+            }
+        });
     }
-}
 
-public class TestFixtureLifecycleWithParallelismTests
-{
     [Fact]
     public async Task TestFixtureLifecycle_WithParallelism()
     {
-        var action = async (Duration delay) =>
+        async Task Run(Duration delay)
         {
             await Task.Delay(delay.ToTimeSpan());
-            await using var fixture = new SampleAppTestsFixture();
-            await fixture.InitializeAsync();
-            for (var ii = 0; ii < 10; ii++)
+            await UsingFixture(async fixture =>
             {
-                await using var integrationTest = new IntegrationTestExample(fixture);
-                await integrationTest.InitializeAsync();
-                await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest);
-            }
-        };
+                for (var i = 0; i < 5; i++)
+                {
+                    await RunTest(fixture);
+                }
+            });
+        }
         await Task.WhenAll(
-            action(Duration.FromSeconds(1)),
-            action(Duration.FromSeconds(2)),
-            action(Duration.FromSeconds(5)),
-            action(Duration.FromSeconds(10)));
+            Run(Duration.FromSeconds(1)),
+            Run(Duration.FromSeconds(2)),
+            Run(Duration.FromSeconds(5)),
+            Run(Duration.FromSeconds(10)));
     }
-}
 
-public class TestFixtureLifecycleWithParallelismTests_SkippingWaits
-{
     [Fact]
     public async Task TestFixtureLifecycle_WithParallelism_SkippingWaits()
     {
-        var action = async () =>
+        async Task Run()
         {
-            await using var fixture = new SampleAppTestsFixture();
-            await fixture.InitializeAsync();
-            for (var ii = 0; ii < 10; ii++)
+            await UsingFixture(async fixture =>
             {
-                await using var integrationTest = new IntegrationTestExample(fixture);
-                await integrationTest.InitializeAsync();
-                await IntegrationTestExample.CreateAndCheckPeopleAndPets(integrationTest, skipWaits: true);
-            }
-        };
-        await Task.WhenAll(action(), action());
+                for (var i = 0; i < 5; i++)
+                {
+                    await RunTest(fixture, skipWaits: true);
+                }
+            });
+        }
+        await Task.WhenAll(Run(), Run());
     }
 }

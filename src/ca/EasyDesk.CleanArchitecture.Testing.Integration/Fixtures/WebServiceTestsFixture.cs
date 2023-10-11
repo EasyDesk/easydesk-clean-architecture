@@ -18,11 +18,16 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
     private readonly TestWebServiceBuilder _webServiceBuilder;
     private readonly ContainersCollection _containers = new();
     private readonly SimpleAsyncEvent<ITestWebService> _onInitialization = new();
+    private readonly SimpleAsyncEvent<ITestWebService> _beforeEachTest = new();
+    private readonly SimpleAsyncEvent<ITestWebService> _afterEachTest = new();
     private readonly SimpleAsyncEvent<ITestWebService> _onReset = new();
     private readonly SimpleAsyncEvent<ITestWebService> _onDisposal = new();
+    private readonly Instant _createdInstant = SystemClock.Instance.GetCurrentInstant();
 
     protected WebServiceTestsFixture(Type entryPointMarker)
     {
+        Clock = new(InitialInstant);
+
         _webServiceBuilder = new TestWebServiceBuilder(entryPointMarker)
             .WithEnvironment(DefaultTestEnvironment)
             .WithServices(services =>
@@ -36,7 +41,9 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
 
     public ITestWebService WebService => _webService!;
 
-    public FakeClock Clock { get; } = new(SystemClock.Instance.GetCurrentInstant());
+    public FakeClock Clock { get; }
+
+    protected virtual Instant InitialInstant => _createdInstant;
 
     protected abstract void ConfigureFixture(WebServiceTestsFixtureBuilder builder);
 
@@ -44,7 +51,15 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        var builder = new WebServiceTestsFixtureBuilder(_webServiceBuilder, _containers, _onInitialization, _onReset, _onDisposal);
+        var builder = new WebServiceTestsFixtureBuilder(
+            webServiceBuilder: _webServiceBuilder,
+            containers: _containers,
+            onInitialization: _onInitialization,
+            beforeEachTest: _beforeEachTest,
+            afterEachTest: _afterEachTest,
+            onReset: _onReset,
+            onDisposal: _onDisposal);
+
         ConfigureFixture(builder);
 
         await _containers.StartAll();
@@ -52,7 +67,17 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
         await _onInitialization.Emit(WebService);
     }
 
-    public async Task ResetAsync(CancellationToken cancellationToken)
+    public async Task BeforeTest()
+    {
+        await _beforeEachTest.Emit(WebService);
+    }
+
+    public async Task AfterTest()
+    {
+        await _afterEachTest.Emit(WebService);
+    }
+
+    public async Task Reset()
     {
         var hostedServicesToStop = WebService
             .Services
@@ -62,15 +87,15 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
 
         foreach (var hostedService in hostedServicesToStop)
         {
-            await hostedService.Pause(cancellationToken);
+            await hostedService.Pause(CancellationToken.None);
         }
 
         await _onReset.Emit(WebService);
-        Clock.Reset(SystemClock.Instance.GetCurrentInstant());
+        Clock.Reset(InitialInstant);
 
         foreach (var hostedService in hostedServicesToStop)
         {
-            await hostedService.Resume(cancellationToken);
+            await hostedService.Resume(CancellationToken.None);
         }
     }
 

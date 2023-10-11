@@ -1,19 +1,15 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenantId = new("test-tenant-kjd");
-
     protected AbstractRemoveAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
@@ -22,10 +18,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        await DefaultBusEndpoint.Send(new CreateTenant(_tenantId));
-        await WebService.WaitUntilTenantExists(_tenantId);
-
-        TenantNavigator.MoveToTenant(_tenantId);
+        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -35,7 +28,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
-            _tenantId,
+            Fixture.TestData.TestTenant,
             async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }
 

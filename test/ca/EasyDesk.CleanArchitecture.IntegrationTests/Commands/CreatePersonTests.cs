@@ -18,8 +18,6 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class CreatePersonTests : SampleIntegrationTest
 {
-    private static readonly TenantId _tenant = new("test-tenant");
-
     private readonly CreatePersonBodyDto _body = new(
         FirstName: "Foo",
         LastName: "Bar",
@@ -32,10 +30,7 @@ public class CreatePersonTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
-        await WebService.WaitUntilTenantExists(_tenant);
-
-        TenantNavigator.MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

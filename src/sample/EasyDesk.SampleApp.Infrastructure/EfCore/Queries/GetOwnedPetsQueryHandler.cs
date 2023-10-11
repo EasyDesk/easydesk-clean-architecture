@@ -22,7 +22,7 @@ public class GetOwnedPetsQueryHandler : IHandler<GetOwnedPets, IPageable<PetDto>
     {
         return Task.FromResult(Success(_context.Pets
             .Where(p => p.PersonId == request.PersonId)
-            .OrderBy(p => p.Id)
+            .OrderBy(p => p.Nickname)
             .Project<PetModel, PetDto>()
             .ToPageable()));
     }

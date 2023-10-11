@@ -1,12 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Pets;
 using NodaTime;
@@ -18,7 +15,6 @@ public class CreatePetTests : SampleIntegrationTest
 {
     private const int BulkQuantity = 200;
     private const string Nickname = "Rex";
-    private static readonly TenantId _tenant = new("test-tenant");
 
     public CreatePetTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -26,10 +22,7 @@ public class CreatePetTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        await DefaultBusEndpoint.Send(new CreateTenant(_tenant));
-        await WebService.WaitUntilTenantExists(_tenant);
-
-        TenantNavigator.MoveToTenant(_tenant);
+        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -73,7 +66,7 @@ public class CreatePetTests : SampleIntegrationTest
     {
         for (var i = 0L; i < count; i++)
         {
-            yield return "buddy" + i;
+            yield return $"buddy{i:000}";
         }
     }
 
