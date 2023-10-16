@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 
-public interface ISeeder
+public interface ISeeder<TData> : IAsyncDisposable
 {
-    Task Seed();
+    Task<TData> Seed();
 }

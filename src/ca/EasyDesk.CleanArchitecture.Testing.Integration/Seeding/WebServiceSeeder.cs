@@ -3,12 +3,12 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Sessions;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 
-public abstract class WebServiceSeeder<T> : WebServiceTestSession<T>, ISeeder
-    where T : WebServiceTestsFixture
+public abstract class WebServiceSeeder<TFixture, TData> : WebServiceTestSession<TFixture>, ISeeder<TData>
+    where TFixture : WebServiceTestsFixture
 {
-    protected WebServiceSeeder(T fixture) : base(fixture)
+    protected WebServiceSeeder(TFixture fixture) : base(fixture)
     {
     }
 
-    public abstract Task Seed();
+    public abstract Task<TData> Seed();
 }

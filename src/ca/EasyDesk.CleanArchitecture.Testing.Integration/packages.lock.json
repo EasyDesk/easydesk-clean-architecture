@@ -75,6 +75,15 @@
           "Testcontainers": "3.5.0"
         }
       },
+      "Testcontainers.PostgreSql": {
+        "type": "Direct",
+        "requested": "[3.5.0, )",
+        "resolved": "3.5.0",
+        "contentHash": "Z/cpR9hOURxgl8ksarqSInkmmISseXkRRpthTgc2o2XX8ckrIQtOYNqpuJ6Hx7mELzRc6xw0/Xgz7998MMalAw==",
+        "dependencies": {
+          "Testcontainers": "3.5.0"
+        }
+      },
       "xunit.extensibility.core": {
         "type": "Direct",
         "requested": "[2.5.1, )",

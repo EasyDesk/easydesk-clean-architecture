@@ -2216,6 +2216,7 @@
           "Respawn": "[6.1.0, )",
           "Testcontainers": "[3.5.0, )",
           "Testcontainers.MsSql": "[3.5.0, )",
+          "Testcontainers.PostgreSql": "[3.5.0, )",
           "xunit.extensibility.core": "[2.5.1, )"
         }
       },

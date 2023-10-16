@@ -3,14 +3,14 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
+using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
+using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.Commons.Utils;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
-using Microsoft.Data.SqlClient;
 using Npgsql;
-using Respawn;
 using Testcontainers.MsSql;
 using Testcontainers.PostgreSql;
 
@@ -28,10 +28,9 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
 
     public SampleAppTestsFixture() : base(typeof(PersonController))
     {
-        TestData = new(this);
     }
 
-    public SampleTestData TestData { get; }
+    public SampleTestData TestData { get; private set; } = default!;
 
     protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
     {
@@ -42,7 +41,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
         ConfigureForDbProvider(provider, builder);
 
         builder
-            .SeedBeforeEachTest(TestData)
+            .SeedBeforeEachTest(() => new SampleSeeder(this), onSeedingCompleted: x => TestData = x)
             .AddInMemoryRebus();
     }
 
@@ -60,16 +59,9 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .Build();
 
         builder
-            .AddSqlDatabaseWithReset(container, CreateRespawnerOptions(DbAdapter.SqlServer))
-            .WithConfiguration(x =>
-            {
-                var csb = new SqlConnectionStringBuilder(container.GetConnectionString())
-                {
-                    TrustServerCertificate = true,
-                    InitialCatalog = "SampleDb",
-                };
-                x.Add("ConnectionStrings:SqlServer", csb.ConnectionString);
-            });
+            .AddSqlServerDatabase(container, "SampleDb")
+            .WithRespawn(ConfigureRespawnerOptions)
+            .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer");
     }
 
     private static void ConfigurePostgreSql(WebServiceTestsFixtureBuilder builder)
@@ -82,15 +74,12 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .Build();
 
         builder
-            .AddSqlDatabaseWithReset(container, CreateRespawnerOptions(DbAdapter.Postgres))
-            .WithConfiguration(x => x.Add(
-                "ConnectionStrings:PostgreSql",
-                new NpgsqlConnectionStringBuilder(container.GetConnectionString()) { IncludeErrorDetail = true }.ConnectionString));
+            .AddPostgresDatabase(container)
+            .WithRespawn(ConfigureRespawnerOptions)
+            .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true }.ConnectionString)
+            .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql");
     }
 
-    private static RespawnerOptions CreateRespawnerOptions(IDbAdapter adapter) => new()
-    {
-        DbAdapter = adapter,
-        SchemasToExclude = new[] { EfCoreUtils.MigrationsSchema }
-    };
+    private static void ConfigureRespawnerOptions(RespawnerOptionsBuilder respawnerOptions) =>
+        respawnerOptions.ExcludeSchemas(EfCoreUtils.MigrationsSchema);
 }
