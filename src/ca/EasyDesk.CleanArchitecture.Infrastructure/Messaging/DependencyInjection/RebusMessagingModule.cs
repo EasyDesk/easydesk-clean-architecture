@@ -101,6 +101,7 @@ public class RebusMessagingModule : AppModule
         AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true));
 
         AddEventPropagators(services);
+        AddCommandPropagators(services);
         services.AddScoped<MessageBroker>();
         services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
         services.AddScoped<ICommandSender>(provider => provider.GetRequiredService<MessageBroker>());
@@ -131,6 +132,30 @@ public class RebusMessagingModule : AppModule
             .Select(i => i.GetGenericArguments()[0]);
     }
 
+    private void AddCommandPropagators(IServiceCollection services)
+    {
+        var arguments = new object[] { services };
+        foreach (var messageType in Options.KnownMessageTypes)
+        {
+            messageType
+                .GetInterfaces()
+                .Where(i => i.IsGenericType)
+                .Where(i => i.GetGenericTypeDefinition() == typeof(IPropagatedCommand<,>))
+                .Select(i => i.GetGenericArguments())
+                .Select(a => typeof(RebusMessagingModule)
+                    .GetMethod(nameof(RegisterCommandPropagatorForType), BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .MakeGenericMethod(a))
+                .ForEach(m => m.Invoke(this, arguments));
+        }
+    }
+
+    private void RegisterCommandPropagatorForType<M, D>(IServiceCollection services)
+        where M : IPropagatedCommand<M, D>, IOutgoingCommand
+        where D : DomainEvent
+    {
+        services.AddTransient<IDomainEventHandler<D>, PropagateCommand<M, D>>();
+    }
+
     private void AddEventPropagators(IServiceCollection services)
     {
         var arguments = new object[] { services };
@@ -142,17 +167,17 @@ public class RebusMessagingModule : AppModule
                 .Where(i => i.GetGenericTypeDefinition() == typeof(IPropagatedEvent<,>))
                 .Select(i => i.GetGenericArguments())
                 .Select(a => typeof(RebusMessagingModule)
-                    .GetMethod(nameof(RegisterPropagatorForType), BindingFlags.NonPublic | BindingFlags.Instance)!
+                    .GetMethod(nameof(RegisterEventPropagatorForType), BindingFlags.NonPublic | BindingFlags.Instance)!
                     .MakeGenericMethod(a))
                 .ForEach(m => m.Invoke(this, arguments));
         }
     }
 
-    private void RegisterPropagatorForType<M, D>(IServiceCollection services)
+    private void RegisterEventPropagatorForType<M, D>(IServiceCollection services)
         where M : IPropagatedEvent<M, D>, IOutgoingEvent
         where D : DomainEvent
     {
-        services.AddTransient<IDomainEventHandler<D>, DomainEventPropagator<M, D>>();
+        services.AddTransient<IDomainEventHandler<D>, PropagateEvent<M, D>>();
     }
 
     private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)
