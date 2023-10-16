@@ -27,8 +27,8 @@ internal class SqlServerFixtureBuilder : AbstractSqlFixtureBuilder<MsSqlContaine
         {
             var commandText = $"""
                 BACKUP DATABASE [{connection.Database}]
-                TO DISK = {BackupFile}
-                WITH NAME = {BackupName}
+                TO DISK = N'{BackupFile}'
+                WITH NAME = N'{BackupName}'
                 """;
             await RunCommand(connection, commandText);
         });
@@ -42,7 +42,7 @@ internal class SqlServerFixtureBuilder : AbstractSqlFixtureBuilder<MsSqlContaine
                 ALTER DATABASE [{connection.Database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
                 USE [master];
                 RESTORE DATABASE [{connection.Database}]
-                FROM DISK = {BackupFile}
+                FROM DISK = N'{BackupFile}'
                 WITH REPLACE;
                 ALTER DATABASE [{connection.Database}] SET MULTI_USER;
                 """;
