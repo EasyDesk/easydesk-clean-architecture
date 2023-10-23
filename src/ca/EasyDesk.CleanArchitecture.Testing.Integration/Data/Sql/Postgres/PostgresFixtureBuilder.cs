@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
-using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.Commons.Collections;
+using Npgsql;
 using Respawn;
+using System.Data.Common;
 using Testcontainers.PostgreSql;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
@@ -13,11 +15,47 @@ internal class PostgresFixtureBuilder : AbstractSqlFixtureBuilder<PostgreSqlCont
 
     protected override IDbAdapter Adapter => DbAdapter.Postgres;
 
-    protected override Task BackupDatabase(ITestWebService webService, PostgreSqlContainer container) =>
-        throw new NotImplementedException();
+    protected override string GetConnectionString() => Container.GetConnectionString();
 
-    protected override Task RestoreBackup(ITestWebService webService, PostgreSqlContainer container) =>
-        throw new NotImplementedException();
+    protected override DbConnection CreateConnection(string connectionString) => new NpgsqlConnection(connectionString);
 
-    protected override string GetConnectionString(PostgreSqlContainer container) => throw new NotImplementedException();
+    protected override string GenerateTablesQuery(string schemaOutput, string tableOutput, string columnOutput) => $"""
+        SELECT T.table_schema AS "{schemaOutput}", T.table_name AS "{tableOutput}", C.column_name AS "{columnOutput}"
+        FROM information_schema.tables T
+        JOIN information_schema.columns C
+        ON T.table_schema = C.table_schema AND T.table_name = C.table_name
+        WHERE T.table_type = 'BASE TABLE'
+        AND T.table_schema NOT IN ('pg_catalog', 'information_schema');
+        """;
+
+    protected override string GenerateCopyTableCommand(TableDef table) => $"""
+        CREATE TABLE {FormatCopyTable(table)}
+        AS TABLE {FormatTable(table)};
+        """;
+
+    protected override string GenerateDisableConstraintsCommand(TableDef table) => $"""
+        ALTER TABLE {FormatTable(table)} DISABLE TRIGGER ALL;
+        """;
+
+    protected override string GenerateEnableConstraintsCommand(TableDef table) => $"""
+        ALTER TABLE{FormatTable(table)} ENABLE TRIGGER ALL;
+        """;
+
+    protected override string GenerateRestoreTableCommand(TableDef table)
+    {
+        var columnsList = table.Columns.Select(x => $@"""{x}""").ConcatStrings(", ");
+        return $"""
+            DELETE FROM {FormatTable(table)};
+
+            INSERT INTO {FormatTable(table)} ({columnsList})
+            SELECT {columnsList}
+            FROM {FormatCopyTable(table)};
+            """;
+    }
+
+    private string FormatCopyTable(TableDef table) => FormatTableRaw(table.Schema, $"__copy_{table.Name}__");
+
+    private string FormatTable(TableDef table) => FormatTableRaw(table.Schema, table.Name);
+
+    private string FormatTableRaw(string schema, string name) => $@"""{schema}"".""{name}""";
 }

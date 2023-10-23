@@ -38,11 +38,11 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .AsOption()
             .Map(p => Enums.ParseOption<DbProvider>(p).OrElseThrow(() => new Exception("Invalid DB provider")))
             .OrElse(DefaultDbProvider);
-        ConfigureForDbProvider(provider, builder);
 
         builder
-            .SeedBeforeEachTest(() => new SampleSeeder(this), onSeedingCompleted: x => TestData = x)
+            .SeedOnInitialization(() => new SampleSeeder(this), onSeedingCompleted: x => TestData = x)
             .AddInMemoryRebus();
+        ConfigureForDbProvider(provider, builder);
     }
 
     private void ConfigureForDbProvider(DbProvider provider, WebServiceTestsFixtureBuilder builder)
@@ -60,7 +60,8 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
 
         builder
             .AddSqlServerDatabase(container, "SampleDb")
-            .WithRespawn(ConfigureRespawnerOptions)
+            ////.WithRespawn(ConfigureRespawnerOptions)
+            .WithTableCopies()
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer");
     }
 
@@ -75,7 +76,8 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
 
         builder
             .AddPostgresDatabase(container)
-            .WithRespawn(ConfigureRespawnerOptions)
+            ////.WithRespawn(ConfigureRespawnerOptions)
+            .WithTableCopies()
             .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true }.ConnectionString)
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql");
     }

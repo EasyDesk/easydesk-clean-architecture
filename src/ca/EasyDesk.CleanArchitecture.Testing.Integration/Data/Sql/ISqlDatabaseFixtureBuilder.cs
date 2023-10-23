@@ -2,7 +2,7 @@
 
 public interface ISqlDatabaseFixtureBuilder
 {
-    ISqlDatabaseFixtureBuilder WithBackups();
+    ISqlDatabaseFixtureBuilder WithTableCopies();
 
     ISqlDatabaseFixtureBuilder WithRespawn(Action<RespawnerOptionsBuilder> options);
 

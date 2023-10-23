@@ -32,6 +32,15 @@
           "NodaTime": "3.1.9"
         }
       },
+      "Npgsql": {
+        "type": "Direct",
+        "requested": "[7.0.6, )",
+        "resolved": "7.0.6",
+        "contentHash": "TAqvwRnm3NJ0QvN7cvu6geJkbI0XPzGVRElVY5hF4gsgA+BnE12x6GM1TLhdeq+7ZKvvo3BD8jXKnXmr3tvdEw==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "6.0.0"
+        }
+      },
       "Respawn": {
         "type": "Direct",
         "requested": "[6.1.0, )",

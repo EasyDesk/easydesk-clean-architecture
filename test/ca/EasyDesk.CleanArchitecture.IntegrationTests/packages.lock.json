@@ -2213,6 +2213,7 @@
           "EasyDesk.CleanArchitecture.Web": "[1.0.0, )",
           "Microsoft.AspNetCore.Mvc.Testing": "[7.0.11, )",
           "NodaTime.Testing": "[3.1.9, )",
+          "Npgsql": "[7.0.6, )",
           "Respawn": "[6.1.0, )",
           "Testcontainers": "[3.5.0, )",
           "Testcontainers.MsSql": "[3.5.0, )",

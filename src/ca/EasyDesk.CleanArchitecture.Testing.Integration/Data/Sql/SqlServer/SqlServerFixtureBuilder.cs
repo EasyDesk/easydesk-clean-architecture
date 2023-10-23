@@ -1,16 +1,14 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
-using EasyDesk.CleanArchitecture.Testing.Integration.Web;
+using EasyDesk.Commons.Collections;
 using Microsoft.Data.SqlClient;
 using Respawn;
-using System.Data.Common;
+using System.Data;
 using Testcontainers.MsSql;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 
 internal class SqlServerFixtureBuilder : AbstractSqlFixtureBuilder<MsSqlContainer>
 {
-    private const string BackupFile = "/tmp/clean-architecture/testing/backup.bak";
-    private const string BackupName = "Clean Architecture integration tests backup";
     private readonly string _databaseName;
 
     public SqlServerFixtureBuilder(WebServiceTestsFixtureBuilder builder, MsSqlContainer container, string databaseName)
@@ -21,45 +19,9 @@ internal class SqlServerFixtureBuilder : AbstractSqlFixtureBuilder<MsSqlContaine
 
     protected override IDbAdapter Adapter => DbAdapter.SqlServer;
 
-    protected override async Task BackupDatabase(ITestWebService webService, MsSqlContainer container)
+    protected override string GetConnectionString()
     {
-        await UsingDbConnection(webService, async connection =>
-        {
-            var commandText = $"""
-                BACKUP DATABASE [{connection.Database}]
-                TO DISK = N'{BackupFile}'
-                WITH NAME = N'{BackupName}'
-                """;
-            await RunCommand(connection, commandText);
-        });
-    }
-
-    protected override async Task RestoreBackup(ITestWebService webService, MsSqlContainer container)
-    {
-        await UsingDbConnection(webService, async connection =>
-        {
-            var commandText = $"""
-                ALTER DATABASE [{connection.Database}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-                USE [master];
-                RESTORE DATABASE [{connection.Database}]
-                FROM DISK = N'{BackupFile}'
-                WITH REPLACE;
-                ALTER DATABASE [{connection.Database}] SET MULTI_USER;
-                """;
-            await RunCommand(connection, commandText);
-        });
-    }
-
-    protected async Task RunCommand(DbConnection connection, string text)
-    {
-        await using var command = connection.CreateCommand();
-        command.CommandText = text;
-        await command.ExecuteNonQueryAsync();
-    }
-
-    protected override string GetConnectionString(MsSqlContainer container)
-    {
-        var originalConnectionString = container.GetConnectionString();
+        var originalConnectionString = Container.GetConnectionString();
         var builder = new SqlConnectionStringBuilder(originalConnectionString)
         {
             InitialCatalog = _databaseName,
@@ -67,4 +29,54 @@ internal class SqlServerFixtureBuilder : AbstractSqlFixtureBuilder<MsSqlContaine
         };
         return builder.ConnectionString;
     }
+
+    protected override string GenerateTablesQuery(string schemaOutput, string tableOutput, string columnOutput) => $"""
+        SELECT T.TABLE_SCHEMA AS [{schemaOutput}], T.TABLE_NAME AS [{tableOutput}], C.COLUMN_NAME AS [{columnOutput}]
+        FROM INFORMATION_SCHEMA.TABLES T
+        INNER JOIN INFORMATION_SCHEMA.COLUMNS C
+        ON T.TABLE_SCHEMA = C.TABLE_SCHEMA AND T.TABLE_NAME = C.TABLE_NAME
+        WHERE T.TABLE_TYPE = 'BASE TABLE';
+        """;
+
+    protected override string GenerateCopyTableCommand(TableDef table) => $"""
+        SELECT *
+        INTO {FormatCopyTable(table)}
+        FROM {FormatTable(table)};
+        """;
+
+    protected override string GenerateDisableConstraintsCommand(TableDef table) => $"""
+        ALTER TABLE {FormatTable(table)} NOCHECK CONSTRAINT ALL;
+        """;
+
+    protected override string GenerateEnableConstraintsCommand(TableDef table) => $"""
+        ALTER TABLE {FormatTable(table)} CHECK CONSTRAINT ALL;
+        """;
+
+    protected override string GenerateRestoreTableCommand(TableDef table)
+    {
+        var columnsList = table.Columns.Select(x => $"[{x}]").ConcatStrings(", ");
+        return $"""
+            DELETE FROM {FormatTable(table)};
+
+            IF (OBJECTPROPERTY(OBJECT_ID('{table.Schema}.{table.Name}'), 'TableHasIdentity') = 1)
+            BEGIN
+                SET IDENTITY_INSERT {FormatTable(table)} ON;
+            END
+
+            INSERT INTO {FormatTable(table)} ({columnsList})
+            SELECT {columnsList}
+            FROM {FormatCopyTable(table)};
+
+            IF (OBJECTPROPERTY(OBJECT_ID('{table.Schema}.{table.Name}'), 'TableHasIdentity') = 1)
+            BEGIN
+                SET IDENTITY_INSERT {FormatTable(table)} OFF;
+            END
+            """;
+    }
+
+    private string FormatCopyTable(TableDef table) => FormatTableRaw(table.Schema, $"__copy_{table.Name}__");
+
+    private string FormatTable(TableDef table) => FormatTableRaw(table.Schema, table.Name);
+
+    private string FormatTableRaw(string schema, string name) => $"[{schema}].[{name}]";
 }
