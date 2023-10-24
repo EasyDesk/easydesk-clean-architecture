@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
-using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
@@ -30,7 +29,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
     {
     }
 
-    public SampleTestData TestData { get; private set; } = default!;
+    public SampleTestData TestData { get; } = new();
 
     protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
     {
@@ -58,10 +57,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .WithPassword("sample.123")
             .Build();
 
-        builder
-            .AddSqlServerDatabase(container, "SampleDb")
-            ////.WithRespawn(ConfigureRespawnerOptions)
-            .WithTableCopies()
+        ConfigureDatabaseDefaults(builder.AddSqlServerDatabase(container, "SampleDb"))
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer");
     }
 
@@ -74,14 +70,12 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .WithPassword("sample")
             .Build();
 
-        builder
-            .AddPostgresDatabase(container)
-            ////.WithRespawn(ConfigureRespawnerOptions)
-            .WithTableCopies()
+        ConfigureDatabaseDefaults(builder.AddPostgresDatabase(container))
             .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true }.ConnectionString)
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql");
     }
 
-    private static void ConfigureRespawnerOptions(RespawnerOptionsBuilder respawnerOptions) =>
-        respawnerOptions.ExcludeSchemas(EfCoreUtils.MigrationsSchema);
+    private static ISqlDatabaseFixtureBuilder ConfigureDatabaseDefaults(ISqlDatabaseFixtureBuilder builder) => builder
+        ////.WithRespawn(x => x.ExcludeSchemas(EfCoreUtils.MigrationsSchema));
+        .WithTableCopies();
 }
