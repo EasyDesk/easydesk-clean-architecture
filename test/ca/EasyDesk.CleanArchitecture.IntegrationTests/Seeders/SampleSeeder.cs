@@ -32,6 +32,6 @@ public class SampleSeeder : WebServiceSeeder<SampleAppTestsFixture, SampleTestDa
         await RunOperation(() => DefaultBusEndpoint.Send(new CreateTenant(SampleTestData.TestTenant)));
         await WebService.WaitUntilTenantExists(SampleTestData.TestTenant);
 
-        data.OperationsRun = 0;
+        data.OperationsRun = operationsRun;
     }
 }
