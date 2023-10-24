@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
@@ -23,14 +24,14 @@ public class AddAdminTests : SampleIntegrationTest
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
-            Fixture.TestData.TestTenant,
+            SampleTestData.TestTenant,
             async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }
 
     [Fact]
     public async Task ShouldSucceed()
     {
-        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
@@ -56,11 +57,11 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReset_AfterTenantIsDeleted()
     {
-        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
         await Http.AddAdmin().Send().EnsureSuccess();
 
-        await DefaultBusEndpoint.Send(new RemoveTenant(Fixture.TestData.TestTenant));
-        await DefaultBusEndpoint.Send(new CreateTenant(Fixture.TestData.TestTenant));
+        await DefaultBusEndpoint.Send(new RemoveTenant(SampleTestData.TestTenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(SampleTestData.TestTenant));
 
         await WaitForConditionOnRoles(r => !r.Contains(Roles.Admin));
     }
@@ -70,8 +71,8 @@ public class AddAdminTests : SampleIntegrationTest
     {
         await Http.AddAdmin().Send().EnsureSuccess();
 
-        await DefaultBusEndpoint.Send(new RemoveTenant(Fixture.TestData.TestTenant));
-        await DefaultBusEndpoint.Send(new CreateTenant(Fixture.TestData.TestTenant));
+        await DefaultBusEndpoint.Send(new RemoveTenant(SampleTestData.TestTenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(SampleTestData.TestTenant));
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }

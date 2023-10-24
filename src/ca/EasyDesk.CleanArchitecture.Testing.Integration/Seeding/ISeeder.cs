@@ -2,5 +2,5 @@
 
 public interface ISeeder<TData> : IAsyncDisposable
 {
-    Task<TData> Seed();
+    Task Seed(TData data);
 }

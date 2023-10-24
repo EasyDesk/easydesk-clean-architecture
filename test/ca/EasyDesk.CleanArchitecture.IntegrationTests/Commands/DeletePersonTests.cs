@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
@@ -26,7 +27,7 @@ public class DeletePersonTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
@@ -30,7 +31,7 @@ public class AuditingTests : SampleIntegrationTest
     {
         _initialAudits = Fixture.TestData.OperationsRun;
 
-        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

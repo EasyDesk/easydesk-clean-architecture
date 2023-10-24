@@ -7,23 +7,22 @@ public static class FixtureSeedingExtensions
     public static WebServiceTestsFixtureBuilder SeedOnInitialization<T>(
         this WebServiceTestsFixtureBuilder builder,
         Func<ISeeder<T>> seederFactory,
-        Action<T>? onSeedingCompleted = null)
+        T data)
     {
-        return builder.OnInitialization(_ => Seed(seederFactory, onSeedingCompleted));
+        return builder.OnInitialization(_ => Seed(seederFactory, data));
     }
 
     public static WebServiceTestsFixtureBuilder SeedBeforeEachTest<T>(
         this WebServiceTestsFixtureBuilder builder,
         Func<ISeeder<T>> seederFactory,
-        Action<T>? onSeedingCompleted = null)
+        T data)
     {
-        return builder.BeforeEachTest(_ => Seed(seederFactory, onSeedingCompleted));
+        return builder.BeforeEachTest(_ => Seed(seederFactory, data));
     }
 
-    private static async Task Seed<T>(Func<ISeeder<T>> seederFactory, Action<T>? onSeedingCompleted)
+    private static async Task Seed<T>(Func<ISeeder<T>> seederFactory, T data)
     {
         await using var seeder = seederFactory();
-        var result = await seeder.Seed();
-        onSeedingCompleted?.Invoke(result);
+        await seeder.Seed(data);
     }
 }

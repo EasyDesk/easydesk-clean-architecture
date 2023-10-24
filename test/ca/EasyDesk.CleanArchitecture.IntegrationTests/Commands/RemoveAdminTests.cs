@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
@@ -18,7 +19,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(Fixture.TestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -28,7 +29,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
-            Fixture.TestData.TestTenant,
+            SampleTestData.TestTenant,
             async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }
 

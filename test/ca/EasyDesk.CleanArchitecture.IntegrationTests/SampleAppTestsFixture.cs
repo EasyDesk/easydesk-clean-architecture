@@ -40,7 +40,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .OrElse(DefaultDbProvider);
 
         builder
-            .SeedOnInitialization(() => new SampleSeeder(this), onSeedingCompleted: x => TestData = x)
+            .SeedOnInitialization(() => new SampleSeeder(this), TestData)
             .AddInMemoryRebus();
         ConfigureForDbProvider(provider, builder);
     }

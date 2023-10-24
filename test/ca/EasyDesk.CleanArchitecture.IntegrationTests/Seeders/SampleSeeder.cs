@@ -6,19 +6,20 @@ using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 
-public record SampleTestData(
-    int OperationsRun,
-    TenantId TestTenant);
+public class SampleTestData
+{
+    public static TenantId TestTenant { get; } = new("test-tenant");
+
+    public int OperationsRun { get; set; } = 0;
+}
 
 public class SampleSeeder : WebServiceSeeder<SampleAppTestsFixture, SampleTestData>
 {
-    private static readonly TenantId _testTenant = new("test-tenant");
-
     public SampleSeeder(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 
-    public override async Task<SampleTestData> Seed()
+    public override async Task Seed(SampleTestData data)
     {
         var operationsRun = 0;
 
@@ -28,9 +29,9 @@ public class SampleSeeder : WebServiceSeeder<SampleAppTestsFixture, SampleTestDa
             operationsRun++;
         }
 
-        await RunOperation(() => DefaultBusEndpoint.Send(new CreateTenant(_testTenant)));
-        await WebService.WaitUntilTenantExists(_testTenant);
+        await RunOperation(() => DefaultBusEndpoint.Send(new CreateTenant(SampleTestData.TestTenant)));
+        await WebService.WaitUntilTenantExists(SampleTestData.TestTenant);
 
-        return new(operationsRun, _testTenant);
+        data.OperationsRun = 0;
     }
 }

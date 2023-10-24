@@ -10,5 +10,5 @@ public abstract class WebServiceSeeder<TFixture, TData> : WebServiceTestSession<
     {
     }
 
-    public abstract Task<TData> Seed();
+    public abstract Task Seed(TData data);
 }
