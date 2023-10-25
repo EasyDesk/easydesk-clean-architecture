@@ -89,7 +89,7 @@ public class OpenApiModule : AppModule
         options.OperationFilter<AddApiVersionParameterFilter>();
         options.DocInclusionPredicate((version, api) =>
         {
-            if (api.ActionDescriptor.GetApiVersionModel().IsApiVersionNeutral)
+            if (api.ActionDescriptor.GetApiVersionMetadata().IsApiVersionNeutral)
             {
                 return true;
             }

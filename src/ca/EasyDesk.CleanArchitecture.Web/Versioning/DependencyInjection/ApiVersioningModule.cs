@@ -1,12 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Versioning;
+﻿using Asp.Versioning;
+using Asp.Versioning.Conventions;
+using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
@@ -37,24 +37,27 @@ public class ApiVersioningModule : AppModule
     {
         services.AddSingleton(ApiVersioningInfo!);
 
-        services.AddApiVersioning(options =>
-        {
-            options.ReportApiVersions = true;
+        services
+            .AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
 
-            options.ApiVersionReader = ApiVersionReader.Combine(
-                new QueryStringApiVersionReader(RestApiVersioning.VersionQueryParam),
-                new HeaderApiVersionReader(RestApiVersioning.VersionHeader));
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new QueryStringApiVersionReader(RestApiVersioning.VersionQueryParam),
+                    new HeaderApiVersionReader(RestApiVersioning.VersionHeader));
 
-            options.AssumeDefaultVersionWhenUnspecified = true;
-            options.DefaultApiVersion = ApiVersioningInfo!.SupportedVersions
-                .MaxOption()
-                .OrElseGet(() => ApiVersioningUtils.DefaultVersion)
-                .ToAspNetApiVersion();
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.DefaultApiVersion = ApiVersioningInfo!.SupportedVersions
+                    .MaxOption()
+                    .OrElseGet(() => ApiVersioningUtils.DefaultVersion)
+                    .ToAspNetApiVersion();
 
-            options.Conventions.Add(new NamespaceConvention());
-
-            _configure?.Invoke(options);
-        });
+                _configure?.Invoke(options);
+            })
+            .AddMvc(options =>
+            {
+                options.Conventions.Add(new NamespaceConvention());
+            });
     }
 
     private class NamespaceConvention : IControllerConvention
