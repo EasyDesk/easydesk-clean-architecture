@@ -19,7 +19,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -29,7 +29,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
-            SampleTestData.TestTenant,
+            SampleSeeder.Data.TestTenant,
             async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }
 

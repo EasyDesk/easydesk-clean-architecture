@@ -24,7 +24,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -49,7 +49,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
                 .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
                 .EnsureSuccess();
             await WebService.WaitConditionUnderTenant<SampleAppContext>(
-                SampleTestData.TestTenant,
+                SampleSeeder.Data.TestTenant,
                 async context => await context.Pets.CountAsync() == Count);
         }
     }

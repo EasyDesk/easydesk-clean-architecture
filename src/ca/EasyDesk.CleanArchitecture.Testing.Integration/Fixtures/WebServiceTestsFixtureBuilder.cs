@@ -5,24 +5,25 @@ using EasyDesk.Commons.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 
-public sealed class WebServiceTestsFixtureBuilder
+public sealed class WebServiceTestsFixtureBuilder<T>
+    where T : WebServiceTestsFixture<T>
 {
     private readonly TestWebServiceBuilder _webServiceBuilder;
     private readonly ContainersCollection _containers;
-    private readonly IAsyncObservable<ITestWebService> _onInitialization;
-    private readonly IAsyncObservable<ITestWebService> _beforeEachTest;
-    private readonly IAsyncObservable<ITestWebService> _afterEachTest;
-    private readonly IAsyncObservable<ITestWebService> _onReset;
-    private readonly IAsyncObservable<ITestWebService> _onDisposal;
+    private readonly IAsyncObservable<T> _onInitialization;
+    private readonly IAsyncObservable<T> _beforeEachTest;
+    private readonly IAsyncObservable<T> _afterEachTest;
+    private readonly IAsyncObservable<T> _onReset;
+    private readonly IAsyncObservable<T> _onDisposal;
 
     public WebServiceTestsFixtureBuilder(
         TestWebServiceBuilder webServiceBuilder,
         ContainersCollection containers,
-        IAsyncObservable<ITestWebService> onInitialization,
-        IAsyncObservable<ITestWebService> beforeEachTest,
-        IAsyncObservable<ITestWebService> afterEachTest,
-        IAsyncObservable<ITestWebService> onReset,
-        IAsyncObservable<ITestWebService> onDisposal)
+        IAsyncObservable<T> onInitialization,
+        IAsyncObservable<T> beforeEachTest,
+        IAsyncObservable<T> afterEachTest,
+        IAsyncObservable<T> onReset,
+        IAsyncObservable<T> onDisposal)
     {
         _webServiceBuilder = webServiceBuilder;
         _containers = containers;
@@ -33,55 +34,55 @@ public sealed class WebServiceTestsFixtureBuilder
         _onDisposal = onDisposal;
     }
 
-    public WebServiceTestsFixtureBuilder ConfigureWebService(Action<TestWebServiceBuilder> configure)
+    public WebServiceTestsFixtureBuilder<T> ConfigureWebService(Action<TestWebServiceBuilder> configure)
     {
         configure(_webServiceBuilder);
         return this;
     }
 
-    public WebServiceTestsFixtureBuilder ConfigureContainers(Action<ContainersCollection> configure)
+    public WebServiceTestsFixtureBuilder<T> ConfigureContainers(Action<ContainersCollection> configure)
     {
         configure(_containers);
         return this;
     }
 
-    public WebServiceTestsFixtureBuilder OnInitialization(AsyncAction<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> OnInitialization(AsyncAction<T> action) =>
         ConfigureLifecycleHook(_onInitialization, action);
 
-    public WebServiceTestsFixtureBuilder OnInitialization(Action<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> OnInitialization(Action<T> action) =>
         ConfigureLifecycleHook(_onInitialization, action);
 
-    public WebServiceTestsFixtureBuilder BeforeEachTest(AsyncAction<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> BeforeEachTest(AsyncAction<T> action) =>
         ConfigureLifecycleHook(_beforeEachTest, action);
 
-    public WebServiceTestsFixtureBuilder BeforeEachTest(Action<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> BeforeEachTest(Action<T> action) =>
         ConfigureLifecycleHook(_beforeEachTest, action);
 
-    public WebServiceTestsFixtureBuilder AfterEachTest(AsyncAction<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> AfterEachTest(AsyncAction<T> action) =>
         ConfigureLifecycleHook(_afterEachTest, action);
 
-    public WebServiceTestsFixtureBuilder AfterEachTest(Action<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> AfterEachTest(Action<T> action) =>
         ConfigureLifecycleHook(_afterEachTest, action);
 
-    public WebServiceTestsFixtureBuilder OnReset(AsyncAction<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> OnReset(AsyncAction<T> action) =>
         ConfigureLifecycleHook(_onReset, action);
 
-    public WebServiceTestsFixtureBuilder OnReset(Action<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> OnReset(Action<T> action) =>
         ConfigureLifecycleHook(_onReset, action);
 
-    public WebServiceTestsFixtureBuilder OnDisposal(AsyncAction<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> OnDisposal(AsyncAction<T> action) =>
         ConfigureLifecycleHook(_onDisposal, action);
 
-    public WebServiceTestsFixtureBuilder OnDisposal(Action<ITestWebService> action) =>
+    public WebServiceTestsFixtureBuilder<T> OnDisposal(Action<T> action) =>
         ConfigureLifecycleHook(_onDisposal, action);
 
-    private WebServiceTestsFixtureBuilder ConfigureLifecycleHook(IAsyncObservable<ITestWebService> observable, AsyncAction<ITestWebService> action)
+    private WebServiceTestsFixtureBuilder<T> ConfigureLifecycleHook(IAsyncObservable<T> observable, AsyncAction<T> action)
     {
         observable.Subscribe(action);
         return this;
     }
 
-    private WebServiceTestsFixtureBuilder ConfigureLifecycleHook(IAsyncObservable<ITestWebService> observable, Action<ITestWebService> action)
+    private WebServiceTestsFixtureBuilder<T> ConfigureLifecycleHook(IAsyncObservable<T> observable, Action<T> action)
     {
         observable.Subscribe(action);
         return this;

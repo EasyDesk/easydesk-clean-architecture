@@ -11,18 +11,20 @@ using Xunit;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 
-public abstract class WebServiceTestsFixture : IAsyncLifetime
+public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
+    where TSelf : WebServiceTestsFixture<TSelf>
 {
     public const string DefaultTestEnvironment = "IntegrationTest";
 
     private readonly TestWebServiceBuilder _webServiceBuilder;
     private readonly ContainersCollection _containers = new();
-    private readonly SimpleAsyncEvent<ITestWebService> _onInitialization = new();
-    private readonly SimpleAsyncEvent<ITestWebService> _beforeEachTest = new();
-    private readonly SimpleAsyncEvent<ITestWebService> _afterEachTest = new();
-    private readonly SimpleAsyncEvent<ITestWebService> _onReset = new();
-    private readonly SimpleAsyncEvent<ITestWebService> _onDisposal = new();
+    private readonly SimpleAsyncEvent<TSelf> _onInitialization = new();
+    private readonly SimpleAsyncEvent<TSelf> _beforeEachTest = new();
+    private readonly SimpleAsyncEvent<TSelf> _afterEachTest = new();
+    private readonly SimpleAsyncEvent<TSelf> _onReset = new();
+    private readonly SimpleAsyncEvent<TSelf> _onDisposal = new();
     private readonly Instant _createdInstant = SystemClock.Instance.GetCurrentInstant();
+    private readonly Dictionary<Type, object> _seedingResults = new();
 
     protected WebServiceTestsFixture(Type entryPointMarker)
     {
@@ -45,13 +47,13 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
 
     protected virtual Instant InitialInstant => _createdInstant;
 
-    protected abstract void ConfigureFixture(WebServiceTestsFixtureBuilder builder);
+    protected abstract void ConfigureFixture(WebServiceTestsFixtureBuilder<TSelf> builder);
 
     private ITestWebService StartService() => _webServiceBuilder.Build();
 
     public async Task InitializeAsync()
     {
-        var builder = new WebServiceTestsFixtureBuilder(
+        var builder = new WebServiceTestsFixtureBuilder<TSelf>(
             webServiceBuilder: _webServiceBuilder,
             containers: _containers,
             onInitialization: _onInitialization,
@@ -64,17 +66,19 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
 
         await _containers.StartAll();
         _webService = StartService();
-        await _onInitialization.Emit(WebService);
+        await _onInitialization.Emit(GetSelf());
     }
+
+    private TSelf GetSelf() => (TSelf)this;
 
     public async Task BeforeTest()
     {
-        await _beforeEachTest.Emit(WebService);
+        await _beforeEachTest.Emit(GetSelf());
     }
 
     public async Task AfterTest()
     {
-        await _afterEachTest.Emit(WebService);
+        await _afterEachTest.Emit(GetSelf());
     }
 
     public async Task Reset()
@@ -90,7 +94,7 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
             await hostedService.Pause(CancellationToken.None);
         }
 
-        await _onReset.Emit(WebService);
+        await _onReset.Emit(GetSelf());
         Clock.Reset(InitialInstant);
 
         foreach (var hostedService in hostedServicesToStop)
@@ -101,8 +105,18 @@ public abstract class WebServiceTestsFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _onDisposal.Emit(WebService);
+        await _onDisposal.Emit(GetSelf());
         await WebService.DisposeAsync();
         await _containers.DisposeAsync();
+    }
+
+    public T GetSeedingResult<T>()
+    {
+        return (T)_seedingResults[typeof(T)];
+    }
+
+    internal void UpdateSeedingResult<T>(T data) where T : notnull
+    {
+        _seedingResults[typeof(T)] = data;
     }
 }

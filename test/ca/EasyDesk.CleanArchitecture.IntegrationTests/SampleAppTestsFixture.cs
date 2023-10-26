@@ -15,11 +15,11 @@ using Testcontainers.PostgreSql;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-public class SampleAppTestsFixture : WebServiceTestsFixture
+public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixture>
 {
     public const DbProvider DefaultDbProvider = DbProvider.PostgreSql;
 
-    private static readonly Dictionary<DbProvider, Action<WebServiceTestsFixtureBuilder>> _providerConfigs = new()
+    private static readonly Dictionary<DbProvider, Action<WebServiceTestsFixtureBuilder<SampleAppTestsFixture>>> _providerConfigs = new()
     {
         { DbProvider.SqlServer, ConfigureSqlServer },
         { DbProvider.PostgreSql, ConfigurePostgreSql },
@@ -29,9 +29,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
     {
     }
 
-    public SampleTestData TestData { get; } = new();
-
-    protected override void ConfigureFixture(WebServiceTestsFixtureBuilder builder)
+    protected override void ConfigureFixture(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
     {
         var provider = Environment.GetEnvironmentVariable("DB_PROVIDER")
             .AsOption()
@@ -39,18 +37,18 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .OrElse(DefaultDbProvider);
 
         builder
-            .SeedOnInitialization(() => new SampleSeeder(this), TestData)
+            .SeedOnInitialization(x => new SampleSeeder(x))
             .AddInMemoryRebus();
         ConfigureForDbProvider(provider, builder);
     }
 
-    private void ConfigureForDbProvider(DbProvider provider, WebServiceTestsFixtureBuilder builder)
+    private void ConfigureForDbProvider(DbProvider provider, WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
     {
         builder.WithConfiguration("DbProvider", provider.ToString());
         _providerConfigs[provider](builder);
     }
 
-    private static void ConfigureSqlServer(WebServiceTestsFixtureBuilder builder)
+    private static void ConfigureSqlServer(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
     {
         var container = new MsSqlBuilder()
             .WithUniqueName("sample-app-tests-sqlserver")
@@ -61,7 +59,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer");
     }
 
-    private static void ConfigurePostgreSql(WebServiceTestsFixtureBuilder builder)
+    private static void ConfigurePostgreSql(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
     {
         var container = new PostgreSqlBuilder()
             .WithUniqueName("sample-app-tests-postgres")

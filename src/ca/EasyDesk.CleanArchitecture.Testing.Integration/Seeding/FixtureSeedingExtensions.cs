@@ -1,28 +1,31 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
+using EasyDesk.Commons.Tasks;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 
 public static class FixtureSeedingExtensions
 {
-    public static WebServiceTestsFixtureBuilder SeedOnInitialization<T>(
-        this WebServiceTestsFixtureBuilder builder,
-        Func<ISeeder<T>> seederFactory,
-        T data)
+    public static WebServiceTestsFixtureBuilder<T> SeedOnInitialization<T>(
+        this WebServiceTestsFixtureBuilder<T> builder,
+        Func<T, WebServiceFixtureSeeder<T>> seederFactory) where T : WebServiceTestsFixture<T>
     {
-        return builder.OnInitialization(_ => Seed(seederFactory, data));
+        return builder.OnInitialization(Seed(seederFactory));
     }
 
-    public static WebServiceTestsFixtureBuilder SeedBeforeEachTest<T>(
-        this WebServiceTestsFixtureBuilder builder,
-        Func<ISeeder<T>> seederFactory,
-        T data)
+    public static WebServiceTestsFixtureBuilder<T> SeedBeforeEachTest<T>(
+        this WebServiceTestsFixtureBuilder<T> builder,
+        Func<T, WebServiceFixtureSeeder<T>> seederFactory) where T : WebServiceTestsFixture<T>
     {
-        return builder.BeforeEachTest(_ => Seed(seederFactory, data));
+        return builder.BeforeEachTest(Seed(seederFactory));
     }
 
-    private static async Task Seed<T>(Func<ISeeder<T>> seederFactory, T data)
+    private static AsyncAction<T> Seed<T>(Func<T, WebServiceFixtureSeeder<T>> seederFactory)
+         where T : WebServiceTestsFixture<T>
     {
-        await using var seeder = seederFactory();
-        await seeder.Seed(data);
+        return async fixture =>
+        {
+            await using var seeder = seederFactory(fixture);
+            await seeder.Seed();
+        };
     }
 }

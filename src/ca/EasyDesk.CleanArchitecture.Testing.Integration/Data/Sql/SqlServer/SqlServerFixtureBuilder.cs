@@ -7,11 +7,12 @@ using Testcontainers.MsSql;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 
-internal class SqlServerFixtureBuilder : AbstractSqlFixtureBuilder<MsSqlContainer>
+internal class SqlServerFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFixture, MsSqlContainer>
+    where TFixture : WebServiceTestsFixture<TFixture>
 {
     private readonly string _databaseName;
 
-    public SqlServerFixtureBuilder(WebServiceTestsFixtureBuilder builder, MsSqlContainer container, string databaseName)
+    public SqlServerFixtureBuilder(WebServiceTestsFixtureBuilder<TFixture> builder, MsSqlContainer container, string databaseName)
         : base(builder, container)
     {
         _databaseName = databaseName;

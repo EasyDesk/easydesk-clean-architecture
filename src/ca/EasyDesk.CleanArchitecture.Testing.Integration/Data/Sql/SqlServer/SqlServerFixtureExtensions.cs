@@ -5,11 +5,11 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 
 public static class SqlServerFixtureExtensions
 {
-    public static ISqlDatabaseFixtureBuilder AddSqlServerDatabase(
-        this WebServiceTestsFixtureBuilder builder,
+    public static ISqlDatabaseFixtureBuilder AddSqlServerDatabase<TFixture>(
+        this WebServiceTestsFixtureBuilder<TFixture> builder,
         MsSqlContainer container,
-        string databaseName)
+        string databaseName) where TFixture : WebServiceTestsFixture<TFixture>
     {
-        return builder.AddSqlDatabase(container, (b, c) => new SqlServerFixtureBuilder(b, c, databaseName));
+        return builder.AddSqlDatabase(container, (b, c) => new SqlServerFixtureBuilder<TFixture>(b, c, databaseName));
     }
 }

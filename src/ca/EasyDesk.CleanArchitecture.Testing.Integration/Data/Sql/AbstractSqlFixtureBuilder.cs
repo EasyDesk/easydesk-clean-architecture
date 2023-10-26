@@ -11,8 +11,9 @@ using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 
-internal abstract class AbstractSqlFixtureBuilder<T> : ISqlDatabaseFixtureBuilder
-    where T : IContainer
+internal abstract class AbstractSqlFixtureBuilder<TFixture, TContainer> : ISqlDatabaseFixtureBuilder
+    where TFixture : WebServiceTestsFixture<TFixture>
+    where TContainer : IContainer
 {
     private const string SchemaOutput = "SCHEMA";
     private const string TableOutput = "TABLE";
@@ -20,7 +21,7 @@ internal abstract class AbstractSqlFixtureBuilder<T> : ISqlDatabaseFixtureBuilde
 
     private Func<string, string> _connectionStringModifier = It;
 
-    public AbstractSqlFixtureBuilder(WebServiceTestsFixtureBuilder builder, T container)
+    public AbstractSqlFixtureBuilder(WebServiceTestsFixtureBuilder<TFixture> builder, TContainer container)
     {
         Builder = builder;
         Container = container;
@@ -28,9 +29,9 @@ internal abstract class AbstractSqlFixtureBuilder<T> : ISqlDatabaseFixtureBuilde
 
     protected abstract IDbAdapter Adapter { get; }
 
-    protected WebServiceTestsFixtureBuilder Builder { get; }
+    protected WebServiceTestsFixtureBuilder<TFixture> Builder { get; }
 
-    protected T Container { get; }
+    protected TContainer Container { get; }
 
     public ISqlDatabaseFixtureBuilder WithRespawn(Action<RespawnerOptionsBuilder> options)
     {

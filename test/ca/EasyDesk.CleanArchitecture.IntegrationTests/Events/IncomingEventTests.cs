@@ -18,7 +18,7 @@ public class IncomingEventTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -44,7 +44,7 @@ public class IncomingEventTests : SampleIntegrationTest
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
         var bus = NewBusEndpoint("pet-freedom-service");
-        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         await bus.Publish(new PetFreedomDayEvent());
         await Http.GetOwnedPets(_person!.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }

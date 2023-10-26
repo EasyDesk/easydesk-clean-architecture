@@ -29,9 +29,9 @@ public class AuditingTests : SampleIntegrationTest
 
     protected override async Task OnInitialization()
     {
-        _initialAudits = Fixture.TestData.OperationsRun;
+        _initialAudits = TestData.OperationsRun;
 
-        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();

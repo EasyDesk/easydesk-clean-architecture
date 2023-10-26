@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
@@ -9,4 +10,6 @@ public abstract class SampleIntegrationTest : WebServiceIntegrationTest<SampleAp
     protected SampleIntegrationTest(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
+
+    public SampleSeeder.Data TestData => Fixture.GetSeedingResult<SampleSeeder.Data>();
 }

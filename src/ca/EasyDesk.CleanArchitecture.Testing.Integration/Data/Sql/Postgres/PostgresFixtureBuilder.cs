@@ -7,9 +7,10 @@ using Testcontainers.PostgreSql;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
 
-internal class PostgresFixtureBuilder : AbstractSqlFixtureBuilder<PostgreSqlContainer>
+internal class PostgresFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFixture, PostgreSqlContainer>
+    where TFixture : WebServiceTestsFixture<TFixture>
 {
-    public PostgresFixtureBuilder(WebServiceTestsFixtureBuilder builder, PostgreSqlContainer container) : base(builder, container)
+    public PostgresFixtureBuilder(WebServiceTestsFixtureBuilder<TFixture> builder, PostgreSqlContainer container) : base(builder, container)
     {
     }
 

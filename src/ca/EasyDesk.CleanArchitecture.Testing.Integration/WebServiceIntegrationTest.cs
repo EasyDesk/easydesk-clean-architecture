@@ -5,7 +5,7 @@ using Xunit;
 namespace EasyDesk.CleanArchitecture.Testing.Integration;
 
 public abstract class WebServiceIntegrationTest<T> : WebServiceTestSession<T>, IAsyncLifetime
-    where T : WebServiceTestsFixture
+    where T : WebServiceTestsFixture<T>
 {
     protected WebServiceIntegrationTest(T fixture) : base(fixture)
     {

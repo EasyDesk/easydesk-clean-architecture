@@ -24,14 +24,14 @@ public class AddAdminTests : SampleIntegrationTest
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
         await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
-            SampleTestData.TestTenant,
+            SampleSeeder.Data.TestTenant,
             async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }
 
     [Fact]
     public async Task ShouldSucceed()
     {
-        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
@@ -57,11 +57,11 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReset_AfterTenantIsDeleted()
     {
-        TenantNavigator.MoveToTenant(SampleTestData.TestTenant);
+        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         await Http.AddAdmin().Send().EnsureSuccess();
 
-        await DefaultBusEndpoint.Send(new RemoveTenant(SampleTestData.TestTenant));
-        await DefaultBusEndpoint.Send(new CreateTenant(SampleTestData.TestTenant));
+        await DefaultBusEndpoint.Send(new RemoveTenant(SampleSeeder.Data.TestTenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(SampleSeeder.Data.TestTenant));
 
         await WaitForConditionOnRoles(r => !r.Contains(Roles.Admin));
     }
@@ -71,8 +71,8 @@ public class AddAdminTests : SampleIntegrationTest
     {
         await Http.AddAdmin().Send().EnsureSuccess();
 
-        await DefaultBusEndpoint.Send(new RemoveTenant(SampleTestData.TestTenant));
-        await DefaultBusEndpoint.Send(new CreateTenant(SampleTestData.TestTenant));
+        await DefaultBusEndpoint.Send(new RemoveTenant(SampleSeeder.Data.TestTenant));
+        await DefaultBusEndpoint.Send(new CreateTenant(SampleSeeder.Data.TestTenant));
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
     }
