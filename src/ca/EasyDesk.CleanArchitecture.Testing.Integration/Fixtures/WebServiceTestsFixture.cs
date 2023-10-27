@@ -1,17 +1,18 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
+using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.Commons.Observables;
+using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Testing;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 
-public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
+public abstract class WebServiceTestsFixture<TSelf> : ITestFixture
     where TSelf : WebServiceTestsFixture<TSelf>
 {
     public const string DefaultTestEnvironment = "IntegrationTest";
@@ -24,7 +25,6 @@ public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
     private readonly SimpleAsyncEvent<TSelf> _onReset = new();
     private readonly SimpleAsyncEvent<TSelf> _onDisposal = new();
     private readonly Instant _createdInstant = SystemClock.Instance.GetCurrentInstant();
-    private readonly Dictionary<Type, object> _seedingResults = new();
 
     protected WebServiceTestsFixture(Type entryPointMarker)
     {
@@ -37,6 +37,8 @@ public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
                 services.RemoveAll<IClock>();
                 services.AddSingleton<IClock>(Clock);
             });
+
+        SetupFixture();
     }
 
     private ITestWebService? _webService;
@@ -47,11 +49,7 @@ public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
 
     protected virtual Instant InitialInstant => _createdInstant;
 
-    protected abstract void ConfigureFixture(WebServiceTestsFixtureBuilder<TSelf> builder);
-
-    private ITestWebService StartService() => _webServiceBuilder.Build();
-
-    public async Task InitializeAsync()
+    private void SetupFixture()
     {
         var builder = new WebServiceTestsFixtureBuilder<TSelf>(
             webServiceBuilder: _webServiceBuilder,
@@ -63,23 +61,35 @@ public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
             onDisposal: _onDisposal);
 
         ConfigureFixture(builder);
+    }
 
+    protected abstract void ConfigureFixture(WebServiceTestsFixtureBuilder<TSelf> builder);
+
+    private ITestWebService StartService() => _webServiceBuilder.Build();
+
+    public async Task InitializeAsync()
+    {
+        await StartFixture();
+        await InitializeInternal();
+    }
+
+    internal virtual async Task InitializeInternal() => await _onInitialization.Emit(GetSelf());
+
+    private async Task StartFixture()
+    {
         await _containers.StartAll();
         _webService = StartService();
-        await _onInitialization.Emit(GetSelf());
     }
 
     private TSelf GetSelf() => (TSelf)this;
 
-    public async Task BeforeTest()
-    {
-        await _beforeEachTest.Emit(GetSelf());
-    }
+    public async Task BeforeTest() => await BeforeTestInternal();
 
-    public async Task AfterTest()
-    {
-        await _afterEachTest.Emit(GetSelf());
-    }
+    internal virtual async Task BeforeTestInternal() => await _beforeEachTest.Emit(GetSelf());
+
+    public async Task AfterTest() => await AfterTestInternal();
+
+    internal virtual async Task AfterTestInternal() => await _afterEachTest.Emit(GetSelf());
 
     public async Task Reset()
     {
@@ -94,7 +104,8 @@ public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
             await hostedService.Pause(CancellationToken.None);
         }
 
-        await _onReset.Emit(GetSelf());
+        await ResetInternal();
+
         Clock.Reset(InitialInstant);
 
         foreach (var hostedService in hostedServicesToStop)
@@ -103,20 +114,77 @@ public abstract class WebServiceTestsFixture<TSelf> : IAsyncLifetime
         }
     }
 
+    internal virtual async Task ResetInternal() => await _onReset.Emit(GetSelf());
+
     public async Task DisposeAsync()
     {
-        await _onDisposal.Emit(GetSelf());
+        await DisposeInternal();
         await WebService.DisposeAsync();
         await _containers.DisposeAsync();
     }
 
-    public T GetSeedingResult<T>()
-    {
-        return (T)_seedingResults[typeof(T)];
-    }
+    internal virtual async Task DisposeInternal() => await _onDisposal.Emit(GetSelf());
 
-    internal void UpdateSeedingResult<T>(T data) where T : notnull
+    public abstract class WithSeeding<TSeed> : WebServiceTestsFixture<TSelf>
     {
-        _seedingResults[typeof(T)] = data;
+        private Option<TSeed> _currentSeed = None;
+
+        private WithSeeding(Type entryPointMarker) : base(entryPointMarker)
+        {
+        }
+
+        public TSeed Seed => _currentSeed.OrElseThrow(() => new InvalidOperationException("Accessing seed outside of its lifetime."));
+
+        private async Task ApplySeed()
+        {
+            await using var seeder = CreateSeeder(GetSelf());
+            var seed = await seeder.Seed();
+            _currentSeed = Some(seed);
+        }
+
+        private void ResetSeed()
+        {
+            _currentSeed = None;
+        }
+
+        protected abstract WebServiceFixtureSeeder<TSelf, TSeed> CreateSeeder(TSelf fixture);
+
+        public abstract class FollowingTestLifetime : WithSeeding<TSeed>
+        {
+            protected FollowingTestLifetime(Type entryPointMarker) : base(entryPointMarker)
+            {
+            }
+
+            internal override async Task BeforeTestInternal()
+            {
+                await ApplySeed();
+                await base.BeforeTestInternal();
+            }
+
+            internal override async Task ResetInternal()
+            {
+                await base.ResetInternal();
+                ResetSeed();
+            }
+        }
+
+        public abstract class FollowingFixtureLifetime : WithSeeding<TSeed>
+        {
+            protected FollowingFixtureLifetime(Type entryPointMarker) : base(entryPointMarker)
+            {
+            }
+
+            internal override async Task InitializeInternal()
+            {
+                await ApplySeed();
+                await base.InitializeInternal();
+            }
+
+            internal override async Task DisposeInternal()
+            {
+                await base.DisposeInternal();
+                ResetSeed();
+            }
+        }
     }
 }

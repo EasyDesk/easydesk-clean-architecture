@@ -16,6 +16,8 @@ using Testcontainers.PostgreSql;
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
 public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixture>
+    .WithSeeding<SampleSeeder.Data>
+    .FollowingFixtureLifetime
 {
     public const DbProvider DefaultDbProvider = DbProvider.PostgreSql;
 
@@ -31,22 +33,28 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
 
     protected override void ConfigureFixture(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
     {
+        ConfigureDbProvider(builder);
+
+        builder.AddInMemoryRebus();
+    }
+
+    private void ConfigureDbProvider(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
+    {
         var provider = Environment.GetEnvironmentVariable("DB_PROVIDER")
             .AsOption()
             .Map(p => Enums.ParseOption<DbProvider>(p).OrElseThrow(() => new Exception("Invalid DB provider")))
             .OrElse(DefaultDbProvider);
 
-        builder
-            .SeedOnInitialization(x => new SampleSeeder(x))
-            .AddInMemoryRebus();
-        ConfigureForDbProvider(provider, builder);
-    }
-
-    private void ConfigureForDbProvider(DbProvider provider, WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
-    {
         builder.WithConfiguration("DbProvider", provider.ToString());
         _providerConfigs[provider](builder);
     }
+
+    protected override WebServiceFixtureSeeder<SampleAppTestsFixture, SampleSeeder.Data> CreateSeeder(SampleAppTestsFixture fixture) =>
+        new SampleSeeder(fixture);
+
+    private static ISqlDatabaseFixtureBuilder ConfigureDatabaseDefaults(ISqlDatabaseFixtureBuilder builder) => builder
+        ////.WithRespawn(x => x.ExcludeSchemas(EfCoreUtils.MigrationsSchema));
+        .WithTableCopies();
 
     private static void ConfigureSqlServer(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
     {
@@ -72,8 +80,4 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
             .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true }.ConnectionString)
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql");
     }
-
-    private static ISqlDatabaseFixtureBuilder ConfigureDatabaseDefaults(ISqlDatabaseFixtureBuilder builder) => builder
-        ////.WithRespawn(x => x.ExcludeSchemas(EfCoreUtils.MigrationsSchema));
-        .WithTableCopies();
 }

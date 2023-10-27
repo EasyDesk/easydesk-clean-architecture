@@ -8,7 +8,7 @@ public static class SqlServerFixtureExtensions
     public static ISqlDatabaseFixtureBuilder AddSqlServerDatabase<TFixture>(
         this WebServiceTestsFixtureBuilder<TFixture> builder,
         MsSqlContainer container,
-        string databaseName) where TFixture : WebServiceTestsFixture<TFixture>
+        string databaseName) where TFixture : ITestFixture
     {
         return builder.AddSqlDatabase(container, (b, c) => new SqlServerFixtureBuilder<TFixture>(b, c, databaseName));
     }

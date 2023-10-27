@@ -16,7 +16,7 @@ using NodaTime.Testing;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Sessions;
 
 public abstract class WebServiceTestSession<T> : IAsyncDisposable
-    where T : WebServiceTestsFixture<T>
+    where T : ITestFixture
 {
     private readonly IList<ITestBusEndpoint> _busEndpoints = new List<ITestBusEndpoint>();
     private Option<Agent> _currentAgent;

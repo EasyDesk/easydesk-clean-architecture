@@ -6,7 +6,7 @@ using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 
-public class SampleSeeder : WebServiceFixtureSeeder<SampleAppTestsFixture>.WithData<SampleSeeder.Data>
+public class SampleSeeder : WebServiceFixtureSeeder<SampleAppTestsFixture, SampleSeeder.Data>
 {
     public record Data(int OperationsRun)
     {
@@ -17,7 +17,7 @@ public class SampleSeeder : WebServiceFixtureSeeder<SampleAppTestsFixture>.WithD
     {
     }
 
-    protected override async Task<Data> SeedWithData()
+    public override async Task<Data> Seed()
     {
         var operationsRun = 0;
 

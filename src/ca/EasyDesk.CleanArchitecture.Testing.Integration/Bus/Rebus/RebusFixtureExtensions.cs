@@ -11,7 +11,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 public static class RebusFixtureExtensions
 {
     public static WebServiceTestsFixtureBuilder<T> AddInMemoryRebus<T>(this WebServiceTestsFixtureBuilder<T> builder)
-        where T : WebServiceTestsFixture<T>
+        where T : ITestFixture
     {
         var network = new InMemNetwork();
         var subscriberStore = new InMemorySubscriberStore();

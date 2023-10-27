@@ -12,7 +12,7 @@ using System.Data.Common;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 
 internal abstract class AbstractSqlFixtureBuilder<TFixture, TContainer> : ISqlDatabaseFixtureBuilder
-    where TFixture : WebServiceTestsFixture<TFixture>
+    where TFixture : ITestFixture
     where TContainer : IContainer
 {
     private const string SchemaOutput = "SCHEMA";

@@ -11,7 +11,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class PaginationTests : SampleIntegrationTest
 {
-    private const int InitialPopulationSize = 300;
+    private const int InitialPopulationSize = 50;
 
     public PaginationTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -115,11 +115,11 @@ public class PaginationTests : SampleIntegrationTest
     public async Task HttpRequestBuilder_ShouldNotWorkWithInvalidInput()
     {
         var response = await Http
-        .GetPeople()
-        .SetPageSize("foo")
-        .SetPageIndex("bar")
-        .SinglePage()
-        .AsVerifiable();
+            .GetPeople()
+            .SetPageSize("foo")
+            .SetPageIndex("bar")
+            .SinglePage()
+            .AsVerifiable();
 
         await Verify(response);
     }

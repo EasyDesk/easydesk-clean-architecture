@@ -11,5 +11,5 @@ public abstract class SampleIntegrationTest : WebServiceIntegrationTest<SampleAp
     {
     }
 
-    public SampleSeeder.Data TestData => Fixture.GetSeedingResult<SampleSeeder.Data>();
+    public SampleSeeder.Data TestData => Fixture.Seed;
 }

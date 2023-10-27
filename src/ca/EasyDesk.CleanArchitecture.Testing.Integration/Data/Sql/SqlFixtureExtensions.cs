@@ -9,7 +9,7 @@ public static class SqlFixtureExtensions
         this WebServiceTestsFixtureBuilder<TFixture> builder,
         TContainer container,
         Func<WebServiceTestsFixtureBuilder<TFixture>, TContainer, ISqlDatabaseFixtureBuilder> sqlFixtureBuilder)
-        where TFixture : WebServiceTestsFixture<TFixture>
+        where TFixture : ITestFixture
         where TContainer : IContainer
     {
         builder.ConfigureContainers(c => c.RegisterTestContainer(container));

@@ -6,7 +6,7 @@ using EasyDesk.Commons.Tasks;
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 
 public sealed class WebServiceTestsFixtureBuilder<T>
-    where T : WebServiceTestsFixture<T>
+    where T : ITestFixture
 {
     private readonly TestWebServiceBuilder _webServiceBuilder;
     private readonly ContainersCollection _containers;
