@@ -29,7 +29,7 @@ public class CancellationTests : SampleIntegrationTest
                 .AsVerifiable();
         });
 
-        await DefaultBusEndpoint.FailIfMessageIsReceivedWithin<CancellationFailed>(waitTime + Duration.FromSeconds(10));
+        await DefaultBusEndpoint.FailIfMessageIsReceived<CancellationFailed>(waitTime + Duration.FromSeconds(10));
     }
 
     [Fact]

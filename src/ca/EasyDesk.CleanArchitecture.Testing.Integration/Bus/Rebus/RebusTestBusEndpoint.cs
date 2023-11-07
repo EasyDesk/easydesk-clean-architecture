@@ -22,7 +22,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
 public sealed class RebusTestBusEndpoint : ITestBusEndpoint
 {
-    private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
+    private static readonly Duration _defaultTimeout = Duration.FromSeconds(5);
 
     private readonly IBus _bus;
     private readonly ISet<Type> _subscriptions = new HashSet<Type>();
@@ -128,7 +128,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         }
     }
 
-    public async Task FailIfMessageIsReceivedWithin<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
+    public async Task FailIfMessageIsReceived<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
     {
         IMessage message;
         IDictionary<string, string> headers;

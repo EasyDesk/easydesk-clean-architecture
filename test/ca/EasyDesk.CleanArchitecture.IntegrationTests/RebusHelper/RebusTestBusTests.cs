@@ -4,11 +4,13 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using EasyDesk.Testing.MatrixExpansion;
 using NodaTime;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
+using Shouldly;
 using Testcontainers.RabbitMq;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.RebusHelper;
@@ -94,7 +96,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
         await _sender.Publish(ev);
 
-        await _receiver.FailIfMessageIsReceivedWithin(ev, _defaultTimeout);
+        await _receiver.FailIfMessageIsReceived(ev, _defaultTimeout);
     }
 
     [Fact]
@@ -104,7 +106,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
         await _sender.Send(command);
 
-        await _receiver.FailIfMessageIsReceivedWithin<Command>(cmd => cmd.Value != 1, _defaultTimeout);
+        await _receiver.FailIfMessageIsReceived<Command>(cmd => cmd.Value != 1, _defaultTimeout);
     }
 
     [Fact]
@@ -115,7 +117,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         await _sender.Send(command);
 
         await _receiver.WaitForMessageOrFail(command, _defaultTimeout);
-        await _receiver.FailIfMessageIsReceivedWithin(command, Duration.Zero);
+        await _receiver.FailIfMessageIsReceived(command, Duration.Zero);
     }
 
     [Fact]
@@ -125,9 +127,9 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
         await _sender.Send(command);
 
-        await _receiver.FailIfMessageIsReceivedWithin<Command>(_ => false, _defaultTimeout);
+        await _receiver.FailIfMessageIsReceived<Command>(_ => false, _defaultTimeout);
         await _receiver.WaitForMessageOrFail(command, Duration.Zero);
-        await _receiver.FailIfMessageIsReceivedWithin(command, Duration.Zero);
+        await _receiver.FailIfMessageIsReceived(command, Duration.Zero);
     }
 
     [Fact]
@@ -139,6 +141,17 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         Defer(command, delay);
 
         await _receiver.WaitForMessageAfterDelayOrFail(command, delay, _defaultTimeout);
+    }
+
+    [Fact]
+    public async Task MultipleCommandsShouldBeReceivedUntilQuiet()
+    {
+        var commands = new Command[] { new(1), new(2), new(3) };
+
+        await Task.WhenAll(commands.Select(e => _sender.Send(e)));
+
+        var received = await _receiver.WaitForMessagesUntilQuiet<Command>(_defaultTimeout).ToEnumerableAsync();
+        received.ShouldBe(commands, ignoreOrder: true);
     }
 
     public static IEnumerable<object?[]> TenantActions()
@@ -169,7 +182,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         }
         else
         {
-            await _receiver.FailIfMessageIsReceivedWithin(command, _defaultTimeout);
+            await _receiver.FailIfMessageIsReceived(command, _defaultTimeout);
         }
     }
 
@@ -194,7 +207,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         }
         else
         {
-            await _receiver.FailIfMessageIsReceivedWithin(ev, _defaultTimeout);
+            await _receiver.FailIfMessageIsReceived(ev, _defaultTimeout);
         }
     }
 

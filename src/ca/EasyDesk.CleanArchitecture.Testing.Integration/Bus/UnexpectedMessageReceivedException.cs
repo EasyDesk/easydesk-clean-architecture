@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.Commons.Collections;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 
 public sealed class UnexpectedMessageReceivedException : Exception
 {

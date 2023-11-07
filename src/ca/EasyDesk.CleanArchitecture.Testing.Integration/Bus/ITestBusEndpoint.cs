@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+using EasyDesk.Commons.Options;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus;
@@ -17,7 +18,7 @@ public interface ITestBusEndpoint : IAsyncDisposable
 
     Task<T> WaitForMessageOrFail<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage;
 
-    Task FailIfMessageIsReceivedWithin<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage;
+    Task FailIfMessageIsReceived<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage;
 
     public async Task<T> WaitForMessageOrFail<T>(T message, Duration? timeout = null) where T : IMessage =>
         await WaitForMessageOrFail<T>(x => x.Equals(message), timeout);
@@ -25,11 +26,11 @@ public interface ITestBusEndpoint : IAsyncDisposable
     public async Task<T> WaitForMessageOrFail<T>(Duration? timeout = null) where T : IMessage =>
         await WaitForMessageOrFail<T>(_ => true, timeout);
 
-    public async Task FailIfMessageIsReceivedWithin<T>(T message, Duration? timeout = null) where T : IMessage =>
-        await FailIfMessageIsReceivedWithin<T>(m => m.Equals(message), timeout);
+    public async Task FailIfMessageIsReceived<T>(T message, Duration? timeout = null) where T : IMessage =>
+        await FailIfMessageIsReceived<T>(m => m.Equals(message), timeout);
 
-    public async Task FailIfMessageIsReceivedWithin<T>(Duration? timeout = null) where T : IMessage =>
-        await FailIfMessageIsReceivedWithin<T>(_ => true, timeout);
+    public async Task FailIfMessageIsReceived<T>(Duration? timeout = null) where T : IMessage =>
+        await FailIfMessageIsReceived<T>(_ => true, timeout);
 
     public async Task<T> WaitForMessageAfterDelayOrFail<T>(T message, Duration delay, Duration? timeout = null) where T : IMessage =>
         await WaitForMessageAfterDelayOrFail<T>(m => m.Equals(message), delay, timeout);
@@ -39,7 +40,36 @@ public interface ITestBusEndpoint : IAsyncDisposable
 
     public async Task<T> WaitForMessageAfterDelayOrFail<T>(Func<T, bool> predicate, Duration delay, Duration? timeout = null) where T : IMessage
     {
-        await FailIfMessageIsReceivedWithin(predicate, delay);
+        await FailIfMessageIsReceived(predicate, delay);
         return await WaitForMessageOrFail(predicate, timeout);
+    }
+
+    public IAsyncEnumerable<T> WaitForMessagesUntilQuiet<T>(Duration? timeout = null) where T : IMessage =>
+        WaitForMessagesUntilQuiet<T>(_ => true, timeout);
+
+    public async IAsyncEnumerable<T> WaitForMessagesUntilQuiet<T>(Func<T, bool> predicate, Duration? timeout = null) where T : IMessage
+    {
+        while (true)
+        {
+            Option<T> message;
+
+            try
+            {
+                message = Some(await WaitForMessageOrFail(predicate, timeout));
+            }
+            catch (MessageNotReceivedWithinTimeoutException)
+            {
+                message = None;
+            }
+
+            if (message.IsPresent)
+            {
+                yield return message.Value;
+            }
+            else
+            {
+                yield break;
+            }
+        }
     }
 }

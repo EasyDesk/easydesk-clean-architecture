@@ -75,7 +75,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureFailure();
 
-        await DefaultBusEndpoint.FailIfMessageIsReceivedWithin<PersonDeleted>();
+        await DefaultBusEndpoint.FailIfMessageIsReceived<PersonDeleted>();
     }
 
     [Fact]
