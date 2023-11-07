@@ -1,0 +1,30 @@
+﻿{
+  IsValid: false,
+  Errors: [
+    {
+      PropertyName: Values,
+      ErrorMessage: 'Values' contains duplicate values for property 'Length'.,
+      AttemptedValue: [
+        A,
+        AA,
+        BB
+      ],
+      CustomState: null,
+      Severity: Error,
+      ErrorCode: NotContainingDuplicatesFor,
+      FormattedMessagePlaceholderValues: {
+        DuplicateValue: 2,
+        PropertyName: Values,
+        PropertyPath: Values,
+        PropertyValue: [
+          A,
+          AA,
+          BB
+        ]
+      }
+    }
+  ],
+  RuleSetsExecuted: [
+    default
+  ]
+}
