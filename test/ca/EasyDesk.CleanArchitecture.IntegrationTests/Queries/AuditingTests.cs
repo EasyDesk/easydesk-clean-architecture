@@ -62,9 +62,7 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReturnInitialAudits()
     {
-        var response = await Http.GetAudits().Send().AsVerifiableEnumerable();
-
-        await Verify(response);
+        await Http.GetAudits().Send().Verify();
     }
 
     [Fact]
@@ -78,9 +76,7 @@ public class AuditingTests : SampleIntegrationTest
             tenantId,
             log => log.Audit(new AuditQuery()).GetAll().Map(audits => audits.Any()));
 
-        var response = await Http.GetAudits().Tenant(tenantId).Send().AsVerifiableEnumerable();
-
-        await Verify(response);
+        await Http.GetAudits().Tenant(tenantId).Send().Verify();
     }
 
     [Fact]
@@ -90,21 +86,17 @@ public class AuditingTests : SampleIntegrationTest
 
         await WaitUntilAuditLogHasMoreRecords(1);
 
-        var response = await Http.GetAudits().Send().AsVerifiableEnumerable();
-
-        await Verify(response);
+        await Http.GetAudits().Send().Verify();
     }
 
     [Fact]
     public async Task ShouldFilterByIdentity()
     {
-        var response = await Http
+        await Http
             .GetAudits()
             .WithQuery("identity", TestAgents.Admin.MainIdentity().Id)
             .Send()
-            .AsVerifiableEnumerable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -147,25 +139,21 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFilterByName()
     {
-        var response = await Http
+        await Http
             .GetAudits()
             .WithQuery("name", nameof(CreatePerson))
             .Send()
-            .AsVerifiableEnumerable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldFilterByType()
     {
-        var response = await Http
+        await Http
             .GetAudits()
             .WithQuery("type", AuditRecordType.CommandRequest.ToString())
             .Send()
-            .AsVerifiableEnumerable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -187,13 +175,11 @@ public class AuditingTests : SampleIntegrationTest
 
         await WaitUntilAuditLogHasMoreRecords(4);
 
-        var response = await Http
+        await Http
             .GetAudits()
             .WithQuery("from", from.ToString())
             .WithQuery("to", to.ToString())
             .Send()
-            .AsVerifiableEnumerable();
-
-        await Verify(response);
+            .Verify();
     }
 }

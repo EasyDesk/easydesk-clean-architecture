@@ -10,15 +10,18 @@ public static partial class StaticImports
 
     public static async Task<R> Let<T, R>(this T self, AsyncFunc<T, R> function) => await function(self);
 
-    public static T Also<T>(this T self, Action<T> action)
+    public static T Also<T>(this T self, Action<T>? action = null)
     {
-        action(self);
+        action?.Invoke(self);
         return self;
     }
 
-    public static async Task<T> Also<T>(this T self, AsyncAction<T> action)
+    public static async Task<T> Also<T>(this T self, AsyncAction<T>? action = null)
     {
-        await action(self);
+        if (action is not null)
+        {
+            await action(self);
+        }
         return self;
     }
 

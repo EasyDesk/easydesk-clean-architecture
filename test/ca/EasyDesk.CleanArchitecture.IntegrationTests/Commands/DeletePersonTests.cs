@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
@@ -49,21 +50,17 @@ public class DeletePersonTests : SampleIntegrationTest
     {
         var person = await CreateTestPerson();
 
-        var response = await DeletePerson(person.Id)
+        await DeletePerson(person.Id)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldFailIfThePersonDoesNotExist()
     {
-        var response = await DeletePerson(Guid.Parse("d9dac153-39d9-4128-89db-fc854ac4b96e"))
+        await DeletePerson(Guid.Parse("d9dac153-39d9-4128-89db-fc854ac4b96e"))
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -100,12 +97,10 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .GetPerson(person.Id)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -132,11 +127,9 @@ public class DeletePersonTests : SampleIntegrationTest
     {
         var person = await CreateTestPerson();
 
-        var response = await DeletePerson(person.Id)
+        await DeletePerson(person.Id)
             .AuthenticateAs(TestAgents.OtherUser)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 }

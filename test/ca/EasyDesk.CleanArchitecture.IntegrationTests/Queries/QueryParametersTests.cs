@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
@@ -11,22 +12,18 @@ public class QueryParametersTests : SampleIntegrationTest
     [Fact]
     public async Task OptionInQuery_ShouldBeCorrectlyParsed_WhenEmpty()
     {
-        var response = Http
+        await Http
             .GetOptionInQuery(None)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task OptionInQuery_ShouldBeCorrectlyParsed_WhenSome()
     {
-        var response = Http
+        await Http
             .GetOptionInQuery(Some("Hello World!"))
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 }

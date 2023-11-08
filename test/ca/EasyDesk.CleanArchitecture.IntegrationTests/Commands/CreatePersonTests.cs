@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
@@ -46,11 +47,9 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldSucceed()
     {
-        var response = await CreatePerson()
+        await CreatePerson()
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -61,22 +60,18 @@ public class CreatePersonTests : SampleIntegrationTest
             .AsData();
         person.Approved.ShouldBeFalse();
 
-        var response = await GetPerson(person.Id)
+        await GetPerson(person.Id)
             .PollUntil(p => p.Approved, interval: Duration.FromSeconds(1))
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldFailWithEmptyAddress()
     {
-        var response = await Http
+        await Http
             .CreatePerson(_body with { Residence = AddressDto.Create(string.Empty) })
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -86,11 +81,9 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        var response = await GetPerson(person.Id)
+        await GetPerson(person.Id)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -132,12 +125,10 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        var response = await GetPerson(person.Id)
+        await GetPerson(person.Id)
             .Tenant(otherTenant)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -149,12 +140,10 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        var response = await GetPerson(person.Id)
+        await GetPerson(person.Id)
             .Headers(h => h.Replace(CommonTenantReaders.TenantIdHttpHeader, otherTenant))
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -166,34 +155,28 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        var response = await GetPerson(person.Id)
+        await GetPerson(person.Id)
             .Tenant(otherTenant)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldFailIfNoTenantIsSpecified()
     {
-        var response = await CreatePerson()
+        await CreatePerson()
             .NoTenant()
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldFailIfAnonymous()
     {
-        var response = await CreatePerson()
+        await CreatePerson()
             .NoAuthentication()
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -242,12 +225,10 @@ public class CreatePersonTests : SampleIntegrationTest
     {
         var person = await CreatePerson().Send().AsData();
 
-        var response = await Http
+        await Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
-            .AsVerifiableEnumerable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -263,12 +244,10 @@ public class CreatePersonTests : SampleIntegrationTest
             await Http.CreatePerson(body).Send().EnsureSuccess();
         }
 
-        var response = await Http
+        await Http
             .GetPeople()
             .Send()
-            .AsVerifiableEnumerable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -288,12 +267,10 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFailIfUnauthorized()
     {
-        var response = await CreatePerson()
+        await CreatePerson()
             .AuthenticateAs(TestAgents.OtherUser)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     public static IEnumerable<object[]> WrongAddresses()
@@ -316,11 +293,8 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task ShouldFail_WithInvalidResidenceAddresses(AddressDto addressDto, string streetNameProblem, string streetTypeProblem, string streetNumberProblem)
     {
         var body = _body with { Residence = addressDto };
-        var response = await Http.CreatePerson(body)
+        await Http.CreatePerson(body)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response)
-            .UseParameters(null, streetNameProblem, streetTypeProblem, streetNumberProblem);
+            .Verify(x => x.UseParameters(null, streetNameProblem, streetTypeProblem, streetNumberProblem));
     }
 }

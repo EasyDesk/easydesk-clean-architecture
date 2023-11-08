@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
@@ -52,12 +53,10 @@ public class CreatePetTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        var response = await Http
+        await Http
             .CreatePet(person.Id, new(Nickname))
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     public IEnumerable<PetInfoDto> PetGenerator(long count) =>
@@ -101,12 +100,10 @@ public class CreatePetTests : SampleIntegrationTest
 
         response.Pets.ShouldBe(BulkQuantity);
 
-        var pets = await Http
+        await Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
-            .AsVerifiableEnumerable();
-
-        await Verify(pets);
+            .Verify();
     }
 
     [Fact]
@@ -129,12 +126,10 @@ public class CreatePetTests : SampleIntegrationTest
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .CreatePets(person.Id, new(PetGenerator(0)))
             .Send(timeout)
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -151,13 +146,11 @@ public class CreatePetTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        var response = await Http
+        await Http
             .CreatePet(person.Id, new(Nickname))
             .AuthenticateAs(TestAgents.OtherUser)
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -189,12 +182,10 @@ public class CreatePetTests : SampleIntegrationTest
 
         response.Pets.ShouldBe(BulkQuantity);
 
-        var pets = await Http
+        await Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
-            .AsVerifiableEnumerable();
-
-        await Verify(pets);
+            .Verify();
     }
 
     [Fact]
@@ -217,12 +208,10 @@ public class CreatePetTests : SampleIntegrationTest
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(0))
             .Send(timeout)
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -245,12 +234,10 @@ public class CreatePetTests : SampleIntegrationTest
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(PetController.MaxFileSize / 4))
             .Send(timeout)
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -273,12 +260,10 @@ public class CreatePetTests : SampleIntegrationTest
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(20).Replace("Nickname", "Nick;Name"))
             .Send(timeout)
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -301,13 +286,11 @@ public class CreatePetTests : SampleIntegrationTest
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(20).Replace("Nickname", "Nick;Name"))
             .WithQuery("greedy", true.ToString())
             .Send(timeout)
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -378,9 +361,10 @@ public class CreatePetTests : SampleIntegrationTest
     [Fact]
     public async Task BulkCreatePets_ShouldNotBeInProgressByDefault()
     {
-        var response = await Http.GetCreatePetsStatus().Send().AsVerifiable();
-
-        await Verify(response);
+        await Http
+            .GetCreatePetsStatus()
+            .Send()
+            .Verify();
     }
 
     [Fact]
@@ -403,12 +387,10 @@ public class CreatePetTests : SampleIntegrationTest
             .Send(timeout)
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .GetCreatePetsStatus()
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 
     [Fact]
@@ -436,11 +418,9 @@ public class CreatePetTests : SampleIntegrationTest
             .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
             .EnsureSuccess();
 
-        var response = await Http
+        await Http
             .GetCreatePetsStatus()
             .Send()
-            .AsVerifiable();
-
-        await Verify(response);
+            .Verify();
     }
 }

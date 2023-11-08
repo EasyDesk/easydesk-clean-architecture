@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
@@ -42,5 +43,12 @@ public static class HttpPageSequenceWrapperExtensions
             result.AddRange(await page.AsData());
         }
         return result;
+    }
+
+    public static async Task<IEnumerable<T>> Verify<T>(this HttpPageSequenceWrapper<IEnumerable<T>> wrapper, Action<SettingsTask>? configureVerifySettings = null, [CallerFilePath] string sourceFile = "")
+    {
+        var response = await wrapper.AsVerifiableEnumerable();
+        await Verifier.Verify(response, sourceFile: sourceFile).Also(configureVerifySettings);
+        return response;
     }
 }
