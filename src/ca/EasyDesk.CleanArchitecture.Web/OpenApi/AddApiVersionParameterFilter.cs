@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Versioning;
-using EasyDesk.CleanArchitecture.Web.Versioning;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -28,7 +27,7 @@ internal class AddApiVersionParameterFilter : IOperationFilter
             {
                 ReadOnly = true,
                 Type = "string",
-                Default = new OpenApiString(version.ToString())
+                Default = new OpenApiString(version.ToStringWithoutV())
             }
         });
     }
