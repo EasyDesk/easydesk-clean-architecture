@@ -16,7 +16,7 @@ public class SagasModule : AppModule
     {
         var configureSagaArgs = new[] { services };
         new AssemblyScanner()
-            .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application))
+            .FromAssemblies(app.Assemblies)
             .SubtypesOrImplementationsOf(typeof(ISagaController<,>))
             .NonAbstract()
             .FindTypes()

@@ -8,6 +8,7 @@ using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
+using EasyDesk.Commons.Options;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -18,6 +19,14 @@ namespace EasyDesk.CleanArchitecture.Web;
 
 public static partial class Extensions
 {
+    private static readonly string[] _layerNames = new[]
+    {
+        "Web",
+        "Infrastructure",
+        "Application",
+        "Domain",
+    };
+
     /// <summary>
     /// Configures the <see cref="WebApplicationBuilder"/> to use the clean architecture framework.
     /// Below the list of modules added by default using this method:
@@ -44,8 +53,10 @@ public static partial class Extensions
         var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name ?? throw new InvalidOperationException("Calling assembly name not found.");
         var match = WebAssemblyRegex().Match(callingAssemblyName);
         var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
+        var assemblies = _layerNames.SelectMany(layer => LoadAssemblyIfPresent($"{assemblyPrefix}.{layer}"));
 
         var appBuilder = new AppBuilder(assemblyPrefix)
+            .WithAssemblies(assemblies)
             .AddControllers(builder.Environment)
             .AddJsonSerialization()
             .AddDomainLayer()
@@ -62,6 +73,18 @@ public static partial class Extensions
         appDescription.ConfigureServices(builder.Services);
 
         return appDescription;
+    }
+
+    private static Option<Assembly> LoadAssemblyIfPresent(string name)
+    {
+        try
+        {
+            return Some(Assembly.Load(name));
+        }
+        catch
+        {
+            return None;
+        }
     }
 
     [GeneratedRegex("^(.+)\\.Web$")]

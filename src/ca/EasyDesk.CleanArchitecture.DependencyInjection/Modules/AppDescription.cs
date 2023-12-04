@@ -3,35 +3,26 @@ using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Immutable;
 using System.Reflection;
-using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public sealed class AppDescription
 {
-    private readonly string _assemblyPrefix;
     private readonly ModulesCollection _modules;
-    private IImmutableDictionary<CleanArchitectureLayer, IImmutableSet<Assembly>> _layers;
 
     public AppDescription(
         string name,
-        string assemblyPrefix,
         ModulesCollection modules,
-        IImmutableDictionary<CleanArchitectureLayer, IImmutableSet<Assembly>> layers)
+        IImmutableSet<Assembly> assemblies)
     {
         Name = name;
-        _assemblyPrefix = assemblyPrefix;
         _modules = modules;
-        _layers = layers;
+        Assemblies = assemblies;
     }
 
     public string Name { get; }
 
-    public IEnumerable<Assembly> GetLayerAssemblies(CleanArchitectureLayer layer)
-    {
-        _layers = _layers.Update(layer, It, () => Set(Assembly.Load($"{_assemblyPrefix}.{layer}")));
-        return _layers[layer];
-    }
+    public IImmutableSet<Assembly> Assemblies { get; }
 
     public Option<T> GetModule<T>() where T : AppModule =>
         _modules.GetModule<T>();

@@ -58,9 +58,7 @@ public class RebusMessagingModule : AppModule
         });
         app.RequireModule<JsonModule>();
 
-        var assembliesToScan = app
-            .GetLayerAssemblies(CleanArchitectureLayer.Application)
-            .Append(typeof(SagasModule).Assembly);
+        var assembliesToScan = app.Assemblies.Append(typeof(SagasModule).Assembly);
         Options.AddKnownMessageTypesFromAssemblies(assembliesToScan);
     }
 

@@ -24,7 +24,7 @@ public class ErrorManagementModule : AppModule
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         var errorTypes = new AssemblyScanner()
-            .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application))
+            .FromAssemblies(app.Assemblies)
             .SubtypesOrImplementationsOf(typeof(IMapFromDomainError<,>))
             .SubtypesOrImplementationsOf<ApplicationError>()
             .NonGeneric()

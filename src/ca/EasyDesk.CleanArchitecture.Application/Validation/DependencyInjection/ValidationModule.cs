@@ -17,13 +17,13 @@ public class ValidationModule : AppModule
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         ValidatorOptions.Global.LanguageManager.Enabled = false;
-        services.AddValidatorsFromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application));
+        services.AddValidatorsFromAssemblies(app.Assemblies);
 
         var registrationMethod = GetType()
             .GetMethod(nameof(RegisterValidatorForValidatableObject), BindingFlags.Static | BindingFlags.NonPublic)!;
 
         new Commons.Reflection.AssemblyScanner()
-            .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application))
+            .FromAssemblies(app.Assemblies)
             .SubtypesOrImplementationsOf(typeof(IValidate<>))
             .NonGeneric()
             .FindTypes()

@@ -1,20 +1,18 @@
-﻿using EasyDesk.Commons.Collections;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.Reflection;
+using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public sealed class AppBuilder
 {
     private readonly ModulesCollection _modules = new();
-    private readonly Dictionary<CleanArchitectureLayer, IImmutableSet<Assembly>> _layers = new();
-    private readonly string _assemblyPrefix;
+    private IImmutableSet<Assembly> _assemblies = Set<Assembly>();
     private string _serviceName;
 
-    public AppBuilder(string assemblyPrefix)
+    public AppBuilder(string serviceName)
     {
-        _assemblyPrefix = assemblyPrefix;
-        _serviceName = assemblyPrefix;
+        _serviceName = serviceName;
     }
 
     public AppBuilder WithServiceName(string name)
@@ -23,21 +21,12 @@ public sealed class AppBuilder
         return this;
     }
 
-    public AppBuilder WithDomainLayer(params Assembly[] domainLayer) =>
-        WithLayer(CleanArchitectureLayer.Domain, domainLayer);
+    public AppBuilder WithAssemblies(params Assembly[] assemblies) =>
+        WithAssemblies(assemblies.AsEnumerable());
 
-    public AppBuilder WithApplicationLayer(params Assembly[] applicationLayer) =>
-        WithLayer(CleanArchitectureLayer.Application, applicationLayer);
-
-    public AppBuilder WithInfrastructureLayer(params Assembly[] infrastructureLayer) =>
-        WithLayer(CleanArchitectureLayer.Infrastructure, infrastructureLayer);
-
-    public AppBuilder WithWebLayer(params Assembly[] webLayer) =>
-        WithLayer(CleanArchitectureLayer.Web, webLayer);
-
-    private AppBuilder WithLayer(CleanArchitectureLayer layer, params Assembly[] layerAssemblies)
+    public AppBuilder WithAssemblies(IEnumerable<Assembly> assemblies)
     {
-        _layers[layer] = layerAssemblies.ToImmutableHashSet();
+        _assemblies = _assemblies.Union(assemblies);
         return this;
     }
 
@@ -62,7 +51,7 @@ public sealed class AppBuilder
         return this;
     }
 
-    public AppDescription Build() => new(_serviceName, _assemblyPrefix, _modules, _layers.ToEquatableMap());
+    public AppDescription Build() => new(_serviceName, _modules, _assemblies);
 }
 
 public static class AppBuilderExtensions

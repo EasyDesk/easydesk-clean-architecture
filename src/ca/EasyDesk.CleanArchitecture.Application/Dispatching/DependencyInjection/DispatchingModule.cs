@@ -30,9 +30,7 @@ public class DispatchingModule : AppModule
     {
         services.RegisterImplementationsAsTransient(
             typeof(IHandler<,>),
-            s => s
-                .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application))
-                .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Infrastructure)));
+            s => s.FromAssemblies(app.Assemblies));
     }
 }
 

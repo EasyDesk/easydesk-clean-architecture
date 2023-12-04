@@ -26,10 +26,7 @@ public class DomainLayerModule : AppModule
 
         services.RegisterImplementationsAsTransient(
             typeof(IDomainEventHandler<>),
-            s => s
-                .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Application))
-                .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Domain))
-                .FromAssemblies(app.GetLayerAssemblies(CleanArchitectureLayer.Infrastructure)));
+            s => s.FromAssemblies(app.Assemblies));
     }
 }
 
