@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
@@ -17,7 +18,14 @@ public sealed class DomainConstraintViolationsHandlingStep<T, R> : IPipelineStep
         }
         catch (DomainConstraintException e)
         {
-            return e.DomainErrors.Any() ? Errors.Multiple(e.DomainErrors.First(), e.DomainErrors.Skip(1)) : throw e;
+            if (e.DomainErrors.IsEmpty())
+            {
+                return Errors.Multiple(e.DomainErrors.First(), e.DomainErrors.Skip(1));
+            }
+            else
+            {
+                throw;
+            }
         }
     }
 }
