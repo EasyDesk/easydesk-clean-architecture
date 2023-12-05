@@ -21,7 +21,6 @@ public static class RebusFixtureExtensions
                 services.AddSingleton<RebusTransportConfiguration>((t, e) =>
                 {
                     t.UseInMemoryTransport(network, e);
-                    //t.OtherService<ISubscriptionStorage>().StoreInMemory(subscriberStore);
                 });
                 services.AddHostedService<RebusResettingTask>();
             }))
