@@ -9,9 +9,9 @@ public static class DictionaryUtils
 
     public static bool Merge<K, V>(this IDictionary<K, V> dictionary, K key, V value, Func<V, V, V> combiner)
     {
-        if (dictionary.ContainsKey(key))
+        if (dictionary.TryGetValue(key, out var existingValue))
         {
-            dictionary[key] = combiner(dictionary[key], value);
+            dictionary[key] = combiner(existingValue, value);
             return false;
         }
         else
