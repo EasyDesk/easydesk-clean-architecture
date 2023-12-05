@@ -88,7 +88,7 @@ public class RebusMessagingModule : AppModule
                 o.Decorate<IErrorHandler>(c =>
                 {
                     _ = c.Get<ITransport>(); // Forces initialization of 'originalTransport'.
-                    return new PoisonQueueErrorHandler(c.Get<SimpleRetryStrategySettings>(), originalTransport, c.Get<IRebusLoggerFactory>());
+                    return new DeadletterQueueErrorHandler(c.Get<RetryStrategySettings>(), originalTransport, c.Get<IRebusLoggerFactory>());
                 });
             });
             return configurer;

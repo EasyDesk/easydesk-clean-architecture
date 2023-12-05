@@ -32,7 +32,7 @@ public sealed class RebusMessagingOptions
 
     public bool AutoSubscribe { get; set; } = true;
 
-    public string ErrorQueueName { get; set; } = SimpleRetryStrategySettings.DefaultErrorQueueName;
+    public string ErrorQueueName { get; set; } = RetryStrategySettings.DefaultErrorQueueName;
 
     public IImmutableSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
 
@@ -104,7 +104,7 @@ public sealed class RebusMessagingOptions
             o.Register(_ => new KnownTypesConvention(KnownMessageTypes));
             o.Register<ITopicNameConvention>(c => c.Get<KnownTypesConvention>());
             o.Register<IMessageTypeNameConvention>(c => c.Get<KnownTypesConvention>());
-            o.SimpleRetryStrategy(errorQueueAddress: ErrorQueueName);
+            o.RetryStrategy(errorQueueName: ErrorQueueName);
             o.Decorate<IFailFastChecker>(c => new FailFastChecker(c.Get<IFailFastChecker>(), FailFastCheckers));
         });
 

@@ -349,32 +349,32 @@
       },
       "Rebus": {
         "type": "Transitive",
-        "resolved": "7.2.1",
-        "contentHash": "LDlUcodEgPv+9lF54UWrBAjbziVEbl0GOF/YmYAQWv6L1ew+YxjgQFGe9mGFMLEVfaZJHVmp2WNO2KoQBybhbA==",
+        "resolved": "8.0.2",
+        "contentHash": "zaxhE1k4Ns6C+hkY9wXl5YtYPQvo7Y7rSgvnM9erxWHs96v4ymPP6qioA9Nh+LBdG+LSijY0jrB+37oSSiWLzQ==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
-          "Newtonsoft.Json": "[12.0.1, 14.0.0)",
-          "system.text.json": "[5.0.0, 8.0.0)"
+          "Newtonsoft.Json": "[13.0.1, 14.0.0)",
+          "system.text.json": "[6.0.0, 9.0.0)"
         }
       },
       "Rebus.Microsoft.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "4.0.0",
-        "contentHash": "dERBJH3QJms8lCUkRavSzK/KrlJDBEP9sK5tCxnqKLVKro8W8VGnrxYZwHRpvfUsAGTltvmsCVeFjaYX1/Hivg==",
+        "resolved": "5.0.0",
+        "contentHash": "js0FjqRS8aKZfpzHO3Xn5Ne/dwYpK3dXypPMc0aRCXKgr3r+h7lPXaNIVBBJhAk7UorQykVNt0kB6XaWPM1MOQ==",
         "dependencies": {
-          "Microsoft.Extensions.Logging": "7.0.0",
-          "rebus": "6.6.5"
+          "microsoft.extensions.logging.abstractions": "[6.0.0, 9.0.0)",
+          "rebus": "8.0.1"
         }
       },
       "Rebus.ServiceProvider": {
         "type": "Transitive",
-        "resolved": "9.1.0",
-        "contentHash": "d0aM2I0XJ3ux0djCtNDfrjdULj4gabCVPBnvMndQZd8n4JYHdxxnP28n3bIzsMlJ5p678Rv+BoW0vPz1wPXfyA==",
+        "resolved": "10.0.0",
+        "contentHash": "Uh589OApGgQ3vvXbj0hjnJ2m+CtvSj12ZsE+zSydjwmrtdjjp3bywf89DPgxg45HXD2oSlIcPQDwU4Hcq/1LiA==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "[6.0.0, 8.0.0)",
-          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 8.0.0)",
-          "Rebus": "[7.0.0, 8.0.0)",
-          "microsoft.extensions.logging.abstractions": "[6.0.0, 8.0.0)"
+          "Microsoft.Extensions.DependencyInjection": "[6.0.0, 9.0.0)",
+          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 9.0.0)",
+          "Rebus": "8.0.1",
+          "microsoft.extensions.logging.abstractions": "[6.0.0, 9.0.0)"
         }
       },
       "Scrutor": {
@@ -479,9 +479,9 @@
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.14, )",
-          "Rebus": "[7.2.1, )",
-          "Rebus.Microsoft.Extensions.Logging": "[4.0.0, )",
-          "Rebus.ServiceProvider": "[9.1.0, )",
+          "Rebus": "[8.0.2, )",
+          "Rebus.Microsoft.Extensions.Logging": "[5.0.0, )",
+          "Rebus.ServiceProvider": "[10.0.0, )",
           "System.IdentityModel.Tokens.Jwt": "[7.0.3, )"
         }
       },

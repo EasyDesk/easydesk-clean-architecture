@@ -944,50 +944,50 @@
       },
       "RabbitMQ.Client": {
         "type": "Transitive",
-        "resolved": "6.4.0",
-        "contentHash": "1znR1gGU+xYVSpO5z8nQolcUKA/yydnxQn7Ug9+RUXxTSLMm/eE58VKGwahPBjELXvDnX0k/kBrAitFLRjx9LA==",
+        "resolved": "6.6.0",
+        "contentHash": "klht0KBLO7xs/uIn8uejq1VC5wJJ8dHJSm2GmFmJHWQnFzWK5YTNUta6IrnuzitR1T5psxIuqwdQqalbTLPtcA==",
         "dependencies": {
-          "System.Memory": "4.5.4",
-          "System.Threading.Channels": "4.7.1"
+          "System.Memory": "4.5.5",
+          "System.Threading.Channels": "7.0.0"
         }
       },
       "Rebus": {
         "type": "Transitive",
-        "resolved": "7.2.1",
-        "contentHash": "LDlUcodEgPv+9lF54UWrBAjbziVEbl0GOF/YmYAQWv6L1ew+YxjgQFGe9mGFMLEVfaZJHVmp2WNO2KoQBybhbA==",
+        "resolved": "8.0.2",
+        "contentHash": "zaxhE1k4Ns6C+hkY9wXl5YtYPQvo7Y7rSgvnM9erxWHs96v4ymPP6qioA9Nh+LBdG+LSijY0jrB+37oSSiWLzQ==",
         "dependencies": {
           "Microsoft.CSharp": "4.7.0",
-          "Newtonsoft.Json": "[12.0.1, 14.0.0)",
-          "system.text.json": "[5.0.0, 8.0.0)"
+          "Newtonsoft.Json": "[13.0.1, 14.0.0)",
+          "system.text.json": "[6.0.0, 9.0.0)"
         }
       },
       "Rebus.Microsoft.Extensions.Logging": {
         "type": "Transitive",
-        "resolved": "4.0.0",
-        "contentHash": "dERBJH3QJms8lCUkRavSzK/KrlJDBEP9sK5tCxnqKLVKro8W8VGnrxYZwHRpvfUsAGTltvmsCVeFjaYX1/Hivg==",
+        "resolved": "5.0.0",
+        "contentHash": "js0FjqRS8aKZfpzHO3Xn5Ne/dwYpK3dXypPMc0aRCXKgr3r+h7lPXaNIVBBJhAk7UorQykVNt0kB6XaWPM1MOQ==",
         "dependencies": {
-          "Microsoft.Extensions.Logging": "7.0.0",
-          "rebus": "6.6.5"
+          "microsoft.extensions.logging.abstractions": "[6.0.0, 9.0.0)",
+          "rebus": "8.0.1"
         }
       },
       "Rebus.RabbitMq": {
         "type": "Transitive",
-        "resolved": "8.1.1",
-        "contentHash": "I95SYAj4TaYd5TfFYY7Y3+6YpibawCYGtqgCMh1j61VY7GYYyeoMAy+NyhDuRU3uNmLvksJq0lyfv1kLJ8Ci/Q==",
+        "resolved": "9.0.1",
+        "contentHash": "jKtGgUnZLvcBsbYFrjWjjmVMV/nFj4tpaad6yXf/THvI0RoTHPzb2M7frwQskJSL0B+RSNlsGoIe453CeS7nuQ==",
         "dependencies": {
-          "RabbitMq.Client": "6.4.0",
-          "rebus": "[7.0.0, 8.0.0)"
+          "RabbitMq.Client": "6.6.0",
+          "rebus": "8.0.1"
         }
       },
       "Rebus.ServiceProvider": {
         "type": "Transitive",
-        "resolved": "9.1.0",
-        "contentHash": "d0aM2I0XJ3ux0djCtNDfrjdULj4gabCVPBnvMndQZd8n4JYHdxxnP28n3bIzsMlJ5p678Rv+BoW0vPz1wPXfyA==",
+        "resolved": "10.0.0",
+        "contentHash": "Uh589OApGgQ3vvXbj0hjnJ2m+CtvSj12ZsE+zSydjwmrtdjjp3bywf89DPgxg45HXD2oSlIcPQDwU4Hcq/1LiA==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "[6.0.0, 8.0.0)",
-          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 8.0.0)",
-          "Rebus": "[7.0.0, 8.0.0)",
-          "microsoft.extensions.logging.abstractions": "[6.0.0, 8.0.0)"
+          "Microsoft.Extensions.DependencyInjection": "[6.0.0, 9.0.0)",
+          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 9.0.0)",
+          "Rebus": "8.0.1",
+          "microsoft.extensions.logging.abstractions": "[6.0.0, 9.0.0)"
         }
       },
       "Respawn": {
@@ -1978,8 +1978,8 @@
       },
       "System.Threading.Channels": {
         "type": "Transitive",
-        "resolved": "4.7.1",
-        "contentHash": "6akRtHK/wab3246t4p5v3HQrtQk8LboOt5T4dtpNgsp3zvDeM4/Gx8V12t0h+c/W9/enUrilk8n6EQqdQorZAA=="
+        "resolved": "7.0.0",
+        "contentHash": "qmeeYNROMsONF6ndEZcIQ+VxR4Q/TX/7uIVLJqtwIWL7dDWeh0l1UIqgo4wYyjG//5lUNhwkLDSFl+pAWO6oiA=="
       },
       "System.Threading.Tasks": {
         "type": "Transitive",
@@ -2217,9 +2217,9 @@
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[7.0.14, )",
-          "Rebus": "[7.2.1, )",
-          "Rebus.Microsoft.Extensions.Logging": "[4.0.0, )",
-          "Rebus.ServiceProvider": "[9.1.0, )",
+          "Rebus": "[8.0.2, )",
+          "Rebus.Microsoft.Extensions.Logging": "[5.0.0, )",
+          "Rebus.ServiceProvider": "[10.0.0, )",
           "System.IdentityModel.Tokens.Jwt": "[7.0.3, )"
         }
       },
@@ -2309,7 +2309,7 @@
           "EasyDesk.SampleApp.Application": "[1.0.0, )",
           "EasyDesk.SampleApp.Infrastructure": "[1.0.0, )",
           "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": "[1.19.5, )",
-          "Rebus.RabbitMq": "[8.1.1, )"
+          "Rebus.RabbitMq": "[9.0.1, )"
         }
       },
       "easydesk.testing": {

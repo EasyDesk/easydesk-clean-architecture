@@ -10,9 +10,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.14" />
-    <PackageReference Include="Rebus" Version="7.2.1" />
-    <PackageReference Include="Rebus.Microsoft.Extensions.Logging" Version="4.0.0" />
-    <PackageReference Include="Rebus.ServiceProvider" Version="9.1.0" />
+    <PackageReference Include="Rebus" Version="8.0.2" />
+    <PackageReference Include="Rebus.Microsoft.Extensions.Logging" Version="5.0.0" />
+    <PackageReference Include="Rebus.ServiceProvider" Version="10.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
   </ItemGroup>
 
