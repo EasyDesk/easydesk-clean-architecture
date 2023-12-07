@@ -30,9 +30,13 @@ public sealed class RebusMessagingOptions
 
     public OutboxOptions OutboxOptions { get; private set; } = new();
 
+    public string ErrorQueueName { get; set; } = RetryStrategySettings.DefaultErrorQueueName;
+
     public bool AutoSubscribe { get; set; } = true;
 
-    public string ErrorQueueName { get; set; } = RetryStrategySettings.DefaultErrorQueueName;
+    public bool UseOutbox { get; set; } = true;
+
+    public bool UseInbox { get; set; } = true;
 
     public IImmutableSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
 

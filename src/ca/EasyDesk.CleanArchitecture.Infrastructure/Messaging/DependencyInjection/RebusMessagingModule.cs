@@ -52,9 +52,12 @@ public class RebusMessagingModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline =>
         {
             pipeline.AddStep(typeof(RebusServiceProviderStep<,>));
-            pipeline
-                .AddStep(typeof(InboxStep<>))
-                .After(typeof(UnitOfWorkStep<,>));
+            if (Options.UseInbox)
+            {
+                pipeline
+                    .AddStep(typeof(InboxStep<>))
+                    .After(typeof(UnitOfWorkStep<,>));
+            }
         });
         app.RequireModule<JsonModule>();
 
@@ -68,10 +71,14 @@ public class RebusMessagingModule : AppModule
         services.AddSingleton(Options);
         services.AddSingleton(_transport);
 
+        if (Options.UseOutbox || Options.UseInbox)
+        {
+            app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
+        }
+
         ITransport? originalTransport = null;
         services.AddSingleton<PausableAsyncTaskFactory>();
-        services.AddSingleton<IRebusPausableTaskPool>(provider =>
-            provider.GetRequiredService<PausableAsyncTaskFactory>());
+        services.AddSingleton<IRebusPausableTaskPool>(provider => provider.GetRequiredService<PausableAsyncTaskFactory>());
         services.AddRebus((configurer, provider) =>
         {
             Options.Apply(provider, _endpoint, configurer);
@@ -79,7 +86,10 @@ public class RebusMessagingModule : AppModule
             {
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
                 o.Register<IAsyncTaskFactory>(_ => provider.GetRequiredService<PausableAsyncTaskFactory>());
-                o.UseOutbox();
+                if (Options.UseOutbox)
+                {
+                    o.UseOutbox();
+                }
                 o.PatchAsyncDisposables();
                 if (app.IsMultitenant())
                 {
@@ -94,9 +104,12 @@ public class RebusMessagingModule : AppModule
             return configurer;
         });
 
-        app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
+        if (Options.UseOutbox)
+        {
+            AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true));
+        }
+
         SetupMessageHandlers(services, Options.KnownMessageTypes);
-        AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true));
 
         AddEventPropagators(services);
         AddCommandPropagators(services);
