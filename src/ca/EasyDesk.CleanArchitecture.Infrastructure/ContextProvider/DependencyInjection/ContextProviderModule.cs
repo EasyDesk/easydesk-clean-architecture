@@ -12,10 +12,10 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyIn
 
 public class ContextProviderModule : AppModule
 {
-    private readonly IWebHostEnvironment _environment;
+    private readonly IHostEnvironment _environment;
     private Action<ContextProviderOptions>? _configure;
 
-    public ContextProviderModule(IWebHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
+    public ContextProviderModule(IHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
     {
         _environment = environment;
         _configure = configure;
@@ -61,7 +61,7 @@ public class ContextProviderModule : AppModule
 
 public static class ContextProviderModuleExtensions
 {
-    public static AppBuilder AddContextProvider(this AppBuilder builder, IWebHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
+    public static AppBuilder AddContextProvider(this AppBuilder builder, IHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
     {
         return builder.AddModule(new ContextProviderModule(environment, configure));
     }

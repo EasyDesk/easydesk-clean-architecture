@@ -26,11 +26,11 @@ public sealed class ControllersModuleOptions
 
 public class ControllersModule : AppModule
 {
-    private readonly IWebHostEnvironment _environment;
+    private readonly IHostEnvironment _environment;
 
     public ControllersModuleOptions Options { get; } = new();
 
-    public ControllersModule(IWebHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
+    public ControllersModule(IHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
     {
         _environment = environment;
         configure?.Invoke(Options);
@@ -66,7 +66,7 @@ public class ControllersModule : AppModule
 
 public static class ControllersModuleExtension
 {
-    public static AppBuilder AddControllers(this AppBuilder builder, IWebHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
+    public static AppBuilder AddControllers(this AppBuilder builder, IHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
     {
         return builder.AddModule(new ControllersModule(environment, configure));
     }
