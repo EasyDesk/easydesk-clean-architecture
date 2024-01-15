@@ -41,7 +41,7 @@ internal class AuditRecordModel : IMultitenantEntity
 
             builder.OwnsMany(x => x.Properties, child =>
             {
-                child.HasKey(x => new { x.AuditRecordId, x.Key });
+                child.HasKey(x => new { x.AuditRecordId, x.Key, x.Value });
 
                 child.WithOwner().HasForeignKey(x => x.AuditRecordId);
             });
@@ -78,11 +78,11 @@ internal class AuditRecordModel : IMultitenantEntity
 
         record
             .Properties
-            .Select(p => new AuditRecordPropertyModel
+            .SelectMany(p => p.Value.Select(x => new AuditRecordPropertyModel
             {
                 Key = p.Key,
-                Value = p.Value
-            })
+                Value = x,
+            }))
             .AddTo(model.Properties);
 
         record.Agent.IfPresent(agent =>
@@ -105,7 +105,7 @@ internal class AuditRecordModel : IMultitenantEntity
             Some(Identities)
                 .Filter(identities => identities.Any())
                 .Map(identities => Agent.FromIdentities(identities.Select(i => i.ToIdentity()))),
-            Properties.Select(p => new KeyValuePair<string, string>(p.Key, p.Value)).ToEquatableMap(),
+            Properties.GroupBy(p => p.Key, x => x.Value).ToEquatableMap(x => x.Key, x => x.ToEquatableSet()),
             Success,
             Instant);
     }

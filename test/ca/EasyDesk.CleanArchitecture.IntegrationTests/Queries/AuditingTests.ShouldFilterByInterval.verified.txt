@@ -22,7 +22,9 @@
       }
     },
     Properties: {
-      nickname: Bobby1
+      nickname: [
+        Bobby1
+      ]
     },
     Success: true,
     Instant: Instant_1
@@ -50,7 +52,9 @@
       }
     },
     Properties: {
-      nickname: Bobby2
+      nickname: [
+        Bobby2
+      ]
     },
     Success: true,
     Instant: Instant_1

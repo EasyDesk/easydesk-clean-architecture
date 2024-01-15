@@ -23,7 +23,9 @@
         }
       },
       Properties: {
-        nickname: Bobby
+        nickname: [
+          Bobby
+        ]
       },
       Success: false,
       Instant: Instant_1

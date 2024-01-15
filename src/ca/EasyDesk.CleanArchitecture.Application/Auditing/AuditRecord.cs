@@ -17,6 +17,6 @@ public record AuditRecord(
     string Name,
     Option<string> Description,
     Option<Agent> Agent,
-    IImmutableDictionary<string, string> Properties,
+    IImmutableDictionary<string, IImmutableSet<string>> Properties,
     bool Success,
     Instant Instant);

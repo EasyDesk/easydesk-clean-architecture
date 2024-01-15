@@ -95,7 +95,7 @@ public class AuditingStepTests
             Name: typeof(T).Name,
             Description: None,
             Agent: agent,
-            Properties: Map<string, string>(),
+            Properties: Map<string, IImmutableSet<string>>(),
             Success: result.IsSuccess,
             Instant: _now));
 

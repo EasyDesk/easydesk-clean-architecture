@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
 using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using NodaTime;
 using System.Collections.Immutable;
@@ -12,7 +13,7 @@ public record AuditRecordDto(
     string Name,
     Option<string> Description,
     Option<AgentDto> Agent,
-    IImmutableDictionary<string, string> Properties,
+    IImmutableDictionary<string, IImmutableList<string>> Properties,
     bool Success,
     Instant Instant) : IMappableFrom<AuditRecord, AuditRecordDto>
 {
@@ -21,7 +22,7 @@ public record AuditRecordDto(
         Name: src.Name,
         Description: src.Description,
         Agent: src.Agent.Map(AgentDto.MapFrom),
-        Properties: src.Properties,
+        Properties: src.Properties.ToEquatableMap(x => x.Key, x => x.Value.Order().ToEquatableList()),
         Success: src.Success,
         Instant: src.Instant);
 }

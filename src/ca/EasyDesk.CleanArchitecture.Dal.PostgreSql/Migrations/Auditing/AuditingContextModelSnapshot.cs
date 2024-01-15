@@ -18,7 +18,7 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("audit")
-            .HasAnnotation("ProductVersion", "7.0.7")
+            .HasAnnotation("ProductVersion", "7.0.14")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -120,10 +120,9 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
                             .HasColumnType("text");
 
                         b1.Property<string>("Value")
-                            .IsRequired()
                             .HasColumnType("text");
 
-                        b1.HasKey("AuditRecordId", "Key");
+                        b1.HasKey("AuditRecordId", "Key", "Value");
 
                         b1.ToTable("AuditProperties", "audit");
 

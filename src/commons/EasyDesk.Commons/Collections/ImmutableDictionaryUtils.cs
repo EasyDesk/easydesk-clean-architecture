@@ -1,5 +1,6 @@
 ﻿using EasyDesk.Commons.Options;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace EasyDesk.Commons.Collections;
 
@@ -32,5 +33,32 @@ public static class ImmutableDictionaryUtils
         return dictionary.SetItem(key, dictionary.GetOption(key).Match(
             some: mutation,
             none: supplier));
+    }
+
+    public static IImmutableDictionary<K, V> UpdateIfPresent<K, V>(
+        this IImmutableDictionary<K, V> dictionary,
+        K key,
+        Func<V, V> mutation)
+        where K : notnull
+    {
+        if (dictionary.ContainsKey(key))
+        {
+            return dictionary;
+        }
+        return dictionary.Update(key, mutation, () => throw new UnreachableException());
+    }
+
+    public static IImmutableDictionary<K, V> UpdateOption<K, V>(
+        this IImmutableDictionary<K, V> dictionary,
+        K key,
+        Func<Option<V>, Option<V>> mutation)
+        where K : notnull
+    {
+        var old = dictionary.GetOption(key);
+        return mutation(old).Match(
+            some: v => dictionary.SetItem(key, v),
+            none: () => old.Match(
+                some: _ => dictionary.Remove(key),
+                none: () => dictionary));
     }
 }

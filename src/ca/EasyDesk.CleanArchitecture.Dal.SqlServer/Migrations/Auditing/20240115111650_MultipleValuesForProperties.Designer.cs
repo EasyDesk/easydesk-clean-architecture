@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Auditing;
 
 [DbContext(typeof(AuditingContext))]
-partial class AuditingContextModelSnapshot : ModelSnapshot
+[Migration("20240115111650_MultipleValuesForProperties")]
+partial class MultipleValuesForProperties
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder

@@ -7,13 +7,15 @@ public interface IAuditConfigurer
 {
     Option<string> Description { get; }
 
-    IImmutableDictionary<string, string> Properties { get; }
+    IImmutableDictionary<string, IImmutableSet<string>> Properties { get; }
 
     IAuditConfigurer AddProperty(string key, string value);
 
     IAuditConfigurer RemoveDescription();
 
     IAuditConfigurer RemoveProperty(string key);
+
+    IAuditConfigurer RemoveProperty(string key, string value);
 
     IAuditConfigurer SetDescription(string description);
 }
