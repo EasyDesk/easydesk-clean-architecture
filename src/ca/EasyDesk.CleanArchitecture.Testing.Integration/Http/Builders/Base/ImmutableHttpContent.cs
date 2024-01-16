@@ -15,7 +15,7 @@ public record class ImmutableHttpContent(
     ImmutableHttpHeaders ContentHeaders)
 {
     public ImmutableHttpContent()
-        : this(ImmutableArray<byte>.Empty)
+        : this([])
     {
     }
 
@@ -37,7 +37,7 @@ public record class ImmutableHttpContent(
     }
 
     public ImmutableHttpContent(string text, string mediaType)
-        : this(Encoding.Default.GetBytes(text).ToImmutableArray(), Encoding.Default, mediaType)
+        : this([.. Encoding.Default.GetBytes(text)], Encoding.Default, mediaType)
     {
     }
 
@@ -85,7 +85,7 @@ public record class ImmutableHttpContent(
             some: e => MediaType.Match(
                 some: m => new StringContent(e.GetString(Bytes.ToArray()), e, m),
                 none: () => new StringContent(e.GetString(Bytes.ToArray()), e)),
-            none: () => new ByteArrayContent(Bytes.ToArray()));
+            none: () => new ByteArrayContent([.. Bytes]));
         foreach (var (key, value) in ContentHeaders.Dictionary)
         {
             if (!content.Headers.Contains(key))

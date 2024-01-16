@@ -4,7 +4,7 @@ namespace EasyDesk.Testing.MatrixExpansion;
 
 public class ResultAxisBuilder<T>
 {
-    private readonly List<Result<T>> _axis = new();
+    private readonly List<Result<T>> _axis = [];
 
     internal ResultAxisBuilder()
     {

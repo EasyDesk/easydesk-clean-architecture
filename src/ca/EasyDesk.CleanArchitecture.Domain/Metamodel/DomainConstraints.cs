@@ -4,7 +4,7 @@ namespace EasyDesk.CleanArchitecture.Domain.Metamodel;
 
 public sealed class DomainConstraints
 {
-    private readonly List<DomainError> _errors = new();
+    private readonly List<DomainError> _errors = [];
 
     private DomainConstraints()
     {
@@ -27,7 +27,7 @@ public sealed class DomainConstraints
 
     public void ThrowException()
     {
-        if (_errors.Any())
+        if (_errors.HasAny())
         {
             throw new DomainConstraintException(_errors);
         }

@@ -70,10 +70,10 @@ public class RespawnerOptionsBuilder
 
     internal RespawnerOptions Build() => new()
     {
-        TablesToIgnore = _tablesToExclude.ToArray(),
-        TablesToInclude = _tablesToInclude.ToArray(),
-        SchemasToExclude = _schemasToExclude.ToArray(),
-        SchemasToInclude = _schemasToInclude.ToArray(),
+        TablesToIgnore = [.. _tablesToExclude],
+        TablesToInclude = [.. _tablesToInclude],
+        SchemasToExclude = [.. _schemasToExclude],
+        SchemasToInclude = [.. _schemasToInclude],
         DbAdapter = _dbAdapter,
         WithReseed = _withReseed,
         CheckTemporalTables = _checkTemporalTables,

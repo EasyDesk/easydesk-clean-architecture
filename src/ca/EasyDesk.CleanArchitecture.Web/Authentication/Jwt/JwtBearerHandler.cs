@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Commons.Results;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -36,9 +35,8 @@ internal class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
         IOptionsMonitor<JwtBearerOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        ISystemClock clock,
         JwtFacade jwtFacade)
-        : base(options, logger, encoder, clock)
+        : base(options, logger, encoder)
     {
         _jwtFacade = jwtFacade;
     }

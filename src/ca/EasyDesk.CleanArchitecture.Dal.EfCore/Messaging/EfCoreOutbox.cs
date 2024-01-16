@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -49,7 +50,7 @@ internal class EfCoreOutbox : IOutbox
             .Select(m => (ToTransportMessage(m), m.DestinationAddress))
             .ToList();
 
-        if (messages.Any())
+        if (messages.HasAny())
         {
             _context.Outbox.RemoveRange(outboxMessages);
             await _context.SaveChangesAsync();

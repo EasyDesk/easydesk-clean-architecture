@@ -94,7 +94,7 @@ public partial class InitialSchema : Migration
                     columns: x => new { x.AuditRecordId, x.Realm },
                     principalSchema: "audit",
                     principalTable: "AuditIdentities",
-                    principalColumns: new[] { "AuditRecordId", "IdentityRealm" },
+                    principalColumns: ["AuditRecordId", "IdentityRealm"],
                     onDelete: ReferentialAction.Cascade);
             });
 
@@ -103,7 +103,7 @@ public partial class InitialSchema : Migration
             schema: "audit",
             table: "AuditRecords",
             column: "Instant",
-            descending: Array.Empty<bool>());
+            descending: []);
 
         migrationBuilder.CreateIndex(
             name: "IX_AuditRecords_Tenant",

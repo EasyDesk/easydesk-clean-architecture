@@ -21,7 +21,7 @@ public static class ValidationUtils
                 x.ErrorMessage,
                 x.FormattedMessagePlaceholderValues.ToImmutableSortedDictionary()))
             .ToList();
-        return errors.Any()
+        return errors.HasAny()
             ? Errors.Multiple(errors.First(), errors.Skip(1))
             : value;
     }

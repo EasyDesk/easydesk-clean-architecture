@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Application.Sagas;
 internal class SagaCoordinator<TId, TState> : ISagaCoordinator<TId, TState>
     where TId : notnull
 {
-    private readonly Dictionary<TId, SagaContext<TId, TState>> _ongoingSagas = new();
+    private readonly Dictionary<TId, SagaContext<TId, TState>> _ongoingSagas = [];
     private readonly ISagaManager _sagaManager;
     private readonly SagaRegistry _sagaRegistry;
 

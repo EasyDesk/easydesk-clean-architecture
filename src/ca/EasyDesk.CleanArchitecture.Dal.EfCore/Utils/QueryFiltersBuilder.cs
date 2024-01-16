@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
 public class QueryFiltersBuilder
 {
-    private readonly Dictionary<Type, List<LambdaExpression>> _filters = new();
+    private readonly Dictionary<Type, List<LambdaExpression>> _filters = [];
 
     public QueryFiltersBuilder AddFilter<T>(Expression<Func<T, bool>> filter)
     {

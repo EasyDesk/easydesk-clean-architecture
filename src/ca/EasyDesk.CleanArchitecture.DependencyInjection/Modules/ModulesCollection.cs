@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public sealed class ModulesCollection : IEnumerable<AppModule>
 {
-    private readonly Dictionary<Type, AppModule> _modules = new();
+    private readonly Dictionary<Type, AppModule> _modules = [];
 
     public void AddModule<T>(T module) where T : AppModule =>
         _modules[typeof(T)] = module;

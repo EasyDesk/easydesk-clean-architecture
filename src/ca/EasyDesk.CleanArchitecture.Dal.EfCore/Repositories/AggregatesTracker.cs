@@ -10,7 +10,7 @@ internal class AggregatesTracker<A, P>
 {
     private record AggregatePersistenceStatus(P Persistence, bool Saved);
 
-    private readonly Dictionary<A, AggregatePersistenceStatus> _modelsMap = new();
+    private readonly Dictionary<A, AggregatePersistenceStatus> _modelsMap = [];
 
     public bool IsTracked(A aggregate) => _modelsMap.ContainsKey(aggregate);
 

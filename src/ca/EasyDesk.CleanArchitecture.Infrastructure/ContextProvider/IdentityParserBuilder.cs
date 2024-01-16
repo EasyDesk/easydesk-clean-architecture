@@ -6,7 +6,7 @@ public class IdentityParserBuilder
 {
     private readonly Realm _realm;
     private readonly ClaimsPrincipalParser<IdentityId> _id;
-    private readonly List<(string Name, ClaimsPrincipalParser<string> Parser)> _attributes = new();
+    private readonly List<(string Name, ClaimsPrincipalParser<string> Parser)> _attributes = [];
 
     public IdentityParserBuilder(Realm realm, ClaimsPrincipalParser<IdentityId> id)
     {

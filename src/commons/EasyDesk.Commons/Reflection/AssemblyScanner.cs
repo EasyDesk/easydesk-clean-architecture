@@ -4,8 +4,8 @@ namespace EasyDesk.Commons.Reflection;
 
 public class AssemblyScanner
 {
-    private readonly HashSet<Assembly> _sourceAssemblies = new();
-    private readonly List<Func<Type, bool>> _filters = new();
+    private readonly HashSet<Assembly> _sourceAssemblies = [];
+    private readonly List<Func<Type, bool>> _filters = [];
 
     public AssemblyScanner FromAssemblies(IEnumerable<Assembly> assemblies)
     {

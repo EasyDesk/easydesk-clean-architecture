@@ -19,13 +19,13 @@ namespace EasyDesk.CleanArchitecture.Web;
 
 public static partial class Extensions
 {
-    private static readonly string[] _layerNames = new[]
-    {
+    private static readonly string[] _layerNames =
+    [
         "Web",
         "Infrastructure",
         "Application",
         "Domain",
-    };
+    ];
 
     /// <summary>
     /// Configures the <see cref="WebApplicationBuilder"/> to use the clean architecture framework.

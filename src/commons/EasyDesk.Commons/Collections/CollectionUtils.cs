@@ -2,6 +2,10 @@
 
 public static class CollectionUtils
 {
+    public static bool HasAny<T>(this ICollection<T> collection) => collection.Count != 0;
+
+    public static bool IsEmpty<T>(this ICollection<T> collection) => collection.Count == 0;
+
     public static IEnumerable<T> RemoveWhere<T>(this ICollection<T> collection, Func<T, bool> predicate)
     {
         var itemsToRemove = collection.Where(predicate).ToList();

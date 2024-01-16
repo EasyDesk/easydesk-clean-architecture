@@ -159,7 +159,7 @@ public class MatrixTests
     public void OptionAxis()
     {
         var result = Matrix.Builder()
-            .OptionAxis<int>(new int[] { 1 })
+            .OptionAxis(1)
             .OptionAxis(2)
             .Build()
             .ToList();
@@ -213,7 +213,7 @@ public class MatrixTests
     public void SuccessAxis()
     {
         var result = Matrix.Builder()
-            .ResultAxis<int>(builder => builder.Successes(new int[] { 1, 2 }))
+            .ResultAxis<int>(builder => builder.Successes(1, 2))
             .ResultAxis<int>(builder => builder.Success(5))
             .ResultAxis<Nothing>(builder => builder.Success())
             .Build()

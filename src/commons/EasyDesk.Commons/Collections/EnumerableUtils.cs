@@ -289,7 +289,7 @@ public static class EnumerableUtils
     public sealed class CachedEnumerable<T> : IEnumerable<T>, IDisposable
     {
         private IEnumerator<T>? _enumerator;
-        private readonly List<T> _cache = new();
+        private readonly List<T> _cache = [];
 
         public CachedEnumerable(IEnumerable<T> enumerable)
         {

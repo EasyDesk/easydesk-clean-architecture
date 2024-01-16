@@ -24,7 +24,7 @@ public class SagasModule : AppModule
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaController<,>))
                 .Select(i => GetType()
                     .GetMethod(nameof(ConfigureSaga), BindingFlags.NonPublic | BindingFlags.Instance)!
-                    .MakeGenericMethod(i.GetGenericArguments().Append(c).ToArray())))
+                    .MakeGenericMethod([.. i.GetGenericArguments(), c])))
             .ForEach(m => m.Invoke(this, configureSagaArgs));
 
         app.RequireModule<DataAccessModule>().Implementation.AddSagas(services, app);

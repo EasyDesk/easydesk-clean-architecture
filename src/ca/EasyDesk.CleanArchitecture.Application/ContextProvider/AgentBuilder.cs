@@ -4,7 +4,7 @@ namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
 public class AgentBuilder
 {
-    private readonly Dictionary<Realm, IdentityBuilder> _identities = new();
+    private readonly Dictionary<Realm, IdentityBuilder> _identities = [];
 
     public IdentityBuilder AddIdentity(Realm realm, IdentityId id)
     {

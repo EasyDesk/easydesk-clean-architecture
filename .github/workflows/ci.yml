@@ -1,7 +1,7 @@
 name: Continuous Integration
 
 env:
-  DOTNET_VERSION: 7.x
+  DOTNET_VERSION: 8.x
 
 defaults:
   run:

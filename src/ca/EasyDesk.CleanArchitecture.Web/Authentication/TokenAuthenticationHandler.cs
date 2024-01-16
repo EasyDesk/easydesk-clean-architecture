@@ -19,8 +19,8 @@ public abstract class TokenAuthenticationOptions : AuthenticationSchemeOptions
 public abstract class TokenAuthenticationHandler<T> : AbstractAuthenticationHandler<T>
     where T : TokenAuthenticationOptions, new()
 {
-    public TokenAuthenticationHandler(IOptionsMonitor<T> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
-        : base(options, logger, encoder, clock)
+    public TokenAuthenticationHandler(IOptionsMonitor<T> options, ILoggerFactory logger, UrlEncoder encoder)
+        : base(options, logger, encoder)
     {
     }
 

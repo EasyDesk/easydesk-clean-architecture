@@ -19,7 +19,7 @@ public partial class MultipleValuesForProperties : Migration
             name: "PK_AuditProperties",
             schema: "audit",
             table: "AuditProperties",
-            columns: new[] { "AuditRecordId", "Key", "Value" });
+            columns: ["AuditRecordId", "Key", "Value"]);
     }
 
     /// <inheritdoc />
@@ -34,6 +34,6 @@ public partial class MultipleValuesForProperties : Migration
             name: "PK_AuditProperties",
             schema: "audit",
             table: "AuditProperties",
-            columns: new[] { "AuditRecordId", "Key" });
+            columns: ["AuditRecordId", "Key"]);
     }
 }

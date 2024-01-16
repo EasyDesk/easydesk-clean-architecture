@@ -4,7 +4,7 @@ namespace EasyDesk.Commons.Observables;
 
 public sealed class SimpleAsyncEvent<T> : IAsyncObservable<T>, IAsyncEmitter<T>
 {
-    private readonly List<AsyncAction<T>> _handlers = new();
+    private readonly IList<AsyncAction<T>> _handlers = [];
 
     public async Task Emit(T value)
     {

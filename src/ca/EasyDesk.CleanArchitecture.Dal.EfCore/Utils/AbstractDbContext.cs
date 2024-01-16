@@ -38,7 +38,7 @@ public class AbstractDbContext : DbContext
             .Where(t => t.IsAssignableTo(typeof(IMultitenantEntity)))
             .ToList();
 
-        if (multitenantEntities.Any())
+        if (multitenantEntities.HasAny())
         {
             var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureMultitenantEntity))!;
             var args = new object[] { modelBuilder, queryFilters };

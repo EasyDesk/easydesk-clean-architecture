@@ -41,8 +41,8 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     private readonly string _endpoint;
     private readonly HttpMethod _method;
     private readonly ITestHttpAuthentication _testHttpAuthentication;
-    private readonly IList<Func<ImmutableHttpRequestMessage, ImmutableHttpRequestMessage>> _configureRequest = new List<Func<ImmutableHttpRequestMessage, ImmutableHttpRequestMessage>>();
-    private readonly Dictionary<string, StringValues> _queryParameters = new();
+    private readonly List<Func<ImmutableHttpRequestMessage, ImmutableHttpRequestMessage>> _configureRequest = [];
+    private readonly Dictionary<string, StringValues> _queryParameters = [];
 
     public HttpRequestBuilder(
         string endpoint,

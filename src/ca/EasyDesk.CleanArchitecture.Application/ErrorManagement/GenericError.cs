@@ -21,7 +21,7 @@ public partial record GenericError(string Code, string Message, IImmutableDictio
 
     private static string CalculateMatchReplacement(Match match, Dictionary<string, object> paramMap, Queue<object> argsQueue)
     {
-        if (match.Value.StartsWith(@"\"))
+        if (match.Value.StartsWith('\\'))
         {
             return match.Value[1..];
         }

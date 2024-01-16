@@ -51,7 +51,7 @@ public class AgentParserBuilder
                 parsedIdentity.IfPresent(i => identities.Add(i));
             }
             return Some(identities)
-                .Filter(i => i.Any())
+                .Filter(i => i.HasAny())
                 .Map(Agent.FromIdentities);
         };
     }

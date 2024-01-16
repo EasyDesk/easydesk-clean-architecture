@@ -2,7 +2,7 @@
 
 public abstract class Entity
 {
-    private List<DomainEvent> _events = new();
+    private List<DomainEvent> _events = [];
 
     public IEnumerable<DomainEvent> EmittedEvents() => _events
         .Concat(ChildEntities().SelectMany(e => e.EmittedEvents()))
@@ -16,7 +16,7 @@ public abstract class Entity
     public IEnumerable<DomainEvent> ConsumeAllEvents()
     {
         var events = _events;
-        _events = new();
+        _events = [];
         return events
             .Concat(ChildEntities().SelectMany(e => e.ConsumeAllEvents()))
             .ToList();

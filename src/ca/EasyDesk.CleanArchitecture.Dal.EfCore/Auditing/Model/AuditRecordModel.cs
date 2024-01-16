@@ -103,7 +103,7 @@ internal class AuditRecordModel : IMultitenantEntity
             Name,
             Description.AsOption(),
             Some(Identities)
-                .Filter(identities => identities.Any())
+                .Filter(identities => identities.HasAny())
                 .Map(identities => Agent.FromIdentities(identities.Select(i => i.ToIdentity()))),
             Properties.GroupBy(p => p.Key, x => x.Value).ToEquatableMap(x => x.Key, x => x.ToEquatableSet()),
             Success,

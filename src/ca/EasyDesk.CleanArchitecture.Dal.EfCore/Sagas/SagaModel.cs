@@ -10,7 +10,7 @@ internal class SagaModel : IMultitenantEntity
 
     public required string Type { get; set; }
 
-    public byte[] State { get; set; } = Array.Empty<byte>();
+    public byte[] State { get; set; } = [];
 
     public int? Version { get; set; }
 
