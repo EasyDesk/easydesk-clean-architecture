@@ -31,44 +31,43 @@ public class AgentExtensionsTests
         result.Map(x => x.ToAgent()).ShouldBe(agent);
     }
 
-    public static IEnumerable<object[]> Agents()
+    public static TheoryData<Agent> Agents()
     {
         var realmA = new Realm("realmA");
         var realmB = new Realm("realmB");
         var idA = new IdentityId("AAAA");
         var idB = new IdentityId("BBBB");
-        yield return new[]
+        return new()
         {
-            Agent.Construct(x => x.AddIdentity(realmA, idA))
-        };
-        yield return new[]
-        {
-            Agent.Construct(x =>
             {
-                x.AddIdentity(realmA, idA);
-                x.AddIdentity(realmB, idB);
-            })
-        };
-        yield return new[]
-        {
-            Agent.Construct(x =>
+                Agent.Construct(x => x.AddIdentity(realmA, idA))
+            },
             {
-                x.AddIdentity(realmA, idA)
-                    .AddAttribute("attributeA", "1")
-                    .AddAttribute("attributeB", "2");
-                x.AddIdentity(realmB, idB);
-            })
-        };
-        yield return new[]
-        {
-            Agent.Construct(x =>
+                Agent.Construct(x =>
+                {
+                    x.AddIdentity(realmA, idA);
+                    x.AddIdentity(realmB, idB);
+                })
+            },
             {
-                x.AddIdentity(realmA, idA)
-                    .AddAttribute("attributeA", "1")
-                    .AddAttribute("attributeA", "2")
-                    .AddAttribute("attributeB", "3");
-                x.AddIdentity(realmB, idB);
-            })
+                Agent.Construct(x =>
+                {
+                    x.AddIdentity(realmA, idA)
+                        .AddAttribute("attributeA", "1")
+                        .AddAttribute("attributeB", "2");
+                    x.AddIdentity(realmB, idB);
+                })
+            },
+            {
+                Agent.Construct(x =>
+                {
+                    x.AddIdentity(realmA, idA)
+                        .AddAttribute("attributeA", "1")
+                        .AddAttribute("attributeA", "2")
+                        .AddAttribute("attributeB", "3");
+                    x.AddIdentity(realmB, idB);
+                })
+            },
         };
     }
 }

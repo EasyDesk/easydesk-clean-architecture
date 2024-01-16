@@ -22,17 +22,17 @@ public class ResultOperatorsTests
 
     private static Result<int> Failure => Failure<int>(_error);
 
-    public static IEnumerable<object[]> AllTypesOfResult()
+    public static TheoryData<Result<int>> AllTypesOfResult() => new()
     {
-        yield return new object[] { Success };
-        yield return new object[] { Failure };
-    }
+        Success,
+        Failure,
+    };
 
-    public static IEnumerable<object[]> FlatMapData()
+    public static TheoryData<Result<string>> FlatMapData() => new()
     {
-        yield return new object[] { Success(TestString) };
-        yield return new object[] { Failure<string>(_differentError) };
-    }
+        { Success(TestString) },
+        { Failure<string>(_differentError) },
+    };
 
     [Fact]
     public void IfSuccess_ShouldNotCallTheGivenFunction_ForFailedResults()
@@ -562,26 +562,12 @@ public class ResultOperatorsTests
         result.ReadValue().ShouldBeEmpty();
     }
 
-    public static IEnumerable<object?[]> SingleOptionOrErrorTestCases()
+    public static TheoryData<IEnumerable<int>, Result<Option<int>>> SingleOptionOrErrorTestCases() => new()
     {
-        yield return new object?[]
-        {
-            EnumerableUtils.Items<int>(),
-            Success(NoneT<int>()),
-        };
-
-        yield return new object?[]
-        {
-            EnumerableUtils.Items(1),
-            Success(Some(1)),
-        };
-
-        yield return new object?[]
-        {
-            EnumerableUtils.Items(3, 4),
-            Failure<Option<int>>(_error),
-        };
-    }
+        { EnumerableUtils.Items<int>(), NoneT<int>() },
+        { EnumerableUtils.Items(1), Some(1) },
+        { EnumerableUtils.Items(3, 4), _error },
+    };
 
     [Theory]
     [MemberData(nameof(SingleOptionOrErrorTestCases))]

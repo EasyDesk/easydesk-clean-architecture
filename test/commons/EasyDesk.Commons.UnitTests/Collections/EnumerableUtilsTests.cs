@@ -100,12 +100,12 @@ public class EnumerableUtilsTests
         sequence.LastOption(predicate).ShouldBeEmpty();
     }
 
-    public static IEnumerable<object[]> FirstOptionEmptyData()
+    public static TheoryData<IEnumerable<int>, Func<int, bool>> FirstOptionEmptyData() => new()
     {
-        yield return new object[] { Empty<int>(), new Func<int, bool>(_ => true) };
-        yield return new object[] { Empty<int>(), new Func<int, bool>(_ => false) };
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x > 20) };
-    }
+        { Empty<int>(), _ => true },
+        { Empty<int>(), _ => false },
+        { Range(5, 10), x => x > 20 },
+    };
 
     [Theory]
     [MemberData(nameof(FirstOptionNonEmptyData))]
@@ -123,17 +123,17 @@ public class EnumerableUtilsTests
         sequence.LastOption(predicate).ShouldContain(expected);
     }
 
-    public static IEnumerable<object[]> FirstOptionNonEmptyData()
+    public static TheoryData<IEnumerable<int>, Func<int, bool>, int> FirstOptionNonEmptyData() => new()
     {
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x > 3), 5 };
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x > 7), 8 };
-    }
+        { Range(5, 10), x => x > 3, 5 },
+        { Range(5, 10), x => x > 7, 8 },
+    };
 
-    public static IEnumerable<object[]> LastOptionNonEmptyData()
+    public static TheoryData<IEnumerable<int>, Func<int, bool>, int> LastOptionNonEmptyData() => new()
     {
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x <= 5), 5 };
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x <= 8), 8 };
-    }
+        { Range(5, 10), x => x <= 5, 5 },
+        { Range(5, 10), x => x <= 8, 8 },
+    };
 
     [Theory]
     [MemberData(nameof(SingleOptionWithOneMatchData))]
@@ -143,11 +143,11 @@ public class EnumerableUtilsTests
         sequence.SingleOption(predicate).ShouldContain(expected);
     }
 
-    public static IEnumerable<object[]> SingleOptionWithOneMatchData()
+    public static TheoryData<IEnumerable<int>, Func<int, bool>, int> SingleOptionWithOneMatchData() => new()
     {
-        yield return new object[] { Range(5, 1), new Func<int, bool>(_ => true), 5 };
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x is > 7 and < 9), 8 };
-    }
+        { Range(5, 1), _ => true, 5 },
+        { Range(5, 10), x => x is > 7 and < 9, 8 },
+    };
 
     [Theory]
     [MemberData(nameof(SingleOptionWithNoMatchesData))]
@@ -157,12 +157,12 @@ public class EnumerableUtilsTests
         sequence.SingleOption(predicate).ShouldBeEmpty();
     }
 
-    public static IEnumerable<object[]> SingleOptionWithNoMatchesData()
+    public static TheoryData<IEnumerable<int>, Func<int, bool>> SingleOptionWithNoMatchesData() => new()
     {
-        yield return new object[] { Empty<int>(), new Func<int, bool>(_ => true) };
-        yield return new object[] { Empty<int>(), new Func<int, bool>(_ => false) };
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x < 3) };
-    }
+        { Empty<int>(), _ => true },
+        { Empty<int>(), _ => false },
+        { Range(5, 10), x => x < 3 },
+    };
 
     [Theory]
     [MemberData(nameof(SingleOptionWithMoreThanOneMatchData))]
@@ -184,10 +184,10 @@ public class EnumerableUtilsTests
         Should.Throw<CustomException>(() => sequence.SingleOption(predicate, () => new CustomException()));
     }
 
-    public static IEnumerable<object[]> SingleOptionWithMoreThanOneMatchData()
+    public static TheoryData<IEnumerable<int>, Func<int, bool>> SingleOptionWithMoreThanOneMatchData() => new()
     {
-        yield return new object[] { Range(5, 10), new Func<int, bool>(x => x > 3) };
-    }
+        { Range(5, 10), x => x > 3 },
+    };
 
     [Theory]
     [MemberData(nameof(ConcatStringsData))]
@@ -197,12 +197,12 @@ public class EnumerableUtilsTests
         sequence.ConcatStrings(",", "[", "]").ShouldBe(expected);
     }
 
-    public static IEnumerable<object[]> ConcatStringsData()
+    public static TheoryData<IEnumerable<int>, string> ConcatStringsData() => new()
     {
-        yield return new object[] { Empty<int>(), "[]" };
-        yield return new object[] { Range(1, 1), "[1]" };
-        yield return new object[] { Range(1, 4), "[1,2,3,4]" };
-    }
+        { Empty<int>(), "[]" },
+        { Range(1, 1), "[1]" },
+        { Range(1, 4), "[1,2,3,4]" },
+    };
 
     [Fact]
     public void Scan_ShouldReturnTheSeedAlone_IfSequenceIsEmpty()
@@ -292,14 +292,14 @@ public class EnumerableUtilsTests
         sequence.MatchesTwoByTwo((a, b) => a < b).ShouldBeFalse();
     }
 
-    public static IEnumerable<object[]> FailingMatchesTwoByTwo()
+    public static TheoryData<IEnumerable<int>> FailingMatchesTwoByTwo() => new()
     {
-        yield return new object[] { Items(1, 0, 1, 0) };
-        yield return new object[] { Items(1, 2, 1, 0) };
-        yield return new object[] { Items(1, 2, 3, 0) };
-        yield return new object[] { Items(4, 3, 2, 1) };
-        yield return new object[] { Items(4, 3, 4, 5) };
-    }
+        { Items(1, 0, 1, 0) },
+        { Items(1, 2, 1, 0) },
+        { Items(1, 2, 3, 0) },
+        { Items(4, 3, 2, 1) },
+        { Items(4, 3, 4, 5) },
+    };
 
     [Fact]
     public void MinMaxOption_ShouldReturnNone_IfSequenceIsEmpty()
@@ -336,12 +336,12 @@ public class EnumerableUtilsTests
         wrapped.MaxByOption(x => x.Value).ShouldBe(Some(new Wrapper(max)));
     }
 
-    public static IEnumerable<object[]> MinMaxData()
+    public static TheoryData<IEnumerable<int>, int, int> MinMaxData() => new()
     {
-        yield return new object[] { Items(1), 1, 1 };
-        yield return new object[] { Items(1, 2, 3, 4, 5), 1, 5 };
-        yield return new object[] { Items(3, 2, 1, 5, 4), 1, 5 };
-    }
+        { Items(1), 1, 1 },
+        { Items(1, 2, 3, 4, 5), 1, 5 },
+        { Items(3, 2, 1, 5, 4), 1, 5 },
+    };
 
     [Theory]
     [MemberData(nameof(FilterNotNullData))]
@@ -351,12 +351,12 @@ public class EnumerableUtilsTests
         sequence.WhereNotNull().ShouldBe(expected);
     }
 
-    public static IEnumerable<object[]> FilterNotNullData()
+    public static TheoryData<IEnumerable<string?>, IEnumerable<string>> FilterNotNullData() => new()
     {
-        yield return new object[] { Items("a", null, "b", null, null), Items("a", "b") };
-        yield return new object[] { Empty<string>(), Empty<string>() };
-        yield return new object[] { Items<string?>(null, null, null), Empty<string>() };
-    }
+        { Items("a", null, "b", null, null), Items("a", "b") },
+        { Empty<string>(), Empty<string>() },
+        { Items<string?>(null, null, null), Empty<string>() },
+    };
 
     [Fact]
     public void EnumerateOnce_ShouldEnumerateItemsAtMostOnce()

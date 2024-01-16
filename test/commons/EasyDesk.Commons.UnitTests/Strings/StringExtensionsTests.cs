@@ -13,17 +13,17 @@ public class StringExtensionsTests
         text.RemovePrefix(prefix).ShouldBe(expected);
     }
 
-    public static IEnumerable<object[]> PrefixData()
+    public static TheoryData<string, string, string> PrefixData() => new()
     {
-        yield return new[] { "Hello World", "ello", "Hello World" };
-        yield return new[] { "Hello World", "Hello", " World" };
-        yield return new[] { "Hello World", "World", "Hello World" };
-        yield return new[] { "Hello World", string.Empty, "Hello World" };
-        yield return new[] { string.Empty, "World", string.Empty };
-        yield return new[] { string.Empty, string.Empty, string.Empty };
-        yield return new[] { "Hello World", "Hello World", string.Empty };
-        yield return new[] { "Hello World", "Hello World!", "Hello World" };
-    }
+        { "Hello World", "ello", "Hello World" },
+        { "Hello World", "Hello", " World" },
+        { "Hello World", "World", "Hello World" },
+        { "Hello World", string.Empty, "Hello World" },
+        { string.Empty, "World", string.Empty },
+        { string.Empty, string.Empty, string.Empty },
+        { "Hello World", "Hello World", string.Empty },
+        { "Hello World", "Hello World!", "Hello World" },
+    };
 
     [Theory]
     [MemberData(nameof(SuffixData))]
@@ -32,15 +32,15 @@ public class StringExtensionsTests
         text.RemoveSuffix(suffix).ShouldBe(expected);
     }
 
-    public static IEnumerable<object[]> SuffixData()
+    public static TheoryData<string, string, string> SuffixData() => new()
     {
-        yield return new[] { "Hello World", "Worl", "Hello World" };
-        yield return new[] { "Hello World", "World", "Hello " };
-        yield return new[] { "Hello World", "Hello", "Hello World" };
-        yield return new[] { "Hello World", string.Empty, "Hello World" };
-        yield return new[] { string.Empty, "World", string.Empty };
-        yield return new[] { string.Empty, string.Empty, string.Empty };
-        yield return new[] { "Hello World", "Hello World", string.Empty };
-        yield return new[] { "Hello World", "!Hello World", "Hello World" };
-    }
+        { "Hello World", "Worl", "Hello World" },
+        { "Hello World", "World", "Hello " },
+        { "Hello World", "Hello", "Hello World" },
+        { "Hello World", string.Empty, "Hello World" },
+        { string.Empty, "World", string.Empty },
+        { string.Empty, string.Empty, string.Empty },
+        { "Hello World", "Hello World", string.Empty },
+        { "Hello World", "!Hello World", "Hello World" },
+    };
 }

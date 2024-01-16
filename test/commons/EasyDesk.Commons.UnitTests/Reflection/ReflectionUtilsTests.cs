@@ -35,35 +35,35 @@ public class ReflectionUtilsTests
         type.IsSubtypeOrImplementationOf(otherType).ShouldBe(expected);
     }
 
-    public static IEnumerable<object[]> TestData()
+    public static TheoryData<Type, Type, bool> TestData() => new()
     {
-        yield return new object[] { typeof(NoInterface), typeof(IInterface), false };
-        yield return new object[] { typeof(NoInterface), typeof(IGenericInterface<>), false };
-        yield return new object[] { typeof(NoInterface), typeof(IGenericInterface<int>), false };
-        yield return new object[] { typeof(Implementation), typeof(IInterface), true };
-        yield return new object[] { typeof(Implementation), typeof(IGenericInterface<>), false };
-        yield return new object[] { typeof(Implementation), typeof(IGenericInterface<int>), false };
-        yield return new object[] { typeof(OpenGenericImplementation<>), typeof(IGenericInterface<>), true };
-        yield return new object[] { typeof(OpenGenericImplementation<>), typeof(IGenericInterface<int>), true };
-        yield return new object[] { typeof(OpenGenericImplementation<int>), typeof(IGenericInterface<>), true };
-        yield return new object[] { typeof(OpenGenericImplementation<int>), typeof(IGenericInterface<int>), true };
-        yield return new object[] { typeof(OpenGenericImplementation<int>), typeof(IGenericInterface<string>), false };
-        yield return new object[] { typeof(ClosedGenericImplementation), typeof(IGenericInterface<>), true };
-        yield return new object[] { typeof(ClosedGenericImplementation), typeof(IGenericInterface<int>), true };
-        yield return new object[] { typeof(ClosedGenericImplementation), typeof(IGenericInterface<string>), false };
-        yield return new object[] { typeof(MultiImplementation), typeof(IInterface), true };
-        yield return new object[] { typeof(MultiImplementation), typeof(IGenericInterface<>), true };
-        yield return new object[] { typeof(MultiImplementation), typeof(IGenericInterface<int>), true };
-        yield return new object[] { typeof(MultiImplementation), typeof(IGenericInterface<string>), false };
-        yield return new object[] { typeof(ConcreteImplementation<>), typeof(IGenericInterface<>), true };
-        yield return new object[] { typeof(ConcreteImplementation<>), typeof(IGenericInterface<int>), true };
-        yield return new object[] { typeof(ConcreteImplementation<>), typeof(BaseImplementation<>), true };
-        yield return new object[] { typeof(ConcreteImplementation<>), typeof(BaseImplementation<int>), true };
-        yield return new object[] { typeof(ConcreteImplementation<int>), typeof(IGenericInterface<>), true };
-        yield return new object[] { typeof(ConcreteImplementation<int>), typeof(IGenericInterface<int>), true };
-        yield return new object[] { typeof(ConcreteImplementation<int>), typeof(IGenericInterface<string>), false };
-        yield return new object[] { typeof(ConcreteImplementation<int>), typeof(BaseImplementation<>), true };
-        yield return new object[] { typeof(ConcreteImplementation<int>), typeof(BaseImplementation<int>), true };
-        yield return new object[] { typeof(ConcreteImplementation<int>), typeof(BaseImplementation<string>), false };
-    }
+        { typeof(NoInterface), typeof(IInterface), false },
+        { typeof(NoInterface), typeof(IGenericInterface<>), false },
+        { typeof(NoInterface), typeof(IGenericInterface<int>), false },
+        { typeof(Implementation), typeof(IInterface), true },
+        { typeof(Implementation), typeof(IGenericInterface<>), false },
+        { typeof(Implementation), typeof(IGenericInterface<int>), false },
+        { typeof(OpenGenericImplementation<>), typeof(IGenericInterface<>), true },
+        { typeof(OpenGenericImplementation<>), typeof(IGenericInterface<int>), true },
+        { typeof(OpenGenericImplementation<int>), typeof(IGenericInterface<>), true },
+        { typeof(OpenGenericImplementation<int>), typeof(IGenericInterface<int>), true },
+        { typeof(OpenGenericImplementation<int>), typeof(IGenericInterface<string>), false },
+        { typeof(ClosedGenericImplementation), typeof(IGenericInterface<>), true },
+        { typeof(ClosedGenericImplementation), typeof(IGenericInterface<int>), true },
+        { typeof(ClosedGenericImplementation), typeof(IGenericInterface<string>), false },
+        { typeof(MultiImplementation), typeof(IInterface), true },
+        { typeof(MultiImplementation), typeof(IGenericInterface<>), true },
+        { typeof(MultiImplementation), typeof(IGenericInterface<int>), true },
+        { typeof(MultiImplementation), typeof(IGenericInterface<string>), false },
+        { typeof(ConcreteImplementation<>), typeof(IGenericInterface<>), true },
+        { typeof(ConcreteImplementation<>), typeof(IGenericInterface<int>), true },
+        { typeof(ConcreteImplementation<>), typeof(BaseImplementation<>), true },
+        { typeof(ConcreteImplementation<>), typeof(BaseImplementation<int>), true },
+        { typeof(ConcreteImplementation<int>), typeof(IGenericInterface<>), true },
+        { typeof(ConcreteImplementation<int>), typeof(IGenericInterface<int>), true },
+        { typeof(ConcreteImplementation<int>), typeof(IGenericInterface<string>), false },
+        { typeof(ConcreteImplementation<int>), typeof(BaseImplementation<>), true },
+        { typeof(ConcreteImplementation<int>), typeof(BaseImplementation<int>), true },
+        { typeof(ConcreteImplementation<int>), typeof(BaseImplementation<string>), false },
+    };
 }

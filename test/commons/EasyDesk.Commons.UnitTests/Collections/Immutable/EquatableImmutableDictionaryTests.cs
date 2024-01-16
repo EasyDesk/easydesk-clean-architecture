@@ -1,5 +1,5 @@
-﻿using EasyDesk.Commons.Collections.Immutable;
-using Shouldly;
+﻿using Shouldly;
+using System.Collections.Immutable;
 using Xunit;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -10,7 +10,7 @@ public class EquatableImmutableDictionaryTests
     [Theory]
     [MemberData(nameof(EqualDictionaryPairs))]
     public void Equals_ShouldReturnTrue_IfTheDictionariesContainTheSameKeyValuePairs(
-        EquatableImmutableDictionary<int, string> left, EquatableImmutableDictionary<int, string> right)
+        IImmutableDictionary<int, string> left, IImmutableDictionary<int, string> right)
     {
         left.Equals(right).ShouldBeTrue();
     }
@@ -18,7 +18,7 @@ public class EquatableImmutableDictionaryTests
     [Theory]
     [MemberData(nameof(DifferentDictionaryPairs))]
     public void Equals_ShouldReturnFalse_IfTheDictionariesContainDifferentKeyValuePairs(
-        EquatableImmutableDictionary<int, string> left, EquatableImmutableDictionary<int, string> right)
+        IImmutableDictionary<int, string> left, IImmutableDictionary<int, string> right)
     {
         left.Equals(right).ShouldBeFalse();
     }
@@ -26,7 +26,7 @@ public class EquatableImmutableDictionaryTests
     [Theory]
     [MemberData(nameof(EqualDictionaryPairs))]
     public void GetHashCode_ShouldReturnTheSameValue_ForEqualDictionaries(
-        EquatableImmutableDictionary<int, string> left, EquatableImmutableDictionary<int, string> right)
+        IImmutableDictionary<int, string> left, IImmutableDictionary<int, string> right)
     {
         var hashLeft = left.GetHashCode();
         var hashRight = right.GetHashCode();
@@ -34,19 +34,21 @@ public class EquatableImmutableDictionaryTests
         (hashLeft == hashRight).ShouldBeTrue();
     }
 
-    public static IEnumerable<object[]> EqualDictionaryPairs()
+    public static TheoryData<IImmutableDictionary<int, string>, IImmutableDictionary<int, string>> EqualDictionaryPairs()
     {
-        yield return new object[] { Map<int, string>(), Map<int, string>() };
-        yield return new object[] { Map((1, "one"), (2, "two")), Map((2, "two"), (1, "one")) };
-
         var sameRefMap = Map((1, "one"), (2, "two"));
-        yield return new object[] { sameRefMap, sameRefMap };
+        return new()
+        {
+            { Map<int, string>(), Map<int, string>() },
+            { Map((1, "one"), (2, "two")), Map((2, "two"), (1, "one")) },
+            { sameRefMap, sameRefMap },
+        };
     }
 
-    public static IEnumerable<object[]> DifferentDictionaryPairs()
+    public static TheoryData<IImmutableDictionary<int, string>, IImmutableDictionary<int, string>> DifferentDictionaryPairs() => new()
     {
-        yield return new object[] { Map<int, string>(), Map((1, "one")) };
-        yield return new object[] { Map((1, "one"), (2, "two")), Map((1, "one")) };
-        yield return new object[] { Map((1, "one"), (2, "two")), Map((1, "one"), (2, "two"), (3, "three")) };
-    }
+        { Map<int, string>(), Map((1, "one")) },
+        { Map((1, "one"), (2, "two")), Map((1, "one")) },
+        { Map((1, "one"), (2, "two")), Map((1, "one"), (2, "two"), (3, "three")) },
+    };
 }

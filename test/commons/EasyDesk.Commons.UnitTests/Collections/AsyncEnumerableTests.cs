@@ -116,13 +116,13 @@ public class AsyncEnumerableTests
         (await left.Concat(right).SequenceEqualAsync(expected)).ShouldBe(true);
     }
 
-    public static IEnumerable<object[]> ConcatData()
+    public static TheoryData<IAsyncEnumerable<int>, IAsyncEnumerable<int>, IAsyncEnumerable<int>> ConcatData() => new()
     {
-        yield return new object[] { Empty<int>(), Empty<int>(), Empty<int>() };
-        yield return new object[] { Empty<int>(), Of(1, 2, 3), Of(1, 2, 3) };
-        yield return new object[] { Of(1, 2, 3), Empty<int>(), Of(1, 2, 3) };
-        yield return new object[] { Of(1, 2, 3), Of(4, 5, 6), Of(1, 2, 3, 4, 5, 6) };
-    }
+        { Empty<int>(), Empty<int>(), Empty<int>() },
+        { Empty<int>(), Of(1, 2, 3), Of(1, 2, 3) },
+        { Of(1, 2, 3), Empty<int>(), Of(1, 2, 3) },
+        { Of(1, 2, 3), Of(4, 5, 6), Of(1, 2, 3, 4, 5, 6) },
+    };
 
     [Fact]
     public async Task SequenceEqualAsync_ShouldReturnTrue_IfTheSequencesAreEqualElementByElement()

@@ -19,13 +19,13 @@ public class MultiTenantPoliciesTests
         _multitenancyManager.TenantExists(_nonExistentId).Returns(Task.FromResult(false));
     }
 
-    public static IEnumerable<object[]> Tenants()
+    public static TheoryData<TenantInfo> Tenants() => new()
     {
-        yield return new object[] { TenantInfo.Tenant(_tenantId) };
-        yield return new object[] { TenantInfo.Tenant(_tenantId2) };
-        yield return new object[] { TenantInfo.Public };
-        yield return new object[] { TenantInfo.Tenant(_nonExistentId) };
-    }
+        TenantInfo.Tenant(_tenantId),
+        TenantInfo.Tenant(_tenantId2),
+        TenantInfo.Public,
+        TenantInfo.Tenant(_nonExistentId),
+    };
 
     [Theory]
     [MemberData(nameof(Tenants))]
@@ -111,13 +111,13 @@ public class MultiTenantPoliciesTests
         }
     }
 
-    public static IEnumerable<object[]> TenantsAndExistence()
+    public static TheoryData<TenantInfo, bool> TenantsAndExistence() => new()
     {
-        yield return new object[] { TenantInfo.Tenant(_tenantId), true };
-        yield return new object[] { TenantInfo.Tenant(_tenantId2), true };
-        yield return new object[] { TenantInfo.Public, true };
-        yield return new object[] { TenantInfo.Tenant(_nonExistentId), false };
-    }
+        { TenantInfo.Tenant(_tenantId), true },
+        { TenantInfo.Tenant(_tenantId2), true },
+        { TenantInfo.Public, true },
+        { TenantInfo.Tenant(_nonExistentId), false },
+    };
 
     [Theory]
     [MemberData(nameof(TenantsAndExistence))]

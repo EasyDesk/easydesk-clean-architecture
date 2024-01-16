@@ -17,15 +17,17 @@ public class PimpedAbstractValidatorTests
         }
     }
 
-    public static IEnumerable<object?[]> TestRecords()
+    public static TheoryData<TestRecord> TestRecords()
     {
+        var data = new TheoryData<TestRecord>();
         foreach (var number in new[] { None, Some(1), Some(-1) })
         {
             foreach (var text in new[] { None, Some(string.Empty), Some("aa"), Some("123456") })
             {
-                yield return new object[] { new TestRecord(number, text) };
+                data.Add(new TestRecord(number, text));
             }
         }
+        return data;
     }
 
     private void SimpleRules(PimpedAbstractValidator<TestRecord> validator)

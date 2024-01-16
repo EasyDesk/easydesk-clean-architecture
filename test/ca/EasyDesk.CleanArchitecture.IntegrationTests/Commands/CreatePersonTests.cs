@@ -273,8 +273,9 @@ public class CreatePersonTests : SampleIntegrationTest
             .Verify();
     }
 
-    public static IEnumerable<object[]> WrongAddresses()
+    public static TheoryData<AddressDto, string, string, string> WrongAddresses()
     {
+        var data = new TheoryData<AddressDto, string, string, string>();
         var badPlaceNames = new[] { (string.Empty, "empty"), (new string('a', PlaceName.MaxLength + 1), "too long") };
         foreach (var (streetName, streetNameProblem) in badPlaceNames)
         {
@@ -282,10 +283,11 @@ public class CreatePersonTests : SampleIntegrationTest
             {
                 foreach (var (streetNumber, streetNumberProblem) in badPlaceNames)
                 {
-                    yield return new object[] { AddressDto.Create(streetName, streetType: streetType, streetNumber: streetNumber), streetNameProblem, streetTypeProblem, streetNumberProblem };
+                    data.Add(AddressDto.Create(streetName, streetType: streetType, streetNumber: streetNumber), streetNameProblem, streetTypeProblem, streetNumberProblem);
                 }
             }
         }
+        return data;
     }
 
     [Theory]

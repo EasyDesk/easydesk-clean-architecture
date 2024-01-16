@@ -1,5 +1,5 @@
-﻿using EasyDesk.Commons.Collections.Immutable;
-using Shouldly;
+﻿using Shouldly;
+using System.Collections.Immutable;
 using Xunit;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -10,7 +10,7 @@ public class EquatableImmutableSetTests
     [Theory]
     [MemberData(nameof(EqualSetPairs))]
     public void Equals_ShouldReturnTrue_IfSetsContainTheSameElements(
-        EquatableImmutableSet<int> left, EquatableImmutableSet<int> right)
+        IImmutableSet<int> left, IImmutableSet<int> right)
     {
         left.Equals(right).ShouldBeTrue();
     }
@@ -18,7 +18,7 @@ public class EquatableImmutableSetTests
     [Theory]
     [MemberData(nameof(DifferentSetPairs))]
     public void Equals_ShouldReturnFalse_IfSetsContainDifferentElements(
-        EquatableImmutableSet<int> left, EquatableImmutableSet<int> right)
+        IImmutableSet<int> left, IImmutableSet<int> right)
     {
         left.Equals(right).ShouldBeFalse();
     }
@@ -26,7 +26,7 @@ public class EquatableImmutableSetTests
     [Theory]
     [MemberData(nameof(EqualSetPairs))]
     public void GetHashCode_ShouldReturnTheSameValue_ForEqualSets(
-        EquatableImmutableSet<int> left, EquatableImmutableSet<int> right)
+        IImmutableSet<int> left, IImmutableSet<int> right)
     {
         var hashLeft = left.GetHashCode();
         var hashRight = right.GetHashCode();
@@ -34,19 +34,22 @@ public class EquatableImmutableSetTests
         (hashLeft == hashRight).ShouldBeTrue();
     }
 
-    public static IEnumerable<object[]> EqualSetPairs()
+    public static TheoryData<IImmutableSet<int>, IImmutableSet<int>> EqualSetPairs()
     {
-        yield return new object[] { Set<int>(), Set<int>() };
-        yield return new object[] { Set(1, 2, 3), Set(1, 2, 3) };
-        yield return new object[] { Set(1, 2, 3), Set(3, 2, 1) };
         var sameRefSet = Set(1, 2);
-        yield return new object[] { sameRefSet, sameRefSet };
+        return new()
+        {
+            { Set<int>(), Set<int>() },
+            { Set(1, 2, 3), Set(1, 2, 3) },
+            { Set(1, 2, 3), Set(3, 2, 1) },
+            { sameRefSet, sameRefSet },
+        };
     }
 
-    public static IEnumerable<object[]> DifferentSetPairs()
+    public static TheoryData<IImmutableSet<int>, IImmutableSet<int>> DifferentSetPairs() => new()
     {
-        yield return new object[] { Set<int>(), Set(1) };
-        yield return new object[] { Set(1, 2, 3), Set(1, 2, 3, 4) };
-        yield return new object[] { Set(1, 2, 3), Set(1, 2) };
-    }
+        { Set<int>(), Set(1) },
+        { Set(1, 2, 3), Set(1, 2, 3, 4) },
+        { Set(1, 2, 3), Set(1, 2) },
+    };
 }

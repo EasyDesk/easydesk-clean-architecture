@@ -118,11 +118,11 @@ public class MultitenancyManagementStepTests
 
     private Option<string> GetRawTenantId(TenantInfo tenantInfo) => tenantInfo.Id.Map(i => i.Value);
 
-    public static IEnumerable<object[]> Tenants()
+    public static TheoryData<TenantInfo> Tenants() => new()
     {
-        yield return new object[] { TenantInfo.Tenant(_tenantId) };
-        yield return new object[] { TenantInfo.Public };
-    }
+        TenantInfo.Tenant(_tenantId),
+        TenantInfo.Public,
+    };
 
     public static IEnumerable<object?[]> TenantsAndPolicyResults()
     {

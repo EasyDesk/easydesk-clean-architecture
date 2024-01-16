@@ -117,16 +117,19 @@ public class ResultTests
         result.ShouldBe(expected);
     }
 
-    public static IEnumerable<object[]> AndOperatorData()
+    public static TheoryData<Result<int>, Result<int>, Result<int>> AndOperatorData()
     {
         var success1 = Success(10);
         var success2 = Success(20);
         var failureA = Failure<int>(TestError.Create("A"));
         var failureB = Failure<int>(TestError.Create("B"));
-        yield return new object[] { failureA, failureB, failureA };
-        yield return new object[] { failureB, success2, failureB };
-        yield return new object[] { success2, failureB, failureB };
-        yield return new object[] { success1, success2, success2 };
+        return new()
+        {
+            { failureA, failureB, failureA },
+            { failureB, success2, failureB },
+            { success2, failureB, failureB },
+            { success1, success2, success2 },
+        };
     }
 
     [Theory]
@@ -137,16 +140,19 @@ public class ResultTests
         result.ShouldBe(expected);
     }
 
-    public static IEnumerable<object[]> OrOperatorData()
+    public static TheoryData<Result<int>, Result<int>, Result<int>> OrOperatorData()
     {
         var success1 = Success(10);
         var success2 = Success(20);
         var failureA = Failure<int>(TestError.Create("A"));
         var failureB = Failure<int>(TestError.Create("B"));
-        yield return new object[] { failureA, failureB, failureB };
-        yield return new object[] { failureB, success2, success2 };
-        yield return new object[] { success2, failureB, success2 };
-        yield return new object[] { success1, success2, success1 };
+        return new()
+        {
+            { failureA, failureB, failureB },
+            { failureB, success2, success2 },
+            { success2, failureB, success2 },
+            { success1, success2, success1 },
+        };
     }
 
     [Fact]

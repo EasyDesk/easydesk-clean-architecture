@@ -16,20 +16,22 @@ public class ListUtilsTests
         _sortedList = _list.Sort();
     }
 
-    public static IEnumerable<object?[]> Needles()
+    public static TheoryData<int, int> Needles()
     {
         var sorted = _list.Sort();
+        var data = new TheoryData<int, int>();
         for (var i = -20; i < 20; i++)
         {
             if (sorted.Contains(i))
             {
-                yield return new object?[] { i, sorted.BinarySearch(i) };
+                data.Add(i, sorted.BinarySearch(i));
             }
             else
             {
-                yield return new object?[] { i, ~sorted.BinarySearch(i) };
+                data.Add(i, ~sorted.BinarySearch(i));
             }
         }
+        return data;
     }
 
     [Theory]
