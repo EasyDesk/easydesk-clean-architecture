@@ -4,7 +4,6 @@ using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel;
 
-[UsesVerify]
 public class CollectionValidationExtensionsTests
 {
     public record Model(params string[] Values);

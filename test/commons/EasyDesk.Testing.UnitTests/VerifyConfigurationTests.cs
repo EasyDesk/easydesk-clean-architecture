@@ -17,7 +17,6 @@ public static class Setup
     }
 }
 
-[UsesVerify]
 public class VerifyConfigurationTests
 {
     [Fact]

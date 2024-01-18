@@ -7,7 +7,6 @@ using System.Text;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Web.Csv;
 
-[UsesVerify]
 public class CsvServiceTests
 {
     private readonly CsvService _sut = new(new(CultureInfo.InvariantCulture)

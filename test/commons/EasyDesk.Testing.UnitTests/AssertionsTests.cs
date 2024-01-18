@@ -3,7 +3,6 @@ using Shouldly;
 
 namespace EasyDesk.Testing.UnitTests;
 
-[UsesVerify]
 public class AssertionsTests
 {
     [Fact]

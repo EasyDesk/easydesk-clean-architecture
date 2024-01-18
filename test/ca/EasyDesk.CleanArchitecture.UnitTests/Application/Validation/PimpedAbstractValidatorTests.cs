@@ -4,7 +4,6 @@ using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Validation;
 
-[UsesVerify]
 public class PimpedAbstractValidatorTests
 {
     public record TestRecord(Option<int> Number, Option<string> Text);

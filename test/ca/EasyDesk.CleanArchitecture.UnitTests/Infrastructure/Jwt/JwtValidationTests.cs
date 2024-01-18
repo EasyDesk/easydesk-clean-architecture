@@ -8,7 +8,6 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Infrastructure.Jwt;
 
-[UsesVerify]
 public class JwtValidationTests
 {
     private readonly JwtFacade _jwtFacade;
