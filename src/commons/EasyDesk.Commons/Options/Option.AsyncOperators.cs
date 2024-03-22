@@ -34,4 +34,13 @@ public static partial class StaticImports
 
     public static async Task<Option<R>> ThenFlatMapAsync<T, R>(this Task<Option<T>> option, AsyncFunc<T, Option<R>> mapper) =>
         await (await option).FlatMapAsync(mapper);
+
+    public static async Task<Option<T>> ThenOr<T>(this Task<Option<T>> option, Option<T> other) =>
+        (await option).Or(other);
+
+    public static async Task<T> ThenOrElse<T>(this Task<Option<T>> option, T other) =>
+        (await option).OrElse(other);
+
+    public static async Task<T> ThenOrElseGet<T>(this Task<Option<T>> option, Func<T> other) =>
+        (await option).OrElseGet(other);
 }
