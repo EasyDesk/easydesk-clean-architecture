@@ -43,4 +43,7 @@ public static partial class StaticImports
 
     public static async Task<T> ThenOrElseGet<T>(this Task<Option<T>> option, Func<T> other) =>
         (await option).OrElseGet(other);
+
+    public static async Task<T> ThenOrElseGetAsync<T>(this Task<Option<T>> option, AsyncFunc<T> other) =>
+        await (await option).OrElseGetAsync(other);
 }
