@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +36,7 @@ public static class SqlServerExtensions
         this AppBuilder builder,
         string connectionString,
         Action<EfCoreDataAccessOptions<T, Builder, Extension>>? configure = null)
-        where T : DomainContext
+        where T : AbstractDbContext
     {
 #pragma warning disable EF1001
         return builder.AddEfCoreDataAccess(
