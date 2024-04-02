@@ -7,7 +7,6 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
@@ -25,7 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
 public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImplementation
-    where T : DomainContext
+    where T : AbstractDbContext
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
@@ -124,7 +123,7 @@ public static class EfCoreDataAccessExtensions
         this AppBuilder builder,
         IEfCoreProvider<TBuilder, TExtension> provider,
         Action<EfCoreDataAccessOptions<T, TBuilder, TExtension>>? configure = null)
-        where T : DomainContext
+        where T : AbstractDbContext
         where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
         where TExtension : RelationalOptionsExtension, new()
     {

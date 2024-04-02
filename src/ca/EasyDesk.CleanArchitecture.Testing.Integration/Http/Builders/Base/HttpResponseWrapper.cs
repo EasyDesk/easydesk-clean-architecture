@@ -64,6 +64,4 @@ public class HttpResponseWrapper<T, M>
         await EnsureSuccess();
         return (await ParseContent()).Meta;
     }
-
-    public async Task<bool> Check(Func<T, bool> condition) => await IsSuccess() && condition(await AsData());
 }

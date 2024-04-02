@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
-using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -10,7 +9,7 @@ using System.Reflection;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
 public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
-    where T : DomainContext
+    where T : AbstractDbContext
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
