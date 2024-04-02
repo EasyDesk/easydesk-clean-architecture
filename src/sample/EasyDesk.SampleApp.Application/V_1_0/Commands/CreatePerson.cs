@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Mapping;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
 using EasyDesk.CleanArchitecture.Domain.Model;
@@ -36,13 +35,11 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDt
 {
     private readonly IPersonRepository _personRepository;
     private readonly IContextProvider _contextProvider;
-    private readonly ITenantNavigator _tenantNavigator;
 
-    public CreatePersonHandler(IPersonRepository personRepository, IContextProvider contextProvider, ITenantNavigator tenantNavigator)
+    public CreatePersonHandler(IPersonRepository personRepository, IContextProvider contextProvider)
     {
         _personRepository = personRepository;
         _contextProvider = contextProvider;
-        _tenantNavigator = tenantNavigator;
     }
 
     protected override Task<Result<Person>> Process(CreatePerson command)
@@ -55,7 +52,6 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDt
             command.Residence.ToDomainObject());
         _personRepository.Save(person);
 
-        _tenantNavigator.MoveToTenant(new TenantId("a-tenant-that-does-not-exists"));
         return Task.FromResult<Result<Person>>(person);
     }
 }

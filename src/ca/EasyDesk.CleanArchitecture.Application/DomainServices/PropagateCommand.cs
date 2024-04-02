@@ -23,12 +23,21 @@ public sealed class PropagateCommand<M, D> : IDomainEventHandler<D>
 
     public async Task<Result<Nothing>> Handle(D ev)
     {
-        _tenantNavigator?.MoveTo(M.ToTenant(ev));
+        await M.ToTenant(ev).MatchAsync(
+            some: async t =>
+            {
+                using var scope = _tenantNavigator?.NavigateTo(t);
+                await Propagate(ev);
+            },
+            none: async () => await Propagate(ev));
 
+        return Ok;
+    }
+
+    private async Task Propagate(D ev)
+    {
         var options = new PropagatedCommandOptions<M>();
         M.ConfigureOptions(ev, options);
         await options.Propagate(M.ToMessage(ev), _commandSender);
-
-        return Ok;
     }
 }

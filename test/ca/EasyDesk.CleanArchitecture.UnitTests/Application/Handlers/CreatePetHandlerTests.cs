@@ -1,8 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Unit.Application;
-using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -20,7 +18,6 @@ public class CreatePetHandlerTests : RequestHandlerTestsBase<CreatePetHandler, C
     private readonly IPersonRepository _personRepository = Substitute.For<IPersonRepository>();
     private readonly IPetRepository _petRepository = Substitute.For<IPetRepository>();
     private readonly IAuditConfigurer _auditConfigurer = Substitute.For<IAuditConfigurer>();
-    private readonly ITenantNavigator _tenantNavigator = new TestTenantNavigator();
     private readonly Guid _personId = Guid.Parse("ace69604-d811-4c6b-8440-ba968a9b8314");
 
     public CreatePetHandlerTests()
@@ -34,7 +31,6 @@ public class CreatePetHandlerTests : RequestHandlerTestsBase<CreatePetHandler, C
         services.AddSingleton(_personRepository);
         services.AddSingleton(_petRepository);
         services.AddSingleton(_auditConfigurer);
-        services.AddSingleton(_tenantNavigator);
     }
 
     [Fact]

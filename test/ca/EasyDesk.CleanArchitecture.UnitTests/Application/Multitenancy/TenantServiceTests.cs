@@ -25,21 +25,9 @@ public class TenantServiceTests
     }
 
     [Fact]
-    public void MoveToTenant_ShouldThrow_IfUsedWithoutInitialization()
+    public void NavigateTo_ShouldThrow_IfUsedWithoutInitialization()
     {
-        Should.Throw<InvalidOperationException>(() => _sut.MoveToTenant(_tenantInfo.Id.Value));
-    }
-
-    [Fact]
-    public void MoveToPublic_ShouldThrow_IfUsedWithoutInitialization()
-    {
-        Should.Throw<InvalidOperationException>(_sut.MoveToPublic);
-    }
-
-    [Fact]
-    public void MoveToContextTenant_ShouldThrow_IfUsedWithoutInitialization()
-    {
-        Should.Throw<InvalidOperationException>(_sut.MoveToContextTenant);
+        Should.Throw<InvalidOperationException>(() => _sut.NavigateTo(_tenantInfo));
     }
 
     [Fact]
@@ -66,7 +54,7 @@ public class TenantServiceTests
     public void TenantInfo_ShouldBeMutualExclusiveWithTenantAfterMove()
     {
         _sut.Initialize(TenantInfo.Public);
-        _sut.MoveToTenant(_tenantId);
+        _sut.NavigateToTenant(_tenantId);
         _sut.Tenant.ShouldBe(_tenantInfo);
     }
 
@@ -74,38 +62,7 @@ public class TenantServiceTests
     public void TenantInfo_ShouldBeMutualExclusiveWithPublicAfterMove()
     {
         _sut.Initialize(_tenantInfo);
-        _sut.MoveToPublic();
-        _sut.Tenant.ShouldBe(TenantInfo.Public);
-    }
-
-    [Fact]
-    public void ShouldSuceed_WithMoveChain()
-    {
-        _sut.Initialize(_tenantInfo);
-        _sut.Tenant.ShouldBe(_tenantInfo);
-        _sut.MoveToPublic();
-        _sut.Tenant.ShouldBe(TenantInfo.Public);
-        _sut.MoveToTenant(_tenantId);
-        _sut.Tenant.ShouldBe(TenantInfo.Tenant(_tenantId));
-        _sut.MoveToPublic();
-        _sut.Tenant.ShouldBe(TenantInfo.Public);
-    }
-
-    [Fact]
-    public void MoveToContextTenant_ShouldReturnToTheInitializedTenant_AfterMovingToPublic()
-    {
-        _sut.Initialize(_tenantInfo);
-        _sut.MoveToPublic();
-        _sut.MoveToContextTenant();
-        _sut.Tenant.ShouldBe(_tenantInfo);
-    }
-
-    [Fact]
-    public void MoveToContextTenant_ShouldReturnToTheInitializedTenant_AfterMovingToTenant()
-    {
-        _sut.Initialize(TenantInfo.Public);
-        _sut.MoveToTenant(_tenantId);
-        _sut.MoveToContextTenant();
+        _sut.NavigateToPublic();
         _sut.Tenant.ShouldBe(TenantInfo.Public);
     }
 }

@@ -1,7 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.IncomingEvents;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using NodaTime;
@@ -16,9 +18,11 @@ public class IncomingEventTests : SampleIntegrationTest
     {
     }
 
+    protected override Option<TenantInfo> DefaultTenantInfo =>
+        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
+
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -44,7 +48,6 @@ public class IncomingEventTests : SampleIntegrationTest
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
         var bus = NewBusEndpoint("pet-freedom-service");
-        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         await bus.Publish(new PetFreedomDayEvent());
         await Http.GetOwnedPets(_person!.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }

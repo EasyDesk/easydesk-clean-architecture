@@ -23,8 +23,15 @@ public sealed class PropagateEvent<M, D> : IDomainEventHandler<D>
 
     public async Task<Result<Nothing>> Handle(D ev)
     {
-        _tenantNavigator?.MoveTo(M.ToTenant(ev));
-        await _publisher.Publish(M.ToMessage(ev));
+        await M.ToTenant(ev).MatchAsync(
+            some: async t =>
+            {
+                using var scope = _tenantNavigator?.NavigateTo(t);
+                await Propagate(ev);
+            },
+            none: async () => await Propagate(ev));
         return Ok;
     }
+
+    private async Task Propagate(D ev) => await _publisher.Publish(M.ToMessage(ev));
 }

@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using System.Collections.Immutable;
@@ -23,15 +22,13 @@ public class AddAdminTests : SampleIntegrationTest
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
-        await WebService.WaitConditionUnderTenant<IAgentRolesProvider>(
-            SampleSeeder.Data.TestTenant,
-            async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
+        await PollServiceUntil<IAgentRolesProvider>(async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }
 
     [Fact]
     public async Task ShouldSucceed()
     {
-        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
+        using var scope = TenantManager.MoveToTenant(SampleSeeder.Data.TestTenant);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         await WaitForConditionOnRoles(r => r.Contains(Roles.Admin));
@@ -57,7 +54,7 @@ public class AddAdminTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReset_AfterTenantIsDeleted()
     {
-        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
+        using var scope = TenantManager.MoveToTenant(SampleSeeder.Data.TestTenant);
         await Http.AddAdmin().Send().EnsureSuccess();
 
         await DefaultBusEndpoint.Send(new RemoveTenant(SampleSeeder.Data.TestTenant));

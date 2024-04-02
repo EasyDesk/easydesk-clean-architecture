@@ -1,10 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Lifetime;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
@@ -22,9 +23,11 @@ internal class IntegrationTestExample : SampleIntegrationTest
     {
     }
 
+    protected override Option<TenantInfo> DefaultTenantInfo =>
+        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
+
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -48,8 +51,7 @@ internal class IntegrationTestExample : SampleIntegrationTest
                 .SetPageSize(PageSize)
                 .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
                 .EnsureSuccess();
-            await WebService.WaitConditionUnderTenant<SampleAppContext>(
-                SampleSeeder.Data.TestTenant,
+            await PollServiceUntil<SampleAppContext>(
                 async context => await context.Pets.CountAsync() == Count);
         }
     }

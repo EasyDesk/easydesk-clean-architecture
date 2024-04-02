@@ -1,38 +1,30 @@
 ﻿using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Scopes;
 
 namespace EasyDesk.CleanArchitecture.Application.Multitenancy;
 
 public class TenantService : IContextTenantNavigator, IContextTenantInitializer
 {
-    private Option<TenantInfo> _overriddenTenantInfo = None;
+    private Option<ScopeManager<TenantInfo>> _scopeManager = None;
 
     public void Initialize(TenantInfo tenantInfo)
     {
-        if (ContextTenant.IsPresent)
+        if (_scopeManager.IsPresent)
         {
-            throw new InvalidOperationException("Trying to initialize tenant after it was already initialized");
+            throw new InvalidOperationException("Trying to initialize tenant after it was already initialized.");
         }
 
+        _scopeManager = Some(new ScopeManager<TenantInfo>(tenantInfo));
         ContextTenant = Some(tenantInfo);
     }
 
     public Option<TenantInfo> ContextTenant { get; private set; } = None;
 
-    public TenantInfo Tenant => _overriddenTenantInfo.OrElse(
-        ContextTenant.OrElseThrow(() => new InvalidOperationException("Accessing tenant before initialization")));
+    public TenantInfo Tenant => _scopeManager
+        .OrElseThrow(() => new InvalidOperationException("Accessing tenant before initialization."))
+        .Current;
 
-    public void MoveToTenant(TenantId id) => MoveToTenantInfo(Some(TenantInfo.Tenant(id)));
-
-    public void MoveToPublic() => MoveToTenantInfo(Some(TenantInfo.Public));
-
-    public void MoveToContextTenant() => MoveToTenantInfo(None);
-
-    private void MoveToTenantInfo(Option<TenantInfo> tenantInfo)
-    {
-        if (ContextTenant.IsAbsent)
-        {
-            throw new InvalidOperationException("Trying to move to a different tenant before initialization");
-        }
-        _overriddenTenantInfo = tenantInfo;
-    }
+    public IDisposable NavigateTo(TenantInfo tenantInfo) => _scopeManager
+        .OrElseThrow(() => new InvalidOperationException("Navigating to different tenant before initialization."))
+        .OpenScope(tenantInfo);
 }

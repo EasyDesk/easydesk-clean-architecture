@@ -28,13 +28,13 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     private readonly ISet<Type> _subscriptions = new HashSet<Type>();
     private readonly Channel<Message> _messages = Channel.CreateUnbounded<Message>();
     private readonly IList<Message> _deadLetter = new List<Message>();
-    private readonly ITestTenantNavigator _tenantNavigator;
+    private readonly TestTenantManager _tenantManager;
     private readonly Duration _timeout;
     private readonly BuiltinHandlerActivator _handlerActivator;
 
-    public RebusTestBusEndpoint(Action<RebusConfigurer> configureRebus, ITestTenantNavigator tenantNavigator, Duration? timeout = null)
+    public RebusTestBusEndpoint(Action<RebusConfigurer> configureRebus, TestTenantManager tenantManager, Duration? timeout = null)
     {
-        _tenantNavigator = tenantNavigator;
+        _tenantManager = tenantManager;
         _timeout = timeout ?? _defaultTimeout;
 
         _handlerActivator = new BuiltinHandlerActivator();
@@ -47,7 +47,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
             o.Decorate<IPipeline>(c =>
             {
                 return new PipelineStepConcatenator(c.Get<IPipeline>())
-                    .OnSend(new TestTenantManagementStep(_tenantNavigator), PipelineAbsolutePosition.Front);
+                    .OnSend(new TestTenantManagementStep(_tenantManager), PipelineAbsolutePosition.Front);
             });
         });
         _bus = configurer.Start();
@@ -144,11 +144,17 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         throw new UnexpectedMessageReceivedException(typeof(T), message, headers);
     }
 
-    private Option<T> ValidateMessage<T>(Message message, Func<T, bool> predicate) =>
-        (_tenantNavigator.IsMultitenancyIgnored || _tenantNavigator.Tenant.Id == message.Headers.GetOption(MultitenantMessagingUtils.TenantIdHeader).Map(id => new TenantId(id)))
-        && message.Body is T t
-        && predicate(t)
-        ? Some(t) : None;
+    private Option<T> ValidateMessage<T>(Message message, Func<T, bool> predicate)
+    {
+        var messageTenantId = message.Headers
+            .GetOption(MultitenantMessagingUtils.TenantIdHeader)
+            .Map(id => TenantInfo.Tenant(new TenantId(id)))
+            .OrElse(TenantInfo.Public);
+        return _tenantManager.CurrentTenantInfo.All(x => x == messageTenantId)
+                && message.Body is T t
+                && predicate(t)
+                ? Some(t) : None;
+    }
 
     public async ValueTask DisposeAsync()
     {
@@ -164,7 +170,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
 
     public static RebusTestBusEndpoint CreateFromServices(
         IServiceProvider serviceProvider,
-        ITestTenantNavigator testTenantNavigator,
+        TestTenantManager testTenantNavigator,
         string? inputQueueAddress = null,
         Duration? defaultTimeout = null)
     {
@@ -188,11 +194,11 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         private readonly TenantManagementStep _inner;
         private readonly IServiceProvider _serviceProvider;
 
-        public TestTenantManagementStep(ITenantProvider tenantProvider)
+        public TestTenantManagementStep(TestTenantManager tenantManager)
         {
             _inner = new TenantManagementStep();
             _serviceProvider = new ServiceCollection()
-                .AddSingleton(tenantProvider)
+                .AddSingleton<ITenantProvider>(new TestTenantProvider(tenantManager))
                 .BuildServiceProvider();
         }
 
@@ -200,6 +206,18 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         {
             context.Load<ITransactionContext>().SetServiceProvider(_serviceProvider);
             await _inner.Process(context, next);
+        }
+
+        private class TestTenantProvider : ITenantProvider
+        {
+            private readonly TestTenantManager _tenantManager;
+
+            public TestTenantProvider(TestTenantManager tenantManager)
+            {
+                _tenantManager = tenantManager;
+            }
+
+            public TenantInfo Tenant => _tenantManager.CurrentTenantInfo.OrElse(TenantInfo.Public);
         }
     }
 }

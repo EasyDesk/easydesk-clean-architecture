@@ -7,6 +7,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.DomainEvents;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
@@ -30,9 +31,11 @@ public class CreatePersonTests : SampleIntegrationTest
     {
     }
 
+    protected override Option<TenantInfo> DefaultTenantInfo =>
+        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
+
     protected override async Task OnInitialization()
     {
-        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -95,7 +98,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        TenantNavigator.IgnoreMultitenancy();
+        using var scope = TenantManager.Ignore();
 
         await DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
@@ -109,7 +112,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        TenantNavigator.MoveToTenant(PersonCreated.EmittedWithTenant);
+        using var scope = TenantManager.MoveToTenant(PersonCreated.EmittedWithTenant);
 
         await DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
     }

@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
@@ -27,11 +28,13 @@ public class AuditingTests : SampleIntegrationTest
     {
     }
 
+    protected override Option<TenantInfo> DefaultTenantInfo =>
+        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
+
     protected override async Task OnInitialization()
     {
         _initialAudits = TestData.OperationsRun;
 
-        TenantNavigator.MoveToTenant(SampleSeeder.Data.TestTenant);
         AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
@@ -45,19 +48,24 @@ public class AuditingTests : SampleIntegrationTest
         _personId = await Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
         _initialAudits += 2;
         await Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();
-        await WebService.WaitConditionUnderPublicTenant<IAuditLog>(
+
+        using var scope = TenantManager.MoveToPublic();
+        await PollServiceUntil<IAuditLog>(
             log => log
                 .Audit(new())
                 .GetAll()
                 .Map(e => e.Count() == _initialAudits));
     }
 
-    private Task WaitUntilAuditLogHasMoreRecords(int newRecords) =>
-        WebService.WaitConditionUnderPublicTenant<IAuditLog>(
+    private Task WaitUntilAuditLogHasMoreRecords(int newRecords)
+    {
+        using var scope = TenantManager.MoveToPublic();
+        return PollServiceUntil<IAuditLog>(
             log => log
                 .Audit(new())
                 .GetAll()
                 .Map(e => e.Count() == _initialAudits + newRecords));
+    }
 
     [Fact]
     public async Task ShouldReturnInitialAudits()
@@ -72,11 +80,11 @@ public class AuditingTests : SampleIntegrationTest
         await DefaultBusEndpoint.Send(new CreateTenant(tenantId.Value));
         await WebService.WaitUntilTenantExists(tenantId);
 
-        await WebService.WaitConditionUnderTenant<IAuditLog>(
-            tenantId,
+        using var scope = TenantManager.MoveToTenant(tenantId);
+        await PollServiceUntil<IAuditLog>(
             log => log.Audit(new AuditQuery()).GetAll().Map(audits => audits.Any()));
 
-        await Http.GetAudits().Tenant(tenantId).Send().Verify();
+        await Http.GetAudits().Send().Verify();
     }
 
     [Fact]

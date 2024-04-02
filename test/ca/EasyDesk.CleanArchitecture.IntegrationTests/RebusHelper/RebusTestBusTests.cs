@@ -50,7 +50,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     private readonly ITestBusEndpoint _sender;
     private readonly ITestBusEndpoint _receiver;
 
-    private readonly ITestTenantNavigator _tenantNavigator = new TestTenantNavigator();
+    private readonly TestTenantManager _tenantManager = new(None);
 
     public RebusTestBusTests(RabbitMqContainerFixture rabbitMqContainerFixture)
     {
@@ -65,7 +65,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
             rebus => rebus
                 .Transport(t => t.UseRabbitMq(_rabbitMqConnection, endpoint))
                 .Routing(r => r.TypeBased().MapFallback(ReceiverAddress)),
-            _tenantNavigator);
+            _tenantManager);
     }
 
     [Fact]
@@ -168,15 +168,11 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     public async Task ShouldFilterCommandInTenant(Option<TenantInfo> before, Option<TenantInfo> after)
     {
         var command = new Command(7);
-        _tenantNavigator.MoveToOrIgnore(before);
-        var sendWithTenant = _tenantNavigator.Tenant;
-
+        using var scopeBefore = _tenantManager.MoveTo(before);
         await _sender.Send(command);
 
-        _tenantNavigator.MoveToOrIgnore(after);
-        var receiveWithTenantContext = after;
-
-        if (receiveWithTenantContext.All(tenant => tenant == sendWithTenant))
+        using var scopeAfter = _tenantManager.MoveTo(after);
+        if (after.IsAbsent || before.OrElse(TenantInfo.Public) == after.OrElse(TenantInfo.Public))
         {
             await _receiver.WaitForMessageOrFail(command, _defaultTimeout);
         }
@@ -193,15 +189,11 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         await _receiver.Subscribe<Event>();
 
         var ev = new Event(11);
-        _tenantNavigator.MoveToOrIgnore(before);
-        var sendWithTenant = _tenantNavigator.Tenant;
-
+        using var scopeBefore = _tenantManager.MoveTo(before);
         await _sender.Publish(ev);
 
-        _tenantNavigator.MoveToOrIgnore(after);
-        var receiveWithTenantContext = after;
-
-        if (receiveWithTenantContext.All(tenant => tenant == sendWithTenant))
+        using var scopeAfter = _tenantManager.MoveTo(after);
+        if (after.IsAbsent || before.OrElse(TenantInfo.Public) == after.OrElse(TenantInfo.Public))
         {
             await _receiver.WaitForMessageOrFail(ev, _defaultTimeout);
         }

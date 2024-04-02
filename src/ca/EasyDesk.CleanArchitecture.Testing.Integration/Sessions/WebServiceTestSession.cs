@@ -1,14 +1,18 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
 using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Tasks;
+using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Testing;
@@ -30,6 +34,7 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
         _http = new(CreateHttpTestHelper);
         _defaultBusEndpoint = new(() => NewBusEndpoint());
         _errorBusEndpoint = new(() => NewBusEndpoint(WebService.Services.GetRequiredService<RebusMessagingOptions>().ErrorQueueName));
+        TenantManager = new TestTenantManager(DefaultTenantInfo);
     }
 
     protected T Fixture { get; }
@@ -40,15 +45,17 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
 
     protected FakeClock Clock => Fixture.Clock;
 
-    protected ITestTenantNavigator TenantNavigator { get; } = new TestTenantNavigator();
+    protected TestTenantManager TenantManager { get; }
 
     protected ITestBusEndpoint DefaultBusEndpoint => _defaultBusEndpoint.Value;
 
     protected ITestBusEndpoint ErrorBusEndpoint => _errorBusEndpoint.Value;
 
+    protected virtual Option<TenantInfo> DefaultTenantInfo => None;
+
     protected ITestBusEndpoint NewBusEndpoint(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        var busEndpoint = RebusTestBusEndpoint.CreateFromServices(WebService.Services, TenantNavigator, inputQueueAddress, defaultTimeout);
+        var busEndpoint = RebusTestBusEndpoint.CreateFromServices(WebService.Services, TenantManager, inputQueueAddress, defaultTimeout);
         _busEndpoints.Add(busEndpoint);
         return busEndpoint;
     }
@@ -61,7 +68,7 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
 
     private void ApplyDefaultRequestConfiguration(HttpRequestBuilder req)
     {
-        TenantNavigator.Tenant.Id.Match(
+        TenantManager.CurrentTenantInfo.FlatMap(x => x.Id).Match(
             some: req.Tenant,
             none: req.NoTenant);
 
@@ -88,6 +95,21 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
 
     protected virtual ITestHttpAuthentication GetHttpAuthentication() =>
         TestHttpAuthentication.CreateFromServices(WebService.Services);
+
+    protected async Task PollServiceUntil<TService>(AsyncFunc<TService, bool> predicate, Duration? timeout = null, Duration? interval = null) where TService : notnull
+    {
+        await WebService.Services.ScopedPollUntil<IServiceProvider>(
+            async services =>
+            {
+                services
+                    .GetServiceAsOption<IContextTenantInitializer>()
+                    .IfPresent(x => x.Initialize(TenantManager.CurrentTenantInfo.OrElse(TenantInfo.Public)));
+                var service = services.GetRequiredService<TService>();
+                return await predicate(service);
+            },
+            timeout: timeout,
+            interval: interval);
+    }
 
     public async ValueTask DisposeAsync()
     {
