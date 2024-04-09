@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
-using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
@@ -8,7 +8,7 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
 
-internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentityRolesManager, IAgentRolesProvider, IRolesToPermissionsMapper
+internal class EfCoreAuthorizationManager : IIdentityRolesManager, IAgentRolesProvider
 {
     private readonly AuthorizationContext _context;
 
@@ -78,24 +78,4 @@ internal class EfCoreAuthorizationManager : IAgentPermissionsProvider, IIdentity
     }
 
     private IEnumerable<string> RoleIds(IEnumerable<Role> roles) => roles.Select(x => x.Value);
-
-    public async Task<IImmutableSet<Permission>> MapRolesToPermissions(IEnumerable<Role> roles)
-    {
-        var roleIds = RoleIds(roles);
-        return await _context.RolePermissions
-            .Where(p => roleIds.Contains(p.RoleId))
-            .Select(p => p.PermissionName)
-            .Distinct()
-            .Select(p => new Permission(p))
-            .ToEquatableSetAsync();
-    }
-
-    public async Task<IImmutableSet<Permission>> GetPermissionsForAgent(Agent agent)
-    {
-        return await RolesByAgent(agent)
-            .Join(_context.RolePermissions, u => u.Role, p => p.RoleId, (u, p) => p.PermissionName)
-            .Distinct()
-            .Select(p => new Permission(p))
-            .ToEquatableSetAsync();
-    }
 }

@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using System.Collections.Immutable;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 public interface IRolesToPermissionsMapper
 {

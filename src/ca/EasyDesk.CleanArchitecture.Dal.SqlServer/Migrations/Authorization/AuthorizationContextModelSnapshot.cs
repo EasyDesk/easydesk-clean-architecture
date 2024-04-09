@@ -17,7 +17,7 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("auth")
-            .HasAnnotation("ProductVersion", "7.0.7")
+            .HasAnnotation("ProductVersion", "8.0.3")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -55,28 +55,6 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                 b.ToTable("IdentityRoles", "auth");
             });
 
-        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
-            {
-                b.Property<string>("RoleId")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
-
-                b.Property<string>("PermissionName")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
-
-                b.Property<string>("Tenant")
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
-
-                b.HasKey("RoleId", "PermissionName", "Tenant");
-
-                b.HasIndex("Tenant");
-
-                b.ToTable("RolePermissions", "auth");
-            });
-
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", b =>
             {
                 b.Property<string>("Id")
@@ -94,15 +72,6 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                     .WithMany()
                     .HasForeignKey("TenantFk")
                     .OnDelete(DeleteBehavior.Cascade);
-            });
-
-        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.RolePermissionModel", b =>
-            {
-                b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model.TenantModel", null)
-                    .WithMany()
-                    .HasForeignKey("Tenant")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
             });
 #pragma warning restore 612, 618
     }

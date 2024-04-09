@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using System.Data;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 public sealed class StaticRolesToPermissionsBuilder
 {

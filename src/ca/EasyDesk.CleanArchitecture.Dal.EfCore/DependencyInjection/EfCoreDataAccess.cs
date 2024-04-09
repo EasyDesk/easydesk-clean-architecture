@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.Authorization;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
@@ -56,11 +56,6 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
         AddDbContext<MessagingContext>(services, ConfigureMigrationsAssembly);
         services.AddScoped<IOutbox, EfCoreOutbox>();
         services.AddScoped<IInbox, EfCoreInbox>();
-    }
-
-    public void AddPermissionsProvider(IServiceCollection services, AppDescription app)
-    {
-        services.AddScoped<IAgentPermissionsProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
     }
 
     public void AddRolesManagement(IServiceCollection services, AppDescription app)

@@ -3,7 +3,7 @@ using EasyDesk.Commons.Collections;
 using System.Collections.Immutable;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 internal class StaticRolesToPermissionsMapper : IRolesToPermissionsMapper
 {

@@ -2,14 +2,14 @@
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using System.Collections.Immutable;
 
-namespace EasyDesk.CleanArchitecture.Application.Authorization;
+namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
-public class DefaultAgentPermissionsProvider : IAgentPermissionsProvider
+public class RoleBasedPermissionsProvider : IAgentPermissionsProvider
 {
     private readonly IAgentRolesProvider _identityRolesProvider;
     private readonly IRolesToPermissionsMapper _rolesToPermissionsMapper;
 
-    public DefaultAgentPermissionsProvider(IAgentRolesProvider identityRolesProvider, IRolesToPermissionsMapper rolesToPermissionsMapper)
+    public RoleBasedPermissionsProvider(IAgentRolesProvider identityRolesProvider, IRolesToPermissionsMapper rolesToPermissionsMapper)
     {
         _identityRolesProvider = identityRolesProvider;
         _rolesToPermissionsMapper = rolesToPermissionsMapper;

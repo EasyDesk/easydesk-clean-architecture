@@ -42,8 +42,8 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddAuditing()
         .AddAuthentication(options => options
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
-        .AddAuthorization(options => options
-            .WithStaticPermissions(PermissionSettings.RolesToPermissions))
+        .AddAuthorization(options => options.RoleBased(x => x
+            .WithStaticPermissions(PermissionSettings.RolesToPermissions)))
         .AddLogging(options => options
             .EnableRequestLogging()
             .EnableResultLogging())

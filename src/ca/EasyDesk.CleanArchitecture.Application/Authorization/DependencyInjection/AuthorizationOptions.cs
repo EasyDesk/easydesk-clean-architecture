@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
-using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,29 +18,25 @@ public sealed class AuthorizationOptions
         services.AddSingleton<IAgentPermissionsProvider, EmptyPermissionsProvider>();
     }
 
-    public AuthorizationOptions WithDynamicPermissions()
+    public AuthorizationOptions RoleBased(Action<RoleBasedAuthorizationOptions> configure)
     {
-        _configure = (services, app) =>
+        return Configure((services, app) =>
         {
-            app.RequireModule<DataAccessModule>().Implementation.AddRolesManagement(services, app);
-            app.RequireModule<DataAccessModule>().Implementation.AddPermissionsProvider(services, app);
-        };
-        return this;
+            new RoleBasedAuthorizationOptions().Also(configure).Apply(services, app);
+        });
     }
 
-    public AuthorizationOptions WithStaticPermissions(Action<StaticRolesToPermissionsBuilder> configure)
+    public AuthorizationOptions Custom(Func<IServiceProvider, IAgentPermissionsProvider> factory, ServiceLifetime lifetime = ServiceLifetime.Scoped)
     {
-        _configure = (services, app) =>
+        return Configure((services, app) =>
         {
-            var builder = new StaticRolesToPermissionsBuilder();
-            configure(builder);
-            var rolesToPermissionsMapper = builder.Build();
+            services.Add(new(typeof(IAgentPermissionsProvider), factory, lifetime));
+        });
+    }
 
-            app.RequireModule<DataAccessModule>().Implementation.AddRolesManagement(services, app);
-            services.AddSingleton<IRolesToPermissionsMapper>(rolesToPermissionsMapper);
-            services.AddScoped<IAgentPermissionsProvider, DefaultAgentPermissionsProvider>();
-            services.AddScoped<IAuthorizationProvider, DefaultAuthorizationProvider>();
-        };
+    private AuthorizationOptions Configure(Action<IServiceCollection, AppDescription> configuration)
+    {
+        _configure = configuration;
         return this;
     }
 
