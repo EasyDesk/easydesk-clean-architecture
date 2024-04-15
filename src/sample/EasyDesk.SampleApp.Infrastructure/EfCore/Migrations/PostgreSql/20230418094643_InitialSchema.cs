@@ -38,7 +38,7 @@ public partial class InitialSchema : Migration
                 Residence_Province = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                 Residence_Region = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                 Residence_State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                Residence_Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true)
+                Residence_Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
             },
             constraints: table =>
             {
@@ -53,7 +53,7 @@ public partial class InitialSchema : Migration
                 Id = table.Column<int>(type: "integer", nullable: false),
                 Nickname = table.Column<string>(type: "text", nullable: false),
                 PersonId = table.Column<Guid>(type: "uuid", nullable: false),
-                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {

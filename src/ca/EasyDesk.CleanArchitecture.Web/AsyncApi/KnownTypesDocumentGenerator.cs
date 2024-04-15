@@ -82,7 +82,7 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
         {
             OperationId = messageType.Name,
             Traits = new List<IOperationTrait>() { new OperationTrait { Summary = messageClassifier } },
-            Message = ConfigureMessage(messageType, schemaOptions)
+            Message = ConfigureMessage(messageType, schemaOptions),
         };
 
     private Message ConfigureMessage(Type messageType, AsyncApiSchemaOptions schemaOptions)
@@ -105,13 +105,13 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
             Name = messageType.Name,
             Title = PascalCaseSplitter.Split(messageType.Name),
             Payload = JsonSchema.FromType(messageType, schemaOptions),
-            Headers = headersSchema
+            Headers = headersSchema,
         };
     }
 
     private Server ConfigureServer() => new(url: "https://github.com/rebus-org/Rebus", protocol: "https")
     {
         Description = $"Use \"{_address}\" as the name of the routing destination " +
-            "for commands directed to this service, within Rebus router."
+            "for commands directed to this service, within Rebus router.",
     };
 }

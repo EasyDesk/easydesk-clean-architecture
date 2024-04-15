@@ -27,7 +27,7 @@ public partial class InitialSchema : Migration
                 Description = table.Column<string>(type: "text", nullable: true),
                 Success = table.Column<bool>(type: "boolean", nullable: false),
                 Instant = table.Column<Instant>(type: "timestamp with time zone", nullable: false),
-                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {
@@ -41,7 +41,7 @@ public partial class InitialSchema : Migration
             {
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
                 IdentityRealm = table.Column<string>(type: "text", nullable: false),
-                Identity = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false)
+                Identity = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
             },
             constraints: table =>
             {
@@ -62,7 +62,7 @@ public partial class InitialSchema : Migration
             {
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
                 Key = table.Column<string>(type: "text", nullable: false),
-                Value = table.Column<string>(type: "text", nullable: false)
+                Value = table.Column<string>(type: "text", nullable: false),
             },
             constraints: table =>
             {
@@ -84,7 +84,7 @@ public partial class InitialSchema : Migration
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
                 Realm = table.Column<string>(type: "text", nullable: false),
                 Key = table.Column<string>(type: "text", nullable: false),
-                Value = table.Column<string>(type: "text", nullable: false)
+                Value = table.Column<string>(type: "text", nullable: false),
             },
             constraints: table =>
             {

@@ -32,6 +32,6 @@ internal class FailFastChecker : IFailFastChecker
                 or MissingConfigurationException
                 or RequiredModuleMissingException => true,
 
-            _ => _fallback.ShouldFailFast(messageId, exception)
+            _ => _fallback.ShouldFailFast(messageId, exception),
         };
 }

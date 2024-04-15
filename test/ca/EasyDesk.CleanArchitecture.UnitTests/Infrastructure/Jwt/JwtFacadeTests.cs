@@ -26,7 +26,7 @@ public class JwtFacadeTests
     private readonly ClaimsIdentity _claimsIdentity = new(new Claim[]
     {
         new("claimA", "valueA"),
-        new("claimB", "valueB")
+        new("claimB", "valueB"),
     });
 
     private readonly IEqualityComparer<Claim> _claimsComparer = EqualityComparers

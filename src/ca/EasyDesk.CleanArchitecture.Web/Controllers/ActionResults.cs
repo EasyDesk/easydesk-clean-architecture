@@ -9,7 +9,7 @@ public static class ActionResults
     {
         return new ObjectResult(body)
         {
-            StatusCode = (int)statusCode
+            StatusCode = (int)statusCode,
         };
     }
 

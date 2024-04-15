@@ -18,7 +18,7 @@ public partial class InitialSchema : Migration
             schema: "auth",
             columns: table => new
             {
-                Id = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                Id = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {
@@ -34,7 +34,7 @@ public partial class InitialSchema : Migration
                 Identity = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
                 Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                 Realm = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                TenantFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true)
+                TenantFk = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
             },
             constraints: table =>
             {
@@ -55,7 +55,7 @@ public partial class InitialSchema : Migration
             {
                 RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                 PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {

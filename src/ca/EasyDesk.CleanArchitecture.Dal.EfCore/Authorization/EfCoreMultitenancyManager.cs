@@ -18,7 +18,7 @@ internal class EfCoreMultitenancyManager : IMultitenancyManager
     {
         _context.Tenants.Add(new TenantModel
         {
-            Id = tenantId
+            Id = tenantId,
         });
 
         await _context.SaveChangesAsync();

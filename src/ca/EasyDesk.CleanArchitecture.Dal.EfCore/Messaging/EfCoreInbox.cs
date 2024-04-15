@@ -23,7 +23,7 @@ internal class EfCoreInbox : IInbox
     {
         _context.Inbox.Add(new InboxMessage
         {
-            Id = messageId
+            Id = messageId,
         });
         await _context.SaveChangesAsync();
     }

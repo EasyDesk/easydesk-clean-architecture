@@ -23,7 +23,7 @@ public sealed class JwtHttpAuthentication : ITestHttpAuthentication
         {
             Headers = message.Headers.Replace(
                 HeaderNames.Authorization,
-                $"{JwtBearerDefaults.AuthenticationScheme} {ForgeJwt(agent)}")
+                $"{JwtBearerDefaults.AuthenticationScheme} {ForgeJwt(agent)}"),
         };
 
     public ImmutableHttpRequestMessage RemoveAuthentication(ImmutableHttpRequestMessage message) =>

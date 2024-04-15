@@ -22,7 +22,7 @@ public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
         _contextProvider.CurrentContext switch
         {
             ContextInfo.AsyncMessage => await HandleAsyncMessageContext(next),
-            _ => await HandleGenericContext(next)
+            _ => await HandleGenericContext(next),
         };
 
     private async Task<Result<R>> HandleAsyncMessageContext(NextPipelineStep<R> next)

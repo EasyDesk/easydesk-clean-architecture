@@ -9,7 +9,7 @@ public enum AuditRecordType
 {
     CommandRequest,
     Command,
-    Event
+    Event,
 }
 
 public record AuditRecord(

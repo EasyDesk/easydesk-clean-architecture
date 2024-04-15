@@ -27,14 +27,14 @@ internal class OutboxFlusher
             OutboxFlushingStrategy.AllAtOnce
                 or OutboxFlushingStrategy.AllInBatches => _ => true,
             OutboxFlushingStrategy.Batched(var batches, _) => i => i < batches,
-            _ => throw new UnreachableException()
+            _ => throw new UnreachableException(),
         };
         _batchSize = flushingStrategy switch
         {
             OutboxFlushingStrategy.AllAtOnce => None,
             OutboxFlushingStrategy.AllInBatches(var batchSize) => Some(batchSize),
             OutboxFlushingStrategy.Batched(_, var batchSize) => Some(batchSize),
-            _ => throw new UnreachableException()
+            _ => throw new UnreachableException(),
         };
     }
 

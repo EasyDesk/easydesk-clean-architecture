@@ -43,7 +43,7 @@ public sealed class JwtAuthenticationProvider : IAuthenticationProvider
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.Http,
             Scheme = JwtBearerDefaults.AuthenticationScheme,
-            BearerFormat = "JWT"
+            BearerFormat = "JWT",
         };
         options.ConfigureSecurityRequirement(schemeName, jwtSecurityScheme);
     }

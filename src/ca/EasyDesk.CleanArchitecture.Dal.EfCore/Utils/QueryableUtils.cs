@@ -49,7 +49,7 @@ public static class QueryableUtils
         return direction switch
         {
             OrderingDirection.Descending => query.OrderByDescending(keySelector),
-            _ => query.OrderBy(keySelector)
+            _ => query.OrderBy(keySelector),
         };
     }
 
@@ -58,7 +58,7 @@ public static class QueryableUtils
         return direction switch
         {
             OrderingDirection.Descending => query.ThenByDescending(keySelector),
-            _ => query.ThenBy(keySelector)
+            _ => query.ThenBy(keySelector),
         };
     }
 

@@ -33,7 +33,7 @@ public static class TestHttpAuthentication
         return provider switch
         {
             JwtAuthenticationProvider => Some(GetJwtAuthenticationConfiguration(serviceProvider, schemeName)),
-            _ => None
+            _ => None,
         };
     }
 

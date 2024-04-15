@@ -37,7 +37,7 @@ public sealed class JwtGenerationBuilder
     {
         _descriptor = new SecurityTokenDescriptor
         {
-            IssuedAt = issuedAt.ToDateTimeUtc()
+            IssuedAt = issuedAt.ToDateTimeUtc(),
         };
     }
 

@@ -18,7 +18,7 @@ public partial class InitialSchema : Migration
             schema: "messaging",
             columns: table => new
             {
-                Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
             },
             constraints: table =>
             {
@@ -34,7 +34,7 @@ public partial class InitialSchema : Migration
                     .Annotation("SqlServer:Identity", "1, 1"),
                 Content = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                 Headers = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
-                DestinationAddress = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                DestinationAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
             },
             constraints: table =>
             {

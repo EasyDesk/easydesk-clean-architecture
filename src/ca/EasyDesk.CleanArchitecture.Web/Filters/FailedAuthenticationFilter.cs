@@ -23,7 +23,7 @@ public class FailedAuthenticationFilter : IAsyncActionFilter
                 new
                 {
                     Schema = e.Key,
-                    InnerError = ErrorDto.FromError(e.Value)
+                    InnerError = ErrorDto.FromError(e.Value),
                 })),
             Nothing.Value));
     }

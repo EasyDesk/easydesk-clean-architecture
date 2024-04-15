@@ -17,11 +17,11 @@ public static class OpenApiUtils
                     Reference = new OpenApiReference
                     {
                         Id = name,
-                        Type = ReferenceType.SecurityScheme
-                    }
+                        Type = ReferenceType.SecurityScheme,
+                    },
                 },
                 Array.Empty<string>()
-            }
+            },
         });
     }
 }

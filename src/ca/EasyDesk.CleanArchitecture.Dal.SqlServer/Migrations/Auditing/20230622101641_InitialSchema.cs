@@ -25,7 +25,7 @@ public partial class InitialSchema : Migration
                 Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                 Success = table.Column<bool>(type: "bit", nullable: false),
                 Instant = table.Column<DateTime>(type: "datetime2", nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {
@@ -39,7 +39,7 @@ public partial class InitialSchema : Migration
             {
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
                 IdentityRealm = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                Identity = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false)
+                Identity = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
             },
             constraints: table =>
             {
@@ -60,7 +60,7 @@ public partial class InitialSchema : Migration
             {
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
                 Key = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                Value = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
             },
             constraints: table =>
             {
@@ -82,7 +82,7 @@ public partial class InitialSchema : Migration
                 AuditRecordId = table.Column<long>(type: "bigint", nullable: false),
                 Realm = table.Column<string>(type: "nvarchar(450)", nullable: false),
                 Key = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                Value = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                Value = table.Column<string>(type: "nvarchar(450)", nullable: false),
             },
             constraints: table =>
             {

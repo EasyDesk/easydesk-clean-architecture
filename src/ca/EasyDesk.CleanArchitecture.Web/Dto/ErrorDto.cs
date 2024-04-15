@@ -11,7 +11,7 @@ public record ErrorDto(string Code, string Detail, object Meta)
     public static IEnumerable<ErrorDto> CreateErrorDtoList(Error error) => error switch
     {
         MultiError(var errors) => errors.Select(FromError),
-        _ => Some(FromError(error))
+        _ => Some(FromError(error)),
     };
 
     public static ErrorDto FromError(Error error) => error switch

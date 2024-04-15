@@ -37,7 +37,7 @@ public partial class InitialSchema : Migration
                 Residence_Province = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                 Residence_Region = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                 Residence_State = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                Residence_Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                Residence_Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
             },
             constraints: table =>
             {
@@ -52,7 +52,7 @@ public partial class InitialSchema : Migration
                 Id = table.Column<int>(type: "int", nullable: false),
                 Nickname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {

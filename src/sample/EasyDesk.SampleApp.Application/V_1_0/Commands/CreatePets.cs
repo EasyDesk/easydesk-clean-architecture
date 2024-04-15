@@ -60,7 +60,7 @@ public class BulkCreatePets
         }
         return remainingWork with
         {
-            Pets = remainingWork.Pets.Skip(BatchSize)
+            Pets = remainingWork.Pets.Skip(BatchSize),
         };
     }
 

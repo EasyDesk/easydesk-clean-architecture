@@ -38,7 +38,7 @@ internal class EfCoreSagaManager : ISagaManager
         {
             Id = GetSagaIdAsString(id),
             Type = FormatSagaType<TState>(),
-            Version = 1
+            Version = 1,
         };
         _context.Sagas.Add(sagaModel);
         return CreateReferenceFromSagaModel<TState>(sagaModel);

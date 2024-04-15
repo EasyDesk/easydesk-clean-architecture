@@ -25,7 +25,7 @@ public partial class RemovePermissions : Migration
             {
                 RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                 PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false)
+                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {

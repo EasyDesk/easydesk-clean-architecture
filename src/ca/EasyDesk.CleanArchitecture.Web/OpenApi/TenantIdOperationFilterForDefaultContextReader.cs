@@ -28,7 +28,7 @@ internal class TenantIdOperationFilterForDefaultContextReader : IOperationFilter
                 {
                     Type = "string",
                     MaxLength = TenantId.MaxLength,
-                }
+                },
             });
         }
     }

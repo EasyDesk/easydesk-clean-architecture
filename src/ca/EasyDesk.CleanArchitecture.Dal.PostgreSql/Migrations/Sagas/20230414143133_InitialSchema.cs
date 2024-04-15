@@ -22,7 +22,7 @@ public partial class InitialSchema : Migration
                 Type = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
                 Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                 State = table.Column<byte[]>(type: "bytea", nullable: false),
-                Version = table.Column<int>(type: "integer", nullable: true)
+                Version = table.Column<int>(type: "integer", nullable: true),
             },
             constraints: table =>
             {

@@ -19,7 +19,7 @@ public partial class InitialSchema : Migration
             schema: "messaging",
             columns: table => new
             {
-                Id = table.Column<string>(type: "text", nullable: false)
+                Id = table.Column<string>(type: "text", nullable: false),
             },
             constraints: table =>
             {
@@ -35,7 +35,7 @@ public partial class InitialSchema : Migration
                     .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                 Content = table.Column<byte[]>(type: "bytea", nullable: false),
                 Headers = table.Column<byte[]>(type: "bytea", nullable: false),
-                DestinationAddress = table.Column<string>(type: "text", nullable: false)
+                DestinationAddress = table.Column<string>(type: "text", nullable: false),
             },
             constraints: table =>
             {

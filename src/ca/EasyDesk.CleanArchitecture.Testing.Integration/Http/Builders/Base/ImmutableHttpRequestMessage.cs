@@ -29,7 +29,7 @@ public record ImmutableHttpRequestMessage(
     {
         var request = new HttpRequestMessage(Method, RequestUri)
         {
-            Content = Content?.ToHttpContent()
+            Content = Content?.ToHttpContent(),
         };
         foreach (var (headerKey, headerValue) in Headers.Dictionary)
         {

@@ -69,7 +69,7 @@ public sealed class JwtFacade
                 SecurityTokenNotYetValidException => "NotYetValid",
                 SecurityTokenReplayAddFailedException => "ReplayAddFailed",
                 SecurityTokenReplayDetectedException => "ReplayDetected",
-                _ => "TokenMalformed"
+                _ => "TokenMalformed",
             };
 
             return new InvalidJwt(message);

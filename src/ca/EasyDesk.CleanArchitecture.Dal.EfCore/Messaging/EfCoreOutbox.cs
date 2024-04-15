@@ -29,7 +29,7 @@ internal class EfCoreOutbox : IOutbox
         {
             Content = message.Body,
             Headers = _serializer.SerializeToBsonBytes(message.Headers),
-            DestinationAddress = destinationAddress
+            DestinationAddress = destinationAddress,
         };
         _context.Outbox.Add(outboxMessage);
     }

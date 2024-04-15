@@ -11,7 +11,7 @@ internal class OutboxFlushRequestsChannel
         _channel = Channel.CreateUnbounded<Nothing>(new UnboundedChannelOptions
         {
             SingleReader = true,
-            SingleWriter = false
+            SingleWriter = false,
         });
     }
 

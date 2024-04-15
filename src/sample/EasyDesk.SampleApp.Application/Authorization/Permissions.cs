@@ -3,5 +3,5 @@
 public enum Permissions
 {
     CanEditPeople,
-    CanEditPets
+    CanEditPets,
 }

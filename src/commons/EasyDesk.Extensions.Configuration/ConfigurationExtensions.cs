@@ -38,6 +38,6 @@ public static class ConfigurationExtensions
         configuration switch
         {
             IConfigurationSection section => $"{section.Path}:{relativeKey}",
-            _ => relativeKey
+            _ => relativeKey,
         };
 }

@@ -10,7 +10,7 @@ public class AssertionsTests
     {
         return Verify(new
         {
-            Id = 42
+            Id = 42,
         });
     }
 

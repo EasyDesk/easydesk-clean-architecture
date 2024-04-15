@@ -77,7 +77,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         var errorToMatchAgainst = error switch
         {
             MultiError(var primary, _) => primary,
-            _ => error
+            _ => error,
         };
         return _errorHandlers
             .SelectMany(h => h(body, errorToMatchAgainst))

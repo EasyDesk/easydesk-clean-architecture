@@ -44,7 +44,7 @@ public class FormFileCsvParser
         return Success(Parse(formFile, converter, configureContext).Select(r => r.MapError(e => e switch
         {
             InvalidCsvLine x => Errors.InvalidInput(propertyName, "Csv.InvalidFormat", x.DisplayMessage),
-            _ => e
+            _ => e,
         })).EnumerateOnce());
     }
 

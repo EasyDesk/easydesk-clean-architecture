@@ -27,8 +27,8 @@ internal class AddApiVersionParameterFilter : IOperationFilter
             {
                 ReadOnly = true,
                 Type = "string",
-                Default = new OpenApiString(version.ToStringWithoutV())
-            }
+                Default = new OpenApiString(version.ToStringWithoutV()),
+            },
         });
     }
 }

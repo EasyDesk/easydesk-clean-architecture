@@ -15,7 +15,7 @@ internal class UnhandledExceptionsFilter : IExceptionFilter
 
         context.Result = new ObjectResult(response)
         {
-            StatusCode = StatusCodes.Status500InternalServerError
+            StatusCode = StatusCodes.Status500InternalServerError,
         };
     }
 }

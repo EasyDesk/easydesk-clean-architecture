@@ -15,8 +15,8 @@ public static class JsonDefaults
         {
             NamingStrategy = new CamelCaseNamingStrategy()
             {
-                ProcessDictionaryKeys = false
-            }
+                ProcessDictionaryKeys = false,
+            },
         };
 
         serializerSettings.Converters.Add(new StringEnumConverter());

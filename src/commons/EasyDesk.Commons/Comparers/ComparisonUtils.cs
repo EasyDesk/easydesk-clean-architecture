@@ -3,7 +3,7 @@
 public enum OrderingDirection
 {
     Ascending = 1,
-    Descending = -1
+    Descending = -1,
 }
 
 public static class ComparisonUtils

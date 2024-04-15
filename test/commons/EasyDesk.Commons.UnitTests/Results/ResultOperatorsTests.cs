@@ -496,7 +496,7 @@ public class ResultOperatorsTests
                 < 15 => Success(i),
                 < 60 => _differentError,
                 < 85 => Success(-i),
-                _ => _differentError
+                _ => _differentError,
             })
             .CatchFirstFailure()
             .ShouldBe(Failure<IEnumerable<int>>(_error));
@@ -532,7 +532,7 @@ public class ResultOperatorsTests
                 < 15 => Success(i),
                 < 60 => _differentError,
                 < 85 => Success(-i),
-                _ => _differentError
+                _ => _differentError,
             });
         var failures = results.Where(r => r.IsFailure).Select(e => e.ReadError());
         var result = results.CatchAllFailures();

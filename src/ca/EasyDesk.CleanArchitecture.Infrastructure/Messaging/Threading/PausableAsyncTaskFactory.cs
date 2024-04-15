@@ -15,7 +15,7 @@ internal class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskP
     {
         var task = new PausableAsyncTask(description, () => action(), _logger.CreateLogger<PausableAsyncTask>())
         {
-            Interval = TimeSpan.FromSeconds(intervalSeconds)
+            Interval = TimeSpan.FromSeconds(intervalSeconds),
         };
         lock (this)
         {

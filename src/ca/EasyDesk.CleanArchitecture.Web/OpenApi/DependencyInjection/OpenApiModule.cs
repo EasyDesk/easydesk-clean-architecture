@@ -59,7 +59,7 @@ public class OpenApiModule : AppModule
                         Name = CommonTenantReaders.TenantIdHttpHeader,
                         Description = "The tenant ID to be used for the request",
                         Type = SecuritySchemeType.ApiKey,
-                        Scheme = "multitenancy"
+                        Scheme = "multitenancy",
                     });
                     options.OperationFilter<TenantIdOperationFilterForDefaultContextReader>();
                 }
@@ -109,7 +109,7 @@ public class OpenApiModule : AppModule
     {
         options.SwaggerDoc("main", new OpenApiInfo
         {
-            Title = app.Name
+            Title = app.Name,
         });
     }
 
