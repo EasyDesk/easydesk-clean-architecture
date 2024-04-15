@@ -51,13 +51,12 @@
       },
       "Verify": {
         "type": "Direct",
-        "requested": "[23.6.0, )",
-        "resolved": "23.6.0",
-        "contentHash": "OgGr+SlVTSDmsdb9kCneMV7AZivJeg0429fTRTyBB52i54JMBvk2nUUv62CeCieYkWzCH2SZcySxrCHVxkIq2w==",
+        "requested": "[24.1.0, )",
+        "resolved": "24.1.0",
+        "contentHash": "7mrJ6q6t1Ap2zP7+3AzH/5OIg2ITv0Gd2x6zPlTo5wig6RxG//c/2JVMRNZhXWdps2zij/EsCE+yfsBctlJ0lQ==",
         "dependencies": {
           "Argon": "0.17.0",
           "DiffEngine": "15.3.0",
-          "EmptyFiles": "8.2.0",
           "SimpleInfoName": "2.2.0",
           "System.IO.Hashing": "8.0.0"
         }
