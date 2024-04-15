@@ -15,8 +15,8 @@
     <PackageReference Include="Testcontainers" Version="3.8.0" />
     <PackageReference Include="Testcontainers.MsSql" Version="3.8.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="3.8.0" />
-    <PackageReference Include="Verify.Xunit" Version="23.6.0" />
-    <PackageReference Include="xunit.extensibility.core" Version="2.7.0" />
+    <PackageReference Include="Verify.Xunit" Version="24.1.0" />
+    <PackageReference Include="xunit.extensibility.core" Version="2.7.1" />
   </ItemGroup>
 
   <ItemGroup>
