@@ -10,11 +10,7 @@ using NodaTime;
 using Rebus.Config;
 using Rebus.Retry.FailFast;
 using Rebus.Retry.Simple;
-using Rebus.Serialization;
-using Rebus.Serialization.Json;
-using Rebus.Time;
 using Rebus.Timeouts;
-using Rebus.Topic;
 using Rebus.Workers.TplBased;
 using System.Collections.Immutable;
 using System.Reflection;
@@ -94,23 +90,15 @@ public sealed class RebusMessagingOptions
             l.MicrosoftExtensionsLogging(loggerFactory);
         });
 
-        configurer.Serialization(s =>
-        {
-            var jsonSettings = serviceProvider.GetRequiredService<JsonSettingsConfigurator>();
-            s.UseNewtonsoftJson(jsonSettings.CreateSettings());
-        });
-
-        configurer.Options(o =>
-        {
-            o.UseTplToReceiveMessages();
-            var clock = serviceProvider.GetRequiredService<IClock>();
-            o.Register<IRebusTime>(_ => new NodaTimeRebusClock(clock));
-            o.Register(_ => new KnownTypesConvention(KnownMessageTypes));
-            o.Register<ITopicNameConvention>(c => c.Get<KnownTypesConvention>());
-            o.Register<IMessageTypeNameConvention>(c => c.Get<KnownTypesConvention>());
-            o.RetryStrategy(errorQueueName: ErrorQueueName);
-            o.Decorate<IFailFastChecker>(c => new FailFastChecker(c.Get<IFailFastChecker>(), FailFastCheckers));
-        });
+        configurer
+            .UseJsonSettings(serviceProvider.GetRequiredService<JsonSettingsConfigurator>().CreateSettings())
+            .UseNodaTimeClock(serviceProvider.GetRequiredService<IClock>())
+            .Options(o =>
+            {
+                o.UseTplToReceiveMessages();
+                o.RetryStrategy(errorQueueName: ErrorQueueName);
+                o.Decorate<IFailFastChecker>(c => new FailFastChecker(c.Get<IFailFastChecker>(), FailFastCheckers));
+            });
 
         _configureRebus?.Invoke(endpoint, configurer);
     }
