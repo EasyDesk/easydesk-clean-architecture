@@ -9,6 +9,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.Commons.Utils;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+using NodaTime;
 using Npgsql;
 using Testcontainers.MsSql;
 using Testcontainers.PostgreSql;
@@ -36,6 +37,7 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
         ConfigureDbProvider(builder);
 
         builder.AddInMemoryRebus();
+        builder.AddInMemoryRebusScheduler(Scheduler.Address, Duration.FromSeconds(1));
     }
 
     private void ConfigureDbProvider(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)

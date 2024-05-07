@@ -28,6 +28,7 @@ using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Rebus.Config;
+using Rebus.Timeouts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +74,8 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
 
     config.AddRebusMessaging(
         "sample",
-        (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e));
+        (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e),
+        o => o.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address)));
 
     config.ConfigureModule<ControllersModule>(m =>
     {
