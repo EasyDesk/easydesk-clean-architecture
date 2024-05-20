@@ -12,9 +12,23 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 public static class QueryableUtils
 {
     public static async Task<Option<T>> FirstOptionAsync<T>(this IQueryable<T> query)
-        where T : class
     {
-        return (await query.FirstOrDefaultAsync()).AsOption();
+        try
+        {
+            var result = await query.FirstAsync();
+            if (result is null)
+            {
+                return None;
+            }
+            else
+            {
+                return Some(result);
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            return None;
+        }
     }
 
     public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T>? op)
