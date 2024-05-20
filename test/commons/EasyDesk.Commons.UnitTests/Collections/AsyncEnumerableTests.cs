@@ -11,7 +11,7 @@ namespace EasyDesk.Commons.UnitTests.Collections;
 public class AsyncEnumerableTests
 {
     [Fact]
-    public async void ForEach_ShouldCallTheGivenAsyncActionForEveryElementInTheSquence()
+    public async Task ForEach_ShouldCallTheGivenAsyncActionForEveryElementInTheSquence()
     {
         var action = Substitute.For<AsyncAction<int>>();
 
@@ -27,7 +27,7 @@ public class AsyncEnumerableTests
     }
 
     [Fact]
-    public async void ForEach_ShouldCallTheGivenActionForEveryElementInTheSquence()
+    public async Task ForEach_ShouldCallTheGivenActionForEveryElementInTheSquence()
     {
         var action = Substitute.For<Action<int>>();
 
