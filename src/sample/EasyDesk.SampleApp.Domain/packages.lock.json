@@ -13,8 +13,8 @@
       },
       "FluentValidation": {
         "type": "Transitive",
-        "resolved": "11.9.0",
-        "contentHash": "VneVlTvwYDkfHV5av3QrQ0amALgrLX6LV94wlYyEsh0B/klJBW7C8y2eAtj5tOZ3jH6CAVpr4s1ZGgew/QWyig=="
+        "resolved": "11.9.1",
+        "contentHash": "C+PqISSMdlOZZJx0Hx25atW32tv4vbpsaiQB+PLjK+ZGLzOFuHl1fUJ3Lny77mIZ31ZtYtNG0JgUjxa3wwLsWg=="
       },
       "NodaTime": {
         "type": "Transitive",
@@ -38,7 +38,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
-          "FluentValidation": "[11.9.0, )",
+          "FluentValidation": "[11.9.1, )",
           "NodaTime": "[3.1.11, )"
         }
       },

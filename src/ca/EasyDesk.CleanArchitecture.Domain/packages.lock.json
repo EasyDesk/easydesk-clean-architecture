@@ -4,9 +4,9 @@
     "net8.0": {
       "FluentValidation": {
         "type": "Direct",
-        "requested": "[11.9.0, )",
-        "resolved": "11.9.0",
-        "contentHash": "VneVlTvwYDkfHV5av3QrQ0amALgrLX6LV94wlYyEsh0B/klJBW7C8y2eAtj5tOZ3jH6CAVpr4s1ZGgew/QWyig=="
+        "requested": "[11.9.1, )",
+        "resolved": "11.9.1",
+        "contentHash": "C+PqISSMdlOZZJx0Hx25atW32tv4vbpsaiQB+PLjK+ZGLzOFuHl1fUJ3Lny77mIZ31ZtYtNG0JgUjxa3wwLsWg=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
