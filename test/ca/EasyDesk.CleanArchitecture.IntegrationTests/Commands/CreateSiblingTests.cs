@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
@@ -22,10 +23,10 @@ public class CreateSiblingTests : SampleIntegrationTest
     protected override Option<TenantInfo> DefaultTenantInfo =>
         Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
 
+    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+
     protected override async Task OnInitialization()
     {
-        AuthenticateAs(TestAgents.Admin);
-
         await Http.AddAdmin().Send().EnsureSuccess();
     }
 

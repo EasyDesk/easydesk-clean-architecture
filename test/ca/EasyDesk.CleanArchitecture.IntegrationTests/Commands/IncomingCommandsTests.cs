@@ -44,8 +44,8 @@ public class IncomingCommandsTests : SampleIntegrationTest
         var tenantId = new TenantId("test-tenant-qwe");
         await DefaultBusEndpoint.Send(new CreateTenant(tenantId));
 
-        AuthenticateAs(TestAgents.Admin);
-        using var scope = TenantManager.MoveToTenant(tenantId);
+        using var adminScope = AuthenticateAs(TestAgents.Admin);
+        using var tenantScope = TenantManager.MoveToTenant(tenantId);
 
         await WebService.WaitUntilTenantExists(tenantId);
         await Http.AddAdmin()

@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
@@ -31,11 +32,11 @@ public class AuditingTests : SampleIntegrationTest
     protected override Option<TenantInfo> DefaultTenantInfo =>
         Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
 
+    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+
     protected override async Task OnInitialization()
     {
         _initialAudits = TestData.OperationsRun;
-
-        AuthenticateAs(TestAgents.Admin);
 
         await Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;

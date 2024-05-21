@@ -11,6 +11,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
 using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Scopes;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +20,32 @@ using NodaTime.Testing;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Sessions;
 
+public class AgentScope : IDisposable
+{
+    private readonly ScopeManager<Option<Agent>>.Scope _scope;
+
+    public AgentScope(ScopeManager<Option<Agent>>.Scope scope)
+    {
+        _scope = scope;
+    }
+
+    public Option<Agent> Agent => _scope.Value;
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _scope.Dispose();
+    }
+}
+
 public abstract class WebServiceTestSession<T> : IAsyncDisposable
     where T : ITestFixture
 {
     private readonly IList<ITestBusEndpoint> _busEndpoints = new List<ITestBusEndpoint>();
-    private Option<Agent> _currentAgent;
     private readonly Lazy<HttpTestHelper> _http;
     private readonly Lazy<ITestBusEndpoint> _defaultBusEndpoint;
     private readonly Lazy<ITestBusEndpoint> _errorBusEndpoint;
+    private readonly ScopeManager<Option<Agent>> _agentScopeManager;
 
     protected WebServiceTestSession(T fixture)
     {
@@ -35,6 +54,7 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
         _defaultBusEndpoint = new(() => NewBusEndpoint());
         _errorBusEndpoint = new(() => NewBusEndpoint(WebService.Services.GetRequiredService<RebusMessagingOptions>().ErrorQueueName));
         TenantManager = new TestTenantManager(DefaultTenantInfo);
+        _agentScopeManager = new(DefaultAgent);
     }
 
     protected T Fixture { get; }
@@ -52,6 +72,8 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
     protected ITestBusEndpoint ErrorBusEndpoint => _errorBusEndpoint.Value;
 
     protected virtual Option<TenantInfo> DefaultTenantInfo => None;
+
+    protected virtual Option<Agent> DefaultAgent => None;
 
     protected ITestBusEndpoint NewBusEndpoint(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
@@ -72,7 +94,7 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
             some: req.Tenant,
             none: req.NoTenant);
 
-        _currentAgent.Match(
+        _agentScopeManager.Current.Match(
             some: req.AuthenticateAs,
             none: req.NoAuthentication);
 
@@ -83,14 +105,14 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
     {
     }
 
-    protected void AuthenticateAs(Agent agent)
+    protected AgentScope AuthenticateAs(Agent agent)
     {
-        _currentAgent = Some(agent);
+        return new(_agentScopeManager.OpenScope(Some(agent)));
     }
 
-    protected void Anonymize()
+    protected AgentScope Anonymize()
     {
-        _currentAgent = None;
+        return new(_agentScopeManager.OpenScope(None));
     }
 
     protected virtual ITestHttpAuthentication GetHttpAuthentication() =>

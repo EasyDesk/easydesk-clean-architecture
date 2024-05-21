@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using System.Collections.Immutable;
@@ -14,11 +16,7 @@ public class AddAdminTests : SampleIntegrationTest
     {
     }
 
-    protected override Task OnInitialization()
-    {
-        AuthenticateAs(TestAgents.Admin);
-        return Task.CompletedTask;
-    }
+    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
 
     private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
     {
