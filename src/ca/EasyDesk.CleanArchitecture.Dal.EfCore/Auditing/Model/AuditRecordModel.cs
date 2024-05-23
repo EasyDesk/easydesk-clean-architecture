@@ -105,7 +105,7 @@ internal class AuditRecordModel : IMultitenantEntity
             Some(Identities)
                 .Filter(identities => identities.HasAny())
                 .Map(identities => Agent.FromIdentities(identities.Select(i => i.ToIdentity()))),
-            Properties.GroupBy(p => p.Key, x => x.Value).ToEquatableMap(x => x.Key, x => x.ToEquatableSet()),
+            Properties.GroupBy(p => p.Key, x => x.Value).ToFixedMap(x => x.Key, x => x.ToFixedSet()),
             Success,
             Instant);
     }

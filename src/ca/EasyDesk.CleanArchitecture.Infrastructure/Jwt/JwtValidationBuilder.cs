@@ -1,7 +1,7 @@
-﻿using EasyDesk.Commons.Options;
+﻿using EasyDesk.Commons.Collections.Immutable;
+using EasyDesk.Commons.Options;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
-using System.Collections.Immutable;
 using static EasyDesk.Commons.Collections.EnumerableUtils;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -9,8 +9,8 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
 public record JwtValidationConfiguration(
     SecurityKey ValidationKey,
-    IImmutableSet<string> Issuers,
-    IImmutableSet<string> Audiences,
+    IFixedSet<string> Issuers,
+    IFixedSet<string> Audiences,
     IEnumerable<SecurityKey> DecryptionKeys,
     Option<Duration> ClockSkew = default,
     bool ValidateLifetime = true)

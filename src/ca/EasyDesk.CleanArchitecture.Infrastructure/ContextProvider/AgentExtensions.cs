@@ -52,7 +52,7 @@ public static class AgentExtensions
         Agent.FromIdentities(claim.Select(x => ConvertClaimToIdentity(x.Value, x.Key)));
 
     public static Identity ConvertClaimToIdentity(IdentityClaimDto claim, string realm) =>
-        new(new Realm(realm), new IdentityId(claim.Id), new(claim.Attributes.ToEquatableMap(x => x.Key, x => x.Value.ToEquatableSet())));
+        new(new Realm(realm), new IdentityId(claim.Id), new(claim.Attributes.ToFixedMap(x => x.Key, x => x.Value.ToFixedSet())));
 
     private static string RequireClaim(this ClaimsIdentity claimsIdentity, string claimType)
     {

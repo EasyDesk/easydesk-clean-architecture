@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
-using System.Collections.Immutable;
+using EasyDesk.Commons.Collections.Immutable;
 using System.Data;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
 public sealed class StaticRolesToPermissionsBuilder
 {
-    private IImmutableSet<(Role, Permission)> _rolePermissionPairs = Set<(Role, Permission)>();
+    private IFixedSet<(Role, Permission)> _rolePermissionPairs = Set<(Role, Permission)>();
 
     public RolesSpecification ForRoles(IEnumerable<Role> roles) => new(this, roles);
 
@@ -29,8 +29,8 @@ public sealed class StaticRolesToPermissionsBuilder
     internal StaticRolesToPermissionsMapper Build()
     {
         var permissionsByRole = _rolePermissionPairs
-            .GroupBy(pair => pair.Item1, (role, pairs) => (role, pairs.Select(p => p.Item2).ToEquatableSet()))
-            .ToEquatableMap();
+            .GroupBy(pair => pair.Item1, (role, pairs) => (role, pairs.Select(p => p.Item2).ToFixedSet()))
+            .ToFixedMap();
         return new StaticRolesToPermissionsMapper(permissionsByRole);
     }
 }

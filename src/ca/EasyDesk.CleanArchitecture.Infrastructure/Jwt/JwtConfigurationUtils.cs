@@ -1,9 +1,9 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Extensions.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using NodaTime;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 
@@ -26,8 +26,8 @@ public static class JwtConfigurationUtils
         var section = configuration.RequireSection(sectionName);
         var validationSection = section.GetSectionAsOption(DefaultValidationSectionName);
 
-        IImmutableSet<string> GetSet(string key) =>
-            validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(key)).Flatten().ToEquatableSet();
+        IFixedSet<string> GetSet(string key) =>
+            validationSection.FlatMap(s => s.GetValueAsOption<IEnumerable<string>>(key)).Flatten().ToFixedSet();
 
         var issuers = GetSet(DefaultValidationIssuersKeyName);
         var audiences = GetSet(DefaultValidationAudiencesKeyName);

@@ -29,7 +29,7 @@ public static class TestHttpAuthentication
             return None;
         }
         var schemeName = options.DefaultScheme ?? throw new InvalidOperationException("A default scheme is not available.");
-        var provider = options.Schemes[schemeName];
+        var provider = options.Schemes.Get(schemeName).Value;
         return provider switch
         {
             JwtAuthenticationProvider => Some(GetJwtAuthenticationConfiguration(serviceProvider, schemeName)),

@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Versioning;
-using System.Collections.Immutable;
+using EasyDesk.Commons.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Web.Versioning;
 
-public record ApiVersioningInfo(IImmutableSet<ApiVersion> SupportedVersions);
+public record ApiVersioningInfo(IFixedSet<ApiVersion> SupportedVersions);

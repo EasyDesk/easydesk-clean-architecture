@@ -1,5 +1,5 @@
-﻿using EasyDesk.Commons.Options;
-using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Collections.Immutable;
+using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Application.Auditing;
 
@@ -7,7 +7,7 @@ public interface IAuditConfigurer
 {
     Option<string> Description { get; }
 
-    IImmutableDictionary<string, IImmutableSet<string>> Properties { get; }
+    IFixedMap<string, IFixedSet<string>> Properties { get; }
 
     IAuditConfigurer AddProperty(string key, string value);
 

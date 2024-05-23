@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using NodaTime;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Auditing;
 
@@ -17,6 +17,6 @@ public record AuditRecord(
     string Name,
     Option<string> Description,
     Option<Agent> Agent,
-    IImmutableDictionary<string, IImmutableSet<string>> Properties,
+    IFixedMap<string, IFixedSet<string>> Properties,
     bool Success,
     Instant Instant);

@@ -1,16 +1,16 @@
-﻿using Shouldly;
-using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Collections.Immutable;
+using Shouldly;
 using Xunit;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.Commons.UnitTests.Collections.Immutable;
 
-public class EquatableImmutableSetTests
+public class FixedSetTests
 {
     [Theory]
     [MemberData(nameof(EqualSetPairs))]
     public void Equals_ShouldReturnTrue_IfSetsContainTheSameElements(
-        IImmutableSet<int> left, IImmutableSet<int> right)
+        IFixedSet<int> left, IFixedSet<int> right)
     {
         left.Equals(right).ShouldBeTrue();
     }
@@ -18,7 +18,7 @@ public class EquatableImmutableSetTests
     [Theory]
     [MemberData(nameof(DifferentSetPairs))]
     public void Equals_ShouldReturnFalse_IfSetsContainDifferentElements(
-        IImmutableSet<int> left, IImmutableSet<int> right)
+        IFixedSet<int> left, IFixedSet<int> right)
     {
         left.Equals(right).ShouldBeFalse();
     }
@@ -26,7 +26,7 @@ public class EquatableImmutableSetTests
     [Theory]
     [MemberData(nameof(EqualSetPairs))]
     public void GetHashCode_ShouldReturnTheSameValue_ForEqualSets(
-        IImmutableSet<int> left, IImmutableSet<int> right)
+        IFixedSet<int> left, IFixedSet<int> right)
     {
         var hashLeft = left.GetHashCode();
         var hashRight = right.GetHashCode();
@@ -34,7 +34,7 @@ public class EquatableImmutableSetTests
         (hashLeft == hashRight).ShouldBeTrue();
     }
 
-    public static TheoryData<IImmutableSet<int>, IImmutableSet<int>> EqualSetPairs()
+    public static TheoryData<IFixedSet<int>, IFixedSet<int>> EqualSetPairs()
     {
         var sameRefSet = Set(1, 2);
         return new()
@@ -46,7 +46,7 @@ public class EquatableImmutableSetTests
         };
     }
 
-    public static TheoryData<IImmutableSet<int>, IImmutableSet<int>> DifferentSetPairs() => new()
+    public static TheoryData<IFixedSet<int>, IFixedSet<int>> DifferentSetPairs() => new()
     {
         { Set<int>(), Set(1) },
         { Set(1, 2, 3), Set(1, 2, 3, 4) },

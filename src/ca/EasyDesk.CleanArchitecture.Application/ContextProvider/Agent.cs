@@ -1,12 +1,12 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.ContextProvider;
 
 public record Agent
 {
-    public Agent(IImmutableDictionary<Realm, Identity> identities)
+    public Agent(IFixedMap<Realm, Identity> identities)
     {
         if (identities.Count == 0)
         {
@@ -15,15 +15,15 @@ public record Agent
         Identities = identities;
     }
 
-    public IImmutableDictionary<Realm, Identity> Identities { get; }
+    public IFixedMap<Realm, Identity> Identities { get; }
 
     public Identity RequireIdentity(Realm realm) => GetIdentity(realm)
         .OrElseThrow(() => new InvalidOperationException($"Missing required identity with name {realm}."));
 
-    public Option<Identity> GetIdentity(Realm realm) => Identities.GetOption(realm);
+    public Option<Identity> GetIdentity(Realm realm) => Identities.Get(realm);
 
     public static Agent FromIdentities(IEnumerable<Identity> identities) =>
-        new(identities.ToEquatableMap(x => x.Realm, x => x));
+        new(identities.ToFixedMap(x => x.Realm, x => x));
 
     public static Agent FromIdentities(params Identity[] identities) =>
         FromIdentities(identities.AsEnumerable());

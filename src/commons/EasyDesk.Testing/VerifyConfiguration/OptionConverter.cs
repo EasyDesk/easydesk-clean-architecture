@@ -7,8 +7,7 @@ internal class OptionConverter : JsonConverterFactory
 {
     protected override JsonConverter CreateConverter(Type objectType, JsonSerializer serializer)
     {
-        var optionType = objectType.GetGenericArguments()[0];
-        var converterType = typeof(OptionConverterImpl<>).MakeGenericType(optionType);
+        var converterType = typeof(OptionConverterImpl<>).MakeGenericType(objectType.GetGenericArguments());
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Collections.Immutable;
 using System.Reflection;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -7,7 +7,7 @@ namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 public sealed class AppBuilder
 {
     private readonly ModulesCollection _modules = new();
-    private IImmutableSet<Assembly> _assemblies = Set<Assembly>();
+    private IFixedSet<Assembly> _assemblies = Set<Assembly>();
     private string _serviceName;
 
     public AppBuilder(string serviceName)

@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using System.Collections.Immutable;
+using EasyDesk.Commons.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 
@@ -15,7 +15,7 @@ public class RoleBasedPermissionsProvider : IAgentPermissionsProvider
         _rolesToPermissionsMapper = rolesToPermissionsMapper;
     }
 
-    public async Task<IImmutableSet<Permission>> GetPermissionsForAgent(Agent agent)
+    public async Task<IFixedSet<Permission>> GetPermissionsForAgent(Agent agent)
     {
         var roles = await _identityRolesProvider.GetRolesForAgent(agent);
         return await _rolesToPermissionsMapper.MapRolesToPermissions(roles);

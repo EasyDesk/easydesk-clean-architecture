@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using EasyDesk.Testing.Errors;
@@ -95,7 +96,7 @@ public class AuditingStepTests
             Name: typeof(T).Name,
             Description: None,
             Agent: agent,
-            Properties: Map<string, IImmutableSet<string>>(),
+            Properties: Map<string, IFixedSet<string>>(),
             Success: result.IsSuccess,
             Instant: _now));
 

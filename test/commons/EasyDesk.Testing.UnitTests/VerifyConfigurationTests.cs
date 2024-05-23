@@ -3,8 +3,8 @@ using EasyDesk.Commons.Results;
 using EasyDesk.Testing.VerifyConfiguration;
 using Newtonsoft.Json;
 using NodaTime;
-using System.Collections.Immutable;
 using System.Runtime.CompilerServices;
+using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.Testing.UnitTests;
 
@@ -44,7 +44,7 @@ public class VerifyConfigurationTests
     [Fact]
     public Task VerifyErrorConversionTestMultiEmpty()
     {
-        return Verify(new MultiError(new CustomError(42, new CustomErrorInside("hello")), ImmutableList.Create<Error>()));
+        return Verify(new MultiError(new CustomError(42, new CustomErrorInside("hello")), List<Error>()));
     }
 
     [Fact]
@@ -52,11 +52,9 @@ public class VerifyConfigurationTests
     {
         return Verify(new MultiError(
                 new CustomError(42, new CustomErrorInside("hello")),
-                ImmutableList.Create<Error>(
+                List<Error>(
                     new CustomErrorInside("asd"),
-                    new CustomError(
-                        123,
-                        new CustomErrorInside("world")))));
+                    new CustomError(123, new CustomErrorInside("world")))));
     }
 
     [Fact]

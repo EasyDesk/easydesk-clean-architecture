@@ -1,10 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Collections.Immutable;
 
 namespace EasyDesk.Commons.Results;
 
 public record MultiError : Error
 {
-    public MultiError(Error primaryError, IImmutableList<Error> secondaryErrors)
+    public MultiError(Error primaryError, IFixedList<Error> secondaryErrors)
     {
         if (primaryError is MultiError)
         {
@@ -20,11 +20,11 @@ public record MultiError : Error
 
     public Error PrimaryError { get; init; }
 
-    public IImmutableList<Error> SecondaryErrors { get; init; }
+    public IFixedList<Error> SecondaryErrors { get; init; }
 
-    public void Deconstruct(out IImmutableList<Error> errors) => errors = SecondaryErrors.Add(PrimaryError);
+    public void Deconstruct(out IFixedList<Error> errors) => errors = SecondaryErrors.Add(PrimaryError);
 
-    public void Deconstruct(out Error primaryError, out IImmutableList<Error> secondaryErrors)
+    public void Deconstruct(out Error primaryError, out IFixedList<Error> secondaryErrors)
     {
         primaryError = PrimaryError;
         secondaryErrors = SecondaryErrors;

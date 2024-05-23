@@ -3,12 +3,11 @@ using Newtonsoft.Json;
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
-internal class OptionConverter : JsonConverterFactory
+internal class OptionConverter : CachedJsonConverterFactory
 {
-    protected override JsonConverter CreateConverter(Type objectType, JsonSerializer serializer)
+    protected override JsonConverter CreateConverter(Type objectType)
     {
-        var optionType = objectType.GetGenericArguments()[0];
-        var converterType = typeof(OptionConverterImpl<>).MakeGenericType(optionType);
+        var converterType = typeof(OptionConverterImpl<>).MakeGenericType(objectType.GetGenericArguments());
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 

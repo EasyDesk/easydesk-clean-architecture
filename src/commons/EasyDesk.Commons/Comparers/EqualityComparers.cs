@@ -4,6 +4,9 @@ namespace EasyDesk.Commons.Comparers;
 
 public static class EqualityComparers
 {
+    public static IEqualityComparer<T> FromComparer<T>(IComparer<T> comparer, Func<T, int>? hashCode = null) =>
+        From((x, y) => comparer.Compare(x, y) == 0, hashCode ?? (x => x?.GetHashCode() ?? 0));
+
     public static IEqualityComparer<T> From<T>(Func<T, T, bool> equals, Func<T, int> hashCode) =>
         new EqualityComparer<T>(equals, hashCode);
 
@@ -16,6 +19,26 @@ public static class EqualityComparers
         int HashCode(T t) => PropertyValues(t).CombineHashCodes();
 
         return From<T>(Equals, HashCode);
+    }
+
+    public static IEqualityComparer<KeyValuePair<K, V>> ForKeyValuePair<K, V>(
+        IEqualityComparer<K> keyComparer,
+        IEqualityComparer<V> valueComparer)
+    {
+        bool Equals(KeyValuePair<K, V> left, KeyValuePair<K, V> right)
+        {
+            return keyComparer.Equals(left.Key, right.Key)
+                && valueComparer.Equals(left.Value, right.Value);
+        }
+
+        int GetHashCode(KeyValuePair<K, V> keyValuePair)
+        {
+            var keyHash = keyValuePair.Key is null ? 0 : keyComparer.GetHashCode(keyValuePair.Key);
+            var valueHash = keyValuePair.Value is null ? 0 : valueComparer.GetHashCode(keyValuePair.Value);
+            return keyHash ^ valueHash;
+        }
+
+        return From<KeyValuePair<K, V>>(Equals, GetHashCode);
     }
 
     private class EqualityComparer<T> : IEqualityComparer<T>

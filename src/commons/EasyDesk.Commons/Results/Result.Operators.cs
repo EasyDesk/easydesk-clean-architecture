@@ -2,7 +2,6 @@
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
-using System.Collections.Immutable;
 
 namespace EasyDesk.Commons;
 
@@ -86,9 +85,9 @@ public static partial class StaticImports
     public static Result<IEnumerable<T>> CatchAllFailures<T>(this IEnumerable<Result<T>> enumerable) => enumerable
         .SelectMany(r => r.Error)
         .AsSome()
-        .Map(l => l.ToImmutableList())
-        .Filter(l => !l.IsEmpty)
-        .Map(l => new MultiError(l[0], l.GetRange(1, l.Count - 1)))
+        .Map(l => l.ToList())
+        .Filter(l => l.Any())
+        .Map(l => new MultiError(l[0], l.Skip(1).ToFixedList()))
         .Map(Failure<IEnumerable<T>>)
         .OrElseGet(() => Success(enumerable.Select(r => r.ReadValue())));
 

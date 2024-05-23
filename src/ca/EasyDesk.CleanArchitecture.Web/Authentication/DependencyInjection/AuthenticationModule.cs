@@ -1,8 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Immutable;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
@@ -54,7 +54,7 @@ public sealed class AuthenticationModuleOptions
 {
     public string? DefaultScheme { get; private set; }
 
-    public IImmutableDictionary<string, IAuthenticationProvider> Schemes { get; private set; } = Map<string, IAuthenticationProvider>();
+    public IFixedMap<string, IAuthenticationProvider> Schemes { get; private set; } = Map<string, IAuthenticationProvider>();
 
     public AuthenticationModuleOptions AddScheme(string name, IAuthenticationProvider provider)
     {

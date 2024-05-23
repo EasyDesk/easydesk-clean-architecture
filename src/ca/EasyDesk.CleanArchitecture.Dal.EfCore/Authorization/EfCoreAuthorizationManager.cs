@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
@@ -36,7 +37,7 @@ internal class EfCoreAuthorizationManager : IIdentityRolesManager, IAgentRolesPr
             .Where(u => u.Identity == id && u.Realm == realm);
     }
 
-    public async Task<IImmutableSet<Role>> GetRolesForAgent(Agent agent)
+    public async Task<IFixedSet<Role>> GetRolesForAgent(Agent agent)
     {
         return await RolesByAgent(agent)
             .Select(u => new Role(u.Role))

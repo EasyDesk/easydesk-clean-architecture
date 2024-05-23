@@ -1,17 +1,13 @@
-﻿using EasyDesk.Commons.Options;
-using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Collections.Immutable;
+using EasyDesk.Commons.Options;
 using System.Diagnostics;
 
 namespace EasyDesk.Commons.Collections;
 
 public static class ImmutableDictionaryUtils
 {
-    public static Option<V> GetOption<K, V>(this IImmutableDictionary<K, V> dictionary, K key)
-        where K : notnull =>
-        TryOption<K, V>(dictionary.TryGetValue, key);
-
-    public static IImmutableDictionary<K, V> Merge<K, V>(
-        this IImmutableDictionary<K, V> dictionary,
+    public static IFixedMap<K, V> Merge<K, V>(
+        this IFixedMap<K, V> dictionary,
         K key,
         V value,
         Func<V, V, V> combiner)
@@ -20,23 +16,23 @@ public static class ImmutableDictionaryUtils
         return dictionary.Update(key, v => combiner(v, value), () => value);
     }
 
-    public static IImmutableDictionary<K, V> AddIfAbsent<K, V>(this IImmutableDictionary<K, V> dictionary, K key, Func<V> value) =>
+    public static IFixedMap<K, V> AddIfAbsent<K, V>(this IFixedMap<K, V> dictionary, K key, Func<V> value) =>
         dictionary.ContainsKey(key) ? dictionary : dictionary.Add(key, value());
 
-    public static IImmutableDictionary<K, V> Update<K, V>(
-        this IImmutableDictionary<K, V> dictionary,
+    public static IFixedMap<K, V> Update<K, V>(
+        this IFixedMap<K, V> dictionary,
         K key,
         Func<V, V> mutation,
         Func<V> supplier)
         where K : notnull
     {
-        return dictionary.SetItem(key, dictionary.GetOption(key).Match(
+        return dictionary.SetItem(key, dictionary.Get(key).Match(
             some: mutation,
             none: supplier));
     }
 
-    public static IImmutableDictionary<K, V> UpdateIfPresent<K, V>(
-        this IImmutableDictionary<K, V> dictionary,
+    public static IFixedMap<K, V> UpdateIfPresent<K, V>(
+        this IFixedMap<K, V> dictionary,
         K key,
         Func<V, V> mutation)
         where K : notnull
@@ -48,13 +44,13 @@ public static class ImmutableDictionaryUtils
         return dictionary.Update(key, mutation, () => throw new UnreachableException());
     }
 
-    public static IImmutableDictionary<K, V> UpdateOption<K, V>(
-        this IImmutableDictionary<K, V> dictionary,
+    public static IFixedMap<K, V> UpdateOption<K, V>(
+        this IFixedMap<K, V> dictionary,
         K key,
         Func<Option<V>, Option<V>> mutation)
         where K : notnull
     {
-        var old = dictionary.GetOption(key);
+        var old = dictionary.Get(key);
         return mutation(old).Match(
             some: v => dictionary.SetItem(key, v),
             none: () => old.Match(

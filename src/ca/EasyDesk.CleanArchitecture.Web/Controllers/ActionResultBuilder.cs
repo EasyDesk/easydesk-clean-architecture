@@ -5,11 +5,11 @@ using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Immutable;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
@@ -24,7 +24,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
     private readonly Func<TResult, TDto> _mapper;
     private readonly Func<Result<TResult>, TMeta> _meta;
     private readonly ControllerBase _controller;
-    private IImmutableList<ErrorHandler> _errorHandlers;
+    private IFixedList<ErrorHandler> _errorHandlers;
 
     public ActionResultBuilder(
         AsyncFunc<Result<TResult>> resultProvider,
@@ -40,7 +40,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         Func<TResult, TDto> mapper,
         Func<Result<TResult>, TMeta> meta,
         ControllerBase controller,
-        IImmutableList<ErrorHandler> errorHandlers)
+        IFixedList<ErrorHandler> errorHandlers)
     {
         _resultProvider = resultProvider;
         _mapper = mapper;

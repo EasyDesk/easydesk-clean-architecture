@@ -5,9 +5,9 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.Authorization;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
@@ -30,7 +30,7 @@ public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
         await WaitForConditionOnRoles(roles => roles.Contains(Roles.Admin));
     }
 
-    private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
+    private async Task WaitForConditionOnRoles(Func<IFixedSet<Role>, bool> condition)
     {
         await PollServiceUntil<IAgentRolesProvider>(
             async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));

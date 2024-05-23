@@ -77,7 +77,7 @@ public sealed class HttpPaginatedRequestExecutor<T> :
     protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> request) =>
         new(request);
 
-    private Option<int> PageIndex => Query.GetOption(nameof(PaginationDto.PageIndex)).FlatMap(p => TryOption<string, int>(int.TryParse, p[0]));
+    private Option<int> PageIndex => Query.Get(nameof(PaginationDto.PageIndex)).FlatMap(p => TryOption<string, int>(int.TryParse, p[0]));
 }
 
 public static class HttpPaginatedRequestExecutorExtensions

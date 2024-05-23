@@ -1,13 +1,14 @@
 ﻿using EasyDesk.Commons.Collections;
-using System.Collections.Immutable;
+using EasyDesk.Commons.Collections.Immutable;
+using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public record class ImmutableHttpHeaders(
-    IImmutableDictionary<string, IEnumerable<string>> Dictionary)
+    IFixedMap<string, IEnumerable<string>> Dictionary)
 {
     public ImmutableHttpHeaders()
-        : this(ImmutableDictionary<string, IEnumerable<string>>.Empty)
+        : this(Map<string, IEnumerable<string>>())
     {
     }
 
@@ -22,7 +23,7 @@ public record class ImmutableHttpHeaders(
             .SetItem(
                 header,
                 Dictionary
-                    .GetOption(header)
+                    .Get(header)
                     .OrElseGet(Enumerable.Empty<string>)
                     .Append(value)));
 

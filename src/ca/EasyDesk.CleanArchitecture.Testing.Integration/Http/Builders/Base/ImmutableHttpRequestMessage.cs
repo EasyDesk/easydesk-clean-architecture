@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using static EasyDesk.Commons.Collections.ImmutableCollections;
+﻿using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
@@ -22,7 +21,7 @@ public record ImmutableHttpRequestMessage(
     public static async Task<ImmutableHttpRequestMessage> From(HttpRequestMessage request) => new(
         request.Method,
         request.RequestUri ?? throw new InvalidOperationException("Request URI is missing."),
-        new(request.Headers.ToImmutableDictionary()),
+        new(request.Headers.ToFixedMap()),
         await ImmutableHttpContent.From(request.Content));
 
     public HttpRequestMessage ToHttpRequestMessage()

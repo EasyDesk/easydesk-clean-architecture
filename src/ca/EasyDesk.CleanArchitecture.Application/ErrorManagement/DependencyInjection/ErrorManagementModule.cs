@@ -4,10 +4,10 @@ using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Reflection;
 using EasyDesk.Commons.Results;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement.DependencyInjection;
@@ -34,12 +34,12 @@ public class ErrorManagementModule : AppModule
         services.AddSingleton(_ => new GlobalErrorMapper(mapperDictionary));
     }
 
-    private IImmutableDictionary<Type, VersionedErrorMapper> CreateMapperDictionary(IEnumerable<Type> errorTypes)
+    private IFixedMap<Type, VersionedErrorMapper> CreateMapperDictionary(IEnumerable<Type> errorTypes)
     {
         return errorTypes
             .SelectMany(e => ExtractDomainTypes(e).Select(d => (Application: e, Domain: d)))
             .GroupBy(x => x.Domain)
-            .ToImmutableDictionary(x => x.Key, x => CreateVersionedErrorMapper(x.Key, x.Select(x => x.Application)));
+            .ToFixedMap(x => x.Key, x => CreateVersionedErrorMapper(x.Key, x.Select(x => x.Application)));
     }
 
     private VersionedErrorMapper CreateVersionedErrorMapper(Type domain, IEnumerable<Type> application)

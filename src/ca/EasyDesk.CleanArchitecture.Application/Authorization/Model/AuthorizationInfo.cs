@@ -1,9 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using System.Collections.Immutable;
+using EasyDesk.Commons.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Model;
 
-public record AuthorizationInfo(Agent Agent, IImmutableSet<Permission> Permissions)
+public record AuthorizationInfo(Agent Agent, IFixedSet<Permission> Permissions)
 {
     public bool HasPermission(Permission permission) =>
         HasAnyPermissionAmong(permission);

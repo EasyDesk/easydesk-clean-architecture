@@ -1,7 +1,7 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Immutable;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -13,7 +13,7 @@ public sealed class AppDescription
     public AppDescription(
         string name,
         ModulesCollection modules,
-        IImmutableSet<Assembly> assemblies)
+        IFixedSet<Assembly> assemblies)
     {
         Name = name;
         _modules = modules;
@@ -22,7 +22,7 @@ public sealed class AppDescription
 
     public string Name { get; }
 
-    public IImmutableSet<Assembly> Assemblies { get; }
+    public IFixedSet<Assembly> Assemblies { get; }
 
     public Option<T> GetModule<T>() where T : AppModule =>
         _modules.GetModule<T>();

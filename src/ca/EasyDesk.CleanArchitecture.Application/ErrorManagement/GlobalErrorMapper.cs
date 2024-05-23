@@ -1,16 +1,15 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Versioning;
-using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
 public class GlobalErrorMapper
 {
-    private readonly IImmutableDictionary<Type, VersionedErrorMapper> _errorMappers;
+    private readonly IFixedMap<Type, VersionedErrorMapper> _errorMappers;
 
-    public GlobalErrorMapper(IImmutableDictionary<Type, VersionedErrorMapper> errorMappers)
+    public GlobalErrorMapper(IFixedMap<Type, VersionedErrorMapper> errorMappers)
     {
         _errorMappers = errorMappers;
     }
@@ -20,7 +19,7 @@ public class GlobalErrorMapper
         var errorType = error.GetType();
 
         return _errorMappers
-            .GetOption(errorType)
+            .Get(errorType)
             .Map(m => m.MapError(error, requestVersion))
             .OrElse(error);
     }

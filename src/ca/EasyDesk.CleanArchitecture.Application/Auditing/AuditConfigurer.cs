@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using System.Collections.Immutable;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
@@ -9,7 +10,7 @@ public sealed class AuditConfigurer : IAuditConfigurer
 {
     public Option<string> Description { get; private set; } = None;
 
-    public IImmutableDictionary<string, IImmutableSet<string>> Properties { get; private set; } = Map<string, IImmutableSet<string>>();
+    public IFixedMap<string, IFixedSet<string>> Properties { get; private set; } = Map<string, IFixedSet<string>>();
 
     public IAuditConfigurer SetDescription(string description)
     {

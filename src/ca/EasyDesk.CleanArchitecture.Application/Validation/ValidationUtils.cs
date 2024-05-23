@@ -3,7 +3,6 @@ using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Strings;
 using FluentValidation;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
@@ -19,7 +18,7 @@ public static class ValidationUtils
                 x.PropertyName,
                 x.ErrorCode.RemoveSuffix("Validator"),
                 x.ErrorMessage,
-                x.FormattedMessagePlaceholderValues.ToImmutableSortedDictionary()))
+                x.FormattedMessagePlaceholderValues.ToFixedSortedMap()))
             .ToList();
         return errors.HasAny()
             ? Errors.Multiple(errors.First(), errors.Skip(1))

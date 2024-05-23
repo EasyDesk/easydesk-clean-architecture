@@ -3,10 +3,11 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Versioning;
+using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using NodaTime;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
@@ -54,8 +55,8 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         _testHttpAuthentication = testHttpAuthentication;
     }
 
-    protected IImmutableDictionary<string, IImmutableList<string>> Query =>
-        _queryParameters.ToImmutableDictionary(pair => pair.Key, pair => pair.Value.ToImmutableList() as IImmutableList<string>);
+    protected IFixedMap<string, IFixedList<string>> Query =>
+        _queryParameters.ToFixedMap(pair => pair.Key, pair => pair.Value.Select(x => x!).ToFixedList());
 
     protected Duration Timeout { get; private set; } = _defaultTimeout;
 

@@ -12,6 +12,9 @@ public static class VerifySettingsInitializer
             settings.Converters.Add(new OptionConverter());
             settings.Converters.Add(new NoneOptionConverter());
             settings.Converters.Add(new ErrorConverter());
+            settings.Converters.Add(new FixedListConverter());
+            settings.Converters.Add(new FixedSetConverter());
+            settings.Converters.Add(new FixedMapConverter());
             settings.NullValueHandling = NullValueHandling.Include;
             settings.DefaultValueHandling = DefaultValueHandling.Include;
         });

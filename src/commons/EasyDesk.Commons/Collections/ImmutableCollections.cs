@@ -5,68 +5,156 @@ namespace EasyDesk.Commons.Collections;
 
 public static class ImmutableCollections
 {
-    public delegate IImmutableSet<T> SetMutation<T>(IImmutableSet<T> set);
+    public static IFixedSet<T> ToFixedSet<T>(this IEnumerable<T> items) => Set(items);
 
-    public delegate IImmutableList<T> ListMutation<T>(IImmutableList<T> list);
+    public static IFixedSet<T> ToFixedHashSet<T>(this IEnumerable<T> items, IEqualityComparer<T>? comparer = null) => HashSet(items, comparer);
 
-    public delegate IImmutableDictionary<K, V> DictionaryMutation<K, V>(IImmutableDictionary<K, V> dictionary);
+    public static IFixedSet<T> ToFixedSortedSet<T>(this IEnumerable<T> items, IComparer<T>? comparer = null) => SortedSet(items, comparer);
 
-    public static IImmutableSet<T> ToEquatableSet<T>(this IEnumerable<T> items) => Set(items);
+    public static IFixedSet<T> Set<T>(params T[] items) => Set(items.AsEnumerable());
 
-    public static IImmutableSet<T> ToEquatableSet<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer) => Set(items, comparer);
+    public static IFixedSet<T> Set<T>(IEnumerable<T> items) => HashSet(items);
 
-    public static IImmutableSet<T> ToEquatableSet<T>(this IEnumerable<T> items, IComparer<T> comparer) => Set(items, comparer);
-
-    public static IImmutableSet<T> Set<T>(params T[] items) => Set(items as IEnumerable<T>);
-
-    public static IImmutableSet<T> Set<T>(IEnumerable<T> items) => Set(items, EqualityComparer<T>.Default);
-
-    public static IImmutableSet<T> Set<T>(IEnumerable<T> items, IEqualityComparer<T> comparer)
+    public static IFixedSet<T> HashSet<T>(IEnumerable<T> items, IEqualityComparer<T>? comparer = null)
     {
         var set = ImmutableHashSet.CreateRange(comparer, items);
-        return EquatableImmutableHashSet<T>.Create(set);
+        return FixedHashSet.Create(set);
     }
 
-    public static IImmutableSet<T> Set<T>(IEnumerable<T> items, IComparer<T> comparer)
+    public static IFixedSet<T> SortedSet<T>(IEnumerable<T> items, IComparer<T>? comparer = null)
     {
         var set = ImmutableSortedSet.CreateRange(comparer, items);
-        return EquatableImmutableSortedSet<T>.Create(set);
+        return FixedSortedSet.Create(set);
     }
 
-    public static IImmutableList<T> ToEquatableList<T>(this IEnumerable<T> items) => List(items);
+    public static IFixedList<T> ToFixedList<T>(this IEnumerable<T> items) => List(items);
 
-    public static IImmutableList<T> List<T>(params T[] items) => List(items as IEnumerable<T>);
+    public static IFixedList<T> List<T>(params T[] items) => List(items.AsEnumerable());
 
-    public static IImmutableList<T> List<T>(IEnumerable<T> items)
+    public static IFixedList<T> List<T>(IEnumerable<T> items)
     {
         var list = ImmutableList.CreateRange(items);
-        return EquatableImmutableList<T>.FromList(list);
+        return FixedList.Create(list);
     }
 
-    public static IImmutableDictionary<K, V> ToEquatableMap<K, V>(this IEnumerable<(K Key, V Value)> items)
-        where K : notnull => Map(items);
+    public static IFixedMap<K, V> ToFixedMap<K, V>(this IEnumerable<(K, V)> items) where K : notnull =>
+        items.ToFixedHashMap();
 
-    public static IImmutableDictionary<K, V> ToEquatableMap<K, V>(this IEnumerable<KeyValuePair<K, V>> items)
-        where K : notnull => Map(items);
+    public static IFixedMap<K, V> ToFixedMap<K, V>(this IEnumerable<KeyValuePair<K, V>> items) where K : notnull =>
+        items.ToFixedHashMap();
 
-    public static IImmutableDictionary<K, V> ToEquatableMap<T, K, V>(this IEnumerable<T> items, Func<T, K> key, Func<T, V> value)
-        where K : notnull => Map(items.Select(t => (key(t), value(t))));
+    public static IFixedMap<K, V> ToFixedMap<K, V>(
+        this IEnumerable<V> items,
+        Func<V, K> key) where K : notnull =>
+        items.ToFixedHashMap(key);
 
-    public static IImmutableDictionary<K, V> Map<K, V>(params (K Key, V Value)[] items)
+    public static IFixedMap<K, V> ToFixedMap<T, K, V>(
+        this IEnumerable<T> items,
+        Func<T, K> key,
+        Func<T, V> value) where K : notnull =>
+        items.ToFixedHashMap(key, value);
+
+    public static IFixedMap<K, V> ToFixedHashMap<K, V>(
+        this IEnumerable<(K, V)> items,
+        IEqualityComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        HashMap(items, keyComparer, valueComparer);
+
+    public static IFixedMap<K, V> ToFixedHashMap<K, V>(
+        this IEnumerable<KeyValuePair<K, V>> items,
+        IEqualityComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        HashMap(items, keyComparer, valueComparer);
+
+    public static IFixedMap<K, V> ToFixedHashMap<K, V>(
+        this IEnumerable<V> items,
+        Func<V, K> key,
+        IEqualityComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        items.ToFixedHashMap(key, It, keyComparer, valueComparer);
+
+    public static IFixedMap<K, V> ToFixedHashMap<T, K, V>(
+        this IEnumerable<T> items,
+        Func<T, K> key,
+        Func<T, V> value,
+        IEqualityComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        FixedHashMap.Create(items.ToImmutableDictionary(key, value, keyComparer, valueComparer));
+
+    public static IFixedMap<K, V> ToFixedSortedMap<K, V>(
+        this IEnumerable<(K, V)> items,
+        IComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        SortedMap(items, keyComparer, valueComparer);
+
+    public static IFixedMap<K, V> ToFixedSortedMap<K, V>(
+        this IEnumerable<KeyValuePair<K, V>> items,
+        IComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        SortedMap(items, keyComparer, valueComparer);
+
+    public static IFixedMap<K, V> ToFixedSortedMap<K, V>(
+        this IEnumerable<V> items,
+        Func<V, K> key,
+        IComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        items.ToFixedSortedMap(key, It, keyComparer, valueComparer);
+
+    public static IFixedMap<K, V> ToFixedSortedMap<T, K, V>(
+        this IEnumerable<T> items,
+        Func<T, K> key,
+        Func<T, V> value,
+        IComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        FixedSortedMap.Create(items.ToImmutableSortedDictionary(key, value, keyComparer, valueComparer));
+
+    public static IFixedMap<K, V> Map<K, V>(params (K, V)[] items) where K : notnull =>
+        HashMap(items);
+
+    public static IFixedMap<K, V> Map<K, V>(IEnumerable<(K, V)> items) where K : notnull =>
+        HashMap(items);
+
+    public static IFixedMap<K, V> Map<K, V>(IEnumerable<KeyValuePair<K, V>> pairs) where K : notnull =>
+        HashMap(pairs);
+
+    public static IFixedMap<K, V> HashMap<K, V>(params (K, V)[] items) where K : notnull =>
+        HashMap(items.AsEnumerable());
+
+    public static IFixedMap<K, V> HashMap<K, V>(
+        IEnumerable<KeyValuePair<K, V>> items,
+        IEqualityComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null)
+        where K : notnull
+    {
+        var dictionary = ImmutableDictionary.CreateRange(keyComparer, valueComparer, items);
+        return FixedHashMap.Create(dictionary);
+    }
+
+    public static IFixedMap<K, V> HashMap<K, V>(
+        IEnumerable<(K, V)> items,
+        IEqualityComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null)
         where K : notnull =>
-        Map(items as IEnumerable<(K, V)>);
+        HashMap(ConvertToKeyValuePairs(items), keyComparer, valueComparer);
 
-    public static IImmutableDictionary<K, V> Map<K, V>(IEnumerable<(K Key, V Value)> items)
-        where K : notnull
+    public static IFixedMap<K, V> SortedMap<K, V>(params (K, V)[] items) where K : notnull =>
+        SortedMap(items.AsEnumerable());
+
+    public static IFixedMap<K, V> SortedMap<K, V>(
+        IEnumerable<(K, V)> items,
+        IComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull =>
+        SortedMap(ConvertToKeyValuePairs(items), keyComparer, valueComparer);
+
+    public static IFixedMap<K, V> SortedMap<K, V>(
+        IEnumerable<KeyValuePair<K, V>> items,
+        IComparer<K>? keyComparer = null,
+        IEqualityComparer<V>? valueComparer = null) where K : notnull
     {
-        var pairs = items.Select(x => new KeyValuePair<K, V>(x.Key, x.Value));
-        return Map(pairs);
+        var dictionary = ImmutableSortedDictionary.CreateRange(keyComparer, valueComparer, items);
+        return FixedSortedMap.Create(dictionary);
     }
 
-    public static IImmutableDictionary<K, V> Map<K, V>(IEnumerable<KeyValuePair<K, V>> pairs)
-        where K : notnull
-    {
-        var dictionary = ImmutableDictionary.CreateRange(pairs);
-        return EquatableImmutableDictionary<K, V>.FromDictionary(dictionary);
-    }
+    private static IEnumerable<KeyValuePair<K, V>> ConvertToKeyValuePairs<K, V>(IEnumerable<(K Key, V Value)> items) =>
+        items.Select(x => new KeyValuePair<K, V>(x.Key, x.Value));
 }

@@ -1,10 +1,10 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Comparers;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 using System.Linq.Expressions;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
@@ -108,14 +108,14 @@ public static class QueryableUtils
         }
     }
 
-    public static async Task<IImmutableSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query) =>
-        await query.ToListThenMap(x => x.ToEquatableSet());
+    public static async Task<IFixedSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query) =>
+        await query.ToListThenMap(x => x.ToFixedSet());
 
-    public static async Task<IImmutableSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query, IEqualityComparer<T> equalityComparer) =>
-        await query.ToListThenMap(x => x.ToEquatableSet(equalityComparer));
+    public static async Task<IFixedSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query, IEqualityComparer<T> equalityComparer) =>
+        await query.ToListThenMap(x => x.ToFixedHashSet(equalityComparer));
 
-    public static async Task<IImmutableList<T>> ToEquatableListAsync<T>(this IQueryable<T> query) =>
-        await query.ToListThenMap(x => x.ToEquatableList());
+    public static async Task<IFixedList<T>> ToEquatableListAsync<T>(this IQueryable<T> query) =>
+        await query.ToListThenMap(x => x.ToFixedList());
 
     private static async Task<R> ToListThenMap<T, R>(this IQueryable<T> query, Func<IEnumerable<T>, R> mapper) =>
         await query.ToListAsync().Map(mapper);

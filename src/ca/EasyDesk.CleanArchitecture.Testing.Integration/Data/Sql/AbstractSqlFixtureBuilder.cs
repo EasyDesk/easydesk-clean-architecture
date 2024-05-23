@@ -2,10 +2,10 @@
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Commands;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Tasks;
 using Microsoft.Data.SqlClient;
 using Respawn;
-using System.Collections.Immutable;
 using System.Data;
 using System.Data.Common;
 
@@ -50,7 +50,7 @@ internal abstract class AbstractSqlFixtureBuilder<TFixture, TContainer> : ISqlDa
         return this;
     }
 
-    protected record TableDef(string Schema, string Name, IImmutableList<string> Columns);
+    protected record TableDef(string Schema, string Name, IFixedList<string> Columns);
 
     public ISqlDatabaseFixtureBuilder WithTableCopies()
     {
@@ -71,7 +71,7 @@ internal abstract class AbstractSqlFixtureBuilder<TFixture, TContainer> : ISqlDa
 
                 var tables = result.GroupBy(
                     x => (x.Schema, x.TableName),
-                    (k, xs) => new TableDef(k.Schema, k.TableName, xs.Select(c => c.ColumnName).ToEquatableList()));
+                    (k, xs) => new TableDef(k.Schema, k.TableName, xs.Select(c => c.ColumnName).ToFixedList()));
 
                 var copyTablesCommand = tables.Select(GenerateCopyTableCommand).ConcatStrings("\n");
                 await connection.RunCommand(copyTablesCommand);

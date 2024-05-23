@@ -1,6 +1,6 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
-using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 
 namespace EasyDesk.CleanArchitecture.Application.Versioning;
@@ -20,8 +20,8 @@ public static class ApiVersioningUtils
                 .FirstOption());
     }
 
-    public static IImmutableSet<ApiVersion> GetSupportedApiVersionsFromNamespaces(this IEnumerable<Type> types) =>
-        types.SelectMany(t => t.GetApiVersionFromNamespace()).ToEquatableSet();
+    public static IFixedSet<ApiVersion> GetSupportedApiVersionsFromNamespaces(this IEnumerable<Type> types) =>
+        types.SelectMany(t => t.GetApiVersionFromNamespace()).ToFixedSet();
 
     private static Option<ApiVersion> ParseVersionFromNamespace(string version)
     {

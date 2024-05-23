@@ -1,16 +1,17 @@
-﻿using Shouldly;
+﻿using EasyDesk.Commons.Collections.Immutable;
+using Shouldly;
 using System.Collections.Immutable;
 using Xunit;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.Commons.UnitTests.Collections.Immutable;
 
-public class EquatableImmutableDictionaryTests
+public class FixedMapTests
 {
     [Theory]
     [MemberData(nameof(EqualDictionaryPairs))]
     public void Equals_ShouldReturnTrue_IfTheDictionariesContainTheSameKeyValuePairs(
-        IImmutableDictionary<int, string> left, IImmutableDictionary<int, string> right)
+        IFixedMap<int, string> left, IFixedMap<int, string> right)
     {
         left.Equals(right).ShouldBeTrue();
     }
@@ -18,7 +19,7 @@ public class EquatableImmutableDictionaryTests
     [Theory]
     [MemberData(nameof(DifferentDictionaryPairs))]
     public void Equals_ShouldReturnFalse_IfTheDictionariesContainDifferentKeyValuePairs(
-        IImmutableDictionary<int, string> left, IImmutableDictionary<int, string> right)
+        IFixedMap<int, string> left, IFixedMap<int, string> right)
     {
         left.Equals(right).ShouldBeFalse();
     }
@@ -26,7 +27,7 @@ public class EquatableImmutableDictionaryTests
     [Theory]
     [MemberData(nameof(EqualDictionaryPairs))]
     public void GetHashCode_ShouldReturnTheSameValue_ForEqualDictionaries(
-        IImmutableDictionary<int, string> left, IImmutableDictionary<int, string> right)
+        IFixedMap<int, string> left, IFixedMap<int, string> right)
     {
         var hashLeft = left.GetHashCode();
         var hashRight = right.GetHashCode();
@@ -34,7 +35,7 @@ public class EquatableImmutableDictionaryTests
         (hashLeft == hashRight).ShouldBeTrue();
     }
 
-    public static TheoryData<IImmutableDictionary<int, string>, IImmutableDictionary<int, string>> EqualDictionaryPairs()
+    public static TheoryData<IFixedMap<int, string>, IFixedMap<int, string>> EqualDictionaryPairs()
     {
         var sameRefMap = Map((1, "one"), (2, "two"));
         return new()
@@ -45,7 +46,7 @@ public class EquatableImmutableDictionaryTests
         };
     }
 
-    public static TheoryData<IImmutableDictionary<int, string>, IImmutableDictionary<int, string>> DifferentDictionaryPairs() => new()
+    public static TheoryData<IFixedMap<int, string>, IFixedMap<int, string>> DifferentDictionaryPairs() => new()
     {
         { Map<int, string>(), Map((1, "one")) },
         { Map((1, "one"), (2, "two")), Map((1, "one")) },

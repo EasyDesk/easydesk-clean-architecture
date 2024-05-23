@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.Commons.Collections.Immutable;
 using Shouldly;
-using System.Collections.Immutable;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.ErrorManagement;
@@ -10,7 +10,7 @@ public class ErrorsTests
     [Theory]
     [MemberData(nameof(GenericErrorData))]
     public void Generic_ShouldReplaceWordsInCurlyBracesWithTheRespectiveValue(
-        string messageFormat, string expectedMessage, IImmutableDictionary<string, object> expectedParams, params object[] args)
+        string messageFormat, string expectedMessage, IFixedMap<string, object> expectedParams, params object[] args)
     {
         var code = "ErrorCode";
         var error = Errors.Generic(code, messageFormat, args);

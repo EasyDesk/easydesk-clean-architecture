@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Collections;
 using System.Net;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -13,7 +13,7 @@ public record ImmutableHttpResponseMessage(
 
     public static async Task<ImmutableHttpResponseMessage> From(HttpResponseMessage response) => new(
         response.StatusCode,
-        new(response.Headers.ToImmutableDictionary()),
+        new(response.Headers.ToFixedMap()),
         await ImmutableHttpContent.From(response.Content),
         await ImmutableHttpRequestMessage.From(response.RequestMessage ?? throw new InvalidOperationException("Request message is missing.")));
 }

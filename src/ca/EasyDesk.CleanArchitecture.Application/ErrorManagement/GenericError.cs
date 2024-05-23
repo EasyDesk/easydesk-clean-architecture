@@ -1,4 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using System.Collections.Immutable;
@@ -7,7 +8,7 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
-public partial record GenericError(string Code, string Message, IImmutableDictionary<string, object> Parameters) : Error
+public partial record GenericError(string Code, string Message, IFixedMap<string, object> Parameters) : Error
 {
     public static GenericError Create(string code, string message, params object[] args)
     {
@@ -16,7 +17,7 @@ public partial record GenericError(string Code, string Message, IImmutableDictio
 
         var formattedMessage = GenericErrorParameterRegex.Instance().Replace(message, match => CalculateMatchReplacement(match, paramMap, argsQueue));
 
-        return new(code, formattedMessage, Map(paramMap));
+        return new(code, formattedMessage, paramMap.ToFixedSortedMap());
     }
 
     private static string CalculateMatchReplacement(Match match, Dictionary<string, object> paramMap, Queue<object> argsQueue)

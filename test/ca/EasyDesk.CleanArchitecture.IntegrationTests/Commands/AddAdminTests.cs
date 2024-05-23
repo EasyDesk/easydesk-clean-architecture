@@ -3,10 +3,10 @@ using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
-using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
@@ -18,7 +18,7 @@ public class AddAdminTests : SampleIntegrationTest
 
     protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
 
-    private async Task WaitForConditionOnRoles(Func<IImmutableSet<Role>, bool> condition)
+    private async Task WaitForConditionOnRoles(Func<IFixedSet<Role>, bool> condition)
     {
         await PollServiceUntil<IAgentRolesProvider>(async p => condition(await p.GetRolesForAgent(TestAgents.Admin)));
     }

@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Routing;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,6 @@ using Rebus.Retry.FailFast;
 using Rebus.Retry.Simple;
 using Rebus.Timeouts;
 using Rebus.Workers.TplBased;
-using System.Collections.Immutable;
 using System.Reflection;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -34,7 +34,7 @@ public sealed class RebusMessagingOptions
 
     public bool UseInbox { get; set; } = true;
 
-    public IImmutableSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
+    public IFixedSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
 
     public bool DeferredMessagesEnabled { get; private set; } = false;
 

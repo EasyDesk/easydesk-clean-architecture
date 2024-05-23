@@ -41,15 +41,13 @@ public record class ImmutableHttpContent(
     {
     }
 
-    public Option<MediaTypeHeaderValue> MediaType =>
-        ContentHeaders.Dictionary
-        .GetOption(HeaderNames.ContentType)
+    public Option<MediaTypeHeaderValue> MediaType => ContentHeaders.Dictionary
+        .Get(HeaderNames.ContentType)
         .FlatMap(e => e.FirstOption())
         .Map(MediaTypeHeaderValue.Parse);
 
-    public Option<Encoding> TextEncoding =>
-        ContentHeaders.Dictionary
-        .GetOption(HeaderNames.ContentEncoding)
+    public Option<Encoding> TextEncoding => ContentHeaders.Dictionary
+        .Get(HeaderNames.ContentEncoding)
         .FlatMap(e => e.FirstOption())
         .Or(MediaType
             .FlatMap(m => m.CharSet.AsOption()))
@@ -105,7 +103,7 @@ public record class ImmutableHttpContent(
                 | ImmutableArray<byte>.Empty,
             ContentHeaders: content
                 .AsOption()
-                .Map(c => c.Headers.ToImmutableDictionary())
+                .Map(c => c.Headers.ToFixedMap())
                 .Map(d => new ImmutableHttpHeaders(d))
                 .OrElseGet(() => new()));
 }

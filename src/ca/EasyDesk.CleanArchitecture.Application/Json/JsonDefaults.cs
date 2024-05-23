@@ -21,6 +21,9 @@ public static class JsonDefaults
 
         serializerSettings.Converters.Add(new StringEnumConverter());
         serializerSettings.Converters.Add(new OptionConverter());
+        serializerSettings.Converters.Add(new FixedListConverter());
+        serializerSettings.Converters.Add(new FixedSetConverter());
+        serializerSettings.Converters.Add(new FixedMapConverter());
         serializerSettings.ConfigureForNodaTime(dateTimeZoneProvider ?? DateTimeZoneProviders.Tzdb);
     }
 

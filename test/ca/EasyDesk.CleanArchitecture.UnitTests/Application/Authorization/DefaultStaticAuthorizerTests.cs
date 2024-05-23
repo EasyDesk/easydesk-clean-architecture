@@ -32,7 +32,7 @@ public class DefaultStaticAuthorizerTests
     private bool IsAuthorized<T>(params TestPermissions[] permissions) where T : new()
     {
         return new DefaultStaticAuthorizer<T>()
-            .IsAuthorized(new T(), new AuthorizationInfo(_agent, permissions.Select(p => (Permission)p).ToEquatableSet()));
+            .IsAuthorized(new T(), new AuthorizationInfo(_agent, permissions.Select(p => (Permission)p).ToFixedSet()));
     }
 
     [Fact]
