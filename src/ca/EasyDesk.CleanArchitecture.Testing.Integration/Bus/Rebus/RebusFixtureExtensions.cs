@@ -44,7 +44,7 @@ public static class RebusFixtureExtensions
         Duration pollInterval)
         where T : ITestFixture
     {
-        IBus bus = default!;
+        IBus? bus = null;
         var store = new InMemTimeoutStore();
         return builder
             .OnInitialization(f =>
@@ -61,6 +61,6 @@ public static class RebusFixtureExtensions
                 bus = rebus.Start();
             })
             .OnReset(_ => store.Reset())
-            .OnDisposal(_ => bus.Dispose());
+            .OnDisposal(_ => bus?.Dispose());
     }
 }
