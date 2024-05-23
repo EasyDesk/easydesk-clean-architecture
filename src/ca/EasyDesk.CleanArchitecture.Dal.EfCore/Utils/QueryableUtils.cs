@@ -108,13 +108,13 @@ public static class QueryableUtils
         }
     }
 
-    public static async Task<IFixedSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query) =>
+    public static async Task<IFixedSet<T>> ToFixedSetAsync<T>(this IQueryable<T> query) =>
         await query.ToListThenMap(x => x.ToFixedSet());
 
-    public static async Task<IFixedSet<T>> ToEquatableSetAsync<T>(this IQueryable<T> query, IEqualityComparer<T> equalityComparer) =>
+    public static async Task<IFixedSet<T>> ToFixedSetAsync<T>(this IQueryable<T> query, IEqualityComparer<T> equalityComparer) =>
         await query.ToListThenMap(x => x.ToFixedHashSet(equalityComparer));
 
-    public static async Task<IFixedList<T>> ToEquatableListAsync<T>(this IQueryable<T> query) =>
+    public static async Task<IFixedList<T>> ToFixedListAsync<T>(this IQueryable<T> query) =>
         await query.ToListThenMap(x => x.ToFixedList());
 
     private static async Task<R> ToListThenMap<T, R>(this IQueryable<T> query, Func<IEnumerable<T>, R> mapper) =>

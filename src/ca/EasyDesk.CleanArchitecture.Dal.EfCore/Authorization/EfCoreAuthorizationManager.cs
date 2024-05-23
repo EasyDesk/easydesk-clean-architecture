@@ -41,7 +41,7 @@ internal class EfCoreAuthorizationManager : IIdentityRolesManager, IAgentRolesPr
     {
         return await RolesByAgent(agent)
             .Select(u => new Role(u.Role))
-            .ToEquatableSetAsync();
+            .ToFixedSetAsync();
     }
 
     public async Task GrantRoles(Realm realm, IdentityId id, IEnumerable<Role> roles)
