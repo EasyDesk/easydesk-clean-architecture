@@ -51,11 +51,7 @@ public class AuditingTests : SampleIntegrationTest
         await Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();
 
         using var scope = TenantManager.MoveToPublic();
-        await PollServiceUntil<IAuditLog>(
-            log => log
-                .Audit(new())
-                .GetAll()
-                .Map(e => e.Count() == _initialAudits));
+        await WaitUntilAuditLogHasMoreRecords(0);
     }
 
     private Task WaitUntilAuditLogHasMoreRecords(int newRecords)

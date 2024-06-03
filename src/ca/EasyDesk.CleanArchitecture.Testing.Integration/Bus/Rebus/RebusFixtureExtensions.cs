@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus.Scheduler;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,6 +10,7 @@ using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Persistence.InMem;
 using Rebus.Subscriptions;
+using Rebus.Threading;
 using Rebus.Time;
 using Rebus.Transport.InMem;
 
@@ -57,7 +59,11 @@ public static class RebusFixtureExtensions
                     .Transport(t => transport(t, address))
                     .UseNodaTimeClock(serviceProvider.GetRequiredService<IClock>())
                     .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(store, c.Get<IRebusTime>())))
-                    .Options(o => o.SetDueTimeoutsPollInteval(pollInterval.ToTimeSpan()));
+                    .Options(o =>
+                    {
+                        o.SetDueTimeoutsPollInteval(pollInterval.ToTimeSpan());
+                        o.Register<IAsyncTaskFactory>(_ => serviceProvider.GetRequiredService<PausableAsyncTaskFactory>());
+                    });
                 bus = rebus.Start();
             })
             .OnReset(_ => store.Reset())

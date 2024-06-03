@@ -3,7 +3,7 @@ using Rebus.Threading;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 
-internal class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPool
+public class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPool
 {
     private readonly ILoggerFactory _logger;
     private readonly IList<PausableAsyncTask> _tasks = new List<PausableAsyncTask>();
