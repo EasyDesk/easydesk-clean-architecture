@@ -1,8 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
-using EasyDesk.CleanArchitecture.Application.Authorization.Static;
-using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Pagination;
-using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
@@ -82,21 +79,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
         return _errorHandlers
             .SelectMany(h => h(body, errorToMatchAgainst))
             .FirstOption()
-            .OrElseGet(() => DefaultErrorHandler(body, errorToMatchAgainst));
-    }
-
-    private ActionResult DefaultErrorHandler(ResponseDto<TDto, TMeta> body, Error error)
-    {
-        return error switch
-        {
-            NotFoundError => _controller.NotFound(body),
-            UnknownAgentError => _controller.Unauthorized(body),
-            ForbiddenError => ActionResults.Forbidden(body),
-            ApplicationError
-                or DomainError
-                or GenericError => _controller.BadRequest(body),
-            _ => ActionResults.InternalServerError(body),
-        };
+            .OrElseGet(() => _controller.DefaultErrorHandler(errorToMatchAgainst, body));
     }
 
     public Task<ActionResult<ResponseDto<TDto, TMeta>>> ReturnOk() =>
