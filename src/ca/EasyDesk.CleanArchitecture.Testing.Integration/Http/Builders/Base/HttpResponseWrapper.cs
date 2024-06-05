@@ -15,7 +15,7 @@ public class HttpResponseWrapper<T, M>
         _response = new(httpResponseMessage);
     }
 
-    private async Task<ImmutableHttpResponseMessage> GetResponse() => await _response.Get();
+    public async Task<ImmutableHttpResponseMessage> GetResponse() => await _response.Get();
 
     public Task<bool> IsSuccess() => GetResponse().Map(r => r.IsSuccessStatusCode && r.Content is not null);
 
@@ -63,10 +63,5 @@ public class HttpResponseWrapper<T, M>
     {
         await EnsureSuccess();
         return (await ParseContent()).Meta;
-    }
-
-    public async Task<ImmutableHttpResponseMessage> Response()
-    {
-        return await GetResponse();
     }
 }
