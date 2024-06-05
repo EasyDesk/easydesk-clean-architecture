@@ -64,4 +64,9 @@ public class HttpResponseWrapper<T, M>
         await EnsureSuccess();
         return (await ParseContent()).Meta;
     }
+
+    public async Task<ImmutableHttpResponseMessage> Response()
+    {
+        return await GetResponse();
+    }
 }
