@@ -23,6 +23,7 @@ public static class ActionResults
 
     public static ActionResult DefaultErrorHandler(this ControllerBase controller, Error error, object? body = null) => error switch
     {
+        MultiError(var primary, _) => controller.DefaultErrorHandler(primary, body),
         NotFoundError => controller.NotFound(body),
         UnknownAgentError => controller.Unauthorized(body),
         ForbiddenError => Forbidden(body),
