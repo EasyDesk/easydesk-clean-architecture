@@ -6,6 +6,8 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
 internal class TransportWithOutbox : ITransport
 {
+    public const string UseOutboxHeader = "x-use-outbox";
+
     private readonly ITransport _transport;
 
     public TransportWithOutbox(ITransport transport)
@@ -15,16 +17,23 @@ internal class TransportWithOutbox : ITransport
 
     public void CreateQueue(string address) => _transport.CreateQueue(address);
 
-    public Task Send(string destinationAddress, TransportMessage message, ITransactionContext context)
+    public async Task Send(string destinationAddress, TransportMessage message, ITransactionContext context)
     {
+        var shouldUseOutbox = message.Headers.ContainsKey(UseOutboxHeader);
+        if (!shouldUseOutbox)
+        {
+            await _transport.Send(destinationAddress, message, context);
+            return;
+        }
+
+        message.Headers.Remove(UseOutboxHeader);
+
         var serviceProvider = context.GetServiceProvider();
         var outbox = serviceProvider.GetRequiredService<IOutbox>();
         outbox.EnqueueMessageForStorage(message, destinationAddress);
 
         var helper = serviceProvider.GetRequiredService<OutboxTransactionHelper>();
         helper.EnsureCommitHooksAreRegistered();
-
-        return Task.CompletedTask;
     }
 
     public Task<TransportMessage> Receive(ITransactionContext context, CancellationToken cancellationToken) =>

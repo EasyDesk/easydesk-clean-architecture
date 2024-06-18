@@ -125,13 +125,20 @@ public class RebusMessagingModule : AppModule
 
     private void SetupMessageHandlers(IServiceCollection services, IEnumerable<Type> knownMessageTypes)
     {
+        Options.BackoffStrategy.IfPresent(strategy =>
+        {
+            services.AddTransient<IHandleMessages<IFailed<object>>>(sp => new FailedMessageHandler<object>(
+                sp.GetRequiredService<IBus>(),
+                strategy));
+        });
+
         knownMessageTypes
             .Where(x => x.IsSubtypeOrImplementationOf(typeof(IIncomingMessage)))
             .ForEach(t =>
             {
-                var interfaceType = typeof(IHandleMessages<>).MakeGenericType(t);
-                var implementationType = typeof(DispatchingMessageHandler<>).MakeGenericType(t);
-                services.AddTransient(interfaceType, implementationType);
+                var handlerInterfaceType = typeof(IHandleMessages<>).MakeGenericType(t);
+                var handlerImplementationType = typeof(DispatchingMessageHandler<>).MakeGenericType(t);
+                services.AddTransient(handlerInterfaceType, handlerImplementationType);
             });
     }
 

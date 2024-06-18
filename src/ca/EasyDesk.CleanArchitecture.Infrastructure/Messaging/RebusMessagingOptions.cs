@@ -38,6 +38,8 @@ public sealed class RebusMessagingOptions
 
     public bool DeferredMessagesEnabled { get; private set; } = false;
 
+    public Option<BackoffStrategy> BackoffStrategy { get; private set; } = None;
+
     public RebusMessagingOptions AddKnownMessageTypes(IEnumerable<Type> types)
     {
         KnownMessageTypes = KnownMessageTypes.Union(types);
@@ -73,6 +75,12 @@ public sealed class RebusMessagingOptions
         return ConfigureRebus(c => c.Timeouts(configurationAction));
     }
 
+    public RebusMessagingOptions EnableScheduledRetries(BackoffStrategy? backoffStrategy = null)
+    {
+        BackoffStrategy = Some(backoffStrategy ?? BackoffStrategies.Exponential(Duration.FromSeconds(5), 1.6).LimitedTo(5));
+        return this;
+    }
+
     public void Apply(IServiceProvider serviceProvider, RebusEndpoint endpoint, RebusConfigurer configurer)
     {
         var transport = serviceProvider.GetRequiredService<RebusTransportConfiguration>();
@@ -97,7 +105,7 @@ public sealed class RebusMessagingOptions
             .Options(o =>
             {
                 o.UseTplToReceiveMessages();
-                o.RetryStrategy(errorQueueName: ErrorQueueName);
+                o.RetryStrategy(errorQueueName: ErrorQueueName, secondLevelRetriesEnabled: BackoffStrategy.IsPresent);
                 o.Decorate<IFailFastChecker>(c => new FailFastChecker(c.Get<IFailFastChecker>(), FailFastCheckers));
             });
 

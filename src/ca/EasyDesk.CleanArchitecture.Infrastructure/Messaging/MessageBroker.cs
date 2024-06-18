@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using NodaTime;
 using Rebus.Bus;
 
@@ -19,7 +20,7 @@ internal sealed class MessageBroker : IEventPublisher, ICommandSender
     }
 
     public async Task Send<T>(T message) where T : IOutgoingCommand =>
-        await _bus.Send(message);
+        await _bus.Send(message, DefaultHeaders());
 
     public async Task Defer<T>(Duration delay, T message) where T : IOutgoingCommand
     {
@@ -27,12 +28,25 @@ internal sealed class MessageBroker : IEventPublisher, ICommandSender
         {
             throw new InvalidOperationException("Deferred messages were not enabled.");
         }
-        await _bus.Defer(delay.ToTimeSpan(), message);
+        await _bus.Defer(delay.ToTimeSpan(), message, DefaultHeaders());
     }
 
     public async Task Schedule<T>(Instant instant, T message) where T : IOutgoingCommand =>
         await Defer(instant - _clock.GetCurrentInstant(), message);
 
     public async Task Publish<T>(T message) where T : IOutgoingEvent =>
-        await _bus.Publish(message);
+        await _bus.Publish(message, DefaultHeaders());
+
+    private Dictionary<string, string> DefaultHeaders()
+    {
+        if (_options.UseOutbox)
+        {
+            return new()
+            {
+                [TransportWithOutbox.UseOutboxHeader] = string.Empty,
+            };
+        }
+
+        return [];
+    }
 }
