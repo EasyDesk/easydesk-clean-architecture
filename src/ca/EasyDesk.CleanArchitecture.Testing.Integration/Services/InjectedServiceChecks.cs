@@ -47,4 +47,42 @@ public static class InjectedServiceChecks
             .WithInterval(interval ?? _defaultQueryInterval);
         await polling.Until(It);
     }
+
+    public static async Task SingleScopePollInvariant<T>(
+        this IServiceProvider serviceProvider,
+        AsyncFunc<T, bool> predicate,
+        Duration? timeout = null,
+        Duration? interval = null)
+        where T : notnull
+    {
+        await using (var scope = serviceProvider.CreateAsyncScope())
+        {
+            var polling = Poll
+                .Sync(scope.ServiceProvider.GetRequiredService<T>)
+                .WithTimeout(timeout ?? _defaultPollTimeout)
+                .WithInterval(interval ?? _defaultQueryInterval);
+            await polling.EnsureInvariant(predicate);
+        }
+    }
+
+    public static async Task ScopedPollInvariant<T>(
+        this IServiceProvider serviceProvider,
+        AsyncFunc<T, bool> predicate,
+        Duration? timeout = null,
+        Duration? interval = null)
+        where T : notnull
+    {
+        var polling = Poll
+            .Async(async token =>
+            {
+                await using (var scope = serviceProvider.CreateAsyncScope())
+                {
+                    var service = scope.ServiceProvider.GetRequiredService<T>();
+                    return await predicate(service);
+                }
+            })
+            .WithTimeout(timeout ?? _defaultPollTimeout)
+            .WithInterval(interval ?? _defaultQueryInterval);
+        await polling.EnsureInvariant(It);
+    }
 }

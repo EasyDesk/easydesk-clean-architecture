@@ -1,5 +1,6 @@
 ﻿using EasyDesk.Commons.Tasks;
 using NodaTime;
+using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Polling;
 
@@ -14,16 +15,20 @@ public sealed class Polling<T>
 {
     public static readonly Duration DefaultTimeout = Duration.FromSeconds(10);
     public static readonly Duration DefaultInterval = Duration.FromMilliseconds(200);
+    public static readonly AsyncFunc<int, T> DefaultFallback = attempts => throw new PollingFailedException(attempts, DefaultTimeout);
     private readonly AsyncFunc<CancellationToken, T> _poller;
+    private AsyncFunc<int, T> _fallback;
     private Duration _timeout;
     private Duration _interval;
 
     internal Polling(
         AsyncFunc<CancellationToken, T> poller,
+        AsyncFunc<int, T>? fallback = null,
         Duration? timeout = null,
         Duration? interval = null)
     {
         _poller = poller;
+        _fallback = fallback ?? DefaultFallback;
         _timeout = timeout ?? DefaultTimeout;
         _interval = interval ?? DefaultInterval;
     }
@@ -39,6 +44,15 @@ public sealed class Polling<T>
         _interval = interval;
         return this;
     }
+
+    public Polling<T> WithFallback(AsyncFunc<int, T> fallback)
+    {
+        _fallback = fallback;
+        return this;
+    }
+
+    public Polling<T> WithFallback(Func<int, T> fallback) =>
+        WithFallback(a => Task.FromResult(fallback(a)));
 
     public async Task<T> While(AsyncFunc<T, bool> predicate)
     {
@@ -59,7 +73,7 @@ public sealed class Polling<T>
         }
         catch (OperationCanceledException)
         {
-            throw new PollingFailedException(attempts, _timeout);
+            return await _fallback(attempts);
         }
     }
 
@@ -72,6 +86,21 @@ public sealed class Polling<T>
     public Task<T> Until(Func<T, bool> cond) =>
         Until(r => Task.FromResult(cond(r)));
 
+    public Polling<R> Map<R>(AsyncFunc<T, R> mapper) =>
+        new(t => _poller(t).FlatMap(mapper), a => _fallback(a).FlatMap(mapper), _timeout, _interval);
+
     public Polling<R> Map<R>(Func<T, R> mapper) =>
-        new(async token => mapper(await _poller(token)), _timeout, _interval);
+        new(t => _poller(t).Map(mapper), a => _fallback(a).Map(mapper), _timeout, _interval);
+
+    public Task<bool> Test(AsyncFunc<T, bool> property) =>
+        Map(property).WithFallback(_ => true).While(It);
+
+    public Task<bool> Test(Func<T, bool> property) =>
+        Test(t => Task.FromResult(property(t)));
+
+    public async Task EnsureInvariant(AsyncFunc<T, bool> invariant) =>
+        (await Test(invariant)).ShouldBeTrue();
+
+    public Task EnsureInvariant(Func<T, bool> invariant) =>
+        EnsureInvariant(t => Task.FromResult(invariant(t)));
 }
