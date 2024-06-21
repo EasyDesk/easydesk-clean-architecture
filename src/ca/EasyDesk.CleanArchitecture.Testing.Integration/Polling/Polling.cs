@@ -1,6 +1,5 @@
 ﻿using EasyDesk.Commons.Tasks;
 using NodaTime;
-using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Polling;
 
@@ -92,15 +91,61 @@ public sealed class Polling<T>
     public Polling<R> Map<R>(Func<T, R> mapper) =>
         new(t => _poller(t).Map(mapper), a => _fallback(a).Map(mapper), _timeout, _interval);
 
-    public Task<bool> Test(AsyncFunc<T, bool> property) =>
+    public Task<bool> PropertyHolds(AsyncFunc<T, bool> property) =>
         Map(property).WithFallback(_ => true).While(It);
 
-    public Task<bool> Test(Func<T, bool> property) =>
-        Test(t => Task.FromResult(property(t)));
+    public Task<bool> PropertyHolds(Func<T, bool> property) =>
+        PropertyHolds(t => Task.FromResult(property(t)));
 
-    public async Task EnsureInvariant(AsyncFunc<T, bool> invariant) =>
-        (await Test(invariant)).ShouldBeTrue();
+    public async Task EnsureInvariant(AsyncFunc<T, bool> invariant)
+    {
+        var ok = await PropertyHolds(invariant);
+        if (!ok)
+        {
+            throw new InvariantDidNotHoldException();
+        }
+    }
 
     public Task EnsureInvariant(Func<T, bool> invariant) =>
         EnsureInvariant(t => Task.FromResult(invariant(t)));
+
+    public Task EnsureDoesNotThrow<E>(AsyncAction<T> action) where E : Exception =>
+        EnsureInvariant(DoesNotThrow<E>(action));
+
+    public Task EnsureDoesNotThrow<E>(Action<T> action) where E : Exception =>
+        EnsureInvariant(DoesNotThrow<E>(action));
+
+    private Func<T, bool> DoesNotThrow<E>(Action<T> action) where E : Exception => t =>
+    {
+        try
+        {
+            action(t);
+            return true;
+        }
+        catch (E)
+        {
+            return false;
+        }
+    };
+
+    private AsyncFunc<T, bool> DoesNotThrow<E>(AsyncAction<T> action) where E : Exception => async t =>
+    {
+        try
+        {
+            await action(t);
+            return true;
+        }
+        catch (E)
+        {
+            return false;
+        }
+    };
+
+    public Task<T> WhileThrows<E>(Action<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
+
+    public Task<T> WhileThrows<E>(AsyncAction<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
+
+    public Task<T> UntilThrows<E>(Action<T> action) where E : Exception => While(DoesNotThrow<E>(action));
+
+    public Task<T> UntilThrows<E>(AsyncAction<T> action) where E : Exception => While(DoesNotThrow<E>(action));
 }
