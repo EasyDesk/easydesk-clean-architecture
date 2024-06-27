@@ -14,16 +14,20 @@ public sealed class Polling<T>
 {
     public static readonly Duration DefaultTimeout = Duration.FromSeconds(10);
     public static readonly Duration DefaultInterval = Duration.FromMilliseconds(200);
+    public static readonly AsyncFunc<int, T> DefaultFallback = attempts => throw new PollingFailedException(attempts, DefaultTimeout);
     private readonly AsyncFunc<CancellationToken, T> _poller;
+    private AsyncFunc<int, T> _fallback;
     private Duration _timeout;
     private Duration _interval;
 
     internal Polling(
         AsyncFunc<CancellationToken, T> poller,
+        AsyncFunc<int, T>? fallback = null,
         Duration? timeout = null,
         Duration? interval = null)
     {
         _poller = poller;
+        _fallback = fallback ?? DefaultFallback;
         _timeout = timeout ?? DefaultTimeout;
         _interval = interval ?? DefaultInterval;
     }
@@ -39,6 +43,15 @@ public sealed class Polling<T>
         _interval = interval;
         return this;
     }
+
+    public Polling<T> WithFallback(AsyncFunc<int, T> fallback)
+    {
+        _fallback = fallback;
+        return this;
+    }
+
+    public Polling<T> WithFallback(Func<int, T> fallback) =>
+        WithFallback(a => Task.FromResult(fallback(a)));
 
     public async Task<T> While(AsyncFunc<T, bool> predicate)
     {
@@ -59,7 +72,7 @@ public sealed class Polling<T>
         }
         catch (OperationCanceledException)
         {
-            throw new PollingFailedException(attempts, _timeout);
+            return await _fallback(attempts);
         }
     }
 
@@ -72,6 +85,67 @@ public sealed class Polling<T>
     public Task<T> Until(Func<T, bool> cond) =>
         Until(r => Task.FromResult(cond(r)));
 
+    public Polling<R> Map<R>(AsyncFunc<T, R> mapper) =>
+        new(t => _poller(t).FlatMap(mapper), a => _fallback(a).FlatMap(mapper), _timeout, _interval);
+
     public Polling<R> Map<R>(Func<T, R> mapper) =>
-        new(async token => mapper(await _poller(token)), _timeout, _interval);
+        new(t => _poller(t).Map(mapper), a => _fallback(a).Map(mapper), _timeout, _interval);
+
+    public Task<bool> PropertyHolds(AsyncFunc<T, bool> property) =>
+        Map(property).WithFallback(_ => true).While(It);
+
+    public Task<bool> PropertyHolds(Func<T, bool> property) =>
+        PropertyHolds(t => Task.FromResult(property(t)));
+
+    public async Task EnsureInvariant(AsyncFunc<T, bool> invariant)
+    {
+        var ok = await PropertyHolds(invariant);
+        if (!ok)
+        {
+            throw new InvariantDidNotHoldException();
+        }
+    }
+
+    public Task EnsureInvariant(Func<T, bool> invariant) =>
+        EnsureInvariant(t => Task.FromResult(invariant(t)));
+
+    public Task EnsureDoesNotThrow<E>(AsyncAction<T> action) where E : Exception =>
+        EnsureInvariant(DoesNotThrow<E>(action));
+
+    public Task EnsureDoesNotThrow<E>(Action<T> action) where E : Exception =>
+        EnsureInvariant(DoesNotThrow<E>(action));
+
+    private Func<T, bool> DoesNotThrow<E>(Action<T> action) where E : Exception => t =>
+    {
+        try
+        {
+            action(t);
+            return true;
+        }
+        catch (E)
+        {
+            return false;
+        }
+    };
+
+    private AsyncFunc<T, bool> DoesNotThrow<E>(AsyncAction<T> action) where E : Exception => async t =>
+    {
+        try
+        {
+            await action(t);
+            return true;
+        }
+        catch (E)
+        {
+            return false;
+        }
+    };
+
+    public Task<T> WhileThrows<E>(Action<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
+
+    public Task<T> WhileThrows<E>(AsyncAction<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
+
+    public Task<T> UntilThrows<E>(Action<T> action) where E : Exception => While(DoesNotThrow<E>(action));
+
+    public Task<T> UntilThrows<E>(AsyncAction<T> action) where E : Exception => While(DoesNotThrow<E>(action));
 }
