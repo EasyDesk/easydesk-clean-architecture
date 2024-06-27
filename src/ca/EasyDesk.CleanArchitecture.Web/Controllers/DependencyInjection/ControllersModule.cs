@@ -53,7 +53,7 @@ public class ControllersModule : AppModule
     {
         options.Filters.Add<FailedAuthenticationFilter>();
         options.Filters.Add<ExceptionLoggingFilter>();
-        if (_environment.IsProduction())
+        if (!_environment.IsDevelopment())
         {
             options.Filters.Add<UnhandledExceptionsFilter>();
         }
