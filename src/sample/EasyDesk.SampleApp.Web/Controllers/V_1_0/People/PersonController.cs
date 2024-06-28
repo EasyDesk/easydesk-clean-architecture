@@ -13,6 +13,8 @@ public static class PersonRoutes
 
     public const string CreatePerson = Base;
 
+    public const string UpdatePerson = Base + "/{id}";
+
     public const string DeletePerson = Base + "/{id}";
 
     public const string GetPeople = Base;
@@ -27,6 +29,13 @@ public class PersonController : CleanArchitectureController
     {
         return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth, body.Residence))
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
+    }
+
+    [HttpPut(PersonRoutes.UpdatePerson)]
+    public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> UpdatePerson([FromRoute] Guid id, [FromBody] UpdatePersonBodyDto body)
+    {
+        return await Dispatch(new UpdatePerson(id, body.FirstName, body.LastName, body.Residence))
+            .ReturnOk();
     }
 
     [HttpDelete(PersonRoutes.DeletePerson)]

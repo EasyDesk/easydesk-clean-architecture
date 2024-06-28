@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
@@ -12,7 +12,7 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
     ISaveRepository<TAggregate>,
     IRemoveRepository<TAggregate>
     where TContext : DbContext
-    where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>
+    where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
 {
     private readonly IDomainEventNotifier _eventNotifier;
@@ -58,6 +58,8 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
         var wasTracked = Tracker.IsTracked(aggregate);
         var wasSaved = Tracker.IsSaved(aggregate);
         var persistenceModel = Tracker.TrackFromAggregate(aggregate);
+
+        Context.Entry(persistenceModel).IncrementVersion();
 
         if (!wasTracked)
         {

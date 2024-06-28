@@ -23,15 +23,15 @@ public class Person : AggregateRoot
 
     public Guid Id { get; }
 
-    public Name FirstName { get; }
+    public Name FirstName { get; set; }
 
-    public Name LastName { get; }
+    public Name LastName { get; set; }
 
     public LocalDate DateOfBirth { get; }
 
     public AdminId CreatedBy { get; }
 
-    public Address Residence { get; }
+    public Address Residence { get; set; }
 
     public bool Approved { get; set; }
 

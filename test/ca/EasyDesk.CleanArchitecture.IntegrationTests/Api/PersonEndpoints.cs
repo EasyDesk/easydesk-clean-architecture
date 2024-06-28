@@ -13,6 +13,9 @@ public static class PersonEndpoints
     public static HttpSingleRequestExecutor<PersonDto> CreatePerson(this HttpTestHelper http, CreatePersonBodyDto body) =>
         http.Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, body);
 
+    public static HttpSingleRequestExecutor<PersonDto> UpdatePerson(this HttpTestHelper http, Guid id, UpdatePersonBodyDto body) =>
+        http.Put<UpdatePersonBodyDto, PersonDto>(PersonRoutes.UpdatePerson.WithRouteParam(nameof(id), id), body);
+
     public static HttpSingleRequestExecutor<PersonDto> DeletePerson(this HttpTestHelper http, Guid id) =>
         http.Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam(nameof(id), id));
 

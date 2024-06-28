@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Hydration;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
@@ -10,7 +11,7 @@ public abstract class EfCoreRepositoryWithHydration<TAggregate, TPersistence, TC
     EfCoreRepository<TAggregate, TPersistence, TContext>,
     ISaveAndHydrateRepository<TAggregate, THydrationData>
     where TContext : DbContext
-    where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>, IWithHydration<THydrationData>
+    where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>, IWithHydration<THydrationData>
     where TAggregate : AggregateRoot, IAggregateRootWithHydration<THydrationData>
 {
     protected EfCoreRepositoryWithHydration(TContext context, IDomainEventNotifier eventNotifier)
@@ -23,6 +24,8 @@ public abstract class EfCoreRepositoryWithHydration<TAggregate, TPersistence, TC
         var wasTracked = Tracker.IsTracked(aggregate);
         var wasSaved = Tracker.IsSaved(aggregate);
         var persistenceModel = Tracker.TrackFromAggregate(aggregate);
+
+        Context.Entry(persistenceModel).IncrementVersion();
 
         if (!wasTracked)
         {

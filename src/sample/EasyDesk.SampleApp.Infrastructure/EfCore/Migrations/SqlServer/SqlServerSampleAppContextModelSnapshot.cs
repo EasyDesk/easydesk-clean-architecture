@@ -19,7 +19,7 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("ProductVersion", "8.0.6")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -57,6 +57,9 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(256)
                     .HasColumnType("nvarchar(256)");
 
+                b.Property<long>("_Version")
+                    .HasColumnType("bigint");
+
                 b.HasKey("Id");
 
                 b.HasIndex("Tenant");
@@ -86,6 +89,9 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
                     .HasColumnType("nvarchar(256)");
+
+                b.Property<long>("_Version")
+                    .HasColumnType("bigint");
 
                 b.HasKey("Id");
 

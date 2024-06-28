@@ -4,26 +4,28 @@ using EasyDesk.SampleApp.Infrastructure.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.PostgreSql;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.SqlServer;
 
-[DbContext(typeof(PostgreSqlSampleAppContext))]
-partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
+[DbContext(typeof(SqlServerSampleAppContext))]
+[Migration("20240628092134_AddVersions")]
+partial class AddVersions
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
             .HasAnnotation("ProductVersion", "8.0.6")
-            .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
         modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
             .IncrementsBy(10);
@@ -32,31 +34,31 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
             {
                 b.Property<Guid>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("uuid");
+                    .HasColumnType("uniqueidentifier");
 
                 b.Property<bool>("Approved")
-                    .HasColumnType("boolean");
+                    .HasColumnType("bit");
 
                 b.Property<string>("CreatedBy")
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(max)");
 
-                b.Property<LocalDate>("DateOfBirth")
+                b.Property<DateTime>("DateOfBirth")
                     .HasColumnType("date");
 
                 b.Property<string>("FirstName")
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(max)");
 
                 b.Property<string>("LastName")
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(max)");
 
                 b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("nvarchar(256)");
 
                 b.Property<long>("_Version")
                     .HasColumnType("bigint");
@@ -72,24 +74,24 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("integer")
-                    .HasAnnotation("SqlServer:HiLoSequenceName", "EntityFrameworkHiLoSequence")
-                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
+                    .HasColumnType("int")
+                    .HasAnnotation("Npgsql:HiLoSequenceName", "EntityFrameworkHiLoSequence")
+                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SequenceHiLo);
 
-                NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
+                SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
 
                 b.Property<string>("Nickname")
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(max)");
 
                 b.Property<Guid>("PersonId")
-                    .HasColumnType("uuid");
+                    .HasColumnType("uniqueidentifier");
 
                 b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
+                    .HasColumnType("nvarchar(256)");
 
                 b.Property<long>("_Version")
                     .HasColumnType("bigint");
@@ -108,44 +110,44 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
                 b.OwnsOne("EasyDesk.SampleApp.Infrastructure.EfCore.Model.AddressModel", "Residence", b1 =>
                     {
                         b1.Property<Guid>("PersonModelId")
-                            .HasColumnType("uuid");
+                            .HasColumnType("uniqueidentifier");
 
                         b1.Property<string>("City")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("Country")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("District")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("Province")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("Region")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("State")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("StreetName")
                             .IsRequired()
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("StreetNumber")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.Property<string>("StreetType")
                             .HasMaxLength(100)
-                            .HasColumnType("character varying(100)");
+                            .HasColumnType("nvarchar(100)");
 
                         b1.HasKey("PersonModelId");
 

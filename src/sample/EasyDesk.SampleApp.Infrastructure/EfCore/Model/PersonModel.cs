@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
@@ -10,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
-public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonDto>, IEntityPersistence<Person, PersonModel>
+public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonDto>, IAggregateRootModel<Person, PersonModel>
 {
     public Guid Id { get; set; }
 
