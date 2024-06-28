@@ -48,6 +48,7 @@ public abstract class DomainContext : AbstractDbContext
     {
         var entityBuilder = modelBuilder.Entity<E>();
         entityBuilder.Property<long>(AggregateVersioningUtils.VersionPropertyName)
-            .IsRequired();
+            .IsRequired()
+            .IsConcurrencyToken();
     }
 }

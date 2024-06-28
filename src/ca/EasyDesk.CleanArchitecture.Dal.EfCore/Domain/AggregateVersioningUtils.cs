@@ -8,6 +8,7 @@ public static class AggregateVersioningUtils
 
     public static void IncrementVersion<T>(this EntityEntry<T> entry) where T : class, IAggregateRootModel
     {
-        entry.Property<long>(VersionPropertyName).CurrentValue++;
+        var propertyEntry = entry.Property<long>(VersionPropertyName);
+        propertyEntry.CurrentValue++;
     }
 }
