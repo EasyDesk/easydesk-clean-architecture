@@ -14,7 +14,6 @@ public sealed class Polling<T>
 {
     public static readonly Duration DefaultTimeout = Duration.FromSeconds(10);
     public static readonly Duration DefaultInterval = Duration.FromMilliseconds(200);
-    public static readonly AsyncFunc<int, T> DefaultFallback = attempts => throw new PollingFailedException(attempts, DefaultTimeout);
     private readonly AsyncFunc<CancellationToken, T> _poller;
     private AsyncFunc<int, T> _fallback;
     private Duration _timeout;
@@ -31,6 +30,8 @@ public sealed class Polling<T>
         _timeout = timeout ?? DefaultTimeout;
         _interval = interval ?? DefaultInterval;
     }
+
+    private Task<T> DefaultFallback(int attempts) => throw new PollingFailedException(attempts, _timeout);
 
     public Polling<T> WithTimeout(Duration timeout)
     {
