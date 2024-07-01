@@ -31,9 +31,8 @@ public class ErrorQueueTests : SampleIntegrationTest
         foreach (var delay in delays)
         {
             await Task.Delay(3000);
-            Clock.Advance(delay * 1.1);
+            Clock.Advance(delay);
         }
-        await Task.Delay(3000);
     }
 
     [Fact]

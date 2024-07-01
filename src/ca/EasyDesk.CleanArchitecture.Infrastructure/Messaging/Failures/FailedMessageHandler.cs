@@ -30,7 +30,7 @@ public class FailedMessageHandler<T> : IHandleMessages<IFailed<T>>
 
             await pipeline();
         }
-        catch (Exception e)
+        catch
         {
             await _bus.Advanced.TransportMessage.Deadletter();
         }
