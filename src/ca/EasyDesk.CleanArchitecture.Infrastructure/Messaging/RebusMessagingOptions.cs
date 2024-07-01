@@ -100,7 +100,7 @@ public sealed class RebusMessagingOptions
             .Options(o =>
             {
                 o.UseTplToReceiveMessages();
-                o.RetryStrategy(errorQueueName: ErrorQueueName, secondLevelRetriesEnabled: true, maxDeliveryAttempts: 1);
+                o.RetryStrategy(errorQueueName: ErrorQueueName, secondLevelRetriesEnabled: true, maxDeliveryAttempts: FailuresOptions.MaxDeliveryAttempts);
                 o.Decorate<IFailFastChecker>(c => new FailFastCheckerWrapper(c.Get<IFailFastChecker>(), FailFastCheckers));
             });
 

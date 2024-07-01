@@ -10,6 +10,8 @@ public class FailuresOptions
 
     private Action<IServiceCollection>? _configureServices;
 
+    public int MaxDeliveryAttempts { get; set; }
+
     public FailuresOptions AddFailureStrategy(Func<IServiceProvider, IFailureStrategy> factory)
     {
         _configureServices += services => services.AddTransient(factory);
