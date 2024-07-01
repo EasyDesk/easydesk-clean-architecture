@@ -10,7 +10,7 @@ public class FailuresOptions
 
     private Action<IServiceCollection>? _configureServices;
 
-    public int MaxDeliveryAttempts { get; set; }
+    public int MaxDeliveryAttempts { get; set; } = 1;
 
     public FailuresOptions AddFailureStrategy(Func<IServiceProvider, IFailureStrategy> factory)
     {
