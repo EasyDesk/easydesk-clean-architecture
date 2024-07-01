@@ -31,7 +31,7 @@ public class FailuresOptions
         return this;
     }
 
-    internal void RegisterFailureStrategies(IServiceCollection services)
+    public void RegisterFailureStrategies(IServiceCollection services)
     {
         _configureServices?.Invoke(services);
     }
