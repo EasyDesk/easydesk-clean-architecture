@@ -75,9 +75,13 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
     config.AddRebusMessaging(
         "sample",
         (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e),
-        o => o
-            .EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address))
-            .EnableScheduledRetries(Retries.BackoffStrategy));
+        options =>
+        {
+            options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
+            options.FailuresOptions
+                .AddScheduledRetries(Retries.BackoffStrategy)
+                .AddDispatchAsFailure();
+        });
 
     config.ConfigureModule<ControllersModule>(m =>
     {

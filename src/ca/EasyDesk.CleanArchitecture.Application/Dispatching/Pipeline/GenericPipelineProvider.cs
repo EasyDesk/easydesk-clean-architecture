@@ -6,12 +6,12 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
-internal class GenericPipeline : IPipeline
+internal class GenericPipelineProvider : IPipelineProvider
 {
     private readonly ConcurrentDictionary<(Type, Type), IEnumerable<Type>> _pipelineCache = new();
     private readonly IImmutableList<Type> _stepTypes;
 
-    public GenericPipeline(IEnumerable<Type> stepTypes)
+    public GenericPipelineProvider(IEnumerable<Type> stepTypes)
     {
         _stepTypes = stepTypes.ToImmutableList();
     }

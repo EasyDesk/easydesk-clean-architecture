@@ -6,7 +6,7 @@ using static EasyDesk.Commons.Collections.EnumerableUtils;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Dispatching;
 
-public class GenericPipelineTests
+public class GenericPipelineProviderTests
 {
     private abstract record Request;
 
@@ -38,13 +38,13 @@ public class GenericPipelineTests
     private readonly IServiceProvider _serviceProvider;
     private readonly TestService _testService = new();
 
-    public GenericPipelineTests()
+    public GenericPipelineProviderTests()
     {
         _serviceProvider = Substitute.For<IServiceProvider>();
         _serviceProvider.GetService(typeof(TestService)).Returns(_testService);
     }
 
-    private GenericPipeline CreatePipeline(params Type[] stepTypes) =>
+    private GenericPipelineProvider CreatePipeline(params Type[] stepTypes) =>
         new(stepTypes);
 
     [Fact]

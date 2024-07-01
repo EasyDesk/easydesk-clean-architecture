@@ -1,6 +1,9 @@
-﻿namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using EasyDesk.Commons.Results;
+using EasyDesk.Commons.Tasks;
 
-internal interface IPipeline
+namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+
+public interface IPipeline
 {
-    IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>(IServiceProvider serviceProvider);
+    Task<Result<R>> Run<T, R>(T request, AsyncFunc<T, Result<R>> action);
 }

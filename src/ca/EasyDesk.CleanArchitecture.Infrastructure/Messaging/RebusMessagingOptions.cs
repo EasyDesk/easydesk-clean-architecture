@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Routing;
 using EasyDesk.Commons.Collections.Immutable;
@@ -24,7 +25,9 @@ public sealed class RebusMessagingOptions
 
     public IList<Func<Exception, Option<bool>>> FailFastCheckers { get; } = new List<Func<Exception, Option<bool>>>();
 
-    public OutboxOptions OutboxOptions { get; private set; } = new();
+    public OutboxOptions OutboxOptions { get; } = new();
+
+    public FailuresOptions FailuresOptions { get; } = new();
 
     public string ErrorQueueName { get; set; } = RetryStrategySettings.DefaultErrorQueueName;
 
@@ -37,8 +40,6 @@ public sealed class RebusMessagingOptions
     public IFixedSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
 
     public bool DeferredMessagesEnabled { get; private set; } = false;
-
-    public Option<BackoffStrategy> BackoffStrategy { get; private set; } = None;
 
     public RebusMessagingOptions AddKnownMessageTypes(IEnumerable<Type> types)
     {
@@ -75,12 +76,6 @@ public sealed class RebusMessagingOptions
         return ConfigureRebus(c => c.Timeouts(configurationAction));
     }
 
-    public RebusMessagingOptions EnableScheduledRetries(BackoffStrategy? backoffStrategy = null)
-    {
-        BackoffStrategy = Some(backoffStrategy ?? BackoffStrategies.Exponential(Duration.FromSeconds(5), 1.6).LimitedTo(5));
-        return this;
-    }
-
     public void Apply(IServiceProvider serviceProvider, RebusEndpoint endpoint, RebusConfigurer configurer)
     {
         var transport = serviceProvider.GetRequiredService<RebusTransportConfiguration>();
@@ -105,8 +100,8 @@ public sealed class RebusMessagingOptions
             .Options(o =>
             {
                 o.UseTplToReceiveMessages();
-                o.RetryStrategy(errorQueueName: ErrorQueueName, secondLevelRetriesEnabled: BackoffStrategy.IsPresent);
-                o.Decorate<IFailFastChecker>(c => new FailFastChecker(c.Get<IFailFastChecker>(), FailFastCheckers));
+                o.RetryStrategy(errorQueueName: ErrorQueueName, secondLevelRetriesEnabled: true, maxDeliveryAttempts: 1);
+                o.Decorate<IFailFastChecker>(c => new FailFastCheckerWrapper(c.Get<IFailFastChecker>(), FailFastCheckers));
             });
 
         _configureRebus?.Invoke(endpoint, configurer);

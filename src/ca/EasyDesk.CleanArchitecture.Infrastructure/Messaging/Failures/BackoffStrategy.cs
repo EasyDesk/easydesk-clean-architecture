@@ -1,6 +1,9 @@
-﻿using NodaTime;
+﻿using EasyDesk.Commons.Options;
+using NodaTime;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
+
+public delegate Option<Duration> BackoffStrategy(int deferCount);
 
 public static class BackoffStrategies
 {

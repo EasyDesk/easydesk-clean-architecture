@@ -1,7 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
+using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Web;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Errors;
 
@@ -11,10 +13,15 @@ public class ErrorQueueTests : SampleIntegrationTest
     {
     }
 
-    private async Task RunTest<T>(T message) where T : IIncomingCommand
+    private async Task ExpectMessageOnErrorQueue<T>(T message) where T : IIncomingCommand
     {
         await DefaultBusEndpoint.Send(message);
+        await WaitForBackoff();
+        await ErrorBusEndpoint.WaitForMessageOrFail(message);
+    }
 
+    private async Task WaitForBackoff()
+    {
         var delays = EnumerableUtils
             .Iterate(0, x => x + 1)
             .Select(i => Retries.BackoffStrategy(i))
@@ -23,28 +30,39 @@ public class ErrorQueueTests : SampleIntegrationTest
 
         foreach (var delay in delays)
         {
-            await Task.Delay(2000);
-            Clock.Advance(delay);
+            await Task.Delay(3000);
+            Clock.Advance(delay * 1.1);
         }
-
-        await ErrorBusEndpoint.WaitForMessageOrFail(message);
+        await Task.Delay(3000);
     }
 
     [Fact]
     public async Task ShouldSendAMessageToTheErrorQueue_AfterException()
     {
-        await RunTest(new GenerateError());
+        await ExpectMessageOnErrorQueue(new GenerateError());
     }
 
     [Fact]
     public async Task ShouldSendAMessageToTheErrorQueue_AfterError()
     {
-        await RunTest(new GenerateError2());
+        await ExpectMessageOnErrorQueue(new GenerateError2());
     }
 
     [Fact]
     public async Task ShouldSendAMessageToTheErrorQueue_AfterNotImplementedException_WithFailFast()
     {
-        await RunTest(new GenerateError3());
+        await ExpectMessageOnErrorQueue(new GenerateError3());
+    }
+
+    [Fact]
+    public async Task ShouldEmitAnEvent_AfterScheduledRetries()
+    {
+        await DefaultBusEndpoint.Subscribe<Error4Handled>();
+
+        await DefaultBusEndpoint.Send(new GenerateError4());
+
+        await WaitForBackoff();
+
+        await DefaultBusEndpoint.WaitForMessageOrFail<Error4Handled>(timeout: Duration.FromDays(20));
     }
 }

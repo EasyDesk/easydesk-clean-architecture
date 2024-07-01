@@ -9,6 +9,7 @@ using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
@@ -16,6 +17,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
+using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Rebus.Bus;
 using Rebus.Config;
@@ -76,17 +78,21 @@ public class RebusMessagingModule : AppModule
             app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
         }
 
+        Options.FailuresOptions.RegisterFailureStrategies(services);
+
         ITransport? originalTransport = null;
         services.AddSingleton<PausableAsyncTaskFactory>();
         services.AddSingleton<IRebusPausableTaskPool>(provider => provider.GetRequiredService<PausableAsyncTaskFactory>());
         services.AddRebus((configurer, provider) =>
         {
-            Options.Apply(provider, _endpoint, configurer);
+            var options = provider.GetRequiredService<RebusMessagingOptions>();
+
+            options.Apply(provider, _endpoint, configurer);
             configurer.Options(o =>
             {
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
                 o.Register<IAsyncTaskFactory>(_ => provider.GetRequiredService<PausableAsyncTaskFactory>());
-                if (Options.UseOutbox)
+                if (options.UseOutbox)
                 {
                     o.UseOutbox();
                 }
@@ -109,7 +115,7 @@ public class RebusMessagingModule : AppModule
             AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true));
         }
 
-        SetupMessageHandlers(services, Options.KnownMessageTypes);
+        SetupMessageHandlers(services, Options.KnownMessageTypes, app);
 
         AddEventPropagators(services);
         AddCommandPropagators(services);
@@ -123,15 +129,8 @@ public class RebusMessagingModule : AppModule
         }
     }
 
-    private void SetupMessageHandlers(IServiceCollection services, IEnumerable<Type> knownMessageTypes)
+    private void SetupMessageHandlers(IServiceCollection services, IEnumerable<Type> knownMessageTypes, AppDescription app)
     {
-        Options.BackoffStrategy.IfPresent(strategy =>
-        {
-            services.AddTransient<IHandleMessages<IFailed<object>>>(sp => new FailedMessageHandler<object>(
-                sp.GetRequiredService<IBus>(),
-                strategy));
-        });
-
         knownMessageTypes
             .Where(x => x.IsSubtypeOrImplementationOf(typeof(IIncomingMessage)))
             .ForEach(t =>
@@ -139,7 +138,14 @@ public class RebusMessagingModule : AppModule
                 var handlerInterfaceType = typeof(IHandleMessages<>).MakeGenericType(t);
                 var handlerImplementationType = typeof(DispatchingMessageHandler<>).MakeGenericType(t);
                 services.AddTransient(handlerInterfaceType, handlerImplementationType);
+
+                var failedType = typeof(IFailed<>).MakeGenericType(t);
+                var failedHandlerInterfaceType = typeof(IHandleMessages<>).MakeGenericType(failedType);
+                var failedHandlerImplementationType = typeof(FailedMessageHandler<>).MakeGenericType(t);
+                services.AddTransient(failedHandlerInterfaceType, failedHandlerImplementationType);
             });
+
+        services.RegisterImplementationsAsTransient(typeof(IFailedMessageHandler<>), x => x.FromAssemblies(app.Assemblies));
     }
 
     private IEnumerable<Type> GetDispatchableReturnTypes(Type messageType)

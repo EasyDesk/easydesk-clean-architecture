@@ -5,14 +5,14 @@ using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.Configuration;
 using Rebus.Retry.FailFast;
 
-namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
+namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
 
-internal class FailFastChecker : IFailFastChecker
+internal class FailFastCheckerWrapper : IFailFastChecker
 {
     private readonly IFailFastChecker _fallback;
     private readonly IEnumerable<Func<Exception, Option<bool>>> _predicates;
 
-    public FailFastChecker(IFailFastChecker fallback, IEnumerable<Func<Exception, Option<bool>>> predicates)
+    public FailFastCheckerWrapper(IFailFastChecker fallback, IEnumerable<Func<Exception, Option<bool>>> predicates)
     {
         _fallback = fallback;
         _predicates = predicates;

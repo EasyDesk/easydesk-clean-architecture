@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
+﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
 using NodaTime;
 
 namespace EasyDesk.SampleApp.Web;
