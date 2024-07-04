@@ -25,14 +25,16 @@ public class FailedMessageHandler<T> : IHandleMessages<IFailed<T>>
         try
         {
             var pipeline = _failureStrategies.FoldRight<IFailureStrategy, AsyncAction>(
-                () => _bus.Advanced.TransportMessage.Deadletter(),
+                () => Deadletter(message),
                 (strategy, rest) => () => strategy.Handle(message, rest));
 
             await pipeline();
         }
         catch
         {
-            await _bus.Advanced.TransportMessage.Deadletter();
+            await Deadletter(message);
         }
     }
+
+    private Task Deadletter(IFailed<T> message) => _bus.Advanced.TransportMessage.Deadletter(message.ErrorDescription);
 }
