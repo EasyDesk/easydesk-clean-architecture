@@ -14,18 +14,11 @@ public abstract class DomainContext : AbstractDbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected sealed override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(SchemaName);
 
         ConfigureDomainModel(modelBuilder);
-
-        base.OnModelCreating(modelBuilder);
-    }
-
-    protected virtual void ConfigureDomainModel(ModelBuilder modelBuilder)
-    {
-        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
 
         var versionedEntities = modelBuilder.Model
             .GetEntityTypes()
@@ -41,6 +34,13 @@ public abstract class DomainContext : AbstractDbContext
                 .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
                 .ForEach(m => m.Invoke(this, args));
         }
+
+        base.OnModelCreating(modelBuilder);
+    }
+
+    protected virtual void ConfigureDomainModel(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 
     private void ConfigureVersionedEntity<E>(ModelBuilder modelBuilder)
