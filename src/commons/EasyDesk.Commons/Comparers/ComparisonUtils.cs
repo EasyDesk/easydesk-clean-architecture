@@ -42,6 +42,9 @@ public static class ComparisonUtils
     public static IComparer<T> ComparerBy<T, P>(Func<T, P> property, OrderingDirection direction = OrderingDirection.Ascending)
         where P : IComparable<P> => Comparer<T>.Create(CompareBy(property, direction));
 
+    public static IComparer<T> ComparerBy<T, P>(Func<T, P> property, IComparer<P> comparer, OrderingDirection direction = OrderingDirection.Ascending) =>
+        Comparer<T>.Create(CompareBy(property, comparer, direction));
+
     public static IComparer<T> ThenBy<T, P>(this IComparer<T> comparer, Func<T, P> property, OrderingDirection direction = OrderingDirection.Ascending)
         where P : IComparable<P> =>
         Comparer<T>.Create((x, y) =>
@@ -50,6 +53,16 @@ public static class ComparisonUtils
             return result == 0 ? CompareBy(property, direction)(x, y) : result;
         });
 
+    public static IComparer<T> ThenBy<T, P>(this IComparer<T> comparer, Func<T, P> property, IComparer<P> propertyComparer, OrderingDirection direction = OrderingDirection.Ascending) =>
+        Comparer<T>.Create((x, y) =>
+        {
+            var result = comparer.Compare(x, y);
+            return result == 0 ? CompareBy(property, propertyComparer, direction)(x, y) : result;
+        });
+
     private static Comparison<T> CompareBy<T, P>(Func<T, P> property, OrderingDirection direction) where P : IComparable<P> =>
         (x, y) => property(x).CompareTo(property(y)) * (int)direction;
+
+    private static Comparison<T> CompareBy<T, P>(Func<T, P> property, IComparer<P> comparer, OrderingDirection direction) =>
+        (x, y) => comparer.Compare(property(x), property(y)) * (int)direction;
 }
