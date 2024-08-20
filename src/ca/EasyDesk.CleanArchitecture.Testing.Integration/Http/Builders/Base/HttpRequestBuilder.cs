@@ -84,7 +84,7 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     public override B WithQuery(string key, string value) =>
         ConfigureQuery(q => q[key] = value);
 
-    public override HttpRequestBuilder WithQueryValues(string key, IEnumerable<string> values) =>
+    public override B WithQueryValues(string key, IEnumerable<string> values) =>
         ConfigureQuery(q => q[key] = values.ToArray());
 
     public override B WithoutQuery(string key) =>
