@@ -29,6 +29,8 @@ public abstract class HttpRequestBuilder
 
     public abstract HttpRequestBuilder WithQuery(string key, string value);
 
+    public abstract HttpRequestBuilder WithQueryValues(string key, IEnumerable<string> values);
+
     public abstract HttpRequestBuilder WithoutQuery(string key);
 
     public abstract HttpRequestBuilder WithTimeout(Duration timeout);
@@ -81,6 +83,9 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
 
     public override B WithQuery(string key, string value) =>
         ConfigureQuery(q => q[key] = value);
+
+    public override HttpRequestBuilder WithQueryValues(string key, IEnumerable<string> values) =>
+        ConfigureQuery(q => q[key] = values.ToArray());
 
     public override B WithoutQuery(string key) =>
         ConfigureQuery(q => q.Remove(key));
