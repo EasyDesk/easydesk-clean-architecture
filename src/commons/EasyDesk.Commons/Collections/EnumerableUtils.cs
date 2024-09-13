@@ -286,6 +286,15 @@ public static class EnumerableUtils
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> values) where T : class =>
         values.SelectMany(v => v.AsOption());
 
+    public static bool HasDuplicatesFor<T, P>(this IEnumerable<T> values, Func<T, P> property, IEqualityComparer<P>? comparer = null)
+    {
+        var set = new HashSet<P>(comparer);
+        return values.Any(x => !set.Add(property(x)));
+    }
+
+    public static bool HasDuplicates<T>(this IEnumerable<T> values, IEqualityComparer<T>? comparer = null) =>
+        values.HasDuplicatesFor(It, comparer);
+
     public sealed class CachedEnumerable<T> : IEnumerable<T>, IDisposable
     {
         private IEnumerator<T>? _enumerator;

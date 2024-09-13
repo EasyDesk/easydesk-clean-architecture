@@ -381,4 +381,24 @@ public class EnumerableUtilsTests
             sideEffect(3);
         });
     }
+
+    public static TheoryData<IEnumerable<string>, bool> DuplicatesForLengthData()
+    {
+        return new()
+        {
+            { [], false },
+            { ["hello"], false },
+            { ["aa", "bb"], true },
+            { ["aa", "bb", "ccc"], true },
+            { ["a", "bb", "ccc"], false },
+        };
+    }
+
+    [Theory]
+    [MemberData(nameof(DuplicatesForLengthData))]
+    public void HasDuplicatesFor_ShouldDetectDuplicates(
+        IEnumerable<string> input, bool expected)
+    {
+        input.HasDuplicatesFor(x => x.Length).ShouldBe(expected);
+    }
 }
