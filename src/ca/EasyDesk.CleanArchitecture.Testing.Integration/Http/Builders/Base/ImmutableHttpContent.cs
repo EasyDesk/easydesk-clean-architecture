@@ -1,6 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Net.Http.Headers;
@@ -60,7 +59,7 @@ public record class ImmutableHttpContent(
                 .Select(m => $"{nameof(MediaType)}: {m}"))
         .ConcatStrings(", ", " [", "]");
 
-    public string AsString() => Bytes.IsNullOrEmpty()
+    public string AsString() => Bytes.IsDefaultOrEmpty
         ? string.Empty
         : TextEncoding
             .Map(e => e.GetString(Bytes.ToArray()))
