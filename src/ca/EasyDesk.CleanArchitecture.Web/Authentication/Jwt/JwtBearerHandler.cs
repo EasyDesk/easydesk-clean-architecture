@@ -11,6 +11,11 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
 public sealed class JwtBearerOptions : TokenAuthenticationOptions
 {
+    public JwtBearerOptions()
+    {
+        TokenReader = TokenReaders.Bearer();
+    }
+
     public JwtValidationConfiguration Configuration { get; private set; } =
         JwtValidationConfiguration.FromKey(KeyUtils.RandomKey());
 
@@ -41,10 +46,10 @@ internal class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
         _jwtFacade = jwtFacade;
     }
 
-    protected override Result<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token)
+    protected override Task<Result<ClaimsPrincipal>> GetClaimsPrincipalFromToken(string token)
     {
-        return _jwtFacade
+        return Task.FromResult(_jwtFacade
             .Validate(token, Options.Configuration.ConfigureBuilder)
-            .Map(x => new ClaimsPrincipal(x));
+            .Map(x => new ClaimsPrincipal(x)));
     }
 }

@@ -13,7 +13,7 @@ public delegate Option<string> TokenReader(HttpContext httpContext);
 
 public abstract class TokenAuthenticationOptions : AuthenticationSchemeOptions
 {
-    public TokenReader TokenReader { get; set; } = TokenReaders.Bearer();
+    public TokenReader TokenReader { get; set; } = _ => throw new InvalidOperationException("TokenReader not configured");
 }
 
 public abstract class TokenAuthenticationHandler<T> : AbstractAuthenticationHandler<T>
@@ -26,13 +26,13 @@ public abstract class TokenAuthenticationHandler<T> : AbstractAuthenticationHand
 
     protected override Task<Option<Result<ClaimsPrincipal>>> Handle()
     {
-        return Task.FromResult(GetAuthenticateResult());
+        return GetAuthenticateResult();
     }
 
-    private Option<Result<ClaimsPrincipal>> GetAuthenticateResult()
+    private Task<Option<Result<ClaimsPrincipal>>> GetAuthenticateResult()
     {
-        return Options.TokenReader(Context).Map(GetClaimsPrincipalFromToken);
+        return Options.TokenReader(Context).MapAsync(GetClaimsPrincipalFromToken);
     }
 
-    protected abstract Result<ClaimsPrincipal> GetClaimsPrincipalFromToken(string token);
+    protected abstract Task<Result<ClaimsPrincipal>> GetClaimsPrincipalFromToken(string token);
 }
