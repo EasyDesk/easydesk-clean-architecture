@@ -1,15 +1,15 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 
 internal class EfCoreMultitenancyManager : IMultitenancyManager
 {
-    private readonly AuthorizationContext _context;
+    private readonly AuthContext _context;
 
-    public EfCoreMultitenancyManager(AuthorizationContext context)
+    public EfCoreMultitenancyManager(AuthContext context)
     {
         _context = context;
     }

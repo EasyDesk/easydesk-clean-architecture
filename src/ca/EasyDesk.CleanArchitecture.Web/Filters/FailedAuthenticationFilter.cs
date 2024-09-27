@@ -16,7 +16,7 @@ public class FailedAuthenticationFilter : IAsyncActionFilter
             await next();
             return;
         }
-        context.Result = new BadRequestObjectResult(ResponseDto<Nothing, Nothing>.FromErrors(
+        context.Result = new UnauthorizedObjectResult(ResponseDto<Nothing, Nothing>.FromErrors(
             errors.Select(e => new ErrorDto(
                 "AuthenticationFailed",
                 $"Authentication with schema '{e.Key}' failed.",

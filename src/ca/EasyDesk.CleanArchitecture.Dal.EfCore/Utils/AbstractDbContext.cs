@@ -13,7 +13,7 @@ public class AbstractDbContext : DbContext
 {
     public const string PublicTenantName = "";
 
-    private readonly IList<DbContextExtension> _extensions = new List<DbContextExtension>();
+    private readonly IList<DbContextExtension> _extensions = [];
 
     public AbstractDbContext(DbContextOptions options) : base(options)
     {

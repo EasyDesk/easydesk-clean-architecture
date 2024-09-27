@@ -19,7 +19,7 @@ public record JwtValidationConfiguration(
         ValidationKey: validationKey,
         Issuers: Set<string>(),
         Audiences: Set<string>(),
-        DecryptionKeys: Enumerable.Empty<SecurityKey>());
+        DecryptionKeys: []);
 
     public void ConfigureBuilder(JwtValidationBuilder builder)
     {

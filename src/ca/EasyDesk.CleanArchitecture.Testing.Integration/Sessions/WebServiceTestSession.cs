@@ -41,7 +41,7 @@ public class AgentScope : IDisposable
 public abstract class WebServiceTestSession<T> : IAsyncDisposable
     where T : ITestFixture
 {
-    private readonly IList<ITestBusEndpoint> _busEndpoints = new List<ITestBusEndpoint>();
+    private readonly IList<ITestBusEndpoint> _busEndpoints = [];
     private readonly Lazy<HttpTestHelper> _http;
     private readonly Lazy<ITestBusEndpoint> _defaultBusEndpoint;
     private readonly Lazy<ITestBusEndpoint> _errorBusEndpoint;

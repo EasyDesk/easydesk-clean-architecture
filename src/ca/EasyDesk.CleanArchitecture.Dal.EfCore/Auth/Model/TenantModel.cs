@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 
 public class TenantModel
 {

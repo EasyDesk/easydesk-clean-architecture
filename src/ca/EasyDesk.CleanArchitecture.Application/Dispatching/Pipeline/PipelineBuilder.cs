@@ -5,9 +5,9 @@ namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 public sealed class PipelineBuilder
 {
     private readonly ISet<Type> _registeredSteps = new HashSet<Type>();
-    private readonly IList<Type> _beforeAll = new List<Type>();
-    private readonly IList<Type> _middleSteps = new List<Type>();
-    private readonly IList<Type> _afterAll = new List<Type>();
+    private readonly IList<Type> _beforeAll = [];
+    private readonly IList<Type> _middleSteps = [];
+    private readonly IList<Type> _afterAll = [];
     private readonly ISet<(Type, Type)> _dependencies = new HashSet<(Type, Type)>();
 
     public StepDependenciesBuilder AddStep(Type stepType) =>
@@ -47,7 +47,7 @@ public sealed class PipelineBuilder
     {
         if (steps.IsEmpty())
         {
-            return Enumerable.Empty<Type>();
+            return [];
         }
 
         var result = new List<Type>();

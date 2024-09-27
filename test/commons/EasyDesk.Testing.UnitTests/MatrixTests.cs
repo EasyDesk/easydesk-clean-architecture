@@ -18,10 +18,10 @@ public class MatrixTests
     {
         var result = Matrix.Builder().Axis(1, 2, 3).Build();
 
-        var expected = Items(
-            new object[] { 1 },
-            new object[] { 2 },
-            new object[] { 3 });
+        var expected = Expected(
+            [1],
+            [2],
+            [3]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -36,15 +36,15 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { 0, "a", true },
-            new object[] { 0, "a", false },
-            new object[] { 0, "b", true },
-            new object[] { 0, "b", false },
-            new object[] { 1, "a", true },
-            new object[] { 1, "a", false },
-            new object[] { 1, "b", true },
-            new object[] { 1, "b", false });
+        var expected = Expected(
+            [0, "a", true],
+            [0, "a", false],
+            [0, "b", true],
+            [0, "b", false],
+            [1, "a", true],
+            [1, "a", false],
+            [1, "b", true],
+            [1, "b", false]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -60,23 +60,23 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object?[] { 0, "a", true, 0.1, null },
-            new object?[] { 0, "a", false, 0.1, null },
-            new object?[] { 0, "b", true, 0.1, null },
-            new object?[] { 0, "b", false, 0.1, null },
-            new object?[] { 1, "a", true, 0.1, null },
-            new object?[] { 1, "a", false, 0.1, null },
-            new object?[] { 1, "b", true, 0.1, null },
-            new object?[] { 1, "b", false, 0.1, null },
-            new object?[] { 0, "a", true, 0.2, null },
-            new object?[] { 0, "a", false, 0.2, null },
-            new object?[] { 0, "b", true, 0.2, null },
-            new object?[] { 0, "b", false, 0.2, null },
-            new object?[] { 1, "a", true, 0.2, null },
-            new object?[] { 1, "a", false, 0.2, null },
-            new object?[] { 1, "b", true, 0.2, null },
-            new object?[] { 1, "b", false, 0.2, null });
+        var expected = Expected(
+            [0, "a", true, 0.1, null],
+            [0, "a", false, 0.1, null],
+            [0, "b", true, 0.1, null],
+            [0, "b", false, 0.1, null],
+            [1, "a", true, 0.1, null],
+            [1, "a", false, 0.1, null],
+            [1, "b", true, 0.1, null],
+            [1, "b", false, 0.1, null],
+            [0, "a", true, 0.2, null],
+            [0, "a", false, 0.2, null],
+            [0, "b", true, 0.2, null],
+            [0, "b", false, 0.2, null],
+            [1, "a", true, 0.2, null],
+            [1, "a", false, 0.2, null],
+            [1, "b", true, 0.2, null],
+            [1, "b", false, 0.2, null]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -93,10 +93,10 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { 1, 0, 0, 2 },
-            new object[] { 0, 1, 0, 2 },
-            new object[] { 0, 0, 1, 2 });
+        var expected = Expected(
+            [1, 0, 0, 2],
+            [0, 1, 0, 2],
+            [0, 0, 1, 2]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -113,10 +113,10 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { 1, 0, 0, 2 },
-            new object[] { 0, 1, 0, 2 },
-            new object[] { 0, 0, 1, 2 });
+        var expected = Expected(
+            [1, 0, 0, 2],
+            [0, 1, 0, 2],
+            [0, 0, 1, 2]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -130,9 +130,9 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object?[] { null, null },
-            new object?[] { null, null });
+        var expected = Expected(
+            [null, null],
+            [null, null]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -146,11 +146,11 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { true, true },
-            new object[] { true, false },
-            new object[] { false, true },
-            new object[] { false, false });
+        var expected = Expected(
+            [true, true],
+            [true, false],
+            [false, true],
+            [false, false]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -164,11 +164,11 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { Some(1), Some(2) },
-            new object[] { Some(1), NoneT<int>() },
-            new object[] { NoneT<int>(), Some(2) },
-            new object[] { NoneT<int>(), NoneT<int>() });
+        var expected = Expected(
+            [Some(1), Some(2)],
+            [Some(1), NoneT<int>()],
+            [NoneT<int>(), Some(2)],
+            [NoneT<int>(), NoneT<int>()]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -186,9 +186,9 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { Failure<object>(new AnError()), Failure<object>(new AnError()) },
-            new object[] { Failure<object>(new AnotherError()), Failure<object>(new AnError()) });
+        var expected = Expected(
+            [Failure<object>(new AnError()), Failure<object>(new AnError())],
+            [Failure<object>(new AnotherError()), Failure<object>(new AnError())]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -202,9 +202,9 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { Failure<Nothing>(new AnError()), Success(5) },
-            new object[] { Failure<Nothing>(new AnotherError()), Success(5) });
+        var expected = Expected(
+            [Failure<Nothing>(new AnError()), Success(5)],
+            [Failure<Nothing>(new AnotherError()), Success(5)]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
     }
@@ -219,10 +219,15 @@ public class MatrixTests
             .Build()
             .ToList();
 
-        var expected = Items(
-            new object[] { Success(1), Success(5), Ok },
-            new object[] { Success(2), Success(5), Ok });
+        var expected = Expected(
+            [Success(1), Success(5), Ok],
+            [Success(2), Success(5), Ok]);
 
         result.ShouldBe(expected, _comparer, ignoreOrder: true);
+    }
+
+    private IEnumerable<object?[]> Expected(params object?[][] arrays)
+    {
+        return Items(arrays);
     }
 }

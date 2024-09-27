@@ -1,19 +1,19 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 
 internal class EfCoreAuthorizationManager : IIdentityRolesManager, IAgentRolesProvider
 {
-    private readonly AuthorizationContext _context;
+    private readonly AuthContext _context;
 
-    public EfCoreAuthorizationManager(AuthorizationContext context)
+    public EfCoreAuthorizationManager(AuthContext context)
     {
         _context = context;
     }

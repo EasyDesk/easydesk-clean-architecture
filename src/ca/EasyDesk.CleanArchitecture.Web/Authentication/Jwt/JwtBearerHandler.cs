@@ -32,7 +32,7 @@ public sealed class JwtBearerOptions : TokenAuthenticationOptions
     }
 }
 
-internal class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
+public class JwtBearerHandler : TokenAuthenticationHandler<JwtBearerOptions>
 {
     private readonly JwtFacade _jwtFacade;
 

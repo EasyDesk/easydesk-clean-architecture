@@ -31,7 +31,7 @@ public class ValidationModule : AppModule
             .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidate<>))
             .ForEach(i => registrationMethod
                 .MakeGenericMethod(i.GetGenericArguments()[0])
-                .Invoke(null, new object[] { services }));
+                .Invoke(null, [services]));
     }
 
     private static void RegisterValidatorForValidatableObject<T>(IServiceCollection services)

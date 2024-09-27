@@ -24,6 +24,6 @@ public abstract class Entity
 
     protected virtual IEnumerable<Entity> ChildEntities()
     {
-        return Enumerable.Empty<Entity>();
+        return [];
     }
 }

@@ -126,7 +126,7 @@ public class GenericPipelineProviderTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<int, Nothing>(_serviceProvider).ShouldBe(Enumerable.Empty<IPipelineStep<int, Nothing>>());
+        pipeline.GetSteps<int, Nothing>(_serviceProvider).ShouldBe([]);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class GenericPipelineProviderTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<Request, Request>(_serviceProvider).ShouldBe(Enumerable.Empty<IPipelineStep<Request, Request>>());
+        pipeline.GetSteps<Request, Request>(_serviceProvider).ShouldBe([]);
     }
 
     [Fact]

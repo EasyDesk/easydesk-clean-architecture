@@ -14,7 +14,7 @@ internal class TenantIdOperationFilterForDefaultContextReader : IOperationFilter
         {
             return;
         }
-        operation.Parameters ??= new List<OpenApiParameter>();
+        operation.Parameters ??= [];
         if (!operation.Parameters.Any(p => p.Name.Equals(CommonTenantReaders.TenantIdHttpQueryParam)))
         {
             operation.Parameters.Add(new OpenApiParameter()

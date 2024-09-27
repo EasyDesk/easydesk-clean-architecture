@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using NodaTime;
 using NodaTime.Testing;
 using System.Security.Claims;
@@ -26,7 +25,7 @@ public class JwtValidationTests
             KeyUtils.KeyFromString("IUYTFCVBNJUHDNEJNUNWOCNJVJNWRNHIUYFQWEZXVCPIOUBN"),
             Set("Issuer"),
             Set("Audience"),
-            Enumerable.Empty<SecurityKey>());
+            []);
 
         var generation = validation.ToJwtGenerationConfiguration();
 

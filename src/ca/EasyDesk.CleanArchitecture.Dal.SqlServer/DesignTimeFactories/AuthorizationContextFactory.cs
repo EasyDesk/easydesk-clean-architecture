@@ -1,13 +1,13 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace EasyDesk.CleanArchitecture.Dal.SqlServer.DesignTimeFactories;
 
-internal class AuthorizationContextFactory : IDesignTimeDbContextFactory<AuthorizationContext>
+internal class AuthorizationContextFactory : IDesignTimeDbContextFactory<AuthContext>
 {
-    public AuthorizationContext CreateDbContext(string[] args)
+    public AuthContext CreateDbContext(string[] args)
     {
-        var options = DbContextOptionsUtils.CreateDesignTimeOptions<AuthorizationContext>();
-        return new AuthorizationContext(options);
+        var options = DbContextOptionsUtils.CreateDesignTimeOptions<AuthContext>();
+        return new AuthContext(options);
     }
 }

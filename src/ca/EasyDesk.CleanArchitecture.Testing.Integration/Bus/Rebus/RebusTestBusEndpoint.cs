@@ -27,7 +27,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     private readonly IBus _bus;
     private readonly ISet<Type> _subscriptions = new HashSet<Type>();
     private readonly Channel<Message> _messages = Channel.CreateUnbounded<Message>();
-    private readonly IList<Message> _deadLetter = new List<Message>();
+    private readonly IList<Message> _deadLetter = [];
     private readonly TestTenantManager _tenantManager;
     private readonly Duration _timeout;
     private readonly BuiltinHandlerActivator _handlerActivator;

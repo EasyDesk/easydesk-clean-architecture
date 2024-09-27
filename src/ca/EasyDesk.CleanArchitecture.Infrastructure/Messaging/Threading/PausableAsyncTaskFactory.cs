@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 public class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPool
 {
     private readonly ILoggerFactory _logger;
-    private readonly IList<PausableAsyncTask> _tasks = new List<PausableAsyncTask>();
+    private readonly IList<PausableAsyncTask> _tasks = [];
 
     public PausableAsyncTaskFactory(ILoggerFactory logger) =>
         _logger = logger;

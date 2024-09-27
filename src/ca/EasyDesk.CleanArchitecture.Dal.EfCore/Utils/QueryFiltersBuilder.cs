@@ -11,7 +11,7 @@ public class QueryFiltersBuilder
 
     public QueryFiltersBuilder AddFilter<T>(Expression<Func<T, bool>> filter)
     {
-        _filters.GetOrAdd(typeof(T), () => new()).Add(filter);
+        _filters.GetOrAdd(typeof(T), () => []).Add(filter);
         return this;
     }
 

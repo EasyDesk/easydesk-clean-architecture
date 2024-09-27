@@ -6,7 +6,7 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
@@ -68,7 +68,7 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
 
     private void AddAuthorizationContext(IServiceCollection services)
     {
-        AddDbContext<AuthorizationContext>(
+        AddDbContext<AuthContext>(
             services,
             ConfigureMigrationsAssembly);
     }

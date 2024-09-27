@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Auth;
 
 /// <inheritdoc />
 public partial class InitialSchema : Migration

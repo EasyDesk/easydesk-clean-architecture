@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Auth;
 
 /// <inheritdoc />
 public partial class InitialSchema : Migration

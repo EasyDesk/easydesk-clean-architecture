@@ -81,7 +81,7 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
         AsyncApiSchemaOptions schemaOptions) => new()
         {
             OperationId = messageType.Name,
-            Traits = new List<IOperationTrait>() { new OperationTrait { Summary = messageClassifier } },
+            Traits = [new OperationTrait { Summary = messageClassifier }],
             Message = ConfigureMessage(messageType, schemaOptions),
         };
 

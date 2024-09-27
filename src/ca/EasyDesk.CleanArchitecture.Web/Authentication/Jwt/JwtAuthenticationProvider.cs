@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
-internal sealed class JwtAuthenticationProvider : AbstractAuthenticationProvider<JwtBearerOptions, JwtBearerHandler>
+public sealed class JwtAuthenticationProvider : AbstractAuthenticationProvider<JwtBearerOptions, JwtBearerHandler>
 {
     public JwtAuthenticationProvider(Action<JwtBearerOptions>? configureOptions) : base(configureOptions)
     {

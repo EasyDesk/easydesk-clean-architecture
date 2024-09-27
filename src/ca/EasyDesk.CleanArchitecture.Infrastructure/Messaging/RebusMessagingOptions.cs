@@ -23,7 +23,7 @@ public sealed class RebusMessagingOptions
 {
     private Action<RebusEndpoint, RebusConfigurer>? _configureRebus;
 
-    public IList<Func<Exception, Option<bool>>> FailFastCheckers { get; } = new List<Func<Exception, Option<bool>>>();
+    public IList<Func<Exception, Option<bool>>> FailFastCheckers { get; } = [];
 
     public OutboxOptions OutboxOptions { get; } = new();
 

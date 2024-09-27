@@ -1,12 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 
-namespace EasyDesk.CleanArchitecture.Dal.EfCore.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 
-internal class AuthorizationContext : AbstractDbContext
+internal class AuthContext : AbstractDbContext
 {
-    public AuthorizationContext(DbContextOptions<AuthorizationContext> options)
+    public AuthContext(DbContextOptions<AuthContext> options)
         : base(options)
     {
     }
@@ -15,12 +15,15 @@ internal class AuthorizationContext : AbstractDbContext
 
     public DbSet<IdentityRoleModel> IdentityRoles { get; set; }
 
+    public DbSet<ApiKeyModel> ApiKeys { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema(AuthorizationModel.SchemaName);
+        modelBuilder.HasDefaultSchema(AuthModel.SchemaName);
 
         modelBuilder.ApplyConfiguration(new TenantModel.Configuration());
         modelBuilder.ApplyConfiguration(new IdentityRoleModel.Configuration());
+        modelBuilder.ApplyConfiguration(new ApiKeyModel.Configuration());
 
         base.OnModelCreating(modelBuilder);
     }

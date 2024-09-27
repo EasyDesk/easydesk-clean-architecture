@@ -24,7 +24,7 @@ internal class DomainEventPublisher : IDomainEventPublisher
             .GetTypeInfo()
             .GetMethod(nameof(PublishEventOfType))!
             .MakeGenericMethod(eventType)
-            .Invoke(this, new object[] { domainEvent });
+            .Invoke(this, [domainEvent]);
         return await (Task<Result<Nothing>>)result!;
     }
 

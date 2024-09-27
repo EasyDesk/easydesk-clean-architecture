@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Authorization;
+namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Auth;
 
 /// <inheritdoc />
 public partial class RemovePermissions : Migration
@@ -23,9 +23,9 @@ public partial class RemovePermissions : Migration
             schema: "auth",
             columns: table => new
             {
-                RoleId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                PermissionName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                RoleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                PermissionName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
             },
             constraints: table =>
             {

@@ -36,7 +36,7 @@ public static class JwtConfigurationUtils
             GetSecretKeyFromSection(section),
             issuers,
             audiences,
-            DecryptionKeys: Enumerable.Empty<SecurityKey>());
+            DecryptionKeys: []);
     }
 
     public static JwtGenerationConfiguration GetJwtGenerationConfiguration(

@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
+using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.Commons.Results;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -22,20 +23,20 @@ public sealed class ApiKeyOptions : TokenAuthenticationOptions
 
 internal class ApiKeyHandler : TokenAuthenticationHandler<ApiKeyOptions>
 {
-    private readonly IApiKeyValidator _apiKeyValidator;
+    private readonly ApiKeyValidator _apiKeyValidator;
 
     public ApiKeyHandler(
         IOptionsMonitor<ApiKeyOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        IApiKeyValidator apiKeyValidator) : base(options, logger, encoder)
+        ApiKeyValidator apiKeyValidator) : base(options, logger, encoder)
     {
         _apiKeyValidator = apiKeyValidator;
     }
 
     protected override async Task<Result<ClaimsPrincipal>> GetClaimsPrincipalFromToken(string token)
     {
-        var agent = await _apiKeyValidator.Authenticate(token);
-        return agent.Map(a => new ClaimsPrincipal(a.ToClaimsIdentity()));
+        return await _apiKeyValidator.Authenticate(token)
+            .ThenMap(agent => new ClaimsPrincipal(agent.ToClaimsIdentity()));
     }
 }
