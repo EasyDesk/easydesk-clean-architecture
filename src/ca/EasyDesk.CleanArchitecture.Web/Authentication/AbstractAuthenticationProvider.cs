@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -19,7 +20,7 @@ public abstract class AbstractAuthenticationProvider<O, H> : IAuthenticationProv
     public void AddAuthenticationHandler(string schemeName, AuthenticationBuilder authenticationBuilder) =>
         authenticationBuilder.AddScheme<O, H>(schemeName, _configureOptions);
 
-    public abstract void AddUtilityServices(IServiceCollection services);
+    public abstract void AddUtilityServices(IServiceCollection services, AppDescription app);
 
     public abstract void ConfigureOpenApi(string schemeName, SwaggerGenOptions options);
 }

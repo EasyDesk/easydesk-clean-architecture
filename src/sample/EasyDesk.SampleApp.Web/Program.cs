@@ -12,6 +12,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
@@ -26,7 +27,6 @@ using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Rebus.Config;
 using Rebus.Timeouts;
 
@@ -42,7 +42,8 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
             .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
         .AddAuditing()
         .AddAuthentication(options => options
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
+            .AddApiKey()
+            .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
         .AddAuthorization(options => options.RoleBased(x => x
             .WithStaticPermissions(PermissionSettings.RolesToPermissions)))
         .AddLogging(options => options

@@ -5,6 +5,9 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization.Model;
 
 public record AuthorizationInfo(Agent Agent, IFixedSet<Permission> Permissions)
 {
+    public bool HasRealm(Realm realm) =>
+        Agent.Identities.ContainsKey(realm);
+
     public bool HasPermission(Permission permission) =>
         HasAnyPermissionAmong(permission);
 

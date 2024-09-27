@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
@@ -90,6 +91,12 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
         AddDbContext<AuditingContext>(services, ConfigureMigrationsAssembly);
         services.AddScoped<IAuditLog, EfCoreAuditLog>();
         services.AddScoped<IAuditStorageImplementation, EfCoreAuditStorage>();
+    }
+
+    public void AddApiKeysManagement(IServiceCollection services, AppDescription app)
+    {
+        AddDbContext<AuthContext>(services, ConfigureMigrationsAssembly);
+        services.AddScoped<IApiKeysStorage, EfCoreApiKeysStorage>();
     }
 
     private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)

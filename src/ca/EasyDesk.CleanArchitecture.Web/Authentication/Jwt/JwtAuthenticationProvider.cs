@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Web.OpenApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +15,7 @@ public sealed class JwtAuthenticationProvider : AbstractAuthenticationProvider<J
     {
     }
 
-    public override void AddUtilityServices(IServiceCollection services)
+    public override void AddUtilityServices(IServiceCollection services, AppDescription app)
     {
         services.TryAddSingleton<JwtFacade>();
     }

@@ -12,7 +12,7 @@ public static class ApiKeyAuthenticationExtensions
         return options.AddScheme(schemeName, new ApiKeyAuthenticationProvider(configureOptions));
     }
 
-    public static AuthenticationModuleOptions AddJwtBearer(
+    public static AuthenticationModuleOptions AddApiKey(
         this AuthenticationModuleOptions options,
         Action<ApiKeyOptions>? configureOptions = default)
     {

@@ -34,7 +34,7 @@ public class AuthenticationModule : AppModule
 
         Options.Schemes.ForEach(scheme =>
         {
-            scheme.Value.AddUtilityServices(services);
+            scheme.Value.AddUtilityServices(services, app);
             scheme.Value.AddAuthenticationHandler(scheme.Key, authBuilder);
         });
     }

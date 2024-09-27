@@ -19,4 +19,6 @@ public interface IDataAccessImplementation
     void AddSagas(IServiceCollection services, AppDescription app);
 
     void AddAuditing(IServiceCollection services, AppDescription app);
+
+    void AddApiKeysManagement(IServiceCollection services, AppDescription app);
 }

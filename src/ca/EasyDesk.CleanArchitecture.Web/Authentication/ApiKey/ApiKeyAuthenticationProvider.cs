@@ -1,4 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Web.OpenApi;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
+using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Web.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -11,8 +14,10 @@ internal sealed class ApiKeyAuthenticationProvider : AbstractAuthenticationProvi
     {
     }
 
-    public override void AddUtilityServices(IServiceCollection services)
+    public override void AddUtilityServices(IServiceCollection services, AppDescription app)
     {
+        services.AddScoped<ApiKeyValidator>();
+        app.RequireModule<DataAccessModule>().Implementation.AddApiKeysManagement(services, app);
     }
 
     public override void ConfigureOpenApi(string schemeName, SwaggerGenOptions options)
