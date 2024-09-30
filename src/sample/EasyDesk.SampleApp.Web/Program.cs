@@ -18,6 +18,7 @@ using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Csv.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Proxy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Seeding;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Extensions.Configuration;
@@ -49,6 +50,7 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
         .AddLogging(options => options
             .EnableRequestLogging()
             .EnableResultLogging())
+        .AddReverseProxy()
         .AddOpenApi()
         .AddAsyncApi()
         .AddSagas()
@@ -113,6 +115,8 @@ await app.SetupDevelopment(async (services, logger) =>
     logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);
     services.LogForgedJwt(admin);
 });
+
+app.UseReverseProxyModule();
 
 app.UseHttpsRedirection();
 
