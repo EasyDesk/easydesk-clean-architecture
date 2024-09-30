@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
+using Microsoft.Net.Http.Headers;
 using Shouldly;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -54,6 +55,15 @@ public class ApiKeysTests : SampleIntegrationTest
     }
 
     [Fact]
+    public async Task DeletingApiKey_ShouldSucceed()
+    {
+        await Http
+            .DeleteApiKey(TestApiKey)
+            .Send()
+            .EnsureSuccess();
+    }
+
+    [Fact]
     public async Task TestingApiKey_ShouldReturnAgent_IfAuthenticationSucceedes()
     {
         await Http
@@ -70,7 +80,22 @@ public class ApiKeysTests : SampleIntegrationTest
         result.ShouldBe(_testAgent);
     }
 
+    [Fact]
+    public async Task TestingApiKey_ShouldReturnAgent_IfAuthenticationSucceedes_UsingHeader()
+    {
+        await Http
+            .StoreApiKey(TestApiKey, _testAgent)
+            .Send()
+            .EnsureSuccess();
 
+        var result = await Http
+            .TestApiKey()
+            .Headers(h => h.Add(HeaderNames.Authorization, $"{ApiKeyOptions.ApiKeyDefaultScheme} {TestApiKey}"))
+            .Send()
+            .AsData();
+
+        result.ShouldBe(_testAgent);
+    }
 
     [Fact]
     public async Task TestingApiKey_ShouldFail_IfAuthenticationFails()
@@ -83,6 +108,26 @@ public class ApiKeysTests : SampleIntegrationTest
         await Http
             .TestApiKey()
             .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, "some_invalid_api_key")
+            .Send()
+            .Verify();
+    }
+
+    [Fact]
+    public async Task TestingApiKey_ShouldFail_AfterDeletingApiKey()
+    {
+        await Http
+            .StoreApiKey(TestApiKey, _testAgent)
+            .Send()
+            .EnsureSuccess();
+
+        await Http
+            .DeleteApiKey(TestApiKey)
+            .Send()
+            .EnsureSuccess();
+
+        await Http
+            .TestApiKey()
+            .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, TestApiKey)
             .Send()
             .Verify();
     }

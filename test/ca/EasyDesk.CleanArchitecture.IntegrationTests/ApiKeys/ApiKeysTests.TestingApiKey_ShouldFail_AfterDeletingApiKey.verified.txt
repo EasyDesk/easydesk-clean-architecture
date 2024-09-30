@@ -1,0 +1,21 @@
+﻿{
+  StatusCode: Unauthorized,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: AuthenticationFailed,
+        Detail: Authentication with schema 'ApiKey' failed.,
+        Meta: {
+          schema: ApiKey,
+          innerError: {
+            code: InvalidApiKey,
+            detail: The given Api Key was not recognized.,
+            meta: {}
+          }
+        }
+      }
+    ],
+    Meta: {}
+  }
+}
