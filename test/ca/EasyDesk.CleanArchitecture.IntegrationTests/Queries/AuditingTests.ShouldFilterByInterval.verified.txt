@@ -4,9 +4,10 @@
     Name: CreatePet,
     Description: null,
     Agent: {
-      Identities: {
-        main: {
+      Identities: [
+        {
           Id: test-admin,
+          Realm: main,
           Attributes: {
             email: [
               johndoe@test.com
@@ -19,7 +20,7 @@
             ]
           }
         }
-      }
+      ]
     },
     Properties: {
       nickname: [
@@ -34,9 +35,10 @@
     Name: CreatePet,
     Description: null,
     Agent: {
-      Identities: {
-        main: {
+      Identities: [
+        {
           Id: test-admin,
+          Realm: main,
           Attributes: {
             email: [
               johndoe@test.com
@@ -49,7 +51,7 @@
             ]
           }
         }
-      }
+      ]
     },
     Properties: {
       nickname: [

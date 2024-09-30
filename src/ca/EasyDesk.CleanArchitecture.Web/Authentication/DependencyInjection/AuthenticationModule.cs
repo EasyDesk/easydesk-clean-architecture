@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -37,6 +38,11 @@ public class AuthenticationModule : AppModule
             scheme.Value.AddUtilityServices(services, app);
             scheme.Value.AddAuthenticationHandler(scheme.Key, authBuilder);
         });
+
+        services.AddAuthorizationBuilder()
+            .AddFallbackPolicy("DEFAULT", new AuthorizationPolicyBuilder(Options.Schemes.Keys.ToArray())
+                .RequireAssertion(_ => true)
+                .Build());
     }
 }
 

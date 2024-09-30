@@ -36,7 +36,8 @@ internal class ApiKeyHandler : TokenAuthenticationHandler<ApiKeyOptions>
 
     protected override async Task<Result<ClaimsPrincipal>> GetClaimsPrincipalFromToken(string token)
     {
-        return await _apiKeyValidator.Authenticate(token)
+        return await _apiKeyValidator
+            .Authenticate(token)
             .ThenMap(agent => new ClaimsPrincipal(agent.ToClaimsIdentity()));
     }
 }

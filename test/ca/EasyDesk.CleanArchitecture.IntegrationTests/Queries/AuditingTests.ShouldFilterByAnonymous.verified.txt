@@ -25,9 +25,10 @@
       Name: AddAdmin,
       Description: null,
       Agent: {
-        Identities: {
-          main: {
+        Identities: [
+          {
             Id: test-admin,
+            Realm: main,
             Attributes: {
               email: [
                 johndoe@test.com
@@ -40,7 +41,7 @@
               ]
             }
           }
-        }
+        ]
       },
       Properties: {},
       Success: true,
@@ -51,9 +52,10 @@
       Name: CreatePerson,
       Description: null,
       Agent: {
-        Identities: {
-          main: {
+        Identities: [
+          {
             Id: test-admin,
+            Realm: main,
             Attributes: {
               email: [
                 johndoe@test.com
@@ -66,7 +68,7 @@
               ]
             }
           }
-        }
+        ]
       },
       Properties: {},
       Success: true,
