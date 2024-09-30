@@ -42,8 +42,8 @@ var appDescription = builder.ConfigureForCleanArchitecture(config =>
             .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
         .AddAuditing()
         .AddAuthentication(options => options
-            .AddApiKey()
-            .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration)))
+            .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration))
+            .AddApiKey())
         .AddAuthorization(options => options.RoleBased(x => x
             .WithStaticPermissions(PermissionSettings.RolesToPermissions)))
         .AddLogging(options => options
