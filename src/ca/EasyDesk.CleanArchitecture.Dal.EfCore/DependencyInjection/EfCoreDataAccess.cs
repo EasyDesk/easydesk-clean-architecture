@@ -29,6 +29,9 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
+    private const string MigrationsTableSuffix = "EFMigrationsHistory";
+    private const string CleanArchitectureDbContextPrefix = "__CA";
+
     private readonly EfCoreDataAccessOptions<T, TBuilder, TExtension> _options;
     private readonly ISet<Type> _registeredDbContextTypes = new HashSet<Type>();
 
@@ -44,7 +47,7 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         _options.RegisterUtilityServices(services);
-        AddDbContext<T>(services);
+        AddDbContext<T>(services, isCleanArchitectureContext: false);
         services.AddScoped<ISaveChangesHandler, EfCoreSaveChangesHandler<T>>();
         services.AddScoped<EfCoreUnitOfWorkProvider>();
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
@@ -54,7 +57,7 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
 
     public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<MessagingContext>(services, ConfigureMigrationsAssembly);
+        AddDbContext<MessagingContext>(services, ConfigureAsCleanArchitectureDbContext);
         services.AddScoped<IOutbox, EfCoreOutbox>();
         services.AddScoped<IInbox, EfCoreInbox>();
     }
@@ -71,7 +74,7 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
     {
         AddDbContext<AuthContext>(
             services,
-            ConfigureMigrationsAssembly);
+            ConfigureAsCleanArchitectureDbContext);
     }
 
     public void AddMultitenancy(IServiceCollection services, AppDescription app)
@@ -82,31 +85,32 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
 
     public void AddSagas(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<SagasContext>(services, ConfigureMigrationsAssembly);
+        AddDbContext<SagasContext>(services, ConfigureAsCleanArchitectureDbContext);
         services.AddScoped<ISagaManager, EfCoreSagaManager>();
     }
 
     public void AddAuditing(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuditingContext>(services, ConfigureMigrationsAssembly);
+        AddDbContext<AuditingContext>(services, ConfigureAsCleanArchitectureDbContext);
         services.AddScoped<IAuditLog, EfCoreAuditLog>();
         services.AddScoped<IAuditStorageImplementation, EfCoreAuditStorage>();
     }
 
     public void AddApiKeysManagement(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuthContext>(services, ConfigureMigrationsAssembly);
+        AddDbContext<AuthContext>(services, ConfigureAsCleanArchitectureDbContext);
         services.AddScoped<IApiKeysStorage, EfCoreApiKeysStorage>();
     }
 
-    private void ConfigureMigrationsAssembly(IServiceProvider provider, TBuilder relationalOptions)
+    private void ConfigureAsCleanArchitectureDbContext(IServiceProvider provider, TBuilder relationalOptions)
     {
         relationalOptions.MigrationsAssembly(_options.InternalMigrationsAssembly.GetName().Name);
     }
 
     private void AddDbContext<C>(
         IServiceCollection services,
-        Action<IServiceProvider, TBuilder>? configure = null)
+        Action<IServiceProvider, TBuilder>? configure = null,
+        bool isCleanArchitectureContext = true)
         where C : DbContext
     {
         if (_registeredDbContextTypes.Contains(typeof(C)))
@@ -114,7 +118,13 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
             return;
         }
 
-        _options.RegisterDbContext<C>(services, configure);
+        _options.RegisterDbContext<C>(services, (provider, relationalOptions) =>
+        {
+            configure?.Invoke(provider, relationalOptions);
+
+            var migrationsTableName = isCleanArchitectureContext ? $"{CleanArchitectureDbContextPrefix}_{typeof(C).Name}_{MigrationsTableSuffix}" : $"{typeof(C).Name}_{MigrationsTableSuffix}";
+            relationalOptions.MigrationsHistoryTable(migrationsTableName, EfCoreUtils.MigrationsSchema);
+        });
         _registeredDbContextTypes.Add(typeof(C));
     }
 }

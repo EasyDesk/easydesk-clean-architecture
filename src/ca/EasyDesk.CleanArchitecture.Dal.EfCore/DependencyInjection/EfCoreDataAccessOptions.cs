@@ -13,8 +13,6 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
-    private const string MigrationsTableSuffix = "EFMigrationsHistory";
-
     private readonly IEfCoreProvider<TBuilder, TExtension> _provider;
     private Action<DbContextOptionsBuilder>? _configureDbContextOptions;
     private Action<TBuilder>? _configureProviderOptions;
@@ -66,9 +64,8 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
             var connection = provider.GetRequiredService<DbConnection>();
             _provider.ConfigureDbProvider(options, connection, relationalOptions =>
             {
-                relationalOptions.MigrationsHistoryTable($"{typeof(C).Name}_{MigrationsTableSuffix}", EfCoreUtils.MigrationsSchema);
-                _configureProviderOptions?.Invoke(relationalOptions);
                 configure?.Invoke(provider, relationalOptions);
+                _configureProviderOptions?.Invoke(relationalOptions);
             });
 
             options.AddInterceptors(provider.GetRequiredService<TransactionEnlistingOnCommandInterceptor>());
