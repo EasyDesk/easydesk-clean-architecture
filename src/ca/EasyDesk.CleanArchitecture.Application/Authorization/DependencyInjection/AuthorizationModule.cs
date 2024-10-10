@@ -40,7 +40,7 @@ public class AuthorizationModule : AppModule
 
 public static class AuthorizationModuleExtensions
 {
-    public static AppBuilder AddAuthorization(this AppBuilder builder, Action<AuthorizationOptions>? configure = null)
+    public static IAppBuilder AddAuthorization(this IAppBuilder builder, Action<AuthorizationOptions>? configure = null)
     {
         return builder.AddModule(new AuthorizationModule(configure));
     }

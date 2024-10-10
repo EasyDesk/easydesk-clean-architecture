@@ -61,12 +61,12 @@ public class ContextProviderModule : AppModule
 
 public static class ContextProviderModuleExtensions
 {
-    public static AppBuilder AddContextProvider(this AppBuilder builder, IHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
+    public static IAppBuilder AddContextProvider(this IAppBuilder builder, IHostEnvironment environment, Action<ContextProviderOptions>? configure = null)
     {
         return builder.AddModule(new ContextProviderModule(environment, configure));
     }
 
-    public static AppBuilder SetAgentParser(this AppBuilder builder, Action<AgentParserBuilder> configure)
+    public static IAppBuilder SetAgentParser(this IAppBuilder builder, Action<AgentParserBuilder> configure)
     {
         return builder.ConfigureModule<ContextProviderModule>(m => m.ConfigureOptions(x => x.SetAgentParser(configure)));
     }

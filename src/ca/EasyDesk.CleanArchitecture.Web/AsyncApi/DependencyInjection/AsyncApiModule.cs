@@ -46,7 +46,7 @@ public class AsyncApiModule : AppModule
 
 public static class AsyncApiModuleExtensions
 {
-    public static AppBuilder AddAsyncApi(this AppBuilder builder, Action<AsyncApiOptions>? configure = null)
+    public static IAppBuilder AddAsyncApi(this IAppBuilder builder, Action<AsyncApiOptions>? configure = null)
     {
         return builder.AddModule(new AsyncApiModule(configure));
     }

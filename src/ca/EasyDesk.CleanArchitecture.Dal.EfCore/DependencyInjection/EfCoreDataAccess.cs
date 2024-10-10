@@ -131,8 +131,8 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
 
 public static class EfCoreDataAccessExtensions
 {
-    public static AppBuilder AddEfCoreDataAccess<T, TBuilder, TExtension>(
-        this AppBuilder builder,
+    public static IAppBuilder AddEfCoreDataAccess<T, TBuilder, TExtension>(
+        this IAppBuilder builder,
         IEfCoreProvider<TBuilder, TExtension> provider,
         Action<EfCoreDataAccessOptions<T, TBuilder, TExtension>>? configure = null)
         where T : AbstractDbContext

@@ -32,7 +32,7 @@ public class DomainLayerModule : AppModule
 
 public static class DomainModuleExtensions
 {
-    public static AppBuilder AddDomainLayer(this AppBuilder builder)
+    public static IAppBuilder AddDomainLayer(this IAppBuilder builder)
     {
         return builder.AddModule(new DomainLayerModule());
     }

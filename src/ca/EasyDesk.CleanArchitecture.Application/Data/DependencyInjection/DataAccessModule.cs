@@ -35,7 +35,7 @@ public class DataAccessModule : AppModule
 
 public static class DataAccessModuleExtensions
 {
-    public static AppBuilder AddDataAccess(this AppBuilder builder, IDataAccessImplementation implementation)
+    public static IAppBuilder AddDataAccess(this IAppBuilder builder, IDataAccessImplementation implementation)
     {
         return builder.AddModule(new DataAccessModule(implementation));
     }

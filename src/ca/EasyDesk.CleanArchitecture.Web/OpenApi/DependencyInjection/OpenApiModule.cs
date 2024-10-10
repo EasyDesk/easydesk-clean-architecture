@@ -135,7 +135,7 @@ public class OpenApiModule : AppModule
 
 public static class SwaggerModuleExtensions
 {
-    public static AppBuilder AddOpenApi(this AppBuilder builder, Action<OpenApiModuleOptions>? configure = null)
+    public static IAppBuilder AddOpenApi(this IAppBuilder builder, Action<OpenApiModuleOptions>? configure = null)
     {
         return builder.AddModule(new OpenApiModule(configure));
     }

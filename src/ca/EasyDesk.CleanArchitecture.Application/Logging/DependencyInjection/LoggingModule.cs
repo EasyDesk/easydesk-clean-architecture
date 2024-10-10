@@ -30,7 +30,7 @@ public class LoggingModule : AppModule
 
 public static class LoggingModuleExtensions
 {
-    public static AppBuilder AddLogging(this AppBuilder builder, Action<LoggingConfiguration>? configure = null)
+    public static IAppBuilder AddLogging(this IAppBuilder builder, Action<LoggingConfiguration>? configure = null)
     {
         return builder.AddModule(new LoggingModule(configure));
     }

@@ -30,7 +30,7 @@ public class ReverseProxyModule : AppModule
 
 public static class ReverseProxyModuleExtensions
 {
-    public static AppBuilder AddReverseProxy(this AppBuilder builder, Action<ReverseProxyModuleOptions>? configure = null)
+    public static IAppBuilder AddReverseProxy(this IAppBuilder builder, Action<ReverseProxyModuleOptions>? configure = null)
     {
         return builder.AddModule(new ReverseProxyModule(configure));
     }

@@ -31,70 +31,85 @@ using EasyDesk.SampleApp.Web.DependencyInjection;
 using Rebus.Config;
 using Rebus.Timeouts;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = CleanArchitectureApp.CreateBuilder(args);
+
+builder
+    .WithName("EasyDesk.Sample.App")
+    .AddApiVersioning()
+    .AddMultitenancy(options => options
+        .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
+    .AddAuditing()
+    .AddAuthentication(options => options
+        .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration))
+        .AddApiKey())
+    .AddAuthorization(options => options.RoleBased(x => x
+        .WithStaticPermissions(PermissionSettings.RolesToPermissions)))
+    .AddLogging(options => options
+        .EnableRequestLogging()
+        .EnableResultLogging())
+    .AddReverseProxy()
+    .AddOpenApi()
+    .AddAsyncApi()
+    .AddSagas()
+    .AddCsvParsing()
+    .AddModule<SampleAppDomainModule>();
 
 var provider = builder.Configuration.RequireValue<DbProvider>("DbProvider");
-var appDescription = builder.ConfigureForCleanArchitecture(config =>
+switch (provider)
 {
-    config
-        .WithServiceName("EasyDesk.Sample.App")
-        .AddApiVersioning()
-        .AddMultitenancy(options => options
-            .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
-        .AddAuditing()
-        .AddAuthentication(options => options
-            .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration))
-            .AddApiKey())
-        .AddAuthorization(options => options.RoleBased(x => x
-            .WithStaticPermissions(PermissionSettings.RolesToPermissions)))
-        .AddLogging(options => options
-            .EnableRequestLogging()
-            .EnableResultLogging())
-        .AddReverseProxy()
-        .AddOpenApi()
-        .AddAsyncApi()
-        .AddSagas()
-        .AddCsvParsing()
-        .AddModule<SampleAppDomainModule>();
-
-    switch (provider)
-    {
-        case DbProvider.SqlServer:
-            config.AddSqlServerDataAccess<SqlServerSampleAppContext>(builder.Configuration.RequireConnectionString("SqlServer"), o =>
-            {
-                o.WithService<SampleAppContext>();
-            });
-            break;
-        case DbProvider.PostgreSql:
-            config.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(builder.Configuration.RequireConnectionString("PostgreSql"), o =>
-            {
-                o.WithService<SampleAppContext>();
-            });
-            break;
-        default:
-            throw new Exception($"Invalid DB provider: {provider}");
-    }
-
-    config.AddRebusMessaging(
-        "sample",
-        (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e),
-        options =>
+    case DbProvider.SqlServer:
+        builder.AddSqlServerDataAccess<SqlServerSampleAppContext>(builder.Configuration.RequireConnectionString("SqlServer"), o =>
         {
-            options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
-            options.FailuresOptions
-                .AddScheduledRetries(Retries.BackoffStrategy)
-                .AddDispatchAsFailure();
+            o.WithService<SampleAppContext>();
         });
+        break;
+    case DbProvider.PostgreSql:
+        builder.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(builder.Configuration.RequireConnectionString("PostgreSql"), o =>
+        {
+            o.WithService<SampleAppContext>();
+        });
+        break;
+    default:
+        throw new Exception($"Invalid DB provider: {provider}");
+}
 
-    config.ConfigureModule<ControllersModule>(m =>
+builder.AddRebusMessaging(
+    "sample",
+    (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e),
+    options =>
     {
-        var section = builder.Configuration.GetSectionAsOption("Pagination");
-        section.FlatMap(s => s.GetValueAsOption<int>("DefaultPageSize")).IfPresent(s => m.Options.DefaultPageSize = s);
-        section.FlatMap(s => s.GetValueAsOption<int>("MaxPageSize")).IfPresent(s => m.Options.MaxPageSize = s);
+        options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
+        options.FailuresOptions
+            .AddScheduledRetries(Retries.BackoffStrategy)
+            .AddDispatchAsFailure();
     });
+
+builder.ConfigureModule<ControllersModule>(m =>
+{
+    var section = builder.Configuration.GetSectionAsOption("Pagination");
+    section.FlatMap(s => s.GetValueAsOption<int>("DefaultPageSize")).IfPresent(s => m.Options.DefaultPageSize = s);
+    section.FlatMap(s => s.GetValueAsOption<int>("MaxPageSize")).IfPresent(s => m.Options.MaxPageSize = s);
 });
 
-var app = builder.Build();
+builder.ConfigureWebApplication(app =>
+{
+    app.UseReverseProxyModule();
+
+    app.UseHttpsRedirection();
+
+    app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+
+    app.UseOpenApiModule();
+
+    app.UseAsyncApiModule();
+
+    app.UseAuthentication();
+
+    app.MapControllers();
+});
+
+await builder.Run();
+
 if (provider == DbProvider.SqlServer)
 {
     // Required due to EF core bug.
@@ -115,19 +130,3 @@ await app.SetupDevelopment(async (services, logger) =>
     logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);
     services.LogForgedJwt(admin);
 });
-
-app.UseReverseProxyModule();
-
-app.UseHttpsRedirection();
-
-app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
-
-app.UseOpenApiModule();
-
-app.UseAsyncApiModule();
-
-app.UseAuthentication();
-
-app.MapControllers();
-
-app.Run();

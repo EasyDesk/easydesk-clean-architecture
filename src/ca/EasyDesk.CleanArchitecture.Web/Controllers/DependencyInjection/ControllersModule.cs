@@ -66,7 +66,7 @@ public class ControllersModule : AppModule
 
 public static class ControllersModuleExtension
 {
-    public static AppBuilder AddControllers(this AppBuilder builder, IHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
+    public static IAppBuilder AddControllers(this IAppBuilder builder, IHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
     {
         return builder.AddModule(new ControllersModule(environment, configure));
     }

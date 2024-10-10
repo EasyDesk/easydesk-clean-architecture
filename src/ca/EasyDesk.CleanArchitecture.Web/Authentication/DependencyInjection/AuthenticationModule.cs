@@ -48,7 +48,7 @@ public class AuthenticationModule : AppModule
 
 public static class AuthenticationModuleExtensions
 {
-    public static AppBuilder AddAuthentication(this AppBuilder builder, Action<AuthenticationModuleOptions> configure)
+    public static IAppBuilder AddAuthentication(this IAppBuilder builder, Action<AuthenticationModuleOptions> configure)
     {
         return builder.AddModule(new AuthenticationModule(configure));
     }

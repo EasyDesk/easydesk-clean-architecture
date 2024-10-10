@@ -45,7 +45,7 @@ public class MultitenancyModule : AppModule
 
 public static class MultitenancyModuleExtensions
 {
-    public static AppBuilder AddMultitenancy(this AppBuilder builder, Action<MultitenancyOptions>? configure = null)
+    public static IAppBuilder AddMultitenancy(this IAppBuilder builder, Action<MultitenancyOptions>? configure = null)
     {
         return builder.AddModule(new MultitenancyModule(configure));
     }

@@ -77,7 +77,7 @@ public class ApiVersioningModule : AppModule
 
 public static class ApiVersioningModuleExtensions
 {
-    public static AppBuilder AddApiVersioning(this AppBuilder builder, Action<ApiVersioningOptions>? configure = null)
+    public static IAppBuilder AddApiVersioning(this IAppBuilder builder, Action<ApiVersioningOptions>? configure = null)
     {
         return builder.AddModule(new ApiVersioningModule(configure));
     }

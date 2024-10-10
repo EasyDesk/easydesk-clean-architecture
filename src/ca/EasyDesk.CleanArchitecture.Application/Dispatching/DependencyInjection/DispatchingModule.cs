@@ -37,7 +37,7 @@ public class DispatchingModule : AppModule
 
 public static class DispatchingModuleExtensions
 {
-    public static AppBuilder AddDispatching(this AppBuilder builder, Action<PipelineBuilder>? configurePipeline = null)
+    public static IAppBuilder AddDispatching(this IAppBuilder builder, Action<PipelineBuilder>? configurePipeline = null)
     {
         return builder.AddModule(new DispatchingModule(configurePipeline));
     }

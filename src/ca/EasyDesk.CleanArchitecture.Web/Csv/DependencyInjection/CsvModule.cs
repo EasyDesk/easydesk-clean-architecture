@@ -41,7 +41,7 @@ public partial class CsvModule : AppModule
 
 public static class CsvModuleExtensions
 {
-    public static AppBuilder AddCsvParsing(this AppBuilder builder, CultureInfo? cultureInfo = null, Action<CsvConfiguration>? configure = null)
+    public static IAppBuilder AddCsvParsing(this IAppBuilder builder, CultureInfo? cultureInfo = null, Action<CsvConfiguration>? configure = null)
     {
         return builder.AddModule(new CsvModule(cultureInfo ?? CultureInfo.InvariantCulture, configure));
     }

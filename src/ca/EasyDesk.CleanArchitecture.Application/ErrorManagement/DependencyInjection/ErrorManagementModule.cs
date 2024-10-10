@@ -89,7 +89,7 @@ public class ErrorManagementModule : AppModule
 
 public static class ErrorManagementModuleExtensions
 {
-    public static AppBuilder AddErrorManagement(this AppBuilder builder)
+    public static IAppBuilder AddErrorManagement(this IAppBuilder builder)
     {
         return builder.AddModule(new ErrorManagementModule());
     }

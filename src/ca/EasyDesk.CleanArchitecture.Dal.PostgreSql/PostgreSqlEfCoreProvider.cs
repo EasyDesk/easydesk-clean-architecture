@@ -34,8 +34,8 @@ internal class PostgreSqlEfCoreProvider : IEfCoreProvider<Builder, Extension>
 
 public static class SqlServerExtensions
 {
-    public static AppBuilder AddPostgreSqlDataAccess<T>(
-        this AppBuilder builder,
+    public static IAppBuilder AddPostgreSqlDataAccess<T>(
+        this IAppBuilder builder,
         string connectionString,
         Action<EfCoreDataAccessOptions<T, Builder, Extension>>? configure = null)
         where T : AbstractDbContext

@@ -43,7 +43,7 @@ public class ValidationModule : AppModule
 
 public static class RequestValidationModuleExtensions
 {
-    public static AppBuilder AddValidation(this AppBuilder builder)
+    public static IAppBuilder AddValidation(this IAppBuilder builder)
     {
         return builder.AddModule(new ValidationModule());
     }

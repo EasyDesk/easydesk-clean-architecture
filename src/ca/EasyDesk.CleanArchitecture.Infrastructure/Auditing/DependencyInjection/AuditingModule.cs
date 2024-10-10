@@ -43,7 +43,7 @@ public class AuditingModule : AppModule
 
 public static class AuditingModuleExtensions
 {
-    public static AppBuilder AddAuditing(this AppBuilder builder)
+    public static IAppBuilder AddAuditing(this IAppBuilder builder)
     {
         return builder.AddModule(new AuditingModule());
     }

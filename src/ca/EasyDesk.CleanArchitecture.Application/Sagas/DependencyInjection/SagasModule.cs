@@ -73,7 +73,7 @@ public class SagasModule : AppModule
 
 public static class SagasModuleExtensions
 {
-    public static AppBuilder AddSagas(this AppBuilder builder)
+    public static IAppBuilder AddSagas(this IAppBuilder builder)
     {
         return builder.AddModule(new SagasModule());
     }

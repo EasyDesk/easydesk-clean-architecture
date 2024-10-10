@@ -39,7 +39,7 @@ public class JsonModule : AppModule
 
 public static class JsonModuleExtensions
 {
-    public static AppBuilder AddJsonSerialization(this AppBuilder builder, JsonSettingsConfigurator? configurator = null)
+    public static IAppBuilder AddJsonSerialization(this IAppBuilder builder, JsonSettingsConfigurator? configurator = null)
     {
         return builder.AddModule(new JsonModule(configurator));
     }

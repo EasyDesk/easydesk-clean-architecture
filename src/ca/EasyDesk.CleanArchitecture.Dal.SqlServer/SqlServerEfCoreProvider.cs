@@ -32,8 +32,8 @@ internal class SqlServerEfCoreProvider : IEfCoreProvider<Builder, Extension>
 
 public static class SqlServerExtensions
 {
-    public static AppBuilder AddSqlServerDataAccess<T>(
-        this AppBuilder builder,
+    public static IAppBuilder AddSqlServerDataAccess<T>(
+        this IAppBuilder builder,
         string connectionString,
         Action<EfCoreDataAccessOptions<T, Builder, Extension>>? configure = null)
         where T : AbstractDbContext
