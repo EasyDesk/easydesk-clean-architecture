@@ -17,7 +17,7 @@ namespace EasyDesk.CleanArchitecture.Web;
 
 public static partial class CleanArchitectureApp
 {
-    private const string ArgsSeparator = "--";
+    private const string ArgsSeparator = "---";
 
     private static readonly string[] _layerNames =
     [

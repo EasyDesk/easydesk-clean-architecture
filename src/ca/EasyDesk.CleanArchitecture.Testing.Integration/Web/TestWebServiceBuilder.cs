@@ -12,6 +12,7 @@ public sealed class TestWebServiceBuilder
     private Action<IDictionary<string, string?>>? _inMemoryConfig;
     private Action<IHostBuilder>? _configureHost;
     private Action<IWebHostBuilder>? _configureWebHost;
+    private Action<IHost>? _beforeStart;
 
     public TestWebServiceBuilder(Type startupAssemblyMarker)
     {
@@ -51,24 +52,35 @@ public sealed class TestWebServiceBuilder
     public TestWebServiceBuilder WithServices(Action<IServiceCollection> configure) =>
         ConfigureWebHost(builder => builder.ConfigureServices(configure));
 
+    public TestWebServiceBuilder BeforeStart(Action<IHost> action)
+    {
+        _beforeStart += action;
+        return this;
+    }
+
     public ITestWebService Build()
     {
         var testWebServiceType = typeof(TestWebService<>).MakeGenericType(_startupAssemblyMarker);
-        return (ITestWebService)Activator.CreateInstance(testWebServiceType, _configureHost, _configureWebHost)!;
+        return (ITestWebService)Activator.CreateInstance(testWebServiceType, _configureHost, _configureWebHost, _beforeStart)!;
     }
 
     private class TestWebService<T> : WebApplicationFactory<T>, ITestWebService
         where T : class
     {
-        private readonly Action<IHostBuilder> _configureHost;
-        private readonly Action<IWebHostBuilder> _configureWebHost;
+        private readonly Action<IHostBuilder>? _configureHost;
+        private readonly Action<IWebHostBuilder>? _configureWebHost;
+        private readonly Action<IHost>? _beforeStart;
 
-        public TestWebService(Action<IHostBuilder> configureHost, Action<IWebHostBuilder> configureWebHost)
+        public TestWebService(
+            Action<IHostBuilder>? configureHost,
+            Action<IWebHostBuilder>? configureWebHost,
+            Action<IHost>? beforeStart)
         {
             _configureHost = configureHost;
             _configureWebHost = configureWebHost;
             HttpClient = CreateClient();
             HttpClient.Timeout = Timeout.InfiniteTimeSpan;
+            _beforeStart = beforeStart;
         }
 
         public HttpClient HttpClient { get; }
@@ -76,7 +88,10 @@ public sealed class TestWebServiceBuilder
         protected override IHost CreateHost(IHostBuilder builder)
         {
             _configureHost?.Invoke(builder);
-            return base.CreateHost(builder);
+            var host = builder.Build();
+            _beforeStart?.Invoke(host);
+            host.Start();
+            return host;
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)

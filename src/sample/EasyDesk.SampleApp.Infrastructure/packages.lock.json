@@ -466,6 +466,11 @@
         "resolved": "1.2.0.556",
         "contentHash": "zvn9Mqs/ox/83cpYPignI8hJEM2A93s2HkHs8HYMOAQW0PkampyoErAiIyKxgTLqbbad29HX/shv/6LGSjPJNQ=="
       },
+      "System.CommandLine": {
+        "type": "Transitive",
+        "resolved": "2.0.0-beta4.22272.1",
+        "contentHash": "1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg=="
+      },
       "System.Configuration.ConfigurationManager": {
         "type": "Transitive",
         "resolved": "6.0.1",
@@ -656,7 +661,8 @@
           "EasyDesk.Commons": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[8.0.2, )",
           "NodaTime": "[3.1.12, )",
-          "Scrutor": "[5.0.1, )"
+          "Scrutor": "[5.0.1, )",
+          "System.CommandLine": "[2.0.0-beta4.22272.1, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {

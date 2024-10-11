@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
@@ -9,6 +10,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.Commons.Utils;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Npgsql;
 using Testcontainers.MsSql;
@@ -49,6 +51,8 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
 
         builder.WithConfiguration("DbProvider", provider.ToString());
         _providerConfigs[provider](builder);
+
+        builder.ConfigureWebService(web => web.BeforeStart(host => host.Services.GetRequiredService<MigrationsService>().MigrateSync()));
     }
 
     protected override WebServiceFixtureSeeder<SampleAppTestsFixture, SampleSeeder.Data> CreateSeeder(SampleAppTestsFixture fixture) =>

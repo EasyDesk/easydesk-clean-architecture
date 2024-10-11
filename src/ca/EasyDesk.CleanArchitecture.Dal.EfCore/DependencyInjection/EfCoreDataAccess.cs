@@ -16,11 +16,10 @@ using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
-using EasyDesk.Commons.Tasks;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System.CommandLine;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
@@ -53,6 +52,17 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
         services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
 
         services.AddScoped(provider => new MigrationsService(provider, _registeredDbContextTypes));
+
+        services.AddScoped(p => MigrationCommand(p.GetRequiredService<MigrationsService>()));
+    }
+
+    private Command MigrationCommand(MigrationsService migrationsService)
+    {
+        var command = new Command("migrate", $"Apply migrations to the database");
+        var syncOption = new Option<bool>(aliases: ["--sync", "--synchronous"], getDefaultValue: () => false, description: "Apply migrations synchronously");
+        command.AddOption(syncOption);
+        command.SetHandler(migrationsService.Migrate, syncOption);
+        return command;
     }
 
     public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
@@ -143,17 +153,5 @@ public static class EfCoreDataAccessExtensions
         configure?.Invoke(options);
         var dataAccessImplementation = new EfCoreDataAccess<T, TBuilder, TExtension>(options);
         return builder.AddDataAccess(dataAccessImplementation);
-    }
-
-    public static async Task MigrateSync(this WebApplication app) =>
-        await app.MigrateUsingRunner(context => Task.Run(() => context.Database.Migrate()));
-
-    public static async Task MigrateAsync(this WebApplication app) =>
-        await app.MigrateUsingRunner(context => context.Database.MigrateAsync());
-
-    private static async Task MigrateUsingRunner(this WebApplication app, AsyncAction<DbContext> runner)
-    {
-        await using var scope = app.Services.CreateAsyncScope();
-        await scope.ServiceProvider.GetRequiredService<MigrationsService>().Migrate(runner);
     }
 }

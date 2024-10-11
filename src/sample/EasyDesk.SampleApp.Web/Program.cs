@@ -1,9 +1,7 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Logging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
-using EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.Dal.SqlServer;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -19,12 +17,9 @@ using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Csv.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Proxy.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Seeding;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Extensions.Configuration;
 using EasyDesk.SampleApp.Application.Authorization;
-using EasyDesk.SampleApp.Application.V_1_0.Commands;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.DependencyInjection;
@@ -110,23 +105,13 @@ builder.ConfigureWebApplication(app =>
 
 await builder.Run();
 
-if (provider == DbProvider.SqlServer)
-{
-    // Required due to EF core bug.
-    await app.MigrateSync();
-}
-else
-{
-    await app.MigrateAsync();
-}
-
-await app.SetupDevelopment(async (services, logger) =>
-{
-    var admin = Agent.FromSingleIdentity(Realms.MainRealm, IdentityId.FromRandomGuid());
-    var tenantId = TenantId.FromRandomGuid();
-    var dispatcher = services.SetupSelfScopedDispatcher(context: new ContextInfo.AuthenticatedRequest(admin), tenantId);
-    await dispatcher.Dispatch(new CreateTenant(tenantId));
-    await dispatcher.Dispatch(new AddAdmin());
-    logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);
-    services.LogForgedJwt(admin);
-});
+//await app.SetupDevelopment(async (services, logger) =>
+//{
+//    var admin = Agent.FromSingleIdentity(Realms.MainRealm, IdentityId.FromRandomGuid());
+//    var tenantId = TenantId.FromRandomGuid();
+//    var dispatcher = services.SetupSelfScopedDispatcher(context: new ContextInfo.AuthenticatedRequest(admin), tenantId);
+//    await dispatcher.Dispatch(new CreateTenant(tenantId));
+//    await dispatcher.Dispatch(new AddAdmin());
+//    logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);
+//    services.LogForgedJwt(admin);
+//});

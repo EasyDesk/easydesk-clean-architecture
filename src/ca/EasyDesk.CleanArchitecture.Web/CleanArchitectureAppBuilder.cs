@@ -2,9 +2,11 @@
 using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.Metrics;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.CommandLine;
 using System.Reflection;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
@@ -83,12 +85,21 @@ public sealed class CleanArchitectureAppBuilder : IAppBuilder
 
         _configureWebApplication?.Invoke(app);
 
-        if (_args.IsEmpty())
-        {
-            app.Run();
-            return;
-        }
+        await using var scope = app.Services.CreateAsyncScope();
 
-        // TODO: run command based on args.
+        var commands = scope.ServiceProvider.GetServices<Command>();
+
+        var rootCommand = CreateRootCommand(app);
+
+        commands.ForEach(rootCommand.Add);
+
+        await rootCommand.InvokeAsync(_args);
+    }
+
+    private RootCommand CreateRootCommand(WebApplication app)
+    {
+        var command = new RootCommand("Start the service");
+        command.SetHandler(app.Run);
+        return command;
     }
 }
