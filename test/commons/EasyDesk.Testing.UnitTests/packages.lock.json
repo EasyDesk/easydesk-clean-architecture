@@ -88,8 +88,8 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "15.5.1",
-        "contentHash": "8j7Ke8odgqsflzwhdNYek6XHCGAL8sACuxJbzm7luvKrPubLPbTwppidvHe++rbJoVBh9Jj2BiF8b00U+TT35Q==",
+        "resolved": "15.5.2",
+        "contentHash": "jvHcJcU3uc43rPHM+rfOPZGY2xQapE0xV0qJQ/OY7/U+aFCi2uYRwMh/EdEUD6l8uyKS1nv34gVnEXIlOmHHVg==",
         "dependencies": {
           "EmptyFiles": "8.4.0",
           "System.Management": "8.0.0"
@@ -210,11 +210,11 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "26.6.0",
-        "contentHash": "n1lR8znqqFqvx6EA8M602B7TYm7RDk9QlFb77l2moCqIZ9/sKm2wKijmJlgYR2KueQjt3eUvm7nWKJjjdPQX9Q==",
+        "resolved": "27.0.0",
+        "contentHash": "OmF0fxjqEMS4g8Uhk/OEYpgVN06sWzAeP//iaETOJlbGQSZyrI/LLyXm1w3UXxuN4hlaLyWvqxfJDR6PtsT91w==",
         "dependencies": {
           "Argon": "0.21.0",
-          "DiffEngine": "15.5.1",
+          "DiffEngine": "15.5.2",
           "SimpleInfoName": "2.3.0",
           "System.IO.Hashing": "8.0.0"
         }
@@ -289,7 +289,7 @@
           "Microsoft.Extensions.DependencyInjection": "[8.0.1, )",
           "NSubstitute": "[5.1.0, )",
           "Shouldly": "[4.2.1, )",
-          "Verify": "[26.6.0, )",
+          "Verify": "[27.0.0, )",
           "Verify.NewtonsoftJson": "[1.1.0, )",
           "Verify.NodaTime": "[2.2.0, )"
         }
