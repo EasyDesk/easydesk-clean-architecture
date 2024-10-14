@@ -593,11 +593,8 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.1.12",
-        "contentHash": "nDcUbG0jiEXmV8cOz7V8GnUKlmPJjqZm/R+E2JNnUSdlMoaQ19xSU8GXFLReGs/Nt8xdBfA8XfO77xVboWO1Vg==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
-        }
+        "resolved": "3.2.0",
+        "contentHash": "yoRA3jEJn8NM0/rQm78zuDNPA3DonNSZdsorMUj+dltc1D+/Lc5h9YXGqbEEZozMGr37lAoYkcSM/KjTVqD0ow=="
       },
       "NodaTime.Serialization.JsonNet": {
         "type": "Transitive",
@@ -1094,7 +1091,7 @@
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[8.0.2, )",
-          "NodaTime": "[3.1.12, )",
+          "NodaTime": "[3.2.0, )",
           "Scrutor": "[5.0.1, )",
           "System.CommandLine": "[2.0.0-beta4.22272.1, )"
         }
@@ -1104,7 +1101,7 @@
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
           "FluentValidation": "[11.10.0, )",
-          "NodaTime": "[3.1.12, )"
+          "NodaTime": "[3.2.0, )"
         }
       },
       "easydesk.cleanarchitecture.infrastructure": {
