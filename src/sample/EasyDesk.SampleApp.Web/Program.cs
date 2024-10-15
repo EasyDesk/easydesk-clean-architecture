@@ -34,7 +34,7 @@ builder
     .AddMultitenancy(options => options
         .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
     .AddAuditing()
-    .AddAuthentication(options => options
+    .AddAuthentication(builder.Environment, options => options
         .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration))
         .AddApiKey())
     .AddAuthorization(options => options.RoleBased(x => x
@@ -47,8 +47,12 @@ builder
     .AddAsyncApi()
     .AddSagas()
     .AddCsvParsing()
-    .AddModule<SampleAppDomainModule>()
-    .AddModule<SampleAppDevelopmentModule>();
+    .AddModule<SampleAppDomainModule>();
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.AddModule<SampleAppDevelopmentModule>();
+}
 
 var provider = builder.Configuration.RequireValue<DbProvider>("DbProvider");
 switch (provider)

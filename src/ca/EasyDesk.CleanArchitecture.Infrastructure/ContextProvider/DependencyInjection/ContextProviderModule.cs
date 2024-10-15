@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.AutoScopingDispatchers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -37,6 +38,7 @@ public class ContextProviderModule : AppModule
         {
             services.AddScoped<BasicContextProvider>();
             services.AddScoped(sp => new OverridableContextProvider(sp.GetRequiredService<BasicContextProvider>()));
+            services.AddScoped<AutoScopingDispatcherFactory>();
             services.AddScoped<IContextProvider>(sp => sp.GetRequiredService<OverridableContextProvider>());
         }
         else

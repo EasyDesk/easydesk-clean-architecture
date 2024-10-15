@@ -1,16 +1,20 @@
 ﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 
 public class AuthenticationModule : AppModule
 {
-    public AuthenticationModule(Action<AuthenticationModuleOptions> configure)
+    private readonly IHostEnvironment _environment;
+
+    public AuthenticationModule(IHostEnvironment environment, Action<AuthenticationModuleOptions> configure)
     {
         var options = new AuthenticationModuleOptions();
         configure(options);
@@ -19,6 +23,7 @@ public class AuthenticationModule : AppModule
             throw new Exception("No authentication scheme was specified");
         }
         Options = options;
+        _environment = environment;
     }
 
     public AuthenticationModuleOptions Options { get; }
@@ -43,14 +48,19 @@ public class AuthenticationModule : AppModule
             .AddFallbackPolicy("DEFAULT", new AuthorizationPolicyBuilder(Options.Schemes.Keys.ToArray())
                 .RequireAssertion(_ => true)
                 .Build());
+
+        if (_environment.IsDevelopment())
+        {
+            services.AddScoped<JwtLogger>();
+        }
     }
 }
 
 public static class AuthenticationModuleExtensions
 {
-    public static IAppBuilder AddAuthentication(this IAppBuilder builder, Action<AuthenticationModuleOptions> configure)
+    public static IAppBuilder AddAuthentication(this IAppBuilder builder, IHostEnvironment environment, Action<AuthenticationModuleOptions> configure)
     {
-        return builder.AddModule(new AuthenticationModule(configure));
+        return builder.AddModule(new AuthenticationModule(environment, configure));
     }
 
     public static bool HasAuthentication(this AppDescription app) => app.HasModule<AuthenticationModule>();

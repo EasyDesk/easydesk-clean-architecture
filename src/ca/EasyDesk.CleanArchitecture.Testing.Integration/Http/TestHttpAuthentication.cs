@@ -7,6 +7,7 @@ using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
@@ -40,5 +41,5 @@ public static class TestHttpAuthentication
     private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IServiceProvider serviceProvider, string schemeName) =>
         new JwtHttpAuthentication(
             serviceProvider.GetRequiredService<JwtFacade>(),
-            serviceProvider.GetJwtConfigurationFromAuthScheme(schemeName));
+            serviceProvider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(schemeName).Configuration.ToJwtGenerationConfiguration());
 }

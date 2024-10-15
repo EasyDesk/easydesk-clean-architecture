@@ -3,7 +3,7 @@ using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Web.Seeding;
+namespace EasyDesk.CleanArchitecture.Infrastructure.AutoScopingDispatchers;
 
 internal class AutoScopingDispatcher : IDispatcher
 {

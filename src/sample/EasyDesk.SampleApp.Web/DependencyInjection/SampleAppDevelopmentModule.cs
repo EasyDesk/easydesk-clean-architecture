@@ -13,7 +13,7 @@ public class SampleAppDevelopmentModule : AppModule
 
     private Command Seed(DevelopmentSeeder seeder)
     {
-        var developmentCommand = new Command("develop", description: "Seed the database with development data.");
+        var developmentCommand = new Command("seed-dev", description: "Seed the database with development data.");
         developmentCommand.SetHandler(seeder.Seed);
         return developmentCommand;
     }
