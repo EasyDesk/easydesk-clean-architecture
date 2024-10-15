@@ -14,7 +14,10 @@ public class DevelopmentSeeder
     private readonly JwtLogger _jwtLogger;
     private readonly ILogger<DevelopmentSeeder> _logger;
 
-    public DevelopmentSeeder(AutoScopingDispatcherFactory dispatcherFactory, JwtLogger jwtLogger, ILogger<DevelopmentSeeder> logger)
+    public DevelopmentSeeder(
+        AutoScopingDispatcherFactory dispatcherFactory,
+        JwtLogger jwtLogger,
+        ILogger<DevelopmentSeeder> logger)
     {
         _dispatcherFactory = dispatcherFactory;
         _jwtLogger = jwtLogger;

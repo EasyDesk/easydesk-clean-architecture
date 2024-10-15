@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.Commons.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +24,7 @@ public class AutoScopingDispatcherFactory
             provider.OverrideTenantId(tenantId.AsOption().Map(x => x.Value));
         });
 
-    public IDispatcher CreateAutoScopingDispatcher(Action<IServiceProvider> setupScope) =>
+    private IDispatcher CreateAutoScopingDispatcher(Action<IServiceProvider> setupScope) =>
         new AutoScopingDispatcher(_services, x =>
         {
             setupScope(x);

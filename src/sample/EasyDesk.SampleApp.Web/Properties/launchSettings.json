@@ -2,7 +2,6 @@
   "profiles": {
     "EasyDesk.SampleApp.Web (PostgreSql)": {
       "commandName": "Project",
-      "launchBrowser": false,
       "launchUrl": "openapi",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
@@ -13,11 +12,32 @@
     },
     "EasyDesk.SampleApp.Web (SqlServer)": {
       "commandName": "Project",
-      "launchBrowser": false,
       "launchUrl": "openapi",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DBPROVIDER": "SqlServer"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "dotnetRunMessages": true
+    },
+    "EasyDesk.SampleApp.Web Migrate (PostgresSql)": {
+      "commandName": "Project",
+      "commandLineArgs": "migrate",
+      "launchUrl": "openapi",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DBPROVIDER": "PostgreSql"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "dotnetRunMessages": true
+    },
+    "EasyDesk.SampleApp.Web Seed (PostgresSql)": {
+      "commandName": "Project",
+      "commandLineArgs": "seed-dev",
+      "launchUrl": "openapi",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DBPROVIDER": "PostgreSql"
       },
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "dotnetRunMessages": true
