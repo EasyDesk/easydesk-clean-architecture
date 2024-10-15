@@ -104,14 +104,3 @@ builder.ConfigureWebApplication(app =>
 });
 
 await builder.Run();
-
-//await app.SetupDevelopment(async (services, logger) =>
-//{
-//    var admin = Agent.FromSingleIdentity(Realms.MainRealm, IdentityId.FromRandomGuid());
-//    var tenantId = TenantId.FromRandomGuid();
-//    var dispatcher = services.SetupSelfScopedDispatcher(context: new ContextInfo.AuthenticatedRequest(admin), tenantId);
-//    await dispatcher.Dispatch(new CreateTenant(tenantId));
-//    await dispatcher.Dispatch(new AddAdmin());
-//    logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);
-//    services.LogForgedJwt(admin);
-//});

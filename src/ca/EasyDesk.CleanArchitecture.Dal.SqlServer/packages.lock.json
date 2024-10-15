@@ -465,11 +465,8 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.1.12",
-        "contentHash": "nDcUbG0jiEXmV8cOz7V8GnUKlmPJjqZm/R+E2JNnUSdlMoaQ19xSU8GXFLReGs/Nt8xdBfA8XfO77xVboWO1Vg==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
-        }
+        "resolved": "3.2.0",
+        "contentHash": "yoRA3jEJn8NM0/rQm78zuDNPA3DonNSZdsorMUj+dltc1D+/Lc5h9YXGqbEEZozMGr37lAoYkcSM/KjTVqD0ow=="
       },
       "NodaTime.Serialization.JsonNet": {
         "type": "Transitive",
@@ -482,8 +479,8 @@
       },
       "Rebus": {
         "type": "Transitive",
-        "resolved": "8.6.0",
-        "contentHash": "J/yY3BRkjhgIVczGEGxU2pRvXZPkCqdVAflcanrsd5gY8CZcCOiYIzKJLbtCBrOlrDeWWhZXaWAczIrHeuZYoQ==",
+        "resolved": "8.6.1",
+        "contentHash": "eFqnydwcXK3FdgtQhpfc2VWKSGmCL5PCUQTuYqBbvt9N+FrhKkzh33oMMl1+9E2PF7vFUfgM8TOQrpLiiKmjow==",
         "dependencies": {
           "Newtonsoft.Json": "[13.0.1, 14.0.0)"
         }
@@ -779,7 +776,7 @@
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[8.0.2, )",
-          "NodaTime": "[3.1.12, )",
+          "NodaTime": "[3.2.0, )",
           "Scrutor": "[5.0.1, )",
           "System.CommandLine": "[2.0.0-beta4.22272.1, )"
         }
@@ -789,7 +786,7 @@
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
           "FluentValidation": "[11.10.0, )",
-          "NodaTime": "[3.1.12, )"
+          "NodaTime": "[3.2.0, )"
         }
       },
       "easydesk.cleanarchitecture.infrastructure": {
@@ -799,7 +796,7 @@
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[8.0.10, )",
-          "Rebus": "[8.6.0, )",
+          "Rebus": "[8.6.1, )",
           "Rebus.Microsoft.Extensions.Logging": "[5.0.0, )",
           "Rebus.ServiceProvider": "[10.2.0, )",
           "System.IdentityModel.Tokens.Jwt": "[8.1.2, )"
