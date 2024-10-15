@@ -47,7 +47,8 @@ builder
     .AddAsyncApi()
     .AddSagas()
     .AddCsvParsing()
-    .AddModule<SampleAppDomainModule>();
+    .AddModule<SampleAppDomainModule>()
+    .AddModule<SampleAppDevelopmentModule>();
 
 var provider = builder.Configuration.RequireValue<DbProvider>("DbProvider");
 switch (provider)
