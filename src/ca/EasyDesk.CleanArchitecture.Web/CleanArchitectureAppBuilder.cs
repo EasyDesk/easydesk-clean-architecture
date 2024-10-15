@@ -1,4 +1,5 @@
-﻿using EasyDesk.Commons.Collections;
+﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +11,7 @@ using System.CommandLine;
 using System.Reflection;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
-namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+namespace EasyDesk.CleanArchitecture.Web;
 
 public sealed class CleanArchitectureAppBuilder : IAppBuilder
 {

@@ -4,7 +4,6 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement.DependencyInjection
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
-using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.Commons.Collections;
@@ -34,10 +33,10 @@ public static partial class CleanArchitectureApp
         var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
         var assemblies = _layerNames.SelectMany(layer => LoadAssemblyIfPresent($"{assemblyPrefix}.{layer}"));
 
-        var (commandArgs, webApplicationArgs) = Split(args, ArgsSeparator);
-        var builder = WebApplication.CreateBuilder(webApplicationArgs);
+        var (command, configurationArgs) = SplitArgs(args, ArgsSeparator);
+        var builder = WebApplication.CreateBuilder(configurationArgs);
 
-        return new CleanArchitectureAppBuilder(assemblyPrefix, commandArgs, builder)
+        return new CleanArchitectureAppBuilder(assemblyPrefix, command, builder)
             .Also(x => x
                 .WithAssemblies(assemblies)
                 .AddControllers(builder.Environment)
@@ -50,10 +49,20 @@ public static partial class CleanArchitectureApp
                 .AddErrorManagement());
     }
 
-    private static (string[] Before, string[] After) Split(string[] args, string separator)
+    private static (string[] Command, string[] ConfigurationArgs) SplitArgs(string[] args, string separator)
     {
+        if (args is [var firstArg, ..] && IsConfigurationArg(firstArg))
+        {
+            return ([], args);
+        }
+
         var index = Array.IndexOf(args, separator);
         return index >= 0 ? (args[0..index], args[(index + 1)..]) : (args, []);
+    }
+
+    private static bool IsConfigurationArg(string arg)
+    {
+        return CommandLineConfigurationRegex().Match(arg).Success;
     }
 
     private static Option<Assembly> LoadAssemblyIfPresent(string name)
@@ -70,4 +79,7 @@ public static partial class CleanArchitectureApp
 
     [GeneratedRegex("^(.+)\\.Web$")]
     private static partial Regex WebAssemblyRegex();
+
+    [GeneratedRegex("^-|^/|.=")]
+    private static partial Regex CommandLineConfigurationRegex();
 }
