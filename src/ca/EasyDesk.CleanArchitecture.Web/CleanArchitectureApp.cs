@@ -33,10 +33,10 @@ public static partial class CleanArchitectureApp
         var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
         var assemblies = _layerNames.SelectMany(layer => LoadAssemblyIfPresent($"{assemblyPrefix}.{layer}"));
 
-        var (command, configurationArgs) = SplitArgs(args, ArgsSeparator);
+        var (commandArgs, configurationArgs) = SplitArgs(args);
         var builder = WebApplication.CreateBuilder(configurationArgs);
 
-        return new CleanArchitectureAppBuilder(assemblyPrefix, command, builder)
+        return new CleanArchitectureAppBuilder(assemblyPrefix, commandArgs, builder)
             .Also(x => x
                 .WithAssemblies(assemblies)
                 .AddControllers(builder.Environment)
@@ -49,14 +49,14 @@ public static partial class CleanArchitectureApp
                 .AddErrorManagement());
     }
 
-    private static (string[] Command, string[] ConfigurationArgs) SplitArgs(string[] args, string separator)
+    private static (string[] CommandArgs, string[] ConfigurationArgs) SplitArgs(string[] args)
     {
         if (args is [var firstArg, ..] && IsConfigurationArg(firstArg))
         {
             return ([], args);
         }
 
-        var index = Array.IndexOf(args, separator);
+        var index = Array.IndexOf(args, ArgsSeparator);
         return index >= 0 ? (args[0..index], args[(index + 1)..]) : (args, []);
     }
 
