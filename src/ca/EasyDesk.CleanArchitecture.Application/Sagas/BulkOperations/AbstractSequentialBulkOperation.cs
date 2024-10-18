@@ -73,7 +73,7 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
                 .ThenMap(rs => new BulkOperationState<TResult, TWork>(rs.Item1, rs.Item2)))
             .HandleWith<TSelf>((c, _, s) => c.Start(s));
 
-        saga.OnRequest<TBatchCommand>()
+        saga.OnRequest<TBatchCommand, Nothing>()
             .CorrelateWith(_ => Id)
             .HandleWith<TSelf>((c, b, s) => c.Handle(b, s));
     }

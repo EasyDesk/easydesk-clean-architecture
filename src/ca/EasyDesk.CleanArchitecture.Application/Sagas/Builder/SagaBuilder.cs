@@ -12,12 +12,24 @@ public sealed class SagaBuilder<TId, TState>
         _sink = sink;
     }
 
-    public SagaCorrelationSelector<SagaRequestHandlerSelector<T, R, TId, TState>, T, TId> OnRequest<T, R>() where T : IDispatchable<R> =>
-        new(correlation => new(_sink, correlation));
+    public SagaCorrelationSelector<T, R, TId, TState> OnRequest<T, R>() where T : IDispatchable<R> =>
+        new(c => _sink.RegisterRequestConfiguration(c));
 
-    public SagaCorrelationSelector<SagaRequestHandlerSelector<T, TId, TState>, T, TId> OnRequest<T>() where T : IDispatchable<Nothing> =>
-        new(correlation => new(_sink, correlation));
+    public SagaCorrelationSelector<T, Nothing, TId, TState> OnRequest<T>() where T : IDispatchable<Nothing> =>
+        OnRequest<T, Nothing>();
 
-    public SagaCorrelationSelector<SagaEventHandlerSelector<T, TId, TState>, T, TId> OnEvent<T>() where T : DomainEvent =>
-        new(correlation => new(_sink, correlation));
+    public SagaCorrelationSelector<T, Nothing, TId, TState> OnEvent<T>() where T : DomainEvent =>
+        new(c => _sink.RegisterEventConfiguration(c));
+}
+
+public class SagaCorrelationSelector<T, R, TId, TState>
+{
+    private readonly Action<SagaStepConfiguration<T, R, TId, TState>> _registerHandler;
+
+    internal SagaCorrelationSelector(Action<SagaStepConfiguration<T, R, TId, TState>> registerHandler)
+    {
+        _registerHandler = registerHandler;
+    }
+
+    public SagaHandlerSelector<T, R, TId, TState> CorrelateWith(Func<T, TId> correlationProperty) => new(_registerHandler, correlationProperty);
 }

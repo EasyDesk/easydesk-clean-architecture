@@ -13,15 +13,3 @@ internal class SagaRequestHandler<T, R, TId, TState> : AbstractSagaHandler<T, R,
     {
     }
 }
-
-internal class SagaRequestHandler<T, TId, TState> : AbstractSagaHandler<T, TId, TState>, IHandler<T>
-    where T : IDispatchable<Nothing>
-{
-    public SagaRequestHandler(
-        ISagaCoordinator<TId, TState> coordinator,
-        IServiceProvider serviceProvider,
-        SagaStepConfiguration<T, TId, TState> configuration)
-        : base(coordinator, serviceProvider, configuration)
-    {
-    }
-}

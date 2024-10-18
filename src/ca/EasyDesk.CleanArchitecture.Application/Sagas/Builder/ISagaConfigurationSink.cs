@@ -8,9 +8,6 @@ internal interface ISagaConfigurationSink<TId, TState>
     void RegisterRequestConfiguration<T, R>(SagaStepConfiguration<T, R, TId, TState> configuration)
         where T : IDispatchable<R>;
 
-    void RegisterRequestConfiguration<T>(SagaStepConfiguration<T, TId, TState> configuration)
-        where T : IDispatchable<Nothing>;
-
-    void RegisterEventConfiguration<T>(SagaStepConfiguration<T, TId, TState> configuration)
+    void RegisterEventConfiguration<T>(SagaStepConfiguration<T, Nothing, TId, TState> configuration)
         where T : DomainEvent;
 }
