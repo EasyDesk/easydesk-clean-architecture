@@ -13,9 +13,13 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.CommandLine;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 
@@ -43,6 +47,7 @@ public class OpenApiModule : AppModule
             _options.ConfigureSwagger?.Invoke(options);
         });
         services.Configure<SwaggerUIOptions>(c => c.DocumentTitle = $"{app.Name} - OpenAPI");
+        services.AddSingleton(sp => OpenApiCommand(sp.GetRequiredService<ISwaggerProvider>(), sp.GetRequiredService<IOptions<SwaggerGenOptions>>().Value));
     }
 
     private void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)
@@ -130,6 +135,52 @@ public class OpenApiModule : AppModule
         {
             auth.Options.Schemes.ForEach(scheme => scheme.Value.ConfigureOpenApi(scheme.Key, options));
         });
+    }
+
+    private Command OpenApiCommand(ISwaggerProvider swaggerProvider, SwaggerGenOptions swaggerGenOptions)
+    {
+        var command = new Command("openapi");
+        var hostOption = new Option<string?>("--host", () => null, "Sets the host value in the OpenApi document");
+        var basePathOption = new Option<string?>("--base-path", () => null, "Sets the basePath value in the OpenApi document");
+        var existingDocumentNames = swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Keys;
+        var documentNameOption = new Option<string?>(
+            "--document",
+            result =>
+            {
+                if (result.Tokens.Count == 0)
+                {
+                    result.ErrorMessage = "The document name is required";
+                    return string.Empty;
+                }
+                var value = result.Tokens.Single().Value;
+                if (!existingDocumentNames.Contains(value))
+                {
+                    result.ErrorMessage = $"The document '{value}' does not exist";
+                    return string.Empty;
+                }
+                return value;
+            },
+            isDefault: true,
+            description: "The name of the document to generate");
+        var formatOption = new Option<OpenApiFormat>("--format", () => OpenApiFormat.Json, "The format of the output (Json or Yaml)");
+
+        command.AddOption(documentNameOption);
+        command.AddOption(hostOption);
+        command.AddOption(basePathOption);
+        command.AddOption(formatOption);
+        command.SetHandler(
+            (documentName, host, basePath, format) =>
+            {
+                var doc = swaggerProvider.GetSwagger(documentName, host, basePath);
+                var stream = Console.OpenStandardOutput();
+                doc.Serialize(stream, OpenApiSpecVersion.OpenApi3_0, format);
+            },
+            documentNameOption,
+            hostOption,
+            basePathOption,
+            formatOption);
+
+        return command;
     }
 }
 
