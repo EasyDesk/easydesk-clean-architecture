@@ -17,11 +17,11 @@ public record ErrorDto(string Code, string Detail, object Meta)
     public static ErrorDto FromError(Error error) => error switch
     {
         ApplicationError e => new(
-            Code: e.GetType().Name.RemoveSuffix("Dto").RemoveSuffix("Error"),
+            Code: GetErrorCodeFromApplicationErrorType(e.GetType()),
             Detail: e.GetDetail(),
             Meta: e),
         DomainError => new(
-            Code: $"DomainError.{error.GetType().Name}",
+            Code: GetErrorCodeFromDomainErrorType(error.GetType()),
             Detail: ConvertPascalCaseToHumanReadable(error.GetType().Name),
             Meta: error),
         _ => new(
@@ -51,4 +51,10 @@ public record ErrorDto(string Code, string Detail, object Meta)
         stringBuilder.Append(charArray[^1]);
         return stringBuilder.ToString();
     }
+
+    public static string GetErrorCodeFromApplicationErrorType(Type errorType) =>
+        errorType.Name.RemoveSuffix("Dto").RemoveSuffix("Error");
+
+    public static string GetErrorCodeFromDomainErrorType(Type domainErrorType) =>
+        $"DomainError.{domainErrorType.Name}";
 }

@@ -80,6 +80,8 @@ public sealed class CleanArchitectureAppBuilder : IAppBuilder
     {
         var appDescription = new AppDescription(_name, _modules, _assemblies);
 
+        _applicationBuilder.Services.AddSingleton(appDescription);
+
         appDescription.ConfigureServices(_applicationBuilder.Services);
 
         var app = _applicationBuilder.Build();
