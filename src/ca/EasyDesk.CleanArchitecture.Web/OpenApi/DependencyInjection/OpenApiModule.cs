@@ -75,6 +75,7 @@ public class OpenApiModule : AppModule
     {
         options.SchemaFilter<OptionSchemaFilter>();
         options.SchemaFilter<ErrorCodeSchemaFilter>();
+        options.OperationFilter<BadRequestOperationFilter>();
         options.SupportNonNullableReferenceTypes();
         app.GetModule<ApiVersioningModule>().Match(
             some: m => SetupApiVersionedDocs(m, app, options),
