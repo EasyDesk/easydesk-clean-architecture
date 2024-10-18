@@ -14,6 +14,13 @@ public abstract record AbstractBulkOperationCommand : IIncomingCommand, IOutgoin
 
 public record BulkOperationState<R, S>(R Result, S RemainingWork);
 
+public record BulkConcurrencyError(string OperationType) : ApplicationError
+{
+    public override string GetDetail() => $"Another bulk operation of type {OperationType} is already in progress.";
+
+    public static BulkConcurrencyError FromType<T>() => new(typeof(T).Name);
+}
+
 public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TResult, TWork, TBatchCommand> :
     ISagaController<string, BulkOperationState<TResult, TWork>>
     where TStartCommand : IDispatchable<TResult>
@@ -31,7 +38,7 @@ public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TRes
     {
         if (!context.IsNew)
         {
-            return Errors.Generic("BulkConcurrency", "Another bulk operation of type {operationType} is already in progress.", typeof(TSelf).Name);
+            return BulkConcurrencyError.FromType<TSelf>();
         }
         return await RequestNextBatchComputation(context);
     }

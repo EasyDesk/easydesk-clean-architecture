@@ -28,8 +28,7 @@ public static class ActionResults
         UnknownAgentError => controller.Unauthorized(body),
         ForbiddenError => Forbidden(body),
         ApplicationError
-            or DomainError
-            or GenericError => controller.BadRequest(body),
+            or DomainError => controller.BadRequest(body),
         _ => InternalServerError(body),
     };
 }

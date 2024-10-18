@@ -6,6 +6,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas.Builder;
 
+public record InvalidSagaInitializerType(string TypeName) : ApplicationError
+{
+    public override string GetDetail() => $"Unable to start saga with event of type {TypeName}";
+
+    public static InvalidSagaInitializerType FromType<T>() => new(typeof(T).Name);
+}
+
 public class SagaEventHandlerSelector<T, TId, TState> : SagaHandlerSelector<SagaEventHandlerSelector<T, TId, TState>, T, TId, TState>
     where T : DomainEvent
 {
@@ -16,7 +23,7 @@ public class SagaEventHandlerSelector<T, TId, TState> : SagaHandlerSelector<Saga
 
     public override void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<Nothing>> handler)
     {
-        var initializer = Initializer.OrElse((_, _, _) => Task.FromResult(Failure<TState>(Errors.Generic("Unable to start saga with event of type {eventType}", typeof(T).Name))));
+        var initializer = Initializer.OrElse((_, _, _) => Task.FromResult(Failure<TState>(InvalidSagaInitializerType.FromType<T>())));
         Sink.RegisterEventConfiguration<T>(new(CorrelationProperty, handler, initializer, IgnoringClosedSaga));
     }
 

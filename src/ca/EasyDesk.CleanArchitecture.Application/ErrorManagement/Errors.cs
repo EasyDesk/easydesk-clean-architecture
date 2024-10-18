@@ -18,6 +18,4 @@ public static class Errors
 
     public static InvalidInputError InvalidInput(string propertyName, string errorCode, string errorMessage, IFixedMap<string, object>? parameters = null) =>
         new(propertyName, errorCode, errorMessage, parameters ?? Map<string, object>());
-
-    public static GenericError Generic(string code, string message, params object[] args) => GenericError.Create(code, message, args);
 }

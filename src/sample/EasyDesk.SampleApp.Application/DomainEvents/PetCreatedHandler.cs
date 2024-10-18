@@ -6,6 +6,11 @@ using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate.Events;
 
 namespace EasyDesk.SampleApp.Application.DomainEvents;
 
+public record PetCreatedError(TenantInfo Tenant, TenantInfo ContextTenant) : ApplicationError
+{
+    public override string GetDetail() => $"Domain handler tenant {Tenant} doesn't match context tenant {ContextTenant}.";
+}
+
 public class PetCreatedHandler : IDomainEventHandler<PetCreatedEvent>
 {
     private readonly IContextTenantNavigator _tenantNavigator;
@@ -21,7 +26,7 @@ public class PetCreatedHandler : IDomainEventHandler<PetCreatedEvent>
         var contextTenant = _tenantNavigator.ContextTenant.Value;
         if (tenant != contextTenant)
         {
-            return Task.FromResult<Result<Nothing>>(Errors.Generic("PetCreatedError", "Domain handler tenant {tenant} doesn't match context tenant {contextTenant}.", tenant, contextTenant));
+            return Task.FromResult<Result<Nothing>>(new PetCreatedError(tenant, contextTenant));
         }
         return Task.FromResult(Ok);
     }

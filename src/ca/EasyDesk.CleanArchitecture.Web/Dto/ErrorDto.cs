@@ -24,10 +24,6 @@ public record ErrorDto(string Code, string Detail, object Meta)
             Code: $"DomainError.{error.GetType().Name}",
             Detail: ConvertPascalCaseToHumanReadable(error.GetType().Name),
             Meta: error),
-        GenericError(var code, var message, var parameters) => new(
-            Code: code,
-            Detail: message,
-            Meta: parameters),
         _ => new(
             Code: "Internal",
             Detail: "Unknown internal error occurred",
