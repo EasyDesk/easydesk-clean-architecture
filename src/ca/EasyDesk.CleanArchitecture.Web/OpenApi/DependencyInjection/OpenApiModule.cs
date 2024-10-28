@@ -169,7 +169,7 @@ public class OpenApiModule : AppModule
                     {
                         return defaultDocumentKey.Value;
                     }
-                    result.ErrorMessage = "The document name is required";
+                    result.ErrorMessage = "Default document not available";
                     return string.Empty;
                 }
                 var value = result.Tokens.Single().Value;
