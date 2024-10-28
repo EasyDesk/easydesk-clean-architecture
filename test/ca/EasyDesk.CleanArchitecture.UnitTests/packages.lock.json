@@ -47,15 +47,15 @@
       },
       "Verify.Xunit": {
         "type": "Direct",
-        "requested": "[27.0.1, )",
-        "resolved": "27.0.1",
-        "contentHash": "d+ikZxPIoblxzT1Mcr3OJvM09MZ6SQcUoMQRENc3pndMqPRrFVvIwSiqKZIXIwZnQrKn7bQIarMraijRaPO7aw==",
+        "requested": "[27.1.0, )",
+        "resolved": "27.1.0",
+        "contentHash": "ME6J8NrWdtVPom/YpcuGlB9rirR9gOfJo476f3aRcruLAmgm+MoJNVBjP8QORyP4jN5g9TVip98SLUKJ7v+Pww==",
         "dependencies": {
           "Argon": "0.22.0",
           "DiffEngine": "15.5.3",
           "SimpleInfoName": "3.0.1",
           "System.IO.Hashing": "8.0.0",
-          "Verify": "27.0.1",
+          "Verify": "27.1.0",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.9.2"
         }
@@ -983,8 +983,8 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "27.0.1",
-        "contentHash": "1N4iEEdyvWhSLLjVO9J8AC0GcvexnGOpOyP13+NwCB+Mm0llEZnZ3KSMyBjQYjJwoJVAHYQ/8q1OI2AD6euypw==",
+        "resolved": "27.1.0",
+        "contentHash": "FZN9S2SlTACZZI0piK9FFeU95oHeYRIu1kGDim7I7H3LSB2H+mKZ3NswMWIWfb2DBgsavL/oYXX2OOZXR9cADQ==",
         "dependencies": {
           "Argon": "0.22.0",
           "DiffEngine": "15.5.3",
