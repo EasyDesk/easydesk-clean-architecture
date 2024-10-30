@@ -5,8 +5,11 @@ using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
+using EasyDesk.Extensions.DependencyInjection;
 using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Abstractions;
@@ -19,12 +22,14 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System.CommandLine;
+using static System.CommandLine.Handler;
+using CommandLine = System.CommandLine;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 
 public class OpenApiModule : AppModule
 {
+    public const string SingleVersionedDocKey = "main";
     private readonly OpenApiModuleOptions _options;
 
     public OpenApiModule(Action<OpenApiModuleOptions>? configure)
@@ -47,7 +52,10 @@ public class OpenApiModule : AppModule
             _options.ConfigureSwagger?.Invoke(options);
         });
         services.Configure<SwaggerUIOptions>(c => c.DocumentTitle = $"{app.Name} - OpenAPI");
-        services.AddSingleton(sp => OpenApiCommand(sp.GetRequiredService<ISwaggerProvider>(), sp.GetRequiredService<IOptions<SwaggerGenOptions>>().Value));
+        services.AddSingleton(sp => OpenApiCommand(
+            sp.GetServiceAsOption<ApiVersioningInfo>(),
+            sp.GetRequiredService<ISwaggerProvider>(),
+            sp.GetRequiredService<IOptions<SwaggerGenOptions>>().Value));
     }
 
     private void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)
@@ -87,7 +95,7 @@ public class OpenApiModule : AppModule
     {
         module.ApiVersioningInfo!
             .SupportedVersions
-            .Select(v => v.ToString())
+            .Select(VersionToDocumentKey)
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
             {
                 Title = $"{app.Name} {version}",
@@ -113,9 +121,11 @@ public class OpenApiModule : AppModule
         });
     }
 
+    private static string VersionToDocumentKey(ApiVersion v) => v.ToString();
+
     private void SetupSingleVersionDoc(AppDescription app, SwaggerGenOptions options)
     {
-        options.SwaggerDoc("main", new OpenApiInfo
+        options.SwaggerDoc(SingleVersionedDocKey, new OpenApiInfo
         {
             Title = app.Name,
         });
@@ -140,19 +150,26 @@ public class OpenApiModule : AppModule
         });
     }
 
-    private Command OpenApiCommand(ISwaggerProvider swaggerProvider, SwaggerGenOptions swaggerGenOptions)
+    private CommandLine.Command OpenApiCommand(Option<ApiVersioningInfo> versioningInfo, ISwaggerProvider swaggerProvider, SwaggerGenOptions swaggerGenOptions)
     {
-        var command = new Command("openapi");
-        var hostOption = new Option<string?>("--host", () => null, "Sets the host value in the OpenApi document");
-        var basePathOption = new Option<string?>("--base-path", () => null, "Sets the basePath value in the OpenApi document");
+        var command = new CommandLine.Command("openapi");
+        var hostOption = new CommandLine.Option<string?>("--host", () => null, "Sets the host value in the OpenApi document");
+        var basePathOption = new CommandLine.Option<string?>("--base-path", () => null, "Sets the basePath value in the OpenApi document");
         var existingDocumentNames = swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Keys;
-        var documentNameOption = new Option<string?>(
+        var defaultDocumentKey = versioningInfo.Match(
+            some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentKey),
+            none: () => Some(SingleVersionedDocKey));
+        var documentNameOption = new CommandLine.Option<string>(
             "--document",
             result =>
             {
                 if (result.Tokens.Count == 0)
                 {
-                    result.ErrorMessage = "The document name is required";
+                    if (defaultDocumentKey)
+                    {
+                        return defaultDocumentKey.Value;
+                    }
+                    result.ErrorMessage = "Default document not available";
                     return string.Empty;
                 }
                 var value = result.Tokens.Single().Value;
@@ -165,7 +182,7 @@ public class OpenApiModule : AppModule
             },
             isDefault: true,
             description: "The name of the document to generate");
-        var formatOption = new Option<OpenApiFormat>("--format", () => OpenApiFormat.Json, "The format of the output (Json or Yaml)");
+        var formatOption = new CommandLine.Option<OpenApiFormat>("--format", () => OpenApiFormat.Json, "The format of the output (Json or Yaml)");
 
         command.AddOption(documentNameOption);
         command.AddOption(hostOption);
