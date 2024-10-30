@@ -76,7 +76,7 @@ public sealed class CleanArchitectureAppBuilder : IAppBuilder
         return this;
     }
 
-    public async Task Run()
+    public async Task<int> Run()
     {
         var appDescription = new AppDescription(_name, _modules, _assemblies);
 
@@ -96,7 +96,7 @@ public sealed class CleanArchitectureAppBuilder : IAppBuilder
 
         commands.ForEach(rootCommand.Add);
 
-        await rootCommand.InvokeAsync(_args);
+        return await rootCommand.InvokeAsync(_args);
     }
 
     private RootCommand CreateRootCommand(WebApplication app)

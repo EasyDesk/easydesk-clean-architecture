@@ -108,4 +108,4 @@ builder.ConfigureWebApplication(app =>
     app.MapControllers();
 });
 
-await builder.Run();
+return await builder.Run();

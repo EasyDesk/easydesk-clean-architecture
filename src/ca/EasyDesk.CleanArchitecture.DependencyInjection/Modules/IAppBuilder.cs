@@ -14,7 +14,7 @@ public interface IAppBuilder
 
     IAppBuilder ConfigureModule<T>(Action<T> configure) where T : AppModule;
 
-    Task Run();
+    Task<int> Run();
 }
 
 public static class AppBuilderExtensions
