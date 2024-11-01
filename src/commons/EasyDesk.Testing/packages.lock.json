@@ -51,9 +51,9 @@
       },
       "Verify": {
         "type": "Direct",
-        "requested": "[27.0.1, )",
-        "resolved": "27.0.1",
-        "contentHash": "1N4iEEdyvWhSLLjVO9J8AC0GcvexnGOpOyP13+NwCB+Mm0llEZnZ3KSMyBjQYjJwoJVAHYQ/8q1OI2AD6euypw==",
+        "requested": "[28.1.0, )",
+        "resolved": "28.1.0",
+        "contentHash": "sneffetRb+eElVUlrMHw40ArcR6NWPdUyC+sKFwWfNJmAc1hNxrZkBSrATARnfnkzdxd+3EMMiv7vfd+WJRa8A==",
         "dependencies": {
           "Argon": "0.22.0",
           "DiffEngine": "15.5.3",
