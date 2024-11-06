@@ -257,10 +257,10 @@
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
-        "resolved": "1.0.2",
-        "contentHash": "QYFyxhaABwmq3p/21VrZNYvCg3DaEoN/wUuw5nmfAf0X3HLjgupwhkEWdgfb9nvGAUIv3osmZoD3kKl4jxEmYQ==",
+        "resolved": "1.0.3",
+        "contentHash": "bCcwagnHfYnhwQfY1criEcn6Hy9PtBuVnZu0pA8hmRhuR3jI/8WxVgoVAdNw9BJ3JHkxmWJzpj/AQy+PMMLqxg==",
         "dependencies": {
-          "Newtonsoft.Json": "12.0.1"
+          "Newtonsoft.Json": "13.0.1"
         }
       },
       "NodaTime": {
@@ -329,7 +329,7 @@
           "Microsoft.Extensions.Hosting.Abstractions": "[8.0.1, )",
           "Microsoft.Extensions.Logging.Abstractions": "[8.0.2, )",
           "Newtonsoft.Json": "[13.0.3, )",
-          "Newtonsoft.Json.Bson": "[1.0.2, )",
+          "Newtonsoft.Json.Bson": "[1.0.3, )",
           "NodaTime.Serialization.JsonNet": "[3.1.0, )"
         }
       },
