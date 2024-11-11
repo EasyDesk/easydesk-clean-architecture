@@ -51,11 +51,11 @@
       },
       "Verify": {
         "type": "Direct",
-        "requested": "[27.0.1, )",
-        "resolved": "27.0.1",
-        "contentHash": "1N4iEEdyvWhSLLjVO9J8AC0GcvexnGOpOyP13+NwCB+Mm0llEZnZ3KSMyBjQYjJwoJVAHYQ/8q1OI2AD6euypw==",
+        "requested": "[28.2.0, )",
+        "resolved": "28.2.0",
+        "contentHash": "D09dlamyhJ2kxYgIlwRhajefIonmAaaZfCIjAJrB+QR3zoRMBSvHtHa8ah3hQrowzpEeKsnD0mBMyqkJyfh3jg==",
         "dependencies": {
-          "Argon": "0.22.0",
+          "Argon": "0.24.2",
           "DiffEngine": "15.5.3",
           "SimpleInfoName": "3.0.1",
           "System.IO.Hashing": "8.0.0"
@@ -85,8 +85,8 @@
       },
       "Argon": {
         "type": "Transitive",
-        "resolved": "0.22.0",
-        "contentHash": "yNFZ8yBUXbfomWoDfpttYkTHZbr8dQg8SMuCpuTfoi+DO7YfWpvYD4AKKmyJ88gNGNY9VRZ5J7EmL7JL4liI7Q=="
+        "resolved": "0.24.2",
+        "contentHash": "O7JY7brhNcYvRNzByqx0cp0w4RlmyyxPyaVlkKOoA6FmWst6fIIkM5uwzQUErLYPx13diUKyhlwpB4KuC9UT2w=="
       },
       "Argon.NodaTime": {
         "type": "Transitive",
