@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -45,6 +46,13 @@ public class ControllersModule : AppModule
             {
                 app.RequireModule<JsonModule>().ApplyJsonConfiguration(options.SerializerSettings, app);
             });
+
+        services.Configure<MvcOptions>(options =>
+        {
+            var formatter = options.OutputFormatters.OfType<StringOutputFormatter>().Single();
+            options.OutputFormatters.Remove(formatter);
+            options.OutputFormatters.Add(formatter);
+        });
 
         services.AddSingleton(new PaginationService(Options.DefaultPageSize, Options.MaxPageSize));
     }
