@@ -54,13 +54,13 @@
       },
       "Rebus.ServiceProvider": {
         "type": "Direct",
-        "requested": "[10.2.0, )",
-        "resolved": "10.2.0",
-        "contentHash": "1PB/9RLU1Z8SaKsFKxCOVTIr/ezcxQgyLDonSAtoRvx6ZHqRjKU4CeN/bJfA0D+JNDkIM8ukQOksjt8tHe8BLA==",
+        "requested": "[10.3.0, )",
+        "resolved": "10.3.0",
+        "contentHash": "sYoAY3nUNVMPCD9wnTh6+iktbyjqyT+ORyv5CysmNvYnKJd/5C6bCPww52EY3fhiQKjuNExu4I8qUN8F7NSMnQ==",
         "dependencies": {
-          "Microsoft.Extensions.DependencyInjection": "[8.0.0, 9.0.0)",
-          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 9.0.0)",
-          "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, 9.0.0)",
+          "Microsoft.Extensions.DependencyInjection": "[8.0.0, 10.0.0)",
+          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 10.0.0)",
+          "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, 10.0.0)",
           "Rebus": "8.0.1"
         }
       },
