@@ -84,7 +84,7 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
 
     protected HttpTestHelper CreateHttpTestHelper()
     {
-        var jsonSettings = WebService.Services.GetRequiredService<JsonSettingsConfigurator>();
+        var jsonSettings = WebService.Services.GetRequiredService<JsonOptionsConfigurator>();
         return new(WebService.HttpClient, jsonSettings, GetHttpAuthentication(), ApplyDefaultRequestConfiguration);
     }
 

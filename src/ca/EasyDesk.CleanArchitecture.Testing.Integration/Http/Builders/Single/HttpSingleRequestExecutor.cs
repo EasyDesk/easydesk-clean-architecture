@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.Commons.Tasks;
-using Newtonsoft.Json;
 using NodaTime;
+using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 
@@ -9,18 +9,18 @@ public class HttpSingleRequestExecutor<T>
     : HttpRequestExecutor<HttpResponseWrapper<T, Nothing>, ImmutableHttpResponseMessage, HttpSingleRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
-    private readonly JsonSerializerSettings _jsonSerializerSettings;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public HttpSingleRequestExecutor(
         string endpoint,
         HttpMethod method,
         ITestHttpAuthentication testHttpAuthentication,
         HttpClient httpClient,
-        JsonSerializerSettings jsonSerializerSettings)
+        JsonSerializerOptions jsonSerializerOptions)
         : base(endpoint, method, testHttpAuthentication)
     {
         _httpClient = httpClient;
-        _jsonSerializerSettings = jsonSerializerSettings;
+        _jsonSerializerOptions = jsonSerializerOptions;
     }
 
     public HttpResponseWrapper<T, Nothing> PollUntil(Func<T, bool> predicate, Duration? interval = null, Duration? timeout = null) =>
@@ -37,5 +37,5 @@ public class HttpSingleRequestExecutor<T>
     }
 
     protected override HttpResponseWrapper<T, Nothing> Wrap(AsyncFunc<ImmutableHttpResponseMessage> request) =>
-        new(request, _jsonSerializerSettings);
+        new(request, _jsonSerializerOptions);
 }

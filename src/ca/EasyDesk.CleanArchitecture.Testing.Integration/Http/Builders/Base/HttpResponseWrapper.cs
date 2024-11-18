@@ -1,17 +1,17 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public class HttpResponseWrapper<T, M>
 {
-    private readonly JsonSerializerSettings _jsonSerializerSettings;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly AsyncCache<ImmutableHttpResponseMessage> _response;
 
-    public HttpResponseWrapper(AsyncFunc<ImmutableHttpResponseMessage> httpResponseMessage, JsonSerializerSettings jsonSerializerSettings)
+    public HttpResponseWrapper(AsyncFunc<ImmutableHttpResponseMessage> httpResponseMessage, JsonSerializerOptions jsonSerializerOptions)
     {
-        _jsonSerializerSettings = jsonSerializerSettings;
+        _jsonSerializerOptions = jsonSerializerOptions;
         _response = new(httpResponseMessage);
     }
 
@@ -40,7 +40,7 @@ public class HttpResponseWrapper<T, M>
         var bodyAsJson = (await GetResponse()).Content.AsString();
         try
         {
-            return JsonConvert.DeserializeObject<ResponseDto<T, M>>(bodyAsJson, _jsonSerializerSettings);
+            return JsonSerializer.Deserialize<ResponseDto<T, M>>(bodyAsJson, _jsonSerializerOptions);
         }
         catch (JsonException e)
         {

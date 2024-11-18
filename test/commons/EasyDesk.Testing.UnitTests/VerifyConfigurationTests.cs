@@ -1,9 +1,9 @@
 ﻿using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using EasyDesk.Testing.VerifyConfiguration;
-using Newtonsoft.Json;
 using NodaTime;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.Testing.UnitTests;
@@ -64,9 +64,10 @@ public class VerifyConfigurationTests
     }
 
     [Fact]
-    public Task NewtonsoftJsonTest()
+    public Task JsonTest()
     {
-        return Verify(JsonConvert.DeserializeObject("{\"a\": [1, 2, 3]}"));
+        using var document = JsonDocument.Parse(@"{""a"": [1, 2, 3]}");
+        return Verify(document);
     }
 
     [Fact]

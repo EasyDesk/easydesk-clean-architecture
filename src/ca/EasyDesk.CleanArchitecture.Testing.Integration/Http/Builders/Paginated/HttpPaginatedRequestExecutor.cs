@@ -3,9 +3,9 @@ using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Tasks;
-using Newtonsoft.Json;
 using NodaTime;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 
@@ -13,22 +13,22 @@ public sealed class HttpPaginatedRequestExecutor<T> :
     HttpRequestExecutor<HttpPageSequenceWrapper<T>, IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>, HttpPaginatedRequestExecutor<T>>
 {
     private readonly HttpClient _httpClient;
-    private readonly JsonSerializerSettings _jsonSerializerSettings;
+    private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public HttpPaginatedRequestExecutor(
         string endpoint,
         HttpMethod method,
         HttpClient httpClient,
-        JsonSerializerSettings jsonSerializerSettings,
+        JsonSerializerOptions jsonSerializerOptions,
         ITestHttpAuthentication testHttpAuthentication)
         : base(endpoint, method, testHttpAuthentication)
     {
         _httpClient = httpClient;
-        _jsonSerializerSettings = jsonSerializerSettings;
+        _jsonSerializerOptions = jsonSerializerOptions;
     }
 
     private HttpResponseWrapper<T, PaginationMetaDto> WrapSinglePage(AsyncFunc<ImmutableHttpResponseMessage> message) =>
-        new(message, _jsonSerializerSettings);
+        new(message, _jsonSerializerOptions);
 
     protected override Task<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> MakeRequest(CancellationToken timeoutToken) =>
         EnumeratePages(timeoutToken).ToEnumerableAsync();

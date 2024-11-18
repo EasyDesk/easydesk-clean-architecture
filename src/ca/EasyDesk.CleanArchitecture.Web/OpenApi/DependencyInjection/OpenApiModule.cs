@@ -41,7 +41,6 @@ public class OpenApiModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddSwaggerGenNewtonsoftSupport();
         services.AddSwaggerGen(options =>
         {
             SetupSwaggerDocs(app, options);
@@ -137,8 +136,8 @@ public class OpenApiModule : AppModule
             .Map(m => m.DateTimeZoneProvider)
             .OrElseNull();
 
-        options.ConfigureForNodaTime(
-            serializerSettings: JsonDefaults.DefaultSerializerSettings(),
+        options.ConfigureForNodaTimeWithSystemTextJson(
+            jsonSerializerOptions: JsonDefaults.DefaultSerializerOptions(),
             dateTimeZoneProvider: dateTimeZoneProvider);
     }
 

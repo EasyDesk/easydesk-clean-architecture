@@ -1,7 +1,8 @@
 ﻿using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Reflection;
-using Newtonsoft.Json;
 using System.Collections.Immutable;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
@@ -19,15 +20,15 @@ internal class FixedMapConverter : CachedJsonConverterFactory
     public class FixedMapConverterImpl<K, V> : JsonConverter<IFixedMap<K, V>>
         where K : notnull
     {
-        public override void WriteJson(JsonWriter writer, IFixedMap<K, V>? value, JsonSerializer serializer)
+        public override IFixedMap<K, V>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            serializer.Serialize(writer, value?.AsImmutableDictionary());
+            var dictionary = JsonSerializer.Deserialize<ImmutableDictionary<K, V>>(ref reader, options);
+            return dictionary is null ? null : FixedHashMap.Create(dictionary);
         }
 
-        public override IFixedMap<K, V>? ReadJson(JsonReader reader, Type objectType, IFixedMap<K, V>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, IFixedMap<K, V> value, JsonSerializerOptions options)
         {
-            var dictionary = serializer.Deserialize<ImmutableDictionary<K, V>>(reader);
-            return dictionary is null ? null : FixedHashMap.Create(dictionary);
+            JsonSerializer.Serialize(writer, value?.AsImmutableDictionary(), options);
         }
     }
 }

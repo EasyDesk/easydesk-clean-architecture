@@ -2,8 +2,8 @@
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using Newtonsoft.Json;
 using System.Net.Mime;
+using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
@@ -12,16 +12,16 @@ public class HttpTestHelper
     private readonly HttpClient _httpClient;
     private readonly ITestHttpAuthentication _httpAuthentication;
     private readonly Action<HttpRequestBuilder>? _configureRequest;
-    private readonly JsonSerializerSettings _settings;
+    private readonly JsonSerializerOptions _jsonOptions;
 
     public HttpTestHelper(
         HttpClient httpClient,
-        JsonSettingsConfigurator jsonSettingsConfigurator,
+        JsonOptionsConfigurator jsonOptionsConfigurator,
         ITestHttpAuthentication? httpAuthentication = null,
         Action<HttpRequestBuilder>? configureRequest = null)
     {
         _httpClient = httpClient;
-        _settings = jsonSettingsConfigurator.CreateSettings();
+        _jsonOptions = jsonOptionsConfigurator.CreateOptions();
         _httpAuthentication = httpAuthentication ?? new NoAuthentication();
         _configureRequest = configureRequest;
     }
@@ -43,14 +43,14 @@ public class HttpTestHelper
 
     private ImmutableHttpContent JsonContent<T>(T body)
     {
-        var bodyAsJson = JsonConvert.SerializeObject(body, Formatting.None, _settings);
+        var bodyAsJson = JsonSerializer.Serialize(body, _jsonOptions);
         var content = new ImmutableHttpContent(bodyAsJson, MediaTypeNames.Application.Json);
         return content;
     }
 
     public HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, ImmutableHttpContent? content = null)
     {
-        var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _settings)
+        var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _jsonOptions)
             .WithContent(content);
         _configureRequest?.Invoke(builder);
         return builder;
@@ -58,7 +58,7 @@ public class HttpTestHelper
 
     private HttpPaginatedRequestExecutor<R> RequestPaginated<R>(string requestUri, HttpMethod method, ImmutableHttpContent? content = null)
     {
-        var builder = new HttpPaginatedRequestExecutor<R>(requestUri, method, _httpClient, _settings, _httpAuthentication)
+        var builder = new HttpPaginatedRequestExecutor<R>(requestUri, method, _httpClient, _jsonOptions, _httpAuthentication)
             .WithContent(content);
         _configureRequest?.Invoke(builder);
         return builder;

@@ -4,9 +4,9 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using NodaTime;
 using Rebus.Messages;
+using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
@@ -15,12 +15,12 @@ internal class EfCoreOutbox : IOutbox
     public static readonly Duration MessageAgingTime = Duration.FromSeconds(30);
 
     private readonly MessagingContext _context;
-    private readonly JsonSerializer _serializer;
+    private readonly JsonSerializerOptions _jsonOptions;
 
-    public EfCoreOutbox(MessagingContext context, JsonSettingsConfigurator jsonSettingsConfigurator)
+    public EfCoreOutbox(MessagingContext context, JsonOptionsConfigurator jsonSettingsConfigurator)
     {
         _context = context;
-        _serializer = JsonSerializer.Create(jsonSettingsConfigurator.CreateSettings());
+        _jsonOptions = jsonSettingsConfigurator.CreateOptions();
     }
 
     public void EnqueueMessageForStorage(TransportMessage message, string destinationAddress)
@@ -28,7 +28,7 @@ internal class EfCoreOutbox : IOutbox
         var outboxMessage = new OutboxMessage
         {
             Content = message.Body,
-            Headers = _serializer.SerializeToBsonBytes(message.Headers),
+            Headers = JsonSerializer.Serialize(message.Headers, _jsonOptions),
             DestinationAddress = destinationAddress,
         };
         _context.Outbox.Add(outboxMessage);
@@ -61,7 +61,7 @@ internal class EfCoreOutbox : IOutbox
 
     private TransportMessage ToTransportMessage(OutboxMessage outboxMessage)
     {
-        var headers = _serializer.DeserializeFromBsonBytes<Dictionary<string, string>>(outboxMessage.Headers);
+        var headers = JsonSerializer.Deserialize<Dictionary<string, string>>(outboxMessage.Headers, _jsonOptions);
         return new TransportMessage(headers, outboxMessage.Content);
     }
 }

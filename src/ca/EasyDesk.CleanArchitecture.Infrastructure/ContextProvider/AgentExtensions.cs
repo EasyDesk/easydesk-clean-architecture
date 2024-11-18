@@ -1,9 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.Commons.Collections;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text.Json;
 using AgentClaimDto = System.Collections.Generic.Dictionary<string, EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.AgentExtensions.IdentityClaimDto>;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
@@ -11,15 +10,9 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 public static class AgentExtensions
 {
     private const string AgentClaimType = "agent";
-    private static readonly JsonSerializerSettings _jsonSettings = new()
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
-        ContractResolver = new CamelCasePropertyNamesContractResolver()
-        {
-            NamingStrategy = new CamelCaseNamingStrategy()
-            {
-                ProcessDictionaryKeys = false,
-            },
-        },
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
     };
 
     public record IdentityClaimDto(string Id, Dictionary<string, IEnumerable<string>> Attributes);
@@ -29,7 +22,7 @@ public static class AgentExtensions
         var model = ConvertAgentToClaim(agent);
         var agentClaim = new Claim(
             AgentClaimType,
-            JsonConvert.SerializeObject(model, _jsonSettings),
+            JsonSerializer.Serialize(model, _jsonOptions),
             JsonClaimValueTypes.Json);
         return new ClaimsIdentity(new[] { agentClaim }, "Agent");
     }
@@ -43,7 +36,7 @@ public static class AgentExtensions
     public static Agent ToAgent(this ClaimsIdentity claimsIdentity)
     {
         var agentClaim = claimsIdentity.RequireClaim(AgentClaimType);
-        var agentModel = JsonConvert.DeserializeObject<AgentClaimDto>(agentClaim)
+        var agentModel = JsonSerializer.Deserialize<AgentClaimDto>(agentClaim, _jsonOptions)
             ?? throw new InvalidOperationException("Json claim deserialization returned null.");
         return ConvertClaimToAgent(agentModel);
     }

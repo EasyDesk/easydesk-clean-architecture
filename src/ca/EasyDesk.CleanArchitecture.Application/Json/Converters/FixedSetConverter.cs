@@ -1,7 +1,8 @@
 ﻿using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Reflection;
-using Newtonsoft.Json;
 using System.Collections.Immutable;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
@@ -18,15 +19,15 @@ internal class FixedSetConverter : CachedJsonConverterFactory
 
     public class FixedSetConverterImpl<T> : JsonConverter<IFixedSet<T>>
     {
-        public override void WriteJson(JsonWriter writer, IFixedSet<T>? value, JsonSerializer serializer)
+        public override IFixedSet<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            serializer.Serialize(writer, value?.AsImmutableSet());
+            var set = JsonSerializer.Deserialize<ImmutableHashSet<T>>(ref reader, options);
+            return set is null ? null : FixedHashSet.Create(set);
         }
 
-        public override IFixedSet<T>? ReadJson(JsonReader reader, Type objectType, IFixedSet<T>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, IFixedSet<T> value, JsonSerializerOptions options)
         {
-            var set = serializer.Deserialize<ImmutableHashSet<T>>(reader);
-            return set is null ? null : FixedHashSet.Create(set);
+            JsonSerializer.Serialize(writer, value?.AsImmutableSet(), options);
         }
     }
 }

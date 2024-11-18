@@ -18,7 +18,7 @@ partial class SagasContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("sagas")
-            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("ProductVersion", "8.0.10")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -37,7 +37,11 @@ partial class SagasContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(256)
                     .HasColumnType("character varying(256)");
 
-                b.Property<byte[]>("State")
+                b.Property<string>("State")
+                    .IsRequired()
+                    .HasColumnType("text");
+
+                b.Property<byte[]>("State_Old")
                     .IsRequired()
                     .HasColumnType("bytea");
 

@@ -42,9 +42,9 @@ public class ControllersModule : AppModule
         services
             .AddControllers(DefaultMvcConfiguration)
             .AddApplicationPart(typeof(CleanArchitectureController).Assembly)
-            .AddNewtonsoftJson(options =>
+            .AddJsonOptions(options =>
             {
-                app.RequireModule<JsonModule>().ApplyJsonConfiguration(options.SerializerSettings, app);
+                app.RequireModule<JsonModule>().ApplyJsonConfiguration(options.JsonSerializerOptions, app);
             });
 
         services.Configure<MvcOptions>(options =>

@@ -1,5 +1,6 @@
 ﻿using EasyDesk.Commons.Options;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
@@ -16,16 +17,16 @@ internal class OptionConverter : CachedJsonConverterFactory
 
     private class OptionConverterImpl<T> : JsonConverter<Option<T>>
     {
-        public override void WriteJson(JsonWriter writer, Option<T> value, JsonSerializer serializer)
+        public override Option<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            value.Match(
-                some: t => serializer.Serialize(writer, t),
-                none: writer.WriteNull);
+            return reader.TokenType == JsonTokenType.Null ? None : Some(JsonSerializer.Deserialize<T>(ref reader, options)!);
         }
 
-        public override Option<T> ReadJson(JsonReader reader, Type objectType, Option<T> existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, Option<T> value, JsonSerializerOptions options)
         {
-            return reader.TokenType == JsonToken.Null ? None : Some(serializer.Deserialize<T>(reader)!);
+            value.Match(
+                some: t => JsonSerializer.Serialize(writer, t, options),
+                none: writer.WriteNullValue);
         }
     }
 }

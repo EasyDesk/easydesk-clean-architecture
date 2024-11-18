@@ -1,16 +1,16 @@
 ﻿using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using NodaTime;
+using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 
 public class JsonModule : AppModule
 {
-    private readonly JsonSettingsConfigurator? _configurator;
+    private readonly JsonOptionsConfigurator? _configurator;
 
-    public JsonModule(JsonSettingsConfigurator? configurator = null)
+    public JsonModule(JsonOptionsConfigurator? configurator = null)
     {
         _configurator = configurator;
     }
@@ -18,28 +18,28 @@ public class JsonModule : AppModule
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
         var dateTimeZoneProvider = app.RequireModule<TimeManagementModule>().DateTimeZoneProvider;
-        services.AddSingleton<JsonSettingsConfigurator>(settings =>
+        services.AddSingleton<JsonOptionsConfigurator>(settings =>
         {
             ConfigureSettings(settings, dateTimeZoneProvider);
         });
     }
 
-    public void ApplyJsonConfiguration(JsonSerializerSettings settings, AppDescription app)
+    public void ApplyJsonConfiguration(JsonSerializerOptions options, AppDescription app)
     {
         var dateTimeZoneProvider = app.RequireModule<TimeManagementModule>().DateTimeZoneProvider;
-        ConfigureSettings(settings, dateTimeZoneProvider);
+        ConfigureSettings(options, dateTimeZoneProvider);
     }
 
-    private void ConfigureSettings(JsonSerializerSettings settings, IDateTimeZoneProvider dateTimeZoneProvider)
+    private void ConfigureSettings(JsonSerializerOptions options, IDateTimeZoneProvider dateTimeZoneProvider)
     {
-        JsonDefaults.ApplyDefaultConfiguration(settings, dateTimeZoneProvider);
-        _configurator?.Invoke(settings);
+        JsonDefaults.ApplyDefaultConfiguration(options, dateTimeZoneProvider);
+        _configurator?.Invoke(options);
     }
 }
 
 public static class JsonModuleExtensions
 {
-    public static IAppBuilder AddJsonSerialization(this IAppBuilder builder, JsonSettingsConfigurator? configurator = null)
+    public static IAppBuilder AddJsonSerialization(this IAppBuilder builder, JsonOptionsConfigurator? configurator = null)
     {
         return builder.AddModule(new JsonModule(configurator));
     }

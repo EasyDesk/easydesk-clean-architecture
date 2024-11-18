@@ -4,19 +4,19 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
 
 internal class EfCoreSagaManager : ISagaManager
 {
     private readonly SagasContext _context;
-    private readonly JsonSerializer _serializer;
+    private readonly JsonSerializerOptions _serializerOptions;
 
-    public EfCoreSagaManager(SagasContext context, JsonSettingsConfigurator jsonConfigurator)
+    public EfCoreSagaManager(SagasContext context, JsonOptionsConfigurator jsonConfigurator)
     {
         _context = context;
-        _serializer = JsonSerializer.Create(jsonConfigurator.CreateSettings());
+        _serializerOptions = jsonConfigurator.CreateOptions();
     }
 
     private IQueryable<SagaModel> QuerySaga<TId, TState>(TId id) =>
@@ -26,7 +26,7 @@ internal class EfCoreSagaManager : ISagaManager
     {
         return await QuerySaga<TId, TState>(id)
             .FirstOptionAsync()
-            .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), _serializer.DeserializeFromBsonBytes<TState>(m.State!)));
+            .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), JsonSerializer.Deserialize<TState>(m.State, _serializerOptions)));
     }
 
     public async Task<bool> IsInProgress<TId, TState>(TId id) =>
@@ -55,7 +55,7 @@ internal class EfCoreSagaManager : ISagaManager
         type.IsGenericType ? type.GetGenericArguments().Select(FormatSagaType).ConcatStrings(",", "<", ">") : string.Empty;
 
     private ISagaReference<TState> CreateReferenceFromSagaModel<TState>(SagaModel sagaModel) =>
-        new EfCoreSagaReference<TState>(sagaModel, _context, _serializer);
+        new EfCoreSagaReference<TState>(sagaModel, _context, _serializerOptions);
 
     public async Task SaveAll() => await _context.SaveChangesAsync();
 }
@@ -64,18 +64,18 @@ internal class EfCoreSagaReference<TState> : ISagaReference<TState>
 {
     private readonly SagaModel _sagaModel;
     private readonly SagasContext _context;
-    private readonly JsonSerializer _serializer;
+    private readonly JsonSerializerOptions _serializerOptions;
 
-    public EfCoreSagaReference(SagaModel sagaModel, SagasContext context, JsonSerializer serializer)
+    public EfCoreSagaReference(SagaModel sagaModel, SagasContext context, JsonSerializerOptions serializerOptions)
     {
         _sagaModel = sagaModel;
         _context = context;
-        _serializer = serializer;
+        _serializerOptions = serializerOptions;
     }
 
     public void UpdateState(TState state)
     {
-        _sagaModel.State = _serializer.SerializeToBsonBytes(state);
+        _sagaModel.State = JsonSerializer.Serialize(state, _serializerOptions);
         _sagaModel.Version++;
     }
 

@@ -1,35 +1,28 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json.Converters;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using NodaTime;
-using NodaTime.Serialization.JsonNet;
+using NodaTime.Serialization.SystemTextJson;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EasyDesk.CleanArchitecture.Application.Json;
 
 public static class JsonDefaults
 {
-    public static void ApplyDefaultConfiguration(this JsonSerializerSettings serializerSettings, IDateTimeZoneProvider? dateTimeZoneProvider = null)
+    public static void ApplyDefaultConfiguration(this JsonSerializerOptions options, IDateTimeZoneProvider? dateTimeZoneProvider = null)
     {
-        serializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver()
-        {
-            NamingStrategy = new CamelCaseNamingStrategy()
-            {
-                ProcessDictionaryKeys = false,
-            },
-        };
+        options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
-        serializerSettings.Converters.Add(new StringEnumConverter());
-        serializerSettings.Converters.Add(new OptionConverter());
-        serializerSettings.Converters.Add(new FixedListConverter());
-        serializerSettings.Converters.Add(new FixedSetConverter());
-        serializerSettings.Converters.Add(new FixedMapConverter());
-        serializerSettings.ConfigureForNodaTime(dateTimeZoneProvider ?? DateTimeZoneProviders.Tzdb);
+        options.Converters.Add(new JsonStringEnumConverter());
+        options.Converters.Add(new OptionConverter());
+        options.Converters.Add(new FixedListConverter());
+        options.Converters.Add(new FixedSetConverter());
+        options.Converters.Add(new FixedMapConverter());
+        options.ConfigureForNodaTime(dateTimeZoneProvider ?? DateTimeZoneProviders.Tzdb);
     }
 
-    public static JsonSerializerSettings DefaultSerializerSettings(IDateTimeZoneProvider? dateTimeZoneProvider = null)
+    public static JsonSerializerOptions DefaultSerializerOptions(IDateTimeZoneProvider? dateTimeZoneProvider = null)
     {
-        var serializerSettings = new JsonSerializerSettings();
+        var serializerSettings = new JsonSerializerOptions();
         serializerSettings.ApplyDefaultConfiguration(dateTimeZoneProvider);
         return serializerSettings;
     }

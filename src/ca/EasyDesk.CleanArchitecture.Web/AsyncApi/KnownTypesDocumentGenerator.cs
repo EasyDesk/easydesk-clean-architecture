@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using NJsonSchema;
 using NJsonSchema.Generation;
 using Saunter;
@@ -15,6 +14,7 @@ using Saunter.Generation.SchemaGeneration;
 using System.Collections.Immutable;
 using System.Net.Mime;
 using System.Reflection;
+using System.Text.Json;
 using RebusHeaders = Rebus.Messages.Headers;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
@@ -94,7 +94,7 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
         var rebusHeadersDictionary = headerNames.Select(name => KeyValuePair.Create(name, string.Empty)).ToImmutableDictionary();
         var frameworkHeadersDictionary = rebusHeadersDictionary
             .Add(MultitenantMessagingUtils.TenantIdHeader, string.Empty);
-        var headersSchema = JsonSchema.FromSampleJson(JsonConvert.SerializeObject(frameworkHeadersDictionary));
+        var headersSchema = JsonSchema.FromSampleJson(JsonSerializer.Serialize(frameworkHeadersDictionary));
         headersSchema.Properties.ForEach(p => p.Value.IsRequired = false);
         foreach (var property in new[] { RebusHeaders.ContentType, RebusHeaders.MessageId, RebusHeaders.SentTime, })
         {

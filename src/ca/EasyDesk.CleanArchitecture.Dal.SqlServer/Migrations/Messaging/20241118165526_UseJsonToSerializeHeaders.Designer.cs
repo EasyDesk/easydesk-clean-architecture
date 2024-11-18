@@ -2,30 +2,33 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Messaging;
+namespace EasyDesk.CleanArchitecture.Dal.SqlServer.Migrations.Messaging;
 
 [DbContext(typeof(MessagingContext))]
-partial class MessagingContextModelSnapshot : ModelSnapshot
+[Migration("20241118165526_UseJsonToSerializeHeaders")]
+partial class UseJsonToSerializeHeaders
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("messaging")
             .HasAnnotation("ProductVersion", "8.0.10")
-            .HasAnnotation("Relational:MaxIdentifierLength", 63);
+            .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-        NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Messaging.InboxMessage", b =>
             {
                 b.Property<string>("Id")
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(450)");
 
                 b.HasKey("Id");
 
@@ -36,25 +39,25 @@ partial class MessagingContextModelSnapshot : ModelSnapshot
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
+                    .HasColumnType("int");
 
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                 b.Property<byte[]>("Content")
                     .IsRequired()
-                    .HasColumnType("bytea");
+                    .HasColumnType("varbinary(max)");
 
                 b.Property<string>("DestinationAddress")
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(max)");
 
                 b.Property<string>("Headers")
                     .IsRequired()
-                    .HasColumnType("text");
+                    .HasColumnType("nvarchar(max)");
 
                 b.Property<byte[]>("Headers_Old")
                     .IsRequired()
-                    .HasColumnType("bytea");
+                    .HasColumnType("varbinary(max)");
 
                 b.HasKey("Id");
 

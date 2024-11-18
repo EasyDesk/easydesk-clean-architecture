@@ -1,10 +1,10 @@
 ﻿using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
-using Newtonsoft.Json;
 using System.Collections.Immutable;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
+using System.Text.Json;
 using HeaderNames = Microsoft.Net.Http.Headers.HeaderNames;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -13,6 +13,8 @@ public record class ImmutableHttpContent(
     ImmutableArray<byte> Bytes,
     ImmutableHttpHeaders ContentHeaders)
 {
+    private static readonly JsonSerializerOptions _options = new() { WriteIndented = true };
+
     public ImmutableHttpContent()
         : this([])
     {
@@ -65,10 +67,13 @@ public record class ImmutableHttpContent(
             .Map(e => e.GetString(Bytes.ToArray()))
             .OrElseGet(() => $"BINARY {nameof(ImmutableHttpContent)} in base64:\n{Convert.ToBase64String(Bytes.ToArray())}");
 
-    private string ToText() =>
-        MediaType.Any(m => m.MediaType == MediaTypeNames.Application.Json)
-        ? JsonConvert.SerializeObject(JsonConvert.DeserializeObject(AsString()), Formatting.Indented)
-        : AsString();
+    private string ToText()
+    {
+        using var jsonDocument = JsonDocument.Parse(AsString());
+        return MediaType.Any(m => m.MediaType == MediaTypeNames.Application.Json)
+                ? JsonSerializer.Serialize(jsonDocument, _options)
+                : AsString();
+    }
 
     public override string ToString() =>
         $"""

@@ -17,7 +17,7 @@ partial class MessagingContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("messaging")
-            .HasAnnotation("ProductVersion", "7.0.5")
+            .HasAnnotation("ProductVersion", "8.0.10")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -48,7 +48,11 @@ partial class MessagingContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
 
-                b.Property<byte[]>("Headers")
+                b.Property<string>("Headers")
+                    .IsRequired()
+                    .HasColumnType("nvarchar(max)");
+
+                b.Property<byte[]>("Headers_Old")
                     .IsRequired()
                     .HasColumnType("varbinary(max)");
 

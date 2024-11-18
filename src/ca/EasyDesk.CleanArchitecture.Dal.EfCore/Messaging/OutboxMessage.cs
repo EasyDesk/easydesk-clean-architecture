@@ -9,7 +9,9 @@ internal class OutboxMessage
 
     public required byte[] Content { get; set; }
 
-    public required byte[] Headers { get; set; }
+    public required string Headers { get; set; }
+
+    public byte[] Headers_Old { get; set; } = [];
 
     public required string DestinationAddress { get; set; }
 

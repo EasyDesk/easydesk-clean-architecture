@@ -94,7 +94,7 @@ public sealed class RebusMessagingOptions
         });
 
         configurer
-            .UseJsonSettings(serviceProvider.GetRequiredService<JsonSettingsConfigurator>().CreateSettings())
+            .UseJsonOptions(serviceProvider.GetRequiredService<JsonOptionsConfigurator>().CreateOptions())
             .UseNodaTimeClock(serviceProvider.GetRequiredService<IClock>())
             .UseKnownMessageTypesConventions(KnownMessageTypes)
             .Options(o =>

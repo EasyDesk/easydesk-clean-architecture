@@ -6,7 +6,7 @@ public static class VerifySettingsInitializer
 {
     public static void Initialize()
     {
-        VerifyNewtonsoftJson.Initialize();
+        VerifySystemJson.Initialize();
         VerifierSettings.AddExtraSettings(settings =>
         {
             settings.Converters.Add(new OptionConverter());

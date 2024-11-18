@@ -1,7 +1,8 @@
 ﻿using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Reflection;
-using Newtonsoft.Json;
 using System.Collections.Immutable;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
@@ -18,15 +19,15 @@ internal class FixedListConverter : CachedJsonConverterFactory
 
     public class FixedListConverterImpl<T> : JsonConverter<IFixedList<T>>
     {
-        public override void WriteJson(JsonWriter writer, IFixedList<T>? value, JsonSerializer serializer)
+        public override IFixedList<T>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            serializer.Serialize(writer, value?.AsImmutableList());
+            var list = JsonSerializer.Deserialize<ImmutableList<T>>(ref reader, options);
+            return list is null ? null : FixedList.Create(list);
         }
 
-        public override IFixedList<T>? ReadJson(JsonReader reader, Type objectType, IFixedList<T>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, IFixedList<T> value, JsonSerializerOptions options)
         {
-            var list = serializer.Deserialize<ImmutableList<T>>(reader);
-            return list is null ? null : FixedList.Create(list);
+            JsonSerializer.Serialize(writer, value?.AsImmutableList(), options);
         }
     }
 }
