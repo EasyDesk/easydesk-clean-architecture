@@ -1,5 +1,8 @@
 name: "CodeQL"
 
+env:
+  DOTNET_VERSION: 9.x
+
 on:
   push:
     branches: [ "*" ]
@@ -18,6 +21,10 @@ jobs:
       contents: read
       security-events: write
     steps:
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
     - name: Checkout repository
       uses: actions/checkout@v4
 

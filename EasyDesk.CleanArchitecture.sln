@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{DA0FBFB1
 		.gitignore = .gitignore
 		.stylecop.json = .stylecop.json
 		.github\workflows\ci.yml = .github\workflows\ci.yml
+		.github\workflows\codeql.yml = .github\workflows\codeql.yml
 		.github\dependabot.yml = .github\dependabot.yml
 		Directory.Build.props = Directory.Build.props
 		Linter.targets = Linter.targets
