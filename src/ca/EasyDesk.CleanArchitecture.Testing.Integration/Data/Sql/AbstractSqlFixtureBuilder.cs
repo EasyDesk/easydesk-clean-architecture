@@ -5,7 +5,6 @@ using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Tasks;
 using Microsoft.Data.SqlClient;
-using Respawn;
 using System.Data;
 using System.Data.Common;
 
@@ -27,28 +26,9 @@ internal abstract class AbstractSqlFixtureBuilder<TFixture, TContainer> : ISqlDa
         Container = container;
     }
 
-    protected abstract IDbAdapter Adapter { get; }
-
     protected WebServiceTestsFixtureBuilder<TFixture> Builder { get; }
 
     protected TContainer Container { get; }
-
-    public ISqlDatabaseFixtureBuilder WithRespawn(Action<RespawnerOptionsBuilder> options)
-    {
-        Respawner? respawner = null;
-        Builder
-            .OnInitialization(_ => UsingDbConnection(async connection =>
-            {
-                var respawnerOptionsBuilder = new RespawnerOptionsBuilder(Adapter);
-                options(respawnerOptionsBuilder);
-                respawner = await Respawner.CreateAsync(connection, respawnerOptionsBuilder.Build());
-            }))
-            .OnReset(_ => UsingDbConnection(async connection =>
-            {
-                await respawner!.ResetAsync(connection);
-            }));
-        return this;
-    }
 
     protected record TableDef(string Schema, string Name, IFixedList<string> Columns);
 

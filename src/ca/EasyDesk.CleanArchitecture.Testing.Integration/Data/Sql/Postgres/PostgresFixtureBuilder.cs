@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.Commons.Collections;
 using Npgsql;
-using Respawn;
 using System.Data.Common;
 using Testcontainers.PostgreSql;
 
@@ -13,8 +12,6 @@ internal class PostgresFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFix
     public PostgresFixtureBuilder(WebServiceTestsFixtureBuilder<TFixture> builder, PostgreSqlContainer container) : base(builder, container)
     {
     }
-
-    protected override IDbAdapter Adapter => DbAdapter.Postgres;
 
     protected override string GetConnectionString() => Container.GetConnectionString();
 

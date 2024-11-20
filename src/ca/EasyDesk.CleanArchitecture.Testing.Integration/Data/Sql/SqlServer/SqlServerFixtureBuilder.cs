@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using EasyDesk.Commons.Collections;
 using Microsoft.Data.SqlClient;
-using Respawn;
 using System.Data;
 using Testcontainers.MsSql;
 
@@ -17,8 +16,6 @@ internal class SqlServerFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFi
     {
         _databaseName = databaseName;
     }
-
-    protected override IDbAdapter Adapter => DbAdapter.SqlServer;
 
     protected override string GetConnectionString()
     {
