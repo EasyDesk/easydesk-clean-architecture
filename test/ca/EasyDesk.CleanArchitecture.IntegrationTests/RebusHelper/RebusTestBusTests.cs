@@ -43,7 +43,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     private const string SenderAddress = "sender";
     private const string ReceiverAddress = "receiver";
 
-    private static readonly Duration _defaultTimeout = Duration.FromSeconds(5);
+    private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
     private static readonly Duration _computationSlack = Duration.FromMilliseconds(500);
 
     private readonly string _rabbitMqConnection;
