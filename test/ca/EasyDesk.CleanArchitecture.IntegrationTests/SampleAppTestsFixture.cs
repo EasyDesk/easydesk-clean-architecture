@@ -59,7 +59,6 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
         new SampleSeeder(fixture);
 
     private static ISqlDatabaseFixtureBuilder ConfigureDatabaseDefaults(ISqlDatabaseFixtureBuilder builder) => builder
-        ////.WithRespawn(x => x.ExcludeSchemas(EfCoreUtils.MigrationsSchema));
         .WithTableCopies();
 
     private static void ConfigureSqlServer(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)

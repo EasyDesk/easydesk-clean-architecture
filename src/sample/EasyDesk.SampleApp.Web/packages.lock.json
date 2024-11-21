@@ -127,8 +127,8 @@
       },
       "JetBrains.Annotations": {
         "type": "Transitive",
-        "resolved": "2023.3.0",
-        "contentHash": "PHfnvdBUdGaTVG9bR/GEfxgTwWM0Z97Y6X3710wiljELBISipSfF5okn/vz+C2gfO+ihoEyVPjaJwn8ZalVukA=="
+        "resolved": "2024.3.0",
+        "contentHash": "ox5pkeLQXjvJdyAB4b2sBYAlqZGLh3PjSnP1bQNVx72ONuTJ9+34/+Rq91Fc0dG29XG9RgZur9+NcP4riihTug=="
       },
       "MicroElements.Swashbuckle.NodaTime": {
         "type": "Transitive",
@@ -705,12 +705,12 @@
       },
       "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": {
         "type": "Transitive",
-        "resolved": "8.0.1",
-        "contentHash": "zcGiwZyCUauBoCnzFTJ2qmY48SNbzz2Dbc4Gze9P4th6du+4ll2Jhpox7l6cVKfTt31uwQ4be4fZ479T7MFuHg==",
+        "resolved": "9.0.0",
+        "contentHash": "DIYVIs5zxeoaWGchD/ozNHXtPuP7Sk8HJYDrukYBwGUa1HI08V3QCpgDHWsYvPbiUMZSFZ8Pz8w7AHYYoz1arw==",
         "dependencies": {
-          "JetBrains.Annotations": "2023.3.0",
-          "Microsoft.EntityFrameworkCore.SqlServer": "8.0.0",
-          "NodaTime": "3.1.0"
+          "JetBrains.Annotations": "2024.3.0",
+          "Microsoft.EntityFrameworkCore.SqlServer": "9.0.0",
+          "NodaTime": "3.2.0"
         }
       },
       "StyleCop.Analyzers.Unstable": {
@@ -1279,7 +1279,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[9.0.0, )",
-          "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": "[8.0.1, )"
+          "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": "[9.0.0, )"
         }
       },
       "easydesk.cleanarchitecture.dependencyinjection": {
