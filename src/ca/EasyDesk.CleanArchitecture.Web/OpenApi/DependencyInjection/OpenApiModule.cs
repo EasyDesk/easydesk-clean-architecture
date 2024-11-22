@@ -82,6 +82,7 @@ public class OpenApiModule : AppModule
     {
         options.SchemaFilter<OptionSchemaFilter>();
         options.SchemaFilter<ErrorCodeSchemaFilter>();
+        options.SchemaFilter<PolymorphismSchemaFilter>();
         options.OperationFilter<BadRequestOperationFilter>();
         options.SupportNonNullableReferenceTypes();
         app.GetModule<ApiVersioningModule>().Match(

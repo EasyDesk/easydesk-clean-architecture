@@ -24,4 +24,13 @@ public static class OpenApiUtils
             },
         });
     }
+
+    public static OpenApiSchema LookupByType(this SchemaRepository schemaRepository, Type type)
+    {
+        if (!schemaRepository.TryLookupByType(type, out var result))
+        {
+            throw new InvalidOperationException($"Schema for type {type} not found in the repository.");
+        }
+        return result;
+    }
 }
