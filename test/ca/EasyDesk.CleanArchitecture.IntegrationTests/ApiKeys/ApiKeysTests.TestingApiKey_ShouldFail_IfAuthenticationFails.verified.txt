@@ -16,6 +16,6 @@
         }
       }
     ],
-    Meta: {}
+    Meta: null
   }
 }

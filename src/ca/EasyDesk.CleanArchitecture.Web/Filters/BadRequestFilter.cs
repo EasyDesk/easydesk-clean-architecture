@@ -8,6 +8,8 @@ namespace EasyDesk.CleanArchitecture.Web.Filters;
 
 internal class BadRequestFilter : IResultFilter
 {
+    private const string ErrorCode = "InvalidValue";
+
     public void OnResultExecuted(ResultExecutedContext context)
     {
     }
@@ -23,10 +25,9 @@ internal class BadRequestFilter : IResultFilter
                         .Select(errorSource =>
                             Errors.InvalidInput(
                                 errorSource.Key,
-                                "InvalidValue",
+                                ErrorCode,
                                 errorSource.Value.ConcatStrings("\n")))
-                        .Select(ErrorDto.FromError),
-                    Nothing.Value));
+                        .Select(ErrorDto.FromError)));
         }
     }
 }

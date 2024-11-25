@@ -9,7 +9,7 @@
         Meta: {
           propertyName: PageSize,
           errorCode: InvalidValue,
-          errorMessage: The value 'foo' is not valid.,
+          errorMessage: The value 'foo' is not valid for PageSize.,
           parameters: {}
         }
       },
@@ -19,15 +19,11 @@
         Meta: {
           propertyName: PageIndex,
           errorCode: InvalidValue,
-          errorMessage: The value 'bar' is not valid.,
+          errorMessage: The value 'bar' is not valid for PageIndex.,
           parameters: {}
         }
       }
     ],
-    Meta: {
-      Count: 0,
-      PageIndex: 0,
-      PageSize: 0
-    }
+    Meta: null
   }
 }

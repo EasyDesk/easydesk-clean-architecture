@@ -61,7 +61,6 @@ public class HttpResponseWrapper<T, M>
 
     public async Task<M> AsMetadata()
     {
-        await EnsureSuccess();
-        return (await ParseContent()).Meta;
+        return (await ParseContent()).Meta.Value;
     }
 }

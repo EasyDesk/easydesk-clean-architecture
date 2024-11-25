@@ -19,14 +19,14 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
 {
     private readonly AsyncFunc<Result<TResult>> _resultProvider;
     private readonly Func<TResult, TDto> _mapper;
-    private readonly Func<Result<TResult>, TMeta> _meta;
+    private readonly Func<Result<TResult>, Option<TMeta>> _meta;
     private readonly ControllerBase _controller;
     private IFixedList<ErrorHandler> _errorHandlers;
 
     public ActionResultBuilder(
         AsyncFunc<Result<TResult>> resultProvider,
         Func<TResult, TDto> mapper,
-        Func<Result<TResult>, TMeta> meta,
+        Func<Result<TResult>, Option<TMeta>> meta,
         ControllerBase controller)
         : this(resultProvider, mapper, meta, controller, List<ErrorHandler>())
     {
@@ -35,7 +35,7 @@ public class ActionResultBuilder<TResult, TDto, TMeta>
     private ActionResultBuilder(
         AsyncFunc<Result<TResult>> resultProvider,
         Func<TResult, TDto> mapper,
-        Func<Result<TResult>, TMeta> meta,
+        Func<Result<TResult>, Option<TMeta>> meta,
         ControllerBase controller,
         IFixedList<ErrorHandler> errorHandlers)
     {
@@ -96,8 +96,9 @@ public class ActionResultBuilder<TDto, TMeta> : ActionResultBuilder<TDto, TDto, 
 {
     public ActionResultBuilder(
         AsyncFunc<Result<TDto>> resultProvider,
-        Func<Result<TDto>, TMeta> meta,
-        ControllerBase controller) : base(resultProvider, It, meta, controller)
+        Func<Result<TDto>, Option<TMeta>> meta,
+        ControllerBase controller)
+        : base(resultProvider, It, meta, controller)
     {
     }
 }

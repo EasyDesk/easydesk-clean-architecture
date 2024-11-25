@@ -25,7 +25,6 @@ public class FailedAuthenticationFilter : IAsyncActionFilter
         context.Result = new UnauthorizedObjectResult(ResponseDto<Nothing, Nothing>.FromErrors(
             errors.Select(e => ErrorDto.FromError(new AuthenticationFailedError(
                 Schema: e.Key,
-                InnerError: ErrorDto.FromError(e.Value)))),
-            Nothing.Value));
+                InnerError: ErrorDto.FromError(e.Value))))));
     }
 }

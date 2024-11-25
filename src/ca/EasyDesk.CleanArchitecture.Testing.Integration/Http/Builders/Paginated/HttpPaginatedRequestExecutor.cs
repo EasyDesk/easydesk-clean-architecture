@@ -41,11 +41,11 @@ public sealed class HttpPaginatedRequestExecutor<T> :
         {
             timeoutToken.ThrowIfCancellationRequested();
             var page = GetSinglePage(timeoutToken);
+            await page.EnsureSuccess();
             var paginationMetadata = await page.AsMetadata();
             var count = paginationMetadata.Count;
             var pageSize = paginationMetadata.PageSize;
             var pageIndex = paginationMetadata.PageIndex;
-            await page.EnsureSuccess();
             hasNextPage = count >= pageSize;
             yield return page;
             this.SetPageIndex(pageIndex + 1);
