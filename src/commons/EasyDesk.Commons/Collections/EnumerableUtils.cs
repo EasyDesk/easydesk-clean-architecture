@@ -346,4 +346,44 @@ public static class EnumerableUtils
     }
 
     public static IEnumerable<T> EnumerateOnce<T>(this IEnumerable<T> sequence) => new CachedEnumerable<T>(sequence);
+
+    public static IDictionary<K, V> ToSortedDictionary<T, K, V>(
+        this IEnumerable<T> enumerable,
+        Func<T, K> keySelector,
+        Func<T, V> elementSelector,
+        IComparer<K>? keyComparer = null)
+        where K : notnull
+    {
+        return enumerable.Select(x => new KeyValuePair<K, V>(keySelector(x), elementSelector(x))).ToSortedDictionary(keyComparer);
+    }
+
+    public static IDictionary<K, T> ToSortedDictionary<T, K>(
+        this IEnumerable<T> enumerable,
+        Func<T, K> keySelector,
+        IComparer<K>? keyComparer = null)
+        where K : notnull
+    {
+        return enumerable.Select(x => new KeyValuePair<K, T>(keySelector(x), x)).ToSortedDictionary(keyComparer);
+    }
+
+    public static IDictionary<K, V> ToSortedDictionary<K, V>(
+        this IEnumerable<(K, V)> enumerable,
+        IComparer<K>? keyComparer = null)
+        where K : notnull
+    {
+        return enumerable.Select(kv => new KeyValuePair<K, V>(kv.Item1, kv.Item2)).ToSortedDictionary(keyComparer);
+    }
+
+    public static IDictionary<K, V> ToSortedDictionary<K, V>(
+        this IEnumerable<KeyValuePair<K, V>> enumerable,
+        IComparer<K>? keyComparer = null)
+        where K : notnull
+    {
+        var result = new SortedDictionary<K, V>(keyComparer);
+        foreach (var kv in enumerable)
+        {
+            result.Add(kv.Key, kv.Value);
+        }
+        return result;
+    }
 }

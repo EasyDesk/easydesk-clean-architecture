@@ -2,8 +2,10 @@
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
-public record ApiVersionDto(string Version)
+public record ApiVersionDto
 {
+    public required string Version { get; init; }
+
     public static ApiVersionDto FromApiVersion(ApiVersion apiVersion) =>
-        new(apiVersion.ToStringWithoutV());
+        new() { Version = apiVersion.ToStringWithoutV() };
 }

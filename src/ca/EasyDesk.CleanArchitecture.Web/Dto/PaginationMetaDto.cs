@@ -2,11 +2,14 @@
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
-public record PaginationMetaDto(
-    int Count,
-    int PageIndex,
-    int PageSize)
+public record PaginationMetaDto
 {
+    public required int Count { get; init; }
+
+    public required int PageIndex { get; init; }
+
+    public required int PageSize { get; init; }
+
     public static PaginationMetaDto FromResult(Result<int> count, int pageSize, int pageIndex) =>
-        new(Count: count.Value | 0, PageIndex: pageIndex, PageSize: pageSize);
+        new() { Count = count.Value | 0, PageIndex = pageIndex, PageSize = pageSize };
 }

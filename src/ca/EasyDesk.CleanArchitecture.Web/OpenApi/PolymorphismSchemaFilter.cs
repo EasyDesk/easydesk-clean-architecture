@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EasyDesk.Commons.Collections;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -26,12 +27,13 @@ internal class PolymorphismSchemaFilter : ISchemaFilter
             return;
         }
         schema.OneOf = typeInfo.PolymorphismOptions.DerivedTypes
+            .OrderBy(x => x.TypeDiscriminator)
             .Select(x => context.SchemaGenerator.GenerateSchema(x.DerivedType, context.SchemaRepository))
             .ToList();
         schema.Discriminator = new()
         {
             PropertyName = typeInfo.PolymorphismOptions.TypeDiscriminatorPropertyName,
-            Mapping = typeInfo.PolymorphismOptions.DerivedTypes.ToDictionary(
+            Mapping = typeInfo.PolymorphismOptions.DerivedTypes.ToSortedDictionary(
                 keySelector: x => (string)x.TypeDiscriminator!,
                 elementSelector: x => context.SchemaRepository.LookupByType(x.DerivedType).Reference.Id),
         };
@@ -44,7 +46,7 @@ internal class PolymorphismSchemaFilter : ISchemaFilter
                     [schema.Discriminator.PropertyName] = new OpenApiSchema()
                     {
                         Type = "string",
-                        Enum = schema.Discriminator.Mapping.Keys.Select(x => new OpenApiString(x) as IOpenApiAny).ToList(),
+                        Enum = schema.Discriminator.Mapping.Keys.Order().Select(x => new OpenApiString(x) as IOpenApiAny).ToList(),
                     },
                 },
             },

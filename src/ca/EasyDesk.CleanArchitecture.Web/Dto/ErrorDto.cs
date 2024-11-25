@@ -6,8 +6,14 @@ using System.Text;
 
 namespace EasyDesk.CleanArchitecture.Web.Dto;
 
-public record ErrorDto(string Code, string Detail, object Meta)
+public record ErrorDto
 {
+    public required string Code { get; init; }
+
+    public required string Detail { get; init; }
+
+    public required object Meta { get; init; }
+
     public static IEnumerable<ErrorDto> CreateErrorDtoList(Error error) => error switch
     {
         MultiError(var errors) => errors.Select(FromError),
@@ -16,18 +22,24 @@ public record ErrorDto(string Code, string Detail, object Meta)
 
     public static ErrorDto FromError(Error error) => error switch
     {
-        ApplicationError e => new(
-            Code: GetErrorCodeFromApplicationErrorType(e.GetType()),
-            Detail: e.GetDetail(),
-            Meta: e),
-        DomainError => new(
-            Code: GetErrorCodeFromDomainErrorType(error.GetType()),
-            Detail: ConvertPascalCaseToHumanReadable(error.GetType().Name),
-            Meta: error),
-        _ => new(
-            Code: "Internal",
-            Detail: "Unknown internal error occurred",
-            Meta: Nothing.Value),
+        ApplicationError e => new()
+        {
+            Code = GetErrorCodeFromApplicationErrorType(e.GetType()),
+            Detail = e.GetDetail(),
+            Meta = e,
+        },
+        DomainError => new()
+        {
+            Code = GetErrorCodeFromDomainErrorType(error.GetType()),
+            Detail = ConvertPascalCaseToHumanReadable(error.GetType().Name),
+            Meta = error,
+        },
+        _ => new()
+        {
+            Code = "Internal",
+            Detail = "Unknown internal error occurred",
+            Meta = Nothing.Value,
+        },
     };
 
     private static string ConvertPascalCaseToHumanReadable(string pascalCaseText)
