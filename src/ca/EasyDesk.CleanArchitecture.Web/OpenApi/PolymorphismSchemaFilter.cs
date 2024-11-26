@@ -1,7 +1,6 @@
 ﻿using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -37,19 +36,5 @@ internal class PolymorphismSchemaFilter : ISchemaFilter
                 keySelector: x => (string)x.TypeDiscriminator!,
                 elementSelector: x => context.SchemaRepository.LookupByType(x.DerivedType).Reference.Id),
         };
-        schema.AllOf = [
-            new OpenApiSchema()
-            {
-                Required = { schema.Discriminator.PropertyName },
-                Properties =
-                {
-                    [schema.Discriminator.PropertyName] = new OpenApiSchema()
-                    {
-                        Type = "string",
-                        Enum = schema.Discriminator.Mapping.Keys.Order().Select(x => new OpenApiString(x) as IOpenApiAny).ToList(),
-                    },
-                },
-            },
-        ];
     }
 }
