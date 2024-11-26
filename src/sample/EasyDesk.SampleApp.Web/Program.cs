@@ -1,4 +1,5 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Logging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
@@ -47,6 +48,10 @@ builder
     .AddAsyncApi()
     .AddSagas()
     .AddCsvParsing()
+    .AddJsonSerialization(c =>
+    {
+        c.TypeInfoResolver = new TypeInfoResolver();
+    })
     .AddModule<SampleAppDomainModule>();
 
 if (builder.Environment.IsDevelopment())
