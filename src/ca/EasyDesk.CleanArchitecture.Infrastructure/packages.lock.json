@@ -35,11 +35,11 @@
       },
       "Rebus": {
         "type": "Direct",
-        "requested": "[8.7.0, )",
-        "resolved": "8.7.0",
-        "contentHash": "pVqJ1ewA4vwnRVVTzTNBsIQGkDqmRTl0kA2t/rcJGKLC+zVnzuevm2nQJwviVxHtXtjWESNXexpZ2NAck+w65g==",
+        "requested": "[8.7.1, )",
+        "resolved": "8.7.1",
+        "contentHash": "HIxlzizlw46zjmy6ykOmbT0QMpxquLnVWc6xVOIZM1RjTTXAJm9AddFzlomqlq2UJl/OJFwoM5DwLmHFOdnO5w==",
         "dependencies": {
-          "Newtonsoft.Json": "[13.0.1, 14.0.0)"
+          "Newtonsoft.Json": "13.0.3"
         }
       },
       "Rebus.Microsoft.Extensions.Logging": {
@@ -240,8 +240,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.1",
-        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
