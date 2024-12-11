@@ -72,9 +72,9 @@
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Direct",
-        "requested": "[7.1.0, )",
-        "resolved": "7.1.0",
-        "contentHash": "+vzt/nV82YVCJt7GIuRV9xe67dvzrVwqDgO8DiQPmUZwtvtjK4rrb+qnoXbcu90VVaz2xjEK/Ma5/3AVWifSHQ==",
+        "requested": "[7.2.0, )",
+        "resolved": "7.2.0",
+        "contentHash": "y27fNDfIh1vGhJjXYynLcZjl7DLOW1bSO2MDsY9wB4Zm1fdxpPsuBSiR4U+0acWlAqLmnuOPKr/OeOgwRUkBlw==",
         "dependencies": {
           "Microsoft.OpenApi": "1.6.22"
         }
