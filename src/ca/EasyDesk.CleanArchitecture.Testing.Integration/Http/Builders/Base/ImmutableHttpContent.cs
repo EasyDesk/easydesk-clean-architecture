@@ -64,15 +64,25 @@ public record class ImmutableHttpContent(
     public string AsString() => Bytes.IsDefaultOrEmpty
         ? string.Empty
         : TextEncoding
-            .Map(e => e.GetString(Bytes.ToArray()))
+            .Map(e => e.GetString([.. Bytes]))
             .OrElseGet(() => $"BINARY {nameof(ImmutableHttpContent)} in base64:\n{Convert.ToBase64String(Bytes.ToArray())}");
 
     private string ToText()
     {
-        using var jsonDocument = JsonDocument.Parse(AsString());
-        return MediaType.Any(m => m.MediaType == MediaTypeNames.Application.Json)
-                ? JsonSerializer.Serialize(jsonDocument, _options)
-                : AsString();
+        var asString = AsString();
+        if (MediaType.Any(m => m.MediaType == MediaTypeNames.Application.Json))
+        {
+            try
+            {
+                using var jsonDocument = JsonDocument.Parse(asString);
+                return JsonSerializer.Serialize(jsonDocument, _options);
+            }
+            catch (JsonException)
+            {
+                return asString;
+            }
+        }
+        return asString;
     }
 
     public override string ToString() =>
@@ -85,8 +95,8 @@ public record class ImmutableHttpContent(
     {
         var content = TextEncoding.Match(
             some: e => MediaType.Match(
-                some: m => new StringContent(e.GetString(Bytes.ToArray()), e, m),
-                none: () => new StringContent(e.GetString(Bytes.ToArray()), e)),
+                some: m => new StringContent(e.GetString([.. Bytes]), e, m),
+                none: () => new StringContent(e.GetString([.. Bytes]), e)),
             none: () => new ByteArrayContent([.. Bytes]));
         foreach (var (key, value) in ContentHeaders.Dictionary)
         {
