@@ -10,7 +10,15 @@ public static class ValidationUtils
 {
     public static Result<T> Validate<T>(T value, IEnumerable<IValidator<T>> validators)
     {
-        var errors = validators
+        var errors = GetValidationErrors(value, validators).ToList();
+        return errors.HasAny()
+            ? Errors.Multiple(errors.First(), errors.Skip(1))
+            : value;
+    }
+
+    public static IEnumerable<InvalidInputError> GetValidationErrors<T>(T value, IEnumerable<IValidator<T>> validators)
+    {
+        return validators
             .Select(x => x.Validate(value))
             .SelectMany(x => x.Errors)
             .Where(x => x is not null)
@@ -18,11 +26,7 @@ public static class ValidationUtils
                 x.PropertyName,
                 x.ErrorCode.RemoveSuffix("Validator"),
                 x.ErrorMessage,
-                x.FormattedMessagePlaceholderValues.ToFixedSortedMap()))
-            .ToList();
-        return errors.HasAny()
-            ? Errors.Multiple(errors.First(), errors.Skip(1))
-            : value;
+                x.FormattedMessagePlaceholderValues.ToFixedSortedMap()));
     }
 
     public static Result<T> Validate<T>(T value, params IValidator<T>[] validators)
