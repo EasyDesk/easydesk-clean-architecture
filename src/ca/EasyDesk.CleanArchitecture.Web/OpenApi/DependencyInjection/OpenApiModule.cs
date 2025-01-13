@@ -81,7 +81,7 @@ public class OpenApiModule : AppModule
     private void SetupSwaggerDocs(AppDescription app, SwaggerGenOptions options)
     {
         options.SchemaFilter<OptionSchemaFilter>();
-        options.SchemaFilter<ErrorCodeSchemaFilter>();
+        options.SchemaFilter<ErrorDtoSchemaFilter>();
         options.SchemaFilter<PolymorphismSchemaFilter>();
         options.OperationFilter<BadRequestOperationFilter>();
         options.SupportNonNullableReferenceTypes();
