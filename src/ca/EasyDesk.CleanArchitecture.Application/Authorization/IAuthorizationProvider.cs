@@ -14,13 +14,19 @@ public interface IAuthorizationProvider
 
 public static class AuthorizationProviderExtensions
 {
-    public static async Task<Result<Nothing>> Require(this IAuthorizationProvider provider, AsyncFunc<AuthorizationInfo, bool> predicate)
+    public static async Task<Result<T>> Require<T>(this IAuthorizationProvider provider, AsyncFunc<AuthorizationInfo, Option<T>> predicate)
     {
         return await provider
             .GetAuthorizationInfo()
             .ThenOrElseError(() => new UnknownAgentError())
-            .ThenFilterAsync(predicate, otherwise: _ => Errors.Forbidden());
+            .ThenFlatMapAsync(info => predicate(info).ThenOrElseError(() => Errors.Forbidden()));
     }
+
+    public static async Task<Result<T>> Require<T>(this IAuthorizationProvider provider, Func<AuthorizationInfo, Option<T>> predicate) =>
+        await provider.Require(c => Task.FromResult(predicate(c)));
+
+    public static async Task<Result<Nothing>> Require(this IAuthorizationProvider provider, AsyncFunc<AuthorizationInfo, bool> predicate) =>
+        await provider.Require(async c => await predicate(c) ? Some(Nothing.Value) : None);
 
     public static async Task<Result<Nothing>> Require(this IAuthorizationProvider provider, Func<AuthorizationInfo, bool> predicate) =>
         await provider.Require(c => Task.FromResult(predicate(c)));
