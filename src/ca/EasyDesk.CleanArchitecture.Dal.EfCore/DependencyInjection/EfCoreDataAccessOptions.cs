@@ -1,8 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
+﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using System.CommandLine;
 using System.Data.Common;
 using System.Reflection;
 
@@ -13,7 +15,11 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
+    private const string MigrationsTableSuffix = "EFMigrationsHistory";
+    private const string CleanArchitectureDbContextPrefix = "__CA";
+
     private readonly IEfCoreProvider<TBuilder, TExtension> _provider;
+    private readonly ISet<Type> _registeredDbContextTypes = new HashSet<Type>();
     private Action<DbContextOptionsBuilder>? _configureDbContextOptions;
     private Action<TBuilder>? _configureProviderOptions;
     private Action<IServiceCollection>? _configureServices;
@@ -46,25 +52,56 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
         return this;
     }
 
+    public EfCoreDataAccessOptions<T, TBuilder, TExtension> WithCustomDbContext<C>()
+        where C : DbContext
+    {
+        _configureServices += services => RegisterDbContext<C>(services, isCleanArchitectureContext: false);
+        return this;
+    }
+
     internal void RegisterUtilityServices(IServiceCollection services)
     {
         services.AddScoped(_ => _provider.NewConnection());
         services.AddScoped<TransactionEnlistingOnCommandInterceptor>();
         services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
+        services.AddScoped(provider => new MigrationsService(provider, _registeredDbContextTypes));
+        services.AddScoped<ISaveChangesHandler, EfCoreSaveChangesHandler<T>>();
+        services.AddScoped<EfCoreUnitOfWorkProvider>();
+        services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
+        services.AddScoped(p => MigrationCommand(p.GetRequiredService<MigrationsService>()));
         _configureServices?.Invoke(services);
     }
 
-    internal void RegisterDbContext<C>(
-        IServiceCollection services,
-        Action<IServiceProvider, TBuilder>? configure = null)
+    private Command MigrationCommand(MigrationsService migrationsService)
+    {
+        var command = new Command("migrate", $"Apply migrations to the database");
+        var syncOption = new Option<bool>(aliases: ["--sync", "--synchronous"], getDefaultValue: () => false, description: "Apply migrations synchronously");
+        command.AddOption(syncOption);
+        command.SetHandler(migrationsService.Migrate, syncOption);
+        return command;
+    }
+
+    internal void RegisterDbContext<C>(IServiceCollection services, bool isCleanArchitectureContext = true)
         where C : DbContext
     {
+        if (_registeredDbContextTypes.Contains(typeof(C)))
+        {
+            return;
+        }
+
         services.AddDbContext<C>((provider, options) =>
         {
             var connection = provider.GetRequiredService<DbConnection>();
             _provider.ConfigureDbProvider(options, connection, relationalOptions =>
             {
-                configure?.Invoke(provider, relationalOptions);
+                if (isCleanArchitectureContext)
+                {
+                    relationalOptions.MigrationsAssembly(InternalMigrationsAssembly.GetName().Name);
+                }
+
+                var migrationsTableName = isCleanArchitectureContext ? $"{CleanArchitectureDbContextPrefix}_{typeof(C).Name}_{MigrationsTableSuffix}" : $"{typeof(C).Name}_{MigrationsTableSuffix}";
+                relationalOptions.MigrationsHistoryTable(migrationsTableName, EfCoreUtils.MigrationsSchema);
+
                 _configureProviderOptions?.Invoke(relationalOptions);
             });
 
@@ -72,5 +109,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
             options.AddInterceptors(provider.GetRequiredService<DbContextEnlistingOnSaveChangesInterceptor>());
             _configureDbContextOptions?.Invoke(options);
         });
+
+        _registeredDbContextTypes.Add(typeof(C));
     }
 }

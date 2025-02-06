@@ -1,7 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
-using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
@@ -10,16 +9,13 @@ using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Sagas;
-using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using System.CommandLine;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
@@ -28,11 +24,7 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
     where TBuilder : RelationalDbContextOptionsBuilder<TBuilder, TExtension>
     where TExtension : RelationalOptionsExtension, new()
 {
-    private const string MigrationsTableSuffix = "EFMigrationsHistory";
-    private const string CleanArchitectureDbContextPrefix = "__CA";
-
     private readonly EfCoreDataAccessOptions<T, TBuilder, TExtension> _options;
-    private readonly ISet<Type> _registeredDbContextTypes = new HashSet<Type>();
 
     public EfCoreDataAccess(EfCoreDataAccessOptions<T, TBuilder, TExtension> options)
     {
@@ -46,28 +38,12 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
     public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
     {
         _options.RegisterUtilityServices(services);
-        AddDbContext<T>(services, isCleanArchitectureContext: false);
-        services.AddScoped<ISaveChangesHandler, EfCoreSaveChangesHandler<T>>();
-        services.AddScoped<EfCoreUnitOfWorkProvider>();
-        services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
-
-        services.AddScoped(provider => new MigrationsService(provider, _registeredDbContextTypes));
-
-        services.AddScoped(p => MigrationCommand(p.GetRequiredService<MigrationsService>()));
-    }
-
-    private Command MigrationCommand(MigrationsService migrationsService)
-    {
-        var command = new Command("migrate", $"Apply migrations to the database");
-        var syncOption = new Option<bool>(aliases: ["--sync", "--synchronous"], getDefaultValue: () => false, description: "Apply migrations synchronously");
-        command.AddOption(syncOption);
-        command.SetHandler(migrationsService.Migrate, syncOption);
-        return command;
+        _options.RegisterDbContext<T>(services, isCleanArchitectureContext: false);
     }
 
     public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<MessagingContext>(services, ConfigureAsCleanArchitectureDbContext);
+        _options.RegisterDbContext<MessagingContext>(services);
         services.AddScoped<IOutbox, EfCoreOutbox>();
         services.AddScoped<IInbox, EfCoreInbox>();
     }
@@ -82,9 +58,7 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
 
     private void AddAuthorizationContext(IServiceCollection services)
     {
-        AddDbContext<AuthContext>(
-            services,
-            ConfigureAsCleanArchitectureDbContext);
+        _options.RegisterDbContext<AuthContext>(services);
     }
 
     public void AddMultitenancy(IServiceCollection services, AppDescription app)
@@ -95,47 +69,21 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
 
     public void AddSagas(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<SagasContext>(services, ConfigureAsCleanArchitectureDbContext);
+        _options.RegisterDbContext<SagasContext>(services);
         services.AddScoped<ISagaManager, EfCoreSagaManager>();
     }
 
     public void AddAuditing(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuditingContext>(services, ConfigureAsCleanArchitectureDbContext);
+        _options.RegisterDbContext<AuditingContext>(services);
         services.AddScoped<IAuditLog, EfCoreAuditLog>();
         services.AddScoped<IAuditStorageImplementation, EfCoreAuditStorage>();
     }
 
     public void AddApiKeysManagement(IServiceCollection services, AppDescription app)
     {
-        AddDbContext<AuthContext>(services, ConfigureAsCleanArchitectureDbContext);
+        _options.RegisterDbContext<AuthContext>(services);
         services.AddScoped<IApiKeysStorage, EfCoreApiKeysStorage>();
-    }
-
-    private void ConfigureAsCleanArchitectureDbContext(IServiceProvider provider, TBuilder relationalOptions)
-    {
-        relationalOptions.MigrationsAssembly(_options.InternalMigrationsAssembly.GetName().Name);
-    }
-
-    private void AddDbContext<C>(
-        IServiceCollection services,
-        Action<IServiceProvider, TBuilder>? configure = null,
-        bool isCleanArchitectureContext = true)
-        where C : DbContext
-    {
-        if (_registeredDbContextTypes.Contains(typeof(C)))
-        {
-            return;
-        }
-
-        _options.RegisterDbContext<C>(services, (provider, relationalOptions) =>
-        {
-            configure?.Invoke(provider, relationalOptions);
-
-            var migrationsTableName = isCleanArchitectureContext ? $"{CleanArchitectureDbContextPrefix}_{typeof(C).Name}_{MigrationsTableSuffix}" : $"{typeof(C).Name}_{MigrationsTableSuffix}";
-            relationalOptions.MigrationsHistoryTable(migrationsTableName, EfCoreUtils.MigrationsSchema);
-        });
-        _registeredDbContextTypes.Add(typeof(C));
     }
 }
 
