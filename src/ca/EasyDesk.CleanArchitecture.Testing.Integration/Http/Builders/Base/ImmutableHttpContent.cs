@@ -64,7 +64,7 @@ public record class ImmutableHttpContent(
     public string AsString() => Bytes.IsDefaultOrEmpty
         ? string.Empty
         : TextEncoding
-            .Map(e => e.GetString([.. Bytes]))
+            .Map(e => e.GetString(Bytes.AsSpan()))
             .OrElseGet(() => $"BINARY {nameof(ImmutableHttpContent)} in base64:\n{Convert.ToBase64String(Bytes.ToArray())}");
 
     private string ToText()
