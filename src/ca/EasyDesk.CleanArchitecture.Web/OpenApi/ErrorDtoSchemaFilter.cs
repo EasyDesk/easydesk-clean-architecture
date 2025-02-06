@@ -11,15 +11,15 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class ErrorCodeSchemaFilter : ISchemaFilter
+internal class ErrorDtoSchemaFilter : ISchemaFilter
 {
     private readonly ISerializerDataContractResolver _serializerDataContractResolver;
     private readonly IEnumerable<string> _errorCodes;
 
-    public ErrorCodeSchemaFilter(ISerializerDataContractResolver serializerDataContractResolver, AppDescription app)
+    public ErrorDtoSchemaFilter(ISerializerDataContractResolver serializerDataContractResolver, AppDescription app)
     {
         _serializerDataContractResolver = serializerDataContractResolver;
-        _errorCodes = new AssemblyScanner()
+        var errors = new AssemblyScanner()
             .FromAssemblies(app.Assemblies)
             .FromAssembliesContaining(
                 typeof(ApplicationError),
@@ -27,7 +27,8 @@ internal class ErrorCodeSchemaFilter : ISchemaFilter
                 typeof(OpenApiModule))
             .NonAbstract()
             .SubtypesOrImplementationsOf<ApplicationError>()
-            .FindTypes()
+            .FindTypes();
+        _errorCodes = errors
             .Select(ErrorDto.GetErrorCodeFromApplicationErrorType)
             .ToFixedSortedSet();
     }
@@ -39,9 +40,10 @@ internal class ErrorCodeSchemaFilter : ISchemaFilter
         {
             return;
         }
-        var codeDataProperty = _serializerDataContractResolver
+        var errorDtoProperties = _serializerDataContractResolver
             .GetDataContractForType(typeof(ErrorDto))
-            .ObjectProperties
+            .ObjectProperties;
+        var codeDataProperty = errorDtoProperties
             .First(p => p.MemberInfo == typeof(ErrorDto).GetProperty(nameof(ErrorDto.Code)));
         schema.Properties[codeDataProperty.Name] = new OpenApiSchema
         {
