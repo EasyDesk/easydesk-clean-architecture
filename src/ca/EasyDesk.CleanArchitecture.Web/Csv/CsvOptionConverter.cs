@@ -11,7 +11,7 @@ public class CsvOptionConverter<T> : DefaultTypeConverter
 
     public CsvOptionConverter(TypeConverterCache typeConverterCache)
     {
-        _wrappedTypeConverter = typeConverterCache.GetConverter(typeof(T));
+        _wrappedTypeConverter = typeConverterCache.GetConverter<T>();
     }
 
     public override object? ConvertFromString(string? text, IReaderRow row, MemberMapData memberMapData) =>
