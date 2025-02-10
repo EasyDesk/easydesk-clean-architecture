@@ -7,29 +7,49 @@ namespace EasyDesk.Commons;
 
 public static partial class StaticImports
 {
-    public static Result<A> IfSuccess<A>(this Result<A> result, Action<A> action)
+    public static Result<T> IfSuccess<T>(this Result<T> result, Action<T> action)
     {
         result.Match(success: action);
         return result;
     }
 
-    public static async Task<Result<A>> IfSuccessAsync<A>(this Result<A> result, AsyncAction<A> action)
+    public static async Task<Result<T>> IfSuccessAsync<T>(this Result<T> result, AsyncAction<T> action)
     {
         await result.MatchAsync(success: action);
         return result;
     }
 
-    public static Result<A> IfFailure<A>(this Result<A> result, Action<Error> action)
+    public static bool IsSuccess<T>(this Result<T> result, out T value, out Error error)
+    {
+        value = default!;
+        error = default!;
+        if (result.IsSuccess)
+        {
+            value = result.ReadValue();
+            return true;
+        }
+        error = result.ReadError();
+        return false;
+    }
+
+    public static bool IsSuccess<T>(this Result<T> result, out T value) => result.IsSuccess(out value, out _);
+
+    public static Result<T> IfFailure<T>(this Result<T> result, Action<Error> action)
     {
         result.Match(failure: action);
         return result;
     }
 
-    public static async Task<Result<A>> IfFailureAsync<A>(this Result<A> result, AsyncAction<Error> action)
+    public static async Task<Result<T>> IfFailureAsync<T>(this Result<T> result, AsyncAction<Error> action)
     {
         await result.MatchAsync(failure: action);
         return result;
     }
+
+    public static bool IsFailure<T>(this Result<T> result, out T value, out Error error) =>
+        !result.IsSuccess(out value, out error);
+
+    public static bool IsFailure<T>(this Result<T> result, out T value) => result.IsFailure(out value, out _);
 
     public static Result<A> FlatTap<A, B>(this Result<A> result, Func<A, Result<B>> mapper) =>
         result.FlatMap(a => mapper(a).Map(_ => a));

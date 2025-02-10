@@ -22,11 +22,11 @@ public class ResultOperatorsTests
 
     private static Result<int> Failure => Failure<int>(_error);
 
-    public static TheoryData<Result<int>> AllTypesOfResult() => new()
-    {
+    public static TheoryData<Result<int>> AllTypesOfResult() =>
+    [
         Success,
         Failure,
-    };
+    ];
 
     public static TheoryData<Result<string>> FlatMapData() => new()
     {
@@ -64,6 +64,36 @@ public class ResultOperatorsTests
     }
 
     [Fact]
+    public void IsSuccess_ShouldSetOutVar_IfResultIsSuccess()
+    {
+        Success.IsSuccess(out var value).ShouldBeTrue();
+        value.ShouldBe(Value);
+    }
+
+    [Fact]
+    public void IsSuccess_ShouldNotSetOutVar_IfResultIsFailure()
+    {
+        Failure.IsSuccess(out var value).ShouldBeFalse();
+        value.ShouldBe(default);
+    }
+
+    [Fact]
+    public void IsSuccess_ShouldSetOutVars_IfResultIsSuccess_WithError()
+    {
+        Success.IsSuccess(out var value, out var error).ShouldBeTrue();
+        value.ShouldBe(Value);
+        error.ShouldBe(default);
+    }
+
+    [Fact]
+    public void IsSuccess_ShouldSetOutVars_IfResultIsFailure_WithError()
+    {
+        Failure.IsSuccess(out var value, out var error).ShouldBeFalse();
+        value.ShouldBe(default);
+        error.ShouldBe(_error);
+    }
+
+    [Fact]
     public void IfFailure_ShouldCallTheGivenFunction_ForFailedResults()
     {
         var shouldBeCalled = Substitute.For<Action<Error>>();
@@ -90,6 +120,36 @@ public class ResultOperatorsTests
         var output = result.IfFailure(Substitute.For<Action<Error>>());
 
         output.ShouldBe(result);
+    }
+
+    [Fact]
+    public void IsFailure_ShouldSetOutVar_IfResultIsSuccess()
+    {
+        Success.IsFailure(out var value).ShouldBeFalse();
+        value.ShouldBe(Value);
+    }
+
+    [Fact]
+    public void IsFailure_ShouldNotSetOutVar_IfResultIsFailure()
+    {
+        Failure.IsFailure(out var value).ShouldBeTrue();
+        value.ShouldBe(default);
+    }
+
+    [Fact]
+    public void IsFailure_ShouldSetOutVars_IfResultIsSuccess_WithError()
+    {
+        Success.IsFailure(out var value, out var error).ShouldBeFalse();
+        value.ShouldBe(Value);
+        error.ShouldBe(default);
+    }
+
+    [Fact]
+    public void IsFailure_ShouldSetOutVars_IfResultIsFailure_WithError()
+    {
+        Failure.IsFailure(out var value, out var error).ShouldBeTrue();
+        value.ShouldBe(default);
+        error.ShouldBe(_error);
     }
 
     [Fact]

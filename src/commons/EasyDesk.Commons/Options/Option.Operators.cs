@@ -13,7 +13,15 @@ public static partial class StaticImports
         return option;
     }
 
-    public static bool IfPresent<T>(this Option<T> option, out T value)
+    public static async Task<Option<T>> IfPresentAsync<T>(this Option<T> option, AsyncAction<T> action)
+    {
+        await option.MatchAsync(
+            some: action,
+            none: () => Task.CompletedTask);
+        return option;
+    }
+
+    public static bool IsPresent<T>(this Option<T> option, out T value)
     {
         value = default!;
         if (option.IsPresent)
@@ -24,31 +32,12 @@ public static partial class StaticImports
         return false;
     }
 
-    public static async Task<Option<T>> IfPresentAsync<T>(this Option<T> option, AsyncAction<T> action)
-    {
-        await option.MatchAsync(
-            some: action,
-            none: () => Task.CompletedTask);
-        return option;
-    }
-
     public static Option<T> IfAbsent<T>(this Option<T> option, Action action)
     {
         option.Match(
             some: _ => { },
             none: action);
         return option;
-    }
-
-    public static bool IfAbsent<T>(this Option<T> option, out T value)
-    {
-        value = default!;
-        if (option.IsPresent)
-        {
-            value = option.Value;
-            return false;
-        }
-        return true;
     }
 
     public static async Task<Option<T>> IfAbsentAsync<T>(this Option<T> option, AsyncAction action)
@@ -58,6 +47,9 @@ public static partial class StaticImports
             none: action);
         return option;
     }
+
+    public static bool IsAbsent<T>(this Option<T> option, out T value) =>
+        !option.IsPresent(out value);
 
     public static Option<R> Map<T, R>(this Option<T> option, Func<T, R> mapper) => option.Match(
         some: t => Some(mapper(t)),

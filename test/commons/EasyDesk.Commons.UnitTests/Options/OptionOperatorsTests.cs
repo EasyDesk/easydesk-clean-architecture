@@ -32,16 +32,16 @@ public class OptionOperatorsTests
     }
 
     [Fact]
-    public void IfPresent_ShouldSetOutVar_IfOptionIsNotEmpty()
+    public void IsPresent_ShouldSetOutVar_IfOptionIsNotEmpty()
     {
-        Some(Value).IfPresent(out var value).ShouldBeTrue();
+        Some(Value).IsPresent(out var value).ShouldBeTrue();
         value.ShouldBe(Value);
     }
 
     [Fact]
-    public void IfPresent_ShouldNotSetOutVar_IfOptionIsEmpty()
+    public void IsPresent_ShouldNotSetOutVar_IfOptionIsEmpty()
     {
-        NoneT<int>().IfPresent(out var value).ShouldBeFalse();
+        NoneT<int>().IsPresent(out var value).ShouldBeFalse();
         value.ShouldBe(default);
     }
 
@@ -66,16 +66,16 @@ public class OptionOperatorsTests
     }
 
     [Fact]
-    public void IfAbsent_ShouldSetOutVar_IfOptionIsNotEmpty()
+    public void IsAbsent_ShouldSetOutVar_IfOptionIsNotEmpty()
     {
-        Some(Value).IfAbsent(out var value).ShouldBeFalse();
+        Some(Value).IsAbsent(out var value).ShouldBeFalse();
         value.ShouldBe(Value);
     }
 
     [Fact]
-    public void IfAbsent_ShouldNotSetOutVar_IfOptionIsEmpty()
+    public void IsAbsent_ShouldNotSetOutVar_IfOptionIsEmpty()
     {
-        NoneT<int>().IfAbsent(out var value).ShouldBeTrue();
+        NoneT<int>().IsAbsent(out var value).ShouldBeTrue();
         value.ShouldBe(default);
     }
 
