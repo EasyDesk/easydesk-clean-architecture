@@ -7,21 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
-internal class EfCoreAggregateView<TAggregate, TPersistence> : IAggregateView<TAggregate>
+internal class EfCoreQueryableAggregateView<TAggregate, TPersistence> : IAggregateView<TAggregate>
     where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
 {
     private readonly IQueryable<TPersistence> _query;
     private readonly AggregatesTracker<TAggregate, TPersistence> _tracker;
 
-    public EfCoreAggregateView(IQueryable<TPersistence> query, AggregatesTracker<TAggregate, TPersistence> tracker)
+    public EfCoreQueryableAggregateView(IQueryable<TPersistence> query, AggregatesTracker<TAggregate, TPersistence> tracker)
     {
         _query = query;
         _tracker = tracker;
     }
 
-    public Task<Option<TAggregate>> AsOption() =>
-        _query.FirstOptionAsync().ThenMap(_tracker.TrackFromPersistenceModel);
+    public Task<Option<TAggregate>> AsOption() => _query.FirstOptionAsync().ThenMap(_tracker.TrackFromPersistenceModel);
 
     public Task<bool> Exists() => _query.AnyAsync();
 }

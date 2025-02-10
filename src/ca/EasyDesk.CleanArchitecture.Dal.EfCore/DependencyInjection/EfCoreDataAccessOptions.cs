@@ -100,7 +100,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
                 }
 
                 var migrationsTableName = isCleanArchitectureContext ? $"{CleanArchitectureDbContextPrefix}_{typeof(C).Name}_{MigrationsTableSuffix}" : $"{typeof(C).Name}_{MigrationsTableSuffix}";
-                relationalOptions.MigrationsHistoryTable(migrationsTableName, EfCoreUtils.MigrationsSchema);
+                relationalOptions.MigrationsHistoryTable(migrationsTableName, EfCoreConstants.MigrationsSchema);
 
                 _configureProviderOptions?.Invoke(relationalOptions);
             });

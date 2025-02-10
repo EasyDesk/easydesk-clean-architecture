@@ -39,7 +39,7 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
         Find(queryWrapper(InitialQuery()));
 
     protected IAggregateView<TAggregate> Find(IQueryable<TPersistence> query) =>
-        new EfCoreAggregateView<TAggregate, TPersistence>(query, Tracker);
+        new EfCoreQueryableAggregateView<TAggregate, TPersistence>(query, Tracker);
 
     protected async Task<IEnumerable<TAggregate>> GetMany(Expression<Func<TPersistence, bool>> predicate) =>
         await GetMany(q => q.Where(predicate));

@@ -6,5 +6,5 @@ public static class SagaManagerModel
 {
     public const string SchemaName = "sagas";
 
-    public const int SagaTypeMaxLength = EfCoreUtils.SymbolMaxLength;
+    public const int SagaTypeMaxLength = EfCoreConstants.SymbolMaxLength;
 }
