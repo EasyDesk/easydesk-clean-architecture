@@ -13,6 +13,17 @@ public static partial class StaticImports
         return option;
     }
 
+    public static bool IfPresent<T>(this Option<T> option, out T value)
+    {
+        value = default!;
+        if (option.IsPresent)
+        {
+            value = option.Value;
+            return true;
+        }
+        return false;
+    }
+
     public static async Task<Option<T>> IfPresentAsync<T>(this Option<T> option, AsyncAction<T> action)
     {
         await option.MatchAsync(
@@ -27,6 +38,17 @@ public static partial class StaticImports
             some: _ => { },
             none: action);
         return option;
+    }
+
+    public static bool IfAbsent<T>(this Option<T> option, out T value)
+    {
+        value = default!;
+        if (option.IsPresent)
+        {
+            value = option.Value;
+            return false;
+        }
+        return true;
     }
 
     public static async Task<Option<T>> IfAbsentAsync<T>(this Option<T> option, AsyncAction action)

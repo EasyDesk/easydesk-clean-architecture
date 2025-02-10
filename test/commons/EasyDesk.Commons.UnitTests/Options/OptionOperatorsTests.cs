@@ -32,6 +32,20 @@ public class OptionOperatorsTests
     }
 
     [Fact]
+    public void IfPresent_ShouldSetOutVar_IfOptionIsNotEmpty()
+    {
+        Some(Value).IfPresent(out var value).ShouldBeTrue();
+        value.ShouldBe(Value);
+    }
+
+    [Fact]
+    public void IfPresent_ShouldNotSetOutVar_IfOptionIsEmpty()
+    {
+        NoneT<int>().IfPresent(out var value).ShouldBeFalse();
+        value.ShouldBe(default);
+    }
+
+    [Fact]
     public void IfAbsent_ShouldCallTheGivenAction_IfOptionIsEmpty()
     {
         var action = Substitute.For<Action>();
@@ -49,6 +63,20 @@ public class OptionOperatorsTests
         Some(Value).IfAbsent(action);
 
         action.DidNotReceiveWithAnyArgs()();
+    }
+
+    [Fact]
+    public void IfAbsent_ShouldSetOutVar_IfOptionIsNotEmpty()
+    {
+        Some(Value).IfAbsent(out var value).ShouldBeFalse();
+        value.ShouldBe(Value);
+    }
+
+    [Fact]
+    public void IfAbsent_ShouldNotSetOutVar_IfOptionIsEmpty()
+    {
+        NoneT<int>().IfAbsent(out var value).ShouldBeTrue();
+        value.ShouldBe(default);
     }
 
     [Fact]
