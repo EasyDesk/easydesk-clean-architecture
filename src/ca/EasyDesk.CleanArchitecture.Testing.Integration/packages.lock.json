@@ -68,9 +68,9 @@
       },
       "Testcontainers": {
         "type": "Direct",
-        "requested": "[4.1.0, )",
-        "resolved": "4.1.0",
-        "contentHash": "5oudr81h9084amKZrjVIWdVWycR2YhqT9ePnN/ID7xinwx3ZLAI4EhYiyurfrDMvWcHJp5+c9x+qPRxOcq1IXQ==",
+        "requested": "[4.2.0, )",
+        "resolved": "4.2.0",
+        "contentHash": "GzxvSJQvasxWLty1BWBSIqc3Rmymv5zorLCWWLo5AfoDCXAVQf5GDl7F9wBOWRs7qnuP5bha8FAzSvMotLJeAg==",
         "dependencies": {
           "Docker.DotNet.Enhanced": "3.126.1",
           "Docker.DotNet.Enhanced.X509": "3.126.1",
@@ -81,11 +81,11 @@
       },
       "Testcontainers.MsSql": {
         "type": "Direct",
-        "requested": "[4.1.0, )",
-        "resolved": "4.1.0",
-        "contentHash": "DjNSX/5lOSEpkQvvZ5btBKs+iPshbWSjpKdcvS6yCSgYrykhSneRC+23Tl/2O4U6FGM13Dxp2C/VEtBePR84uw==",
+        "requested": "[4.2.0, )",
+        "resolved": "4.2.0",
+        "contentHash": "degFDO7d2OOFG++c/jw6CzdmP2W9FprriT7LwLIk5JfVf4w9NmrFqW4FWDq8LUjqBS2OOzpuJWh0zDBWtE1y/Q==",
         "dependencies": {
-          "Testcontainers": "4.1.0"
+          "Testcontainers": "4.2.0"
         }
       },
       "Testcontainers.PostgreSql": {
