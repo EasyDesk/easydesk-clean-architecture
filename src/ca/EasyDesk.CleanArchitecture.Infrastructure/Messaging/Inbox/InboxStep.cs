@@ -20,6 +20,8 @@ public sealed class InboxStep<T> : IPipelineStep<T, Nothing>
         _contextProvider = contextProvider;
     }
 
+    public bool IsForEachHandler => false;
+
     public async Task<Result<Nothing>> Run(T request, NextPipelineStep<Nothing> next)
     {
         if (_contextProvider.CurrentContext is not ContextInfo.AsyncMessage)

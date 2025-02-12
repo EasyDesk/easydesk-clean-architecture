@@ -7,7 +7,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Dispatching;
 
-public class DefaultPipelineTests
+public class PipelineTests
 {
     public record StringRequest : IDispatchable<string>;
 
@@ -21,6 +21,8 @@ public class DefaultPipelineTests
             _before = before;
             _after = after;
         }
+
+        public bool IsForEachHandler => true;
 
         public Task<Result<R>> Run(T request, NextPipelineStep<R> next)
         {
@@ -50,14 +52,11 @@ public class DefaultPipelineTests
     private readonly StringRequest _stringRequest = new();
     private readonly IPipelineProvider _pipelineProvider = Substitute.For<IPipelineProvider>();
     private readonly IServiceProvider _serviceProvider = Substitute.For<IServiceProvider>();
-    private readonly DefaultPipeline _sut;
     private readonly AsyncFunc<StringRequest, Result<string>> _action = Substitute.For<AsyncFunc<StringRequest, Result<string>>>();
 
-    public DefaultPipelineTests()
+    public PipelineTests()
     {
         _action(_stringRequest).Returns(ActionResult);
-
-        _sut = new(_pipelineProvider, _serviceProvider);
     }
 
     [Fact]
@@ -67,7 +66,7 @@ public class DefaultPipelineTests
         var step2 = SubstituteForPipelineStep<StringRequest, string>();
         SetupPipeline(step1, step2);
 
-        await _sut.Run(_stringRequest, _action);
+        await _pipelineProvider.GetSteps<StringRequest, string>(_serviceProvider).Run(_stringRequest, _action);
 
         Received.InOrder(() =>
         {
@@ -84,7 +83,7 @@ public class DefaultPipelineTests
         var stepB = new GenericStepB<StringRequest, string>(notifier);
         SetupPipeline(stepA, stepB);
 
-        await _sut.Run(_stringRequest, _action);
+        await _pipelineProvider.GetSteps<StringRequest, string>(_serviceProvider).Run(_stringRequest, _action);
 
         Received.InOrder(() =>
         {
@@ -103,7 +102,7 @@ public class DefaultPipelineTests
         var step2 = SubstituteForPipelineStep<StringRequest, string>();
         SetupPipeline(step1, step2);
 
-        var result = await _sut.Run(_stringRequest, _action);
+        var result = await _pipelineProvider.GetSteps<StringRequest, string>(_serviceProvider).Run(_stringRequest, _action);
 
         result.ShouldBe(ActionResult);
     }

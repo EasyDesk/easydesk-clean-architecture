@@ -1,7 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.Commons.Results;
-using EasyDesk.Commons.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Shouldly;
@@ -17,7 +15,7 @@ public class DispatcherTests
     private const int IntValue = 10;
     private const string StringValue = "hello";
 
-    private readonly IPipeline _pipeline;
+    private readonly IPipelineProvider _pipelineProvider;
 
     private readonly IntRequest _intRequest = new();
     private readonly StringRequest _stringRequest = new();
@@ -29,14 +27,10 @@ public class DispatcherTests
     {
         void ConfigurePipelineDelegation<T, R>()
         {
-            _pipeline.Run<T, R>(default!, default!).ReturnsForAnyArgs(callInfo =>
-            {
-                var handler = callInfo.Arg<AsyncFunc<T, Result<R>>>();
-                return handler.Invoke(callInfo.Arg<T>());
-            });
+            _pipelineProvider.GetSteps<T, R>(default!).ReturnsForAnyArgs([]);
         }
 
-        _pipeline = Substitute.For<IPipeline>();
+        _pipelineProvider = Substitute.For<IPipelineProvider>();
         ConfigurePipelineDelegation<IntRequest, int>();
         ConfigurePipelineDelegation<StringRequest, string>();
 
@@ -51,7 +45,7 @@ public class DispatcherTests
     {
         var services = new ServiceCollection();
         configure?.Invoke(services);
-        return new Dispatcher(services.BuildServiceProvider(), _pipeline);
+        return new Dispatcher(services.BuildServiceProvider(), _pipelineProvider);
     }
 
     [Fact]
@@ -76,7 +70,7 @@ public class DispatcherTests
 
         await Should.ThrowAsync<HandlerNotFoundException>(dispatcher.Dispatch(_intRequest));
 
-        await _pipeline.DidNotReceiveWithAnyArgs().Run<IntRequest, int>(default!, default!);
+        _pipelineProvider.DidNotReceiveWithAnyArgs().GetSteps<IntRequest, int>(default!);
     }
 
     [Fact]

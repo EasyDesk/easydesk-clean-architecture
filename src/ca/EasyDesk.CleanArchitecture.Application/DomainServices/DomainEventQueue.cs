@@ -4,13 +4,13 @@ using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-internal class DomainEventQueue : IDomainEventNotifier, IDomainEventFlusher
+internal class DomainEventQueue : IDomainEventNotifier
 {
     private readonly Queue<DomainEvent> _eventQueue = new();
-    private readonly IDomainEventPublisher _publisher;
+    private readonly DomainEventPublisher _publisher;
     private readonly ISaveChangesHandler _saveChangesHandler;
 
-    public DomainEventQueue(IDomainEventPublisher publisher, ISaveChangesHandler saveChangesHandler)
+    public DomainEventQueue(DomainEventPublisher publisher, ISaveChangesHandler saveChangesHandler)
     {
         _publisher = publisher;
         _saveChangesHandler = saveChangesHandler;

@@ -17,14 +17,13 @@ public class DispatchingModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddTransient<IDispatcher, Dispatcher>();
+        services.AddScoped<IDispatcher, Dispatcher>();
 
         RegisterRequestHandlers(services, app);
 
         var steps = Pipeline.GetOrderedSteps().ToList();
         services.AddHostedService<StartupPipelineLogger>(sp => new(steps, sp.GetRequiredService<ILogger<StartupPipelineLogger>>()));
         services.AddSingleton<IPipelineProvider>(p => new GenericPipelineProvider(steps));
-        services.AddTransient<IPipeline, DefaultPipeline>();
     }
 
     private void RegisterRequestHandlers(IServiceCollection services, AppDescription app)

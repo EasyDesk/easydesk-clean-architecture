@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-internal class DomainEventPublisher : IDomainEventPublisher
+public class DomainEventPublisher
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -19,13 +19,13 @@ internal class DomainEventPublisher : IDomainEventPublisher
         var eventType = domainEvent.GetType();
         var result = GetType()
             .GetTypeInfo()
-            .GetMethod(nameof(PublishEventOfType))!
+            .GetMethod(nameof(PublishEventOfType), BindingFlags.Instance | BindingFlags.NonPublic)!
             .MakeGenericMethod(eventType)
             .Invoke(this, [domainEvent]);
         return await (Task<Result<Nothing>>)result!;
     }
 
-    public async Task<Result<Nothing>> PublishEventOfType<T>(T domainEvent)
+    private async Task<Result<Nothing>> PublishEventOfType<T>(T domainEvent)
         where T : DomainEvent
     {
         var handlers = _serviceProvider.GetServices<IDomainEventHandler<T>>();

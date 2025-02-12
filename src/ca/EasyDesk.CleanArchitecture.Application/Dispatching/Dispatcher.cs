@@ -11,12 +11,13 @@ internal class Dispatcher : IDispatcher
 {
     private static readonly ConcurrentDictionary<Type, MethodInfo> _dispatchMethodsByType = new();
     private readonly IServiceProvider _serviceProvider;
-    private readonly IPipeline _pipeline;
+    private readonly IPipelineProvider _pipelineProvider;
+    private bool _initialized = false;
 
-    public Dispatcher(IServiceProvider serviceProvider, IPipeline pipeline)
+    public Dispatcher(IServiceProvider serviceProvider, IPipelineProvider pipelineProvider)
     {
         _serviceProvider = serviceProvider;
-        _pipeline = pipeline;
+        _pipelineProvider = pipelineProvider;
     }
 
     public async Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper)
@@ -33,7 +34,16 @@ internal class Dispatcher : IDispatcher
         where T : IDispatchable<X>
     {
         var handler = FindHandler<T, X>();
-        return await _pipeline.Run(dispatchable, r => handler.Handle(r).ThenMapAsync(mapper));
+        var pipeline = _pipelineProvider.GetSteps<T, R>(_serviceProvider);
+        if (_initialized)
+        {
+            pipeline = pipeline.Where(step => step.IsForEachHandler);
+        }
+        else
+        {
+            _initialized = true;
+        }
+        return await pipeline.Run(dispatchable, r => handler.Handle(r).ThenMapAsync(mapper));
     }
 
     private IHandler<T, R> FindHandler<T, R>()

@@ -13,6 +13,8 @@ public class ErrorMappingStep<T, R> : IPipelineStep<T, R>
         _globalErrorMapper = globalErrorMapper;
     }
 
+    public bool IsForEachHandler => false;  // TODO: consider true
+
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         var result = await next();
