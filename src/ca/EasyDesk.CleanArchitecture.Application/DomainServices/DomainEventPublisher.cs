@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Domain.Metamodel;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Results;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -9,12 +8,10 @@ namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 internal class DomainEventPublisher : IDomainEventPublisher
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IContextResetter _contextResetter;
 
-    public DomainEventPublisher(IServiceProvider serviceProvider, IContextResetter contextResetter)
+    public DomainEventPublisher(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _contextResetter = contextResetter;
     }
 
     public async Task<Result<Nothing>> Publish(DomainEvent domainEvent)
@@ -35,8 +32,6 @@ internal class DomainEventPublisher : IDomainEventPublisher
         foreach (var handler in handlers)
         {
             var result = await handler.Handle(domainEvent);
-
-            _contextResetter.ResetContext();
 
             if (result.IsFailure)
             {

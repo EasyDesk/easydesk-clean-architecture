@@ -1,6 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.AutoScopingDispatchers;
@@ -49,15 +47,6 @@ public class ContextProviderModule : AppModule
         services.TryAddScoped<ITenantProvider, PublicTenantProvider>();
         services.TryAddSingleton<HttpRequestTenantReader>((_, _) => None);
         services.TryAddSingleton<AsyncMessageTenantReader>(_ => None);
-        services.AddScoped<IContextResetter, BasicContextResetter>();
-    }
-
-    public override void BeforeServiceConfiguration(AppDescription app)
-    {
-        app.ConfigureDispatchingPipeline(builder =>
-        {
-            builder.AddStepAfterAll(typeof(ContextResetStep<,>)).After(typeof(DomainEventHandlingStep<,>));
-        });
     }
 }
 
