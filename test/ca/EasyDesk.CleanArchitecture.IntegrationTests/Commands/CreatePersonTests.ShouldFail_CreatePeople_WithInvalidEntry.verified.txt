@@ -1,0 +1,39 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: Validation for property 'People[3].LastName' failed,
+        Meta: {
+          propertyName: People[3].LastName,
+          errorCode: NotEmptyOrWhitespace,
+          errorMessage: 'Last Name' is empty or white space.,
+          parameters: {
+            CollectionIndex: 3,
+            PropertyName: Last Name,
+            PropertyPath: People[3].LastName,
+            PropertyValue:    
+          }
+        }
+      },
+      {
+        Code: InvalidInput,
+        Detail: Validation for property 'People[3].FirstName' failed,
+        Meta: {
+          propertyName: People[3].FirstName,
+          errorCode: NotEmptyOrWhitespace,
+          errorMessage: 'First Name' is empty or white space.,
+          parameters: {
+            CollectionIndex: 3,
+            PropertyName: First Name,
+            PropertyPath: People[3].FirstName,
+            PropertyValue:    
+          }
+        }
+      }
+    ],
+    Meta: {}
+  }
+}

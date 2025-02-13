@@ -42,7 +42,13 @@ public class DeletePersonTests : SampleIntegrationTest
     private async Task<PersonDto> CreateTestPerson()
     {
         return await Http
-            .Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, new CreatePersonBodyDto(FirstName, LastName, _dateOfBirth, _address))
+            .Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, new CreatePersonBodyDto
+            {
+                FirstName = FirstName,
+                LastName = LastName,
+                DateOfBirth = _dateOfBirth,
+                Residence = _address,
+            })
             .Send()
             .AsData();
     }

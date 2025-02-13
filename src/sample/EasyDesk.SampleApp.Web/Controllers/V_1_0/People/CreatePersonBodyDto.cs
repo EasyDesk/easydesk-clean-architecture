@@ -3,8 +3,13 @@ using NodaTime;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 
-public record CreatePersonBodyDto(
-    string FirstName,
-    string LastName,
-    LocalDate DateOfBirth,
-    AddressDto Residence);
+public record CreatePersonBodyDto
+{
+    public required string FirstName { get; init; }
+
+    public required string LastName { get; init; }
+
+    public required LocalDate DateOfBirth { get; init; }
+
+    public required AddressDto Residence { get; init; }
+}

@@ -34,4 +34,7 @@ public static class PersonEndpoints
         }
         return result.WithoutQuery("value");
     }
+
+    public static HttpSingleRequestExecutor<IEnumerable<PersonDto>> CreatePeople(this HttpTestHelper http, IEnumerable<CreatePersonBodyDto> people) =>
+        http.Post<IEnumerable<CreatePersonBodyDto>, IEnumerable<PersonDto>>(PersonRoutes.CreatePeople, people);
 }

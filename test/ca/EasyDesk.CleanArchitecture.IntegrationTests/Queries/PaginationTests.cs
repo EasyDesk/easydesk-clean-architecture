@@ -36,12 +36,13 @@ public class PaginationTests : SampleIntegrationTest
     }
 
     private HttpSingleRequestExecutor<PersonDto> CreatePerson(int index) => Http
-        .CreatePerson(
-            new(
-                FirstName: $"Foo{index:0000}",
-                LastName: $"Bar{index:0000}",
-                DateOfBirth: new LocalDate(2000, 1, 1).PlusDays(index),
-                Residence: AddressDto.Create("some name idk", "street", index.ToString())));
+        .CreatePerson(new()
+        {
+            FirstName = $"Foo{index:0000}",
+            LastName = $"Bar{index:0000}",
+            DateOfBirth = new LocalDate(2000, 1, 1).PlusDays(index),
+            Residence = AddressDto.Create("some name idk", "street", index.ToString()),
+        });
 
     private HttpSingleRequestExecutor<IEnumerable<PersonDto>> GetPeople(int pageSize) => Http
         .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)

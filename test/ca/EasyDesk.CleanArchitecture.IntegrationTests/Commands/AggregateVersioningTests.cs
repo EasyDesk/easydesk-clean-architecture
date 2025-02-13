@@ -30,11 +30,13 @@ public class AggregateVersioningTests : SampleIntegrationTest
         await Http.AddAdmin().Send().EnsureSuccess();
 
         _person = await Http
-            .CreatePerson(new(
-                FirstName: "Alan",
-                LastName: "Turing",
-                DateOfBirth: new(1990, 12, 02),
-                Residence: AddressDto.Create("street")))
+            .CreatePerson(new()
+            {
+                FirstName = "Alan",
+                LastName = "Turing",
+                DateOfBirth = new(1990, 12, 02),
+                Residence = AddressDto.Create("street"),
+            })
             .Send()
             .AsData();
     }

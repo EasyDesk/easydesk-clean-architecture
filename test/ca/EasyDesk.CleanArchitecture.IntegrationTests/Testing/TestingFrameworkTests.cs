@@ -35,7 +35,13 @@ internal class IntegrationTestExample : SampleIntegrationTest
     }
 
     public HttpSingleRequestExecutor<PersonDto> CreatePerson(int id) => Http
-        .CreatePerson(new($"FirstName_{id}", $"LastName_{id}", new LocalDate(1997, 1, 1).PlusDays(id), AddressDto.Create("a place")));
+        .CreatePerson(new()
+        {
+            FirstName = $"FirstName_{id}",
+            LastName = $"LastName_{id}",
+            DateOfBirth = new LocalDate(1997, 1, 1).PlusDays(id),
+            Residence = AddressDto.Create("a place"),
+        });
 
     public async Task CreateAndCheckPeopleAndPets(bool skipWaits = false)
     {

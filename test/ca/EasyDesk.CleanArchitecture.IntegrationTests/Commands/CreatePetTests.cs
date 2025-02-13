@@ -38,11 +38,12 @@ public class CreatePetTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldSucceed()
     {
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            new(
+        var body = new CreatePersonBodyDto()
+        {
+            FirstName = "Foo",
+            LastName = "Bar",
+            DateOfBirth = new LocalDate(1995, 10, 12),
+            Residence = new(
                 StreetType: Some("street"),
                 StreetName: "Arthur IV",
                 StreetNumber: Some("12324"),
@@ -51,7 +52,8 @@ public class CreatePetTests : SampleIntegrationTest
                 Province: None,
                 Region: Some("New York State"),
                 State: Some("USA"),
-                Country: None));
+                Country: None),
+        };
 
         var person = await Http
             .CreatePerson(body)
@@ -82,11 +84,13 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePets_ShouldSucceed()
     {
         var timeout = Duration.FromSeconds(30);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("unknown"));
+        var body = new CreatePersonBodyDto()
+        {
+            FirstName = "Foo",
+            LastName = "Bar",
+            DateOfBirth = new LocalDate(1995, 10, 12),
+            Residence = AddressDto.Create("unknown"),
+        };
 
         var person = await Http
             .CreatePerson(body)
@@ -111,15 +115,22 @@ public class CreatePetTests : SampleIntegrationTest
             .Verify();
     }
 
+    private CreatePersonBodyDto CreatePersonBody()
+    {
+        return new CreatePersonBodyDto
+        {
+            FirstName = "Foo",
+            LastName = "Bar",
+            DateOfBirth = new LocalDate(1995, 10, 12),
+            Residence = AddressDto.Create("_"),
+        };
+    }
+
     [Fact]
     public async Task BulkCreatePets_ShouldFailWithEmptyList()
     {
         var timeout = Duration.FromSeconds(15);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            AddressDto.Create("_"));
+        var body = CreatePersonBody();
 
         var person = await Http
             .CreatePerson(body)
@@ -140,11 +151,7 @@ public class CreatePetTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFailIfNotAuthorized()
     {
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("-"));
+        var body = CreatePersonBody();
 
         var person = await Http
             .CreatePerson(body)
@@ -162,11 +169,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePetsFromCsv_ShouldSucceed()
     {
         var timeout = Duration.FromSeconds(30);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("asd"));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("asd") };
 
         var person = await Http
             .CreatePerson(body)
@@ -197,11 +200,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePetsFromCsv_ShouldFailWithEmptyList()
     {
         var timeout = Duration.FromSeconds(15);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("__"));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("__") };
 
         var person = await Http
             .CreatePerson(body)
@@ -223,11 +222,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePetsFromCsv_ShouldFailWithFileTooLarge()
     {
         var timeout = Duration.FromSeconds(15);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            AddressDto.Create("ooo"));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("ooo") };
 
         var person = await Http
             .CreatePerson(body)
@@ -249,11 +244,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePetsFromCsv_ShouldFailWithInvalidFile_WithEagerParsing()
     {
         var timeout = Duration.FromSeconds(15);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            AddressDto.Create("..."));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("...") };
 
         var person = await Http
             .CreatePerson(body)
@@ -275,11 +266,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePetsFromCsv_ShouldFailWithInvalidFile_WithGreedyParsing()
     {
         var timeout = Duration.FromSeconds(15);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            AddressDto.Create("..."));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("...") };
 
         var person = await Http
             .CreatePerson(body)
@@ -302,11 +289,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePets_ShouldFailInParallel()
     {
         var timeout = Duration.FromSeconds(30);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("unknown"));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
         var person = await Http
             .CreatePerson(body)
@@ -334,11 +317,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePets_ShouldSucceedInParallel_WithDifferentOperations()
     {
         var timeout = Duration.FromSeconds(30);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("unknown"));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
         var person = await Http
             .CreatePerson(body)
@@ -376,11 +355,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePets_ShouldBeInProgress_AfterStartingBulkOperation()
     {
         var timeout = Duration.FromSeconds(30);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("unknown"));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
         var person = await Http
             .CreatePerson(body)
@@ -402,11 +377,7 @@ public class CreatePetTests : SampleIntegrationTest
     public async Task BulkCreatePets_ShouldNotBeInProgress_AfterCompletion()
     {
         var timeout = Duration.FromSeconds(30);
-        var body = new CreatePersonBodyDto(
-            FirstName: "Foo",
-            LastName: "Bar",
-            DateOfBirth: new LocalDate(1995, 10, 12),
-            Residence: AddressDto.Create("unknown"));
+        var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
         var person = await Http
             .CreatePerson(body)

@@ -10,7 +10,7 @@ namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 public sealed class DomainConstraintViolationsHandlingStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
 {
-    public bool IsForEachHandler => false;  // TODO: consider true
+    public bool IsForEachHandler => true;
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {

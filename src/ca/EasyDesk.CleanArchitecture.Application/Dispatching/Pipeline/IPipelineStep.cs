@@ -15,7 +15,10 @@ public delegate Task<Result<R>> NextPipelineStep<R>();
 
 public static class PipelineStepExtensions
 {
-    public static async Task<Result<R>> Run<T, R>(this IEnumerable<IPipelineStep<T, R>> steps, T request, AsyncFunc<T, Result<R>> action)
+    public static async Task<Result<R>> Run<T, R>(
+        this IEnumerable<IPipelineStep<T, R>> steps,
+        T request,
+        AsyncFunc<T, Result<R>> action)
     {
         return await steps.FoldRight<IPipelineStep<T, R>, NextPipelineStep<R>>(
             () => action(request),

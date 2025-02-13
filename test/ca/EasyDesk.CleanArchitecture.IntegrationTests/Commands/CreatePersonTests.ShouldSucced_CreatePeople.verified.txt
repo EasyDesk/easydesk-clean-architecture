@@ -1,0 +1,66 @@
+﻿{
+  StatusCode: OK,
+  Content: {
+    Data: [
+      {
+        Id: Guid_1,
+        FirstName: Foo,
+        LastName: Bar,
+        DateOfBirth: LocalDate_1,
+        CreatedBy: test-admin,
+        Residence: {
+          StreetName: Calvin,
+          StreetType: street,
+          StreetNumber: 15,
+          City: Brooklyn,
+          District: New York,
+          Province: null,
+          Region: null,
+          State: New York State,
+          Country: USA
+        },
+        Approved: false
+      },
+      {
+        Id: Guid_2,
+        FirstName: Baz,
+        LastName: Qux,
+        DateOfBirth: LocalDate_1,
+        CreatedBy: test-admin,
+        Residence: {
+          StreetName: Calvin,
+          StreetType: street,
+          StreetNumber: 15,
+          City: Brooklyn,
+          District: New York,
+          Province: null,
+          Region: null,
+          State: New York State,
+          Country: USA
+        },
+        Approved: false
+      },
+      {
+        Id: Guid_3,
+        FirstName: Asd,
+        LastName: Qwerty,
+        DateOfBirth: LocalDate_2,
+        CreatedBy: test-admin,
+        Residence: {
+          StreetName: Calvin,
+          StreetType: street,
+          StreetNumber: 15,
+          City: Brooklyn,
+          District: New York,
+          Province: null,
+          Region: null,
+          State: New York State,
+          Country: USA
+        },
+        Approved: false
+      }
+    ],
+    Errors: [],
+    Meta: {}
+  }
+}

@@ -17,16 +17,19 @@ using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 using Shouldly;
+using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
 public class CreatePersonTests : SampleIntegrationTest
 {
-    private readonly CreatePersonBodyDto _body = new(
-        FirstName: "Foo",
-        LastName: "Bar",
-        DateOfBirth: new LocalDate(1996, 2, 2),
-        Residence: AddressDto.Create("Calvin", "street", "15", "Brooklyn", "New York", null, null, "New York State", "USA"));
+    private readonly CreatePersonBodyDto _body = new()
+    {
+        FirstName = "Foo",
+        LastName = "Bar",
+        DateOfBirth = new LocalDate(1996, 2, 2),
+        Residence = AddressDto.Create("Calvin", "street", "15", "Brooklyn", "New York", null, null, "New York State", "USA"),
+    };
 
     public CreatePersonTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -45,8 +48,25 @@ public class CreatePersonTests : SampleIntegrationTest
     private HttpSingleRequestExecutor<PersonDto> CreatePerson() => Http
         .CreatePerson(_body);
 
-    private HttpSingleRequestExecutor<PersonDto> GetPerson(Guid id) => Http
-        .GetPerson(id);
+    private HttpSingleRequestExecutor<IEnumerable<PersonDto>> CreatePeople(params CreatePersonBodyDto[] extra) => Http
+        .CreatePeople(List(
+            _body,
+            new()
+            {
+                FirstName = "Baz",
+                LastName = "Qux",
+                DateOfBirth = new LocalDate(1996, 2, 2),
+                Residence = _body.Residence,
+            },
+            new()
+            {
+                FirstName = "Asd",
+                LastName = "Qwerty",
+                DateOfBirth = new LocalDate(1997, 11, 11),
+                Residence = _body.Residence,
+            }).Concat(extra));
+
+    private HttpSingleRequestExecutor<PersonDto> GetPerson(Guid id) => Http.GetPerson(id);
 
     [Fact]
     public async Task ShouldSucceed()
@@ -240,11 +260,13 @@ public class CreatePersonTests : SampleIntegrationTest
     {
         foreach (var i in Enumerable.Range(0, 150))
         {
-            var body = new CreatePersonBodyDto(
-                $"test-name-{i}",
-                $"test-last-name-{i}",
-                new LocalDate(1992, 3, 12).PlusDays(i),
-                AddressDto.Create("number", streetNumber: i.ToString()));
+            var body = new CreatePersonBodyDto
+            {
+                FirstName = $"test-name-{i}",
+                LastName = $"test-last-name-{i}",
+                DateOfBirth = new LocalDate(1992, 3, 12).PlusDays(i),
+                Residence = AddressDto.Create("number", streetNumber: i.ToString()),
+            };
             await Http.CreatePerson(body).Send().EnsureSuccess();
         }
 
@@ -302,5 +324,49 @@ public class CreatePersonTests : SampleIntegrationTest
         await Http.CreatePerson(body)
             .Send()
             .Verify(x => x.UseParameters(null, streetNameProblem, streetTypeProblem, streetNumberProblem));
+    }
+
+    [Fact]
+    public async Task ShouldSucced_CreatePeople()
+    {
+        await CreatePeople()
+            .Send()
+            .Verify();
+    }
+
+    [Fact]
+    public async Task ShouldFail_CreatePeople_WithInvalidEntry()
+    {
+        await CreatePeople(new CreatePersonBodyDto()
+        {
+            FirstName = "   ",
+            LastName = "   ",
+            DateOfBirth = _body.DateOfBirth,
+            Residence = _body.Residence,
+        })
+            .Send()
+            .Verify();
+    }
+
+    [Fact]
+    public async Task ShouldFail_CreatePeople_WithInvalidEntry_CausingErrorInHandler()
+    {
+        await CreatePeople(
+            new CreatePersonBodyDto()
+            {
+                FirstName = "Mario",
+                LastName = "Facher",
+                DateOfBirth = Clock.GetCurrentInstant().InUtc().Date.PlusYears(1),
+                Residence = _body.Residence,
+            },
+            new CreatePersonBodyDto()
+            {
+                FirstName = "Mario",
+                LastName = "Facher",
+                DateOfBirth = Clock.GetCurrentInstant().InUtc().Date.PlusYears(1),
+                Residence = _body.Residence,
+            })
+            .Send()
+            .Verify();
     }
 }

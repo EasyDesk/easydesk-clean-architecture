@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.V_1_0.AsyncCommands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
+using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
 using Shouldly;
 
@@ -15,6 +16,13 @@ public class CreateSiblingTests : SampleIntegrationTest
 {
     private static readonly Duration _epsilon = Duration.FromSeconds(1);
     private static readonly Duration _waitTime = Duration.FromSeconds(5);
+    private static readonly CreatePersonBodyDto _body = new()
+    {
+        FirstName = "Pippo",
+        LastName = "Pluto",
+        DateOfBirth = new(2000, 10, 11),
+        Residence = AddressDto.Create("Some street"),
+    };
 
     public CreateSiblingTests(SampleAppTestsFixture fixture) : base(fixture)
     {
@@ -34,11 +42,7 @@ public class CreateSiblingTests : SampleIntegrationTest
     public async Task ShouldNotReceiveCommand_UntilScheduledTime()
     {
         await Http
-            .CreatePerson(new(
-                FirstName: "Pippo",
-                LastName: "Pluto",
-                DateOfBirth: new(2000, 10, 11),
-                Residence: AddressDto.Create("Some street")))
+            .CreatePerson(_body)
             .Send()
             .EnsureSuccess();
 
@@ -58,11 +62,7 @@ public class CreateSiblingTests : SampleIntegrationTest
     public async Task ShouldReceiveCommand_AfterScheduledTime()
     {
         await Http
-            .CreatePerson(new(
-                FirstName: "Pippo",
-                LastName: "Pluto",
-                DateOfBirth: new(2000, 10, 11),
-                Residence: AddressDto.Create("Some street")))
+            .CreatePerson(_body)
             .Send()
             .EnsureSuccess();
 

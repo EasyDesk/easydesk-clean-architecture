@@ -53,11 +53,13 @@ public class IncomingCommandsTests : SampleIntegrationTest
             .EnsureSuccess();
 
         var person = await Http
-            .CreatePerson(new(
-                FirstName: "Foo",
-                LastName: "Bar",
-                DateOfBirth: new LocalDate(1996, 2, 2),
-                Residence: AddressDto.Create("unknown")))
+            .CreatePerson(new()
+            {
+                FirstName = "Foo",
+                LastName = "Bar",
+                DateOfBirth = new LocalDate(1996, 2, 2),
+                Residence = AddressDto.Create("unknown"),
+            })
             .Send()
             .AsData();
 

@@ -41,11 +41,13 @@ public class AuditingTests : SampleIntegrationTest
         await Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;
 
-        var createPersonBody = new CreatePersonBodyDto(
-            FirstName: "John",
-            LastName: "Doe",
-            DateOfBirth: new LocalDate(2012, 12, 21),
-            Residence: AddressDto.Create(streetName: "Abbey Road"));
+        var createPersonBody = new CreatePersonBodyDto()
+        {
+            FirstName = "John",
+            LastName = "Doe",
+            DateOfBirth = new LocalDate(2012, 12, 21),
+            Residence = AddressDto.Create(streetName: "Abbey Road"),
+        };
         _personId = await Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
         _initialAudits += 2;
         await Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();

@@ -13,6 +13,8 @@ public static class PersonRoutes
 
     public const string CreatePerson = Base;
 
+    public const string CreatePeople = "bulk/" + Base;
+
     public const string UpdatePerson = Base + "/{id}";
 
     public const string DeletePerson = Base + "/{id}";
@@ -27,8 +29,30 @@ public class PersonController : CleanArchitectureController
     [HttpPost(PersonRoutes.CreatePerson)]
     public async Task<ActionResult<ResponseDto<PersonDto, Nothing>>> CreatePerson([FromBody] CreatePersonBodyDto body)
     {
-        return await Dispatch(new CreatePerson(body.FirstName, body.LastName, body.DateOfBirth, body.Residence))
+        return await Dispatch(new CreatePerson
+        {
+            FirstName = body.FirstName,
+            LastName = body.LastName,
+            DateOfBirth = body.DateOfBirth,
+            Residence = body.Residence,
+        })
             .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
+    }
+
+    [HttpPost(PersonRoutes.CreatePeople)]
+    public async Task<ActionResult<ResponseDto<IEnumerable<PersonDto>, Nothing>>> CreatePerson([FromBody] IEnumerable<CreatePersonBodyDto> body)
+    {
+        return await Dispatch(new CreatePeople
+        {
+            People = body.Select(person => new CreatePerson
+            {
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                DateOfBirth = person.DateOfBirth,
+                Residence = person.Residence,
+            }),
+        })
+            .ReturnOk();
     }
 
     [HttpPut(PersonRoutes.UpdatePerson)]

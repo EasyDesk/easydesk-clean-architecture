@@ -1,0 +1,16 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: BirthDateUtcInTheFuture,
+        Detail: The provided date is in the future in UTC.,
+        Meta: {
+          date: 2026-02-13
+        }
+      }
+    ],
+    Meta: {}
+  }
+}
