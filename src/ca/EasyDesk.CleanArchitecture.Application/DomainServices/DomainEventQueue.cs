@@ -4,7 +4,7 @@ using EasyDesk.Commons.Results;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
-internal class DomainEventQueue : IDomainEventNotifier
+public class DomainEventQueue : IDomainEventNotifier
 {
     private readonly Queue<DomainEvent> _eventQueue = new();
     private readonly DomainEventPublisher _publisher;
