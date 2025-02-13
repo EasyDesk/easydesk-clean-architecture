@@ -15,6 +15,8 @@ public sealed class ValidationStep<T, R> : IPipelineStep<T, R>
         _serviceProvider = serviceProvider;
     }
 
+    public bool IsForEachHandler => false;
+
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         var validators = _serviceProvider.GetServices<IValidator<T>>().ToList();

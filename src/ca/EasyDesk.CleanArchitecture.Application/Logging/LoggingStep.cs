@@ -15,6 +15,8 @@ public class LoggingStep<T, R> : IPipelineStep<T, R>
         _loggingConfiguration = loggingConfiguration;
     }
 
+    public bool IsForEachHandler => true;
+
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         var id = Guid.NewGuid();

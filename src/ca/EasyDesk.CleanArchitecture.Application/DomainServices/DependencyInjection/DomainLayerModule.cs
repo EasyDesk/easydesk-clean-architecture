@@ -19,10 +19,9 @@ public class DomainLayerModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped<DomainEventQueue>();
-        services.AddScoped<IDomainEventFlusher>(provider => provider.GetRequiredService<DomainEventQueue>());
-        services.AddScoped<IDomainEventNotifier>(provider => provider.GetRequiredService<DomainEventQueue>());
-        services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
+        services.AddScoped<DomainEventScope>();
+        services.AddScoped<IDomainEventNotifier>(provider => provider.GetRequiredService<DomainEventScope>());
+        services.AddScoped<DomainEventPublisher>();
 
         services.RegisterImplementationsAsTransient(
             typeof(IDomainEventHandler<>),

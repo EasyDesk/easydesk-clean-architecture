@@ -14,6 +14,8 @@ public class GenericPipelineProviderTests
 
     private abstract record BaseStep<T, R> : IPipelineStep<T, R>
     {
+        public bool IsForEachHandler => true;
+
         public Task<Result<R>> Run(T request, NextPipelineStep<R> next) => throw new NotImplementedException();
     }
 

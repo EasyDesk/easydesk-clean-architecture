@@ -7,15 +7,17 @@ namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 public sealed class DomainEventHandlingStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
 {
-    private readonly IDomainEventFlusher _domainEventFlusher;
+    private readonly DomainEventScope _domainEventScope;
 
-    public DomainEventHandlingStep(IDomainEventFlusher domainEventFlusher)
+    public DomainEventHandlingStep(DomainEventScope domainEventScope)
     {
-        _domainEventFlusher = domainEventFlusher;
+        _domainEventScope = domainEventScope;
     }
+
+    public bool IsForEachHandler => true;
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return await next().ThenFlatTapAsync(_ => _domainEventFlusher.Flush());
+        return await _domainEventScope.RunInScope(next.Invoke);
     }
 }

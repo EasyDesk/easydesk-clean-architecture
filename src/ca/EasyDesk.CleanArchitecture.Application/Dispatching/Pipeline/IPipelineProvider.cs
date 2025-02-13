@@ -1,6 +1,6 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
-internal interface IPipelineProvider
+public interface IPipelineProvider
 {
     IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>(IServiceProvider serviceProvider);
 }

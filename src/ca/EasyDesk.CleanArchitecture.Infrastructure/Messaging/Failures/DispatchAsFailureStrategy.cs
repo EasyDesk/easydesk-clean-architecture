@@ -20,13 +20,14 @@ public class DispatchAsFailureStrategy : IFailureStrategy
     public async Task Handle<T>(IFailed<T> message, AsyncAction next) where T : IIncomingMessage
     {
         await using var scope = _scopeFactory.CreateAsyncScope();
-        var pipeline = scope.ServiceProvider.GetRequiredService<IPipeline>();
+        var pipelineProvider = scope.ServiceProvider.GetRequiredService<IPipelineProvider>();
         var failureHandler = scope.ServiceProvider.GetServiceAsOption<IFailedMessageHandler<T>>();
 
         using var rebusScope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(scope.ServiceProvider);
 
         await failureHandler.Match(
-            some: handler => pipeline
+            some: handler => pipelineProvider
+                .GetSteps<T, Nothing>(scope.ServiceProvider)
                 .Run(message.Message, x => handler.HandleFailure(x))
                 .ThenIfFailureAsync(_ => next()),
             none: () => next());

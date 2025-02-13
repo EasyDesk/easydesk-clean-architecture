@@ -14,6 +14,8 @@ public class HandleUnknownAgentStep<T, R> : IPipelineStep<T, R>
         _contextProvider = contextProvider;
     }
 
+    public bool IsForEachHandler => false;
+
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         return _contextProvider.CurrentContext switch

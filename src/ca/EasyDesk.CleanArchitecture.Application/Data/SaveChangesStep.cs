@@ -12,8 +12,11 @@ public class SaveChangesStep<T, R> : IPipelineStep<T, R>
         _saveChangesHandler = saveChangesHandler;
     }
 
+    public bool IsForEachHandler => true;
+
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
+        await _saveChangesHandler.SaveChanges();
         return await next().ThenIfSuccessAsync(_ => _saveChangesHandler.SaveChanges());
     }
 }
