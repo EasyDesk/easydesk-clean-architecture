@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 
@@ -28,7 +29,7 @@ public class SampleSeeder : WebServiceFixtureSeeder<SampleAppTestsFixture, Sampl
         }
 
         await RunOperation(() => DefaultBusEndpoint.Send(new CreateTenant(Data.TestTenant)));
-        await WebService.WaitUntilTenantExists(Data.TestTenant);
+        await WebService.WaitUntilTenantExists(Data.TestTenant, timeout: Duration.FromDays(1));
 
         return new(operationsRun);
     }

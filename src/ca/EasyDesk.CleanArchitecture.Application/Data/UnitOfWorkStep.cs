@@ -14,7 +14,7 @@ public sealed class UnitOfWorkStep<T, R> : IPipelineStep<T, R>
         _unitOfWorkProvider = unitOfWorkProvider;
     }
 
-    public bool IsForEachHandler => false;  // TODO: consider true
+    public bool IsForEachHandler => false;
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {

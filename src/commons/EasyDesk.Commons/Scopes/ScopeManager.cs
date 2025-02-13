@@ -14,6 +14,8 @@ public sealed class ScopeManager<T>
 
     public T Current => _scopeStack.IsEmpty() ? _baseValue : _scopeStack.Peek().Value;
 
+    public int Depth => _scopeStack.Count;
+
     public Scope OpenScope(T value)
     {
         var scope = new Scope(value, this);

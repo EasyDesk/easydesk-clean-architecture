@@ -17,7 +17,7 @@ public class DispatchingModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped<IDispatcher, Dispatcher>();
+        services.AddInherited<IDispatcher>(sp => new Dispatcher(sp));
 
         RegisterRequestHandlers(services, app);
 

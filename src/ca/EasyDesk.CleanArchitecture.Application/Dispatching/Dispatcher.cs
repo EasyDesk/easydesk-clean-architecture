@@ -2,6 +2,7 @@
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Reflection;
 
@@ -11,13 +12,11 @@ internal class Dispatcher : IDispatcher
 {
     private static readonly ConcurrentDictionary<Type, MethodInfo> _dispatchMethodsByType = new();
     private readonly IServiceProvider _serviceProvider;
-    private readonly IPipelineProvider _pipelineProvider;
     private bool _initialized = false;
 
-    public Dispatcher(IServiceProvider serviceProvider, IPipelineProvider pipelineProvider)
+    public Dispatcher(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _pipelineProvider = pipelineProvider;
     }
 
     public async Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper)
@@ -33,23 +32,38 @@ internal class Dispatcher : IDispatcher
     private async Task<Result<R>> DispatchImpl<T, X, R>(T dispatchable, AsyncFunc<X, R> mapper)
         where T : IDispatchable<X>
     {
-        var handler = FindHandler<T, X>();
-        var pipeline = _pipelineProvider.GetSteps<T, R>(_serviceProvider);
-        if (_initialized)
+        DispatcherScopeManager.Current ??= new(_serviceProvider);
+
+        Result<R> result;
+        await using (var scope = DispatcherScopeManager.Current.OpenNewScope())
         {
-            pipeline = pipeline.Where(step => step.IsForEachHandler);
+            var serviceProvider = scope.ServiceProvider;
+            var handler = FindHandler<T, X>(serviceProvider);
+            var pipeline = serviceProvider.GetRequiredService<IPipelineProvider>().GetSteps<T, R>(serviceProvider);
+            if (_initialized)
+            {
+                pipeline = pipeline.Where(step => step.IsForEachHandler);
+            }
+            else
+            {
+                _initialized = true;
+            }
+
+            result = await pipeline.Run(dispatchable, r => handler.Handle(r).ThenMapAsync(mapper));
         }
-        else
+
+        if (DispatcherScopeManager.Current.Depth == 0)
         {
-            _initialized = true;
+            DispatcherScopeManager.Current = null!;
         }
-        return await pipeline.Run(dispatchable, r => handler.Handle(r).ThenMapAsync(mapper));
+
+        return result;
     }
 
-    private IHandler<T, R> FindHandler<T, R>()
+    private IHandler<T, R> FindHandler<T, R>(IServiceProvider serviceProvider)
         where T : IDispatchable<R>
     {
-        return _serviceProvider
+        return serviceProvider
             .GetServiceAsOption<IHandler<T, R>>()
             .OrElseThrow(() => new HandlerNotFoundException(typeof(T)));
     }

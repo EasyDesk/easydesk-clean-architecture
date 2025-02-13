@@ -44,8 +44,9 @@ public class DispatcherTests
     private IDispatcher CreateDispatcher(Action<IServiceCollection>? configure = null)
     {
         var services = new ServiceCollection();
+        services.AddSingleton(_pipelineProvider);
         configure?.Invoke(services);
-        return new Dispatcher(services.BuildServiceProvider(), _pipelineProvider);
+        return new Dispatcher(services.BuildServiceProvider());
     }
 
     [Fact]

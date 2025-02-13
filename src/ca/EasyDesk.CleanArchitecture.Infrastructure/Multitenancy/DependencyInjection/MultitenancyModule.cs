@@ -29,7 +29,7 @@ public class MultitenancyModule : AppModule
 
     public override void ConfigureServices(IServiceCollection services, AppDescription app)
     {
-        services.AddScoped<TenantService>();
+        services.AddInherited(_ => new TenantService());
         services.AddScoped<IContextTenantInitializer>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<ITenantNavigator>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<IContextTenantNavigator>(p => p.GetRequiredService<TenantService>());

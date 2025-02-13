@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Data;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -61,13 +62,13 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
 
     internal void RegisterUtilityServices(IServiceCollection services)
     {
-        services.AddScoped(_ => _provider.NewConnection());
+        services.AddInherited(_ => _provider.NewConnection());
         services.AddScoped<TransactionEnlistingOnCommandInterceptor>();
         services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
         services.AddScoped(provider => new MigrationsService(provider, _registeredDbContextTypes));
         services.AddScoped<ISaveChangesHandler, EfCoreSaveChangesHandler<T>>();
-        services.AddScoped<EfCoreUnitOfWorkProvider>();
-        services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
+        services.AddInherited(sp => new EfCoreUnitOfWorkProvider(sp.GetRequiredService<DbConnection>()));
+        services.AddInherited<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());
         services.AddScoped(p => MigrationCommand(p.GetRequiredService<MigrationsService>()));
         _configureServices?.Invoke(services);
     }
