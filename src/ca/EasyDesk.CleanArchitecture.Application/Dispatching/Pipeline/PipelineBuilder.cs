@@ -92,7 +92,7 @@ public sealed class PipelineBuilder
     }
 
     private bool IsValidDependency((Type, Type) dependency) =>
-        _middleSteps.Contains(dependency.Item1) && _middleSteps.Contains(dependency.Item2);
+        _registeredSteps.Contains(dependency.Item1) && _registeredSteps.Contains(dependency.Item2);
 }
 
 public sealed class StepDependenciesBuilder
