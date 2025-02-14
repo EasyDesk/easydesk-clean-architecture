@@ -17,7 +17,10 @@ internal class EfCoreUnitOfWork : UnitOfWorkBase<DbTransaction>
         await Transaction.CommitAsync();
     }
 
-    protected override async Task RollbackTransaction() => await Transaction.RollbackAsync();
+    protected override async Task RollbackTransaction()
+    {
+        await Transaction.RollbackAsync();
+    }
 
     public async Task EnlistDbContext(DbContext dbContext)
     {
