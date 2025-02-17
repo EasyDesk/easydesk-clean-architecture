@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -16,11 +18,11 @@ public sealed class CleanArchitectureAppBuilder : AppBuilder, IAppBuilder
     private readonly WebApplicationBuilder _applicationBuilder;
     private Action<WebApplication>? _configureWebApplication;
 
-    internal CleanArchitectureAppBuilder(string name, string[] args, WebApplicationBuilder applicationBuilder)
+    internal CleanArchitectureAppBuilder(string name, string[] commandArgs, string[] configurationArgs)
         : base(name)
     {
-        _args = args;
-        _applicationBuilder = applicationBuilder;
+        _applicationBuilder = WebApplication.CreateBuilder(configurationArgs);
+        _args = commandArgs;
     }
 
     public IConfigurationManager Configuration => _applicationBuilder.Configuration;
@@ -43,7 +45,13 @@ public sealed class CleanArchitectureAppBuilder : AppBuilder, IAppBuilder
 
         _applicationBuilder.Services.AddSingleton(appDescription);
 
-        appDescription.ConfigureServices(_applicationBuilder.Services);
+        _applicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        _applicationBuilder.Host.ConfigureContainer<ContainerBuilder>(builder =>
+        {
+            appDescription.ConfigureServices(_applicationBuilder.Services, builder);
+            builder.Populate(_applicationBuilder.Services);
+        });
+        //appDescription.ConfigureServices(_applicationBuilder.Services, new());
 
         var app = _applicationBuilder.Build();
 

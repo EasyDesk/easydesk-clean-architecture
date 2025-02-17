@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,7 +16,7 @@ public class DispatchingModule : AppModule
 
     public PipelineBuilder Pipeline { get; } = new();
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.AddInherited<IDispatcher>(sp => new Dispatcher(sp));
 

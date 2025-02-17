@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.Commons.Collections;
@@ -28,7 +29,7 @@ public class AuthenticationModule : AppModule
 
     public AuthenticationModuleOptions Options { get; }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.AddSingleton(Options);
 

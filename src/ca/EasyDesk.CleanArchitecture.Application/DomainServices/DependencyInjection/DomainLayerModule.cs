@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ public class DomainLayerModule : AppModule
         });
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.AddScoped<DomainEventQueue>();
         services.AddScoped<IDomainEventNotifier>(provider => provider.GetRequiredService<DomainEventQueue>());

@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,7 @@ public class ReverseProxyModule : AppModule
         _options = options;
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.Configure<ForwardedHeadersOptions>(options =>
         {

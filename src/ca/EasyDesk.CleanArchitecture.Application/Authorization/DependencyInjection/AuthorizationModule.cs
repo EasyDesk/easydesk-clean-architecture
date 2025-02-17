@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
@@ -30,7 +31,7 @@ public class AuthorizationModule : AppModule
         });
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         var options = new AuthorizationOptions();
         _configure?.Invoke(options);

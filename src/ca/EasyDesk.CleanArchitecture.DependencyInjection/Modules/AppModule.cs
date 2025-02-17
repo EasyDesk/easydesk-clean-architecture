@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Autofac;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
@@ -12,5 +13,5 @@ public abstract class AppModule
     {
     }
 
-    public abstract void ConfigureServices(IServiceCollection services, AppDescription app);
+    public abstract void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder);
 }

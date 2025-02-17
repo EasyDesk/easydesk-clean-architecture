@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.Conventions;
+using Autofac;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers;
@@ -33,7 +34,7 @@ public class ApiVersioningModule : AppModule
         ApiVersioningInfo = new ApiVersioningInfo(supportedVersions);
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.AddSingleton(ApiVersioningInfo!);
 

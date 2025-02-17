@@ -8,14 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
     <PackageReference Include="NodaTime" Version="3.2.0" />
     <PackageReference Include="Scrutor" Version="5.1.1" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\commons\EasyDesk.Commons\EasyDesk.Commons.csproj" />
+    <ProjectReference Include="..\..\commons\EasyDesk.Extensions.DependencyInjection\EasyDesk.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

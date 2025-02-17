@@ -24,7 +24,7 @@ public static class RebusFixtureExtensions
         var network = new InMemNetwork();
         var subscriberStore = new InMemorySubscriberStore();
         return builder
-            .ConfigureWebService(ws => ws.WithServices(services =>
+            .ConfigureWebService(ws => ws.WithServices(services => // TODO: use autofac
             {
                 services.RemoveAll<RebusTransportConfiguration>();
                 services.AddSingleton<RebusTransportConfiguration>((t, e) =>

@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
 using FluentValidation;
@@ -14,7 +15,7 @@ public class ValidationModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline => pipeline.AddStep(typeof(ValidationStep<,>)));
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         ValidatorOptions.Global.LanguageManager.Enabled = false;
         services.AddValidatorsFromAssemblies(app.Assemblies);

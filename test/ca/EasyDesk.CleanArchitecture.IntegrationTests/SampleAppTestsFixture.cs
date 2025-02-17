@@ -52,7 +52,12 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
         builder.WithConfiguration("DbProvider", provider.ToString());
         _providerConfigs[provider](builder);
 
-        builder.ConfigureWebService(web => web.BeforeStart(host => host.Services.GetRequiredService<MigrationsService>().MigrateSync()));
+        builder.ConfigureWebService(web => web.BeforeStart(host =>
+        {
+            using var scope = host.Services.CreateScope();
+            var migrationService = scope.ServiceProvider.GetRequiredService<MigrationsService>();
+            migrationService.MigrateSync();
+        }));
     }
 
     protected override WebServiceFixtureSeeder<SampleAppTestsFixture, SampleSeeder.Data> CreateSeeder(SampleAppTestsFixture fixture) =>

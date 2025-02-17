@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
@@ -20,7 +21,7 @@ public class AuditingModule : AppModule
             .After(typeof(MultitenancyManagementStep<,>)));
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         app.RequireModule<DataAccessModule>().Implementation.AddAuditing(services, app);
 

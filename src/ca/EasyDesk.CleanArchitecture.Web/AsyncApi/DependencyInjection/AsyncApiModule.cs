@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Versioning;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
@@ -21,7 +22,7 @@ public class AsyncApiModule : AppModule
         _configure = configure;
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.AddTransient<IDocumentGenerator, KnownTypesDocumentGenerator>();
         services.AddTransient<IAsyncApiDocumentProvider, KnownTypesDocumentProvider>();

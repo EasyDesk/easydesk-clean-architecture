@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Json;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -39,7 +40,7 @@ public class OpenApiModule : AppModule
         _options = options;
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.AddSwaggerGen(options =>
         {

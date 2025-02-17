@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,7 +20,7 @@ public class LoggingModule : AppModule
             .AddStepBeforeAll(typeof(LoggingStep<,>)));
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         var config = new LoggingConfiguration();
         _configure?.Invoke(config);

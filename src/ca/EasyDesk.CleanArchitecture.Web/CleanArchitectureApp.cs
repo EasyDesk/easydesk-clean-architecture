@@ -8,7 +8,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInject
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
-using Microsoft.AspNetCore.Builder;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -26,27 +25,36 @@ public static partial class CleanArchitectureApp
         "Domain",
     ];
 
-    public static CleanArchitectureAppBuilder CreateBuilder(string[] args)
+    public static CleanArchitectureAppBuilder CreateBuilderWithDefaults(string[] args, Assembly? assembly = default)
     {
-        var callingAssemblyName = Assembly.GetCallingAssembly().GetName().Name ?? throw new InvalidOperationException("Calling assembly name not found.");
+        return CreateBuilder(args, assembly ?? Assembly.GetCallingAssembly()).ConfigureDefaults();
+    }
+
+    public static CleanArchitectureAppBuilder CreateBuilder(string[] args, Assembly? assembly = default)
+    {
+        var callingAssemblyName = (assembly ?? Assembly.GetCallingAssembly())?.GetName().Name ?? throw new InvalidOperationException("Calling assembly name not found.");
         var match = WebAssemblyRegex().Match(callingAssemblyName);
         var assemblyPrefix = match.Success ? match.Groups[1].Value : callingAssemblyName;
         var assemblies = _layerNames.SelectMany(layer => LoadAssemblyIfPresent($"{assemblyPrefix}.{layer}"));
 
         var (commandArgs, configurationArgs) = SplitArgs(args);
-        var builder = WebApplication.CreateBuilder(configurationArgs);
+        var builder = new CleanArchitectureAppBuilder(assemblyPrefix, commandArgs, configurationArgs);
+        builder.WithAssemblies(assemblies);
+        return builder;
+    }
 
-        return new CleanArchitectureAppBuilder(assemblyPrefix, commandArgs, builder)
-            .Also(x => x
-                .WithAssemblies(assemblies)
-                .AddControllers(builder.Environment)
-                .AddJsonSerialization()
-                .AddDomainLayer()
-                .AddContextProvider(builder.Environment)
-                .AddTimeManagement()
-                .AddDispatching()
-                .AddValidation()
-                .AddErrorManagement());
+    public static CleanArchitectureAppBuilder ConfigureDefaults(this CleanArchitectureAppBuilder builder)
+    {
+        builder
+            .AddControllers(builder.Environment)
+            .AddJsonSerialization()
+            .AddDomainLayer()
+            .AddContextProvider(builder.Environment)
+            .AddTimeManagement()
+            .AddDispatching()
+            .AddValidation()
+            .AddErrorManagement();
+        return builder;
     }
 
     private static (string[] CommandArgs, string[] ConfigurationArgs) SplitArgs(string[] args)

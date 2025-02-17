@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using Autofac;
+using CsvHelper;
 using CsvHelper.Configuration;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,7 @@ public partial class CsvModule : AppModule
         _configure = configure;
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         var configuration = new CsvConfiguration(_cultureInfo)
         {

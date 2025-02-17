@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
@@ -37,7 +38,7 @@ public class ControllersModule : AppModule
         configure?.Invoke(Options);
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services
             .AddControllers(DefaultMvcConfiguration)

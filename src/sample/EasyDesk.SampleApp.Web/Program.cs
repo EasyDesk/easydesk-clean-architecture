@@ -27,7 +27,7 @@ using EasyDesk.SampleApp.Web.DependencyInjection;
 using Rebus.Config;
 using Rebus.Timeouts;
 
-var builder = CleanArchitectureApp.CreateBuilder(args);
+var builder = CleanArchitectureApp.CreateBuilderWithDefaults(args);
 
 builder
     .WithName("EasyDesk.Sample.App")

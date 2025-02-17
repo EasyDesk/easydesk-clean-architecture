@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
@@ -67,7 +68,7 @@ public class RebusMessagingModule : AppModule
         Options.AddKnownMessageTypesFromAssemblies(assembliesToScan);
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         services.AddSingleton(_endpoint);
         services.AddSingleton(Options);

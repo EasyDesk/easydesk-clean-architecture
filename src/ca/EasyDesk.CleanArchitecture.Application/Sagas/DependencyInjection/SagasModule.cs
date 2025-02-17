@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Sagas.Builder;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -12,7 +13,7 @@ namespace EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 
 public class SagasModule : AppModule
 {
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         var configureSagaArgs = new[] { services };
         new AssemblyScanner()

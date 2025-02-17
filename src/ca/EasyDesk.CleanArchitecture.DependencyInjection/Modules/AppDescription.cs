@@ -1,4 +1,5 @@
-﻿using EasyDesk.Commons.Collections;
+﻿using Autofac;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,10 +34,10 @@ public sealed class AppDescription
     public bool HasModule<T>() where T : AppModule =>
         GetModule<T>().IsPresent;
 
-    public void ConfigureServices(IServiceCollection services)
+    public void ConfigureServices(IServiceCollection services, ContainerBuilder builder)
     {
         _modules.ForEach(m => m.BeforeServiceConfiguration(this));
-        _modules.ForEach(m => m.ConfigureServices(services, this));
+        _modules.ForEach(m => m.ConfigureServices(this, services, builder));
         _modules.ForEach(m => m.AfterServiceConfiguration(this));
     }
 }

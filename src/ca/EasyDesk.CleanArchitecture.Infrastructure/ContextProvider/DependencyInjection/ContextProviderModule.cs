@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.AutoScopingDispatchers;
@@ -25,7 +26,7 @@ public class ContextProviderModule : AppModule
         _configure += configure;
     }
 
-    public override void ConfigureServices(IServiceCollection services, AppDescription app)
+    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
         var options = new ContextProviderOptions();
         _configure?.Invoke(options);
