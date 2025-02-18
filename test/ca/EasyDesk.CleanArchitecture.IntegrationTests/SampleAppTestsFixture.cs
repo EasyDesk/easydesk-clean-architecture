@@ -34,6 +34,8 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
     {
     }
 
+    protected override Instant InitialInstant => Instant.FromUtc(2021, 11, 20, 11, 45);
+
     protected override void ConfigureFixture(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
     {
         ConfigureDbProvider(builder);

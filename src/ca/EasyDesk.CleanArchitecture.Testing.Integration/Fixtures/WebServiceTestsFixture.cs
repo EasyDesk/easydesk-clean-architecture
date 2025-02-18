@@ -1,11 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.Commons.Observables;
 using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Testing;
@@ -32,10 +32,9 @@ public abstract class WebServiceTestsFixture<TSelf> : ITestFixture
 
         _webServiceBuilder = new TestWebServiceBuilder(entryPointMarker)
             .WithEnvironment(DefaultTestEnvironment)
-            .WithServices(services =>
+            .WithServices(builder =>
             {
-                services.RemoveAll<IClock>();
-                services.AddSingleton<IClock>(Clock);
+                builder.RegisterDecorator<IClock>((_, _, _) => Clock);
             });
 
         SetupFixture();

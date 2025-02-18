@@ -12,11 +12,16 @@ internal class Dispatcher : IDispatcher
 {
     private static readonly ConcurrentDictionary<Type, MethodInfo> _dispatchMethodsByType = new();
     private readonly IServiceProvider _serviceProvider;
-    private bool _initialized = false;
+    private readonly bool _nested;
 
-    public Dispatcher(IServiceProvider serviceProvider)
+    public Dispatcher(IServiceProvider serviceProvider) : this(serviceProvider, false)
+    {
+    }
+
+    private Dispatcher(IServiceProvider serviceProvider, bool nested)
     {
         _serviceProvider = serviceProvider;
+        _nested = nested;
     }
 
     public async Task<Result<R>> Dispatch<X, R>(IDispatchable<X> dispatchable, AsyncFunc<X, R> mapper)
@@ -32,32 +37,16 @@ internal class Dispatcher : IDispatcher
     private async Task<Result<R>> DispatchImpl<T, X, R>(T dispatchable, AsyncFunc<X, R> mapper)
         where T : IDispatchable<X>
     {
-        DispatcherScopeManager.Current ??= new(_serviceProvider);
+        await using var scope = _serviceProvider.CreateAsyncScope();
+        var serviceProvider = scope.ServiceProvider;
+        var handler = FindHandler<T, X>(serviceProvider);
+        var pipeline = serviceProvider.GetRequiredService<IPipelineProvider>().GetSteps<T, R>(serviceProvider);
 
-        Result<R> result;
-        await using (var scope = DispatcherScopeManager.Current.OpenNewScope())
+        if (_nested)
         {
-            var serviceProvider = scope.ServiceProvider;
-            var handler = FindHandler<T, X>(serviceProvider);
-            var pipeline = serviceProvider.GetRequiredService<IPipelineProvider>().GetSteps<T, R>(serviceProvider);
-            if (_initialized)
-            {
-                pipeline = pipeline.Where(step => step.IsForEachHandler);
-            }
-            else
-            {
-                _initialized = true;
-            }
-
-            result = await pipeline.Run(dispatchable, r => handler.Handle(r).ThenMapAsync(mapper));
+            pipeline = pipeline.Where(step => step.IsForEachHandler);
         }
-
-        if (DispatcherScopeManager.Current.Depth == 0)
-        {
-            DispatcherScopeManager.Current = null!;
-        }
-
-        return result;
+        return await pipeline.Run(dispatchable, r => handler.Handle(r).ThenMapAsync(mapper));
     }
 
     private IHandler<T, R> FindHandler<T, R>(IServiceProvider serviceProvider)

@@ -18,7 +18,7 @@ public class DispatchingModule : AppModule
 
     public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
-        services.AddInherited<IDispatcher>(sp => new Dispatcher(sp));
+        builder.RegisterType<Dispatcher>().As<IDispatcher>().InstancePerLifetimeScope();
 
         RegisterRequestHandlers(services, app);
 

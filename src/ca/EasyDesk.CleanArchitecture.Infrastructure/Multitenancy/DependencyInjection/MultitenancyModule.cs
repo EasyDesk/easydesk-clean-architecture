@@ -30,7 +30,7 @@ public class MultitenancyModule : AppModule
 
     public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
     {
-        services.AddInherited(_ => new TenantService());
+        services.AddScoped(_ => new TenantService()); // TODO: request scoped
         services.AddScoped<IContextTenantInitializer>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<ITenantNavigator>(p => p.GetRequiredService<TenantService>());
         services.AddScoped<IContextTenantNavigator>(p => p.GetRequiredService<TenantService>());

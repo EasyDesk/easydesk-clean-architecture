@@ -1,9 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus.Scheduler;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Rebus.Activation;
 using Rebus.Bus;
@@ -24,15 +25,14 @@ public static class RebusFixtureExtensions
         var network = new InMemNetwork();
         var subscriberStore = new InMemorySubscriberStore();
         return builder
-            .ConfigureWebService(ws => ws.WithServices(services => // TODO: use autofac
+            .ConfigureWebService(ws => ws.WithServices(builder =>
             {
-                services.RemoveAll<RebusTransportConfiguration>();
-                services.AddSingleton<RebusTransportConfiguration>((t, e) =>
+                builder.RegisterDecorator<RebusTransportConfiguration>((_, _, _) => (t, e) =>
                 {
                     t.UseInMemoryTransport(network, e, registerSubscriptionStorage: false);
                     t.OtherService<ISubscriptionStorage>().StoreInMemory(subscriberStore);
                 });
-                services.AddHostedService<RebusResettingTask>();
+                builder.RegisterType<RebusResettingTask>().As<IHostedService>().SingleInstance();
             }))
             .OnReset(_ =>
             {

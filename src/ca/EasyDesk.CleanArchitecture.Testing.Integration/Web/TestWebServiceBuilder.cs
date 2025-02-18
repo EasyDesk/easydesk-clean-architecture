@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Autofac;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
@@ -49,8 +49,8 @@ public sealed class TestWebServiceBuilder
         return this;
     }
 
-    public TestWebServiceBuilder WithServices(Action<IServiceCollection> configure) =>
-        ConfigureWebHost(builder => builder.ConfigureServices(configure));
+    public TestWebServiceBuilder WithServices(Action<ContainerBuilder> configure) =>
+        ConfigureHost(builder => builder.ConfigureContainer(configure));
 
     public TestWebServiceBuilder BeforeStart(Action<IHost> action)
     {
