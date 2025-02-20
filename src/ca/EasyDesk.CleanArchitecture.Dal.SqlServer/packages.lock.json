@@ -551,8 +551,8 @@
       },
       "Scrutor": {
         "type": "Transitive",
-        "resolved": "5.1.1",
-        "contentHash": "dLzrEZTzS+ahww88hMtwekpkVW7t0XtUiJQFjojoes+gcSociUY9VkCF/a9Fsgmb6Gvp+aVlD14T4ujZ8lLwaw==",
+        "resolved": "6.0.1",
+        "contentHash": "5xKT6ND5GqnFzwSaYozHCJe75GFL8sPy4yw/iRFqeBFGlmqPNFpOg1T9Q0Gl2h76Cklt0ZTg6Ypkri5iUBKXsA==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.1",
           "Microsoft.Extensions.DependencyModel": "8.0.2"
@@ -813,7 +813,7 @@
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
           "NodaTime": "[3.2.0, )",
-          "Scrutor": "[5.1.1, )",
+          "Scrutor": "[6.0.1, )",
           "System.CommandLine": "[2.0.0-beta4.22272.1, )"
         }
       },

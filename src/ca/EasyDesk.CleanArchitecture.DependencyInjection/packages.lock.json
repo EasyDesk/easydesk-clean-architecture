@@ -30,9 +30,9 @@
       },
       "Scrutor": {
         "type": "Direct",
-        "requested": "[5.1.1, )",
-        "resolved": "5.1.1",
-        "contentHash": "dLzrEZTzS+ahww88hMtwekpkVW7t0XtUiJQFjojoes+gcSociUY9VkCF/a9Fsgmb6Gvp+aVlD14T4ujZ8lLwaw==",
+        "requested": "[6.0.1, )",
+        "resolved": "6.0.1",
+        "contentHash": "5xKT6ND5GqnFzwSaYozHCJe75GFL8sPy4yw/iRFqeBFGlmqPNFpOg1T9Q0Gl2h76Cklt0ZTg6Ypkri5iUBKXsA==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.1",
           "Microsoft.Extensions.DependencyModel": "8.0.2"
