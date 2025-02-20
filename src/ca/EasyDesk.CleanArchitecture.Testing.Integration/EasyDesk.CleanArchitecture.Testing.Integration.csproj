@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
-    <PackageReference Include="NodaTime.Testing" Version="3.2.0" />
+    <PackageReference Include="NodaTime.Testing" Version="3.2.1" />
     <PackageReference Include="Npgsql" Version="9.0.2" />
     <PackageReference Include="Testcontainers" Version="4.1.0" />
     <PackageReference Include="Testcontainers.MsSql" Version="4.1.0" />
