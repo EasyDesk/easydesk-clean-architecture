@@ -7,6 +7,8 @@ public interface IFixedMap<K, V> : IReadOnlyCollection<KeyValuePair<K, V>>, IEqu
 {
     Option<V> Get(K key);
 
+    V this[K key] { get; }
+
     IEnumerable<K> Keys { get; }
 
     IEnumerable<V> Values { get; }

@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 

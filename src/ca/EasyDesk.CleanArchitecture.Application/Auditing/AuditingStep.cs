@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
@@ -14,18 +14,18 @@ public sealed class AuditingStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
 {
     private readonly IAuditStorage _auditStorage;
-    private readonly IContextProvider _contextProvider;
+    private readonly IAgentProvider _agentProvider;
     private readonly IAuditConfigurer _auditConfigurer;
     private readonly IClock _clock;
 
     public AuditingStep(
         IAuditStorage auditStorage,
-        IContextProvider contextProvider,
+        IAgentProvider agentProvider,
         IAuditConfigurer auditConfigurer,
         IClock clock)
     {
         _auditStorage = auditStorage;
-        _contextProvider = contextProvider;
+        _agentProvider = agentProvider;
         _auditConfigurer = auditConfigurer;
         _clock = clock;
     }
@@ -50,7 +50,7 @@ public sealed class AuditingStep<T, R> : IPipelineStep<T, R>
                 Name: typeof(T).Name,
                 Description: _auditConfigurer.Description,
                 Properties: _auditConfigurer.Properties,
-                Agent: _contextProvider.GetAgent(),
+                Agent: _agentProvider.Agent,
                 Success: result.IsSuccess,
                 Instant: _clock.GetCurrentInstant()));
     }

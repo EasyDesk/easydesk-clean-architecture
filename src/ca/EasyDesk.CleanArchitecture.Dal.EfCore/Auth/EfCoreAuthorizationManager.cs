@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Commons.Collections.Immutable;

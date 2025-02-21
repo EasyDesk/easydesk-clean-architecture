@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
@@ -24,7 +25,8 @@ public class MultitenancyModule : AppModule
         {
             pipeline
                 .AddStep(typeof(MultitenancyManagementStep<,>))
-                .After(typeof(UnitOfWorkStep<,>));
+                .After(typeof(UnitOfWorkStep<,>))
+                .After(typeof(AuthenticationStep<,>));
         });
     }
 
@@ -41,6 +43,8 @@ public class MultitenancyModule : AppModule
         services.AddSingleton(Options.DefaultPolicy);
         services.AddSingleton(Options.HttpRequestTenantReader);
         services.AddSingleton(Options.AsyncMessageTenantReader);
+
+        services.AddScoped<IContextTenantDetector, ContextTenantDetector>();
     }
 }
 

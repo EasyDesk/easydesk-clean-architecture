@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
@@ -16,17 +16,17 @@ public record RemoveAdmin : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
 public class RemoveAdminHandler : IHandler<RemoveAdmin>
 {
     private readonly IIdentityRolesManager _identityRolesManager;
-    private readonly IContextProvider _contextProvider;
+    private readonly IAgentProvider _agentProvider;
 
-    public RemoveAdminHandler(IIdentityRolesManager identityRolesManager, IContextProvider contextProvider)
+    public RemoveAdminHandler(IIdentityRolesManager identityRolesManager, IAgentProvider agentProvider)
     {
         _identityRolesManager = identityRolesManager;
-        _contextProvider = contextProvider;
+        _agentProvider = agentProvider;
     }
 
     public async Task<Result<Nothing>> Handle(RemoveAdmin request)
     {
-        await _identityRolesManager.RevokeRoles(_contextProvider.RequireAgent().MainIdentity(), Roles.Admin);
+        await _identityRolesManager.RevokeRoles(_agentProvider.RequireAgent().MainIdentity(), Roles.Admin);
         return Ok;
     }
 }

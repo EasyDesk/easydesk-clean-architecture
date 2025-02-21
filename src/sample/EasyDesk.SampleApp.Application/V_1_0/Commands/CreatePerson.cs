@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Mapping;
@@ -44,13 +44,13 @@ public record CreatePerson : ICommandRequest<PersonDto>, IAuthorize, IValidate<C
 public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDto>
 {
     private readonly IPersonRepository _personRepository;
-    private readonly IContextProvider _contextProvider;
+    private readonly IAgentProvider _agentProvider;
     private readonly IClock _clock;
 
-    public CreatePersonHandler(IPersonRepository personRepository, IContextProvider contextProvider, IClock clock)
+    public CreatePersonHandler(IPersonRepository personRepository, IAgentProvider agentProvider, IClock clock)
     {
         _personRepository = personRepository;
-        _contextProvider = contextProvider;
+        _agentProvider = agentProvider;
         _clock = clock;
     }
 
@@ -64,7 +64,7 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDt
             new Name(command.FirstName),
             new Name(command.LastName),
             command.DateOfBirth,
-            AdminId.From(_contextProvider.RequireAgent().MainIdentity().Id),
+            AdminId.From(_agentProvider.RequireAgent().MainIdentity().Id),
             command.Residence.ToDomainObject());
         _personRepository.Save(person);
 

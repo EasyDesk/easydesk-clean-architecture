@@ -25,6 +25,7 @@ public class DispatchingModule : AppModule
         var steps = Pipeline.GetOrderedSteps().ToList();
         services.AddHostedService<StartupPipelineLogger>(sp => new(steps, sp.GetRequiredService<ILogger<StartupPipelineLogger>>()));
         services.AddSingleton<IPipelineProvider>(p => new GenericPipelineProvider(steps));
+        services.AddScoped<DispatcherFactory>();
     }
 
     private void RegisterRequestHandlers(IServiceCollection services, AppDescription app)

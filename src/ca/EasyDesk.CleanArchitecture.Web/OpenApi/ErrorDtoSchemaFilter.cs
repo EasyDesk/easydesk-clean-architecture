@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Context.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.Commons.Collections;
@@ -23,7 +23,7 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
             .FromAssemblies(app.Assemblies)
             .FromAssembliesContaining(
                 typeof(ApplicationError),
-                typeof(ContextProviderModule),
+                typeof(ContextModule),
                 typeof(OpenApiModule))
             .NonAbstract()
             .SubtypesOrImplementationsOf<ApplicationError>()

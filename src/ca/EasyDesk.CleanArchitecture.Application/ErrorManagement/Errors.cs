@@ -14,6 +14,12 @@ public static class Errors
 
     public static NotFoundError NotFound() => new();
 
+    public static AuthenticationFailedError AuthenticationFailed(string scheme, string message) => new()
+    {
+        Scheme = scheme,
+        Message = message,
+    };
+
     public static ForbiddenError Forbidden(string? message = null) => new(message ?? "Not authorized");
 
     public static InvalidInputError InvalidInput(string propertyName, string errorCode, string errorMessage, IFixedMap<string, object>? parameters = null) =>

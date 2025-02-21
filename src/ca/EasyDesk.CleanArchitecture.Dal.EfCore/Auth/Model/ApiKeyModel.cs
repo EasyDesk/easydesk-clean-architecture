@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
 using EasyDesk.Commons.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

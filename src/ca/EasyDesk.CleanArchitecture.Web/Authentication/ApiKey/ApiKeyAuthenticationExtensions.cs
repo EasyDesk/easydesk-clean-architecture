@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
 
@@ -9,7 +9,9 @@ public static class ApiKeyAuthenticationExtensions
         string schemeName,
         Action<ApiKeyOptions>? configureOptions = default)
     {
-        return options.AddScheme(schemeName, new ApiKeyAuthenticationProvider(configureOptions));
+        var apiKeyOptions = new ApiKeyOptions();
+        configureOptions?.Invoke(apiKeyOptions);
+        return options.AddScheme(schemeName, new ApiKeyProvider(apiKeyOptions));
     }
 
     public static AuthenticationModuleOptions AddApiKey(

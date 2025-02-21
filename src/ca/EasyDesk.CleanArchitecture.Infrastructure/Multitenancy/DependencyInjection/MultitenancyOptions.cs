@@ -1,6 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider;
 using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
@@ -15,8 +14,7 @@ public sealed class MultitenancyOptions
 
     public AsyncMessageTenantReader AsyncMessageTenantReader { get; private set; } = DefaultAsyncMessageTenantReader;
 
-    public MultitenantPolicy DefaultPolicy { get; private set; } =
-        MultitenantPolicies.IgnoreAndUsePublic();
+    public MultitenantPolicy DefaultPolicy { get; private set; } = MultitenantPolicies.IgnoreAndUsePublic();
 
     public MultitenancyOptions WithDefaultPolicy(MultitenantPolicy policy)
     {

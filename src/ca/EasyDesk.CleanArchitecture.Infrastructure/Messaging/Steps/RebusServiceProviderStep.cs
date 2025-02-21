@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Cqrs;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Results;
 using Rebus.Transport;
@@ -10,20 +10,18 @@ public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IContextProvider _contextProvider;
 
-    public RebusServiceProviderStep(IServiceProvider serviceProvider, IContextProvider contextProvider)
+    public RebusServiceProviderStep(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _contextProvider = contextProvider;
     }
 
     public bool IsForEachHandler => false;
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next) =>
-        _contextProvider.CurrentContext switch
+        request switch
         {
-            ContextInfo.AsyncMessage => await HandleAsyncMessageContext(next),
+            IMessage => await HandleAsyncMessageContext(next),
             _ => await HandleGenericContext(next),
         };
 

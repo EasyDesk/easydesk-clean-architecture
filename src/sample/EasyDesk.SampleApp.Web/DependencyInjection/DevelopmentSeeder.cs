@@ -1,6 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Infrastructure.AutoScopingDispatchers;
+using EasyDesk.CleanArchitecture.Infrastructure.Seeding;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
@@ -10,12 +11,12 @@ namespace EasyDesk.SampleApp.Web.DependencyInjection;
 
 public class DevelopmentSeeder
 {
-    private readonly AutoScopingDispatcherFactory _dispatcherFactory;
+    private readonly DispatcherFactory _dispatcherFactory;
     private readonly JwtLogger _jwtLogger;
     private readonly ILogger<DevelopmentSeeder> _logger;
 
     public DevelopmentSeeder(
-        AutoScopingDispatcherFactory dispatcherFactory,
+        DispatcherFactory dispatcherFactory,
         JwtLogger jwtLogger,
         ILogger<DevelopmentSeeder> logger)
     {
@@ -28,7 +29,7 @@ public class DevelopmentSeeder
     {
         var admin = Agent.FromSingleIdentity(Realms.MainRealm, IdentityId.FromRandomGuid());
         var tenantId = TenantId.FromRandomGuid();
-        var dispatcher = _dispatcherFactory.CreateAutoScopingDispatcher(context: new ContextInfo.AuthenticatedRequest(admin), tenantId);
+        var dispatcher = _dispatcherFactory.CreateSeedingDispatcher(admin, tenantId);
         await dispatcher.Dispatch(new CreateTenant(tenantId));
         await dispatcher.Dispatch(new AddAdmin());
         _logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);

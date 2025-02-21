@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
@@ -22,11 +23,13 @@ public class AuthorizationModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline =>
         {
             pipeline
-                .AddStepBeforeAll(typeof(HandleUnknownAgentStep<,>));
+                .AddStep(typeof(HandleUnknownAgentStep<,>))
+                .After(typeof(AuthenticationStep<,>));
 
             pipeline
                 .AddStep(typeof(StaticAuthorizationStep<,>))
                 .After(typeof(UnitOfWorkStep<,>))
+                .After(typeof(AuthenticationStep<,>))
                 .After(typeof(MultitenancyManagementStep<,>));
         });
     }

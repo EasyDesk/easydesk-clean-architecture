@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.Commons.Collections.Immutable;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.Model;

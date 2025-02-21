@@ -5,17 +5,13 @@
     Errors: [
       {
         Code: AuthenticationFailed,
-        Detail: Authentication with schema 'ApiKey' failed.,
+        Detail: Authentication with scheme 'ApiKey' failed.,
         Meta: {
-          schema: ApiKey,
-          innerError: {
-            code: InvalidApiKey,
-            detail: The given Api Key was not recognized.,
-            meta: {}
-          }
+          scheme: ApiKey,
+          message: The given API key is invalid.
         }
       }
     ],
-    Meta: null
+    Meta: {}
   }
 }

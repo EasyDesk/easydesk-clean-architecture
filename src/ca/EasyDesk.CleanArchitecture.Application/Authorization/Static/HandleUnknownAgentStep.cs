@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Results;
 using System.Reflection;
@@ -7,20 +8,20 @@ namespace EasyDesk.CleanArchitecture.Application.Authorization.Static;
 
 public class HandleUnknownAgentStep<T, R> : IPipelineStep<T, R>
 {
-    private readonly IContextProvider _contextProvider;
+    private readonly IAgentProvider _agentProvider;
 
-    public HandleUnknownAgentStep(IContextProvider contextProvider)
+    public HandleUnknownAgentStep(IAgentProvider agentProvider)
     {
-        _contextProvider = contextProvider;
+        _agentProvider = agentProvider;
     }
 
     public bool IsForEachHandler => false;
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return _contextProvider.CurrentContext switch
+        return request switch
         {
-            ContextInfo.AnonymousRequest => await HandleUnknownAgentRequest(next),
+            IRequest when _agentProvider.Agent.IsAbsent => await HandleUnknownAgentRequest(next),
             _ => await next(),
         };
     }

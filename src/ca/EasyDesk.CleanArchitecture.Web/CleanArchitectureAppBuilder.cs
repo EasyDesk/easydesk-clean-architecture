@@ -51,7 +51,6 @@ public sealed class CleanArchitectureAppBuilder : AppBuilder, IAppBuilder
             appDescription.ConfigureServices(_applicationBuilder.Services, builder);
             builder.Populate(_applicationBuilder.Services);
         });
-        //appDescription.ConfigureServices(_applicationBuilder.Services, new());
 
         var app = _applicationBuilder.Build();
 

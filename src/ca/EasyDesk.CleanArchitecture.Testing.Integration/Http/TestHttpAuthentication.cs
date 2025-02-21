@@ -1,13 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
-using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
@@ -29,17 +28,17 @@ public static class TestHttpAuthentication
         {
             return None;
         }
-        var schemeName = options.DefaultScheme ?? throw new InvalidOperationException("A default scheme is not available.");
-        var provider = options.Schemes.Get(schemeName).Value;
+        var schemeName = options.DefaultScheme.Value;
+        var provider = options.Schemes[schemeName];
         return provider switch
         {
-            JwtAuthenticationProvider => Some(GetJwtAuthenticationConfiguration(serviceProvider, schemeName)),
+            JwtBearerProvider jwtProvider => Some(GetJwtAuthenticationConfiguration(serviceProvider, jwtProvider)),
             _ => None,
         };
     }
 
-    private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IServiceProvider serviceProvider, string schemeName) =>
+    private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IServiceProvider serviceProvider, JwtBearerProvider jwtProvider) =>
         new JwtHttpAuthentication(
             serviceProvider.GetRequiredService<JwtFacade>(),
-            serviceProvider.GetRequiredService<IOptionsMonitor<JwtBearerOptions>>().Get(schemeName).Configuration.ToJwtGenerationConfiguration());
+            jwtProvider.Options.Configuration.ToJwtGenerationConfiguration());
 }

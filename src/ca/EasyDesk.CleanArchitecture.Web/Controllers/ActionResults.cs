@@ -25,10 +25,9 @@ public static class ActionResults
     {
         MultiError(var primary, _) => controller.DefaultErrorHandler(primary, body),
         NotFoundError => controller.NotFound(body),
-        UnknownAgentError => controller.Unauthorized(body),
+        UnknownAgentError or AuthenticationFailedError => controller.Unauthorized(body),
         ForbiddenError => Forbidden(body),
-        ApplicationError
-            or DomainError => controller.BadRequest(body),
+        ApplicationError or DomainError => controller.BadRequest(body),
         _ => InternalServerError(body),
     };
 }

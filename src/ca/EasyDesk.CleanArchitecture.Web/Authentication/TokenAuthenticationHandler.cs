@@ -1,38 +1,36 @@
-﻿using EasyDesk.Commons.Options;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication;
 
-public delegate Option<string> TokenReader(HttpContext httpContext);
-
-public abstract class TokenAuthenticationOptions : AuthenticationSchemeOptions
+public abstract class TokenAuthenticationHandler : IAuthenticationHandler
 {
-    public TokenReader TokenReader { get; set; } = _ => throw new InvalidOperationException("TokenReader not configured");
-}
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-public abstract class TokenAuthenticationHandler<T> : AbstractAuthenticationHandler<T>
-    where T : TokenAuthenticationOptions, new()
-{
-    public TokenAuthenticationHandler(IOptionsMonitor<T> options, ILoggerFactory logger, UrlEncoder encoder)
-        : base(options, logger, encoder)
+    protected TokenAuthenticationHandler(IHttpContextAccessor httpContextAccessor)
     {
+        _httpContextAccessor = httpContextAccessor;
     }
 
-    protected override Task<Option<Result<ClaimsPrincipal>>> Handle()
+    public async Task<Option<AuthenticationResult>> Authenticate()
     {
-        return GetAuthenticateResult();
+        var token = ReadToken(_httpContextAccessor.HttpContext!);
+        return await token.MapAsync(ValidateToken).ThenMap(x => x.Match<AuthenticationResult>(
+            success: agent => new AuthenticationResult.Authenticated
+            {
+                Agent = agent,
+            },
+            failure: error => new AuthenticationResult.Failed
+            {
+                ErrorMessage = GetErrorMessage(error),
+            }));
     }
 
-    private Task<Option<Result<ClaimsPrincipal>>> GetAuthenticateResult()
-    {
-        return Options.TokenReader(Context).MapAsync(GetClaimsPrincipalFromToken);
-    }
+    protected abstract Option<string> ReadToken(HttpContext httpContext);
 
-    protected abstract Task<Result<ClaimsPrincipal>> GetClaimsPrincipalFromToken(string token);
+    protected abstract Task<Result<Agent>> ValidateToken(string token);
+
+    protected abstract string GetErrorMessage(Error error);
 }

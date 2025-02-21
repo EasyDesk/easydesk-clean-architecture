@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Abstractions;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 

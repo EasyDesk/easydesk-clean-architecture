@@ -58,18 +58,18 @@ public sealed class JwtFacade
 
             var message = ex switch
             {
-                SecurityTokenDecryptionFailedException => "DecryptionFailed",
-                SecurityTokenExpiredException => "TokenExpired",
-                SecurityTokenInvalidAudienceException => "InvalidAudience",
-                SecurityTokenInvalidIssuerException => "InvalidIssuer",
-                SecurityTokenInvalidLifetimeException => "InvalidLifetime",
-                SecurityTokenInvalidSignatureException => "InvalidSignature",
-                SecurityTokenInvalidSigningKeyException => "InvalidSigningKey",
-                SecurityTokenNoExpirationException => "NoExpiration",
-                SecurityTokenNotYetValidException => "NotYetValid",
-                SecurityTokenReplayAddFailedException => "ReplayAddFailed",
-                SecurityTokenReplayDetectedException => "ReplayDetected",
-                _ => "TokenMalformed",
+                SecurityTokenDecryptionFailedException => "Decryption failed",
+                SecurityTokenExpiredException => "Token expired",
+                SecurityTokenInvalidAudienceException => "Invalid audience",
+                SecurityTokenInvalidIssuerException => "Invalid issuer",
+                SecurityTokenInvalidLifetimeException => "Invalid lifetime",
+                SecurityTokenInvalidSignatureException => "Invalid signature",
+                SecurityTokenInvalidSigningKeyException => "Invalid signing key",
+                SecurityTokenNoExpirationException => "No expiration",
+                SecurityTokenNotYetValidException => "Not yet valid",
+                SecurityTokenReplayAddFailedException => "Replay add failed",
+                SecurityTokenReplayDetectedException => "Replay detected",
+                _ => "Token malformed",
             };
 
             return new InvalidJwt(message);

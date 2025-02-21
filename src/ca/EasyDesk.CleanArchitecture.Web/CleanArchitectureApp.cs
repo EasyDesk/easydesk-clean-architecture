@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement.DependencyInjection
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.ContextProvider.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Context.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
@@ -49,7 +49,7 @@ public static partial class CleanArchitectureApp
             .AddControllers(builder.Environment)
             .AddJsonSerialization()
             .AddDomainLayer()
-            .AddContextProvider(builder.Environment)
+            .AddContextDetector()
             .AddTimeManagement()
             .AddDispatching()
             .AddValidation()

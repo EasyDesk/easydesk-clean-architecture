@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.Commons.Collections;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;

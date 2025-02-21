@@ -22,6 +22,8 @@ internal class ImmutableDictionaryAdapter<K, V> : IFixedMap<K, V>
 
     public Option<V> Get(K key) => TryOption<K, V>(_dictionary.TryGetValue, key);
 
+    public V this[K key] => _dictionary[key];
+
     public IEnumerable<K> Keys => _dictionary.Keys;
 
     public IEnumerable<V> Values => _dictionary.Values;

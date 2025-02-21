@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Cancellation;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Messaging;
@@ -18,18 +18,18 @@ public record CancellableRequest(Duration WaitTime) : ICommandRequest<Nothing>, 
 
 public class CancellableRequestHandler : IHandler<CancellableRequest>
 {
-    private readonly IContextProvider _contextProvider;
+    private readonly ICancellationTokenProvider _cancellationTokenProvider;
     private readonly IEventPublisher _publisher;
 
-    public CancellableRequestHandler(IContextProvider contextProvider, IEventPublisher publisher)
+    public CancellableRequestHandler(ICancellationTokenProvider cancellationTokenProvider, IEventPublisher publisher)
     {
-        _contextProvider = contextProvider;
+        _cancellationTokenProvider = cancellationTokenProvider;
         _publisher = publisher;
     }
 
     public async Task<Result<Nothing>> Handle(CancellableRequest request)
     {
-        await Task.Delay(request.WaitTime.ToTimeSpan(), _contextProvider.CancellationToken);
+        await Task.Delay(request.WaitTime.ToTimeSpan(), _cancellationTokenProvider.CancellationToken);
         await _publisher.Publish(new CancellationFailed());
         return Ok;
     }

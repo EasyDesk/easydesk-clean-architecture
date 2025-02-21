@@ -60,7 +60,6 @@ public class ControllersModule : AppModule
 
     protected void DefaultMvcConfiguration(MvcOptions options)
     {
-        options.Filters.Add<FailedAuthenticationFilter>();
         options.Filters.Add<ExceptionLoggingFilter>();
         if (!_environment.IsDevelopment())
         {

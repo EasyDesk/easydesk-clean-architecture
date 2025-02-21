@@ -8,6 +8,8 @@ using System.Net.Http.Headers;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication;
 
+public delegate Option<string> TokenReader(HttpContext httpContext);
+
 public static class TokenReaders
 {
     public static TokenReader Combine(params TokenReader[] readers) => httpContext => readers

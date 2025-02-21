@@ -1,7 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authorization;
 using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
@@ -14,7 +15,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Application.Authorization;
 
 public class StaticAuthorizationStepTests
 {
-    public record TestRequest : IDispatchable<Nothing>;
+    public record TestRequest : IDispatchable<Nothing>, IRequest;
 
     private readonly Agent _agent = Agent.FromSingleIdentity(Realm.Default, new IdentityId("identity"));
     private readonly IAuthorizationProvider _authorizationProvider;

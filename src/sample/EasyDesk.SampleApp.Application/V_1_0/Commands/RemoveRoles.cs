@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
@@ -16,17 +16,17 @@ public class RemoveRoles : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
 public class RemoveRolesHandler : IHandler<RemoveRoles>
 {
     private readonly IIdentityRolesManager _identityRolesManager;
-    private readonly IContextProvider _contextProvider;
+    private readonly IAgentProvider _agentProvider;
 
-    public RemoveRolesHandler(IIdentityRolesManager identityRolesManager, IContextProvider contextProvider)
+    public RemoveRolesHandler(IIdentityRolesManager identityRolesManager, IAgentProvider agentProvider)
     {
         _identityRolesManager = identityRolesManager;
-        _contextProvider = contextProvider;
+        _agentProvider = agentProvider;
     }
 
     public async Task<Result<Nothing>> Handle(RemoveRoles request)
     {
-        await _identityRolesManager.RevokeAllRoles(_contextProvider.RequireAgent().MainIdentity());
+        await _identityRolesManager.RevokeAllRoles(_agentProvider.RequireAgent().MainIdentity());
         return Ok;
     }
 }

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
@@ -22,17 +21,18 @@ public class MultitenancyManagementStepTests
     private const string InvalidTenantId = "###invalid###";
     private static readonly TenantId _tenantId = new("test-tenant");
 
-    private readonly IContextProvider _contextProvider;
     private readonly IMultitenancyManager _multitenancyManager;
     private readonly IContextTenantInitializer _tenantInitializer;
     private readonly NextPipelineStep<Nothing> _next;
 
     private readonly MultitenantPolicy _defaultPolicy;
 
+    private readonly IContextTenantDetector _contextTenantDetector;
+
     public MultitenancyManagementStepTests()
     {
-        _contextProvider = Substitute.For<IContextProvider>();
-        _contextProvider.TenantId.Returns(None);
+        _contextTenantDetector = Substitute.For<IContextTenantDetector>();
+        _contextTenantDetector.TenantId.Returns(None);
 
         _tenantInitializer = Substitute.For<IContextTenantInitializer>();
 
@@ -46,12 +46,12 @@ public class MultitenancyManagementStepTests
             .Returns(call => call.Arg<TenantInfo>());
     }
 
-    private void UseRawContextTenantId(Option<string> rawTenantId) => _contextProvider.TenantId.Returns(rawTenantId);
+    private void UseRawContextTenantId(Option<string> rawTenantId) => _contextTenantDetector.TenantId.Returns(rawTenantId);
 
     private async Task<Result<Nothing>> Run<T>(T request)
     {
         var step = new MultitenancyManagementStep<T, Nothing>(
-            _contextProvider,
+            _contextTenantDetector,
             _tenantInitializer,
             _multitenancyManager,
             _defaultPolicy);

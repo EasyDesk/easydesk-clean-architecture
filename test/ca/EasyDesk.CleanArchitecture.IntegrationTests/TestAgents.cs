@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.SampleApp.Application.Authorization;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;

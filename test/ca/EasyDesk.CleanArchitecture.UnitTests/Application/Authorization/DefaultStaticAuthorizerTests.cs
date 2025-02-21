@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
-using EasyDesk.CleanArchitecture.Application.ContextProvider;
 using Shouldly;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 

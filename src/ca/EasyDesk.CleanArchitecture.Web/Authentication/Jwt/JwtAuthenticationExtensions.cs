@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
-using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
+using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +14,9 @@ public static class JwtAuthenticationExtensions
         string schemeName,
         Action<JwtBearerOptions>? configureOptions = default)
     {
-        return options.AddScheme(schemeName, new JwtAuthenticationProvider(configureOptions));
+        var jwtBearerOptions = new JwtBearerOptions();
+        configureOptions?.Invoke(jwtBearerOptions);
+        return options.AddScheme(schemeName, new JwtBearerProvider(jwtBearerOptions));
     }
 
     public static AuthenticationModuleOptions AddJwtBearer(

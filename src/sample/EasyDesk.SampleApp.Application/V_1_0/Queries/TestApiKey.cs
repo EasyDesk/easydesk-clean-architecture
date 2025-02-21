@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
@@ -13,13 +13,13 @@ public record TestApiKey : IQueryRequest<AgentDto>, IOverrideMultitenantPolicy
 
 public class TestApiKeyHandler : SuccessHandler<TestApiKey, AgentDto>
 {
-    private readonly IContextProvider _contextProvider;
+    private readonly IAgentProvider _agentProvider;
 
-    public TestApiKeyHandler(IContextProvider contextProvider)
+    public TestApiKeyHandler(IAgentProvider agentProvider)
     {
-        _contextProvider = contextProvider;
+        _agentProvider = agentProvider;
     }
 
     protected override Task<AgentDto> Process(TestApiKey request) =>
-        Task.FromResult(AgentDto.MapFrom(_contextProvider.RequireAgent()));
+        Task.FromResult(AgentDto.MapFrom(_agentProvider.RequireAgent()));
 }

@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.ContextProvider;
-using EasyDesk.CleanArchitecture.Application.Cqrs;
+﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Results;
@@ -12,23 +11,16 @@ public sealed class InboxStep<T> : IPipelineStep<T, Nothing>
     where T : IReadWriteOperation, IIncomingMessage
 {
     private readonly IInbox _inbox;
-    private readonly IContextProvider _contextProvider;
 
-    public InboxStep(IInbox inbox, IContextProvider contextProvider)
+    public InboxStep(IInbox inbox)
     {
         _inbox = inbox;
-        _contextProvider = contextProvider;
     }
 
     public bool IsForEachHandler => false;
 
     public async Task<Result<Nothing>> Run(T request, NextPipelineStep<Nothing> next)
     {
-        if (_contextProvider.CurrentContext is not ContextInfo.AsyncMessage)
-        {
-            return await next();
-        }
-
         var messageId = MessageContext.Current.TransportMessage.GetMessageId();
         if (await _inbox.HasBeenProcessed(messageId))
         {

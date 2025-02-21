@@ -1,3 +1,4 @@
+using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Logging.DependencyInjection;
@@ -12,7 +13,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
-using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Csv.DependencyInjection;
@@ -35,7 +35,7 @@ builder
     .AddMultitenancy(options => options
         .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
     .AddAuditing()
-    .AddAuthentication(builder.Environment, options => options
+    .AddAuthentication(options => options
         .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration))
         .AddApiKey())
     .AddAuthorization(options => options.RoleBased(x => x
@@ -107,8 +107,6 @@ builder.ConfigureWebApplication(app =>
     app.UseOpenApiModule();
 
     app.UseAsyncApiModule();
-
-    app.UseAuthentication();
 
     app.MapControllers();
 });

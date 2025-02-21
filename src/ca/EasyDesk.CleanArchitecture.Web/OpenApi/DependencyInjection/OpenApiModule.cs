@@ -5,7 +5,6 @@ using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
-using EasyDesk.CleanArchitecture.Web.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
@@ -46,7 +45,6 @@ public class OpenApiModule : AppModule
         {
             SetupSwaggerDocs(app, options);
             SetupNodaTimeSupport(app, options);
-            SetupAuthenticationSchemesSupport(app, options);
             SetupMultitenancySupport(app, options);
 
             _options.ConfigureSwagger?.Invoke(options);
@@ -140,14 +138,6 @@ public class OpenApiModule : AppModule
         options.ConfigureForNodaTimeWithSystemTextJson(
             jsonSerializerOptions: JsonDefaults.DefaultSerializerOptions(),
             dateTimeZoneProvider: dateTimeZoneProvider);
-    }
-
-    private void SetupAuthenticationSchemesSupport(AppDescription app, SwaggerGenOptions options)
-    {
-        app.GetModule<AuthenticationModule>().IfPresent(auth =>
-        {
-            auth.Options.Schemes.ForEach(scheme => scheme.Value.ConfigureOpenApi(scheme.Key, options));
-        });
     }
 
     private CommandLine.Command OpenApiCommand(Option<ApiVersioningInfo> versioningInfo, ISwaggerProvider swaggerProvider, SwaggerGenOptions swaggerGenOptions)
