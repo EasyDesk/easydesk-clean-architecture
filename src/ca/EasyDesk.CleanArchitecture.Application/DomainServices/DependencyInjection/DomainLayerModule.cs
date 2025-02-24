@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.DomainServices.DependencyInjection;
 
@@ -18,15 +17,20 @@ public class DomainLayerModule : AppModule
         });
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        services.AddScoped<DomainEventQueue>();
-        services.AddScoped<IDomainEventNotifier>(provider => provider.GetRequiredService<DomainEventQueue>());
-        services.AddScoped<DomainEventPublisher>();
+        builder.RegisterType<DomainEventQueue>()
+            .AsSelf()
+            .As<IDomainEventNotifier>()
+            .InstancePerLifetimeScope();
 
-        services.RegisterImplementationsAsTransient(
-            typeof(IDomainEventHandler<>),
-            s => s.FromAssemblies(app.Assemblies));
+        builder.RegisterType<DomainEventPublisher>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterAssemblyTypes([.. app.Assemblies])
+            .AssignableToOpenGenericType(typeof(IDomainEventHandler<>))
+            .AsClosedTypesOf(typeof(IDomainEventHandler<>))
+            .InstancePerDependency();
     }
 }
 

@@ -1,8 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Testing.Unit.Domain;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.DomainServices;
@@ -23,7 +23,12 @@ public class DomainEventQueueTests
     public DomainEventQueueTests()
     {
         _handler = Substitute.For<IDomainEventHandler<Event>>();
-        _publisher = new(new ServiceCollection().AddSingleton(_handler).BuildServiceProvider());
+
+        var builder = new ContainerBuilder();
+
+        builder.RegisterInstance(_handler).SingleInstance();
+
+        _publisher = new(builder.Build());
         _handler.Handle(default!).ReturnsForAnyArgs(Ok);
 
         _saveChangesHandler = Substitute.For<ISaveChangesHandler>();

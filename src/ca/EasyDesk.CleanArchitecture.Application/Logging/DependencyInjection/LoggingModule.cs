@@ -1,17 +1,16 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Logging.DependencyInjection;
 
 public class LoggingModule : AppModule
 {
-    private readonly Action<LoggingConfiguration>? _configure;
+    private readonly LoggingConfiguration _configuration;
 
-    public LoggingModule(Action<LoggingConfiguration>? configure = null)
+    public LoggingModule(LoggingConfiguration configuration)
     {
-        _configure = configure;
+        _configuration = configuration;
     }
 
     public override void BeforeServiceConfiguration(AppDescription app)
@@ -20,12 +19,10 @@ public class LoggingModule : AppModule
             .AddStepBeforeAll(typeof(LoggingStep<,>)));
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        var config = new LoggingConfiguration();
-        _configure?.Invoke(config);
-
-        services.AddSingleton(config);
+        builder.RegisterInstance(_configuration)
+            .SingleInstance();
     }
 }
 
@@ -33,6 +30,8 @@ public static class LoggingModuleExtensions
 {
     public static IAppBuilder AddLogging(this IAppBuilder builder, Action<LoggingConfiguration>? configure = null)
     {
-        return builder.AddModule(new LoggingModule(configure));
+        var configuration = new LoggingConfiguration();
+        configure?.Invoke(configuration);
+        return builder.AddModule(new LoggingModule(configuration));
     }
 }

@@ -1,13 +1,14 @@
-﻿using Rebus.Transport;
+﻿using Autofac;
+using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
 internal static class RebusTransactionScopeUtils
 {
-    public static RebusTransactionScope CreateScopeWithServiceProvider(IServiceProvider serviceProvider)
+    public static RebusTransactionScope CreateScopeWithComponentContext(IComponentContext context)
     {
         var scope = new RebusTransactionScope();
-        scope.TransactionContext.SetServiceProvider(serviceProvider);
+        scope.TransactionContext.SetComponentContext(context);
         return scope;
     }
 }

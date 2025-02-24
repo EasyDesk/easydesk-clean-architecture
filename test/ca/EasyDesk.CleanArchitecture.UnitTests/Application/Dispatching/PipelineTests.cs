@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
@@ -51,7 +52,7 @@ public class PipelineTests
 
     private readonly StringRequest _stringRequest = new();
     private readonly IPipelineProvider _pipelineProvider = Substitute.For<IPipelineProvider>();
-    private readonly IServiceProvider _serviceProvider = Substitute.For<IServiceProvider>();
+    private readonly IComponentContext _componentContext = Substitute.For<IComponentContext>();
     private readonly AsyncFunc<StringRequest, Result<string>> _action = Substitute.For<AsyncFunc<StringRequest, Result<string>>>();
 
     public PipelineTests()
@@ -66,7 +67,7 @@ public class PipelineTests
         var step2 = SubstituteForPipelineStep<StringRequest, string>();
         SetupPipeline(step1, step2);
 
-        await _pipelineProvider.GetSteps<StringRequest, string>(_serviceProvider).Run(_stringRequest, _action);
+        await _pipelineProvider.GetSteps<StringRequest, string>(_componentContext).Run(_stringRequest, _action);
 
         Received.InOrder(() =>
         {
@@ -83,7 +84,7 @@ public class PipelineTests
         var stepB = new GenericStepB<StringRequest, string>(notifier);
         SetupPipeline(stepA, stepB);
 
-        await _pipelineProvider.GetSteps<StringRequest, string>(_serviceProvider).Run(_stringRequest, _action);
+        await _pipelineProvider.GetSteps<StringRequest, string>(_componentContext).Run(_stringRequest, _action);
 
         Received.InOrder(() =>
         {
@@ -102,14 +103,14 @@ public class PipelineTests
         var step2 = SubstituteForPipelineStep<StringRequest, string>();
         SetupPipeline(step1, step2);
 
-        var result = await _pipelineProvider.GetSteps<StringRequest, string>(_serviceProvider).Run(_stringRequest, _action);
+        var result = await _pipelineProvider.GetSteps<StringRequest, string>(_componentContext).Run(_stringRequest, _action);
 
         result.ShouldBe(ActionResult);
     }
 
     private void SetupPipeline<T, R>(params IPipelineStep<T, R>[] steps)
     {
-        _pipelineProvider.GetSteps<T, R>(_serviceProvider).Returns(steps);
+        _pipelineProvider.GetSteps<T, R>(_componentContext).Returns(steps);
     }
 
     private IPipelineStep<T, R> SubstituteForPipelineStep<T, R>()

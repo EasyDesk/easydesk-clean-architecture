@@ -6,16 +6,20 @@ using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 
 public class SagasModule : AppModule
 {
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        var configureSagaArgs = new[] { services };
+        app.RequireModule<DataAccessModule>().Implementation.AddSagas(registry, app);
+    }
+
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+        var configureSagaArgs = new[] { builder };
         new AssemblyScanner()
             .FromAssemblies(app.Assemblies)
             .SubtypesOrImplementationsOf(typeof(ISagaController<,>))
@@ -28,42 +32,53 @@ public class SagasModule : AppModule
                     .MakeGenericMethod([.. i.GetGenericArguments(), c])))
             .ForEach(m => m.Invoke(this, configureSagaArgs));
 
-        app.RequireModule<DataAccessModule>().Implementation.AddSagas(services, app);
+        builder.RegisterGeneric(typeof(SagaCoordinator<,>))
+            .As(typeof(ISagaCoordinator<,>))
+            .InstancePerLifetimeScope();
 
-        services.AddScoped(typeof(ISagaCoordinator<,>), typeof(SagaCoordinator<,>));
-        services.AddScoped<SagaRegistry>();
+        builder.RegisterType<SagaRegistry>()
+            .InstancePerLifetimeScope();
     }
 
-    private void ConfigureSaga<TId, TState, TController>(IServiceCollection services)
+    private void ConfigureSaga<TId, TState, TController>(ContainerBuilder builder)
         where TController : class, ISagaController<TId, TState>
     {
-        var sink = new SagaConfigurationSink<TId, TState>(services);
+        var sink = new SagaConfigurationSink<TId, TState>(builder);
         var sagaBuilder = new SagaBuilder<TId, TState>(sink);
         TController.ConfigureSaga(sagaBuilder);
-        services.AddTransient<TController>();
+        builder.RegisterType<TController>()
+            .InstancePerDependency();
     }
 
     private class SagaConfigurationSink<TId, TState> : ISagaConfigurationSink<TId, TState>
     {
-        private readonly IServiceCollection _services;
+        private readonly ContainerBuilder _builder;
 
-        public SagaConfigurationSink(IServiceCollection services)
+        public SagaConfigurationSink(ContainerBuilder builder)
         {
-            _services = services;
+            _builder = builder;
         }
 
         public void RegisterRequestConfiguration<T, R>(SagaStepConfiguration<T, R, TId, TState> configuration)
             where T : IDispatchable<R>
         {
-            _services.AddSingleton(configuration);
-            _services.AddTransient<IHandler<T, R>, SagaRequestHandler<T, R, TId, TState>>();
+            _builder.RegisterInstance(configuration)
+                .SingleInstance();
+
+            _builder.RegisterType<SagaRequestHandler<T, R, TId, TState>>()
+                .As<IHandler<T, R>>()
+                .InstancePerDependency();
         }
 
         public void RegisterEventConfiguration<T>(SagaStepConfiguration<T, Nothing, TId, TState> configuration)
             where T : DomainEvent
         {
-            _services.AddSingleton(configuration);
-            _services.AddTransient<IDomainEventHandler<T>, SagaEventHandler<T, TId, TState>>();
+            _builder.RegisterInstance(configuration)
+                .SingleInstance();
+
+            _builder.RegisterType<SagaEventHandler<T, TId, TState>>()
+                .As<IDomainEventHandler<T>>()
+                .InstancePerDependency();
         }
     }
 }

@@ -22,23 +22,31 @@ public class ApiKeyProvider : IAuthenticationProvider
         _options = options;
     }
 
-    public void AddUtilityServices(ContainerBuilder builder, IServiceCollection services, AppDescription app, string scheme)
+    public void AddUtilityServices(ServiceRegistry registry, AppDescription app, string scheme)
     {
-        services.AddScoped<ApiKeyValidator>();
-        app.RequireModule<DataAccessModule>().Implementation.AddApiKeysManagement(services, app);
+        app.RequireModule<DataAccessModule>().Implementation.AddApiKeysManagement(registry, app);
 
-        services.Configure<SwaggerGenOptions>(options =>
-        {
-            var apiKeySecurityScheme = new OpenApiSecurityScheme
+        registry
+            .ConfigureContainer(builder =>
             {
-                Description = $"ApiKey Token Authenticationn ({scheme})",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = ApiKeyOptions.ApiKeyDefaultScheme,
-            };
-            options.ConfigureSecurityRequirement(scheme, apiKeySecurityScheme);
-        });
+                builder.RegisterType<ApiKeyValidator>()
+                    .InstancePerLifetimeScope();
+            })
+            .ConfigureServices(services =>
+            {
+                services.Configure<SwaggerGenOptions>(options =>
+                {
+                    var apiKeySecurityScheme = new OpenApiSecurityScheme
+                    {
+                        Description = $"ApiKey Token Authenticationn ({scheme})",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = ApiKeyOptions.ApiKeyDefaultScheme,
+                    };
+                    options.ConfigureSecurityRequirement(scheme, apiKeySecurityScheme);
+                });
+            });
     }
 
     public IAuthenticationHandler CreateHandler(IComponentContext context, string scheme) => new ApiKeyHandler(

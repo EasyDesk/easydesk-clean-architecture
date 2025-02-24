@@ -1,11 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Rebus.Activation;
 using Rebus.Bus;
@@ -168,18 +168,18 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     }
 
     public static RebusTestBusEndpoint CreateFromServices(
-        IServiceProvider serviceProvider,
+        IComponentContext context,
         TestTenantManager testTenantNavigator,
         string? inputQueueAddress = null,
         Duration? defaultTimeout = null)
     {
-        var options = serviceProvider.GetRequiredService<RebusMessagingOptions>();
-        var serviceEndpoint = serviceProvider.GetRequiredService<RebusEndpoint>();
+        var options = context.Resolve<RebusMessagingOptions>();
+        var serviceEndpoint = context.Resolve<RebusEndpoint>();
         var helperEndpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
         return new RebusTestBusEndpoint(
             rebus =>
             {
-                options.Apply(serviceProvider, helperEndpoint, rebus);
+                options.Apply(context, helperEndpoint, rebus);
                 rebus.Routing(r => r.Decorate(c => new TestRouterWrapper(c.Get<IRouter>(), serviceEndpoint)));
             },
             testTenantNavigator,
@@ -191,19 +191,24 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     private class TestTenantManagementStep : IOutgoingStep
     {
         private readonly TenantManagementStep _inner;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly IComponentContext _context;
 
         public TestTenantManagementStep(TestTenantManager tenantManager)
         {
             _inner = new TenantManagementStep();
-            _serviceProvider = new ServiceCollection()
-                .AddSingleton<ITenantProvider>(new TestTenantProvider(tenantManager))
-                .BuildServiceProvider();
+
+            var builder = new ContainerBuilder();
+
+            builder.RegisterInstance(new TestTenantProvider(tenantManager))
+                .As<ITenantProvider>()
+                .SingleInstance();
+
+            _context = builder.Build();
         }
 
         public async Task Process(OutgoingStepContext context, Func<Task> next)
         {
-            context.Load<ITransactionContext>().SetServiceProvider(_serviceProvider);
+            context.Load<ITransactionContext>().SetComponentContext(_context);
             await _inner.Process(context, next);
         }
 

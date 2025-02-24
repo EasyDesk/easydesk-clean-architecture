@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Builder;
@@ -45,20 +46,23 @@ public sealed class CleanArchitectureAppBuilder : AppBuilder, IAppBuilder
 
         _applicationBuilder.Services.AddSingleton(appDescription);
 
+        var serviceRegistry = new ServiceRegistry();
+        appDescription.ConfigureRegistry(serviceRegistry);
+
+        appDescription.BeforeServiceConfiguration();
+
+        serviceRegistry.ApplyToServiceCollection(_applicationBuilder.Services);
+
         _applicationBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-        _applicationBuilder.Host.ConfigureContainer<ContainerBuilder>(builder =>
-        {
-            appDescription.ConfigureServices(_applicationBuilder.Services, builder);
-            builder.Populate(_applicationBuilder.Services);
-        });
+        _applicationBuilder.Host.ConfigureContainer<ContainerBuilder>(serviceRegistry.ApplyToContainerBuilder);
 
         var app = _applicationBuilder.Build();
 
         _configureWebApplication?.Invoke(app);
 
-        await using var scope = app.Services.CreateAsyncScope();
+        await using var scope = app.Services.GetRequiredService<ILifetimeScope>().BeginUseCaseLifetimeScope();
 
-        var commands = scope.ServiceProvider.GetServices<Command>();
+        var commands = scope.Resolve<IEnumerable<Command>>();
 
         var rootCommand = CreateRootCommand(app);
 

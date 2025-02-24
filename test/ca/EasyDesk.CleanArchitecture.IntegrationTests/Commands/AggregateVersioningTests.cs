@@ -1,13 +1,14 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
@@ -43,9 +44,9 @@ public class AggregateVersioningTests : SampleIntegrationTest
 
     private async Task<long> GetVersion()
     {
-        await using var scope = WebService.Services.CreateAsyncScope();
-        var context = scope.ServiceProvider.GetRequiredService<SampleAppContext>();
-        scope.ServiceProvider.GetRequiredService<IContextTenantInitializer>().Initialize(DefaultTenantInfo.Value);
+        await using var scope = WebService.LifetimeScope.BeginUseCaseLifetimeScope();
+        var context = scope.Resolve<SampleAppContext>();
+        scope.Resolve<IContextTenantInitializer>().Initialize(DefaultTenantInfo.Value);
         return await context.People
             .Where(x => x.Id == _person.Id)
             .Select(x => EF.Property<long>(x, AggregateVersioningUtils.VersionPropertyName))

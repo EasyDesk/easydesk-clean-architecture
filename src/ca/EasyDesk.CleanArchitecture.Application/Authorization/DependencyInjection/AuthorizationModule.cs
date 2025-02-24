@@ -1,21 +1,19 @@
-﻿using Autofac;
-using EasyDesk.CleanArchitecture.Application.Authentication;
+﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 
 public class AuthorizationModule : AppModule
 {
-    private readonly Action<AuthorizationOptions>? _configure;
+    private readonly AuthorizationOptions _options;
 
-    public AuthorizationModule(Action<AuthorizationOptions>? configure)
+    public AuthorizationModule(AuthorizationOptions options)
     {
-        _configure = configure;
+        _options = options;
     }
 
     public override void BeforeServiceConfiguration(AppDescription app)
@@ -34,11 +32,9 @@ public class AuthorizationModule : AppModule
         });
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        var options = new AuthorizationOptions();
-        _configure?.Invoke(options);
-        options.Apply(services, app);
+        _options.Apply(registry, app);
     }
 }
 
@@ -46,7 +42,9 @@ public static class AuthorizationModuleExtensions
 {
     public static IAppBuilder AddAuthorization(this IAppBuilder builder, Action<AuthorizationOptions>? configure = null)
     {
-        return builder.AddModule(new AuthorizationModule(configure));
+        var options = new AuthorizationOptions();
+        configure?.Invoke(options);
+        return builder.AddModule(new AuthorizationModule(options));
     }
 
     public static bool HasAuthorization(this AppDescription app) => app.HasModule<AuthorizationModule>();

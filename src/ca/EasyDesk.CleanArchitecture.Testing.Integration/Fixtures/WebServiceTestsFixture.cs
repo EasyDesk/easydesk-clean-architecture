@@ -5,7 +5,6 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.CleanArchitecture.Testing.Integration.Web;
 using EasyDesk.Commons.Observables;
 using EasyDesk.Commons.Options;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using NodaTime.Testing;
@@ -93,8 +92,8 @@ public abstract class WebServiceTestsFixture<TSelf> : ITestFixture
     public async Task Reset()
     {
         var hostedServicesToStop = WebService
-            .Services
-            .GetServices<IHostedService>()
+            .LifetimeScope
+            .Resolve<IEnumerable<IHostedService>>()
             .SelectMany(h => h is IPausableHostedService p ? Some(p) : None)
             .ToList();
 

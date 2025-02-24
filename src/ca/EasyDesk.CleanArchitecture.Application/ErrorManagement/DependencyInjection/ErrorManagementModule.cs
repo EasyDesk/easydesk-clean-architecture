@@ -8,7 +8,6 @@ using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Reflection;
 using EasyDesk.Commons.Results;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace EasyDesk.CleanArchitecture.Application.ErrorManagement.DependencyInjection;
@@ -22,7 +21,7 @@ public class ErrorManagementModule : AppModule
             .Before(typeof(DomainConstraintViolationsHandlingStep<,>)));
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
         var errorTypes = new AssemblyScanner()
             .FromAssemblies(app.Assemblies)
@@ -32,7 +31,8 @@ public class ErrorManagementModule : AppModule
             .FindTypes();
 
         var mapperDictionary = CreateMapperDictionary(errorTypes);
-        services.AddSingleton(_ => new GlobalErrorMapper(mapperDictionary));
+        builder.RegisterInstance(new GlobalErrorMapper(mapperDictionary))
+            .SingleInstance();
     }
 
     private IFixedMap<Type, VersionedErrorMapper> CreateMapperDictionary(IEnumerable<Type> errorTypes)

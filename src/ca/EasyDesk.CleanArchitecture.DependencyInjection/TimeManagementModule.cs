@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.DependencyInjection;
@@ -18,10 +17,10 @@ public class TimeManagementModule : AppModule
 
     public IClock Clock => _options.Clock;
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        services.AddSingleton(_ => Clock);
-        services.AddSingleton(_ => DateTimeZoneProvider);
+        builder.RegisterInstance(Clock).SingleInstance();
+        builder.RegisterInstance(DateTimeZoneProvider).SingleInstance();
     }
 }
 

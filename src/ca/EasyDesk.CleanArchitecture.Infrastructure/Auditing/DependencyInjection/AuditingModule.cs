@@ -5,7 +5,7 @@ using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading.Channels;
 
@@ -21,24 +21,38 @@ public class AuditingModule : AppModule
             .After(typeof(MultitenancyManagementStep<,>)));
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        app.RequireModule<DataAccessModule>().Implementation.AddAuditing(services, app);
+        app.RequireModule<DataAccessModule>().Implementation.AddAuditing(registry, app);
 
-        var channel = Channel.CreateUnbounded<(AuditRecord, TenantInfo)>(new UnboundedChannelOptions
+        registry.ConfigureContainer(builder =>
         {
-            SingleReader = true,
-            SingleWriter = false,
-        });
-        services.AddHostedService(p => new AuditingBackgroundTask(
-            p.GetRequiredService<IServiceScopeFactory>(),
-            channel.Reader,
-            p.GetRequiredService<ILogger<AuditingBackgroundTask>>()));
-        services.AddScoped<IAuditStorage>(p => new OutOfProcessAuditStorage(
-            p.GetRequiredService<ITenantProvider>(),
-            channel.Writer));
+            var channel = Channel.CreateUnbounded<(AuditRecord, TenantInfo)>(new UnboundedChannelOptions
+            {
+                SingleReader = true,
+                SingleWriter = false,
+            });
 
-        services.AddScoped<IAuditConfigurer, AuditConfigurer>();
+            builder
+                .Register(c => new AuditingBackgroundTask(
+                    c.Resolve<ILifetimeScope>(),
+                    channel.Reader,
+                    c.Resolve<ILogger<AuditingBackgroundTask>>()))
+                .As<IHostedService>()
+                .SingleInstance();
+
+            builder
+                .Register(c => new OutOfProcessAuditStorage(
+                    c.Resolve<ITenantProvider>(),
+                    channel.Writer))
+                .As<IAuditStorage>()
+                .InstancePerLifetimeScope();
+
+            builder
+                .RegisterType<AuditConfigurer>()
+                .As<IAuditConfigurer>()
+                .InstancePerLifetimeScope();
+        });
     }
 }
 

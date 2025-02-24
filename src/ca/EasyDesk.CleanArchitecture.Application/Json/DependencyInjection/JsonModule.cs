@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using System.Text.Json;
 
@@ -16,13 +15,11 @@ public class JsonModule : AppModule
         _configurator = configurator;
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
         var dateTimeZoneProvider = app.RequireModule<TimeManagementModule>().DateTimeZoneProvider;
-        services.AddSingleton<JsonOptionsConfigurator>(settings =>
-        {
-            ConfigureSettings(settings, dateTimeZoneProvider);
-        });
+        builder.RegisterInstance<JsonOptionsConfigurator>(settings => ConfigureSettings(settings, dateTimeZoneProvider))
+            .SingleInstance();
     }
 
     public void ApplyJsonConfiguration(JsonSerializerOptions options, AppDescription app)

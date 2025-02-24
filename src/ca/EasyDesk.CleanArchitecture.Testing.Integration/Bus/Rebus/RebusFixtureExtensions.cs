@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus.Scheduler;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Rebus.Activation;
@@ -52,17 +51,17 @@ public static class RebusFixtureExtensions
             .OnInitialization(f =>
             {
                 var rebus = Configure.With(new BuiltinHandlerActivator());
-                var serviceProvider = f.WebService.Services;
+                var lifetimeScope = f.WebService.LifetimeScope;
 
-                var transport = serviceProvider.GetRequiredService<RebusTransportConfiguration>();
+                var transport = lifetimeScope.Resolve<RebusTransportConfiguration>();
                 rebus
                     .Transport(t => transport(t, address))
-                    .UseNodaTimeClock(serviceProvider.GetRequiredService<IClock>())
+                    .UseNodaTimeClock(lifetimeScope.Resolve<IClock>())
                     .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(store, c.Get<IRebusTime>())))
                     .Options(o =>
                     {
                         o.SetDueTimeoutsPollInteval(pollInterval.ToTimeSpan());
-                        o.Register<IAsyncTaskFactory>(_ => serviceProvider.GetRequiredService<PausableAsyncTaskFactory>());
+                        o.Register<IAsyncTaskFactory>(_ => lifetimeScope.Resolve<PausableAsyncTaskFactory>());
                     });
                 bus = rebus.Start();
             })

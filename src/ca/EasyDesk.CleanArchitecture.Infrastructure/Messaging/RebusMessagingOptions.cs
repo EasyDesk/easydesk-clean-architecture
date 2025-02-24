@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
@@ -6,7 +7,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Routing;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Rebus.Config;
@@ -76,9 +76,9 @@ public sealed class RebusMessagingOptions
         return ConfigureRebus(c => c.Timeouts(configurationAction));
     }
 
-    public void Apply(IServiceProvider serviceProvider, RebusEndpoint endpoint, RebusConfigurer configurer)
+    public void Apply(IComponentContext context, RebusEndpoint endpoint, RebusConfigurer configurer)
     {
-        var transport = serviceProvider.GetRequiredService<RebusTransportConfiguration>();
+        var transport = context.Resolve<RebusTransportConfiguration>();
 
         configurer.Transport(t => transport(t, endpoint.InputQueueAddress));
 
@@ -89,13 +89,13 @@ public sealed class RebusMessagingOptions
 
         configurer.Logging(l =>
         {
-            var loggerFactory = serviceProvider.GetRequiredService<ILoggerFactory>();
+            var loggerFactory = context.Resolve<ILoggerFactory>();
             l.MicrosoftExtensionsLogging(loggerFactory);
         });
 
         configurer
-            .UseJsonOptions(serviceProvider.GetRequiredService<JsonOptionsConfigurator>().CreateOptions())
-            .UseNodaTimeClock(serviceProvider.GetRequiredService<IClock>())
+            .UseJsonOptions(context.Resolve<JsonOptionsConfigurator>().CreateOptions())
+            .UseNodaTimeClock(context.Resolve<IClock>())
             .UseKnownMessageTypesConventions(KnownMessageTypes)
             .Options(o =>
             {

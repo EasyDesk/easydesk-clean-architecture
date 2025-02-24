@@ -1,50 +1,67 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 
 public sealed class AuthorizationOptions
 {
-    private Action<IServiceCollection, AppDescription> _configure;
+    private Action<ServiceRegistry, AppDescription> _configure;
 
     public AuthorizationOptions()
     {
         _configure = DoNotUsePermissionsBasedAuth;
     }
 
-    private void DoNotUsePermissionsBasedAuth(IServiceCollection services, AppDescription app)
+    private void DoNotUsePermissionsBasedAuth(ServiceRegistry registry, AppDescription app)
     {
-        services.AddSingleton<IAgentPermissionsProvider, EmptyPermissionsProvider>();
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterType<EmptyPermissionsProvider>()
+                .As<IAgentPermissionsProvider>()
+                .SingleInstance();
+        });
     }
 
     public AuthorizationOptions RoleBased(Action<RoleBasedAuthorizationOptions> configure)
     {
-        return Configure((services, app) =>
+        return Configure((registry, app) =>
         {
-            new RoleBasedAuthorizationOptions().Also(configure).Apply(services, app);
+            new RoleBasedAuthorizationOptions().Also(configure).Apply(registry, app);
         });
     }
 
-    public AuthorizationOptions Custom(Func<IServiceProvider, IAgentPermissionsProvider> factory, ServiceLifetime lifetime = ServiceLifetime.Scoped)
+    public AuthorizationOptions Custom(Func<IComponentContext, IAgentPermissionsProvider> factory)
     {
-        return Configure((services, app) =>
+        return Configure((registry, app) => registry.ConfigureContainer(builder =>
         {
-            services.Add(new(typeof(IAgentPermissionsProvider), factory, lifetime));
-        });
+            builder.Register(factory)
+                .As<IAgentPermissionsProvider>()
+                .InstancePerDependency();
+        }));
     }
 
-    private AuthorizationOptions Configure(Action<IServiceCollection, AppDescription> configuration)
+    private AuthorizationOptions Configure(Action<ServiceRegistry, AppDescription> configuration)
     {
         _configure = configuration;
         return this;
     }
 
-    internal void Apply(IServiceCollection services, AppDescription app)
+    internal void Apply(ServiceRegistry registry, AppDescription app)
     {
-        services.AddScoped(typeof(IStaticAuthorizer<>), typeof(DefaultStaticAuthorizer<>));
-        services.AddScoped<IAuthorizationProvider, DefaultAuthorizationProvider>();
-        services.Decorate<IAuthorizationProvider, CachedAuthorizationProvider>();
-        _configure?.Invoke(services, app);
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterGeneric(typeof(DefaultStaticAuthorizer<>))
+                .As(typeof(IStaticAuthorizer<>))
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<DefaultAuthorizationProvider>()
+                .As<IAuthorizationProvider>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterDecorator<CachedAuthorizationProvider, IAuthorizationProvider>();
+        });
+
+        _configure?.Invoke(registry, app);
     }
 }

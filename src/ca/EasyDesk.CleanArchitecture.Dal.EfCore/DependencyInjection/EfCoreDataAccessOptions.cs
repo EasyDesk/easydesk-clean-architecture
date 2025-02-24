@@ -1,9 +1,13 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.CommandLine;
 using System.Data.Common;
 using System.Reflection;
@@ -22,7 +26,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
     private readonly ISet<Type> _registeredDbContextTypes = new HashSet<Type>();
     private Action<DbContextOptionsBuilder>? _configureDbContextOptions;
     private Action<TBuilder>? _configureProviderOptions;
-    private Action<IServiceCollection>? _configureServices;
+    private Action<ServiceRegistry>? _configureRegistry;
 
     public EfCoreDataAccessOptions(IEfCoreProvider<TBuilder, TExtension> provider)
     {
@@ -46,30 +50,51 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
     public EfCoreDataAccessOptions<T, TBuilder, TExtension> WithService<S>()
         where S : class
     {
-        _configureServices += services => services.AddScoped(p => p.GetRequiredService<T>() as S
+        _configureRegistry += registry => registry.ConfigureServices(services => services.AddScoped(p => p.GetRequiredService<T>() as S
             ?? throw new InvalidOperationException(
-                $"Cannot use {typeof(S).Name} as a service type for DbContext {typeof(T).Name}."));
+                $"Cannot use {typeof(S).Name} as a service type for DbContext {typeof(T).Name}.")));
         return this;
     }
 
     public EfCoreDataAccessOptions<T, TBuilder, TExtension> WithCustomDbContext<C>()
         where C : DbContext
     {
-        _configureServices += services => RegisterDbContext<C>(services, isCleanArchitectureContext: false);
+        _configureRegistry += registry => RegisterDbContext<C>(registry, isCleanArchitectureContext: false);
         return this;
     }
 
-    internal void RegisterUtilityServices(IServiceCollection services)
+    internal void RegisterUtilityServices(ServiceRegistry registry)
     {
-        services.AddScoped(_ => _provider.NewConnection());  // TOODO: request scoped
-        services.AddScoped<TransactionEnlistingOnCommandInterceptor>();
-        services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
-        services.AddScoped(provider => new MigrationsService(provider, _registeredDbContextTypes));
-        services.AddScoped<ISaveChangesHandler, EfCoreSaveChangesHandler<T>>();
-        services.AddScoped(sp => new EfCoreUnitOfWorkProvider(sp.GetRequiredService<DbConnection>()));  // TODO: request scoped
-        services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());  // TODO: request scoped
-        services.AddScoped(p => MigrationCommand(p.GetRequiredService<MigrationsService>()));
-        _configureServices?.Invoke(services);
+        registry.ConfigureContainer(builder =>
+        {
+            builder.Register(_ => _provider.NewConnection())
+                .InstancePerUseCase();
+
+            builder.RegisterType<TransactionEnlistingOnCommandInterceptor>()
+                .InstancePerUseCase();
+
+            builder.RegisterType<DbContextEnlistingOnSaveChangesInterceptor>()
+                .InstancePerUseCase();
+
+            builder
+                .Register(c => new MigrationsService(
+                    _registeredDbContextTypes.Select(t => c.Resolve(t)).Cast<DbContext>().ToList(),
+                    c.Resolve<ILogger<MigrationsService>>()))
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<EfCoreSaveChangesHandler<T>>()
+                .As<ISaveChangesHandler>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<EfCoreUnitOfWorkProvider>()
+                .AsSelf()
+                .As<IUnitOfWorkProvider>()
+                .InstancePerUseCase();
+
+            builder.Register(c => MigrationCommand(c.Resolve<MigrationsService>()));
+        });
+
+        _configureRegistry?.Invoke(registry);
     }
 
     private Command MigrationCommand(MigrationsService migrationsService)
@@ -81,7 +106,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
         return command;
     }
 
-    internal void RegisterDbContext<C>(IServiceCollection services, bool isCleanArchitectureContext = true)
+    internal void RegisterDbContext<C>(ServiceRegistry registry, bool isCleanArchitectureContext = true)
         where C : DbContext
     {
         if (_registeredDbContextTypes.Contains(typeof(C)))
@@ -89,7 +114,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
             return;
         }
 
-        services.AddDbContext<C>((provider, options) =>
+        registry.ConfigureServices(services => services.AddDbContext<C>((provider, options) =>
         {
             var connection = provider.GetRequiredService<DbConnection>();
             _provider.ConfigureDbProvider(options, connection, relationalOptions =>
@@ -108,7 +133,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
             options.AddInterceptors(provider.GetRequiredService<TransactionEnlistingOnCommandInterceptor>());
             options.AddInterceptors(provider.GetRequiredService<DbContextEnlistingOnSaveChangesInterceptor>());
             _configureDbContextOptions?.Invoke(options);
-        });
+        }));
 
         _registeredDbContextTypes.Add(typeof(C));
     }

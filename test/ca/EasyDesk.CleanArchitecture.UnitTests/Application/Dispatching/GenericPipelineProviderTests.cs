@@ -1,6 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Results;
-using NSubstitute;
 using Shouldly;
 using static EasyDesk.Commons.Collections.EnumerableUtils;
 
@@ -37,13 +38,21 @@ public class GenericPipelineProviderTests
 
     private record TestService;
 
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IComponentContext _componentContext;
     private readonly TestService _testService = new();
 
     public GenericPipelineProviderTests()
     {
-        _serviceProvider = Substitute.For<IServiceProvider>();
-        _serviceProvider.GetService(typeof(TestService)).Returns(_testService);
+        var builder = new ContainerBuilder();
+
+        builder.RegisterInstance(_testService)
+            .SingleInstance();
+
+        builder.Register(c => new AutofacServiceProvider(c.Resolve<ILifetimeScope>()))
+            .As<IServiceProvider>()
+            .InstancePerLifetimeScope();
+
+        _componentContext = builder.Build();
     }
 
     private GenericPipelineProvider CreatePipeline(params Type[] stepTypes) =>
@@ -58,7 +67,7 @@ public class GenericPipelineProviderTests
             typeof(OpenGenericRequestStep<>),
             typeof(ClosedStep));
 
-        pipeline.GetSteps<Request, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
+        pipeline.GetSteps<Request, Nothing>(_componentContext).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
             new OpenGenericStep<Request, Nothing>(),
             new OpenGenericResultStep<Nothing>(),
             new OpenGenericRequestStep<Request>(),
@@ -74,7 +83,7 @@ public class GenericPipelineProviderTests
             typeof(OpenGenericRequestStep<>),
             typeof(ClosedStep));
 
-        pipeline.GetSteps<int, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<int, Nothing>>(
+        pipeline.GetSteps<int, Nothing>(_componentContext).ShouldBe(Items<IPipelineStep<int, Nothing>>(
             new OpenGenericStep<int, Nothing>(),
             new OpenGenericRequestStep<int>()));
     }
@@ -88,7 +97,7 @@ public class GenericPipelineProviderTests
             typeof(OpenGenericRequestStep<>),
             typeof(ClosedStep));
 
-        pipeline.GetSteps<Request, int>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, int>>(
+        pipeline.GetSteps<Request, int>(_componentContext).ShouldBe(Items<IPipelineStep<Request, int>>(
             new OpenGenericStep<Request, int>(),
             new OpenGenericResultStep<int>()));
     }
@@ -100,7 +109,7 @@ public class GenericPipelineProviderTests
             typeof(OpenGenericResultStep<>),
             typeof(OpenGenericResultStepSpecific<>));
 
-        pipeline.GetSteps<SpecificRequest, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<SpecificRequest, Nothing>>(
+        pipeline.GetSteps<SpecificRequest, Nothing>(_componentContext).ShouldBe(Items<IPipelineStep<SpecificRequest, Nothing>>(
             new OpenGenericResultStep<Nothing>(),
             new OpenGenericResultStepSpecific<Nothing>()));
     }
@@ -110,7 +119,7 @@ public class GenericPipelineProviderTests
     {
         var pipeline = CreatePipeline(typeof(StepWithService<,>));
 
-        pipeline.GetSteps<Request, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
+        pipeline.GetSteps<Request, Nothing>(_componentContext).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
             new StepWithService<Request, Nothing>(_testService)));
     }
 
@@ -119,7 +128,7 @@ public class GenericPipelineProviderTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<Request, Nothing>(_serviceProvider).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
+        pipeline.GetSteps<Request, Nothing>(_componentContext).ShouldBe(Items<IPipelineStep<Request, Nothing>>(
             new StepWithConstraints<Request, Nothing>()));
     }
 
@@ -128,7 +137,7 @@ public class GenericPipelineProviderTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<int, Nothing>(_serviceProvider).ShouldBe([]);
+        pipeline.GetSteps<int, Nothing>(_componentContext).ShouldBe([]);
     }
 
     [Fact]
@@ -136,7 +145,7 @@ public class GenericPipelineProviderTests
     {
         var pipeline = CreatePipeline(typeof(StepWithConstraints<,>));
 
-        pipeline.GetSteps<Request, Request>(_serviceProvider).ShouldBe([]);
+        pipeline.GetSteps<Request, Request>(_componentContext).ShouldBe([]);
     }
 
     [Fact]
@@ -148,8 +157,8 @@ public class GenericPipelineProviderTests
             typeof(OpenGenericRequestStep<>),
             typeof(ClosedStep));
 
-        var first = pipeline.GetSteps<Request, Nothing>(_serviceProvider);
-        var second = pipeline.GetSteps<Request, Nothing>(_serviceProvider);
+        var first = pipeline.GetSteps<Request, Nothing>(_componentContext);
+        var second = pipeline.GetSteps<Request, Nothing>(_componentContext);
 
         first.ShouldBe(second);
     }

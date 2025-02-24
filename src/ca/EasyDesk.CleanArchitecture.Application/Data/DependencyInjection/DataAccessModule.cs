@@ -1,8 +1,6 @@
-﻿using Autofac;
-using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 
@@ -28,9 +26,9 @@ public class DataAccessModule : AppModule
         });
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        Implementation.AddMainDataAccessServices(services, app);
+        Implementation.AddMainDataAccessServices(registry, app);
     }
 }
 

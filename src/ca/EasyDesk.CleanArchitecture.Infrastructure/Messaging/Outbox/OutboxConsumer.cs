@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
@@ -13,9 +13,9 @@ internal class OutboxConsumer : BackgroundConsumer<Nothing>
     private readonly ILogger<OutboxConsumer> _logger;
 
     public OutboxConsumer(
-        IServiceScopeFactory serviceScopeFactory,
+        ILifetimeScope lifetimeScope,
         OutboxFlushRequestsChannel requestsChannel,
-        ILogger<OutboxConsumer> logger) : base(serviceScopeFactory)
+        ILogger<OutboxConsumer> logger) : base(lifetimeScope)
     {
         _requestsChannel = requestsChannel;
         _logger = logger;
@@ -24,17 +24,17 @@ internal class OutboxConsumer : BackgroundConsumer<Nothing>
     protected override IAsyncEnumerable<Nothing> GetProducer(CancellationToken pausingToken) =>
         _requestsChannel.GetAllFlushRequests(pausingToken);
 
-    protected override async Task Consume(Nothing item, IServiceProvider serviceProvider, CancellationToken pausingToken)
+    protected override async Task Consume(Nothing item, ILifetimeScope lifetimeScope, CancellationToken pausingToken)
     {
-        await serviceProvider.GetRequiredService<OutboxFlusher>().Flush();
+        await lifetimeScope.Resolve<OutboxFlusher>().Flush();
         _logger.LogDebug("Correctly flushed outbox");
     }
 
-    protected override async Task OnException(Nothing item, IServiceProvider serviceProvider, Exception exception, CancellationToken pausingToken)
+    protected override async Task OnException(Nothing item, ILifetimeScope lifetimeScope, Exception exception, CancellationToken pausingToken)
     {
         _logger.LogError(exception, "Unexpected error while flushing the outbox.");
-        await serviceProvider
-            .GetServiceAsOption<OutboxExceptionHandler>()
+        await lifetimeScope
+            .ResolveOption<OutboxExceptionHandler>()
             .IfPresentAsync(h => h(exception));
     }
 }

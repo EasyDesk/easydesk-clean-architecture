@@ -1,25 +1,25 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Results;
 using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Validation;
 
 public sealed class ValidationStep<T, R> : IPipelineStep<T, R>
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IComponentContext _componentContext;
 
-    public ValidationStep(IServiceProvider serviceProvider)
+    public ValidationStep(IComponentContext componentContext)
     {
-        _serviceProvider = serviceProvider;
+        _componentContext = componentContext;
     }
 
     public bool IsForEachHandler => false;
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        var validators = _serviceProvider.GetServices<IValidator<T>>().ToList();
+        var validators = _componentContext.Resolve<IEnumerable<IValidator<T>>>().ToList();
         if (validators.IsEmpty())
         {
             return await next();

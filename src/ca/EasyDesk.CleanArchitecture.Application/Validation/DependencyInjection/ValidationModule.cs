@@ -15,10 +15,14 @@ public class ValidationModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline => pipeline.AddStep(typeof(ValidationStep<,>)));
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureServices(AppDescription app, IServiceCollection services)
+    {
+        services.AddValidatorsFromAssemblies(app.Assemblies);
+    }
+
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
         ValidatorOptions.Global.LanguageManager.Enabled = false;
-        services.AddValidatorsFromAssemblies(app.Assemblies);
 
         var registrationMethod = GetType()
             .GetMethod(nameof(RegisterValidatorForValidatableObject), BindingFlags.Static | BindingFlags.NonPublic)!;
@@ -32,13 +36,15 @@ public class ValidationModule : AppModule
             .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidate<>))
             .ForEach(i => registrationMethod
                 .MakeGenericMethod(i.GetGenericArguments()[0])
-                .Invoke(null, [services]));
+                .Invoke(null, [builder]));
     }
 
-    private static void RegisterValidatorForValidatableObject<T>(IServiceCollection services)
+    private static void RegisterValidatorForValidatableObject<T>(ContainerBuilder builder)
         where T : IValidate<T>
     {
-        services.AddSingleton(IValidate<T>.Validator);
+        builder.RegisterInstance(IValidate<T>.Validator)
+            .As<IValidator<T>>()
+            .SingleInstance();
     }
 }
 

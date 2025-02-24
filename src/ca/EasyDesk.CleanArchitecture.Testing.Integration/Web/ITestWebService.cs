@@ -1,8 +1,10 @@
-﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
+﻿using Autofac;
+
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Web;
 
 public interface ITestWebService : IAsyncDisposable
 {
     HttpClient HttpClient { get; }
 
-    IServiceProvider Services { get; }
+    ILifetimeScope LifetimeScope { get; }
 }

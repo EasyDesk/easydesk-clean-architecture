@@ -3,7 +3,6 @@ using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Web;
-using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Errors;
 
@@ -62,6 +61,6 @@ public class ErrorQueueTests : SampleIntegrationTest
 
         await WaitForBackoff();
 
-        await DefaultBusEndpoint.WaitForMessageOrFail<Error4Handled>(timeout: Duration.FromDays(20));
+        await DefaultBusEndpoint.WaitForMessageOrFail<Error4Handled>();
     }
 }

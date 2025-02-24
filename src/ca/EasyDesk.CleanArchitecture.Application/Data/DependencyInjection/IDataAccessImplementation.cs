@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 
@@ -8,17 +7,17 @@ public interface IDataAccessImplementation
 {
     void ConfigurePipeline(PipelineBuilder pipeline);
 
-    void AddMainDataAccessServices(IServiceCollection services, AppDescription app);
+    void AddMainDataAccessServices(ServiceRegistry registry, AppDescription app);
 
-    void AddMessagingUtilities(IServiceCollection services, AppDescription app);
+    void AddMessagingUtilities(ServiceRegistry registry, AppDescription app);
 
-    void AddRolesManagement(IServiceCollection services, AppDescription app);
+    void AddRolesManagement(ServiceRegistry registry, AppDescription app);
 
-    void AddMultitenancy(IServiceCollection services, AppDescription app);
+    void AddMultitenancy(ServiceRegistry registry, AppDescription app);
 
-    void AddSagas(IServiceCollection services, AppDescription app);
+    void AddSagas(ServiceRegistry registry, AppDescription app);
 
-    void AddAuditing(IServiceCollection services, AppDescription app);
+    void AddAuditing(ServiceRegistry registry, AppDescription app);
 
-    void AddApiKeysManagement(IServiceCollection services, AppDescription app);
+    void AddApiKeysManagement(ServiceRegistry registry, AppDescription app);
 }

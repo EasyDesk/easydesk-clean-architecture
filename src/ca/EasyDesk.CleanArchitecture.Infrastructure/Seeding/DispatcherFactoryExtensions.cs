@@ -41,8 +41,8 @@ public static class DispatcherFactoryExtensions
                 .Map(a => new AuthenticationResult.Authenticated
                 {
                     Agent = a,
-                } as AuthenticationResult)
-                .Map(r => (r, "seeding")));
+                })
+                .Map(r => (r as AuthenticationResult, "seeding")));
         }
     }
 }

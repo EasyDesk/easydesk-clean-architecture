@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -24,23 +23,31 @@ public class JwtBearerProvider : IAuthenticationProvider
 
     public JwtBearerOptions Options { get; }
 
-    public void AddUtilityServices(ContainerBuilder builder, IServiceCollection services, AppDescription app, string scheme)
+    public void AddUtilityServices(ServiceRegistry registry, AppDescription app, string scheme)
     {
-        services.TryAddSingleton<JwtFacade>();
-
-        services.Configure<SwaggerGenOptions>(options =>
-        {
-            var jwtSecurityScheme = new OpenApiSecurityScheme
+        registry
+            .ConfigureContainer(builder =>
             {
-                Description = $"JWT Token Authentication ({scheme})",
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.Http,
-                Scheme = JwtBearerDefaults.AuthenticationScheme,
-                BearerFormat = "JWT",
-            };
-            options.ConfigureSecurityRequirement(scheme, jwtSecurityScheme);
-        });
+                builder.RegisterType<JwtFacade>()
+                    .SingleInstance()
+                    .IfNotRegistered(typeof(JwtFacade));
+            })
+            .ConfigureServices(services =>
+            {
+                services.Configure<SwaggerGenOptions>(options =>
+                {
+                    var jwtSecurityScheme = new OpenApiSecurityScheme
+                    {
+                        Description = $"JWT Token Authentication ({scheme})",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.Http,
+                        Scheme = JwtBearerDefaults.AuthenticationScheme,
+                        BearerFormat = "JWT",
+                    };
+                    options.ConfigureSecurityRequirement(scheme, jwtSecurityScheme);
+                });
+            });
     }
 
     public IAuthenticationHandler CreateHandler(IComponentContext context, string scheme) => new JwtBearerHandler(

@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Auditing;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
@@ -15,7 +16,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Auditing;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.DependencyInjection;
 
@@ -35,55 +35,96 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
     {
     }
 
-    public void AddMainDataAccessServices(IServiceCollection services, AppDescription app)
+    public void AddMainDataAccessServices(ServiceRegistry registry, AppDescription app)
     {
-        _options.RegisterUtilityServices(services);
-        _options.RegisterDbContext<T>(services, isCleanArchitectureContext: false);
+        _options.RegisterUtilityServices(registry);
+        _options.RegisterDbContext<T>(registry, isCleanArchitectureContext: false);
     }
 
-    public void AddMessagingUtilities(IServiceCollection services, AppDescription app)
+    public void AddMessagingUtilities(ServiceRegistry registry, AppDescription app)
     {
-        _options.RegisterDbContext<MessagingContext>(services);
-        services.AddScoped<IOutbox, EfCoreOutbox>();
-        services.AddScoped<IInbox, EfCoreInbox>();
+        _options.RegisterDbContext<MessagingContext>(registry);
+
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterType<EfCoreOutbox>()
+                .As<IOutbox>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<EfCoreInbox>()
+                .As<IInbox>()
+                .InstancePerLifetimeScope();
+        });
     }
 
-    public void AddRolesManagement(IServiceCollection services, AppDescription app)
+    public void AddRolesManagement(ServiceRegistry registry, AppDescription app)
     {
-        AddAuthorizationContext(services);
-        services.AddScoped<EfCoreAuthorizationManager>();
-        services.AddScoped<IAgentRolesProvider>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
-        services.AddScoped<IIdentityRolesManager>(provider => provider.GetRequiredService<EfCoreAuthorizationManager>());
+        AddAuthorizationContext(registry);
+
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterType<EfCoreAuthorizationManager>()
+                .As<IAgentRolesProvider>()
+                .As<IIdentityRolesManager>()
+                .InstancePerLifetimeScope();
+        });
     }
 
-    private void AddAuthorizationContext(IServiceCollection services)
+    private void AddAuthorizationContext(ServiceRegistry registry)
     {
-        _options.RegisterDbContext<AuthContext>(services);
+        _options.RegisterDbContext<AuthContext>(registry);
     }
 
-    public void AddMultitenancy(IServiceCollection services, AppDescription app)
+    public void AddMultitenancy(ServiceRegistry registry, AppDescription app)
     {
-        AddAuthorizationContext(services);
-        services.AddScoped<IMultitenancyManager, EfCoreMultitenancyManager>();
+        AddAuthorizationContext(registry);
+
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterType<EfCoreMultitenancyManager>()
+                .As<IMultitenancyManager>()
+                .InstancePerLifetimeScope();
+        });
     }
 
-    public void AddSagas(IServiceCollection services, AppDescription app)
+    public void AddSagas(ServiceRegistry registry, AppDescription app)
     {
-        _options.RegisterDbContext<SagasContext>(services);
-        services.AddScoped<ISagaManager, EfCoreSagaManager>();
+        _options.RegisterDbContext<SagasContext>(registry);
+
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterType<EfCoreSagaManager>()
+                .As<ISagaManager>()
+                .InstancePerLifetimeScope();
+        });
     }
 
-    public void AddAuditing(IServiceCollection services, AppDescription app)
+    public void AddAuditing(ServiceRegistry registry, AppDescription app)
     {
-        _options.RegisterDbContext<AuditingContext>(services);
-        services.AddScoped<IAuditLog, EfCoreAuditLog>();
-        services.AddScoped<IAuditStorageImplementation, EfCoreAuditStorage>();
+        _options.RegisterDbContext<AuditingContext>(registry);
+
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterType<EfCoreAuditLog>()
+                .As<IAuditLog>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<EfCoreAuditStorage>()
+                .As<IAuditStorageImplementation>()
+                .InstancePerLifetimeScope();
+        });
     }
 
-    public void AddApiKeysManagement(IServiceCollection services, AppDescription app)
+    public void AddApiKeysManagement(ServiceRegistry registry, AppDescription app)
     {
-        _options.RegisterDbContext<AuthContext>(services);
-        services.AddScoped<IApiKeysStorage, EfCoreApiKeysStorage>();
+        _options.RegisterDbContext<AuthContext>(registry);
+
+        registry.ConfigureContainer(builder =>
+        {
+            builder.RegisterType<EfCoreApiKeysStorage>()
+                .As<IApiKeysStorage>()
+                .InstancePerLifetimeScope();
+        });
     }
 }
 

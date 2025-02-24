@@ -8,9 +8,14 @@ namespace EasyDesk.SampleApp.Web.DependencyInjection;
 
 public class SampleAppDomainModule : AppModule
 {
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        services.AddScoped<IPersonRepository, EfCorePersonRepository>();
-        services.AddScoped<IPetRepository, EfCorePetRepository>();
+        builder.RegisterType<EfCorePersonRepository>()
+            .As<IPersonRepository>()
+            .InstancePerLifetimeScope();
+
+        builder.RegisterType<EfCorePetRepository>()
+            .As<IPetRepository>()
+            .InstancePerLifetimeScope();
     }
 }

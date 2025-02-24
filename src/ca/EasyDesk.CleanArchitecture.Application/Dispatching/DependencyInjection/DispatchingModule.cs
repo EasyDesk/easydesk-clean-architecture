@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
@@ -16,23 +16,32 @@ public class DispatchingModule : AppModule
 
     public PipelineBuilder Pipeline { get; } = new();
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        builder.RegisterType<Dispatcher>().As<IDispatcher>().InstancePerLifetimeScope();
+        builder.RegisterType<Dispatcher>().As<IDispatcher>().InstancePerDependency();
 
-        RegisterRequestHandlers(services, app);
+        RegisterRequestHandlers(builder, app);
 
         var steps = Pipeline.GetOrderedSteps().ToList();
-        services.AddHostedService<StartupPipelineLogger>(sp => new(steps, sp.GetRequiredService<ILogger<StartupPipelineLogger>>()));
-        services.AddSingleton<IPipelineProvider>(p => new GenericPipelineProvider(steps));
-        services.AddScoped<DispatcherFactory>();
+        builder.Register(c => new StartupPipelineLogger(steps, c.Resolve<ILogger<StartupPipelineLogger>>()))
+            .As<IHostedService>()
+            .SingleInstance();
+
+        builder.RegisterInstance(new GenericPipelineProvider(steps))
+            .As<IPipelineProvider>()
+            .SingleInstance();
+
+        builder.RegisterType<DispatcherFactory>()
+            .InstancePerLifetimeScope();
     }
 
-    private void RegisterRequestHandlers(IServiceCollection services, AppDescription app)
+    private void RegisterRequestHandlers(ContainerBuilder builder, AppDescription app)
     {
-        services.RegisterImplementationsAsTransient(
-            typeof(IHandler<,>),
-            s => s.FromAssemblies(app.Assemblies));
+        builder
+            .RegisterAssemblyTypes([.. app.Assemblies])
+            .AssignableToOpenGenericType(typeof(IHandler<,>))
+            .AsClosedTypesOf(typeof(IHandler<,>))
+            .InstancePerDependency();
     }
 }
 

@@ -39,7 +39,17 @@ public class OpenApiModule : AppModule
         _options = options;
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+        builder
+            .Register(c => OpenApiCommand(
+                c.ResolveOption<ApiVersioningInfo>(),
+                c.Resolve<ISwaggerProvider>(),
+                c.Resolve<IOptions<SwaggerGenOptions>>().Value))
+            .SingleInstance();
+    }
+
+    protected override void ConfigureServices(AppDescription app, IServiceCollection services)
     {
         services.AddSwaggerGen(options =>
         {
@@ -50,10 +60,6 @@ public class OpenApiModule : AppModule
             _options.ConfigureSwagger?.Invoke(options);
         });
         services.Configure<SwaggerUIOptions>(c => c.DocumentTitle = $"{app.Name} - OpenAPI");
-        services.AddSingleton(sp => OpenApiCommand(
-            sp.GetServiceAsOption<ApiVersioningInfo>(),
-            sp.GetRequiredService<ISwaggerProvider>(),
-            sp.GetRequiredService<IOptions<SwaggerGenOptions>>().Value));
     }
 
     private void SetupMultitenancySupport(AppDescription app, SwaggerGenOptions options)

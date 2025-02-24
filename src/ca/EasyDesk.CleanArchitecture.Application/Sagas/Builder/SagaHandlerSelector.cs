@@ -1,8 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas.Builder;
 
@@ -17,8 +17,8 @@ public class SagaHandlerSelector<T, R, TId, TState>
 {
     private readonly Action<SagaStepConfiguration<T, R, TId, TState>> _registerHandler;
     private readonly Func<T, TId> _correlationProperty;
-    private Option<AsyncFunc<IServiceProvider, TId, T, Result<TState>>> _initializer = None;
-    private AsyncFunc<IServiceProvider, TId, T, Result<R>> _missingSagaHandler = (_, _, _) => DefaultMissingSagaHandler();
+    private Option<AsyncFunc<IComponentContext, TId, T, Result<TState>>> _initializer = None;
+    private AsyncFunc<IComponentContext, TId, T, Result<R>> _missingSagaHandler = (_, _, _) => DefaultMissingSagaHandler();
 
     internal SagaHandlerSelector(Action<SagaStepConfiguration<T, R, TId, TState>> registerHandler, Func<T, TId> correlationProperty)
     {
@@ -29,7 +29,7 @@ public class SagaHandlerSelector<T, R, TId, TState>
     private static Task<Result<R>> DefaultMissingSagaHandler() =>
         Task.FromResult(Failure<R>(InvalidSagaInitializerType.FromType<T>()));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<IServiceProvider, TId, T, Result<TState>> initialState)
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(AsyncFunc<IComponentContext, TId, T, Result<TState>> initialState)
     {
         _initializer = Some(initialState);
         return this;
@@ -42,7 +42,7 @@ public class SagaHandlerSelector<T, R, TId, TState>
         InitializeWith((_, _, r) => initialState(r));
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, TId, T, Result<TState>> initialState) where H : notnull =>
-        InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
+        InitializeWith((p, i, r) => initialState(p.Resolve<H>(), i, r));
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, T, Result<TState>> initialState) where H : notnull =>
         InitializeWith<H>((h, _, r) => initialState(h, r));
@@ -50,7 +50,7 @@ public class SagaHandlerSelector<T, R, TId, TState>
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(AsyncFunc<H, Result<TState>> initialState) where H : notnull =>
         InitializeWith<H>((h, _, _) => initialState(h));
 
-    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<IServiceProvider, TId, T, Result<TState>> initialState) =>
+    public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<IComponentContext, TId, T, Result<TState>> initialState) =>
         InitializeWith((p, i, r) => Task.FromResult(initialState(p, i, r)));
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith(Func<TId, T, TState> initialState) =>
@@ -60,7 +60,7 @@ public class SagaHandlerSelector<T, R, TId, TState>
         InitializeWith((_, _, r) => initialState(r));
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TId, T, TState> initialState) where H : notnull =>
-        InitializeWith((p, i, r) => initialState(p.GetRequiredService<H>(), i, r));
+        InitializeWith((p, i, r) => initialState(p.Resolve<H>(), i, r));
 
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, T, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, r) => initialState(h, r));
@@ -68,7 +68,7 @@ public class SagaHandlerSelector<T, R, TId, TState>
     public SagaHandlerSelector<T, R, TId, TState> InitializeWith<H>(Func<H, TState> initialState) where H : notnull =>
         InitializeWith<H>((h, _, _) => initialState(h));
 
-    public SagaHandlerSelector<T, R, TId, TState> HandleMissingSaga(AsyncFunc<IServiceProvider, TId, T, Result<R>> handler)
+    public SagaHandlerSelector<T, R, TId, TState> HandleMissingSaga(AsyncFunc<IComponentContext, TId, T, Result<R>> handler)
     {
         _missingSagaHandler = handler;
         return this;
@@ -83,19 +83,19 @@ public class SagaHandlerSelector<T, R, TId, TState>
     public SagaHandlerSelector<T, R, TId, TState> HandleMissingSaga(AsyncFunc<Result<R>> handler) =>
         HandleMissingSaga((_, _, _) => handler());
 
-    public void HandleWith(AsyncFunc<IServiceProvider, T, SagaContext<TId, TState>, Result<R>> handler)
+    public void HandleWith(AsyncFunc<IComponentContext, T, SagaContext<TId, TState>, Result<R>> handler)
     {
         _registerHandler(new(_correlationProperty, handler, _initializer, _missingSagaHandler));
     }
 
     public void HandleWith<H>(AsyncFunc<H, T, SagaContext<TId, TState>, Result<R>> handler) where H : notnull =>
-        HandleWith((p, r, c) => handler(p.GetRequiredService<H>(), r, c));
+        HandleWith((p, r, c) => handler(p.Resolve<H>(), r, c));
 
-    public void HandleWith(Func<IServiceProvider, ISagaStepHandler<T, R, TId, TState>> handlerFactory) =>
+    public void HandleWith(Func<IComponentContext, ISagaStepHandler<T, R, TId, TState>> handlerFactory) =>
         HandleWith((p, r, c) => handlerFactory(p).Handle(r, c));
 
     public void HandleWith<H>() where H : ISagaStepHandler<T, R, TId, TState> =>
-        HandleWith(p => p.GetRequiredService<H>());
+        HandleWith(p => p.Resolve<H>());
 }
 
 public static class SagaHandlerSelectorExtensions

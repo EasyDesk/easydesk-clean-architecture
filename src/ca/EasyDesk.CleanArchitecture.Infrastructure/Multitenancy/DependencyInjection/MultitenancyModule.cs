@@ -4,9 +4,9 @@ using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Options;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 
@@ -30,21 +30,30 @@ public class MultitenancyModule : AppModule
         });
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        services.AddScoped(_ => new TenantService()); // TODO: request scoped
-        services.AddScoped<IContextTenantInitializer>(p => p.GetRequiredService<TenantService>());
-        services.AddScoped<ITenantNavigator>(p => p.GetRequiredService<TenantService>());
-        services.AddScoped<IContextTenantNavigator>(p => p.GetRequiredService<TenantService>());
-        services.AddScoped<ITenantProvider>(p => p.GetRequiredService<ITenantNavigator>());
+        app.RequireModule<DataAccessModule>().Implementation.AddMultitenancy(registry, app);
+    }
 
-        app.RequireModule<DataAccessModule>().Implementation.AddMultitenancy(services, app);
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+        builder.Register(_ => new TenantService())
+            .As<IContextTenantInitializer>()
+            .As<ITenantNavigator>()
+            .As<IContextTenantNavigator>()
+            .As<ITenantProvider>()
+            .InstancePerUseCase();
 
-        services.AddSingleton(Options.DefaultPolicy);
-        services.AddSingleton(Options.HttpRequestTenantReader);
-        services.AddSingleton(Options.AsyncMessageTenantReader);
+        builder.RegisterInstance(Options.DefaultPolicy)
+            .SingleInstance();
+        builder.RegisterInstance(Options.HttpRequestTenantReader)
+            .SingleInstance();
+        builder.RegisterInstance(Options.AsyncMessageTenantReader)
+            .SingleInstance();
 
-        services.AddScoped<IContextTenantDetector, ContextTenantDetector>();
+        builder.RegisterType<ContextTenantDetector>()
+            .As<IContextTenantDetector>()
+            .InstancePerLifetimeScope();
     }
 }
 

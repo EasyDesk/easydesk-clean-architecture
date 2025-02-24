@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
@@ -14,7 +15,6 @@ using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Scopes;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Testing;
 
@@ -52,7 +52,7 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
         Fixture = fixture;
         _http = new(CreateHttpTestHelper);
         _defaultBusEndpoint = new(() => NewBusEndpoint());
-        _errorBusEndpoint = new(() => NewBusEndpoint(WebService.Services.GetRequiredService<RebusMessagingOptions>().ErrorQueueName));
+        _errorBusEndpoint = new(() => NewBusEndpoint(WebService.LifetimeScope.Resolve<RebusMessagingOptions>().ErrorQueueName));
         TenantManager = new TestTenantManager(DefaultTenantInfo);
         _agentScopeManager = new(DefaultAgent);
     }
@@ -77,14 +77,14 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
 
     protected ITestBusEndpoint NewBusEndpoint(string? inputQueueAddress = null, Duration? defaultTimeout = null)
     {
-        var busEndpoint = RebusTestBusEndpoint.CreateFromServices(WebService.Services, TenantManager, inputQueueAddress, defaultTimeout);
+        var busEndpoint = RebusTestBusEndpoint.CreateFromServices(WebService.LifetimeScope, TenantManager, inputQueueAddress, defaultTimeout);
         _busEndpoints.Add(busEndpoint);
         return busEndpoint;
     }
 
     protected HttpTestHelper CreateHttpTestHelper()
     {
-        var jsonSettings = WebService.Services.GetRequiredService<JsonOptionsConfigurator>();
+        var jsonSettings = WebService.LifetimeScope.Resolve<JsonOptionsConfigurator>();
         return new(WebService.HttpClient, jsonSettings, GetHttpAuthentication(), ApplyDefaultRequestConfiguration);
     }
 
@@ -116,17 +116,17 @@ public abstract class WebServiceTestSession<T> : IAsyncDisposable
     }
 
     protected virtual ITestHttpAuthentication GetHttpAuthentication() =>
-        TestHttpAuthentication.CreateFromServices(WebService.Services);
+        TestHttpAuthentication.CreateFromServices(WebService.LifetimeScope);
 
     protected async Task PollServiceUntil<TService>(AsyncFunc<TService, bool> predicate, Duration? timeout = null, Duration? interval = null) where TService : notnull
     {
-        await WebService.Services.ScopedPollUntil<IServiceProvider>(
-            async services =>
+        await WebService.LifetimeScope.ScopedPollUntil<ILifetimeScope>(
+            async scope =>
             {
-                services
-                    .GetServiceAsOption<IContextTenantInitializer>()
+                scope
+                    .ResolveOption<IContextTenantInitializer>()
                     .IfPresent(x => x.Initialize(TenantManager.CurrentTenantInfo.OrElse(TenantInfo.Public)));
-                var service = services.GetRequiredService<TService>();
+                var service = scope.Resolve<TService>();
                 return await predicate(service);
             },
             timeout: timeout,

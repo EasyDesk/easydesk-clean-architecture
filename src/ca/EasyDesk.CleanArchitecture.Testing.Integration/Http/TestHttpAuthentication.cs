@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Jwt;
@@ -6,7 +7,6 @@ using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 
@@ -14,15 +14,15 @@ public static class TestHttpAuthentication
 {
     public static ITestHttpAuthentication NoAuthentication => new NoAuthentication();
 
-    public static ITestHttpAuthentication CreateFromServices(IServiceProvider serviceProvider)
+    public static ITestHttpAuthentication CreateFromServices(IComponentContext componentContext)
     {
-        return serviceProvider
-            .GetServiceAsOption<AuthenticationModuleOptions>()
-            .FlatMap(options => GetDefaultAuthenticationConfiguration(options, serviceProvider))
+        return componentContext
+            .ResolveOption<AuthenticationModuleOptions>()
+            .FlatMap(options => GetDefaultAuthenticationConfiguration(options, componentContext))
             .OrElseGet(() => NoAuthentication);
     }
 
-    private static Option<ITestHttpAuthentication> GetDefaultAuthenticationConfiguration(AuthenticationModuleOptions options, IServiceProvider serviceProvider)
+    private static Option<ITestHttpAuthentication> GetDefaultAuthenticationConfiguration(AuthenticationModuleOptions options, IComponentContext componentContext)
     {
         if (options.Schemes.IsEmpty())
         {
@@ -32,13 +32,13 @@ public static class TestHttpAuthentication
         var provider = options.Schemes[schemeName];
         return provider switch
         {
-            JwtBearerProvider jwtProvider => Some(GetJwtAuthenticationConfiguration(serviceProvider, jwtProvider)),
+            JwtBearerProvider jwtProvider => Some(GetJwtAuthenticationConfiguration(componentContext, jwtProvider)),
             _ => None,
         };
     }
 
-    private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IServiceProvider serviceProvider, JwtBearerProvider jwtProvider) =>
+    private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IComponentContext componentContext, JwtBearerProvider jwtProvider) =>
         new JwtHttpAuthentication(
-            serviceProvider.GetRequiredService<JwtFacade>(),
+            componentContext.Resolve<JwtFacade>(),
             jwtProvider.Options.Configuration.ToJwtGenerationConfiguration());
 }

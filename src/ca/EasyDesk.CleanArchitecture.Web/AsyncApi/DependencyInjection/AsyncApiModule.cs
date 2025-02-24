@@ -22,10 +22,19 @@ public class AsyncApiModule : AppModule
         _configure = configure;
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        services.AddTransient<IDocumentGenerator, KnownTypesDocumentGenerator>();
-        services.AddTransient<IAsyncApiDocumentProvider, KnownTypesDocumentProvider>();
+        builder.RegisterType<KnownTypesDocumentGenerator>()
+            .As<IDocumentGenerator>()
+            .InstancePerDependency();
+
+        builder.RegisterType<KnownTypesDocumentProvider>()
+            .As<IAsyncApiDocumentProvider>()
+            .InstancePerDependency();
+    }
+
+    protected override void ConfigureServices(AppDescription app, IServiceCollection services)
+    {
         services.AddAsyncApiSchemaGeneration(options =>
         {
             options.Middleware.Route = "/asyncapi/{document}/asyncapi.json";

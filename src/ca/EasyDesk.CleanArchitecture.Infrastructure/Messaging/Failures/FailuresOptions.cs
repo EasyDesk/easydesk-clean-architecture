@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Autofac;
 using NodaTime;
 using Rebus.Bus;
 
@@ -8,33 +8,33 @@ public class FailuresOptions
 {
     public static BackoffStrategy DefaultBackoffStrategy { get; } = BackoffStrategies.Exponential(Duration.FromSeconds(5), 2).LimitedTo(5);
 
-    private Action<IServiceCollection>? _configureServices;
+    private Action<ContainerBuilder>? _configureContainer;
 
     public int MaxDeliveryAttempts { get; set; } = 1;
 
-    public FailuresOptions AddFailureStrategy(Func<IServiceProvider, IFailureStrategy> factory)
+    public FailuresOptions AddFailureStrategy(Func<IComponentContext, IFailureStrategy> factory)
     {
-        _configureServices += services => services.AddTransient(factory);
+        _configureContainer += builder => builder.Register(factory).As<IFailureStrategy>().InstancePerDependency();
         return this;
     }
 
     public FailuresOptions AddScheduledRetries(BackoffStrategy? backoffStrategy) =>
-        AddFailureStrategy(sp => new ScheduledRetriesStrategy(
-            sp.GetRequiredService<IBus>(),
+        AddFailureStrategy(c => new ScheduledRetriesStrategy(
+            c.Resolve<IBus>(),
             backoffStrategy ?? DefaultBackoffStrategy));
 
     public FailuresOptions AddDispatchAsFailure() =>
-        AddFailureStrategy(sp => new DispatchAsFailureStrategy(
-            sp.GetRequiredService<IServiceScopeFactory>()));
+        AddFailureStrategy(c => new DispatchAsFailureStrategy(
+            c.Resolve<ILifetimeScope>()));
 
     public FailuresOptions ClearFailureStrategies()
     {
-        _configureServices = null;
+        _configureContainer = null;
         return this;
     }
 
-    public void RegisterFailureStrategies(IServiceCollection services)
+    public void RegisterFailureStrategies(ContainerBuilder builder)
     {
-        _configureServices?.Invoke(services);
+        _configureContainer?.Invoke(builder);
     }
 }

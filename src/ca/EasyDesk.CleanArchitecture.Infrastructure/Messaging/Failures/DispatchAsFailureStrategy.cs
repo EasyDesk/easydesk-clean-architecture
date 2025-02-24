@@ -1,33 +1,34 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.Messaging;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using Rebus.Retry.Simple;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
 
 public class DispatchAsFailureStrategy : IFailureStrategy
 {
-    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILifetimeScope _scope;
 
-    public DispatchAsFailureStrategy(IServiceScopeFactory scopeFactory)
+    public DispatchAsFailureStrategy(ILifetimeScope scope)
     {
-        _scopeFactory = scopeFactory;
+        _scope = scope;
     }
 
     public async Task Handle<T>(IFailed<T> message, AsyncAction next) where T : IIncomingMessage
     {
-        await using var scope = _scopeFactory.CreateAsyncScope();
-        var pipelineProvider = scope.ServiceProvider.GetRequiredService<IPipelineProvider>();
-        var failureHandler = scope.ServiceProvider.GetServiceAsOption<IFailedMessageHandler<T>>();
+        await using var innerScope = _scope.BeginUseCaseLifetimeScope();
+        var pipelineProvider = innerScope.Resolve<IPipelineProvider>();
+        var failureHandler = innerScope.ResolveOption<IFailedMessageHandler<T>>();
 
-        using var rebusScope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(scope.ServiceProvider);
+        using var rebusScope = RebusTransactionScopeUtils.CreateScopeWithComponentContext(innerScope);
 
         await failureHandler.Match(
             some: handler => pipelineProvider
-                .GetSteps<T, Nothing>(scope.ServiceProvider)
+                .GetSteps<T, Nothing>(innerScope)
                 .Run(message.Message, x => handler.HandleFailure(x))
                 .ThenIfFailureAsync(_ => next()),
             none: () => next());

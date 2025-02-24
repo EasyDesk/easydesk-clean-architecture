@@ -6,13 +6,16 @@ namespace EasyDesk.SampleApp.Web.DependencyInjection;
 
 public class SampleAppDevelopmentModule : AppModule
 {
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        services.AddScoped<DevelopmentSeeder>();
-        services.AddScoped(p => Seed(p.GetRequiredService<DevelopmentSeeder>()));
+        builder.RegisterType<DevelopmentSeeder>()
+            .InstancePerLifetimeScope();
+
+        builder.Register(c => SeedCommand(c.Resolve<DevelopmentSeeder>()))
+            .InstancePerLifetimeScope();
     }
 
-    private Command Seed(DevelopmentSeeder seeder)
+    private Command SeedCommand(DevelopmentSeeder seeder)
     {
         var developmentCommand = new Command("seed-dev", description: "Seed the database with development data.");
         developmentCommand.SetHandler(seeder.Seed);

@@ -38,7 +38,13 @@ public class ControllersModule : AppModule
         configure?.Invoke(Options);
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+        builder.RegisterInstance(new PaginationService(Options.DefaultPageSize, Options.MaxPageSize))
+            .SingleInstance();
+    }
+
+    protected override void ConfigureServices(AppDescription app, IServiceCollection services)
     {
         services
             .AddControllers(DefaultMvcConfiguration)
@@ -54,8 +60,6 @@ public class ControllersModule : AppModule
             options.OutputFormatters.Remove(formatter);
             options.OutputFormatters.Add(formatter);
         });
-
-        services.AddSingleton(new PaginationService(Options.DefaultPageSize, Options.MaxPageSize));
     }
 
     protected void DefaultMvcConfiguration(MvcOptions options)

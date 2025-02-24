@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Autofac;
 using Rebus.Pipeline;
 using Rebus.Transport;
 
@@ -6,6 +6,6 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 
 public static class StepContextExtensions
 {
-    public static T GetService<T>(this StepContext stepContext) where T : notnull =>
-        stepContext.Load<ITransactionContext>().GetServiceProvider().GetRequiredService<T>();
+    public static T Resolve<T>(this StepContext stepContext) where T : notnull =>
+        stepContext.Load<ITransactionContext>().GetComponentContext().Resolve<T>();
 }

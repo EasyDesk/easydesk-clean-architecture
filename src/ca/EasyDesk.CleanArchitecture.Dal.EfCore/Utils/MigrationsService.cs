@@ -1,20 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 
 public class MigrationsService
 {
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IEnumerable<Type> _dbContextTypes;
+    private readonly IEnumerable<DbContext> _contexts;
     private readonly ILogger<MigrationsService> _logger;
 
-    internal MigrationsService(IServiceProvider serviceProvider, IEnumerable<Type> dbContextTypes)
+    internal MigrationsService(IEnumerable<DbContext> contexts, ILogger<MigrationsService> logger)
     {
-        _serviceProvider = serviceProvider;
-        _dbContextTypes = dbContextTypes;
-        _logger = serviceProvider.GetRequiredService<ILogger<MigrationsService>>();
+        _contexts = contexts;
+        _logger = logger;
     }
 
     public async Task Migrate(bool sync)
@@ -31,21 +28,19 @@ public class MigrationsService
 
     public async Task MigrateAsync()
     {
-        foreach (var dbContextType in _dbContextTypes)
+        foreach (var context in _contexts)
         {
-            var dbContext = (DbContext)_serviceProvider.GetRequiredService(dbContextType);
-            await dbContext.Database.MigrateAsync();
-            _logger.LogInformation("Successfully asynchronously migrated DbContext of type {dbContextType}", dbContextType.Name);
+            await context.Database.MigrateAsync();
+            _logger.LogInformation("Successfully asynchronously migrated DbContext of type {contextType}", context.GetType().Name);
         }
     }
 
     public void MigrateSync()
     {
-        foreach (var dbContextType in _dbContextTypes)
+        foreach (var context in _contexts)
         {
-            var dbContext = (DbContext)_serviceProvider.GetRequiredService(dbContextType);
-            dbContext.Database.Migrate();
-            _logger.LogInformation("Successfully synchronously migrated DbContext of type {dbContextType}", dbContextType.Name);
+            context.Database.Migrate();
+            _logger.LogInformation("Successfully synchronously migrated DbContext of type {contextType}", context.GetType().Name);
         }
     }
 }

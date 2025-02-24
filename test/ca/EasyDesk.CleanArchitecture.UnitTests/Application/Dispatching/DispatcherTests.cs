@@ -1,6 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Shouldly;
 
@@ -41,20 +41,20 @@ public class DispatcherTests
         _stringHandler.Handle(_stringRequest).Returns(Success(StringValue));
     }
 
-    private IDispatcher CreateDispatcher(Action<IServiceCollection>? configure = null)
+    private IDispatcher CreateDispatcher(Action<ContainerBuilder>? configure = null)
     {
-        var services = new ServiceCollection();
-        services.AddSingleton(_pipelineProvider);
-        configure?.Invoke(services);
-        return new Dispatcher(services.BuildServiceProvider());
+        var builder = new ContainerBuilder();
+        builder.RegisterInstance(_pipelineProvider).SingleInstance();
+        configure?.Invoke(builder);
+        return new Dispatcher(builder.Build());
     }
 
     [Fact]
     public async Task Dispatch_ShouldThrowAnExceptionIfNoHandlerExists()
     {
-        var dispatcher = CreateDispatcher(services =>
+        var dispatcher = CreateDispatcher(builder =>
         {
-            services.AddSingleton(_stringHandler);
+            builder.RegisterInstance(_stringHandler).SingleInstance();
         });
 
         var exception = await Should.ThrowAsync<HandlerNotFoundException>(dispatcher.Dispatch(_intRequest));
@@ -64,9 +64,9 @@ public class DispatcherTests
     [Fact]
     public async Task Dispatch_ShouldNotCallThePipelineIfNoHandlerExists()
     {
-        var dispatcher = CreateDispatcher(services =>
+        var dispatcher = CreateDispatcher(builder =>
         {
-            services.AddSingleton(_stringHandler);
+            builder.RegisterInstance(_stringHandler).SingleInstance();
         });
 
         await Should.ThrowAsync<HandlerNotFoundException>(dispatcher.Dispatch(_intRequest));
@@ -77,9 +77,9 @@ public class DispatcherTests
     [Fact]
     public async Task Dispatch_ShouldCallTheHandlerIfItExists()
     {
-        var dispatcher = CreateDispatcher(services =>
+        var dispatcher = CreateDispatcher(builder =>
         {
-            services.AddSingleton(_intHandler);
+            builder.RegisterInstance(_intHandler).SingleInstance();
         });
 
         await dispatcher.Dispatch(_intRequest);
@@ -90,10 +90,10 @@ public class DispatcherTests
     [Fact]
     public async Task Dispatch_ShouldCallTheCorrectHandler_IfMultipleExist()
     {
-        var dispatcher = CreateDispatcher(services =>
+        var dispatcher = CreateDispatcher(builder =>
         {
-            services.AddSingleton(_intHandler);
-            services.AddSingleton(_stringHandler);
+            builder.RegisterInstance(_intHandler).SingleInstance();
+            builder.RegisterInstance(_stringHandler).SingleInstance();
         });
 
         await dispatcher.Dispatch(_intRequest);
@@ -104,9 +104,9 @@ public class DispatcherTests
     [Fact]
     public async Task Dispatch_ShouldReturnTheResultOfTheHandler()
     {
-        var dispatcher = CreateDispatcher(services =>
+        var dispatcher = CreateDispatcher(builder =>
         {
-            services.AddSingleton(_intHandler);
+            builder.RegisterInstance(_intHandler).SingleInstance();
         });
 
         var result = await dispatcher.Dispatch(_intRequest);
@@ -117,9 +117,9 @@ public class DispatcherTests
     [Fact]
     public async Task Dispatch_ShouldBeAbleToDispatchMultipleTimesWithTheSameRequestType()
     {
-        var dispatcher = CreateDispatcher(services =>
+        var dispatcher = CreateDispatcher(builder =>
         {
-            services.AddSingleton(_intHandler);
+            builder.RegisterInstance(_intHandler).SingleInstance();
         });
 
         await dispatcher.Dispatch(_intRequest);
@@ -132,10 +132,10 @@ public class DispatcherTests
     [Fact]
     public async Task Dispatch_ShouldBeAbleToDispatchMultipleTimesWithDifferentRequestTypes()
     {
-        var dispatcher = CreateDispatcher(services =>
+        var dispatcher = CreateDispatcher(builder =>
         {
-            services.AddSingleton(_intHandler);
-            services.AddSingleton(_stringHandler);
+            builder.RegisterInstance(_intHandler).SingleInstance();
+            builder.RegisterInstance(_stringHandler).SingleInstance();
         });
 
         await dispatcher.Dispatch(_intRequest);

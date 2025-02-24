@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Autofac;
 using Rebus.Messages;
 using Rebus.Transport;
 
@@ -28,11 +28,11 @@ internal class TransportWithOutbox : ITransport
 
         message.Headers.Remove(UseOutboxHeader);
 
-        var serviceProvider = context.GetServiceProvider();
-        var outbox = serviceProvider.GetRequiredService<IOutbox>();
+        var componentContext = context.GetComponentContext();
+        var outbox = componentContext.Resolve<IOutbox>();
         outbox.EnqueueMessageForStorage(message, destinationAddress);
 
-        var helper = serviceProvider.GetRequiredService<OutboxTransactionHelper>();
+        var helper = componentContext.Resolve<OutboxTransactionHelper>();
         helper.EnsureCommitHooksAreRegistered();
     }
 

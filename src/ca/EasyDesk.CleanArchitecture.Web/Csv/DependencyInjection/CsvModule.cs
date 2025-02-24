@@ -2,7 +2,6 @@
 using CsvHelper;
 using CsvHelper.Configuration;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -10,27 +9,23 @@ namespace EasyDesk.CleanArchitecture.Web.Csv.DependencyInjection;
 
 public partial class CsvModule : AppModule
 {
-    private readonly CultureInfo _cultureInfo;
-    private readonly Action<CsvConfiguration>? _configure;
+    private readonly CsvConfiguration _configuration;
 
-    public CsvModule(CultureInfo cultureInfo, Action<CsvConfiguration>? configure = null)
+    public CsvModule(CsvConfiguration configuration)
     {
-        _cultureInfo = cultureInfo;
-        _configure = configure;
+        _configuration = configuration;
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        var configuration = new CsvConfiguration(_cultureInfo)
-        {
-            DetectDelimiter = true,
-            PrepareHeaderForMatch = DefaultPrepareHeaderForMatch,
-            DetectColumnCountChanges = true,
-        };
-        _configure?.Invoke(configuration);
-        services.AddSingleton(configuration);
-        services.AddSingleton<CsvService>();
-        services.AddSingleton<FormFileCsvParser>();
+        builder.RegisterInstance(_configuration)
+            .SingleInstance();
+
+        builder.RegisterType<CsvService>()
+            .SingleInstance();
+
+        builder.RegisterType<FormFileCsvParser>()
+            .SingleInstance();
     }
 
     public static string DefaultPrepareHeaderForMatch(PrepareHeaderForMatchArgs args) =>
@@ -44,6 +39,13 @@ public static class CsvModuleExtensions
 {
     public static IAppBuilder AddCsvParsing(this IAppBuilder builder, CultureInfo? cultureInfo = null, Action<CsvConfiguration>? configure = null)
     {
-        return builder.AddModule(new CsvModule(cultureInfo ?? CultureInfo.InvariantCulture, configure));
+        var configuration = new CsvConfiguration(cultureInfo ?? CultureInfo.InvariantCulture)
+        {
+            DetectDelimiter = true,
+            PrepareHeaderForMatch = CsvModule.DefaultPrepareHeaderForMatch,
+            DetectColumnCountChanges = true,
+        };
+        configure?.Invoke(configuration);
+        return builder.AddModule(new CsvModule(configuration));
     }
 }

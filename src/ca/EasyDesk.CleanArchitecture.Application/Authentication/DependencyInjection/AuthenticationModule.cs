@@ -1,11 +1,11 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
-using Microsoft.Extensions.DependencyInjection;
 using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
@@ -32,20 +32,29 @@ public class AuthenticationModule : AppModule
             .After(typeof(UnitOfWorkStep<,>)));
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        services.AddSingleton(Options);
+        Options.Schemes.ForEach(scheme =>
+        {
+            scheme.Value.AddUtilityServices(registry, app, scheme.Key);
+        });
+    }
 
-        services.AddTransient<IAuthenticationService, AuthenticationService>();
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+        builder.RegisterInstance(Options).SingleInstance();
+
+        builder.RegisterType<AuthenticationService>()
+            .As<IAuthenticationService>()
+            .InstancePerDependency();
 
         builder.RegisterType<AgentProvider>()
             .AsSelf()
             .As<IAgentProvider>()
-            .InstancePerLifetimeScope(); // TODO: request scoped
+            .InstancePerUseCase();
 
         Options.Schemes.ForEach(scheme =>
         {
-            scheme.Value.AddUtilityServices(builder, services, app, scheme.Key);
             builder
                 .Register(c => new AuthenticationScheme
                 {

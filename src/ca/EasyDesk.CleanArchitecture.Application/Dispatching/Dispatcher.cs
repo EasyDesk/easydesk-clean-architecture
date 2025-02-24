@@ -1,8 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Reflection;
 
@@ -11,16 +12,16 @@ namespace EasyDesk.CleanArchitecture.Application.Dispatching;
 internal class Dispatcher : IDispatcher
 {
     private static readonly ConcurrentDictionary<Type, MethodInfo> _dispatchMethodsByType = new();
-    private readonly IServiceProvider _serviceProvider;
+    private readonly ILifetimeScope _lifetimeScope;
     private readonly bool _nested;
 
-    public Dispatcher(IServiceProvider serviceProvider) : this(serviceProvider, false)
+    public Dispatcher(ILifetimeScope lifetimeScope) : this(lifetimeScope, false)
     {
     }
 
-    private Dispatcher(IServiceProvider serviceProvider, bool nested)
+    private Dispatcher(ILifetimeScope lifetimeScope, bool nested)
     {
-        _serviceProvider = serviceProvider;
+        _lifetimeScope = lifetimeScope;
         _nested = nested;
     }
 
@@ -37,10 +38,16 @@ internal class Dispatcher : IDispatcher
     private async Task<Result<R>> DispatchImpl<T, X, R>(T dispatchable, AsyncFunc<X, R> mapper)
         where T : IDispatchable<X>
     {
-        await using var scope = _serviceProvider.CreateAsyncScope();
-        var serviceProvider = scope.ServiceProvider;
-        var handler = FindHandler<T, X>(serviceProvider);
-        var pipeline = serviceProvider.GetRequiredService<IPipelineProvider>().GetSteps<T, R>(serviceProvider);
+        await using var scope = _nested
+            ? _lifetimeScope.BeginLifetimeScope()
+            : _lifetimeScope.BeginUseCaseLifetimeScope(builder =>
+            {
+                builder.Register(c => new Dispatcher(c.Resolve<ILifetimeScope>(), nested: true))
+                    .As<IDispatcher>()
+                    .InstancePerDependency();
+            });
+        var handler = FindHandler<T, X>(scope);
+        var pipeline = scope.Resolve<IPipelineProvider>().GetSteps<T, R>(scope);
 
         if (_nested)
         {
@@ -49,11 +56,11 @@ internal class Dispatcher : IDispatcher
         return await pipeline.Run(dispatchable, r => handler.Handle(r).ThenMapAsync(mapper));
     }
 
-    private IHandler<T, R> FindHandler<T, R>(IServiceProvider serviceProvider)
+    private IHandler<T, R> FindHandler<T, R>(ILifetimeScope scope)
         where T : IDispatchable<R>
     {
-        return serviceProvider
-            .GetServiceAsOption<IHandler<T, R>>()
+        return scope
+            .ResolveOption<IHandler<T, R>>()
             .OrElseThrow(() => new HandlerNotFoundException(typeof(T)));
     }
 }

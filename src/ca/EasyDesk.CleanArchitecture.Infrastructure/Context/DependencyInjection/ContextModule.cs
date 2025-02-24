@@ -2,19 +2,34 @@
 using EasyDesk.CleanArchitecture.Application.Cancellation;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
+using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Context.DependencyInjection;
 
 public class ContextModule : AppModule
 {
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureServices(AppDescription app, IServiceCollection services)
     {
         services.AddHttpContextAccessor();
-        services.AddSingleton<ContextDetector>();
-        services.AddSingleton<ICancellationTokenProvider, ContextCancellationTokenProvider>();
-        services.TryAddScoped<ITenantProvider, PublicTenantProvider>();
+    }
+
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+        builder.RegisterType<ContextDetector>()
+            .SingleInstance();
+
+        builder.RegisterType<ContextCancellationTokenProvider>()
+            .As<ICancellationTokenProvider>()
+            .SingleInstance();
+
+        if (!app.IsMultitenant())
+        {
+            builder.RegisterType<PublicTenantProvider>()
+                .As<ITenantProvider>()
+                .IfNotRegistered(typeof(ITenantProvider))
+                .SingleInstance();
+        }
     }
 }
 

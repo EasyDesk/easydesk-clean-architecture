@@ -34,10 +34,14 @@ public class ApiVersioningModule : AppModule
         ApiVersioningInfo = new ApiVersioningInfo(supportedVersions);
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        services.AddSingleton(ApiVersioningInfo!);
+        builder.RegisterInstance(ApiVersioningInfo!)
+            .SingleInstance();
+    }
 
+    protected override void ConfigureServices(AppDescription app, IServiceCollection services)
+    {
         services
             .AddApiVersioning(options =>
             {

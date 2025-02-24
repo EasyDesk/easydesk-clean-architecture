@@ -1,6 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.Commons.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rebus.Bus;
 
@@ -10,24 +11,24 @@ internal class AutoSubscriptionService : IHostedService
 {
     private readonly IBus _bus;
     private readonly RebusMessagingOptions _options;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
+    private readonly ILifetimeScope _lifetimeScope;
 
-    public AutoSubscriptionService(IBus bus, RebusMessagingOptions options, IServiceScopeFactory serviceScopeFactory)
+    public AutoSubscriptionService(IBus bus, RebusMessagingOptions options, ILifetimeScope lifetimeScope)
     {
         _bus = bus;
         _options = options;
-        _serviceScopeFactory = serviceScopeFactory;
+        _lifetimeScope = lifetimeScope;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await using var serviceScope = _serviceScopeFactory.CreateAsyncScope();
-        using var scope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(serviceScope.ServiceProvider);
+        await using var childScope = _lifetimeScope.BeginUseCaseLifetimeScope();
+        using var rebusScope = RebusTransactionScopeUtils.CreateScopeWithComponentContext(childScope);
         foreach (var messageType in _options.KnownMessageTypes.Where(ShouldAutoSubscribe))
         {
             await _bus.Subscribe(messageType);
         }
-        await scope.CompleteAsync();
+        await rebusScope.CompleteAsync();
     }
 
     private bool ShouldAutoSubscribe(Type type)

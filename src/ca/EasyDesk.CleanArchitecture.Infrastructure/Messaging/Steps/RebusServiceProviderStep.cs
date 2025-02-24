@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Cqrs;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.Commons.Results;
@@ -9,11 +10,11 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly ILifetimeScope _lifetimeScope;
 
-    public RebusServiceProviderStep(IServiceProvider serviceProvider)
+    public RebusServiceProviderStep(ILifetimeScope lifetimeScope)
     {
-        _serviceProvider = serviceProvider;
+        _lifetimeScope = lifetimeScope;
     }
 
     public bool IsForEachHandler => false;
@@ -27,13 +28,13 @@ public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
 
     private async Task<Result<R>> HandleAsyncMessageContext(NextPipelineStep<R> next)
     {
-        AmbientTransactionContext.Current.SetServiceProvider(_serviceProvider);
+        AmbientTransactionContext.Current.SetComponentContext(_lifetimeScope);
         return await next();
     }
 
     private async Task<Result<R>> HandleGenericContext(NextPipelineStep<R> next)
     {
-        using var scope = RebusTransactionScopeUtils.CreateScopeWithServiceProvider(_serviceProvider);
+        using var scope = RebusTransactionScopeUtils.CreateScopeWithComponentContext(_lifetimeScope);
         var response = await next();
         await scope.CompleteAsync();
         return response;

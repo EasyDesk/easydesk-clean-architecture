@@ -1,4 +1,5 @@
-﻿using EasyDesk.Commons.Collections;
+﻿using Autofac;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
@@ -16,11 +17,11 @@ internal class GenericPipelineProvider : IPipelineProvider
         _stepTypes = stepTypes.ToImmutableList();
     }
 
-    public IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>(IServiceProvider serviceProvider)
+    public IEnumerable<IPipelineStep<T, R>> GetSteps<T, R>(IComponentContext context)
     {
         var stepTypes = _pipelineCache.GetOrAdd((typeof(T), typeof(R)), _ => ComputePipelineStepTypes<T, R>());
         return stepTypes
-            .Select(t => (IPipelineStep<T, R>)ActivatorUtilities.CreateInstance(serviceProvider, t));
+            .Select(t => (IPipelineStep<T, R>)ActivatorUtilities.CreateInstance(context.Resolve<IServiceProvider>(), t));
     }
 
     private IEnumerable<Type> ComputePipelineStepTypes<T, R>() =>

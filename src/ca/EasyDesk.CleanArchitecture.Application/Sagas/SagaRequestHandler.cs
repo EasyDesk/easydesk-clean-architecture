@@ -1,4 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Application.Dispatching;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Dispatching;
 
 namespace EasyDesk.CleanArchitecture.Application.Sagas;
 
@@ -7,9 +8,9 @@ internal class SagaRequestHandler<T, R, TId, TState> : AbstractSagaHandler<T, R,
 {
     public SagaRequestHandler(
         ISagaCoordinator<TId, TState> coordinator,
-        IServiceProvider serviceProvider,
+        IComponentContext componentContext,
         SagaStepConfiguration<T, R, TId, TState> configuration)
-        : base(coordinator, serviceProvider, configuration)
+        : base(coordinator, componentContext, configuration)
     {
     }
 }

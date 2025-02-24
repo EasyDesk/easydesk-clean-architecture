@@ -1,14 +1,15 @@
-﻿using Rebus.Transport;
+﻿using Autofac;
+using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
 public static class TransactionContextExtensions
 {
-    private const string ServiceProviderKey = "x-service-provider";
+    private const string ComponentContextKey = "x-component-context";
 
-    public static void SetServiceProvider(this ITransactionContext transactionContext, IServiceProvider serviceProvider) =>
-        transactionContext.GetOrAdd(ServiceProviderKey, () => serviceProvider);
+    public static void SetComponentContext(this ITransactionContext transactionContext, IComponentContext componentContext) =>
+        transactionContext.GetOrAdd(ComponentContextKey, () => componentContext);
 
-    public static IServiceProvider GetServiceProvider(this ITransactionContext transactionContext) =>
-        transactionContext.GetOrThrow<IServiceProvider>(ServiceProviderKey);
+    public static IComponentContext GetComponentContext(this ITransactionContext transactionContext) =>
+        transactionContext.GetOrThrow<IComponentContext>(ComponentContextKey);
 }

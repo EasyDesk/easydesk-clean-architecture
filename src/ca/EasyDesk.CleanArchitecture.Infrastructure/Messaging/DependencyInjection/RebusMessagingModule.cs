@@ -19,7 +19,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using EasyDesk.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
@@ -37,15 +37,12 @@ public class RebusMessagingModule : AppModule
 {
     private readonly RebusEndpoint _endpoint;
     private readonly RebusTransportConfiguration _transport;
-    private readonly Action<RebusMessagingOptions>? _configure;
 
-    public RebusMessagingModule(RebusEndpoint endpoint, RebusTransportConfiguration transport, Action<RebusMessagingOptions>? configure = null)
+    public RebusMessagingModule(RebusEndpoint endpoint, RebusTransportConfiguration transport, RebusMessagingOptions options)
     {
         _endpoint = endpoint;
         _transport = transport;
-        _configure = configure;
-        Options = new RebusMessagingOptions();
-        configure?.Invoke(Options);
+        Options = options;
     }
 
     public RebusMessagingOptions Options { get; }
@@ -68,31 +65,42 @@ public class RebusMessagingModule : AppModule
         Options.AddKnownMessageTypesFromAssemblies(assembliesToScan);
     }
 
-    public override void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder)
+    protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        services.AddSingleton(_endpoint);
-        services.AddSingleton(Options);
-        services.AddSingleton(_transport);
-
         if (Options.UseOutbox || Options.UseInbox)
         {
-            app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(services, app);
+            app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(registry, app);
         }
+    }
 
-        Options.FailuresOptions.RegisterFailureStrategies(services);
+    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+        builder.RegisterInstance(_endpoint)
+            .SingleInstance();
+
+        builder.RegisterInstance(Options)
+            .SingleInstance();
+
+        builder.RegisterInstance(_transport)
+            .SingleInstance();
+
+        Options.FailuresOptions.RegisterFailureStrategies(builder);
+
+        builder.RegisterType<PausableAsyncTaskFactory>()
+            .AsSelf()
+            .As<IRebusPausableTaskPool>()
+            .SingleInstance();
 
         ITransport? originalTransport = null;
-        services.AddSingleton<PausableAsyncTaskFactory>();
-        services.AddSingleton<IRebusPausableTaskPool>(provider => provider.GetRequiredService<PausableAsyncTaskFactory>());
-        services.AddRebus((configurer, provider) =>
+        builder.RegisterRebus((configurer, context) =>
         {
-            var options = provider.GetRequiredService<RebusMessagingOptions>();
+            var options = context.Resolve<RebusMessagingOptions>();
 
-            options.Apply(provider, _endpoint, configurer);
+            options.Apply(context, _endpoint, configurer);
             configurer.Options(o =>
             {
                 o.Decorate(c => originalTransport = c.Get<ITransport>());
-                o.Register<IAsyncTaskFactory>(_ => provider.GetRequiredService<PausableAsyncTaskFactory>());
+                o.Register<IAsyncTaskFactory>(_ => context.Resolve<PausableAsyncTaskFactory>());
                 if (options.UseOutbox)
                 {
                     o.UseOutbox();
@@ -113,24 +121,27 @@ public class RebusMessagingModule : AppModule
 
         if (Options.UseOutbox)
         {
-            AddOutboxServices(services, new(() => originalTransport!, isThreadSafe: true));
+            AddOutboxServices(builder, new(() => originalTransport!, isThreadSafe: true));
         }
 
-        SetupMessageHandlers(services, Options.KnownMessageTypes, app);
+        SetupMessageHandlers(builder, Options.KnownMessageTypes, app);
 
-        AddEventPropagators(services);
-        AddCommandPropagators(services);
-        services.AddScoped<MessageBroker>();
-        services.AddScoped<IEventPublisher>(provider => provider.GetRequiredService<MessageBroker>());
-        services.AddScoped<ICommandSender>(provider => provider.GetRequiredService<MessageBroker>());
+        AddEventPropagators(builder);
+        AddCommandPropagators(builder);
+        builder.RegisterType<MessageBroker>()
+            .As<IEventPublisher>()
+            .As<ICommandSender>()
+            .InstancePerLifetimeScope();
 
         if (Options.AutoSubscribe)
         {
-            services.AddHostedService<AutoSubscriptionService>();
+            builder.RegisterType<AutoSubscriptionService>()
+                .As<IHostedService>()
+                .SingleInstance();
         }
     }
 
-    private void SetupMessageHandlers(IServiceCollection services, IEnumerable<Type> knownMessageTypes, AppDescription app)
+    private void SetupMessageHandlers(ContainerBuilder builder, IEnumerable<Type> knownMessageTypes, AppDescription app)
     {
         knownMessageTypes
             .Where(x => x.IsSubtypeOrImplementationOf(typeof(IIncomingMessage)))
@@ -138,15 +149,23 @@ public class RebusMessagingModule : AppModule
             {
                 var handlerInterfaceType = typeof(IHandleMessages<>).MakeGenericType(t);
                 var handlerImplementationType = typeof(DispatchingMessageHandler<>).MakeGenericType(t);
-                services.AddTransient(handlerInterfaceType, handlerImplementationType);
+                builder.RegisterType(handlerImplementationType)
+                    .As(handlerInterfaceType)
+                    .InstancePerDependency();
 
                 var failedType = typeof(IFailed<>).MakeGenericType(t);
                 var failedHandlerInterfaceType = typeof(IHandleMessages<>).MakeGenericType(failedType);
                 var failedHandlerImplementationType = typeof(FailedMessageHandler<>).MakeGenericType(t);
-                services.AddTransient(failedHandlerInterfaceType, failedHandlerImplementationType);
+                builder.RegisterType(failedHandlerImplementationType)
+                    .As(failedHandlerInterfaceType)
+                    .InstancePerDependency();
             });
 
-        services.RegisterImplementationsAsTransient(typeof(IFailedMessageHandler<>), x => x.FromAssemblies(app.Assemblies));
+        builder
+            .RegisterAssemblyTypes([.. app.Assemblies])
+            .AssignableToOpenGenericType(typeof(IFailedMessageHandler<>))
+            .AsClosedTypesOf(typeof(IFailedMessageHandler<>))
+            .InstancePerDependency();
     }
 
     private IEnumerable<Type> GetDispatchableReturnTypes(Type messageType)
@@ -157,9 +176,9 @@ public class RebusMessagingModule : AppModule
             .Select(i => i.GetGenericArguments()[0]);
     }
 
-    private void AddCommandPropagators(IServiceCollection services)
+    private void AddCommandPropagators(ContainerBuilder builder)
     {
-        var arguments = new object[] { services };
+        var arguments = new object[] { builder };
         foreach (var messageType in Options.KnownMessageTypes)
         {
             messageType
@@ -174,16 +193,18 @@ public class RebusMessagingModule : AppModule
         }
     }
 
-    private void RegisterCommandPropagatorForType<M, D>(IServiceCollection services)
+    private void RegisterCommandPropagatorForType<M, D>(ContainerBuilder builder)
         where M : IPropagatedCommand<M, D>, IOutgoingCommand
         where D : DomainEvent
     {
-        services.AddTransient<IDomainEventHandler<D>, PropagateCommand<M, D>>();
+        builder.RegisterType<PropagateCommand<M, D>>()
+            .As<IDomainEventHandler<D>>()
+            .InstancePerDependency();
     }
 
-    private void AddEventPropagators(IServiceCollection services)
+    private void AddEventPropagators(ContainerBuilder builder)
     {
-        var arguments = new object[] { services };
+        var arguments = new object[] { builder };
         foreach (var messageType in Options.KnownMessageTypes)
         {
             messageType
@@ -198,37 +219,50 @@ public class RebusMessagingModule : AppModule
         }
     }
 
-    private void RegisterEventPropagatorForType<M, D>(IServiceCollection services)
+    private void RegisterEventPropagatorForType<M, D>(ContainerBuilder builder)
         where M : IPropagatedEvent<M, D>, IOutgoingEvent
         where D : DomainEvent
     {
-        services.AddTransient<IDomainEventHandler<D>, PropagateEvent<M, D>>();
+        builder.RegisterType<PropagateEvent<M, D>>()
+            .As<IDomainEventHandler<D>>()
+            .InstancePerDependency();
     }
 
-    private void AddOutboxServices(IServiceCollection services, Lazy<ITransport> originalTransport)
+    private void AddOutboxServices(ContainerBuilder builder, Lazy<ITransport> originalTransport)
     {
-        services.AddScoped<OutboxTransactionHelper>();
+        builder.RegisterType<OutboxTransactionHelper>()
+            .InstancePerLifetimeScope();
 
         if (Options.OutboxOptions.PeriodicTaskEnabled)
         {
-            services.AddHostedService<PeriodicOutboxAwaker>(provider => new(
-                Options.OutboxOptions.FlushingPeriod,
-                provider.GetRequiredService<OutboxFlushRequestsChannel>()));
+            builder
+                .Register(c => new PeriodicOutboxAwaker(
+                    Options.OutboxOptions.FlushingPeriod,
+                    c.Resolve<OutboxFlushRequestsChannel>()))
+                .As<IHostedService>()
+                .SingleInstance();
         }
 
-        services.AddHostedService<OutboxConsumer>();
-        services.AddSingleton<OutboxFlushRequestsChannel>();
-        services.AddScoped(provider =>
-        {
-            // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
-            _ = provider.GetRequiredService<IBus>();
+        builder.RegisterType<OutboxConsumer>()
+            .As<IHostedService>()
+            .SingleInstance();
 
-            return new OutboxFlusher(
-                Options.OutboxOptions.FlushingStrategy,
-                provider.GetRequiredService<IUnitOfWorkProvider>(),
-                provider.GetRequiredService<IOutbox>(),
-                originalTransport.Value);
-        });
+        builder.RegisterType<OutboxFlushRequestsChannel>()
+            .SingleInstance();
+
+        builder
+            .Register(c =>
+            {
+                // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
+                _ = c.Resolve<IBus>();
+
+                return new OutboxFlusher(
+                    Options.OutboxOptions.FlushingStrategy,
+                    c.Resolve<IUnitOfWorkProvider>(),
+                    c.Resolve<IOutbox>(),
+                    originalTransport.Value);
+            })
+            .InstancePerLifetimeScope();
     }
 }
 
@@ -236,7 +270,9 @@ public static class RebusMessagingModuleExtensions
 {
     public static IAppBuilder AddRebusMessaging(this IAppBuilder builder, string inputQueueAddress, RebusTransportConfiguration transport, Action<RebusMessagingOptions>? configure = null)
     {
-        return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), transport, configure));
+        var options = new RebusMessagingOptions();
+        configure?.Invoke(options);
+        return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), transport, options));
     }
 
     public static bool HasRebusMessaging(this AppDescription app) => app.HasModule<RebusMessagingModule>();

@@ -9,9 +9,22 @@ public abstract class AppModule
     {
     }
 
-    public virtual void AfterServiceConfiguration(AppDescription app)
+    public void Configure(AppDescription app, ServiceRegistry registry)
+    {
+        ConfigureRegistry(app, registry);
+        registry.ConfigureServices(services => ConfigureServices(app, services));
+        registry.ConfigureContainer(builder => ConfigureContainer(app, builder));
+    }
+
+    protected virtual void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
     }
 
-    public abstract void ConfigureServices(AppDescription app, IServiceCollection services, ContainerBuilder builder);
+    protected virtual void ConfigureServices(AppDescription app, IServiceCollection services)
+    {
+    }
+
+    protected virtual void ConfigureContainer(AppDescription app, ContainerBuilder builder)
+    {
+    }
 }

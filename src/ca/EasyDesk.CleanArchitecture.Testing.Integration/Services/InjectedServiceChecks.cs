@@ -1,6 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Polling;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.DependencyInjection;
+using EasyDesk.CleanArchitecture.Testing.Integration.Polling;
 using EasyDesk.Commons.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Services;
@@ -11,16 +12,16 @@ public static class InjectedServiceChecks
     private static readonly Duration _defaultQueryInterval = Duration.FromMilliseconds(200);
 
     public static async Task SingleScopePollUntil<T>(
-        this IServiceProvider serviceProvider,
+        this ILifetimeScope lifetimeScope,
         AsyncFunc<T, bool> predicate,
         Duration? timeout = null,
         Duration? interval = null)
         where T : notnull
     {
-        await using (var scope = serviceProvider.CreateAsyncScope())
+        await using (var scope = lifetimeScope.BeginUseCaseLifetimeScope())
         {
             var polling = Poll
-                .Sync(scope.ServiceProvider.GetRequiredService<T>)
+                .Sync(scope.Resolve<T>)
                 .WithTimeout(timeout ?? _defaultPollTimeout)
                 .WithInterval(interval ?? _defaultQueryInterval);
             await polling.Until(predicate);
@@ -28,7 +29,7 @@ public static class InjectedServiceChecks
     }
 
     public static async Task ScopedPollUntil<T>(
-        this IServiceProvider serviceProvider,
+        this ILifetimeScope lifetimeScope,
         AsyncFunc<T, bool> predicate,
         Duration? timeout = null,
         Duration? interval = null)
@@ -37,9 +38,9 @@ public static class InjectedServiceChecks
         var polling = Poll
             .Async(async token =>
             {
-                await using (var scope = serviceProvider.CreateAsyncScope())
+                await using (var scope = lifetimeScope.BeginUseCaseLifetimeScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<T>();
+                    var service = scope.Resolve<T>();
                     return await predicate(service);
                 }
             })
@@ -49,16 +50,16 @@ public static class InjectedServiceChecks
     }
 
     public static async Task SingleScopePollInvariant<T>(
-        this IServiceProvider serviceProvider,
+        this ILifetimeScope lifetimeScope,
         AsyncFunc<T, bool> predicate,
         Duration? timeout = null,
         Duration? interval = null)
         where T : notnull
     {
-        await using (var scope = serviceProvider.CreateAsyncScope())
+        await using (var scope = lifetimeScope.BeginUseCaseLifetimeScope())
         {
             var polling = Poll
-                .Sync(scope.ServiceProvider.GetRequiredService<T>)
+                .Sync(scope.Resolve<T>)
                 .WithTimeout(timeout ?? _defaultPollTimeout)
                 .WithInterval(interval ?? _defaultQueryInterval);
             await polling.EnsureInvariant(predicate);
@@ -66,7 +67,7 @@ public static class InjectedServiceChecks
     }
 
     public static async Task ScopedPollInvariant<T>(
-        this IServiceProvider serviceProvider,
+        this ILifetimeScope lifetimeScope,
         AsyncFunc<T, bool> predicate,
         Duration? timeout = null,
         Duration? interval = null)
@@ -75,9 +76,9 @@ public static class InjectedServiceChecks
         var polling = Poll
             .Async(async token =>
             {
-                await using (var scope = serviceProvider.CreateAsyncScope())
+                await using (var scope = lifetimeScope.BeginUseCaseLifetimeScope())
                 {
-                    var service = scope.ServiceProvider.GetRequiredService<T>();
+                    var service = scope.Resolve<T>();
                     return await predicate(service);
                 }
             })

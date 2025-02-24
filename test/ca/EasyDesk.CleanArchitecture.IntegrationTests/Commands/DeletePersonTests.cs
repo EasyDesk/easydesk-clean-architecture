@@ -1,6 +1,8 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
@@ -12,7 +14,6 @@ using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Shouldly;
 
@@ -122,9 +123,9 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        await using var scope = WebService.Services.CreateAsyncScope();
-        var personRecord = await scope.ServiceProvider
-            .GetRequiredService<SampleAppContext>()
+        await using var scope = WebService.LifetimeScope.BeginUseCaseLifetimeScope();
+        var personRecord = await scope
+            .Resolve<SampleAppContext>()
             .People
             .IgnoreQueryFilters()
             .Where(p => p.Id == person.Id)

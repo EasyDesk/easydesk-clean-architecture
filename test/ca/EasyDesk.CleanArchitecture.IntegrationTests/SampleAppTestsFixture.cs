@@ -1,4 +1,6 @@
-﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+﻿using Autofac;
+using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
@@ -56,8 +58,8 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
 
         builder.ConfigureWebService(web => web.BeforeStart(host =>
         {
-            using var scope = host.Services.CreateScope();
-            var migrationService = scope.ServiceProvider.GetRequiredService<MigrationsService>();
+            using var scope = host.Services.GetRequiredService<ILifetimeScope>().BeginUseCaseLifetimeScope();
+            var migrationService = scope.Resolve<MigrationsService>();
             migrationService.MigrateSync();
         }));
     }
