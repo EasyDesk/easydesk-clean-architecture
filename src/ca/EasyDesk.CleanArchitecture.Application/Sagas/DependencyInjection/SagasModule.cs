@@ -1,6 +1,9 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
+using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Sagas.Builder;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
@@ -32,6 +35,13 @@ public class SagasModule : AppModule
 
         services.AddScoped(typeof(ISagaCoordinator<,>), typeof(SagaCoordinator<,>));
         services.AddScoped<SagaRegistry>();
+        app.ConfigureDispatchingPipeline(pipeline =>
+        {
+            pipeline
+                .AddStepAfterAll(typeof(SaveSagaChangesStep<,>))
+                .Before(typeof(SaveChangesStep<,>))
+                .Before(typeof(DomainEventHandlingStep<,>));
+        });
     }
 
     private void ConfigureSaga<TId, TState, TController>(IServiceCollection services)

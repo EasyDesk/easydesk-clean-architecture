@@ -5,9 +5,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
 internal class TransactionEnlistingOnCommandInterceptor : DbCommandInterceptor
 {
-    private readonly EfCoreUnitOfWorkProvider _unitOfWorkProvider;
+    private readonly EfCoreUnitOfWorkManager _unitOfWorkProvider;
 
-    public TransactionEnlistingOnCommandInterceptor(EfCoreUnitOfWorkProvider unitOfWorkProvider)
+    public TransactionEnlistingOnCommandInterceptor(EfCoreUnitOfWorkManager unitOfWorkProvider)
     {
         _unitOfWorkProvider = unitOfWorkProvider;
     }
@@ -16,7 +16,7 @@ internal class TransactionEnlistingOnCommandInterceptor : DbCommandInterceptor
     {
         _unitOfWorkProvider.CurrentTransaction.IfPresent(t =>
         {
-            result.Transaction = t;
+            result.Transaction = t.DbTransaction;
         });
         return result;
     }

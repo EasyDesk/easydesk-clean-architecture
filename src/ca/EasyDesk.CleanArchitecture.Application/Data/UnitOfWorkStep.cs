@@ -7,9 +7,9 @@ namespace EasyDesk.CleanArchitecture.Application.Data;
 public sealed class UnitOfWorkStep<T, R> : IPipelineStep<T, R>
     where T : IReadWriteOperation
 {
-    private readonly IUnitOfWorkProvider _unitOfWorkProvider;
+    private readonly IUnitOfWorkManager _unitOfWorkProvider;
 
-    public UnitOfWorkStep(IUnitOfWorkProvider unitOfWorkProvider)
+    public UnitOfWorkStep(IUnitOfWorkManager unitOfWorkProvider)
     {
         _unitOfWorkProvider = unitOfWorkProvider;
     }
@@ -18,6 +18,6 @@ public sealed class UnitOfWorkStep<T, R> : IPipelineStep<T, R>
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return await _unitOfWorkProvider.RunTransactionally(() => next());
+        return await _unitOfWorkProvider.RunTransactionally<R>(() => next());
     }
 }

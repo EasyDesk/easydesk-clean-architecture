@@ -30,7 +30,7 @@ public class ErrorQueueTests : SampleIntegrationTest
 
         foreach (var delay in delays)
         {
-            await Task.Delay(3000);
+            await Task.Delay(10000);
             Clock.Advance(delay);
         }
     }
@@ -62,6 +62,6 @@ public class ErrorQueueTests : SampleIntegrationTest
 
         await WaitForBackoff();
 
-        await DefaultBusEndpoint.WaitForMessageOrFail<Error4Handled>(timeout: Duration.FromDays(20));
+        await DefaultBusEndpoint.WaitForMessageOrFail<Error4Handled>(timeout: Duration.FromMinutes(2));
     }
 }

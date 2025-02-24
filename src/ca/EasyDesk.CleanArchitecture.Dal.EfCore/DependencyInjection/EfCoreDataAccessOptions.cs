@@ -66,8 +66,8 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
         services.AddScoped<DbContextEnlistingOnSaveChangesInterceptor>();
         services.AddScoped(provider => new MigrationsService(provider, _registeredDbContextTypes));
         services.AddScoped<ISaveChangesHandler, EfCoreSaveChangesHandler<T>>();
-        services.AddScoped(sp => new EfCoreUnitOfWorkProvider(sp.GetRequiredService<DbConnection>()));  // TODO: request scoped
-        services.AddScoped<IUnitOfWorkProvider>(provider => provider.GetRequiredService<EfCoreUnitOfWorkProvider>());  // TODO: request scoped
+        services.AddScoped(sp => new EfCoreUnitOfWorkManager(sp.GetRequiredService<DbConnection>()));  // TODO: request scoped
+        services.AddScoped<IUnitOfWorkManager>(provider => provider.GetRequiredService<EfCoreUnitOfWorkManager>());  // TODO: request scoped
         services.AddScoped(p => MigrationCommand(p.GetRequiredService<MigrationsService>()));
         _configureServices?.Invoke(services);
     }
