@@ -33,7 +33,7 @@ internal class TransportWithOutbox : ITransport
         outbox.EnqueueMessageForStorage(message, destinationAddress);
 
         var helper = componentContext.Resolve<OutboxTransactionHelper>();
-        helper.EnsureCommitHooksAreRegistered();
+        helper.NotifyNewOutgoingMessage();
     }
 
     public Task<TransportMessage> Receive(ITransactionContext context, CancellationToken cancellationToken) =>

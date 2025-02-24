@@ -1,34 +1,19 @@
-﻿using EasyDesk.CleanArchitecture.Application.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Data.Common;
+﻿using System.Data.Common;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
-internal class EfCoreUnitOfWork : UnitOfWorkBase<DbTransaction>
+internal abstract class EfCoreUnitOfWork : IDisposable
 {
-    private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
-
-    public EfCoreUnitOfWork(DbTransaction transaction) : base(transaction)
+    protected EfCoreUnitOfWork(DbTransaction dbTransaction)
     {
+        DbTransaction = dbTransaction;
     }
 
-    protected override async Task CommitTransaction()
-    {
-        await Transaction.CommitAsync();
-    }
+    public DbTransaction DbTransaction { get; }
 
-    protected override async Task RollbackTransaction()
-    {
-        await Transaction.RollbackAsync();
-    }
+    public abstract Task Commit();
 
-    public async Task EnlistDbContext(DbContext dbContext)
-    {
-        if (_registeredDbContexts.Contains(dbContext))
-        {
-            return;
-        }
-        await dbContext.Database.UseTransactionAsync(Transaction);
-        _registeredDbContexts.Add(dbContext);
-    }
+    public abstract Task Rollback();
+
+    public abstract void Dispose();
 }

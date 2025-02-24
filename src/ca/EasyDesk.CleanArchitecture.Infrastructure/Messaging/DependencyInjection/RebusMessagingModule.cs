@@ -58,6 +58,11 @@ public class RebusMessagingModule : AppModule
                     .AddStep(typeof(InboxStep<>))
                     .After(typeof(UnitOfWorkStep<,>));
             }
+            pipeline.AddStepAfterAll(typeof(OutboxStoreMessagesStep<,>))
+                .Before(typeof(SaveChangesStep<,>))
+                .Before(typeof(DomainEventHandlingStep<,>));
+            pipeline.AddStep(typeof(OutboxFlushRequestStep<,>))
+                .Before(typeof(UnitOfWorkStep<,>));
         });
         app.RequireModule<JsonModule>();
 
@@ -258,7 +263,7 @@ public class RebusMessagingModule : AppModule
 
                 return new OutboxFlusher(
                     Options.OutboxOptions.FlushingStrategy,
-                    c.Resolve<IUnitOfWorkProvider>(),
+                    c.Resolve<IUnitOfWorkManager>(),
                     c.Resolve<IOutbox>(),
                     originalTransport.Value);
             })

@@ -86,10 +86,10 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
                 .As<ISaveChangesHandler>()
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<EfCoreUnitOfWorkProvider>()
+            builder.RegisterType<EfCoreUnitOfWorkManager>()
                 .AsSelf()
-                .As<IUnitOfWorkProvider>()
-                .InstancePerUseCase();
+                .As<IUnitOfWorkManager>()
+                .InstancePerUseCase(); // TODO: check if .AsSelf() is needed.
 
             builder.Register(c => MigrationCommand(c.Resolve<MigrationsService>()));
         });

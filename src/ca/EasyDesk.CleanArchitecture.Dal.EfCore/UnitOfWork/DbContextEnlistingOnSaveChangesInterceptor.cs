@@ -4,9 +4,9 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
 internal class DbContextEnlistingOnSaveChangesInterceptor : SaveChangesInterceptor
 {
-    private readonly EfCoreUnitOfWorkProvider _unitOfWorkProvider;
+    private readonly EfCoreUnitOfWorkManager _unitOfWorkProvider;
 
-    public DbContextEnlistingOnSaveChangesInterceptor(EfCoreUnitOfWorkProvider unitOfWorkProvider)
+    public DbContextEnlistingOnSaveChangesInterceptor(EfCoreUnitOfWorkManager unitOfWorkProvider)
     {
         _unitOfWorkProvider = unitOfWorkProvider;
     }

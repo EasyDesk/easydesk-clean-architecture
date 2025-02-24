@@ -23,6 +23,8 @@ public sealed class ScopeManager<T>
         return scope;
     }
 
+    public IEnumerable<T> AsEnumerable() => _scopeStack.Select(s => s.Value);
+
     public sealed class Scope : IDisposable
     {
         private readonly ScopeManager<T> _manager;

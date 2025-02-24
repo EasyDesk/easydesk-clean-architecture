@@ -9,13 +9,13 @@ internal class OutboxFlusher
 {
     private readonly Func<int, bool> _batchPredicate;
     private readonly Option<int> _batchSize;
-    private readonly IUnitOfWorkProvider _unitOfWorkProvider;
+    private readonly IUnitOfWorkManager _unitOfWorkProvider;
     private readonly IOutbox _outbox;
     private readonly ITransport _transport;
 
     public OutboxFlusher(
         OutboxFlushingStrategy flushingStrategy,
-        IUnitOfWorkProvider unitOfWorkProvider,
+        IUnitOfWorkManager unitOfWorkProvider,
         IOutbox outbox,
         ITransport transport)
     {
