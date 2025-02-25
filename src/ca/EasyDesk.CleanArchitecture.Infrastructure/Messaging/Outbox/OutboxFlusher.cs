@@ -9,17 +9,17 @@ internal class OutboxFlusher
 {
     private readonly Func<int, bool> _batchPredicate;
     private readonly Option<int> _batchSize;
-    private readonly IUnitOfWorkManager _unitOfWorkProvider;
+    private readonly IUnitOfWorkManager _unitOfWorkManager;
     private readonly IOutbox _outbox;
     private readonly ITransport _transport;
 
     public OutboxFlusher(
         OutboxFlushingStrategy flushingStrategy,
-        IUnitOfWorkManager unitOfWorkProvider,
+        IUnitOfWorkManager unitOfWorkManager,
         IOutbox outbox,
         ITransport transport)
     {
-        _unitOfWorkProvider = unitOfWorkProvider;
+        _unitOfWorkManager = unitOfWorkManager;
         _outbox = outbox;
         _transport = transport;
         _batchPredicate = flushingStrategy switch
@@ -40,7 +40,7 @@ internal class OutboxFlusher
 
     public async Task Flush()
     {
-        await _unitOfWorkProvider.RunTransactionally(FlushWithinTransaction);
+        await _unitOfWorkManager.RunTransactionally(FlushWithinTransaction);
     }
 
     private async Task FlushWithinTransaction()

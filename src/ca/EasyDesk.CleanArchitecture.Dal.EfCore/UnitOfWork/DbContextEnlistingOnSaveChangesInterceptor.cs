@@ -4,11 +4,11 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
 internal class DbContextEnlistingOnSaveChangesInterceptor : SaveChangesInterceptor
 {
-    private readonly EfCoreUnitOfWorkManager _unitOfWorkProvider;
+    private readonly EfCoreUnitOfWorkManager _unitOfWorkManager;
 
-    public DbContextEnlistingOnSaveChangesInterceptor(EfCoreUnitOfWorkManager unitOfWorkProvider)
+    public DbContextEnlistingOnSaveChangesInterceptor(EfCoreUnitOfWorkManager unitOfWorkManager)
     {
-        _unitOfWorkProvider = unitOfWorkProvider;
+        _unitOfWorkManager = unitOfWorkManager;
     }
 
     public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
@@ -16,7 +16,7 @@ internal class DbContextEnlistingOnSaveChangesInterceptor : SaveChangesIntercept
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-        await _unitOfWorkProvider.EnlistDbContextForCurrentTransaction(eventData.Context!);
+        await _unitOfWorkManager.EnlistDbContextForCurrentTransaction(eventData.Context!);
         return result;
     }
 }

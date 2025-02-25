@@ -33,7 +33,7 @@ public class ContextModule : AppModule
     }
 }
 
-public static class ContextProviderModuleExtensions
+public static class ContextModuleExtensions
 {
     public static IAppBuilder AddContextDetector(this IAppBuilder builder)
     {
