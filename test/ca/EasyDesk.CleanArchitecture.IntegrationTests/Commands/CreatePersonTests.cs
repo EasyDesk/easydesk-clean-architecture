@@ -363,9 +363,48 @@ public class CreatePersonTests : SampleIntegrationTest
             {
                 FirstName = "Mario",
                 LastName = "Facher",
-                DateOfBirth = Clock.GetCurrentInstant().InUtc().Date.PlusYears(1),
+                DateOfBirth = Clock.GetCurrentInstant().InUtc().Date.PlusYears(-1),
                 Residence = _body.Residence,
             })
+            .Send()
+            .Verify();
+
+        var people = await Http.GetPeople().Send().AsVerifiableEnumerable();
+        people.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ShouldSucceed_CreatePeople_WithInvalidEntry_CausingErrorInHandler_IfEntryErrorIsIgnored()
+    {
+        await Http.CreatePeople(
+            [
+                new CreatePersonBodyDto()
+                {
+                    FirstName = "Mario",
+                    LastName = "Facher",
+                    DateOfBirth = new LocalDate(1992, 3, 12),
+                    Residence = _body.Residence,
+                },
+                new CreatePersonBodyDto()
+                {
+                    FirstName = "skip",
+                    LastName = "asd",
+                    DateOfBirth = new LocalDate(1992, 3, 12),
+                    Residence = _body.Residence,
+                },
+                new CreatePersonBodyDto()
+                {
+                    FirstName = "Mario",
+                    LastName = "Facher",
+                    DateOfBirth = new LocalDate(1992, 3, 12),
+                    Residence = _body.Residence,
+                }
+            ])
+            .Send()
+            .EnsureSuccess();
+
+        await Http
+            .GetPeople()
             .Send()
             .Verify();
     }

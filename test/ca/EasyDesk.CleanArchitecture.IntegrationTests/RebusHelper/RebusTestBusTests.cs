@@ -40,8 +40,8 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
     private record Event(int Value) : IEvent;
 
-    private const string SenderAddress = "sender";
-    private const string ReceiverAddress = "receiver";
+    private readonly string _senderAddress;
+    private readonly string _receiverAddress;
 
     private static readonly Duration _defaultTimeout = Duration.FromSeconds(10);
     private static readonly Duration _computationSlack = Duration.FromMilliseconds(500);
@@ -55,8 +55,10 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     public RebusTestBusTests(RabbitMqContainerFixture rabbitMqContainerFixture)
     {
         _rabbitMqConnection = rabbitMqContainerFixture.RabbitMq.GetConnectionString();
-        _sender = CreateBus(SenderAddress);
-        _receiver = CreateBus(ReceiverAddress);
+        _senderAddress = $"sender-{Guid.NewGuid()}";
+        _receiverAddress = $"receiver-{Guid.NewGuid()}";
+        _sender = CreateBus(_senderAddress);
+        _receiver = CreateBus(_receiverAddress);
     }
 
     private RebusTestBusEndpoint CreateBus(string endpoint)
@@ -64,7 +66,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         return new RebusTestBusEndpoint(
             rebus => rebus
                 .Transport(t => t.UseRabbitMq(_rabbitMqConnection, endpoint))
-                .Routing(r => r.TypeBased().MapFallback(ReceiverAddress)),
+                .Routing(r => r.TypeBased().MapFallback(_receiverAddress)),
             _tenantManager);
     }
 

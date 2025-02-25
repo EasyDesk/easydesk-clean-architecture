@@ -14,10 +14,10 @@ public sealed class UnitOfWorkStep<T, R> : IPipelineStep<T, R>
         _unitOfWorkProvider = unitOfWorkProvider;
     }
 
-    public bool IsForEachHandler => false;
+    public bool IsForEachHandler => true;
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return await _unitOfWorkProvider.RunTransactionally<R>(() => next());
+        return await _unitOfWorkProvider.RunTransactionally(() => next());
     }
 }

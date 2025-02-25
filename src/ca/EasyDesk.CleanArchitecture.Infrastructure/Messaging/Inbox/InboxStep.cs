@@ -17,8 +17,6 @@ public sealed class InboxStep<T> : IPipelineStep<T, Nothing>
         _inbox = inbox;
     }
 
-    public bool IsForEachHandler => false;
-
     public async Task<Result<Nothing>> Run(T request, NextPipelineStep<Nothing> next)
     {
         if (MessageContext.Current is null)

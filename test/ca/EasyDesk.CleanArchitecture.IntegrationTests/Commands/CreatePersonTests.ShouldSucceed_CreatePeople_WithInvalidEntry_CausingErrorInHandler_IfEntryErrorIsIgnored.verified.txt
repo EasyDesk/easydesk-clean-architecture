@@ -1,0 +1,40 @@
+﻿[
+  {
+    Id: Guid_1,
+    FirstName: Mario,
+    LastName: Facher,
+    DateOfBirth: LocalDate_1,
+    CreatedBy: test-admin,
+    Residence: {
+      StreetName: Calvin,
+      StreetType: street,
+      StreetNumber: 15,
+      City: Brooklyn,
+      District: New York,
+      Province: null,
+      Region: null,
+      State: New York State,
+      Country: USA
+    },
+    Approved: true
+  },
+  {
+    Id: Guid_2,
+    FirstName: Mario,
+    LastName: Facher,
+    DateOfBirth: LocalDate_1,
+    CreatedBy: test-admin,
+    Residence: {
+      StreetName: Calvin,
+      StreetType: street,
+      StreetNumber: 15,
+      City: Brooklyn,
+      District: New York,
+      Province: null,
+      Region: null,
+      State: New York State,
+      Country: USA
+    },
+    Approved: true
+  }
+]

@@ -16,7 +16,7 @@ internal class TransactionEnlistingOnCommandInterceptor : DbCommandInterceptor
     {
         _unitOfWorkProvider.CurrentTransaction.IfPresent(t =>
         {
-            result.Transaction = t.DbTransaction;
+            result.Transaction = t;
         });
         return result;
     }

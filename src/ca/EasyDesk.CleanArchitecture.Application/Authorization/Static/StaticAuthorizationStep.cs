@@ -18,8 +18,6 @@ public sealed class StaticAuthorizationStep<T, R> : IPipelineStep<T, R>
         _authorizationProvider = authorizationProvider;
     }
 
-    public bool IsForEachHandler => false;
-
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         return await _authorizationProvider.GetAuthorizationInfo().ThenMatchAsync(

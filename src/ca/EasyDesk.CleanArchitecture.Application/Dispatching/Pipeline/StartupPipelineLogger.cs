@@ -17,21 +17,28 @@ public sealed class StartupPipelineLogger : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        var stepsList = _steps.Select((s, i) => $"{i + 1,3}. {s.Namespace}.{s.Name.Split('`')[0]}").ToList().AsEnumerable();
+        LogPipeline(_steps, "Main use case pipeline");
+        return Task.CompletedTask;
+    }
+
+    private void LogPipeline(IEnumerable<Type> steps, string name)
+    {
+        var stepsList = steps.Select((s, i) => $"{i + 1,3}. {s.Namespace}.{s.Name.Split('`')[0]}").ToList().AsEnumerable();
         _logger.LogInformation(
             """
 
             -------------------------------------------------------------------------------
-                                           Request pipeline
+            {spacesForName}{name}
             -------------------------------------------------------------------------------
             {stepsList}
             ----------------------------------- Handler -----------------------------------
             {reversedStepsList}
             -------------------------------------------------------------------------------
             """,
+            new string(' ', 39 - name.Length / 2),
+            name,
             stepsList.ConcatStrings("\n"),
             stepsList.Reverse().ConcatStrings("\n"));
-        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

@@ -17,8 +17,6 @@ public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
         _lifetimeScope = lifetimeScope;
     }
 
-    public bool IsForEachHandler => false;
-
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next) =>
         request switch
         {

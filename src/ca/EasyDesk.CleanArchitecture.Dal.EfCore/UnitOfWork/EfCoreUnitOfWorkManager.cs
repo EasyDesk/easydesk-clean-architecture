@@ -11,6 +11,8 @@ internal class EfCoreUnitOfWorkManager : UnitOfWorkManager<EfCoreUnitOfWork>
     private readonly DbConnection _connection;
     private int _savepointCounter = 0;
 
+    private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
+
     public EfCoreUnitOfWorkManager(DbConnection connection)
     {
         _connection = connection;
@@ -18,22 +20,24 @@ internal class EfCoreUnitOfWorkManager : UnitOfWorkManager<EfCoreUnitOfWork>
 
     public string SavePointName() => $"_savepoint_{++_savepointCounter}";
 
-    public Option<EfCoreTransactionUnitOfWork> CurrentTransaction => MainUnitOfWork.Map(uow => (EfCoreTransactionUnitOfWork)uow);
+    public Option<DbTransaction> CurrentTransaction => CurrentUnitOfWork.Map(uow => uow.DbTransaction);
 
     protected override async Task<EfCoreUnitOfWork> CreateTransaction()
     {
-        if (MainUnitOfWork.IsAbsent(out var main))
+        if (CurrentTransaction.IsAbsent(out var transaction))
         {
             if (_connection.State is ConnectionState.Closed)
             {
                 await _connection.OpenAsync();
             }
-            var transaction = await _connection.BeginTransactionAsync();
+            transaction = await _connection.BeginTransactionAsync();
             return new EfCoreTransactionUnitOfWork(transaction);
         }
         else
         {
-            return new EfCoreSavepointUnitOfWork(SavePointName(), main.DbTransaction);
+            var savepoint = SavePointName();
+            await transaction.SaveAsync(savepoint);
+            return new EfCoreSavepointUnitOfWork(savepoint, transaction);
         }
     }
 
@@ -43,10 +47,23 @@ internal class EfCoreUnitOfWorkManager : UnitOfWorkManager<EfCoreUnitOfWork>
         {
             throw new InvalidOperationException($"Unit of work was not started when registering DbContext of type {context.GetType()} to the transaction");
         }
-        await CurrentTransaction.IfPresentAsync(uow => uow.EnlistDbContext(context));
+        await EnlistDbContext(context);
     }
 
     protected override Task Commit(EfCoreUnitOfWork transaction) => transaction.Commit();
 
     protected override Task Rollback(EfCoreUnitOfWork transaction) => transaction.Rollback();
+
+    private async Task EnlistDbContext(DbContext dbContext)
+    {
+        if (_registeredDbContexts.Contains(dbContext))
+        {
+            return;
+        }
+        await CurrentTransaction.IfPresentAsync(async transaction =>
+        {
+            await dbContext.Database.UseTransactionAsync(transaction);
+            _registeredDbContexts.Add(dbContext);
+        });
+    }
 }

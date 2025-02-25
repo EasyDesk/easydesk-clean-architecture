@@ -36,6 +36,10 @@ public class CreatePeopleHandler : IHandler<CreatePeople, IEnumerable<PersonDto>
         foreach (var createPerson in request.People)
         {
             var result = await _dispatcher.Dispatch(createPerson);
+            if (result.IsFailure && createPerson.FirstName == "skip")
+            {
+                continue;
+            }
             if (result.IsFailure)
             {
                 return result.ReadError();

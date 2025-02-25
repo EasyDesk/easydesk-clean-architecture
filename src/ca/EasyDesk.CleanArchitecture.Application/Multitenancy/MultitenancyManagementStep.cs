@@ -23,8 +23,6 @@ public sealed class MultitenancyManagementStep<T, R> : IPipelineStep<T, R>
         _defaultPolicy = defaultPolicy;
     }
 
-    public bool IsForEachHandler => false;
-
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         var policy = GetPolicyForRequest(request);

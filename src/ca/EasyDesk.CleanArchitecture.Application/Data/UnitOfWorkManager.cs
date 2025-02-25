@@ -9,8 +9,6 @@ public abstract class UnitOfWorkManager<T> : IUnitOfWorkManager where T : IDispo
 {
     private readonly ScopeManager<Option<T>> _scopeManager = new(None);
 
-    protected Option<T> MainUnitOfWork => _scopeManager.AsEnumerable().FirstOrDefault();
-
     protected Option<T> CurrentUnitOfWork => _scopeManager.Current;
 
     public async Task<Result<R>> RunTransactionally<R>(AsyncFunc<Result<R>> action)

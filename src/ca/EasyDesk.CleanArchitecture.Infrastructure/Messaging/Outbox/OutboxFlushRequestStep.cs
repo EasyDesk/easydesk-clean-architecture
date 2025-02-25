@@ -12,8 +12,6 @@ public class OutboxFlushRequestStep<T, R> : IPipelineStep<T, R>
         _outboxTransactionHelper = outboxTransactionHelper;
     }
 
-    public bool IsForEachHandler => false;
-
     public Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         return next().ThenIfSuccess(_ => _outboxTransactionHelper.RequestNewFlushIfNecessary());

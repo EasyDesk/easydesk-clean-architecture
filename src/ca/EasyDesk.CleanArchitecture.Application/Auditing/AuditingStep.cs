@@ -30,8 +30,6 @@ public sealed class AuditingStep<T, R> : IPipelineStep<T, R>
         _clock = clock;
     }
 
-    public bool IsForEachHandler => false;
-
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         var result = await next();

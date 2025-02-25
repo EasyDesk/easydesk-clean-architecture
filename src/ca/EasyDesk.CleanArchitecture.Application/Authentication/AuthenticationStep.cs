@@ -46,6 +46,4 @@ public class AuthenticationStep<T, R> : IPipelineStep<T, R>
             _ => throw new UnreachableException(),
         };
     }
-
-    public bool IsForEachHandler => false;
 }

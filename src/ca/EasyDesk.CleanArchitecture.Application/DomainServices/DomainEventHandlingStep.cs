@@ -18,6 +18,6 @@ public sealed class DomainEventHandlingStep<T, R> : IPipelineStep<T, R>
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return await next().ThenIfSuccessAsync(_ => _eventQueue.Flush());
+        return await next().ThenFlatTapAsync(_ => _eventQueue.Flush());
     }
 }

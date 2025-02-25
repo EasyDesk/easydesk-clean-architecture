@@ -15,8 +15,6 @@ public sealed class ValidationStep<T, R> : IPipelineStep<T, R>
         _componentContext = componentContext;
     }
 
-    public bool IsForEachHandler => false;
-
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         var validators = _componentContext.Resolve<IEnumerable<IValidator<T>>>().ToList();

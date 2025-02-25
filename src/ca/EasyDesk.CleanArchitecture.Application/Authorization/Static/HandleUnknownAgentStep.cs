@@ -15,8 +15,6 @@ public class HandleUnknownAgentStep<T, R> : IPipelineStep<T, R>
         _agentProvider = agentProvider;
     }
 
-    public bool IsForEachHandler => false;
-
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
         return request switch

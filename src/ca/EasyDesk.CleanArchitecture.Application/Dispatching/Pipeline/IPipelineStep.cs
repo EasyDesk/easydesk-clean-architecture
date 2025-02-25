@@ -8,7 +8,7 @@ public interface IPipelineStep<in T, R>
 {
     Task<Result<R>> Run(T request, NextPipelineStep<R> next);
 
-    bool IsForEachHandler { get; }
+    virtual bool IsForEachHandler { get => false; }
 }
 
 public delegate Task<Result<R>> NextPipelineStep<R>();
