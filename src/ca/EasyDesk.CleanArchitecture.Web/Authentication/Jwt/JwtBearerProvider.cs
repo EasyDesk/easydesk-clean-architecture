@@ -31,6 +31,10 @@ public class JwtBearerProvider : IAuthenticationProvider
                 builder.RegisterType<JwtFacade>()
                     .SingleInstance()
                     .IfNotRegistered(typeof(JwtFacade));
+
+                builder.RegisterType<JwtLogger>()
+                    .SingleInstance()
+                    .IfNotRegistered(typeof(JwtLogger));
             })
             .ConfigureServices(services =>
             {
