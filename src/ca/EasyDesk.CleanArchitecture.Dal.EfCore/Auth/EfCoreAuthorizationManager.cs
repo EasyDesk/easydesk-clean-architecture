@@ -27,7 +27,6 @@ internal class EfCoreAuthorizationManager : IIdentityRolesManager, IAgentRolesPr
             .Aggregate(PredicateBuilder.Or);
         return _context
             .IdentityRoles
-            .AsEx
             .Where(predicate);
     }
 
