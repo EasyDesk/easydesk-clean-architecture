@@ -8,6 +8,7 @@ using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Messaging;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Failures;
@@ -236,7 +237,7 @@ public class RebusMessagingModule : AppModule
     private void AddOutboxServices(ContainerBuilder builder, Lazy<ITransport> originalTransport)
     {
         builder.RegisterType<OutboxTransactionHelper>()
-            .InstancePerLifetimeScope();
+            .InstancePerUseCase();
 
         if (Options.OutboxOptions.PeriodicTaskEnabled)
         {

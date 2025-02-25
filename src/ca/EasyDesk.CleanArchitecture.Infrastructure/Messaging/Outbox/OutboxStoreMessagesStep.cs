@@ -5,17 +5,17 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 
 public class OutboxStoreMessagesStep<T, R> : IPipelineStep<T, R>
 {
-    private readonly OutboxTransactionHelper _outboxTransactionHelper;
+    private readonly IOutbox _outbox;
 
-    public OutboxStoreMessagesStep(OutboxTransactionHelper outboxTransactionHelper)
+    public OutboxStoreMessagesStep(IOutbox outbox)
     {
-        _outboxTransactionHelper = outboxTransactionHelper;
+        _outbox = outbox;
     }
 
     public bool IsForEachHandler => true;
 
     public Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return next().ThenIfSuccess(_ => _outboxTransactionHelper.StoreEnqueuedMessagesIfNecessary());
+        return next().ThenIfSuccessAsync(_ => _outbox.StoreEnqueuedMessages());
     }
 }

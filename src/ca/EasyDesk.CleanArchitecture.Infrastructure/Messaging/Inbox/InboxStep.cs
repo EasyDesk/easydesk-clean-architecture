@@ -21,6 +21,11 @@ public sealed class InboxStep<T> : IPipelineStep<T, Nothing>
 
     public async Task<Result<Nothing>> Run(T request, NextPipelineStep<Nothing> next)
     {
+        if (MessageContext.Current is null)
+        {
+            return await next();
+        }
+
         var messageId = MessageContext.Current.TransportMessage.GetMessageId();
         if (await _inbox.HasBeenProcessed(messageId))
         {
