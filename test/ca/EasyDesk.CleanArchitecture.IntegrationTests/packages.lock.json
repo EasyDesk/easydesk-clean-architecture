@@ -859,8 +859,8 @@
       },
       "Npgsql": {
         "type": "Transitive",
-        "resolved": "9.0.2",
-        "contentHash": "hCbO8box7i/XXiTFqCJ3GoowyLqx3JXxyrbOJ6om7dr+eAknvBNhhUHeJVGAQo44sySZTfdVffp4BrtPeLZOAA==",
+        "resolved": "9.0.3",
+        "contentHash": "tPvY61CxOAWxNsKLEBg+oR646X4Bc8UmyQ/tJszL/7mEmIXQnnBhVJZrZEEUv0Bstu0mEsHZD5At3EO8zQRAYw==",
         "dependencies": {
           "Microsoft.Extensions.Logging.Abstractions": "8.0.2"
         }
@@ -1595,7 +1595,7 @@
           "Microsoft.AspNetCore.Mvc.Testing": "[9.0.0, )",
           "Microsoft.Data.SqlClient": "[5.2.2, )",
           "NodaTime.Testing": "[3.2.0, )",
-          "Npgsql": "[9.0.2, )",
+          "Npgsql": "[9.0.3, )",
           "Testcontainers": "[4.1.0, )",
           "Testcontainers.MsSql": "[4.1.0, )",
           "Testcontainers.PostgreSql": "[4.1.0, )",
