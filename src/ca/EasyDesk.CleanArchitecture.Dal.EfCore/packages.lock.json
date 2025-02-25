@@ -2,6 +2,16 @@
   "version": 1,
   "dependencies": {
     "net9.0": {
+      "LinqKit.Microsoft.EntityFrameworkCore": {
+        "type": "Direct",
+        "requested": "[9.0.8, )",
+        "resolved": "9.0.8",
+        "contentHash": "9qVemq8r7eEih29EMTLCj68PeNq/+ZaLTXT9zPBhSdyOMNsdALzdExymKK3UqSMgJmUyOuzYww+kw2h7HlAvJQ==",
+        "dependencies": {
+          "LinqKit.Core": "1.2.8",
+          "Microsoft.EntityFrameworkCore": "9.0.0"
+        }
+      },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Direct",
         "requested": "[9.0.2, )",
@@ -63,6 +73,11 @@
           "FluentValidation": "11.11.0",
           "Microsoft.Extensions.Dependencyinjection.Abstractions": "2.1.0"
         }
+      },
+      "LinqKit.Core": {
+        "type": "Transitive",
+        "resolved": "1.2.8",
+        "contentHash": "F/ZGutPdat2u+nevwACsp09fT1z+fazu0UlZGVeAPSaGCdf/PuOv4hAyJ+7zCmqpADQLtmw9jEfJVPmgQy/8Cg=="
       },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Transitive",

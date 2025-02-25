@@ -99,6 +99,20 @@
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
       },
+      "LinqKit.Core": {
+        "type": "Transitive",
+        "resolved": "1.2.8",
+        "contentHash": "F/ZGutPdat2u+nevwACsp09fT1z+fazu0UlZGVeAPSaGCdf/PuOv4hAyJ+7zCmqpADQLtmw9jEfJVPmgQy/8Cg=="
+      },
+      "LinqKit.Microsoft.EntityFrameworkCore": {
+        "type": "Transitive",
+        "resolved": "9.0.8",
+        "contentHash": "9qVemq8r7eEih29EMTLCj68PeNq/+ZaLTXT9zPBhSdyOMNsdALzdExymKK3UqSMgJmUyOuzYww+kw2h7HlAvJQ==",
+        "dependencies": {
+          "LinqKit.Core": "1.2.8",
+          "Microsoft.EntityFrameworkCore": "9.0.0"
+        }
+      },
       "Microsoft.AspNet.WebApi.Client": {
         "type": "Transitive",
         "resolved": "6.0.0",
@@ -610,6 +624,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
+          "LinqKit.Microsoft.EntityFrameworkCore": "[9.0.8, )",
           "Microsoft.EntityFrameworkCore.Relational": "[9.0.2, )"
         }
       },

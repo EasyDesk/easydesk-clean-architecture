@@ -4,6 +4,7 @@ using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Commons.Collections.Immutable;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Immutable;
 
@@ -23,7 +24,7 @@ internal class EfCoreAuthorizationManager : IIdentityRolesManager, IAgentRolesPr
         var predicate = agent
             .Identities
             .Values
-            .Select(i => PredicateBuilder.Create<IdentityRoleModel>(r => r.Identity == i.Id && r.Realm == i.Realm))
+            .Select(i => PredicateBuilder.New<IdentityRoleModel>().Start(r => r.Identity == i.Id && r.Realm == i.Realm))
             .Aggregate(PredicateBuilder.Or);
         return _context
             .IdentityRoles
