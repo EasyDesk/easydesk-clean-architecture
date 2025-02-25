@@ -49,11 +49,11 @@
       },
       "Testcontainers.MsSql": {
         "type": "Direct",
-        "requested": "[4.1.0, )",
-        "resolved": "4.1.0",
-        "contentHash": "DjNSX/5lOSEpkQvvZ5btBKs+iPshbWSjpKdcvS6yCSgYrykhSneRC+23Tl/2O4U6FGM13Dxp2C/VEtBePR84uw==",
+        "requested": "[4.3.0, )",
+        "resolved": "4.3.0",
+        "contentHash": "cuFPklU0tcFB0X2KyUNMBoPFMxmUCG793Jj0SNIWni+LG7YgUp3r6T2jbwAWKZHpFS3/Q/SIvpUPfcgB1pAd3g==",
         "dependencies": {
-          "Testcontainers": "4.1.0"
+          "Testcontainers": "4.3.0"
         }
       },
       "Testcontainers.PostgreSql": {
@@ -174,6 +174,11 @@
           "System.Text.Json": "4.7.2",
           "System.Threading.Tasks.Extensions": "4.5.4"
         }
+      },
+      "BouncyCastle.Cryptography": {
+        "type": "Transitive",
+        "resolved": "2.4.0",
+        "contentHash": "SwXsAV3sMvAU/Nn31pbjhWurYSjJ+/giI/0n6tCrYoupEK34iIHCuk3STAd9fx8yudM85KkLSVdn951vTng/vQ=="
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -994,8 +999,11 @@
       },
       "SSH.NET": {
         "type": "Transitive",
-        "resolved": "2024.1.0",
-        "contentHash": "pyOea9czgC+OwMoetuWtMuwRebOyskKkqTZtODgyEZ5K6JwV+Hh/GFiyYubl93YnEvmvNZeuyWyUDsb3LvBDYA=="
+        "resolved": "2024.2.0",
+        "contentHash": "9r+4UF2P51lTztpd+H7SJywk7WgmlWB//Cm2o96c6uGVZU5r58ys2/cD9pCgTk0zCdSkfflWL1WtqQ9I4IVO9Q==",
+        "dependencies": {
+          "BouncyCastle.Cryptography": "2.4.0"
+        }
       },
       "StyleCop.Analyzers.Unstable": {
         "type": "Transitive",
@@ -1427,13 +1435,13 @@
       },
       "Testcontainers": {
         "type": "Transitive",
-        "resolved": "4.1.0",
-        "contentHash": "5oudr81h9084amKZrjVIWdVWycR2YhqT9ePnN/ID7xinwx3ZLAI4EhYiyurfrDMvWcHJp5+c9x+qPRxOcq1IXQ==",
+        "resolved": "4.3.0",
+        "contentHash": "1cxsjDE2+rdi/ELOel+NbQhQ7tvaqXG2YDN6nmhDzyAu9baGM2FUENG/3eG7N+ak3nap35RFvxyhIdVBeqNwlA==",
         "dependencies": {
           "Docker.DotNet.Enhanced": "3.126.1",
           "Docker.DotNet.Enhanced.X509": "3.126.1",
-          "Microsoft.Extensions.Logging.Abstractions": "8.0.2",
-          "SSH.NET": "2024.1.0",
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.3",
+          "SSH.NET": "2024.2.0",
           "SharpZipLib": "1.4.2"
         }
       },
@@ -1596,8 +1604,8 @@
           "Microsoft.Data.SqlClient": "[5.2.2, )",
           "NodaTime.Testing": "[3.2.0, )",
           "Npgsql": "[9.0.2, )",
-          "Testcontainers": "[4.1.0, )",
-          "Testcontainers.MsSql": "[4.1.0, )",
+          "Testcontainers": "[4.3.0, )",
+          "Testcontainers.MsSql": "[4.3.0, )",
           "Testcontainers.PostgreSql": "[4.1.0, )",
           "Verify.Xunit": "[28.8.1, )"
         }
