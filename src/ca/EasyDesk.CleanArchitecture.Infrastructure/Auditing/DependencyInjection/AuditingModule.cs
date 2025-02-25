@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Auditing;
+using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
@@ -18,7 +19,8 @@ public class AuditingModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline => pipeline
             .AddStep(typeof(AuditingStep<,>))
             .After(typeof(UnitOfWorkStep<,>))
-            .After(typeof(MultitenancyManagementStep<,>)));
+            .After(typeof(MultitenancyManagementStep<,>))
+            .After(typeof(AuthenticationStep<,>)));
     }
 
     protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
