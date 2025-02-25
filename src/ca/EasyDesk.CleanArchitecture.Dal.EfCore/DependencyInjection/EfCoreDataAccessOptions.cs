@@ -89,7 +89,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
             builder.RegisterType<EfCoreUnitOfWorkManager>()
                 .AsSelf()
                 .As<IUnitOfWorkManager>()
-                .InstancePerUseCase(); // TODO: check if .AsSelf() is needed.
+                .InstancePerUseCase();
 
             builder.Register(c => MigrationCommand(c.Resolve<MigrationsService>()));
         });

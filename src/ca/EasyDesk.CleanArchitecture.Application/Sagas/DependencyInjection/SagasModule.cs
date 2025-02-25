@@ -15,6 +15,17 @@ namespace EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 
 public class SagasModule : AppModule
 {
+    public override void BeforeServiceConfiguration(AppDescription app)
+    {
+        app.ConfigureDispatchingPipeline(pipeline =>
+        {
+            pipeline
+                .AddStepAfterAll(typeof(SaveSagaChangesStep<,>))
+                .Before(typeof(SaveChangesStep<,>))
+                .Before(typeof(DomainEventHandlingStep<,>));
+        });
+    }
+
     protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
         app.RequireModule<DataAccessModule>().Implementation.AddSagas(registry, app);
@@ -41,13 +52,6 @@ public class SagasModule : AppModule
 
         builder.RegisterType<SagaRegistry>()
             .InstancePerLifetimeScope();
-        app.ConfigureDispatchingPipeline(pipeline =>
-        {
-            pipeline
-                .AddStepAfterAll(typeof(SaveSagaChangesStep<,>))
-                .Before(typeof(SaveChangesStep<,>))
-                .Before(typeof(DomainEventHandlingStep<,>));
-        });
     }
 
     private void ConfigureSaga<TId, TState, TController>(ContainerBuilder builder)
