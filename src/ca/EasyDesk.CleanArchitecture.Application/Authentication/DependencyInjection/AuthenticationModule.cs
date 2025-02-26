@@ -12,10 +12,8 @@ namespace EasyDesk.CleanArchitecture.Application.Authentication.DependencyInject
 
 public class AuthenticationModule : AppModule
 {
-    public AuthenticationModule(Action<AuthenticationModuleOptions> configure)
+    public AuthenticationModule(AuthenticationModuleOptions options)
     {
-        var options = new AuthenticationModuleOptions();
-        configure(options);
         if (options.Schemes.Count == 0)
         {
             throw new Exception("No authentication scheme was specified");
@@ -70,7 +68,7 @@ public static class AuthenticationModuleExtensions
 {
     public static IAppBuilder AddAuthentication(this IAppBuilder builder, Action<AuthenticationModuleOptions> configure)
     {
-        return builder.AddModule(new AuthenticationModule(configure));
+        return builder.AddModule(new AuthenticationModule(new AuthenticationModuleOptions().Also(configure)));
     }
 
     public static bool HasAuthentication(this AppDescription app) => app.HasModule<AuthenticationModule>();

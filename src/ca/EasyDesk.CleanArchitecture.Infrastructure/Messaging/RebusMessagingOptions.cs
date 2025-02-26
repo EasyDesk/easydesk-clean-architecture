@@ -80,7 +80,7 @@ public sealed class RebusMessagingOptions
     {
         var transport = context.Resolve<RebusTransportConfiguration>();
 
-        configurer.Transport(t => transport(t, endpoint.InputQueueAddress));
+        configurer.Transport(t => transport(t, endpoint));
 
         configurer.Routing(r =>
         {

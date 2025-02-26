@@ -28,7 +28,7 @@ public static class RebusFixtureExtensions
             {
                 builder.RegisterDecorator<RebusTransportConfiguration>((_, _, _) => (t, e) =>
                 {
-                    t.UseInMemoryTransport(network, e, registerSubscriptionStorage: false);
+                    t.UseInMemoryTransport(network, e.InputQueueAddress, registerSubscriptionStorage: false);
                     t.OtherService<ISubscriptionStorage>().StoreInMemory(subscriberStore);
                 });
                 builder.RegisterType<RebusResettingTask>().As<IHostedService>().SingleInstance();
@@ -55,7 +55,7 @@ public static class RebusFixtureExtensions
 
                 var transport = lifetimeScope.Resolve<RebusTransportConfiguration>();
                 rebus
-                    .Transport(t => transport(t, address))
+                    .Transport(t => transport(t, new(address)))
                     .UseNodaTimeClock(lifetimeScope.Resolve<IClock>())
                     .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(store, c.Get<IRebusTime>())))
                     .Options(o =>

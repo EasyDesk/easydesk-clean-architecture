@@ -16,12 +16,12 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
 public class JwtBearerProvider : IAuthenticationProvider
 {
-    public JwtBearerProvider(Lazy<JwtBearerOptions> options)
+    public JwtBearerProvider(JwtBearerOptions options)
     {
         Options = options;
     }
 
-    public Lazy<JwtBearerOptions> Options { get; }
+    public JwtBearerOptions Options { get; }
 
     public void AddUtilityServices(ServiceRegistry registry, AppDescription app, string scheme)
     {
@@ -55,17 +55,17 @@ public class JwtBearerProvider : IAuthenticationProvider
     }
 
     public IAuthenticationHandler CreateHandler(IComponentContext context, string scheme) => new JwtBearerHandler(
-        Options.Value,
+        Options,
         context.Resolve<JwtFacade>(),
         context.Resolve<IHttpContextAccessor>());
 }
 
 public class JwtBearerOptions
 {
-    public JwtValidationConfiguration Configuration { get; private set; } =
-        JwtValidationConfiguration.FromKey(KeyUtils.RandomKey());
+    public Lazy<JwtValidationConfiguration> Configuration { get; private set; } =
+        new(JwtValidationConfiguration.FromKey(KeyUtils.RandomKey()));
 
-    public JwtBearerOptions ConfigureValidationParameters(JwtValidationConfiguration configure)
+    public JwtBearerOptions ConfigureValidationParameters(Lazy<JwtValidationConfiguration> configure)
     {
         Configuration = configure;
         return this;
@@ -74,7 +74,7 @@ public class JwtBearerOptions
     public JwtBearerOptions LoadParametersFromConfiguration(
         IConfiguration configuration, string sectionName = JwtConfigurationUtils.DefaultConfigurationSectionName)
     {
-        return ConfigureValidationParameters(configuration.GetJwtValidationConfiguration(sectionName));
+        return ConfigureValidationParameters(new(() => configuration.GetJwtValidationConfiguration(sectionName)));
     }
 }
 
@@ -93,7 +93,7 @@ internal class JwtBearerHandler : TokenAuthenticationHandler
         TokenReaders.Bearer()(httpContext);
 
     protected override Task<Result<Agent>> ValidateToken(string token) => Task.FromResult(_jwtFacade
-        .Validate(token, _options.Configuration.ConfigureBuilder)
+        .Validate(token, _options.Configuration.Value.ConfigureBuilder)
         .Map(c => c.ToAgent()));
 
     protected override string GetErrorMessage(Error error) => error switch

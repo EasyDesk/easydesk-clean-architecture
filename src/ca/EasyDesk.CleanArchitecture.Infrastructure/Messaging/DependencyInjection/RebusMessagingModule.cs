@@ -274,11 +274,13 @@ public class RebusMessagingModule : AppModule
 
 public static class RebusMessagingModuleExtensions
 {
-    public static IAppBuilder AddRebusMessaging(this IAppBuilder builder, string inputQueueAddress, RebusTransportConfiguration transport, Action<RebusMessagingOptions>? configure = null)
+    public static IAppBuilder AddRebusMessaging(
+        this IAppBuilder builder,
+        string inputQueueAddress,
+        RebusTransportConfiguration transport,
+        Action<RebusMessagingOptions>? configure = null)
     {
-        var options = new RebusMessagingOptions();
-        configure?.Invoke(options);
-        return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), transport, options));
+        return builder.AddModule(new RebusMessagingModule(new(inputQueueAddress), transport, new RebusMessagingOptions().Also(configure)));
     }
 
     public static bool HasRebusMessaging(this AppDescription app) => app.HasModule<RebusMessagingModule>();

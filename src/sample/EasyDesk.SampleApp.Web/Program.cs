@@ -80,7 +80,7 @@ switch (provider)
 
 builder.AddRebusMessaging(
     "sample",
-    (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e),
+    (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e.InputQueueAddress),
     options =>
     {
         options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
