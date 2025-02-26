@@ -15,9 +15,9 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
 
 public class ApiKeyProvider : IAuthenticationProvider
 {
-    private readonly ApiKeyOptions _options;
+    private readonly Lazy<ApiKeyOptions> _options;
 
-    public ApiKeyProvider(ApiKeyOptions options)
+    public ApiKeyProvider(Lazy<ApiKeyOptions> options)
     {
         _options = options;
     }
@@ -50,7 +50,7 @@ public class ApiKeyProvider : IAuthenticationProvider
     }
 
     public IAuthenticationHandler CreateHandler(IComponentContext context, string scheme) => new ApiKeyHandler(
-        _options,
+        _options.Value,
         context.Resolve<ApiKeyValidator>(),
         context.Resolve<IHttpContextAccessor>());
 }

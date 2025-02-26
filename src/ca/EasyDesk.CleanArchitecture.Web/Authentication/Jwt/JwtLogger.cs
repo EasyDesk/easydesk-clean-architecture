@@ -25,7 +25,7 @@ public class JwtLogger
     public void LogForgedJwt(Agent agent, string? schemeName = null)
     {
         var jwtBearerProvider = FindJwtBearerProvider(schemeName);
-        var jwtConfiguration = jwtBearerProvider.Options.Configuration.ToJwtGenerationConfiguration();
+        var jwtConfiguration = jwtBearerProvider.Options.Value.Configuration.ToJwtGenerationConfiguration();
         var jwt = _jwtFacade.Create(agent.ToClaimsIdentity(), jwtConfiguration.ConfigureBuilder);
         _logger.LogWarning("Forged JWT: {jwt}", jwt);
     }

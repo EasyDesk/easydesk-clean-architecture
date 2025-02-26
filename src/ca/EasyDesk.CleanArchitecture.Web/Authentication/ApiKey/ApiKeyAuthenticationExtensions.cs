@@ -9,9 +9,7 @@ public static class ApiKeyAuthenticationExtensions
         string schemeName,
         Action<ApiKeyOptions>? configureOptions = default)
     {
-        var apiKeyOptions = new ApiKeyOptions();
-        configureOptions?.Invoke(apiKeyOptions);
-        return options.AddScheme(schemeName, new ApiKeyProvider(apiKeyOptions));
+        return options.AddScheme(schemeName, new ApiKeyProvider(new(() => new ApiKeyOptions().Also(configureOptions))));
     }
 
     public static AuthenticationModuleOptions AddApiKey(
