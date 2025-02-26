@@ -40,5 +40,5 @@ public static class TestHttpAuthentication
     private static ITestHttpAuthentication GetJwtAuthenticationConfiguration(IComponentContext componentContext, JwtBearerProvider jwtProvider) =>
         new JwtHttpAuthentication(
             componentContext.Resolve<JwtFacade>(),
-            jwtProvider.Options.Configuration.Value.ToJwtGenerationConfiguration());
+            jwtProvider.Options.Configuration.ToJwtGenerationConfiguration());
 }

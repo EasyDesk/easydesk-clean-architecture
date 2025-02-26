@@ -62,10 +62,10 @@ public class JwtBearerProvider : IAuthenticationProvider
 
 public class JwtBearerOptions
 {
-    public Lazy<JwtValidationConfiguration> Configuration { get; private set; } =
-        new(JwtValidationConfiguration.FromKey(KeyUtils.RandomKey()));
+    public JwtValidationConfiguration Configuration { get; private set; } =
+        JwtValidationConfiguration.FromKey(KeyUtils.RandomKey());
 
-    public JwtBearerOptions ConfigureValidationParameters(Lazy<JwtValidationConfiguration> configure)
+    public JwtBearerOptions ConfigureValidationParameters(JwtValidationConfiguration configure)
     {
         Configuration = configure;
         return this;
@@ -74,7 +74,7 @@ public class JwtBearerOptions
     public JwtBearerOptions LoadParametersFromConfiguration(
         IConfiguration configuration, string sectionName = JwtConfigurationUtils.DefaultConfigurationSectionName)
     {
-        return ConfigureValidationParameters(new(() => configuration.GetJwtValidationConfiguration(sectionName)));
+        return ConfigureValidationParameters(configuration.GetJwtValidationConfiguration(sectionName));
     }
 }
 
@@ -93,7 +93,7 @@ internal class JwtBearerHandler : TokenAuthenticationHandler
         TokenReaders.Bearer()(httpContext);
 
     protected override Task<Result<Agent>> ValidateToken(string token) => Task.FromResult(_jwtFacade
-        .Validate(token, _options.Configuration.Value.ConfigureBuilder)
+        .Validate(token, _options.Configuration.ConfigureBuilder)
         .Map(c => c.ToAgent()));
 
     protected override string GetErrorMessage(Error error) => error switch
