@@ -51,9 +51,9 @@
       },
       "Verify": {
         "type": "Direct",
-        "requested": "[28.12.1, )",
-        "resolved": "28.12.1",
-        "contentHash": "edO8nBG7XlQU/eA+6nTjMbX/dep82+ID18oi84K4eu979LVgmjbqy8OlBwpUW3yVpQZryxOQtuG/G+fJ3AYJYg==",
+        "requested": "[28.13.0, )",
+        "resolved": "28.13.0",
+        "contentHash": "r/B8R7yDC+6eRtOef5PoQKLgNZzi3KMgsBnzwQ3tMlB192RtbXvZgiGcbxyA7VowSE62BDmrpSz2bTPOYYlcSw==",
         "dependencies": {
           "Argon": "0.26.0",
           "DiffEngine": "15.9.1",
