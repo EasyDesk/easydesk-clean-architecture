@@ -804,8 +804,8 @@
       },
       "Swashbuckle.AspNetCore.SwaggerUI": {
         "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "hgrXeKzyp5OGN8qVvL7A+vhmU7mDJTfGpiMBRL66IcfLOyna8UTLtn3cC3CghamXpRDufcc9ciklTszUGEQK0w=="
+        "resolved": "7.3.0",
+        "contentHash": "CiWrMnLZMjnXSNoY1BSa5HWcbv6ibe4YnMq8HPhwSiTf44eiyNZlIpK4Y5Vvdv9MI7qmwC2q53a3R4JqNKTocg=="
       },
       "System.ClientModel": {
         "type": "Transitive",
@@ -1417,7 +1417,7 @@
           "Swashbuckle.AspNetCore": "[7.2.0, )",
           "Swashbuckle.AspNetCore.Swagger": "[7.2.0, )",
           "Swashbuckle.AspNetCore.SwaggerGen": "[7.2.0, )",
-          "Swashbuckle.AspNetCore.SwaggerUI": "[7.2.0, )"
+          "Swashbuckle.AspNetCore.SwaggerUI": "[7.3.0, )"
         }
       },
       "easydesk.commons": {
