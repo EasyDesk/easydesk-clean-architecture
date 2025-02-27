@@ -85,6 +85,10 @@ public class CsvService
         {
             return new InvalidCsvLine(lineIndex, CleanExceptionMessage(e.Message), e.Text);
         }
+        catch (MissingCsvValueException e)
+        {
+            return new InvalidCsvLine(lineIndex, e.Message, e.Field);
+        }
         catch (InvalidCsvLineException e)
         {
             return new InvalidCsvLine(lineIndex, e.Message, e.Field);

@@ -125,6 +125,20 @@ public class CsvServiceTests
         }));
     }
 
+    [Fact]
+    public async Task ShouldFail_IfRequiredValueIsMissing()
+    {
+        var csv = """
+            String;Integer
+            A;1
+            B;
+            """;
+        await Verify(SafeParse(csv, row => new
+        {
+            X = row.GetRequiredField<int>("Integer"),
+        }));
+    }
+
     ////[Fact]
     ////public async Task ShouldParseRecordsAutomatically()
     ////{

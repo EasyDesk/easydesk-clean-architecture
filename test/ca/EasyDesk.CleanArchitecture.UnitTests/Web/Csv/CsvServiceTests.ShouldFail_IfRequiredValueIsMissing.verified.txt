@@ -1,0 +1,24 @@
+﻿[
+  {
+    IsSuccess: true,
+    IsFailure: false,
+    Value: {
+      X: 1
+    },
+    Error: null
+  },
+  {
+    IsSuccess: false,
+    IsFailure: true,
+    Value: null,
+    Error: {
+      Error: InvalidCsvLine,
+      Meta: {
+        LineIndex: 2,
+        Message: value is missing.,
+        Field: Integer,
+        DisplayMessage: Line 2: Integer value is missing.
+      }
+    }
+  }
+]
