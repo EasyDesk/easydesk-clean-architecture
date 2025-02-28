@@ -40,7 +40,7 @@ public sealed class CleanArchitectureAppBuilder : AppBuilder, IAppBuilder
         return this;
     }
 
-    public override async Task<int> Run()
+    public WebApplication Build()
     {
         var appDescription = BuildAppDescription();
 
@@ -59,6 +59,13 @@ public sealed class CleanArchitectureAppBuilder : AppBuilder, IAppBuilder
         var app = _applicationBuilder.Build();
 
         _configureWebApplication?.Invoke(app);
+
+        return app;
+    }
+
+    public override async Task<int> Run()
+    {
+        var app = Build();
 
         await using var scope = app.Services.GetRequiredService<ILifetimeScope>().BeginUseCaseLifetimeScope();
 

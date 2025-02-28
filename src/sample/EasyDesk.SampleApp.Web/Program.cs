@@ -45,7 +45,6 @@ builder
         .EnableResultLogging())
     .AddReverseProxy()
     .AddOpenApi()
-    .AddAsyncApi()
     .AddSagas()
     .AddCsvParsing()
     .AddJsonSerialization(c =>
@@ -78,16 +77,19 @@ switch (provider)
         throw new Exception($"Invalid DB provider: {provider}");
 }
 
-builder.AddRebusMessaging(
-    "sample",
-    (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e.InputQueueAddress),
-    options =>
-    {
-        options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
-        options.FailuresOptions
-            .AddScheduledRetries(Retries.BackoffStrategy)
-            .AddDispatchAsFailure();
-    });
+builder.Configuration.GetConnectionStringAsOption("RabbitMq").IfPresent(connectionString =>
+    builder
+    .AddRebusMessaging(
+        "sample",
+        (t, e) => t.UseRabbitMq(connectionString, e.InputQueueAddress),
+        options =>
+        {
+            options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
+            options.FailuresOptions
+                .AddScheduledRetries(Retries.BackoffStrategy)
+                .AddDispatchAsFailure();
+        })
+    .AddAsyncApi());
 
 builder.ConfigureModule<ControllersModule>(m =>
 {
