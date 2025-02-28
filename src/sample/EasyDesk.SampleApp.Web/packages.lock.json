@@ -752,8 +752,8 @@
       },
       "Swashbuckle.AspNetCore.Swagger": {
         "type": "Transitive",
-        "resolved": "7.2.0",
-        "contentHash": "y27fNDfIh1vGhJjXYynLcZjl7DLOW1bSO2MDsY9wB4Zm1fdxpPsuBSiR4U+0acWlAqLmnuOPKr/OeOgwRUkBlw==",
+        "resolved": "7.3.1",
+        "contentHash": "jQuJ8kVbq+YE8WsJE3RwWHlF1kasp0QkA9Gl6NeNLICrhcgN8IQIthMufYW6t/4hpcN5cBIdES5jCEV81WjHbA==",
         "dependencies": {
           "Microsoft.OpenApi": "1.6.22"
         }
@@ -1345,7 +1345,7 @@
           "MicroElements.Swashbuckle.NodaTime": "[4.0.1, )",
           "Saunter": "[0.13.0, )",
           "Swashbuckle.AspNetCore": "[7.2.0, )",
-          "Swashbuckle.AspNetCore.Swagger": "[7.2.0, )",
+          "Swashbuckle.AspNetCore.Swagger": "[7.3.1, )",
           "Swashbuckle.AspNetCore.SwaggerGen": "[7.2.0, )",
           "Swashbuckle.AspNetCore.SwaggerUI": "[7.2.0, )"
         }
