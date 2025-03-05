@@ -512,8 +512,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.3",
-        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
+        "resolved": "13.0.1",
+        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
       },
       "Newtonsoft.Json.Bson": {
         "type": "Transitive",
@@ -538,10 +538,10 @@
       },
       "Rebus": {
         "type": "Transitive",
-        "resolved": "8.7.1",
-        "contentHash": "HIxlzizlw46zjmy6ykOmbT0QMpxquLnVWc6xVOIZM1RjTTXAJm9AddFzlomqlq2UJl/OJFwoM5DwLmHFOdnO5w==",
+        "resolved": "8.8.0",
+        "contentHash": "bfnybaR2o1cJMoFKpVl4nPP+3H/Y51fTheNJgIzHXXUb24zjd8x7gDDozs1XpYMfpc9q56tKjV2umbWz9GdM9A==",
         "dependencies": {
-          "Newtonsoft.Json": "13.0.3"
+          "Newtonsoft.Json": "[13.0.1, 14.0.0)"
         }
       },
       "Rebus.Microsoft.Extensions.Logging": {
@@ -838,7 +838,7 @@
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[9.0.2, )",
-          "Rebus": "[8.7.1, )",
+          "Rebus": "[8.8.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[5.1.0, )",
           "Rebus.ServiceProvider": "[10.3.0, )",
           "System.IdentityModel.Tokens.Jwt": "[8.6.0, )"
