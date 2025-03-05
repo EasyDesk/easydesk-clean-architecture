@@ -9,7 +9,7 @@ internal class OptionSchemaFilter : ISchemaFilter
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         var type = context.Type;
-        if (!type.IsGenericType || !type.GetGenericTypeDefinition().IsAssignableFrom(typeof(Option<>)))
+        if (!type.IsGenericType || !type.GetGenericTypeDefinition().IsAssignableTo(typeof(Option<>)))
         {
             return;
         }

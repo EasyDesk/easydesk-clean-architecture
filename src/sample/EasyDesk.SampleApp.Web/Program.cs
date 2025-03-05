@@ -77,7 +77,7 @@ switch (provider)
         throw new Exception($"Invalid DB provider: {provider}");
 }
 
-builder.Configuration.GetConnectionStringAsOption("RabbitMq").IfPresent(connectionString =>
+var hasBus = builder.Configuration.GetConnectionStringAsOption("RabbitMq").IfPresent(connectionString =>
     builder
     .AddRebusMessaging(
         "sample",
@@ -89,7 +89,8 @@ builder.Configuration.GetConnectionStringAsOption("RabbitMq").IfPresent(connecti
                 .AddScheduledRetries(Retries.BackoffStrategy)
                 .AddDispatchAsFailure();
         })
-    .AddAsyncApi());
+    .AddAsyncApi())
+    .IsPresent;
 
 builder.ConfigureModule<ControllersModule>(m =>
 {
@@ -108,7 +109,10 @@ builder.ConfigureWebApplication(app =>
 
     app.UseOpenApiModule();
 
-    app.UseAsyncApiModule();
+    if (hasBus)
+    {
+        app.UseAsyncApiModule();
+    }
 
     app.MapControllers();
 });
