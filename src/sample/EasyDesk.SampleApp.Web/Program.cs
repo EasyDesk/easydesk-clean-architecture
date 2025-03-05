@@ -45,6 +45,7 @@ builder
         .EnableResultLogging())
     .AddReverseProxy()
     .AddOpenApi()
+    .AddAsyncApi()
     .AddSagas()
     .AddCsvParsing()
     .AddJsonSerialization(c =>
@@ -62,13 +63,13 @@ var provider = builder.Configuration.RequireValue<DbProvider>("DbProvider");
 switch (provider)
 {
     case DbProvider.SqlServer:
-        builder.AddSqlServerDataAccess<SqlServerSampleAppContext>(builder.Configuration.RequireConnectionString("SqlServer"), o =>
+        builder.AddSqlServerDataAccess<SqlServerSampleAppContext>(() => builder.Configuration.RequireConnectionString("SqlServer"), o =>
         {
             o.WithService<SampleAppContext>();
         });
         break;
     case DbProvider.PostgreSql:
-        builder.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(builder.Configuration.RequireConnectionString("PostgreSql"), o =>
+        builder.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(() => builder.Configuration.RequireConnectionString("PostgreSql"), o =>
         {
             o.WithService<SampleAppContext>();
         });
@@ -77,20 +78,16 @@ switch (provider)
         throw new Exception($"Invalid DB provider: {provider}");
 }
 
-var hasBus = builder.Configuration.GetConnectionStringAsOption("RabbitMq").IfPresent(connectionString =>
-    builder
-    .AddRebusMessaging(
-        "sample",
-        (t, e) => t.UseRabbitMq(connectionString, e.InputQueueAddress),
-        options =>
-        {
-            options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
-            options.FailuresOptions
-                .AddScheduledRetries(Retries.BackoffStrategy)
-                .AddDispatchAsFailure();
-        })
-    .AddAsyncApi())
-    .IsPresent;
+builder.AddRebusMessaging(
+    "sample",
+    (t, e) => t.UseRabbitMq(builder.Configuration.RequireConnectionString("RabbitMq"), e.InputQueueAddress),
+    options =>
+    {
+        options.EnableDeferredMessages(t => t.UseExternalTimeoutManager(Scheduler.Address));
+        options.FailuresOptions
+            .AddScheduledRetries(Retries.BackoffStrategy)
+            .AddDispatchAsFailure();
+    });
 
 builder.ConfigureModule<ControllersModule>(m =>
 {
@@ -109,10 +106,7 @@ builder.ConfigureWebApplication(app =>
 
     app.UseOpenApiModule();
 
-    if (hasBus)
-    {
-        app.UseAsyncApiModule();
-    }
+    app.UseAsyncApiModule();
 
     app.MapControllers();
 });

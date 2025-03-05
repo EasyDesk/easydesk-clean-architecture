@@ -92,18 +92,18 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
                 .As<IUnitOfWorkManager>()
                 .InstancePerUseCase();
 
-            builder.Register(c => MigrationCommand(c.Resolve<MigrationsService>()));
+            builder.Register(c => MigrationCommand(c.Resolve<IComponentContext>()));
         });
 
         _configureRegistry?.Invoke(registry);
     }
 
-    private Command MigrationCommand(MigrationsService migrationsService)
+    private Command MigrationCommand(IComponentContext context)
     {
         var command = new Command("migrate", $"Apply migrations to the database");
         var syncOption = new Option<bool>(aliases: ["--sync", "--synchronous"], getDefaultValue: () => false, description: "Apply migrations synchronously");
         command.AddOption(syncOption);
-        command.SetHandler(migrationsService.Migrate, syncOption);
+        command.SetHandler(sync => context.Resolve<MigrationsService>().Migrate(sync), syncOption);
         return command;
     }
 

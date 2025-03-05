@@ -20,6 +20,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using EasyDesk.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Rebus.Bus;
 using Rebus.Config;
@@ -38,6 +39,8 @@ public class RebusMessagingModule : AppModule
 {
     private readonly RebusEndpoint _endpoint;
     private readonly RebusTransportConfiguration _transport;
+
+    private ITransport? _originalTransport;
 
     public RebusMessagingModule(RebusEndpoint endpoint, RebusTransportConfiguration transport, RebusMessagingOptions options)
     {
@@ -79,6 +82,37 @@ public class RebusMessagingModule : AppModule
         }
     }
 
+    protected override void ConfigureServices(AppDescription app, IServiceCollection services)
+    {
+        services.AddRebus((configurer, provider) =>
+        {
+            var context = provider.GetRequiredService<IComponentContext>();
+            var options = context.Resolve<RebusMessagingOptions>();
+
+            options.Apply(context, _endpoint, configurer);
+            configurer.Options(o =>
+            {
+                o.Decorate(c => _originalTransport = c.Get<ITransport>());
+                o.Register<IAsyncTaskFactory>(_ => context.Resolve<PausableAsyncTaskFactory>());
+                if (options.UseOutbox)
+                {
+                    o.UseOutbox();
+                }
+                o.PatchAsyncDisposables();
+                if (app.IsMultitenant())
+                {
+                    o.SetupForMultitenancy();
+                }
+                o.Decorate<IErrorHandler>(c =>
+                {
+                    _ = c.Get<ITransport>(); // Forces initialization of '_originalTransport'.
+                    return new DeadletterQueueErrorHandler(c.Get<RetryStrategySettings>(), _originalTransport, c.Get<IRebusLoggerFactory>());
+                });
+            });
+            return configurer;
+        });
+    }
+
     protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
         builder.RegisterInstance(_endpoint)
@@ -97,37 +131,9 @@ public class RebusMessagingModule : AppModule
             .As<IRebusPausableTaskPool>()
             .SingleInstance();
 
-        ITransport? originalTransport = null;
-        builder.RegisterRebus((configurer, context) =>
-        {
-            var options = context.Resolve<RebusMessagingOptions>();
-
-            options.Apply(context, _endpoint, configurer);
-            configurer.Options(o =>
-            {
-                o.Decorate(c => originalTransport = c.Get<ITransport>());
-                o.Register<IAsyncTaskFactory>(_ => context.Resolve<PausableAsyncTaskFactory>());
-                if (options.UseOutbox)
-                {
-                    o.UseOutbox();
-                }
-                o.PatchAsyncDisposables();
-                if (app.IsMultitenant())
-                {
-                    o.SetupForMultitenancy();
-                }
-                o.Decorate<IErrorHandler>(c =>
-                {
-                    _ = c.Get<ITransport>(); // Forces initialization of 'originalTransport'.
-                    return new DeadletterQueueErrorHandler(c.Get<RetryStrategySettings>(), originalTransport, c.Get<IRebusLoggerFactory>());
-                });
-            });
-            return configurer;
-        });
-
         if (Options.UseOutbox)
         {
-            AddOutboxServices(builder, new(() => originalTransport!, isThreadSafe: true));
+            AddOutboxServices(builder, new(() => _originalTransport!, isThreadSafe: true));
         }
 
         SetupMessageHandlers(builder, Options.KnownMessageTypes, app);
@@ -259,7 +265,7 @@ public class RebusMessagingModule : AppModule
         builder
             .Register(c =>
             {
-                // Required to force initialization of the bus, which in turn sets the 'originalTransport' variable.
+                // Required to force initialization of the bus, which in turn sets the '_originalTransport' field.
                 _ = c.Resolve<IBus>();
 
                 return new OutboxFlusher(

@@ -11,14 +11,14 @@ public class SampleAppDevelopmentModule : AppModule
         builder.RegisterType<DevelopmentSeeder>()
             .InstancePerLifetimeScope();
 
-        builder.Register(c => SeedCommand(c.Resolve<DevelopmentSeeder>()))
+        builder.Register(c => SeedCommand(c.Resolve<IComponentContext>()))
             .InstancePerLifetimeScope();
     }
 
-    private Command SeedCommand(DevelopmentSeeder seeder)
+    private Command SeedCommand(IComponentContext context)
     {
         var developmentCommand = new Command("seed-dev", description: "Seed the database with development data.");
-        developmentCommand.SetHandler(seeder.Seed);
+        developmentCommand.SetHandler(() => context.Resolve<DevelopmentSeeder>().Seed());
         return developmentCommand;
     }
 }

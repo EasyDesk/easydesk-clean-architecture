@@ -11,14 +11,14 @@ namespace EasyDesk.CleanArchitecture.Dal.SqlServer;
 
 internal class SqlServerEfCoreProvider : IEfCoreProvider<Builder, Extension>
 {
-    private readonly string _connectionString;
+    private readonly Lazy<string> _connectionString;
 
-    public SqlServerEfCoreProvider(string connectionString)
+    public SqlServerEfCoreProvider(Lazy<string> connectionString)
     {
         _connectionString = connectionString;
     }
 
-    public DbConnection NewConnection() => new SqlConnection(_connectionString);
+    public DbConnection NewConnection() => new SqlConnection(_connectionString.Value);
 
     public void ConfigureDbProvider(DbContextOptionsBuilder options, DbConnection connection, Action<Builder> configure)
     {
@@ -34,13 +34,13 @@ public static class SqlServerExtensions
 {
     public static IAppBuilder AddSqlServerDataAccess<T>(
         this IAppBuilder builder,
-        string connectionString,
+        Func<string> connectionString,
         Action<EfCoreDataAccessOptions<T, Builder, Extension>>? configure = null)
         where T : AbstractDbContext
     {
 #pragma warning disable EF1001
         return builder.AddEfCoreDataAccess(
-            new SqlServerEfCoreProvider(connectionString),
+            new SqlServerEfCoreProvider(new(connectionString)),
             configure);
 #pragma warning restore EF1001
     }

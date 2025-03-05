@@ -11,16 +11,19 @@ namespace EasyDesk.CleanArchitecture.Dal.PostgreSql;
 
 internal class PostgreSqlEfCoreProvider : IEfCoreProvider<Builder, Extension>
 {
-    private readonly NpgsqlDataSource _dataSource;
+    private readonly Lazy<NpgsqlDataSource> _dataSource;
 
-    public PostgreSqlEfCoreProvider(string connectionString)
+    public PostgreSqlEfCoreProvider(Lazy<string> connectionString)
     {
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
-        dataSourceBuilder.UseNodaTime();
-        _dataSource = dataSourceBuilder.Build();
+        _dataSource = new(() =>
+        {
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString.Value);
+            dataSourceBuilder.UseNodaTime();
+            return dataSourceBuilder.Build();
+        });
     }
 
-    public DbConnection NewConnection() => _dataSource.CreateConnection();
+    public DbConnection NewConnection() => _dataSource.Value.CreateConnection();
 
     public void ConfigureDbProvider(DbContextOptionsBuilder options, DbConnection connection, Action<Builder> configure)
     {
@@ -36,13 +39,13 @@ public static class SqlServerExtensions
 {
     public static IAppBuilder AddPostgreSqlDataAccess<T>(
         this IAppBuilder builder,
-        string connectionString,
+        Func<string> connectionString,
         Action<EfCoreDataAccessOptions<T, Builder, Extension>>? configure = null)
         where T : AbstractDbContext
     {
 #pragma warning disable EF1001
         return builder.AddEfCoreDataAccess(
-            new PostgreSqlEfCoreProvider(connectionString),
+            new PostgreSqlEfCoreProvider(new(connectionString)),
             configure);
 #pragma warning restore EF1001
     }

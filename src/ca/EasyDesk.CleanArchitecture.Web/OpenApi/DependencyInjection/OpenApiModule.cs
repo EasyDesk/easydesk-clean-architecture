@@ -8,7 +8,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.DependencyInjection;
 using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Builder;
@@ -42,10 +41,7 @@ public class OpenApiModule : AppModule
     protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
         builder
-            .Register(c => OpenApiCommand(
-                c.ResolveOption<ApiVersioningInfo>(),
-                c.Resolve<ISwaggerProvider>(),
-                c.Resolve<IOptions<SwaggerGenOptions>>().Value))
+            .Register(c => OpenApiCommand(c.Resolve<IComponentContext>()))
             .SingleInstance();
     }
 
@@ -147,13 +143,13 @@ public class OpenApiModule : AppModule
             dateTimeZoneProvider: dateTimeZoneProvider);
     }
 
-    private CommandLine.Command OpenApiCommand(Option<ApiVersioningInfo> versioningInfo, ISwaggerProvider swaggerProvider, SwaggerGenOptions swaggerGenOptions)
+    private CommandLine.Command OpenApiCommand(IComponentContext context)
     {
         var command = new CommandLine.Command("openapi");
         var hostOption = new CommandLine.Option<string?>("--host", () => null, "Sets the host value in the OpenApi document");
         var basePathOption = new CommandLine.Option<string?>("--base-path", () => null, "Sets the basePath value in the OpenApi document");
-        var existingDocumentNames = swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Keys;
-        var defaultDocumentKey = versioningInfo.Match(
+        var existingDocumentNames = context.Resolve<IOptions<SwaggerGenOptions>>().Value.SwaggerGeneratorOptions.SwaggerDocs.Keys;
+        var defaultDocumentKey = context.ResolveOption<ApiVersioningInfo>().Match(
             some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentKey),
             none: () => Some(SingleVersionedDocKey));
         var documentNameOption = new CommandLine.Option<string>(
@@ -188,7 +184,7 @@ public class OpenApiModule : AppModule
         command.SetHandler(
             (documentName, host, basePath, format) =>
             {
-                var doc = swaggerProvider.GetSwagger(documentName, host, basePath);
+                var doc = context.Resolve<ISwaggerProvider>().GetSwagger(documentName, host, basePath);
                 var stream = Console.OpenStandardOutput();
                 doc.Serialize(stream, OpenApiSpecVersion.OpenApi3_0, format);
             },

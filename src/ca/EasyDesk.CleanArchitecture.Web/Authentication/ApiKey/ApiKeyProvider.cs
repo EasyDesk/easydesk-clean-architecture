@@ -17,7 +17,7 @@ public class ApiKeyProvider : IAuthenticationProvider
 {
     private readonly Lazy<ApiKeyOptions> _options;
 
-    public ApiKeyProvider(Lazy<ApiKeyOptions> options)
+    internal ApiKeyProvider(Lazy<ApiKeyOptions> options)
     {
         _options = options;
     }

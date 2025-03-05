@@ -18,7 +18,7 @@ public class JwtBearerProvider : IAuthenticationProvider
 {
     private readonly Lazy<JwtBearerOptions> _options;
 
-    public JwtBearerProvider(Lazy<JwtBearerOptions> options)
+    internal JwtBearerProvider(Lazy<JwtBearerOptions> options)
     {
         _options = options;
     }

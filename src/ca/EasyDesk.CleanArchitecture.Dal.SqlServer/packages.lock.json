@@ -544,20 +544,22 @@
           "Newtonsoft.Json": "13.0.3"
         }
       },
-      "Rebus.Autofac": {
-        "type": "Transitive",
-        "resolved": "9.0.0",
-        "contentHash": "zKunfVY02jsjpwoibItVnFCBaCF2g0rhr27gZ7fZaKu4wbz8Z0IFSAWZ3xC8Wpzw9m7FsKgB4MODuhCjP541Aw==",
-        "dependencies": {
-          "Autofac": "7.1.0",
-          "Rebus": "8.0.1"
-        }
-      },
       "Rebus.Microsoft.Extensions.Logging": {
         "type": "Transitive",
         "resolved": "5.1.0",
         "contentHash": "L0lvKPVi1UAv7F3f70H1nJ8IYHy2k8f4NRNnOVph9YlInT3e1wrzfotSie5TP2jmXk50VljMslSQCVxpD5tZwA==",
         "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, 10.0.0)",
+          "Rebus": "8.0.1"
+        }
+      },
+      "Rebus.ServiceProvider": {
+        "type": "Transitive",
+        "resolved": "10.3.0",
+        "contentHash": "sYoAY3nUNVMPCD9wnTh6+iktbyjqyT+ORyv5CysmNvYnKJd/5C6bCPww52EY3fhiQKjuNExu4I8qUN8F7NSMnQ==",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "[8.0.0, 10.0.0)",
+          "Microsoft.Extensions.Hosting.Abstractions": "[6.0.0, 10.0.0)",
           "Microsoft.Extensions.Logging.Abstractions": "[6.0.0, 10.0.0)",
           "Rebus": "8.0.1"
         }
@@ -837,8 +839,8 @@
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[9.0.2, )",
           "Rebus": "[8.7.1, )",
-          "Rebus.Autofac": "[9.0.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[5.1.0, )",
+          "Rebus.ServiceProvider": "[10.3.0, )",
           "System.IdentityModel.Tokens.Jwt": "[8.6.0, )"
         }
       },
