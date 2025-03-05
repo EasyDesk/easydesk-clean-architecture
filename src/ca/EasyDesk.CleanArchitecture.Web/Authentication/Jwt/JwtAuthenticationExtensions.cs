@@ -14,7 +14,7 @@ public static class JwtAuthenticationExtensions
         string schemeName,
         Action<JwtBearerOptions>? configureOptions = default)
     {
-        return options.AddScheme(schemeName, new JwtBearerProvider(new JwtBearerOptions().Also(configureOptions)));
+        return options.AddScheme(schemeName, new JwtBearerProvider(new(() => new JwtBearerOptions().Also(configureOptions))));
     }
 
     public static AuthenticationModuleOptions AddJwtBearer(

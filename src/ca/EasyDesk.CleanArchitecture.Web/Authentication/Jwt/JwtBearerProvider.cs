@@ -16,12 +16,14 @@ namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
 public class JwtBearerProvider : IAuthenticationProvider
 {
-    public JwtBearerProvider(JwtBearerOptions options)
+    private readonly Lazy<JwtBearerOptions> _options;
+
+    public JwtBearerProvider(Lazy<JwtBearerOptions> options)
     {
-        Options = options;
+        _options = options;
     }
 
-    public JwtBearerOptions Options { get; }
+    public JwtBearerOptions Options => _options.Value;
 
     public void AddUtilityServices(ServiceRegistry registry, AppDescription app, string scheme)
     {
