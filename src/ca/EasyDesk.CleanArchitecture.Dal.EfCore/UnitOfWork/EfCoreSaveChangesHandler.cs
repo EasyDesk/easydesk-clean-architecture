@@ -3,21 +3,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 
-internal class EfCoreSaveChangesHandler<T> : ISaveChangesHandler
-    where T : DbContext
+internal class EfCoreSaveChangesHandler : ISaveChangesHandler
 {
-    private readonly T _context;
+    private readonly ISet<DbContext> _contexts = new HashSet<DbContext>();
 
-    public EfCoreSaveChangesHandler(T context)
+    public EfCoreSaveChangesHandler()
     {
-        _context = context;
+    }
+
+    public void AddDbContext(DbContext context)
+    {
+        _contexts.Add(context);
     }
 
     public async Task SaveChanges()
     {
-        if (_context.ChangeTracker.HasChanges())
+        foreach (var context in _contexts)
         {
-            await _context.SaveChangesAsync();
+            if (context.ChangeTracker.HasChanges())
+            {
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

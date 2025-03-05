@@ -82,7 +82,8 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
                     c.Resolve<ILogger<MigrationsService>>()))
                 .InstancePerLifetimeScope();
 
-            builder.RegisterType<EfCoreSaveChangesHandler<T>>()
+            builder.RegisterType<EfCoreSaveChangesHandler>()
+                .AsSelf()
                 .As<ISaveChangesHandler>()
                 .InstancePerLifetimeScope();
 
@@ -134,6 +135,18 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
             options.AddInterceptors(provider.GetRequiredService<DbContextEnlistingOnSaveChangesInterceptor>());
             _configureDbContextOptions?.Invoke(options);
         }));
+
+        if (!isCleanArchitectureContext)
+        {
+            registry.ConfigureContainer(builder =>
+            {
+                builder.RegisterDecorator<C>((c, _, inner) =>
+                {
+                    c.Resolve<EfCoreSaveChangesHandler>().AddDbContext(inner);
+                    return inner;
+                });
+            });
+        }
 
         _registeredDbContextTypes.Add(typeof(C));
     }
