@@ -102,7 +102,7 @@ public static class ControllersModuleExtension
 
     public static IFilterMetadata Remove<TFilterType>(this FilterCollection filters) where TFilterType : IFilterMetadata
     {
-        var toRemove = filters.First(f => f is TFilterType);
+        var toRemove = filters.First(f => f is TFilterType || f is TypeFilterAttribute a && a.ImplementationType == typeof(TFilterType));
         filters.Remove(toRemove);
         return toRemove;
     }
