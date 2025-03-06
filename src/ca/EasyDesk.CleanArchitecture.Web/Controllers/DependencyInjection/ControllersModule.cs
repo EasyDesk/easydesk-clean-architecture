@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -97,5 +98,12 @@ public static class ControllersModuleExtension
     public static IAppBuilder AddControllers(this IAppBuilder builder, IHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
     {
         return builder.AddModule(new ControllersModule(environment, configure));
+    }
+
+    public static IFilterMetadata Remove<TFilterType>(this FilterCollection filters) where TFilterType : IFilterMetadata
+    {
+        var toRemove = filters.First(f => f is TFilterType);
+        filters.Remove(toRemove);
+        return toRemove;
     }
 }
