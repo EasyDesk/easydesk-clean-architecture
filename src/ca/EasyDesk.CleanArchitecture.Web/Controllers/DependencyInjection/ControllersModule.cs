@@ -3,12 +3,10 @@ using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Filters;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
@@ -23,6 +21,8 @@ public sealed class ControllersModuleOptions
 
     public int MaxPageSize { get; set; } = DefaultMaxPageSize;
 
+    public bool HideUnhandledExceptions { get; set; } = true;
+
     public void ConfigureMvc(Action<MvcOptions> configureMvc) => _configureMvc += configureMvc;
 
     internal void ApplyMvcConfiguration(MvcOptions options) => _configureMvc?.Invoke(options);
@@ -30,13 +30,10 @@ public sealed class ControllersModuleOptions
 
 public class ControllersModule : AppModule
 {
-    private readonly IHostEnvironment _environment;
-
     public ControllersModuleOptions Options { get; } = new();
 
-    public ControllersModule(IHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
+    public ControllersModule(Action<ControllersModuleOptions>? configure = null)
     {
-        _environment = environment;
         configure?.Invoke(Options);
     }
 
@@ -65,7 +62,7 @@ public class ControllersModule : AppModule
     protected void DefaultMvcConfiguration(MvcOptions options)
     {
         options.Filters.Add<ExceptionLoggingFilter>();
-        if (!_environment.IsDevelopment())
+        if (Options.HideUnhandledExceptions)
         {
             options.Filters.Add<UnhandledExceptionsFilter>();
         }
@@ -95,9 +92,9 @@ public class ControllersModule : AppModule
 
 public static class ControllersModuleExtension
 {
-    public static IAppBuilder AddControllers(this IAppBuilder builder, IHostEnvironment environment, Action<ControllersModuleOptions>? configure = null)
+    public static IAppBuilder AddControllers(this IAppBuilder builder, Action<ControllersModuleOptions>? configure = null)
     {
-        return builder.AddModule(new ControllersModule(environment, configure));
+        return builder.AddModule(new ControllersModule(configure));
     }
 
     public static IFilterMetadata Remove<TFilterType>(this FilterCollection filters) where TFilterType : IFilterMetadata

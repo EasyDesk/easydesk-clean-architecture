@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace EasyDesk.CleanArchitecture.Web.Filters;
 
-public class UnhandledExceptionsFilter : IExceptionFilter
+internal class UnhandledExceptionsFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {

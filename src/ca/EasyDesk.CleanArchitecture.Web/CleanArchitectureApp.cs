@@ -8,6 +8,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Context.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
+using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -46,7 +47,7 @@ public static partial class CleanArchitectureApp
     public static CleanArchitectureAppBuilder ConfigureDefaults(this CleanArchitectureAppBuilder builder)
     {
         builder
-            .AddControllers(builder.Environment)
+            .AddControllers(options => options.HideUnhandledExceptions = !builder.Environment.IsDevelopment())
             .AddJsonSerialization()
             .AddDomainLayer()
             .AddContextDetector()
