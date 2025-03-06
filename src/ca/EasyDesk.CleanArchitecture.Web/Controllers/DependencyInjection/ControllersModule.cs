@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 
@@ -48,11 +49,9 @@ public class ControllersModule : AppModule
     {
         services
             .AddControllers(DefaultMvcConfiguration)
-            .AddApplicationPart(typeof(CleanArchitectureController).Assembly)
-            .AddJsonOptions(options =>
-            {
-                app.RequireModule<JsonModule>().ApplyJsonConfiguration(options.JsonSerializerOptions, app);
-            });
+            .AddApplicationPart(typeof(CleanArchitectureController).Assembly);
+
+        services.AddSingleton<IConfigureOptions<JsonOptions>, ConfigureJsonOptions>();
 
         services.Configure<MvcOptions>(options =>
         {
@@ -73,6 +72,23 @@ public class ControllersModule : AppModule
         options.EnableEndpointRouting = false;
         options.ModelBinderProviders.Insert(0, new OptionBinderProvider());
         Options.ApplyMvcConfiguration(options);
+    }
+
+    private class ConfigureJsonOptions : IConfigureOptions<JsonOptions>
+    {
+        private readonly IComponentContext _context;
+        private readonly AppDescription _app;
+
+        public ConfigureJsonOptions(IComponentContext context, AppDescription app)
+        {
+            _context = context;
+            _app = app;
+        }
+
+        public void Configure(JsonOptions options)
+        {
+            _app.RequireModule<JsonModule>().ApplyJsonConfiguration(_context, options.JsonSerializerOptions, _app);
+        }
     }
 }
 
