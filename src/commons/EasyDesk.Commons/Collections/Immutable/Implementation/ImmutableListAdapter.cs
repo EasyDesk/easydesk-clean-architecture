@@ -23,14 +23,14 @@ internal class ImmutableListAdapter<T> : IFixedList<T>
     public IFixedList<T> Clear() => Wrap(_list.Clear());
 
     public Option<int> IndexOf(T item, IEqualityComparer<T>? equalityComparer = null) =>
-        Some(_list.IndexOf(item, equalityComparer)).Filter(x => x > 0);
+        Some(_list.IndexOf(item, equalityComparer)).Filter(x => x >= 0);
 
     public IFixedList<T> Insert(int index, T element) => Wrap(_list.Insert(index, element));
 
     public IFixedList<T> InsertRange(int index, IEnumerable<T> items) => Wrap(_list.InsertRange(index, items));
 
     public Option<int> LastIndexOf(T item, IEqualityComparer<T>? equalityComparer = null) =>
-        Some(_list.LastIndexOf(item, equalityComparer)).Filter(x => x > 0);
+        Some(_list.LastIndexOf(item, equalityComparer)).Filter(x => x >= 0);
 
     public IFixedList<T> Remove(T value, IEqualityComparer<T>? equalityComparer = null) =>
         Wrap(_list.Remove(value, equalityComparer));
