@@ -58,4 +58,10 @@ public static partial class StaticImports
 
     public static async Task<B> ThenMatchAsync<A, B>(this Task<Result<A>> result, AsyncFunc<A, B> success, AsyncFunc<Error, B> failure) =>
         await (await result).MatchAsync(success, failure);
+
+    public static async Task ThenMatch<A>(this Task<Result<A>> result, Action<A> success, Action<Error> failure) =>
+        (await result).Match(success, failure);
+
+    public static async Task ThenMatchAsync<A>(this Task<Result<A>> result, AsyncAction<A> success, AsyncAction<Error> failure) =>
+        await (await result).MatchAsync(success, failure);
 }
