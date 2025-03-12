@@ -51,12 +51,12 @@
       },
       "Verify": {
         "type": "Direct",
-        "requested": "[28.12.1, )",
-        "resolved": "28.12.1",
-        "contentHash": "edO8nBG7XlQU/eA+6nTjMbX/dep82+ID18oi84K4eu979LVgmjbqy8OlBwpUW3yVpQZryxOQtuG/G+fJ3AYJYg==",
+        "requested": "[28.14.0, )",
+        "resolved": "28.14.0",
+        "contentHash": "+PoX/sTmW6XxvoIZoh5lTFI99l+49yn7bhvwd815lz8BM2djjt5hQHCSetpoHeWPprQBGpxGpHcHJSdEIGUtlg==",
         "dependencies": {
           "Argon": "0.26.0",
-          "DiffEngine": "15.9.1",
+          "DiffEngine": "15.10.0",
           "SimpleInfoName": "3.1.0",
           "System.IO.Hashing": "9.0.2"
         }
@@ -105,8 +105,8 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "15.9.1",
-        "contentHash": "QXb2+PSzT/gBYpkF4IDzeZ+gDJeM9EMKShnSULOoIE7+oflqgwg4s9YzahIM74JXagd+XjN6fs0FQjk3F++fKg==",
+        "resolved": "15.10.0",
+        "contentHash": "ljXejRWy4G8LoRKJkgO6MofbG/69Wq67Lynu0YyMBidtmNQ+slLrkG3ATNA5Mtt5QrXCGfTrqlam793GmWxJxg==",
         "dependencies": {
           "EmptyFiles": "8.7.1",
           "System.Management": "9.0.2"
