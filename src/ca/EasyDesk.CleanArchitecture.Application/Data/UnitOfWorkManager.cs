@@ -15,31 +15,25 @@ public abstract class UnitOfWorkManager<T> : IUnitOfWorkManager where T : IDispo
     {
         using var transaction = await CreateTransaction();
         using var scope = _scopeManager.OpenScope(Some(transaction));
+        Result<R>? result;
         try
         {
-            var result = await action();
-            if (result.IsSuccess)
+            result = await action();
+            if (result.Value.IsSuccess)
             {
                 await Commit(transaction);
             }
-            else
-            {
-                await WrapInPassThroughException(async () =>
-                {
-                    await Rollback(transaction);
-                });
-            }
-            return result;
-        }
-        catch (PassThroughException e)
-        {
-            throw e.Inner;
         }
         catch
         {
             await Rollback(transaction);
             throw;
         }
+        if (result.Value.IsFailure)
+        {
+            await Rollback(transaction);
+        }
+        return result.Value;
     }
 
     protected abstract Task<T> CreateTransaction();
@@ -47,25 +41,4 @@ public abstract class UnitOfWorkManager<T> : IUnitOfWorkManager where T : IDispo
     protected abstract Task Commit(T transaction);
 
     protected abstract Task Rollback(T transaction);
-
-    private Task WrapInPassThroughException(AsyncAction asyncAction)
-    {
-        try
-        {
-            return asyncAction();
-        }
-        catch (Exception e)
-        {
-            throw new PassThroughException(e);
-        }
-    }
-
-    private class PassThroughException : Exception
-    {
-        public PassThroughException(Exception inner) : base(null, inner)
-        {
-        }
-
-        public Exception Inner => InnerException!;
-    }
 }
