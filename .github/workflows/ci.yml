@@ -112,11 +112,60 @@ jobs:
           path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
           test-args: --logger 'GitHubActions'
 
+  seed-test:
+    name: Seed Test
+    runs-on: ubuntu-20.04
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        db-provider:
+          - SqlServer
+          - PostgreSql
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        options: --user root
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_PID: Developer
+          MSSQL_SA_PASSWORD: samplepass.123
+        volumes:
+          - sqlservervolume:/var/opt/mssql
+        ports:
+          - "1433:1433"
+      postgres:
+        image: postgres:alpine3.16
+        env:
+          POSTGRES_USER: sample
+          POSTGRES_PASSWORD: samplepass-123
+          POSTGRES_DB: sampledb
+        volumes:
+          - postgresvolume:/var/lib/postgresql/data
+        ports:
+          - "5432:5432"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Build
+        uses: EasyDesk/action-dotnet-build@v1
+        with:
+          warnings-as-errors: true
+      - name: Seeding command test
+        uses: EasyDesk/action-dotnet@v1
+        env:
+          DB_PROVIDER: ${{ matrix.db-provider }}
+        with:
+            script: dotnet run --no-build --environment Development --project src/sample/EasyDesk.SampleApp.Web/ -- seed-dev
+
   release:
     name: GitHub Release
     if: needs.build.outputs.should-release == 'true'
     concurrency: release
-    needs: [build, test]
+    needs: [build, test, seed-test]
     runs-on: ubuntu-20.04
     permissions: write-all
     steps:

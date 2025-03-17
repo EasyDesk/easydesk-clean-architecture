@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Builder;
@@ -67,7 +66,7 @@ public sealed class CleanArchitectureAppBuilder : AppBuilder, IAppBuilder
     {
         var app = Build();
 
-        await using var scope = app.Services.GetRequiredService<ILifetimeScope>().BeginUseCaseLifetimeScope();
+        await using var scope = app.Services.GetRequiredService<ILifetimeScope>().BeginLifetimeScope();
 
         var commands = scope.Resolve<IEnumerable<Command>>();
 
