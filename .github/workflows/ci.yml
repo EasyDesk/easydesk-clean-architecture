@@ -150,16 +150,12 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Build
-        uses: EasyDesk/action-dotnet-build@v1
-        with:
-          warnings-as-errors: true
       - name: Seeding command test
         uses: EasyDesk/action-dotnet@v1
         env:
           DB_PROVIDER: ${{ matrix.db-provider }}
         with:
-            script: dotnet run --no-build --environment Development --project src/sample/EasyDesk.SampleApp.Web/ -- seed-dev
+            script: dotnet run --environment Development --project src/sample/EasyDesk.SampleApp.Web/ -- seed-dev
 
   release:
     name: GitHub Release
