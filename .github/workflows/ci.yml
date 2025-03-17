@@ -112,8 +112,8 @@ jobs:
           path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
           test-args: --logger 'GitHubActions'
 
-  seed-test:
-    name: Seed Test
+  command-test:
+    name: Command Test
     runs-on: ubuntu-20.04
     needs: [build]
     strategy:
@@ -122,8 +122,11 @@ jobs:
         include:
          - db-provider: SqlServer
            sqlserver-connection: "Server=localhost,1433;Initial Catalog=SampleDB;User Id=SA;TrustServerCertificate=True;Password=samplepass.123;"
+           usesdb: true
          - db-provider: PostgreSql
            postgres-connection: "Host=localhost;Database=sampledb;Username=sample;Password=samplepass-123;"
+           usesdb: true
+         - usesdb: false
     env:
       CONNECTIONSTRINGS__SQLSERVER: ${{ matrix.sqlserver-connection }}
       CONNECTIONSTRINGS__POSTGRESQL: ${{ matrix.postgres-connection }}
@@ -169,14 +172,20 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Seeding command test
         uses: EasyDesk/action-dotnet@v1
+        if: ${{ matrix.usesdb == true }}
         with:
             script: dotnet run --environment Development --project src/sample/EasyDesk.SampleApp.Web/ -- seed-dev
+      - name: Openapi command test
+        if: ${{ matrix.usesdb == false }}
+        uses: EasyDesk/action-dotnet@v1
+        with:
+            script: dotnet run --environment Development --project src/sample/EasyDesk.SampleApp.Web/ -- openapi
 
   release:
     name: GitHub Release
     if: needs.build.outputs.should-release == 'true'
     concurrency: release
-    needs: [build, test, seed-test]
+    needs: [build, test, command-test]
     runs-on: ubuntu-20.04
     permissions: write-all
     steps:
