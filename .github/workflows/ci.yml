@@ -120,10 +120,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-         - db-provider: 0
+         - db-provider: SqlServer
            sqlserver-connection: "Server=localhost,1433;Initial Catalog=SampleDB;User Id=SA;TrustServerCertificate=True;Password=samplepass.123;"
            usesdb: true
-         - db-provider: 1
+         - db-provider: PostgreSql
            postgres-connection: "Host=localhost;Port=5432;Database=sampledb;Username=sample;Password=samplepass-123;"
            usesdb: true
          - usesdb: false
@@ -132,7 +132,8 @@ jobs:
       CONNECTIONSTRINGS__POSTGRESQL: ${{ matrix.postgres-connection }}
       CONNECTIONSTRINGS__RABBITMQ: "amqp://admin:admin@localhost:5672"
       DBPROVIDER: ${{ matrix.db-provider }}
-      COMMAND_BASE: "dotnet run --project src/sample/EasyDesk.SampleApp.Web/"
+      OUTPUT_DIR: bin/Release/
+      COMMAND_BASE: dotnet "${OUTPUT_DIR}/EasyDesk.SampleApp.Web.dll"
     services:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
@@ -171,21 +172,33 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Build
+        uses: EasyDesk/action-dotnet-build@v1
+        with:
+          warnings-as-errors: true
+          build-configuration: Release
+          build-args: -o "${{ env.OUTPUT_DIR }}"
       - name: Migrate
         uses: EasyDesk/action-dotnet@v1
         if: ${{ matrix.usesdb == true }}
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
         with:
-            script: ${{ env.COMMAND_BASE }} --environment Production -- migrate
+            script: ${{ env.COMMAND_BASE }} -- migrate
       - name: Seeding
         uses: EasyDesk/action-dotnet@v1
         if: ${{ matrix.usesdb == true }}
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
         with:
-            script: ${{ env.COMMAND_BASE }} --environment Development -- seed-dev
+            script: ${{ env.COMMAND_BASE }} -- seed-dev
       - name: Openapi
         if: ${{ matrix.usesdb == false }}
         uses: EasyDesk/action-dotnet@v1
+        env:
+          ASPNETCORE_ENVIRONMENT: Production
         with:
-            script: ${{ env.COMMAND_BASE }} --environment Production -- openapi
+            script: ${{ env.COMMAND_BASE }} -- openapi
 
   release:
     name: GitHub Release
