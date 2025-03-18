@@ -131,7 +131,7 @@ jobs:
       CONNECTIONSTRINGS__SQLSERVER: ${{ matrix.sqlserver-connection }}
       CONNECTIONSTRINGS__POSTGRESQL: ${{ matrix.postgres-connection }}
       CONNECTIONSTRINGS__RABBITMQ: "amqp://admin:admin@localhost:5672"
-      DBPROVIDER: ${{ matrix.db-provider }}
+      DBPROVIDER: ${{ matrix.db-provider || 'SqlServer' }}
       OUTPUT_DIR: bin/Release
       COMMAND_BASE: dotnet "${OUTPUT_DIR}/EasyDesk.SampleApp.Web.dll"
     services:
