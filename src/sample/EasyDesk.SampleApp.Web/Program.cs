@@ -98,9 +98,6 @@ builder.ConfigureModule<ControllersModule>(m =>
 
 builder.ConfigureWebApplication(app =>
 {
-    using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetRequiredService<DevelopmentSeeder>().Seed().GetAwaiter().GetResult();
-
     app.UseReverseProxyModule();
 
     app.UseHttpsRedirection();
