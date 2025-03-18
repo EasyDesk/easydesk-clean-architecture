@@ -120,10 +120,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-         - db-provider: SqlServer
+         - db-provider: 0
            sqlserver-connection: "Server=localhost,1433;Initial Catalog=SampleDB;User Id=SA;TrustServerCertificate=True;Password=samplepass.123;"
            usesdb: true
-         - db-provider: PostgreSql
+         - db-provider: 1
            postgres-connection: "Host=localhost;Port=5432;Database=sampledb;Username=sample;Password=samplepass-123;"
            usesdb: true
          - usesdb: false
