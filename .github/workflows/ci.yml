@@ -175,6 +175,7 @@ jobs:
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
+          path: src/sample/EasyDesk.SampleApp.Web/
           warnings-as-errors: true
           build-configuration: Release
           build-args: -o "${{ env.OUTPUT_DIR }}"
