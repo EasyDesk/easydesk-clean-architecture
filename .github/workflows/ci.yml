@@ -193,6 +193,7 @@ jobs:
         timeout-minutes: 2
         env:
           ASPNETCORE_ENVIRONMENT: Development
+          JWTSETTINGS__SECRETKEY: MpBkxo3B9iXr0gfGs11YxF2vj4DpLm8kdhoZfTNEKLNEYVFKNv
         with:
             script: ${{ env.COMMAND_BASE }} seed-dev
       - name: Openapi
