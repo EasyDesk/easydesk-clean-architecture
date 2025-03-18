@@ -131,7 +131,7 @@ jobs:
       CONNECTIONSTRINGS__SQLSERVER: ${{ matrix.sqlserver-connection }}
       CONNECTIONSTRINGS__POSTGRESQL: ${{ matrix.postgres-connection }}
       CONNECTIONSTRINGS__RABBITMQ: "amqp://admin:admin@localhost:5672"
-      DBPROVIDER: ${{ matrix.db-provider || PostgreSql }}
+      DBPROVIDER: ${{ matrix.db-provider || "PostgreSql" }}
       OUTPUT_DIR: bin/Release
       COMMAND_BASE: dotnet "${OUTPUT_DIR}/EasyDesk.SampleApp.Web.dll"
     services:
@@ -182,6 +182,7 @@ jobs:
       - name: Migrate
         uses: EasyDesk/action-dotnet@v1
         if: ${{ matrix.usesdb == true }}
+        timeout-minutes: 2
         env:
           ASPNETCORE_ENVIRONMENT: Production
         with:
@@ -189,6 +190,7 @@ jobs:
       - name: Seeding
         uses: EasyDesk/action-dotnet@v1
         if: ${{ matrix.usesdb == true }}
+        timeout-minutes: 2
         env:
           ASPNETCORE_ENVIRONMENT: Development
         with:
@@ -196,6 +198,7 @@ jobs:
       - name: Openapi
         if: ${{ matrix.usesdb == false }}
         uses: EasyDesk/action-dotnet@v1
+        timeout-minutes: 1
         env:
           ASPNETCORE_ENVIRONMENT: Production
         with:
