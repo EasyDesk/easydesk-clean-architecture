@@ -3,7 +3,7 @@ using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 
-internal static class RebusTransactionScopeUtils
+public static class RebusTransactionScopeUtils
 {
     public static RebusTransactionScope CreateScopeWithComponentContext(IComponentContext context)
     {
