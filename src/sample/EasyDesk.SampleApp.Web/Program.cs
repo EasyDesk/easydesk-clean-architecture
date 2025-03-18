@@ -59,24 +59,26 @@ if (builder.Environment.IsDevelopment())
     builder.AddModule<SampleAppDevelopmentModule>();
 }
 
-var provider = builder.Configuration.RequireValue<DbProvider>("DbProvider");
-switch (provider)
+builder.Configuration.GetValueAsOption<DbProvider>("DbProvider").IfPresent(provider =>
 {
-    case DbProvider.SqlServer:
-        builder.AddSqlServerDataAccess<SqlServerSampleAppContext>(() => builder.Configuration.RequireConnectionString("SqlServer"), o =>
-        {
-            o.WithService<SampleAppContext>();
-        });
-        break;
-    case DbProvider.PostgreSql:
-        builder.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(() => builder.Configuration.RequireConnectionString("PostgreSql"), o =>
-        {
-            o.WithService<SampleAppContext>();
-        });
-        break;
-    default:
-        throw new Exception($"Invalid DB provider: {provider}");
-}
+    switch (provider)
+    {
+        case DbProvider.SqlServer:
+            builder.AddSqlServerDataAccess<SqlServerSampleAppContext>(() => builder.Configuration.RequireConnectionString("SqlServer"), o =>
+            {
+                o.WithService<SampleAppContext>();
+            });
+            break;
+        case DbProvider.PostgreSql:
+            builder.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(() => builder.Configuration.RequireConnectionString("PostgreSql"), o =>
+            {
+                o.WithService<SampleAppContext>();
+            });
+            break;
+        default:
+            throw new Exception($"Invalid DB provider: {provider}");
+    }
+});
 
 builder.AddRebusMessaging(
     "sample",
