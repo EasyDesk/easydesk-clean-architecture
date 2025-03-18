@@ -20,7 +20,7 @@ public sealed class RebusServiceProviderStep<T, R> : IPipelineStep<T, R>
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next) =>
         request switch
         {
-            IMessage => await HandleAsyncMessageContext(next),
+            IMessage when AmbientTransactionContext.Current is not null => await HandleAsyncMessageContext(next),
             _ => await HandleGenericContext(next),
         };
 

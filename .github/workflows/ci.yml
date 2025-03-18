@@ -132,6 +132,7 @@ jobs:
       CONNECTIONSTRINGS__POSTGRESQL: ${{ matrix.postgres-connection }}
       CONNECTIONSTRINGS__RABBITMQ: "amqp://admin:admin@localhost:5672"
       DB_PROVIDER: ${{ matrix.db-provider }}
+      COMMAND_BASE: "dotnet run --project src/sample/EasyDesk.SampleApp.Web/"
     services:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
@@ -170,16 +171,21 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Seeding command test
+      - name: Migrate
         uses: EasyDesk/action-dotnet@v1
         if: ${{ matrix.usesdb == true }}
         with:
-            script: dotnet run --environment Development --project src/sample/EasyDesk.SampleApp.Web/ -- seed-dev
-      - name: Openapi command test
+            script: ${{ env.COMMAND_BASE }} --environment Production -- migrate
+      - name: Seeding
+        uses: EasyDesk/action-dotnet@v1
+        if: ${{ matrix.usesdb == true }}
+        with:
+            script: ${{ env.COMMAND_BASE }} --environment Development -- seed-dev
+      - name: Openapi
         if: ${{ matrix.usesdb == false }}
         uses: EasyDesk/action-dotnet@v1
         with:
-            script: dotnet run --environment Development --project src/sample/EasyDesk.SampleApp.Web/ -- openapi
+            script: ${{ env.COMMAND_BASE }} --environment Production -- openapi
 
   release:
     name: GitHub Release
