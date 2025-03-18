@@ -121,10 +121,10 @@ jobs:
       matrix:
         include:
          - db-provider: SqlServer
-           sqlserver-connection: "Server=localhost,1433;Initial Catalog=SampleDB;User Id=SA;TrustServerCertificate=True;Password=samplepass.123;"
+           sqlserver-connection: "Server=sqlserver;Initial Catalog=SampleDB;User Id=SA;TrustServerCertificate=True;Password=samplepass.123;"
            usesdb: true
          - db-provider: PostgreSql
-           postgres-connection: "Host=localhost;Database=sampledb;Username=sample;Password=samplepass-123;"
+           postgres-connection: "Host=postgres;Database=sampledb;Username=sample;Password=samplepass-123;"
            usesdb: true
          - usesdb: false
     env:
@@ -143,8 +143,6 @@ jobs:
           MSSQL_SA_PASSWORD: samplepass.123
         volumes:
           - sqlservervolume:/var/opt/mssql
-        ports:
-          - "1433"
       postgres:
         image: postgres:alpine3.16
         env:
@@ -153,8 +151,6 @@ jobs:
           POSTGRES_DB: sampledb
         volumes:
           - postgresvolume:/var/lib/postgresql/data
-        ports:
-          - "5432"
       rabbitmq:
         image: rabbitmq:3.9-management
         env:
