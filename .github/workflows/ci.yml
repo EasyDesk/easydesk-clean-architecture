@@ -186,7 +186,7 @@ jobs:
         env:
           ASPNETCORE_ENVIRONMENT: Production
         with:
-            script: ${{ env.COMMAND_BASE }} migrate
+            script: ${{ env.COMMAND_BASE }} migrate --sync
       - name: Seeding
         uses: EasyDesk/action-dotnet@v1
         if: ${{ matrix.usesdb == true }}
