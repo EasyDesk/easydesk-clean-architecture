@@ -59,7 +59,7 @@ if (builder.Environment.IsDevelopment())
     builder.AddModule<SampleAppDevelopmentModule>();
 }
 
-var provider = builder.Configuration.RequireValue<DbProvider>("DbProvider");
+var provider = builder.Configuration.RequireValue<DbProvider?>("DbProvider");
 switch (provider)
 {
     case DbProvider.SqlServer:
@@ -74,6 +74,7 @@ switch (provider)
             o.WithService<SampleAppContext>();
         });
         break;
+    case null: break;
     default:
         throw new Exception($"Invalid DB provider: {provider}");
 }
