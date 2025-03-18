@@ -186,7 +186,7 @@ jobs:
         env:
           ASPNETCORE_ENVIRONMENT: Production
         with:
-            script: ${{ env.COMMAND_BASE }} -- migrate
+            script: ${{ env.COMMAND_BASE }} migrate
       - name: Seeding
         uses: EasyDesk/action-dotnet@v1
         if: ${{ matrix.usesdb == true }}
@@ -194,7 +194,7 @@ jobs:
         env:
           ASPNETCORE_ENVIRONMENT: Development
         with:
-            script: ${{ env.COMMAND_BASE }} -- seed-dev
+            script: ${{ env.COMMAND_BASE }} seed-dev
       - name: Openapi
         if: ${{ matrix.usesdb == false }}
         uses: EasyDesk/action-dotnet@v1
@@ -202,7 +202,7 @@ jobs:
         env:
           ASPNETCORE_ENVIRONMENT: Production
         with:
-            script: ${{ env.COMMAND_BASE }} -- openapi
+            script: ${{ env.COMMAND_BASE }} openapi
 
   release:
     name: GitHub Release
