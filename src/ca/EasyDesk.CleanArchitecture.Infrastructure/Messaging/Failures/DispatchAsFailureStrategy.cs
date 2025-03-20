@@ -30,6 +30,5 @@ public class DispatchAsFailureStrategy : IFailureStrategy
                     .Run(message.Message, x => handler.HandleFailure(x))
                     .ThenIfFailureAsync(_ => next()),
             none: () => next());
-
     }
 }
