@@ -24,15 +24,12 @@ public class DispatchAsFailureStrategy : IFailureStrategy
         var pipelineProvider = innerScope.Resolve<IPipelineProvider>();
         var failureHandler = innerScope.ResolveOption<IFailedMessageHandler<T>>();
 
-        using var rebusScope = RebusTransactionScopeUtils.CreateScopeWithComponentContext(innerScope);
-
         await failureHandler.Match(
             some: handler => pipelineProvider
-                .GetSteps<T, Nothing>(innerScope)
-                .Run(message.Message, x => handler.HandleFailure(x))
-                .ThenIfFailureAsync(_ => next()),
+                    .GetSteps<T, Nothing>(innerScope)
+                    .Run(message.Message, x => handler.HandleFailure(x))
+                    .ThenIfFailureAsync(_ => next()),
             none: () => next());
 
-        await rebusScope.CompleteAsync();
     }
 }

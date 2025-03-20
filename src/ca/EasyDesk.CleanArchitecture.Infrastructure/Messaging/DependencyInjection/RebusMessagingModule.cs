@@ -55,7 +55,7 @@ public class RebusMessagingModule : AppModule
     {
         app.ConfigureDispatchingPipeline(pipeline =>
         {
-            pipeline.AddStep(typeof(RebusServiceProviderStep<,>));
+            pipeline.AddStep(typeof(RebusScopeStep<,>));
             if (Options.UseInbox)
             {
                 pipeline

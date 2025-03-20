@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Tasks;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
@@ -12,4 +14,26 @@ public static class TransactionContextExtensions
 
     public static IComponentContext GetComponentContext(this ITransactionContext transactionContext) =>
         transactionContext.GetOrThrow<IComponentContext>(ComponentContextKey);
+
+    public static async Task<R> UseComponentContext<R>(this ITransactionContext transactionContext, IComponentContext componentContext, AsyncFunc<R> action)
+    {
+        var componentContextBefore = transactionContext.Items.GetOption(ComponentContextKey);
+
+        transactionContext.Items[ComponentContextKey] = componentContext;
+        try
+        {
+            return await action();
+        }
+        finally
+        {
+            componentContextBefore.Match(
+                some: c => transactionContext.Items[ComponentContextKey] = c,
+                none: () => transactionContext.Items.Remove(ComponentContextKey, out var _));
+        }
+    }
+
+    public static async Task UseComponentContext(this ITransactionContext transactionContext, IComponentContext componentContext, AsyncAction action)
+    {
+        await transactionContext.UseComponentContext(componentContext, () => ReturningNothing(action));
+    }
 }
