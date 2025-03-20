@@ -23,7 +23,7 @@ internal class AutoSubscriptionService : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await using var childScope = _lifetimeScope.BeginUseCaseLifetimeScope();
-        using var rebusScope = RebusTransactionScopeUtils.CreateScopeWithComponentContext(childScope);
+        using var rebusScope = childScope.CreateRebusTransactionScope();
         foreach (var messageType in _options.KnownMessageTypes.Where(ShouldAutoSubscribe))
         {
             await _bus.Subscribe(messageType);

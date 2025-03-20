@@ -36,4 +36,11 @@ public static class TransactionContextExtensions
     {
         await transactionContext.UseComponentContext(componentContext, () => ReturningNothing(action));
     }
+
+    public static RebusTransactionScope CreateRebusTransactionScope(this IComponentContext context)
+    {
+        var scope = new RebusTransactionScope();
+        scope.TransactionContext.SetComponentContext(context);
+        return scope;
+    }
 }

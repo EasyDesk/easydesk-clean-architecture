@@ -23,7 +23,7 @@ public sealed class RebusScopeStep<T, R> : IPipelineStep<T, R>
             return await AmbientTransactionContext.Current.UseComponentContext(_lifetimeScope, () => next());
         }
 
-        using var scope = RebusTransactionScopeUtils.CreateScopeWithComponentContext(_lifetimeScope);
+        using var scope = _lifetimeScope.CreateRebusTransactionScope();
         var response = await next();
         await scope.CompleteAsync();
         return response;
