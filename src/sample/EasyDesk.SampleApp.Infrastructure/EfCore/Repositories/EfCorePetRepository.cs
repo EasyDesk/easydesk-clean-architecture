@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Repositories;
 
-public class EfCorePetRepository : EfCoreRepositoryWithHydration<Pet, PetModel, SampleAppContext, int>, IPetRepository
+public class EfCorePetRepository : EfCoreRepositoryWithHydration<Pet, PetModel, int>, IPetRepository
 {
     public EfCorePetRepository(SampleAppContext context, IDomainEventNotifier eventNotifier)
-        : base(context, eventNotifier)
+        : base(context.Pets, eventNotifier)
     {
     }
 

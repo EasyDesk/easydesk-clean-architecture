@@ -8,23 +8,19 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
-public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
+public abstract class EfCoreRepository<TAggregate, TPersistence> :
     ISaveRepository<TAggregate>,
     IRemoveRepository<TAggregate>
-    where TContext : DbContext
     where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
 {
     private readonly IDomainEventNotifier _eventNotifier;
 
-    public EfCoreRepository(TContext context, IDomainEventNotifier eventNotifier)
+    public EfCoreRepository(DbSet<TPersistence> dbSet, IDomainEventNotifier eventNotifier)
     {
-        Context = context;
         _eventNotifier = eventNotifier;
-        DbSet = context.Set<TPersistence>();
+        DbSet = dbSet;
     }
-
-    protected TContext Context { get; }
 
     internal AggregatesTracker<TAggregate, TPersistence> Tracker { get; } = new();
 
@@ -59,7 +55,7 @@ public abstract class EfCoreRepository<TAggregate, TPersistence, TContext> :
         var wasSaved = Tracker.IsSaved(aggregate);
         var persistenceModel = Tracker.TrackFromAggregate(aggregate);
 
-        Context.Entry(persistenceModel).IncrementVersion();
+        DbSet.Entry(persistenceModel).IncrementVersion();
 
         if (!wasTracked)
         {

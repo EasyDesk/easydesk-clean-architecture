@@ -7,15 +7,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
-public abstract class EfCoreRepositoryWithHydration<TAggregate, TPersistence, TContext, THydrationData> :
-    EfCoreRepository<TAggregate, TPersistence, TContext>,
+public abstract class EfCoreRepositoryWithHydration<TAggregate, TPersistence, THydrationData> :
+    EfCoreRepository<TAggregate, TPersistence>,
     ISaveAndHydrateRepository<TAggregate, THydrationData>
-    where TContext : DbContext
     where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>, IWithHydration<THydrationData>
     where TAggregate : AggregateRoot, IAggregateRootWithHydration<THydrationData>
 {
-    protected EfCoreRepositoryWithHydration(TContext context, IDomainEventNotifier eventNotifier)
-        : base(context, eventNotifier)
+    protected EfCoreRepositoryWithHydration(DbSet<TPersistence> dbSet, IDomainEventNotifier eventNotifier)
+        : base(dbSet, eventNotifier)
     {
     }
 
@@ -25,7 +24,7 @@ public abstract class EfCoreRepositoryWithHydration<TAggregate, TPersistence, TC
         var wasSaved = Tracker.IsSaved(aggregate);
         var persistenceModel = Tracker.TrackFromAggregate(aggregate);
 
-        Context.Entry(persistenceModel).IncrementVersion();
+        DbSet.Entry(persistenceModel).IncrementVersion();
 
         if (!wasTracked)
         {

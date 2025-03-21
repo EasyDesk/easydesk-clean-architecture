@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Repositories;
 
-public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel, SampleAppContext>, IPersonRepository
+public class EfCorePersonRepository : EfCoreRepository<Person, PersonModel>, IPersonRepository
 {
     public EfCorePersonRepository(
         SampleAppContext context,
-        IDomainEventNotifier eventNotifier) : base(context, eventNotifier)
+        IDomainEventNotifier eventNotifier) : base(context.People, eventNotifier)
     {
     }
 
