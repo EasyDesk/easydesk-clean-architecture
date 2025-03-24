@@ -29,11 +29,11 @@
       },
       "NodaTime.Testing": {
         "type": "Direct",
-        "requested": "[3.2.1, )",
-        "resolved": "3.2.1",
-        "contentHash": "5/3Knjh+U/lshyad4MS6SSO4VD18RT6wf0tFi0rp7wlG0Zxso247qt7RPAPArnsD/bBUqq0/36N8QIs9SzSoSA==",
+        "requested": "[3.2.2, )",
+        "resolved": "3.2.2",
+        "contentHash": "2cx5CqkMtsJOs0spGmqfD3s2RKjcRn7r2QL/vuiu/r39hWn3KVb0dRM/J9IDeOcOV14XbssCaX9VaF9O1N/EsQ==",
         "dependencies": {
-          "NodaTime": "3.2.1"
+          "NodaTime": "3.2.2"
         }
       },
       "StyleCop.Analyzers": {
@@ -629,8 +629,8 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.2.1",
-        "contentHash": "D1aHhUfPQUxU2nfDCVuSLahpp0xCYZTmj/KNH3mSK/tStJYcx9HO9aJ0qbOP3hzjGPV/DXOqY2AHe27Nt4xs4g=="
+        "resolved": "3.2.2",
+        "contentHash": "dmju5W0UYC3QP/UJM0juKAZkH0HSDMp0gH91A0+mT9M0kgyM2Jm67hUZPl/WRQLq8Lijjqmdk8kyAViWFWM7dA=="
       },
       "NodaTime.Serialization.JsonNet": {
         "type": "Transitive",
