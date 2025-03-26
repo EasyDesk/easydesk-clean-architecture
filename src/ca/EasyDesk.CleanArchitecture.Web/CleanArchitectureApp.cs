@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Validation.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Context.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.AppBuilders;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
@@ -26,12 +27,7 @@ public static partial class CleanArchitectureApp
         "Domain",
     ];
 
-    public static CleanArchitectureAppBuilder CreateBuilderWithDefaults(string[] args, Assembly? assembly = default)
-    {
-        return CreateBuilder(args, assembly ?? Assembly.GetCallingAssembly()).ConfigureDefaults();
-    }
-
-    public static CleanArchitectureAppBuilder CreateBuilder(string[] args, Assembly? assembly = default)
+    public static CleanArchitectureWebAppBuilder CreateWebAppBuilder(string[] args, Assembly? assembly = default)
     {
         var callingAssemblyName = (assembly ?? Assembly.GetCallingAssembly())?.GetName().Name ?? throw new InvalidOperationException("Calling assembly name not found.");
         var match = WebAssemblyRegex().Match(callingAssemblyName);
@@ -39,15 +35,35 @@ public static partial class CleanArchitectureApp
         var assemblies = _layerNames.SelectMany(layer => LoadAssemblyIfPresent($"{assemblyPrefix}.{layer}"));
 
         var (commandArgs, configurationArgs) = SplitArgs(args);
-        var builder = new CleanArchitectureAppBuilder(assemblyPrefix, commandArgs, configurationArgs);
+        var builder = new CleanArchitectureWebAppBuilder(assemblyPrefix, commandArgs, configurationArgs);
         builder.WithAssemblies(assemblies);
         return builder;
     }
 
-    public static CleanArchitectureAppBuilder ConfigureDefaults(this CleanArchitectureAppBuilder builder)
+    public static CleanArchitectureHostBuilder CreateHostBuilder(string name, string[] args, Assembly? assembly = default)
+    {
+        var (commandArgs, configurationArgs) = SplitArgs(args);
+        var builder = new CleanArchitectureHostBuilder(name, commandArgs, configurationArgs);
+        builder.WithAssemblies([assembly ?? Assembly.GetCallingAssembly()]);
+        return builder;
+    }
+
+    public static CleanArchitectureWebAppBuilder ConfigureDefaults(this CleanArchitectureWebAppBuilder builder)
+    {
+        builder.AddControllers(options => options.HideUnhandledExceptions = !builder.Environment.IsDevelopment());
+        builder.ConfigureCommonDefaults();
+        return builder;
+    }
+
+    public static CleanArchitectureHostBuilder ConfigureDefaults(this CleanArchitectureHostBuilder builder)
+    {
+        builder.ConfigureCommonDefaults();
+        return builder;
+    }
+
+    private static B ConfigureCommonDefaults<B>(this B builder) where B : CleanArchitectureAppBuilder
     {
         builder
-            .AddControllers(options => options.HideUnhandledExceptions = !builder.Environment.IsDevelopment())
             .AddJsonSerialization()
             .AddDomainLayer()
             .AddContextDetector()

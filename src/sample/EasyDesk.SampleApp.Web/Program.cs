@@ -27,7 +27,7 @@ using EasyDesk.SampleApp.Web.DependencyInjection;
 using Rebus.Config;
 using Rebus.Timeouts;
 
-var builder = CleanArchitectureApp.CreateBuilderWithDefaults(args);
+var builder = CleanArchitectureApp.CreateWebAppBuilder(args).ConfigureDefaults();
 
 builder
     .WithName("EasyDesk.Sample.App")
@@ -96,7 +96,7 @@ builder.ConfigureModule<ControllersModule>(m =>
     section.FlatMap(s => s.GetValueAsOption<int>("MaxPageSize")).IfPresent(s => m.Options.MaxPageSize = s);
 });
 
-builder.ConfigureWebApplication(app =>
+builder.ConfigureApplication(app =>
 {
     app.UseReverseProxyModule();
 
