@@ -62,11 +62,14 @@ public class RebusMessagingModule : AppModule
                     .AddStep(typeof(InboxStep<>))
                     .After(typeof(UnitOfWorkStep<,>));
             }
-            pipeline.AddStepAfterAll(typeof(OutboxStoreMessagesStep<,>))
-                .Before(typeof(SaveChangesStep<,>))
-                .Before(typeof(DomainEventHandlingStep<,>));
-            pipeline.AddStep(typeof(OutboxFlushRequestStep<,>))
-                .Before(typeof(UnitOfWorkStep<,>));
+            if (Options.UseOutbox)
+            {
+                pipeline.AddStepAfterAll(typeof(OutboxStoreMessagesStep<,>))
+                    .Before(typeof(SaveChangesStep<,>))
+                    .Before(typeof(DomainEventHandlingStep<,>));
+                pipeline.AddStep(typeof(OutboxFlushRequestStep<,>))
+                    .Before(typeof(UnitOfWorkStep<,>));
+            }
         });
         app.RequireModule<JsonModule>();
 
