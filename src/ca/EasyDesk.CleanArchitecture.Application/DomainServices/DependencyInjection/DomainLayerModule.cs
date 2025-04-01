@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
@@ -31,6 +32,11 @@ public class DomainLayerModule : AppModule
             .AssignableToOpenGenericType(typeof(IDomainEventHandler<>))
             .AsClosedTypesOf(typeof(IDomainEventHandler<>))
             .InstancePerDependency();
+
+        builder.RegisterType<NullSaveChangesHandler>()
+            .IfNotRegistered(typeof(ISaveChangesHandler))
+            .As<ISaveChangesHandler>()
+            .InstancePerLifetimeScope();
     }
 }
 
