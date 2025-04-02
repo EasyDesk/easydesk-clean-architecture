@@ -195,8 +195,8 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "15.11.0",
-        "contentHash": "+XmI62PXN+abRRInWuJGBqM+8boHRxl5ZXHguJDteyI9jPv7HluhtpKL9HqpgcLqJJ/BMp72+E8k+l8E2UN0GQ==",
+        "resolved": "16.0.0",
+        "contentHash": "DPXmcWTAJzRzbBIUkJOtEeDVS8RpPyIkXFP++GUygnwoaTrma42/7sbGYYLsOWqcdvbITeO4M0dhACvC2U57Xg==",
         "dependencies": {
           "EmptyFiles": "8.8.0",
           "System.Management": "9.0.2"
@@ -1463,11 +1463,11 @@
       },
       "Verify": {
         "type": "Transitive",
-        "resolved": "28.16.0",
-        "contentHash": "4C4q8cDArIZjFESw7/4gy5aqHQ3ZBPb0XqlRvpNoMdO8Aa/vsNK/BpWvIsK+PhtnqiVUgVDfcpki9LHU+5MTOA==",
+        "resolved": "29.1.0",
+        "contentHash": "7lAN4tPO10w7XIPp5J1gq5zc8hF+VHAkdb84+NliH3bIlGZQfUCaQauj8ktTccq9ty0FTqdN4jaluN6EFAVLZw==",
         "dependencies": {
           "Argon": "0.27.0",
-          "DiffEngine": "15.11.0",
+          "DiffEngine": "16.0.0",
           "SimpleInfoName": "3.1.0",
           "System.IO.Hashing": "9.0.3"
         }
@@ -1492,14 +1492,14 @@
       },
       "Verify.Xunit": {
         "type": "Transitive",
-        "resolved": "28.16.0",
-        "contentHash": "+xRz/YERwIJ9tJYH35LYLWyyD4yavhokLHDptlNHQ2xhlnsXfWtjuzSSFvA6vGu7dEBXbunVoWt/Xq35hiqtNQ==",
+        "resolved": "29.0.0",
+        "contentHash": "PJ8CrV6df8XCKNmV7l7Nt49wJiJlNFRHbk+j8H6bqxNmHFYI8XwWUJRsF+dIY8/xBszgRnrQROxPMgCdGKWNyA==",
         "dependencies": {
           "Argon": "0.27.0",
           "DiffEngine": "15.11.0",
           "SimpleInfoName": "3.1.0",
           "System.IO.Hashing": "9.0.3",
-          "Verify": "28.16.0",
+          "Verify": "29.0.0",
           "xunit.abstractions": "2.0.3",
           "xunit.extensibility.execution": "2.9.3"
         }
@@ -1623,7 +1623,7 @@
           "Testcontainers": "[4.3.0, )",
           "Testcontainers.MsSql": "[4.3.0, )",
           "Testcontainers.PostgreSql": "[4.3.0, )",
-          "Verify.Xunit": "[28.16.0, )"
+          "Verify.Xunit": "[29.0.0, )"
         }
       },
       "easydesk.cleanarchitecture.testing.unit": {
@@ -1705,7 +1705,7 @@
           "Microsoft.Extensions.DependencyInjection": "[9.0.3, )",
           "NSubstitute": "[5.3.0, )",
           "Shouldly": "[4.3.0, )",
-          "Verify": "[28.16.0, )",
+          "Verify": "[29.1.0, )",
           "Verify.NodaTime": "[2.2.0, )",
           "Verify.SystemJson": "[1.4.1, )"
         }
