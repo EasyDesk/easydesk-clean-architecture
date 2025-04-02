@@ -81,7 +81,6 @@ public sealed class TestWebServiceBuilder
             _configureWebHost = configureWebHost;
             _beforeStart = beforeStart;
             HttpClient = CreateClient();
-            HttpClient.Timeout = Timeout.InfiniteTimeSpan;
         }
 
         public HttpClient HttpClient { get; }
@@ -100,6 +99,12 @@ public sealed class TestWebServiceBuilder
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             _configureWebHost?.Invoke(builder);
+        }
+
+        protected override void ConfigureClient(HttpClient client)
+        {
+            base.ConfigureClient(client);
+            client.Timeout = Timeout.InfiniteTimeSpan;
         }
     }
 }
