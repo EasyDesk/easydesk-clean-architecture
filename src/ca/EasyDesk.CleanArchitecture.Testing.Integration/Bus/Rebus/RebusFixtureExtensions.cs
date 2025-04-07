@@ -2,7 +2,10 @@
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus.Scheduler;
-using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Rebus.Activation;
@@ -18,13 +21,23 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 
 public static class RebusFixtureExtensions
 {
-    public static WebServiceTestsFixtureBuilder<T> AddInMemoryRebus<T>(this WebServiceTestsFixtureBuilder<T> builder)
-        where T : ITestFixture
+    public static TestFixtureConfigurer AddInMemoryRebus(this TestFixtureConfigurer configurer)
     {
         var network = new InMemNetwork();
         var subscriberStore = new InMemorySubscriberStore();
-        return builder
-            .ConfigureWebService(ws => ws.WithServices(builder =>
+
+        configurer.ContainerBuilder
+            .RegisterType<TestBusEndpointsManager>()
+            .InstancePerLifetimeScope();
+
+        // TODO: use an abstraction or remove multitenancy entirely.
+        configurer.ContainerBuilder
+            .RegisterType<TestTenantManager>()
+            .IfNotRegistered(typeof(TestTenantManager))
+            .InstancePerLifetimeScope();
+
+        return configurer
+            .ConfigureHost(host => host.ConfigureContainer(builder =>
             {
                 builder.RegisterDecorator<RebusTransportConfiguration>((_, _, _) => (t, e) =>
                 {
@@ -33,39 +46,69 @@ public static class RebusFixtureExtensions
                 });
                 builder.RegisterType<RebusResettingTask>().As<IHostedService>().SingleInstance();
             }))
-            .OnReset(_ =>
-            {
-                network.Reset();
-            });
+            .RegisterLifetimeHooks(betweenTests: network.Reset);
     }
 
-    public static WebServiceTestsFixtureBuilder<T> AddInMemoryRebusScheduler<T>(
-        this WebServiceTestsFixtureBuilder<T> builder,
+    public static TestFixtureConfigurer AddInMemoryRebusScheduler(
+        this TestFixtureConfigurer configurer,
         string address,
         Duration pollInterval)
-        where T : ITestFixture
     {
-        IBus? bus = null;
-        var store = new InMemTimeoutStore();
-        return builder
-            .OnInitialization(f =>
-            {
-                var rebus = Configure.With(new BuiltinHandlerActivator());
-                var lifetimeScope = f.WebService.LifetimeScope;
+        return configurer.RegisterLifetimeHooks(c => new InMemoryRebusSchedulerLifetimeHooks(
+            c.Resolve<ITestHost>(),
+            address,
+            pollInterval,
+            new InMemTimeoutStore()));
+    }
 
-                var transport = lifetimeScope.Resolve<RebusTransportConfiguration>();
-                rebus
-                    .Transport(t => transport(t, new(address)))
-                    .UseNodaTimeClock(lifetimeScope.Resolve<IClock>())
-                    .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(store, c.Get<IRebusTime>())))
-                    .Options(o =>
-                    {
-                        o.SetDueTimeoutsPollInteval(pollInterval.ToTimeSpan());
-                        o.Register<IAsyncTaskFactory>(_ => lifetimeScope.Resolve<PausableAsyncTaskFactory>());
-                    });
-                bus = rebus.Start();
-            })
-            .OnReset(_ => store.Reset())
-            .OnDisposal(_ => bus?.Dispose());
+    private class InMemoryRebusSchedulerLifetimeHooks : LifetimeHooks
+    {
+        private readonly ITestHost _testHost;
+        private readonly string _address;
+        private readonly Duration _pollInterval;
+        private readonly InMemTimeoutStore _timeoutStore;
+
+        private IBus _bus = default!;
+
+        public InMemoryRebusSchedulerLifetimeHooks(ITestHost testHost, string address, Duration pollInterval, InMemTimeoutStore timeoutStore)
+        {
+            _testHost = testHost;
+            _address = address;
+            _pollInterval = pollInterval;
+            _timeoutStore = timeoutStore;
+        }
+
+        public override Task OnInitialization()
+        {
+            var rebus = Configure.With(new BuiltinHandlerActivator());
+            var lifetimeScope = _testHost.LifetimeScope;
+
+            var transport = lifetimeScope.Resolve<RebusTransportConfiguration>();
+            rebus
+                .Transport(t => transport(t, new(_address)))
+                .UseNodaTimeClock(lifetimeScope.Resolve<IClock>())
+                .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(_timeoutStore, c.Get<IRebusTime>())))
+                .Options(o =>
+                {
+                    o.SetDueTimeoutsPollInteval(_pollInterval.ToTimeSpan());
+                    o.Register<IAsyncTaskFactory>(_ => lifetimeScope.Resolve<PausableAsyncTaskFactory>());
+                });
+
+            _bus = rebus.Start();
+
+            return Task.CompletedTask;
+        }
+
+        public override Task BetweenTests()
+        {
+            _timeoutStore.Reset();
+            return Task.CompletedTask;
+        }
+
+        public override Task OnDisposal()
+        {
+            _bus.Dispose();
+            return Task.CompletedTask;
+        }
     }
 }

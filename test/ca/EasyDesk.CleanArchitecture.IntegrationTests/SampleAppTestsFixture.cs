@@ -7,12 +7,16 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
-using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
-using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Seeding;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Time;
 using EasyDesk.Commons.Utils;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
-using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 using Npgsql;
 using Testcontainers.MsSql;
@@ -20,68 +24,65 @@ using Testcontainers.PostgreSql;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixture>
-    .WithSeeding<SampleSeeder.Data>
-    .FollowingFixtureLifetime
+public class SampleAppTestsFixture : IntegrationTestsFixture
 {
     public const DbProvider DefaultDbProvider = DbProvider.PostgreSql;
 
-    private static readonly Dictionary<DbProvider, Action<WebServiceTestsFixtureBuilder<SampleAppTestsFixture>>> _providerConfigs = new()
+    private static readonly Dictionary<DbProvider, Action<TestFixtureConfigurer>> _providerConfigs = new()
     {
         { DbProvider.SqlServer, ConfigureSqlServer },
         { DbProvider.PostgreSql, ConfigurePostgreSql },
     };
 
-    public SampleAppTestsFixture() : base(typeof(PersonController))
+    protected override void ConfigureFixture(TestFixtureConfigurer configurer)
     {
+        configurer.AddFakeClock(Instant.FromUtc(2021, 11, 20, 11, 45));
+        configurer.AddHttpTestHelper();
+        configurer.AddMultitenancy();
+
+        ConfigureDatabase(configurer);
+
+        configurer.RegisterHost<PersonController>();
+
+        configurer.AddInMemoryRebus();
+        configurer.AddInMemoryRebusScheduler(Scheduler.Address, Duration.FromSeconds(1));
+
+        configurer.RegisterLifetimeHooks(
+            onInitialization: () =>
+            {
+                using var scope = Container.Resolve<ITestHost>().LifetimeScope.BeginUseCaseLifetimeScope();
+                var migrationService = scope.Resolve<MigrationsService>();
+                migrationService.MigrateSync();
+            });
+
+        configurer.AddSeedingOnInitialization(new SampleSeeder());
+        configurer.AddDatabaseResetUsingTableCopies();
     }
 
-    protected override Instant InitialInstant => Instant.FromUtc(2021, 11, 20, 11, 45);
-
-    protected override void ConfigureFixture(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
-    {
-        ConfigureDbProvider(builder);
-
-        builder.AddInMemoryRebus();
-        builder.AddInMemoryRebusScheduler(Scheduler.Address, Duration.FromSeconds(1));
-    }
-
-    private void ConfigureDbProvider(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
+    private void ConfigureDatabase(TestFixtureConfigurer configurer)
     {
         var provider = Environment.GetEnvironmentVariable("DB_PROVIDER")
             .AsOption()
             .Map(p => Enums.ParseOption<DbProvider>(p).OrElseThrow(() => new Exception("Invalid DB provider")))
             .OrElse(DefaultDbProvider);
 
-        builder.WithConfiguration("DbProvider", provider.ToString());
-        _providerConfigs[provider](builder);
+        _providerConfigs[provider](configurer);
 
-        builder.ConfigureWebService(web => web.BeforeStart(host =>
-        {
-            using var scope = host.Services.GetRequiredService<ILifetimeScope>().BeginUseCaseLifetimeScope();
-            var migrationService = scope.Resolve<MigrationsService>();
-            migrationService.MigrateSync();
-        }));
+        configurer.ConfigureHost(h => h.WithConfiguration("DbProvider", provider.ToString()));
     }
 
-    protected override WebServiceFixtureSeeder<SampleAppTestsFixture, SampleSeeder.Data> CreateSeeder(SampleAppTestsFixture fixture) =>
-        new SampleSeeder(fixture);
-
-    private static ISqlDatabaseFixtureBuilder ConfigureDatabaseDefaults(ISqlDatabaseFixtureBuilder builder) => builder
-        .WithTableCopies();
-
-    private static void ConfigureSqlServer(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
+    private static void ConfigureSqlServer(TestFixtureConfigurer configurer)
     {
         var container = new MsSqlBuilder()
             .WithUniqueName("sample-app-tests-sqlserver")
             .WithPassword("sample.123")
             .Build();
 
-        ConfigureDatabaseDefaults(builder.AddSqlServerDatabase(container, "SampleDb"))
-            .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer");
+        configurer.AddSqlServerDatabase(container, "SampleDb", x => x
+            .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer"));
     }
 
-    private static void ConfigurePostgreSql(WebServiceTestsFixtureBuilder<SampleAppTestsFixture> builder)
+    private static void ConfigurePostgreSql(TestFixtureConfigurer configurer)
     {
         var container = new PostgreSqlBuilder()
             .WithUniqueName("sample-app-tests-postgres")
@@ -90,8 +91,8 @@ public class SampleAppTestsFixture : WebServiceTestsFixture<SampleAppTestsFixtur
             .WithPassword("sample")
             .Build();
 
-        ConfigureDatabaseDefaults(builder.AddPostgresDatabase(container))
+        configurer.AddPostgresDatabase(container, x => x
             .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true }.ConnectionString)
-            .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql");
+            .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql"));
     }
 }

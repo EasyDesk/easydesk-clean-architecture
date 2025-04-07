@@ -1,17 +1,13 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
-using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Seeding;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
-using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
-using EasyDesk.Commons.Options;
-using EasyDesk.Commons.Scopes;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Extensions.DependencyInjection;
 using NodaTime;
@@ -19,107 +15,49 @@ using NodaTime.Testing;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 
-public class AgentScope : IDisposable
+public sealed class IntegrationTestSession<TFixture> : IAsyncDisposable
+    where TFixture : IntegrationTestsFixture
 {
-    private readonly ScopeManager<Option<Agent>>.Scope _scope;
-
-    public AgentScope(ScopeManager<Option<Agent>>.Scope scope)
-    {
-        _scope = scope;
-    }
-
-    public Option<Agent> Agent => _scope.Value;
-
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        _scope.Dispose();
-    }
-}
-
-public abstract class IntegrationTestSession<T> : IAsyncDisposable
-    where T : IHostFixture, ITimedFixture
-{
-    private readonly IList<ITestBusEndpoint> _busEndpoints = [];
-    private readonly Lazy<HttpTestHelper> _http;
     private readonly Lazy<ITestBusEndpoint> _defaultBusEndpoint;
     private readonly Lazy<ITestBusEndpoint> _errorBusEndpoint;
-    private readonly ScopeManager<Option<Agent>> _agentScopeManager;
 
-    protected IntegrationTestSession(T fixture)
+    public IntegrationTestSession(TFixture fixture, Action<SessionConfigurer>? configureSession = null)
     {
         Fixture = fixture;
-        _http = new(CreateHttpTestHelper);
+        LifetimeScope = configureSession is null
+            ? fixture.Container.BeginLifetimeScope()
+            : fixture.Container.BeginLifetimeScope(builder => configureSession(new SessionConfigurer { ContainerBuilder = builder }));
+
         _defaultBusEndpoint = new(() => NewBusEndpoint());
         _errorBusEndpoint = new(() => NewBusEndpoint(Host.LifetimeScope.Resolve<RebusMessagingOptions>().ErrorQueueName));
-        TenantManager = new TestTenantManager(DefaultTenantInfo);
-        _agentScopeManager = new(DefaultAgent);
     }
 
-    protected T Fixture { get; }
+    public TFixture Fixture { get; }
 
-    protected ITestHost Host => Fixture.Host;
+    public ILifetimeScope LifetimeScope { get; }
 
-    protected HttpTestHelper Http => _http.Value;
+    public ITestHost Host => LifetimeScope.Resolve<ITestHost>();
 
-    protected FakeClock Clock => Fixture.Clock;
+    public FakeClock Clock => LifetimeScope.Resolve<FakeClock>();
 
-    protected TestTenantManager TenantManager { get; }
+    public HttpTestHelper Http => LifetimeScope.Resolve<HttpTestHelper>();
 
-    protected ITestBusEndpoint DefaultBusEndpoint => _defaultBusEndpoint.Value;
+    public ITestBusEndpoint DefaultBusEndpoint => _defaultBusEndpoint.Value;
 
-    protected ITestBusEndpoint ErrorBusEndpoint => _errorBusEndpoint.Value;
+    public ITestBusEndpoint ErrorBusEndpoint => _errorBusEndpoint.Value;
 
-    protected virtual Option<TenantInfo> DefaultTenantInfo => None;
+    public TSeed GetSeed<TSeed>() => LifetimeScope.Resolve<SeedManager<TFixture, TSeed>>().Seed;
 
-    protected virtual Option<Agent> DefaultAgent => None;
+    public TestTenantManager TenantManager => LifetimeScope.Resolve<TestTenantManager>();
 
-    protected ITestBusEndpoint NewBusEndpoint(string? inputQueueAddress = null, Duration? defaultTimeout = null)
+    public TestAuthenticationManager AuthenticationManager => LifetimeScope.Resolve<TestAuthenticationManager>();
+
+    public ITestBusEndpoint NewBusEndpoint(string? inputQueueAddress = null, Duration? defaultTimeout = null) =>
+        LifetimeScope.Resolve<TestBusEndpointsManager>().NewBusEndpoint(inputQueueAddress, defaultTimeout);
+
+    public async Task PollServiceUntil<TService>(AsyncFunc<TService, bool> predicate, Duration? timeout = null, Duration? interval = null) where TService : notnull
     {
-        var busEndpoint = RebusTestBusEndpoint.CreateFromServices(Host.LifetimeScope, TenantManager, inputQueueAddress, defaultTimeout);
-        _busEndpoints.Add(busEndpoint);
-        return busEndpoint;
-    }
-
-    protected HttpTestHelper CreateHttpTestHelper()
-    {
-        var jsonSettings = Host.LifetimeScope.Resolve<JsonOptionsConfigurator>();
-        return new(Host.HttpClient, jsonSettings, GetHttpAuthentication(), ApplyDefaultRequestConfiguration);
-    }
-
-    private void ApplyDefaultRequestConfiguration(HttpRequestBuilder req)
-    {
-        TenantManager.CurrentTenantInfo.FlatMap(x => x.Id).Match(
-            some: req.Tenant,
-            none: req.NoTenant);
-
-        _agentScopeManager.Current.Match(
-            some: req.AuthenticateAs,
-            none: req.NoAuthentication);
-
-        ConfigureRequests(req);
-    }
-
-    protected virtual void ConfigureRequests(HttpRequestBuilder req)
-    {
-    }
-
-    protected AgentScope AuthenticateAs(Agent agent)
-    {
-        return new(_agentScopeManager.OpenScope(Some(agent)));
-    }
-
-    protected AgentScope Anonymize()
-    {
-        return new(_agentScopeManager.OpenScope(None));
-    }
-
-    protected virtual ITestHttpAuthentication GetHttpAuthentication() =>
-        TestHttpAuthentication.CreateFromServices(Host.LifetimeScope);
-
-    protected async Task PollServiceUntil<TService>(AsyncFunc<TService, bool> predicate, Duration? timeout = null, Duration? interval = null) where TService : notnull
-    {
-        await WebService.LifetimeScope.ScopedPollUntil<ILifetimeScope>(
+        await Host.LifetimeScope.ScopedPollUntil<ILifetimeScope>(
             async scope =>
             {
                 scope
@@ -134,11 +72,6 @@ public abstract class IntegrationTestSession<T> : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        foreach (var bus in _busEndpoints)
-        {
-            await bus.DisposeAsync();
-        }
-        _busEndpoints.Clear();
-        GC.SuppressFinalize(this);
+        await LifetimeScope.DisposeAsync();
     }
 }

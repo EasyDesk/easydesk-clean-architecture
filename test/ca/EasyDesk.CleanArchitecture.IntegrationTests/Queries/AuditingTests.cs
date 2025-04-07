@@ -1,13 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
@@ -29,16 +29,17 @@ public class AuditingTests : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
         _initialAudits = TestData.OperationsRun;
 
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;
 
         var createPersonBody = new CreatePersonBodyDto()
@@ -48,18 +49,18 @@ public class AuditingTests : SampleIntegrationTest
             DateOfBirth = new LocalDate(2012, 12, 21),
             Residence = AddressDto.Create(streetName: "Abbey Road"),
         };
-        _personId = await Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
+        _personId = await Session.Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
         _initialAudits += 2;
-        await Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();
+        await Session.Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();
 
-        using var scope = TenantManager.MoveToPublic();
+        using var scope = Session.TenantManager.MoveToPublic();
         await WaitUntilAuditLogHasMoreRecords(0);
     }
 
     private Task WaitUntilAuditLogHasMoreRecords(int newRecords)
     {
-        using var scope = TenantManager.MoveToPublic();
-        return PollServiceUntil<IAuditLog>(
+        using var scope = Session.TenantManager.MoveToPublic();
+        return Session.PollServiceUntil<IAuditLog>(
             log => log
                 .Audit(new())
                 .GetAll()
@@ -69,37 +70,37 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReturnInitialAudits()
     {
-        await Http.GetAudits().Send().Verify();
+        await Session.Http.GetAudits().Send().Verify();
     }
 
     [Fact]
     public async Task ShouldAuditCommands()
     {
         var tenantId = new TenantId("new-tenant");
-        await DefaultBusEndpoint.Send(new CreateTenant(tenantId.Value));
-        await WebService.WaitUntilTenantExists(tenantId);
+        await Session.DefaultBusEndpoint.Send(new CreateTenant(tenantId.Value));
+        await Session.Host.WaitUntilTenantExists(tenantId);
 
-        using var scope = TenantManager.MoveToTenant(tenantId);
-        await PollServiceUntil<IAuditLog>(
+        using var scope = Session.TenantManager.MoveToTenant(tenantId);
+        await Session.PollServiceUntil<IAuditLog>(
             log => log.Audit(new AuditQuery()).GetAll().Map(audits => audits.Any()));
 
-        await Http.GetAudits().Send().Verify();
+        await Session.Http.GetAudits().Send().Verify();
     }
 
     [Fact]
     public async Task ShouldAuditCommandRequests()
     {
-        await Http.CreatePet(_personId, new("Bobby")).Send().EnsureSuccess();
+        await Session.Http.CreatePet(_personId, new("Bobby")).Send().EnsureSuccess();
 
         await WaitUntilAuditLogHasMoreRecords(1);
 
-        await Http.GetAudits().Send().Verify();
+        await Session.Http.GetAudits().Send().Verify();
     }
 
     [Fact]
     public async Task ShouldFilterByIdentity()
     {
-        await Http
+        await Session.Http
             .GetAudits()
             .WithQuery("identity", TestAgents.Admin.MainIdentity().Id)
             .Send()
@@ -109,12 +110,12 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFilterBySuccess()
     {
-        var success = await Http.CreatePet(Guid.NewGuid(), new("Bobby")).Send().IsSuccess();
+        var success = await Session.Http.CreatePet(Guid.NewGuid(), new("Bobby")).Send().IsSuccess();
         success.ShouldBeFalse();
 
         await WaitUntilAuditLogHasMoreRecords(1);
 
-        Task<IEnumerable<AuditRecordDto>> RunQuery(bool success) => Http
+        Task<IEnumerable<AuditRecordDto>> RunQuery(bool success) => Session.Http
             .GetAudits()
             .WithQuery("success", success.ToString())
             .Send()
@@ -130,7 +131,7 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFilterByAnonymous()
     {
-        Task<IEnumerable<AuditRecordDto>> RunQuery(bool anonymous) => Http
+        Task<IEnumerable<AuditRecordDto>> RunQuery(bool anonymous) => Session.Http
             .GetAudits()
             .WithQuery("anonymous", anonymous.ToString())
             .Send()
@@ -146,7 +147,7 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFilterByName()
     {
-        await Http
+        await Session.Http
             .GetAudits()
             .WithQuery("name", nameof(CreatePerson))
             .Send()
@@ -156,7 +157,7 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFilterByType()
     {
-        await Http
+        await Session.Http
             .GetAudits()
             .WithQuery("type", AuditRecordType.CommandRequest.ToString())
             .Send()
@@ -166,23 +167,23 @@ public class AuditingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFilterByInterval()
     {
-        void Advance() => Clock.AdvanceSeconds(1);
-        Task RunCommand(string name) => Http.CreatePet(_personId, new(name)).Send().EnsureSuccess();
+        void Advance() => Session.Clock.AdvanceSeconds(1);
+        Task RunCommand(string name) => Session.Http.CreatePet(_personId, new(name)).Send().EnsureSuccess();
 
         await RunCommand("Bobby0");
         Advance();
-        var from = Clock.GetCurrentInstant();
+        var from = Session.Clock.GetCurrentInstant();
         Advance();
         await RunCommand("Bobby1");
         await RunCommand("Bobby2");
         Advance();
-        var to = Clock.GetCurrentInstant();
+        var to = Session.Clock.GetCurrentInstant();
         Advance();
         await RunCommand("Bobby3");
 
         await WaitUntilAuditLogHasMoreRecords(4);
 
-        await Http
+        await Session.Http
             .GetAudits()
             .WithQuery("from", from.ToString())
             .WithQuery("to", to.ToString())

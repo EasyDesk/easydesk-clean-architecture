@@ -1,10 +1,14 @@
 ﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
 
-public interface IFixtureLifetime : IAsyncLifetime
+public interface IFixtureLifetime
 {
+    Task OnInitialization();
+
     Task BeforeTest();
 
     Task AfterTest();
 
-    Task Reset();
+    Task BetweenTests();
+
+    Task OnDisposal();
 }

@@ -36,7 +36,7 @@ public class TransactionsTests : SampleIntegrationTest
 
     private async Task UseContext(AsyncAction<SampleAppContext, ILifetimeScope> action)
     {
-        await using var scope = WebService.LifetimeScope.BeginUseCaseLifetimeScope();
+        await using var scope = Session.Host.LifetimeScope.BeginUseCaseLifetimeScope();
         scope.Resolve<IContextTenantInitializer>().Initialize(TenantInfo.Public);
         await action(scope.Resolve<SampleAppContext>(), scope);
     }

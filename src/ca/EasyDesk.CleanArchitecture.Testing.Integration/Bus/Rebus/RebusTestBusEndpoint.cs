@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
-using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using NodaTime;
@@ -170,12 +170,12 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     public static RebusTestBusEndpoint CreateFromServices(
         IComponentContext context,
         TestTenantManager testTenantNavigator,
-        string? inputQueueAddress = null,
+        string inputQueueAddress,
         Duration? defaultTimeout = null)
     {
         var options = context.Resolve<RebusMessagingOptions>();
         var serviceEndpoint = context.Resolve<RebusEndpoint>();
-        var helperEndpoint = new RebusEndpoint(inputQueueAddress ?? GenerateNewRandomAddress());
+        var helperEndpoint = new RebusEndpoint(inputQueueAddress);
         return new RebusTestBusEndpoint(
             rebus =>
             {
@@ -185,8 +185,6 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
             testTenantNavigator,
             defaultTimeout);
     }
-
-    private static string GenerateNewRandomAddress() => $"rebus-test-helper-{Guid.NewGuid()}";
 
     private class TestTenantManagementStep : IOutgoingStep
     {

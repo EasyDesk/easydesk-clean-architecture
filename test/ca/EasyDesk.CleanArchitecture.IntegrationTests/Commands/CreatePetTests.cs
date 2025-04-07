@@ -1,12 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -25,14 +24,15 @@ public class CreatePetTests : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
     }
 
     [Fact]
@@ -55,12 +55,12 @@ public class CreatePetTests : SampleIntegrationTest
                 Country: None),
         };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .CreatePet(person.Id, new(Nickname))
             .Send()
             .Verify();
@@ -92,24 +92,24 @@ public class CreatePetTests : SampleIntegrationTest
             Residence = AddressDto.Create("unknown"),
         };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var response = await Http
+        var response = await Session.Http
             .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
             .Send(timeout)
             .AsData();
 
         response.Pets.ShouldBe(BulkQuantity);
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
             .Verify();
@@ -132,17 +132,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(15);
         var body = CreatePersonBody();
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .CreatePets(person.Id, new(PetGenerator(0)))
             .Send(timeout)
             .Verify();
@@ -153,12 +153,12 @@ public class CreatePetTests : SampleIntegrationTest
     {
         var body = CreatePersonBody();
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .CreatePet(person.Id, new(Nickname))
             .AuthenticateAs(TestAgents.OtherUser)
             .Send()
@@ -171,17 +171,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(30);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("asd") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var response = await Http
+        var response = await Session.Http
             .CreatePetsFromCsv(
                 person.Id,
                 GenerateCsv(BulkQuantity))
@@ -190,7 +190,7 @@ public class CreatePetTests : SampleIntegrationTest
 
         response.Pets.ShouldBe(BulkQuantity);
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
             .Verify();
@@ -202,17 +202,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(15);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("__") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(0))
             .Send(timeout)
             .Verify();
@@ -224,17 +224,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(15);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("ooo") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(PetController.MaxFileSize / 4))
             .Send(timeout)
             .Verify();
@@ -246,17 +246,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(15);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("...") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(20).Replace("Nickname", "Nick;Name"))
             .Send(timeout)
             .Verify();
@@ -268,17 +268,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(15);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("...") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(20).Replace("Nickname", "Nick;Name"))
             .WithQuery("greedy", true.ToString())
             .Send(timeout)
@@ -291,17 +291,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(30);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        Task<VerifiableHttpResponse<CreatePetsResultDto, Nothing>> StartBulkOperation() => Http
+        Task<VerifiableHttpResponse<CreatePetsResultDto, Nothing>> StartBulkOperation() => Session.Http
             .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
             .Send(timeout)
             .AsVerifiable();
@@ -319,22 +319,22 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(30);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .EnsureSuccess();
 
-        var success = await Http
+        var success = await Session.Http
             .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
             .Send(timeout)
             .AsVerifiable();
 
-        var successToo = await Http
+        var successToo = await Session.Http
             .CreatePets2(person.Id, new(PetGenerator(BulkQuantity)))
             .Send(timeout)
             .AsVerifiable();
@@ -345,7 +345,7 @@ public class CreatePetTests : SampleIntegrationTest
     [Fact]
     public async Task BulkCreatePets_ShouldNotBeInProgressByDefault()
     {
-        await Http
+        await Session.Http
             .GetCreatePetsStatus()
             .Send()
             .Verify();
@@ -357,17 +357,17 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(30);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
             .Send(timeout)
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .GetCreatePetsStatus()
             .Send()
             .Verify();
@@ -379,22 +379,22 @@ public class CreatePetTests : SampleIntegrationTest
         var timeout = Duration.FromSeconds(30);
         var body = CreatePersonBody() with { Residence = AddressDto.Create("unknown") };
 
-        var person = await Http
+        var person = await Session.Http
             .CreatePerson(body)
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .CreatePets(person.Id, new(PetGenerator(BulkQuantity)))
             .Send(timeout)
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Count() == BulkQuantity + 1, timeout: timeout)
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .GetCreatePetsStatus()
             .Send()
             .Verify();

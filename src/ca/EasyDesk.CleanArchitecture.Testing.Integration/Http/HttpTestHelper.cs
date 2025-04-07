@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
+using EasyDesk.Commons.Collections;
 using System.Net.Mime;
 using System.Text.Json;
 
@@ -10,20 +11,20 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;
 public class HttpTestHelper
 {
     private readonly HttpClient _httpClient;
-    private readonly ITestHttpAuthentication _httpAuthentication;
-    private readonly Action<HttpRequestBuilder>? _configureRequest;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly IEnumerable<IHttpRequestConfigurator> _requestConfigurators;
+    private readonly ITestHttpAuthentication _httpAuthentication;
 
     public HttpTestHelper(
         HttpClient httpClient,
         JsonOptionsConfigurator jsonOptionsConfigurator,
-        ITestHttpAuthentication? httpAuthentication = null,
-        Action<HttpRequestBuilder>? configureRequest = null)
+        IEnumerable<IHttpRequestConfigurator> requestConfigurators,
+        ITestHttpAuthentication? httpAuthentication = null)
     {
         _httpClient = httpClient;
         _jsonOptions = jsonOptionsConfigurator.CreateOptions();
+        _requestConfigurators = requestConfigurators;
         _httpAuthentication = httpAuthentication ?? new NoAuthentication();
-        _configureRequest = configureRequest;
     }
 
     public HttpSingleRequestExecutor<R> Get<R>(string requestUri) =>
@@ -52,7 +53,7 @@ public class HttpTestHelper
     {
         var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _jsonOptions)
             .WithContent(content);
-        _configureRequest?.Invoke(builder);
+        ConfigureRequest(builder);
         return builder;
     }
 
@@ -60,7 +61,12 @@ public class HttpTestHelper
     {
         var builder = new HttpPaginatedRequestExecutor<R>(requestUri, method, _httpClient, _jsonOptions, _httpAuthentication)
             .WithContent(content);
-        _configureRequest?.Invoke(builder);
+        ConfigureRequest(builder);
         return builder;
+    }
+
+    private void ConfigureRequest(HttpRequestBuilder request)
+    {
+        _requestConfigurators.ForEach(c => c.ConfigureHttpRequest(request));
     }
 }

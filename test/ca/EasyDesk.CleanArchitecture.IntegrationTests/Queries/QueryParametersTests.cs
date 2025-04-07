@@ -12,7 +12,7 @@ public class QueryParametersTests : SampleIntegrationTest
     [Fact]
     public async Task OptionInQuery_ShouldBeCorrectlyParsed_WhenEmpty()
     {
-        await Http
+        await Session.Http
             .GetOptionInQuery(None)
             .Send()
             .Verify();
@@ -21,7 +21,7 @@ public class QueryParametersTests : SampleIntegrationTest
     [Fact]
     public async Task OptionInQuery_ShouldBeCorrectlyParsed_WhenSome()
     {
-        await Http
+        await Session.Http
             .GetOptionInQuery(Some("Hello World!"))
             .Send()
             .Verify();

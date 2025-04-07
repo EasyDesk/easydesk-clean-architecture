@@ -31,7 +31,7 @@ public class ApiKeysTests : SampleIntegrationTest
     [Fact]
     public async Task StoringApiKey_ShouldSucceed()
     {
-        await Http
+        await Session.Http
             .StoreApiKey(TestApiKey, _testAgent)
             .Send()
             .EnsureSuccess();
@@ -48,7 +48,7 @@ public class ApiKeysTests : SampleIntegrationTest
                 Map(("a", Set("eh"))))),
         };
 
-        await Http
+        await Session.Http
             .StoreApiKey(TestApiKey, updatedAgent)
             .Send()
             .EnsureSuccess();
@@ -57,7 +57,7 @@ public class ApiKeysTests : SampleIntegrationTest
     [Fact]
     public async Task DeletingApiKey_ShouldSucceed()
     {
-        await Http
+        await Session.Http
             .DeleteApiKey(TestApiKey)
             .Send()
             .EnsureSuccess();
@@ -66,12 +66,12 @@ public class ApiKeysTests : SampleIntegrationTest
     [Fact]
     public async Task TestingApiKey_ShouldReturnAgent_IfAuthenticationSucceedes()
     {
-        await Http
+        await Session.Http
             .StoreApiKey(TestApiKey, _testAgent)
             .Send()
             .EnsureSuccess();
 
-        var result = await Http
+        var result = await Session.Http
             .TestApiKey()
             .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, TestApiKey)
             .Send()
@@ -83,12 +83,12 @@ public class ApiKeysTests : SampleIntegrationTest
     [Fact]
     public async Task TestingApiKey_ShouldReturnAgent_IfAuthenticationSucceedes_UsingHeader()
     {
-        await Http
+        await Session.Http
             .StoreApiKey(TestApiKey, _testAgent)
             .Send()
             .EnsureSuccess();
 
-        var result = await Http
+        var result = await Session.Http
             .TestApiKey()
             .Headers(h => h.Add(HeaderNames.Authorization, $"{ApiKeyOptions.ApiKeyDefaultScheme} {TestApiKey}"))
             .Send()
@@ -100,12 +100,12 @@ public class ApiKeysTests : SampleIntegrationTest
     [Fact]
     public async Task TestingApiKey_ShouldFail_IfAuthenticationFails()
     {
-        await Http
+        await Session.Http
             .StoreApiKey(TestApiKey, _testAgent)
             .Send()
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .TestApiKey()
             .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, "some_invalid_api_key")
             .Send()
@@ -115,17 +115,17 @@ public class ApiKeysTests : SampleIntegrationTest
     [Fact]
     public async Task TestingApiKey_ShouldFail_AfterDeletingApiKey()
     {
-        await Http
+        await Session.Http
             .StoreApiKey(TestApiKey, _testAgent)
             .Send()
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .DeleteApiKey(TestApiKey)
             .Send()
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .TestApiKey()
             .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, TestApiKey)
             .Send()

@@ -1,16 +1,20 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Scopes;
 
-namespace EasyDesk.CleanArchitecture.Testing.Unit.Commons;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 
-public sealed class TestTenantManager
+public record DefaultTenantInfo(Option<TenantInfo> TenantInfo);
+
+public sealed class TestTenantManager : IHttpRequestConfigurator
 {
     private readonly ScopeManager<Option<TenantInfo>> _scopeManager;
 
-    public TestTenantManager(Option<TenantInfo> defaultTenantInfo)
+    public TestTenantManager(DefaultTenantInfo defaultTenantInfo)
     {
-        _scopeManager = new(defaultTenantInfo);
+        _scopeManager = new(defaultTenantInfo.TenantInfo);
     }
 
     public Option<TenantInfo> CurrentTenantInfo => _scopeManager.Current;
@@ -38,5 +42,12 @@ public sealed class TestTenantManager
         {
             _innerScope.Dispose();
         }
+    }
+
+    public void ConfigureHttpRequest(HttpRequestBuilder request)
+    {
+        CurrentTenantInfo.FlatMap(x => x.Id).Match(
+            some: request.Tenant,
+            none: request.NoTenant);
     }
 }

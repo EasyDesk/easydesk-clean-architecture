@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
-using EasyDesk.CleanArchitecture.Testing.Unit.Commons;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using EasyDesk.Testing.MatrixExpansion;
@@ -50,7 +50,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     private readonly ITestBusEndpoint _sender;
     private readonly ITestBusEndpoint _receiver;
 
-    private readonly TestTenantManager _tenantManager = new(None);
+    private readonly TestTenantManager _tenantManager = new(new(None));
 
     public RebusTestBusTests(RabbitMqContainerFixture rabbitMqContainerFixture)
     {

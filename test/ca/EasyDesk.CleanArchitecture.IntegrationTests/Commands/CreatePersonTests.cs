@@ -1,14 +1,14 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
+﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.DomainEvents;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
@@ -35,20 +35,21 @@ public class CreatePersonTests : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
     }
 
-    private HttpSingleRequestExecutor<PersonDto> CreatePerson() => Http
+    private HttpSingleRequestExecutor<PersonDto> CreatePerson() => Session.Http
         .CreatePerson(_body);
 
-    private HttpSingleRequestExecutor<IEnumerable<PersonDto>> CreatePeople(params CreatePersonBodyDto[] extra) => Http
+    private HttpSingleRequestExecutor<IEnumerable<PersonDto>> CreatePeople(params CreatePersonBodyDto[] extra) => Session.Http
         .CreatePeople(List(
             _body,
             new()
@@ -66,7 +67,7 @@ public class CreatePersonTests : SampleIntegrationTest
                 Residence = _body.Residence,
             }).Concat(extra));
 
-    private HttpSingleRequestExecutor<PersonDto> GetPerson(Guid id) => Http.GetPerson(id);
+    private HttpSingleRequestExecutor<PersonDto> GetPerson(Guid id) => Session.Http.GetPerson(id);
 
     [Fact]
     public async Task ShouldSucceed()
@@ -92,7 +93,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldFailWithEmptyAddress()
     {
-        await Http
+        await Session.Http
             .CreatePerson(_body with { Residence = AddressDto.Create(string.Empty) })
             .Send()
             .Verify();
@@ -113,37 +114,37 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldEmitAnEvent()
     {
-        await DefaultBusEndpoint.Subscribe<PersonCreated>();
+        await Session.DefaultBusEndpoint.Subscribe<PersonCreated>();
 
         var person = await CreatePerson()
             .Send()
             .AsData();
 
-        using var scope = TenantManager.Ignore();
+        using var scope = Session.TenantManager.Ignore();
 
-        await DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
+        await Session.DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
 
     [Fact]
     public async Task ShouldEmitAnEventUnderSpecificTenant()
     {
-        await DefaultBusEndpoint.Subscribe<PersonCreated>();
+        await Session.DefaultBusEndpoint.Subscribe<PersonCreated>();
 
         var person = await CreatePerson()
             .Send()
             .AsData();
 
-        using var scope = TenantManager.MoveToTenant(PersonCreated.EmittedWithTenant);
+        using var scope = Session.TenantManager.MoveToTenant(PersonCreated.EmittedWithTenant);
 
-        await DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
+        await Session.DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
     }
 
     [Fact]
     public async Task ShouldBeMultitenant()
     {
         var otherTenant = new TenantId("other-tenant");
-        await DefaultBusEndpoint.Send(new CreateTenant(otherTenant));
-        await WebService.WaitUntilTenantExists(otherTenant);
+        await Session.DefaultBusEndpoint.Send(new CreateTenant(otherTenant));
+        await Session.Host.WaitUntilTenantExists(otherTenant);
 
         var person = await CreatePerson()
             .Send()
@@ -222,7 +223,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .EnsureSuccess();
         for (var i = 0; i < 150; i++)
         {
-            await Http
+            await Session.Http
                 .GetPeople()
                 .Send()
                 .EnsureSuccess();
@@ -237,7 +238,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .AsData();
         for (var i = 0; i < 150; i++)
         {
-            await Http
+            await Session.Http
                 .GetPerson(person.Id)
                 .Send()
                 .EnsureSuccess();
@@ -249,7 +250,7 @@ public class CreatePersonTests : SampleIntegrationTest
     {
         var person = await CreatePerson().Send().AsData();
 
-        await Http
+        await Session.Http
             .GetOwnedPets(person.Id)
             .PollUntil(pets => pets.Any())
             .Verify();
@@ -267,10 +268,10 @@ public class CreatePersonTests : SampleIntegrationTest
                 DateOfBirth = new LocalDate(1992, 3, 12).PlusDays(i),
                 Residence = AddressDto.Create("number", streetNumber: i.ToString()),
             };
-            await Http.CreatePerson(body).Send().EnsureSuccess();
+            await Session.Http.CreatePerson(body).Send().EnsureSuccess();
         }
 
-        await Http
+        await Session.Http
             .GetPeople()
             .Send()
             .Verify();
@@ -279,7 +280,7 @@ public class CreatePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldCreateThePersonsPassport()
     {
-        var bus = NewBusEndpoint(OtherServicesEndpoints.PassportService);
+        var bus = Session.NewBusEndpoint(OtherServicesEndpoints.PassportService);
 
         var person = await CreatePerson().Send().AsData();
 
@@ -321,7 +322,7 @@ public class CreatePersonTests : SampleIntegrationTest
     public async Task ShouldFail_WithInvalidResidenceAddresses(AddressDto addressDto, string streetNameProblem, string streetTypeProblem, string streetNumberProblem)
     {
         var body = _body with { Residence = addressDto };
-        await Http.CreatePerson(body)
+        await Session.Http.CreatePerson(body)
             .Send()
             .Verify(x => x.UseParameters(null, streetNameProblem, streetTypeProblem, streetNumberProblem));
     }
@@ -356,27 +357,27 @@ public class CreatePersonTests : SampleIntegrationTest
             {
                 FirstName = "Mario",
                 LastName = "Facher",
-                DateOfBirth = Clock.GetCurrentInstant().InUtc().Date.PlusYears(1),
+                DateOfBirth = Session.Clock.GetCurrentInstant().InUtc().Date.PlusYears(1),
                 Residence = _body.Residence,
             },
             new CreatePersonBodyDto()
             {
                 FirstName = "Mario",
                 LastName = "Facher",
-                DateOfBirth = Clock.GetCurrentInstant().InUtc().Date.PlusYears(-1),
+                DateOfBirth = Session.Clock.GetCurrentInstant().InUtc().Date.PlusYears(-1),
                 Residence = _body.Residence,
             })
             .Send()
             .Verify();
 
-        var people = await Http.GetPeople().Send().AsVerifiableEnumerable();
+        var people = await Session.Http.GetPeople().Send().AsVerifiableEnumerable();
         people.ShouldBeEmpty();
     }
 
     [Fact]
     public async Task ShouldSucceed_CreatePeople_WithInvalidEntry_CausingErrorInHandler_IfEntryErrorIsIgnored()
     {
-        await Http.CreatePeople(
+        await Session.Http.CreatePeople(
             [
                 new CreatePersonBodyDto()
                 {
@@ -403,7 +404,7 @@ public class CreatePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .GetPeople()
             .Send()
             .Verify();

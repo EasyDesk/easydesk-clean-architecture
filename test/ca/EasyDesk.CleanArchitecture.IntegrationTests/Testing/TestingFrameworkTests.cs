@@ -1,12 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Lifetime;
-using EasyDesk.Commons.Options;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
@@ -24,17 +24,18 @@ internal class IntegrationTestExample : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
     }
 
-    public HttpSingleRequestExecutor<PersonDto> CreatePerson(int id) => Http
+    public HttpSingleRequestExecutor<PersonDto> CreatePerson(int id) => Session.Http
         .CreatePerson(new()
         {
             FirstName = $"FirstName_{id}",
@@ -53,12 +54,12 @@ internal class IntegrationTestExample : SampleIntegrationTest
         }
         if (!skipWaits)
         {
-            await Http
+            await Session.Http
                 .GetPeople()
                 .SetPageSize(PageSize)
                 .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
                 .EnsureSuccess();
-            await PollServiceUntil<SampleAppContext>(
+            await Session.PollServiceUntil<SampleAppContext>(
                 async context => await context.Pets.CountAsync() == Count);
         }
     }

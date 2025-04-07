@@ -1,6 +1,4 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
@@ -8,7 +6,8 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.Commons.Options;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
@@ -30,19 +29,20 @@ public class DeletePersonTests : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
     }
 
     private async Task<PersonDto> CreateTestPerson()
     {
-        return await Http
+        return await Session.Http
             .Post<CreatePersonBodyDto, PersonDto>(PersonRoutes.CreatePerson, new CreatePersonBodyDto
             {
                 FirstName = FirstName,
@@ -54,7 +54,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .AsData();
     }
 
-    private HttpSingleRequestExecutor<PersonDto> DeletePerson(Guid id) => Http
+    private HttpSingleRequestExecutor<PersonDto> DeletePerson(Guid id) => Session.Http
         .Delete<PersonDto>(PersonRoutes.DeletePerson.WithRouteParam(nameof(id), id));
 
     [Fact]
@@ -78,19 +78,19 @@ public class DeletePersonTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldNotEmitAnEvent_IfFailed()
     {
-        await DefaultBusEndpoint.Subscribe<PersonDeleted>();
+        await Session.DefaultBusEndpoint.Subscribe<PersonDeleted>();
 
         await DeletePerson(Guid.Parse("d9dac153-39d9-4128-89db-fc854ac4b96e"))
             .Send()
             .EnsureFailure();
 
-        await DefaultBusEndpoint.FailIfMessageIsReceived<PersonDeleted>();
+        await Session.DefaultBusEndpoint.FailIfMessageIsReceived<PersonDeleted>();
     }
 
     [Fact]
     public async Task ShouldEmitAnEvent()
     {
-        await DefaultBusEndpoint.Subscribe<PersonDeleted>();
+        await Session.DefaultBusEndpoint.Subscribe<PersonDeleted>();
 
         var person = await CreateTestPerson();
 
@@ -98,7 +98,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        await DefaultBusEndpoint.WaitForMessageOrFail(new PersonDeleted(person.Id));
+        await Session.DefaultBusEndpoint.WaitForMessageOrFail(new PersonDeleted(person.Id));
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        await Http
+        await Session.Http
             .GetPerson(person.Id)
             .Send()
             .Verify();
@@ -123,7 +123,7 @@ public class DeletePersonTests : SampleIntegrationTest
             .Send()
             .EnsureSuccess();
 
-        await using var scope = WebService.LifetimeScope.BeginUseCaseLifetimeScope();
+        await using var scope = Session.Host.LifetimeScope.BeginUseCaseLifetimeScope();
         var personRecord = await scope
             .Resolve<SampleAppContext>()
             .People

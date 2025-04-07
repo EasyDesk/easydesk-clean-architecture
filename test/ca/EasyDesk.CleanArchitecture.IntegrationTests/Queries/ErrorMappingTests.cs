@@ -12,7 +12,7 @@ public class ErrorMappingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldMapErrorForV_1_0()
     {
-        await Http
+        await Session.Http
             .Get<Nothing>(TestErrorController.V10)
             .Send()
             .Verify();
@@ -21,7 +21,7 @@ public class ErrorMappingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldMapErrorForV_1_5()
     {
-        await Http
+        await Session.Http
             .Get<Nothing>(TestErrorController.V15)
             .Send()
             .Verify();
@@ -30,7 +30,7 @@ public class ErrorMappingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldMapUnversionedError()
     {
-        await Http
+        await Session.Http
             .Get<Nothing>(TestErrorController.Unversioned)
             .Send()
             .Verify();
@@ -39,7 +39,7 @@ public class ErrorMappingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldMapErrorForVersionV_0_1_ThatMissesMapper()
     {
-        await Http
+        await Session.Http
             .Get<Nothing>(TestErrorController.V01)
             .Send()
             .Verify();
@@ -48,7 +48,7 @@ public class ErrorMappingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldMapErrorForV_1_1_ThatMissesMapper()
     {
-        await Http
+        await Session.Http
             .Get<Nothing>(TestErrorController.V11)
             .Send()
             .Verify();

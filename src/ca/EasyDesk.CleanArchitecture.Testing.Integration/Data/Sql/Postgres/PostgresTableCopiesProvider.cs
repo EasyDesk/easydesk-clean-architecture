@@ -1,23 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
-using EasyDesk.Commons.Collections;
-using Npgsql;
-using System.Data.Common;
-using Testcontainers.PostgreSql;
+﻿using EasyDesk.Commons.Collections;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
 
-internal class PostgresFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFixture, PostgreSqlContainer>
-    where TFixture : ITestFixture
+internal class PostgresTableCopiesProvider : ITableCopiesProvider
 {
-    public PostgresFixtureBuilder(WebServiceTestsFixtureBuilder<TFixture> builder, PostgreSqlContainer container) : base(builder, container)
-    {
-    }
-
-    protected override string GetConnectionString() => Container.GetConnectionString();
-
-    protected override DbConnection CreateConnection(string connectionString) => new NpgsqlConnection(connectionString);
-
-    protected override string GenerateTablesQuery(string schemaOutput, string tableOutput, string columnOutput) => $"""
+    public string GenerateTablesQuery(string schemaOutput, string tableOutput, string columnOutput) => $"""
         SELECT T.table_schema AS "{schemaOutput}", T.table_name AS "{tableOutput}", C.column_name AS "{columnOutput}"
         FROM information_schema.tables T
         JOIN information_schema.columns C
@@ -26,20 +13,20 @@ internal class PostgresFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFix
         AND T.table_schema NOT IN ('pg_catalog', 'information_schema');
         """;
 
-    protected override string GenerateCopyTableCommand(TableDef table) => $"""
+    public string GenerateCopyTableCommand(TableDef table) => $"""
         CREATE TABLE {FormatCopyTable(table)}
         AS TABLE {FormatTable(table)};
         """;
 
-    protected override string GenerateDisableConstraintsCommand(TableDef table) => $"""
+    public string GenerateDisableConstraintsCommand(TableDef table) => $"""
         ALTER TABLE {FormatTable(table)} DISABLE TRIGGER ALL;
         """;
 
-    protected override string GenerateEnableConstraintsCommand(TableDef table) => $"""
+    public string GenerateEnableConstraintsCommand(TableDef table) => $"""
         ALTER TABLE{FormatTable(table)} ENABLE TRIGGER ALL;
         """;
 
-    protected override string GenerateRestoreTableCommand(TableDef table)
+    public string GenerateRestoreTableCommand(TableDef table)
     {
         var columnsList = table.Columns.Select(x => $@"""{x}""").ConcatStrings(", ");
         return $"""

@@ -1,15 +1,33 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+using Microsoft.Data.SqlClient;
 using Testcontainers.MsSql;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 
 public static class SqlServerFixtureExtensions
 {
-    public static ISqlDatabaseFixtureBuilder AddSqlServerDatabase<TFixture>(
-        this WebServiceTestsFixtureBuilder<TFixture> builder,
+    public static TestFixtureConfigurer AddSqlServerDatabase(
+        this TestFixtureConfigurer builder,
         MsSqlContainer container,
-        string databaseName) where TFixture : ITestFixture
+        string databaseName,
+        Action<SqlDatabaseFixtureOptions>? configureOptions = null)
     {
-        return builder.AddSqlDatabase(container, (b, c) => new SqlServerFixtureBuilder<TFixture>(b, c, databaseName));
+        string GetConnectionString(MsSqlContainer container)
+        {
+            var originalConnectionString = container.GetConnectionString();
+            var builder = new SqlConnectionStringBuilder(originalConnectionString)
+            {
+                InitialCatalog = databaseName,
+                TrustServerCertificate = true,
+            };
+            return builder.ConnectionString;
+        }
+
+        return builder.AddSqlDatabase(
+            container,
+            GetConnectionString,
+            s => new SqlConnection(s),
+            new SqlServerTableCopiesProvider(),
+            configureOptions);
     }
 }

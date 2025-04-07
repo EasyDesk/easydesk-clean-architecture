@@ -14,9 +14,9 @@ public class ErrorQueueTests : SampleIntegrationTest
 
     private async Task ExpectMessageOnErrorQueue<T>(T message) where T : IIncomingCommand
     {
-        await DefaultBusEndpoint.Send(message);
+        await Session.DefaultBusEndpoint.Send(message);
         await WaitForBackoff();
-        await ErrorBusEndpoint.WaitForMessageOrFail(message);
+        await Session.ErrorBusEndpoint.WaitForMessageOrFail(message);
     }
 
     private async Task WaitForBackoff()
@@ -30,7 +30,7 @@ public class ErrorQueueTests : SampleIntegrationTest
         foreach (var delay in delays)
         {
             await Task.Delay(3000);
-            Clock.Advance(delay);
+            Session.Clock.Advance(delay);
         }
     }
 
@@ -55,12 +55,12 @@ public class ErrorQueueTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldEmitAnEvent_AfterScheduledRetries()
     {
-        await DefaultBusEndpoint.Subscribe<Error4Handled>();
+        await Session.DefaultBusEndpoint.Subscribe<Error4Handled>();
 
-        await DefaultBusEndpoint.Send(new GenerateError4());
+        await Session.DefaultBusEndpoint.Send(new GenerateError4());
 
         await WaitForBackoff();
 
-        await DefaultBusEndpoint.WaitForMessageOrFail<Error4Handled>();
+        await Session.DefaultBusEndpoint.WaitForMessageOrFail<Error4Handled>();
     }
 }

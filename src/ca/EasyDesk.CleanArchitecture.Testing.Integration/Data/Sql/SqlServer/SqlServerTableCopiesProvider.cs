@@ -1,34 +1,11 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixtures;
-using EasyDesk.Commons.Collections;
-using Microsoft.Data.SqlClient;
+﻿using EasyDesk.Commons.Collections;
 using System.Data;
-using Testcontainers.MsSql;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 
-internal class SqlServerFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFixture, MsSqlContainer>
-    where TFixture : ITestFixture
+internal class SqlServerTableCopiesProvider : ITableCopiesProvider
 {
-    private readonly string _databaseName;
-
-    public SqlServerFixtureBuilder(WebServiceTestsFixtureBuilder<TFixture> builder, MsSqlContainer container, string databaseName)
-        : base(builder, container)
-    {
-        _databaseName = databaseName;
-    }
-
-    protected override string GetConnectionString()
-    {
-        var originalConnectionString = Container.GetConnectionString();
-        var builder = new SqlConnectionStringBuilder(originalConnectionString)
-        {
-            InitialCatalog = _databaseName,
-            TrustServerCertificate = true,
-        };
-        return builder.ConnectionString;
-    }
-
-    protected override string GenerateTablesQuery(string schemaOutput, string tableOutput, string columnOutput) => $"""
+    public string GenerateTablesQuery(string schemaOutput, string tableOutput, string columnOutput) => $"""
         SELECT T.TABLE_SCHEMA AS [{schemaOutput}], T.TABLE_NAME AS [{tableOutput}], C.COLUMN_NAME AS [{columnOutput}]
         FROM INFORMATION_SCHEMA.TABLES T
         INNER JOIN INFORMATION_SCHEMA.COLUMNS C
@@ -36,21 +13,21 @@ internal class SqlServerFixtureBuilder<TFixture> : AbstractSqlFixtureBuilder<TFi
         WHERE T.TABLE_TYPE = 'BASE TABLE';
         """;
 
-    protected override string GenerateCopyTableCommand(TableDef table) => $"""
+    public string GenerateCopyTableCommand(TableDef table) => $"""
         SELECT *
         INTO {FormatCopyTable(table)}
         FROM {FormatTable(table)};
         """;
 
-    protected override string GenerateDisableConstraintsCommand(TableDef table) => $"""
+    public string GenerateDisableConstraintsCommand(TableDef table) => $"""
         ALTER TABLE {FormatTable(table)} NOCHECK CONSTRAINT ALL;
         """;
 
-    protected override string GenerateEnableConstraintsCommand(TableDef table) => $"""
+    public string GenerateEnableConstraintsCommand(TableDef table) => $"""
         ALTER TABLE {FormatTable(table)} CHECK CONSTRAINT ALL;
         """;
 
-    protected override string GenerateRestoreTableCommand(TableDef table)
+    public string GenerateRestoreTableCommand(TableDef table)
     {
         var columnsList = table.Columns.Select(x => $"[{x}]").ConcatStrings(", ");
         return $"""

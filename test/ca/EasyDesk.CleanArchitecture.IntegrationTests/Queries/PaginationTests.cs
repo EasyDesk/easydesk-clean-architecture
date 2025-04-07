@@ -1,12 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.Commons.Options;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;
@@ -21,21 +21,22 @@ public class PaginationTests : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
         foreach (var i in Enumerable.Range(0, InitialPopulationSize))
         {
             await CreatePerson(i).Send().EnsureSuccess();
         }
     }
 
-    private HttpSingleRequestExecutor<PersonDto> CreatePerson(int index) => Http
+    private HttpSingleRequestExecutor<PersonDto> CreatePerson(int index) => Session.Http
         .CreatePerson(new()
         {
             FirstName = $"Foo{index:0000}",
@@ -44,14 +45,14 @@ public class PaginationTests : SampleIntegrationTest
             Residence = AddressDto.Create("some name idk", "street", index.ToString()),
         });
 
-    private HttpSingleRequestExecutor<IEnumerable<PersonDto>> GetPeople(int pageSize) => Http
+    private HttpSingleRequestExecutor<IEnumerable<PersonDto>> GetPeople(int pageSize) => Session.Http
         .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)
         .SetPageSize(pageSize);
 
     [Fact]
     public async Task DefaultPageSize_ShouldBeConfigurable()
     {
-        await Http
+        await Session.Http
             .GetPeople()
             .SinglePage()
             .Verify();
@@ -60,7 +61,7 @@ public class PaginationTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldGetAnyPage()
     {
-        await Http
+        await Session.Http
             .GetPeople()
             .SinglePage(1)
             .Verify();
@@ -85,7 +86,7 @@ public class PaginationTests : SampleIntegrationTest
     [Fact]
     public async Task HttpRequestBuilder_ShouldWorkWithAnyPageSize()
     {
-        await Http
+        await Session.Http
             .GetPeople()
             .SetPageSize(1)
             .Send()
@@ -95,7 +96,7 @@ public class PaginationTests : SampleIntegrationTest
     [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSize()
     {
-        await Http
+        await Session.Http
             .GetPeople()
             .SetPageIndex(3)
             .SetPageSize(5)
@@ -106,7 +107,7 @@ public class PaginationTests : SampleIntegrationTest
     [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSizeEvenIfOutOfBounds()
     {
-        await Http
+        await Session.Http
             .GetPeople()
             .SetPageIndex(int.MaxValue)
             .SetPageSize(int.MaxValue)
@@ -117,7 +118,7 @@ public class PaginationTests : SampleIntegrationTest
     [Fact]
     public async Task HttpRequestBuilder_ShouldStartWithGivenPageIndexAndSizeEvenIfOutOfBoundsInNegative()
     {
-        await Http
+        await Session.Http
             .GetPeople()
             .SetPageIndex(int.MinValue)
             .SetPageSize(int.MinValue)
@@ -128,7 +129,7 @@ public class PaginationTests : SampleIntegrationTest
     [Fact]
     public async Task HttpRequestBuilder_ShouldNotWorkWithInvalidInput()
     {
-        await Http
+        await Session.Http
             .GetPeople()
             .SetPageSize("foo")
             .SetPageIndex("bar")

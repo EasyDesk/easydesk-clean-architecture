@@ -1,10 +1,10 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Application.IncomingEvents;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using NodaTime;
@@ -19,16 +19,17 @@ public class IncomingEventTests : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
 
-        _person = await Http
+        _person = await Session.Http
             .CreatePerson(new()
             {
                 FirstName = "Foo",
@@ -39,19 +40,19 @@ public class IncomingEventTests : SampleIntegrationTest
             .Send()
             .AsData();
 
-        await Http
+        await Session.Http
             .CreatePet(_person.Id, new("Snoopy"))
             .Send()
             .EnsureSuccess();
 
-        await Http.GetOwnedPets(_person.Id).PollUntil(pets => pets.Count() == 2).EnsureSuccess();
+        await Session.Http.GetOwnedPets(_person.Id).PollUntil(pets => pets.Count() == 2).EnsureSuccess();
     }
 
     [Fact]
     public async Task PetFreedomDayIncomingEvent_ShouldSucceed()
     {
-        var bus = NewBusEndpoint("pet-freedom-service");
+        var bus = Session.NewBusEndpoint("pet-freedom-service");
         await bus.Publish(new PetFreedomDayEvent());
-        await Http.GetOwnedPets(_person!.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
+        await Session.Http.GetOwnedPets(_person!.Id).PollUntil(pets => pets.IsEmpty()).EnsureSuccess();
     }
 }

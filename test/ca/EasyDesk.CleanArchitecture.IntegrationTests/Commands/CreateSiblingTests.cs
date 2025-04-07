@@ -1,9 +1,9 @@
-﻿using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
-using EasyDesk.Commons.Options;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.SampleApp.Application.V_1_0.AsyncCommands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -28,29 +28,30 @@ public class CreateSiblingTests : SampleIntegrationTest
     {
     }
 
-    protected override Option<TenantInfo> DefaultTenantInfo =>
-        Some(TenantInfo.Tenant(SampleSeeder.Data.TestTenant));
-
-    protected override Option<Agent> DefaultAgent => Some(TestAgents.Admin);
+    protected override void ConfigureSession(SessionConfigurer configurer)
+    {
+        configurer.SetDefaultAgent(TestAgents.Admin);
+        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
+    }
 
     protected override async Task OnInitialization()
     {
-        await Http.AddAdmin().Send().EnsureSuccess();
+        await Session.Http.AddAdmin().Send().EnsureSuccess();
     }
 
     [Fact]
     public async Task ShouldNotReceiveCommand_UntilScheduledTime()
     {
-        await Http
+        await Session.Http
             .CreatePerson(_body)
             .Send()
             .EnsureSuccess();
 
-        Clock.Advance(CreateSibling.CreationDelay.Minus(_epsilon));
+        Session.Clock.Advance(CreateSibling.CreationDelay.Minus(_epsilon));
 
         await Task.Delay(_waitTime.ToTimeSpan());
 
-        var data = await Http
+        var data = await Session.Http
             .GetPeople()
             .Send()
             .AsVerifiableEnumerable();
@@ -61,14 +62,14 @@ public class CreateSiblingTests : SampleIntegrationTest
     [Fact]
     public async Task ShouldReceiveCommand_AfterScheduledTime()
     {
-        await Http
+        await Session.Http
             .CreatePerson(_body)
             .Send()
             .EnsureSuccess();
 
-        Clock.Advance(CreateSibling.CreationDelay.Plus(_epsilon));
+        Session.Clock.Advance(CreateSibling.CreationDelay.Plus(_epsilon));
 
-        await Http
+        await Session.Http
             .GetPeople()
             .PollUntil(people => people.Any(p => p.FirstName == "Pippo's sibling"))
             .EnsureSuccess();

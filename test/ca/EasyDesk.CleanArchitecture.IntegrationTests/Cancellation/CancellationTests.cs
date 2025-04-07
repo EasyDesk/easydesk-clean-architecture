@@ -18,11 +18,11 @@ public class CancellationTests : SampleIntegrationTest
         var waitTime = Duration.FromSeconds(5);
         var timeout = Duration.FromSeconds(1);
 
-        await DefaultBusEndpoint.Subscribe<CancellationFailed>();
+        await Session.DefaultBusEndpoint.Subscribe<CancellationFailed>();
 
         await Should.ThrowAsync<TaskCanceledException>(async () =>
         {
-            await Http
+            await Session.Http
                 .Post<Nothing, Nothing>(CancellationRoutes.CancellableRequest, Nothing.Value)
                 .WithQuery("waitTime", waitTime.ToString())
                 .WithTimeout(timeout)
@@ -30,7 +30,7 @@ public class CancellationTests : SampleIntegrationTest
                 .EnsureSuccess();
         });
 
-        await DefaultBusEndpoint.FailIfMessageIsReceived<CancellationFailed>(waitTime + Duration.FromSeconds(10));
+        await Session.DefaultBusEndpoint.FailIfMessageIsReceived<CancellationFailed>(waitTime + Duration.FromSeconds(10));
     }
 
     [Fact]
@@ -38,15 +38,15 @@ public class CancellationTests : SampleIntegrationTest
     {
         var waitTime = Duration.FromSeconds(1);
         var timeout = Duration.FromSeconds(15);
-        await DefaultBusEndpoint.Subscribe<CancellationFailed>();
+        await Session.DefaultBusEndpoint.Subscribe<CancellationFailed>();
 
-        await Http
+        await Session.Http
             .Post<Nothing, Nothing>(CancellationRoutes.CancellableRequest, Nothing.Value)
             .WithQuery("waitTime", waitTime.ToString())
             .WithTimeout(timeout)
             .Send()
             .Verify();
 
-        await DefaultBusEndpoint.WaitForMessageOrFail<CancellationFailed>();
+        await Session.DefaultBusEndpoint.WaitForMessageOrFail<CancellationFailed>();
     }
 }

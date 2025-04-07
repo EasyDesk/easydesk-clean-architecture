@@ -1,23 +1,24 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
-using EasyDesk.CleanArchitecture.Testing.Integration.Services;
+using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Seeding;
+using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 
-public class SampleSeeder : WebServiceFixtureSeeder<SampleAppTestsFixture, SampleSeeder.Data>
+public class SampleSeeder : ISeeder<SampleAppTestsFixture, SampleSeeder.Data>
 {
     public record Data(int OperationsRun)
     {
         public static TenantId TestTenant { get; } = new("test-tenant");
     }
 
-    public SampleSeeder(SampleAppTestsFixture fixture) : base(fixture)
+    public void ConfigureSession(SessionConfigurer configurer)
     {
     }
 
-    public override async Task<Data> Seed()
+    public async Task<Data> Seed(IntegrationTestSession<SampleAppTestsFixture> session)
     {
         var operationsRun = 0;
 
@@ -27,8 +28,8 @@ public class SampleSeeder : WebServiceFixtureSeeder<SampleAppTestsFixture, Sampl
             operationsRun += expectedOperations;
         }
 
-        await RunOperation(() => DefaultBusEndpoint.Send(new CreateTenant(Data.TestTenant)));
-        await WebService.WaitUntilTenantExists(Data.TestTenant);
+        await RunOperation(() => session.DefaultBusEndpoint.Send(new CreateTenant(Data.TestTenant)));
+        await session.Host.WaitUntilTenantExists(Data.TestTenant);
 
         return new(operationsRun);
     }
