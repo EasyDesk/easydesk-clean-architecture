@@ -32,7 +32,7 @@ public static class RebusFixtureExtensions
 
         // TODO: use an abstraction or remove multitenancy entirely.
         configurer.ContainerBuilder
-            .RegisterType<TestTenantManager>()
+            .Register(_ => new TestTenantManager(new(None)))
             .IfNotRegistered(typeof(TestTenantManager))
             .InstancePerLifetimeScope();
 

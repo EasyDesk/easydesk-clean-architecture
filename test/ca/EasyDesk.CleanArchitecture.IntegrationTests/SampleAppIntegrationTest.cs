@@ -3,10 +3,10 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Tests;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-[Collection(nameof(SampleApplicationTestCollection))]
-public abstract class SampleIntegrationTest : IntegrationTest<SampleAppTestsFixture>
+[Collection(nameof(SampleAppTestCollection))]
+public abstract class SampleAppIntegrationTest : IntegrationTest<SampleAppTestsFixture>
 {
-    protected SampleIntegrationTest(SampleAppTestsFixture fixture) : base(fixture)
+    protected SampleAppIntegrationTest(SampleAppTestsFixture fixture) : base(fixture)
     {
     }
 

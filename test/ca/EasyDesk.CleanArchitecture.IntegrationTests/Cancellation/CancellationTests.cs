@@ -6,7 +6,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Cancellation;
 
-public class CancellationTests : SampleIntegrationTest
+public class CancellationTests : SampleAppIntegrationTest
 {
     public CancellationTests(SampleAppTestsFixture fixture) : base(fixture)
     {

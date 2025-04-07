@@ -14,7 +14,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public class AggregateVersioningTests : SampleIntegrationTest
+public class AggregateVersioningTests : SampleAppIntegrationTest
 {
     private PersonDto _person = default!;
 

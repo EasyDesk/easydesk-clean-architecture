@@ -3,7 +3,7 @@ using EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
-public class ErrorMappingTests : SampleIntegrationTest
+public class ErrorMappingTests : SampleAppIntegrationTest
 {
     public ErrorMappingTests(SampleAppTestsFixture fixture) : base(fixture)
     {

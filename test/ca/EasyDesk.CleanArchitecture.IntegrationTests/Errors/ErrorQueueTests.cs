@@ -6,7 +6,7 @@ using EasyDesk.SampleApp.Web;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Errors;
 
-public class ErrorQueueTests : SampleIntegrationTest
+public class ErrorQueueTests : SampleAppIntegrationTest
 {
     public ErrorQueueTests(SampleAppTestsFixture fixture) : base(fixture)
     {

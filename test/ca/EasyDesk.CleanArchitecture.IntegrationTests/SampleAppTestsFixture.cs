@@ -42,7 +42,7 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
         ConfigureDatabase(configurer);
 
-        configurer.RegisterHost<PersonController>();
+        configurer.RegisterWebHost<PersonController>();
 
         configurer.AddInMemoryRebus();
         configurer.AddInMemoryRebusScheduler(Scheduler.Address, Duration.FromSeconds(1));

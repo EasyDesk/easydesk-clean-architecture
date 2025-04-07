@@ -15,12 +15,12 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Testing;
 
-internal class IntegrationTestExample : SampleIntegrationTest
+internal class AppIntegrationTestingFrameworkTests : SampleAppIntegrationTest
 {
     private const int Count = 50;
     private const int PageSize = 10;
 
-    public IntegrationTestExample(SampleAppTestsFixture factory) : base(factory)
+    public AppIntegrationTestingFrameworkTests(SampleAppTestsFixture factory) : base(factory)
     {
     }
 
@@ -65,14 +65,14 @@ internal class IntegrationTestExample : SampleIntegrationTest
     }
 }
 
-public class TestFixtureLifecycleTests
+public class AppIntegrationTestTestFixtureLifecycleTests
 {
     private async Task UsingFixture(AsyncAction<SampleAppTestsFixture> action) =>
         await AsyncLifetime.UsingAsyncLifetime(() => new SampleAppTestsFixture(), action);
 
     private async Task RunTest(SampleAppTestsFixture fixture, bool skipWaits = false)
     {
-        await AsyncLifetime.UsingAsyncLifetime(() => new IntegrationTestExample(fixture), async integrationTest =>
+        await AsyncLifetime.UsingAsyncLifetime(() => new AppIntegrationTestingFrameworkTests(fixture), async integrationTest =>
         {
             await integrationTest.CreateAndCheckPeopleAndPets(skipWaits);
         });

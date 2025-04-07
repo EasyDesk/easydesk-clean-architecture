@@ -34,7 +34,7 @@ public static class HostFixtureExtensions
             .Register(c =>
             {
                 var configurationActions = c.Resolve<IEnumerable<Action<ITestHostBuilder>>>();
-                return new TestHostBuilder<T>()
+                return new TestHostBuilder<T>(configureWebHost)
                     .Also(b =>
                     {
                         b.WithEnvironment(DefaultEnvironment);

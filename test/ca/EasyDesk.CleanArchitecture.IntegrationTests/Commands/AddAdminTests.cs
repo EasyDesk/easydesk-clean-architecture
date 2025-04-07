@@ -10,7 +10,7 @@ using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public class AddAdminTests : SampleIntegrationTest
+public class AddAdminTests : SampleAppIntegrationTest
 {
     public AddAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {

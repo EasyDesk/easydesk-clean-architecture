@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\sample\EasyDesk.SampleApp.Web\EasyDesk.SampleApp.Web.csproj" />
     <ProjectReference Include="..\..\..\src\ca\EasyDesk.CleanArchitecture.Testing.Integration\EasyDesk.CleanArchitecture.Testing.Integration.csproj" />
+    <ProjectReference Include="..\..\..\src\sample\EasyDesk.SampleHostApp.Service\EasyDesk.SampleHostApp.Service.csproj" />
   </ItemGroup>
 	
   <ItemGroup>

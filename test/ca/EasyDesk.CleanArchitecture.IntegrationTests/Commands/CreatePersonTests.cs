@@ -21,7 +21,7 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public class CreatePersonTests : SampleIntegrationTest
+public class CreatePersonTests : SampleAppIntegrationTest
 {
     private readonly CreatePersonBodyDto _body = new()
     {

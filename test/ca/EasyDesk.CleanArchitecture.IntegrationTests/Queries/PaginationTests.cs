@@ -13,7 +13,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
-public class PaginationTests : SampleIntegrationTest
+public class PaginationTests : SampleAppIntegrationTest
 {
     private const int InitialPopulationSize = 50;
 

@@ -3,7 +3,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
-public class QueryParametersTests : SampleIntegrationTest
+public class QueryParametersTests : SampleAppIntegrationTest
 {
     public QueryParametersTests(SampleAppTestsFixture fixture) : base(fixture)
     {

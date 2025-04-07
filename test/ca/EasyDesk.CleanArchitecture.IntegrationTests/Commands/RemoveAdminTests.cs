@@ -11,7 +11,7 @@ using EasyDesk.SampleApp.Application.Authorization;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public abstract class AbstractRemoveAdminTests : SampleIntegrationTest
+public abstract class AbstractRemoveAdminTests : SampleAppIntegrationTest
 {
     protected AbstractRemoveAdminTests(SampleAppTestsFixture fixture) : base(fixture)
     {

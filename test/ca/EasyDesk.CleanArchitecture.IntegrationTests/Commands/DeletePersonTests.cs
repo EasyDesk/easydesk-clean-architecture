@@ -18,7 +18,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public class DeletePersonTests : SampleIntegrationTest
+public class DeletePersonTests : SampleAppIntegrationTest
 {
     private const string FirstName = "Foo";
     private const string LastName = "Bar";

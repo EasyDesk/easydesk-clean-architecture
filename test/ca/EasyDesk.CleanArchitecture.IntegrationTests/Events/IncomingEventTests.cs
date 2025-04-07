@@ -11,7 +11,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Events;
 
-public class IncomingEventTests : SampleIntegrationTest
+public class IncomingEventTests : SampleAppIntegrationTest
 {
     private PersonDto? _person;
 

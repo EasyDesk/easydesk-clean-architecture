@@ -12,7 +12,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public class CreateSiblingTests : SampleIntegrationTest
+public class CreateSiblingTests : SampleAppIntegrationTest
 {
     private static readonly Duration _epsilon = Duration.FromSeconds(1);
     private static readonly Duration _waitTime = Duration.FromSeconds(5);

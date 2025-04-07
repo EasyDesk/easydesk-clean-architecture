@@ -20,7 +20,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
-public class AuditingTests : SampleIntegrationTest
+public class AuditingTests : SampleAppIntegrationTest
 {
     private Guid _personId;
     private int _initialAudits;

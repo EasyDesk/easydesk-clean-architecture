@@ -11,7 +11,7 @@ using System.Data;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Transactions;
 
-public class TransactionsTests : SampleIntegrationTest
+public class TransactionsTests : SampleAppIntegrationTest
 {
     private static readonly Person _person = Person.Create(
             firstName: new("Pluto"),

@@ -9,7 +9,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public class IncomingCommandsTests : SampleIntegrationTest
+public class IncomingCommandsTests : SampleAppIntegrationTest
 {
     public IncomingCommandsTests(SampleAppTestsFixture factory) : base(factory)
     {

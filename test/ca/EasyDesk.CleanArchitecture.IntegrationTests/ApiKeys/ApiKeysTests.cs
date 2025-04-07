@@ -9,7 +9,7 @@ using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.ApiKeys;
 
-public class ApiKeysTests : SampleIntegrationTest
+public class ApiKeysTests : SampleAppIntegrationTest
 {
     private const string TestApiKey = "some_long_api_key";
     private readonly AgentDto _testAgent = AgentDto.MapFrom(Agent.Construct(x =>

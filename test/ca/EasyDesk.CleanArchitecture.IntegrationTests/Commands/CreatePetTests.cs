@@ -15,7 +15,7 @@ using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Commands;
 
-public class CreatePetTests : SampleIntegrationTest
+public class CreatePetTests : SampleAppIntegrationTest
 {
     private const int BulkQuantity = 200;
     private const string Nickname = "Rex";
