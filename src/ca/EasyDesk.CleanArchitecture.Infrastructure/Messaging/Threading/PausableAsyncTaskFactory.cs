@@ -8,8 +8,10 @@ public class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPoo
     private readonly ILoggerFactory _logger;
     private readonly IList<PausableAsyncTask> _tasks = [];
 
-    public PausableAsyncTaskFactory(ILoggerFactory logger) =>
+    public PausableAsyncTaskFactory(ILoggerFactory logger)
+    {
         _logger = logger;
+    }
 
     public IAsyncTask Create(string description, Func<Task> action, bool prettyInsignificant = false, int intervalSeconds = 10)
     {

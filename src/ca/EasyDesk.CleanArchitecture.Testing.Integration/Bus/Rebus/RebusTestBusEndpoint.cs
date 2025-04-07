@@ -175,11 +175,11 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
     {
         var options = context.Resolve<RebusMessagingOptions>();
         var serviceEndpoint = context.Resolve<RebusEndpoint>();
-        var helperEndpoint = new RebusEndpoint(inputQueueAddress);
+        var endpoint = new RebusEndpoint(inputQueueAddress);
         return new RebusTestBusEndpoint(
             rebus =>
             {
-                options.Apply(context, helperEndpoint, rebus);
+                options.Apply(context, endpoint, rebus);
                 rebus.Routing(r => r.Decorate(c => new TestRouterWrapper(c.Get<IRouter>(), serviceEndpoint)));
             },
             testTenantNavigator,

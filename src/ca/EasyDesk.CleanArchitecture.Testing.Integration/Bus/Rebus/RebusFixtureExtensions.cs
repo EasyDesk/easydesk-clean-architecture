@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
-using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus.Scheduler;
 using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
@@ -13,7 +12,6 @@ using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Persistence.InMem;
 using Rebus.Subscriptions;
-using Rebus.Threading;
 using Rebus.Time;
 using Rebus.Transport.InMem;
 
@@ -57,8 +55,7 @@ public static class RebusFixtureExtensions
         return configurer.RegisterLifetimeHooks(c => new InMemoryRebusSchedulerLifetimeHooks(
             c.Resolve<ITestHost>(),
             address,
-            pollInterval,
-            new InMemTimeoutStore()));
+            pollInterval));
     }
 
     private class InMemoryRebusSchedulerLifetimeHooks : LifetimeHooks
@@ -66,19 +63,17 @@ public static class RebusFixtureExtensions
         private readonly ITestHost _testHost;
         private readonly string _address;
         private readonly Duration _pollInterval;
-        private readonly InMemTimeoutStore _timeoutStore;
 
-        private IBus _bus = default!;
+        private IBus? _bus;
 
-        public InMemoryRebusSchedulerLifetimeHooks(ITestHost testHost, string address, Duration pollInterval, InMemTimeoutStore timeoutStore)
+        public InMemoryRebusSchedulerLifetimeHooks(ITestHost testHost, string address, Duration pollInterval)
         {
             _testHost = testHost;
             _address = address;
             _pollInterval = pollInterval;
-            _timeoutStore = timeoutStore;
         }
 
-        public override Task OnInitialization()
+        public override Task BeforeTest()
         {
             var rebus = Configure.With(new BuiltinHandlerActivator());
             var lifetimeScope = _testHost.LifetimeScope;
@@ -87,11 +82,10 @@ public static class RebusFixtureExtensions
             rebus
                 .Transport(t => transport(t, new(_address)))
                 .UseNodaTimeClock(lifetimeScope.Resolve<IClock>())
-                .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(_timeoutStore, c.Get<IRebusTime>())))
+                .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(new InMemTimeoutStore(), c.Get<IRebusTime>())))
                 .Options(o =>
                 {
                     o.SetDueTimeoutsPollInteval(_pollInterval.ToTimeSpan());
-                    o.Register<IAsyncTaskFactory>(_ => lifetimeScope.Resolve<PausableAsyncTaskFactory>());
                 });
 
             _bus = rebus.Start();
@@ -99,15 +93,10 @@ public static class RebusFixtureExtensions
             return Task.CompletedTask;
         }
 
-        public override Task BetweenTests()
+        public override Task AfterTest()
         {
-            _timeoutStore.Reset();
-            return Task.CompletedTask;
-        }
-
-        public override Task OnDisposal()
-        {
-            _bus.Dispose();
+            _bus!.Dispose();
+            _bus = null;
             return Task.CompletedTask;
         }
     }
