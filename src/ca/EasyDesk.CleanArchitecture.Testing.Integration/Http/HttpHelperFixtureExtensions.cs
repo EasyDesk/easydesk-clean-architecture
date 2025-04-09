@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
 using EasyDesk.Commons.Options;
@@ -54,6 +53,12 @@ public static class HttpHelperFixtureExtensions
         return configurer;
     }
 
-    public static HttpTestHelper Http<T>(this IntegrationTestSession<T> session) where T : IntegrationTestsFixture =>
-        session.LifetimeScope.Resolve<HttpTestHelper>();
+    public static SessionConfigurer ConfigureHttpRequests(this SessionConfigurer configurer, Action<HttpRequestBuilder> configureRequest)
+    {
+        configurer.ContainerBuilder
+            .RegisterInstance(new HttpRequestConfigurator(configureRequest))
+            .As<IHttpRequestConfigurator>()
+            .SingleInstance();
+        return configurer;
+    }
 }
