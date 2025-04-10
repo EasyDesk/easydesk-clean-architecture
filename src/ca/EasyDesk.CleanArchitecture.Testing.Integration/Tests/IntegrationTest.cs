@@ -8,10 +8,11 @@ public abstract class IntegrationTest<T> : IAsyncLifetime
 {
     protected IntegrationTestSession<T> Session { get; }
 
-    protected T Fixture => Session.Fixture;
+    protected T Fixture { get; }
 
     protected IntegrationTest(T fixture)
     {
+        Fixture = fixture;
         Session = new(fixture, ConfigureSession);
     }
 
