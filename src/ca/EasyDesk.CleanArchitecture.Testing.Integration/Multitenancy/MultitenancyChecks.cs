@@ -1,5 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using NodaTime;
 

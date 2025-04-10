@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Host;
 
 internal class TestHostApplicationFactory<T> : WebApplicationFactory<T>
     where T : class

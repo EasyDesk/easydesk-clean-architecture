@@ -2,18 +2,17 @@
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Seeding;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Testing;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Session;
 
 public sealed class IntegrationTestSession<TFixture> : IAsyncDisposable
     where TFixture : IntegrationTestsFixture
@@ -45,8 +44,6 @@ public sealed class IntegrationTestSession<TFixture> : IAsyncDisposable
     public ITestBusEndpoint DefaultBusEndpoint => _defaultBusEndpoint.Value;
 
     public ITestBusEndpoint ErrorBusEndpoint => _errorBusEndpoint.Value;
-
-    public TSeed GetSeed<TSeed>() => LifetimeScope.Resolve<SeedManager<TFixture, TSeed>>().Seed;
 
     public TestTenantManager TenantManager => LifetimeScope.Resolve<TestTenantManager>();
 

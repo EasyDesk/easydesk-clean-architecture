@@ -1,9 +1,10 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using NodaTime;
 using NodaTime.Testing;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Time;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Time;
 
 public static class TestFixtureTimeExtensions
 {

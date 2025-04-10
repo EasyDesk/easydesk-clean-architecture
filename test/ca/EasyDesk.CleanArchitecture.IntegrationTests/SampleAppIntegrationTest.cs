@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Tests;
+using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
+using EasyDesk.CleanArchitecture.Testing.Integration.Tests;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
@@ -10,5 +11,5 @@ public abstract class SampleAppIntegrationTest : IntegrationTest<SampleAppTestsF
     {
     }
 
-    public SampleSeeder.Data TestData => Session.GetSeed<SampleSeeder.Data>();
+    public SampleSeeder.Data TestData => Fixture.GetSeed<SampleSeeder.Data>();
 }

@@ -5,7 +5,7 @@ using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.SampleApp.Application.Authorization;
 

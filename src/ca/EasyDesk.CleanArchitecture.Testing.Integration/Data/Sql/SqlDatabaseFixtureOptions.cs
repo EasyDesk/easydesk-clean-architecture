@@ -1,5 +1,5 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 

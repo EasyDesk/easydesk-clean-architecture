@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Seeding;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
+using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 

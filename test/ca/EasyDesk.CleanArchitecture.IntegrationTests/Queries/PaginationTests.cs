@@ -6,7 +6,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using NodaTime;

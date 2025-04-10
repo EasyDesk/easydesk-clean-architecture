@@ -1,11 +1,11 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Host;
 
 public static class HostFixtureExtensions
 {

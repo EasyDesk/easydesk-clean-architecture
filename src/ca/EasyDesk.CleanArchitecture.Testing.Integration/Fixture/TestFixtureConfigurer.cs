@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
 public class TestFixtureConfigurer
 {

@@ -2,7 +2,7 @@
 using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.Commons.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
 public abstract class IntegrationTestsFixture : IAsyncLifetime
 {

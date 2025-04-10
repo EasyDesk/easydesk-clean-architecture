@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using Microsoft.Data.SqlClient;
 using Testcontainers.MsSql;
 

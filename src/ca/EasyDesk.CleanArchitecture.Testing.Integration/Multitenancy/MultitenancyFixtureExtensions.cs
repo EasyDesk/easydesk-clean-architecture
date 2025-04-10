@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;

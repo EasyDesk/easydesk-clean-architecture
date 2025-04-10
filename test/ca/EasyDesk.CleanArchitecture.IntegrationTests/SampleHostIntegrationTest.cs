@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Tests;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Tests;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 

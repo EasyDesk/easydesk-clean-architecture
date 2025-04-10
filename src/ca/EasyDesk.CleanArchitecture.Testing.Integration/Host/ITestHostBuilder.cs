@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Host;
 
 public interface ITestHostBuilder
 {

@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using System.Data.Common;
 using IDockerContainer = DotNet.Testcontainers.Containers.IContainer;
 

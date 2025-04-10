@@ -1,6 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
 using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Bus;

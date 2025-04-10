@@ -1,6 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 

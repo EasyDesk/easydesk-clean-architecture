@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Host;
 
 internal class TestHostBuilder<T> : ITestHostBuilder
     where T : class

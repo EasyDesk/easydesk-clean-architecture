@@ -1,8 +1,7 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
 using EasyDesk.Commons.Tasks;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
 public static class TestFixtureLifetimeExtensions
 {

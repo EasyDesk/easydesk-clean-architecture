@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
+﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
 public abstract class LifetimeHooks : IFixtureLifetime
 {

@@ -1,4 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using Npgsql;
 using Testcontainers.PostgreSql;
 

@@ -1,7 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+﻿using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Tests;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Tests;
 
 public abstract class IntegrationTest<T> : IAsyncLifetime
     where T : IntegrationTestsFixture

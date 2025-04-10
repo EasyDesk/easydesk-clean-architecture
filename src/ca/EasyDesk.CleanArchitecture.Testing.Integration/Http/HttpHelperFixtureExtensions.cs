@@ -1,10 +1,10 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http;

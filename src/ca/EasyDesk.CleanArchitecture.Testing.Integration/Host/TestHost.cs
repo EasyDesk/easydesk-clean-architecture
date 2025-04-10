@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Host;
 
 internal sealed class TestHost<T> : ITestHost
     where T : class

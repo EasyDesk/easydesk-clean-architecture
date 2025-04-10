@@ -1,10 +1,9 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus.Scheduler;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Rebus.Activation;

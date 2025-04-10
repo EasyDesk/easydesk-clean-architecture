@@ -1,8 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Fixture;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Host;
-using EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Time;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
+using EasyDesk.CleanArchitecture.Testing.Integration.Host;
+using EasyDesk.CleanArchitecture.Testing.Integration.Time;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleHostApp.Service.V_1_0.AsyncCommands;
 using NodaTime;

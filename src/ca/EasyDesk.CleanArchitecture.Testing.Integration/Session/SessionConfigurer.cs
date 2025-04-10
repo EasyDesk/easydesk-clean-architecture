@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Refactor.Session;
+namespace EasyDesk.CleanArchitecture.Testing.Integration.Session;
 
 public class SessionConfigurer
 {
