@@ -6,8 +6,6 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
 public abstract class IntegrationTestsFixture : IAsyncLifetime
 {
-    private bool _firstBeforeTestRun = false;
-
     protected IntegrationTestsFixture()
     {
         var configurer = new TestFixtureConfigurer();
@@ -32,23 +30,16 @@ public abstract class IntegrationTestsFixture : IAsyncLifetime
 
     public async Task BeforeTest()
     {
-        if (_firstBeforeTestRun)
-        {
-            await Pause();
-            await TriggerFixtureLifetimeHook(l => l.BetweenTests());
-            await Resume();
-        }
-        else
-        {
-            _firstBeforeTestRun = true;
-        }
-
         await TriggerFixtureLifetimeHook(l => l.BeforeTest());
     }
 
     public async Task AfterTest()
     {
         await TriggerFixtureLifetimeHook(l => l.AfterTest(), reverseOrder: true);
+
+        await Pause();
+        await TriggerFixtureLifetimeHook(l => l.BetweenTests());
+        await Resume();
     }
 
     public async Task DisposeAsync()
