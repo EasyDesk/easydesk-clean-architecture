@@ -6,14 +6,15 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Tests;
 public abstract class IntegrationTest<T> : IAsyncLifetime
     where T : IntegrationTestsFixture
 {
-    protected IntegrationTestSession<T> Session { get; }
+    private IntegrationTestSession<T>? _session;
+
+    protected IntegrationTestSession<T> Session => _session ?? throw new InvalidOperationException("Accessing session before test initialization.");
 
     protected T Fixture { get; }
 
     protected IntegrationTest(T fixture)
     {
         Fixture = fixture;
-        Session = new(fixture, ConfigureSession);
     }
 
     protected virtual void ConfigureSession(SessionConfigurer configurer)
@@ -22,6 +23,7 @@ public abstract class IntegrationTest<T> : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
+        _session = new(Fixture, ConfigureSession);
         await Fixture.BeforeTest();
         await OnInitialization();
     }
