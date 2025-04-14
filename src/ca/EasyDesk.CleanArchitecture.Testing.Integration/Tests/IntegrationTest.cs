@@ -8,13 +8,14 @@ public abstract class IntegrationTest<T> : IAsyncLifetime
 {
     private IntegrationTestSession<T>? _session;
 
-    protected IntegrationTestSession<T> Session => _session ?? throw new InvalidOperationException("Accessing session before test initialization.");
+    protected IntegrationTestSession<T> Session => _session ?? throw new InvalidOperationException("Accessing session inside of ConfigureSession().");
 
     protected T Fixture { get; }
 
     protected IntegrationTest(T fixture)
     {
         Fixture = fixture;
+        _session = new(Fixture, ConfigureSession);
     }
 
     protected virtual void ConfigureSession(SessionConfigurer configurer)
@@ -23,7 +24,6 @@ public abstract class IntegrationTest<T> : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        _session = new(Fixture, ConfigureSession);
         await Fixture.BeforeTest();
         await OnInitialization();
     }
