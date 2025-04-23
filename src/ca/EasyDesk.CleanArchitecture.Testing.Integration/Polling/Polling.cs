@@ -95,8 +95,14 @@ public sealed class Polling<T>
     public Task<bool> PropertyHolds(AsyncFunc<T, bool> property) =>
         Map(property).WithFallback(_ => true).While(It);
 
+    public Task<bool> EventuallyPropertyHolds(AsyncFunc<T, bool> property) =>
+        Map(property).WithFallback(_ => PropertyHolds(property)).Until(It);
+
     public Task<bool> PropertyHolds(Func<T, bool> property) =>
         PropertyHolds(t => Task.FromResult(property(t)));
+
+    public Task<bool> EventuallyPropertyHolds(Func<T, bool> property) =>
+        EventuallyPropertyHolds(t => Task.FromResult(property(t)));
 
     public async Task EnsureInvariant(AsyncFunc<T, bool> invariant)
     {
@@ -115,6 +121,24 @@ public sealed class Polling<T>
 
     public Task EnsureDoesNotThrow<E>(Action<T> action) where E : Exception =>
         EnsureInvariant(DoesNotThrow<E>(action));
+
+    public async Task EventuallyEnsureInvariant(AsyncFunc<T, bool> invariant)
+    {
+        var ok = await EventuallyPropertyHolds(invariant);
+        if (!ok)
+        {
+            throw new InvariantDidNotHoldException();
+        }
+    }
+
+    public Task EventuallyEnsureInvariant(Func<T, bool> invariant) =>
+        EventuallyEnsureInvariant(t => Task.FromResult(invariant(t)));
+
+    public Task EventuallyEnsureDoesNotThrow<E>(AsyncAction<T> action) where E : Exception =>
+        EventuallyEnsureInvariant(DoesNotThrow<E>(action));
+
+    public Task EventuallyEnsureDoesNotThrow<E>(Action<T> action) where E : Exception =>
+        EventuallyEnsureInvariant(DoesNotThrow<E>(action));
 
     private Func<T, bool> DoesNotThrow<E>(Action<T> action) where E : Exception => t =>
     {
