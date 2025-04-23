@@ -166,9 +166,13 @@ public sealed class Polling<T>
         }
     };
 
-    public Task<T> WhileThrows<E>(Action<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
+    public Task<T> UntilDoesNotThrow<E>(Action<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
 
-    public Task<T> WhileThrows<E>(AsyncAction<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
+    public Task<T> UntilDoesNotThrow(Action<T> action) => UntilDoesNotThrow<Exception>(action);
+
+    public Task<T> UntilDoesNotThrow<E>(AsyncAction<T> action) where E : Exception => Until(DoesNotThrow<E>(action));
+
+    public Task<T> UntilDoesNotThrow(AsyncAction<T> action) => UntilDoesNotThrow<Exception>(action);
 
     public Task<T> UntilThrows<E>(Action<T> action) where E : Exception => While(DoesNotThrow<E>(action));
 
