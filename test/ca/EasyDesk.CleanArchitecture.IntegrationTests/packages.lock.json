@@ -58,11 +58,11 @@
       },
       "Testcontainers.PostgreSql": {
         "type": "Direct",
-        "requested": "[4.3.0, )",
-        "resolved": "4.3.0",
-        "contentHash": "OWtFKTrVaYrAA+N+tQF3ZC/o21pIPUihRB7NZNYbPWyxIJgSkTRzBdtV/ZNIGmsM+Smg0kqUy9ho2mbfTBt2Xw==",
+        "requested": "[4.4.0, )",
+        "resolved": "4.4.0",
+        "contentHash": "AZan+H6m/jBR/qN4Dj3QA8NOqqiTo2Zq9/FswbXP6XADu9FVJU2sXPG3nQHxpBQ8ccHARCL3uxKg0BSR5YSTQw==",
         "dependencies": {
-          "Testcontainers": "4.3.0"
+          "Testcontainers": "4.4.0"
         }
       },
       "Testcontainers.RabbitMq": {
@@ -1622,7 +1622,7 @@
           "Npgsql": "[9.0.3, )",
           "Testcontainers": "[4.4.0, )",
           "Testcontainers.MsSql": "[4.3.0, )",
-          "Testcontainers.PostgreSql": "[4.3.0, )",
+          "Testcontainers.PostgreSql": "[4.4.0, )",
           "Verify.Xunit": "[29.3.0, )"
         }
       },
