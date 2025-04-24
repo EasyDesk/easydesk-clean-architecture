@@ -13,7 +13,7 @@
     <PackageReference Include="NodaTime.Testing" Version="3.2.2" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Testcontainers" Version="4.4.0" />
-    <PackageReference Include="Testcontainers.MsSql" Version="4.3.0" />
+    <PackageReference Include="Testcontainers.MsSql" Version="4.4.0" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.3.0" />
     <PackageReference Include="Verify.Xunit" Version="29.3.0" />
   </ItemGroup>

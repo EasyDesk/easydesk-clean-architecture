@@ -82,11 +82,11 @@
       },
       "Testcontainers.MsSql": {
         "type": "Direct",
-        "requested": "[4.3.0, )",
-        "resolved": "4.3.0",
-        "contentHash": "cuFPklU0tcFB0X2KyUNMBoPFMxmUCG793Jj0SNIWni+LG7YgUp3r6T2jbwAWKZHpFS3/Q/SIvpUPfcgB1pAd3g==",
+        "requested": "[4.4.0, )",
+        "resolved": "4.4.0",
+        "contentHash": "Ghh7rK17G7Lf6fhmfnen2Jo3X6x3xrXaiakeR4KkR1bHFACeYSlbBvQhuAz1Vx+aVkcCzoLpbxexVwqnQocvcw==",
         "dependencies": {
-          "Testcontainers": "4.3.0"
+          "Testcontainers": "4.4.0"
         }
       },
       "Testcontainers.PostgreSql": {
