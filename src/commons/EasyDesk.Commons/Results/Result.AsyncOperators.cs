@@ -64,4 +64,22 @@ public static partial class StaticImports
 
     public static async Task ThenMatchAsync<A>(this Task<Result<A>> result, AsyncAction<A> success, AsyncAction<Error> failure) =>
         await (await result).MatchAsync(success, failure);
+
+    public static async Task<Result<T>> ThenCatchError<T>(this Task<Result<T>> result, Func<Error, Result<T>> handler) =>
+        (await result).CatchError(handler);
+
+    public static async Task<Result<Nothing>> ThenCatchError(this Task<Result<Nothing>> result, Func<Error, bool> filter) =>
+        (await result).CatchError(filter);
+
+    public static async Task<Result<Nothing>> ThenCatchError<E>(this Task<Result<Nothing>> result, Func<E, bool> filter) where E : Error =>
+        (await result).CatchError(filter);
+
+    public static async Task<Result<T>> ThenCatchErrorAsync<T>(this Task<Result<T>> result, AsyncFunc<Error, Result<T>> handler) =>
+        await (await result).CatchErrorAsync(handler);
+
+    public static async Task<Result<Nothing>> ThenCatchErrorAsync(this Task<Result<Nothing>> result, AsyncFunc<Error, bool> filter) =>
+        await (await result).CatchErrorAsync(filter);
+
+    public static async Task<Result<Nothing>> ThenCatchErrorAsync<E>(this Task<Result<Nothing>> result, AsyncFunc<E, bool> filter) where E : Error =>
+        await (await result).CatchErrorAsync(filter);
 }
