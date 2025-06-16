@@ -6,7 +6,6 @@ using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
-using static EasyDesk.Commons.Collections.ImmutableCollections;
 
 namespace EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
 
@@ -34,7 +33,7 @@ public class AuthenticationModule : AppModule
     {
         Options.Schemes.ForEach(scheme =>
         {
-            scheme.Value.AddUtilityServices(registry, app, scheme.Key);
+            scheme.Provider.AddUtilityServices(registry, app, scheme.Name);
         });
     }
 
@@ -56,8 +55,8 @@ public class AuthenticationModule : AppModule
             builder
                 .Register(c => new AuthenticationScheme
                 {
-                    Scheme = scheme.Key,
-                    Handler = scheme.Value.CreateHandler(c, scheme.Key),
+                    Scheme = scheme.Name,
+                    Handler = scheme.Provider.CreateHandler(c, scheme.Name),
                 })
                 .InstancePerDependency();
         });
@@ -78,12 +77,21 @@ public sealed class AuthenticationModuleOptions
 {
     public Option<string> DefaultScheme { get; private set; }
 
-    public IFixedMap<string, IAuthenticationProvider> Schemes { get; private set; } = Map<string, IAuthenticationProvider>();
+    public IFixedList<(string Name, IAuthenticationProvider Provider)> Schemes { get; private set; } = [];
 
     public AuthenticationModuleOptions AddScheme(string name, IAuthenticationProvider provider)
     {
+        if (Schemes.Any(s => s.Name == name))
+        {
+            throw new InvalidOperationException($"An authentication scheme named {name} already exists.");
+        }
+
         DefaultScheme.IfAbsent(() => DefaultScheme = Some(name));
-        Schemes = Schemes.Add(name, provider);
+        Schemes = Schemes.Add((name, provider));
         return this;
     }
+
+    public Option<IAuthenticationProvider> GetSchemeProvider(string schemeName) => Schemes
+        .SingleOption(x => x.Name == schemeName)
+        .Map(x => x.Provider);
 }

@@ -29,7 +29,7 @@ public static class TestHttpAuthentication
             return None;
         }
         var schemeName = options.DefaultScheme.Value;
-        var provider = options.Schemes[schemeName];
+        var provider = options.GetSchemeProvider(schemeName).Value;
         return provider switch
         {
             JwtBearerProvider jwtProvider => Some(GetJwtAuthenticationConfiguration(componentContext, jwtProvider)),

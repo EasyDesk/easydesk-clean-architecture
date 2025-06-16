@@ -34,14 +34,14 @@ public class JwtLogger
     {
         if (schemeName is null)
         {
-            return _authModuleOptions.Schemes.Values
-                .SelectMany(s => (s as JwtBearerProvider).AsOption())
+            return _authModuleOptions.Schemes
+                .SelectMany(s => (s.Provider as JwtBearerProvider).AsOption())
                 .FirstOption()
                 .OrElseThrow(() => new InvalidOperationException(
                     $"Missing a {nameof(JwtBearerProvider)} in the authentication configuration"));
         }
 
-        if (_authModuleOptions.Schemes[schemeName] is not JwtBearerProvider jwtProvider)
+        if (_authModuleOptions.GetSchemeProvider(schemeName).Value is not JwtBearerProvider jwtProvider)
         {
             throw new InvalidOperationException($"Scheme {schemeName} is not of type {nameof(JwtBearerProvider)}.");
         }
