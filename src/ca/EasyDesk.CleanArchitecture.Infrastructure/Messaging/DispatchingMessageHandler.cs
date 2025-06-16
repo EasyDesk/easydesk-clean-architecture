@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
+using EasyDesk.Commons.Results;
 using Rebus.Handlers;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging;
@@ -17,6 +18,6 @@ internal class DispatchingMessageHandler<T> : IHandleMessages<T>
     public async Task Handle(T message)
     {
         var result = await _dispatcher.Dispatch(message);
-        result.ThrowIfFailure();
+        result.ThrowIfFailure(e => new ResultFailedException($"Error while dispatching request of type '{message.GetType().FullName}' ({message}): {e}", e));
     }
 }

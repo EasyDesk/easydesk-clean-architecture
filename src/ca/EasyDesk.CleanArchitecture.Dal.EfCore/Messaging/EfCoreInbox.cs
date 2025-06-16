@@ -1,15 +1,20 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using Microsoft.EntityFrameworkCore;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 
 internal class EfCoreInbox : IInbox
 {
     private readonly MessagingContext _context;
+    private readonly IClock _clock;
 
-    public EfCoreInbox(MessagingContext context)
+    public EfCoreInbox(
+        MessagingContext context,
+        IClock clock)
     {
         _context = context;
+        _clock = clock;
     }
 
     public async Task<bool> HasBeenProcessed(string messageId)
@@ -24,6 +29,7 @@ internal class EfCoreInbox : IInbox
         _context.Inbox.Add(new InboxMessage
         {
             Id = messageId,
+            Instant = _clock.GetCurrentInstant(),
         });
         await _context.SaveChangesAsync();
     }

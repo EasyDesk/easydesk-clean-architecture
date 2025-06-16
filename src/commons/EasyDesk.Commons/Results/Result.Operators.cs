@@ -127,4 +127,22 @@ public static partial class StaticImports
             return Some(itemToReturn);
         }
     }
+
+    public static Result<T> CatchError<T>(this Result<T> result, Func<Error, Result<T>> handler) =>
+        result.Match(success: Success, failure: handler);
+
+    public static Result<Nothing> CatchError(this Result<Nothing> result, Func<Error, bool> filter) =>
+        result.CatchError(error => filter(error) ? Ok : error);
+
+    public static Result<Nothing> CatchError<E>(this Result<Nothing> result, Func<E, bool> filter) where E : Error =>
+        result.CatchError(error => error is E e && filter(e));
+
+    public static Task<Result<T>> CatchErrorAsync<T>(this Result<T> result, AsyncFunc<Error, Result<T>> handler) =>
+        result.MatchAsync(success: r => Task.FromResult(Success(r)), failure: handler);
+
+    public static Task<Result<Nothing>> CatchErrorAsync(this Result<Nothing> result, AsyncFunc<Error, bool> filter) =>
+        result.CatchErrorAsync(async error => await filter(error) ? Ok : error);
+
+    public static Task<Result<Nothing>> CatchErrorAsync<E>(this Result<Nothing> result, AsyncFunc<E, bool> filter) where E : Error =>
+        result.CatchErrorAsync(async error => error is E e && await filter(e));
 }

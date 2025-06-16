@@ -2,6 +2,7 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.CleanArchitecture.Dal.PostgreSql.Migrations.Messaging;
 
 [DbContext(typeof(MessagingContext))]
-partial class MessagingContextModelSnapshot : ModelSnapshot
+[Migration("20250516084546_AddInstantToInbox")]
+partial class AddInstantToInbox
 {
-    protected override void BuildModel(ModelBuilder modelBuilder)
+    /// <inheritdoc />
+    protected override void BuildTargetModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
