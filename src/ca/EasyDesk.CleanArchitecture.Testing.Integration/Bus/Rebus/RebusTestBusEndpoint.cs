@@ -36,7 +36,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         _tenantManager = tenantManager;
         _timeout = timeout ?? _defaultTimeout;
 
-        _handlerActivator = new BuiltinHandlerActivator();
+        _handlerActivator = new();
         _handlerActivator.Handle<IMessage>(Handler);
 
         var configurer = Configure.With(_handlerActivator);
@@ -150,9 +150,9 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
             .Map(id => TenantInfo.Tenant(new TenantId(id)))
             .OrElse(TenantInfo.Public);
         return _tenantManager.CurrentTenantInfo.All(x => x == messageTenantId)
-                && message.Body is T t
-                && predicate(t)
-                ? Some(t) : None;
+            && message.Body is T t
+            && predicate(t)
+             ? Some(t) : None;
     }
 
     public async ValueTask DisposeAsync()
@@ -176,7 +176,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         var options = context.Resolve<RebusMessagingOptions>();
         var serviceEndpoint = context.Resolve<RebusEndpoint>();
         var endpoint = new RebusEndpoint(inputQueueAddress);
-        return new RebusTestBusEndpoint(
+        return new(
             rebus =>
             {
                 options.Apply(context, endpoint, rebus);
@@ -193,7 +193,7 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
 
         public TestTenantManagementStep(TestTenantManager tenantManager)
         {
-            _inner = new TenantManagementStep();
+            _inner = new();
 
             var builder = new ContainerBuilder();
 

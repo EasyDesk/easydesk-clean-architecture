@@ -19,22 +19,14 @@ public static class Pageable
         {
             IEnumerable<T> SafeSkip()
             {
-                int skip;
-                if (pageIndex > int.MaxValue / pageSize)
-                {
-                    skip = int.MaxValue;
-                }
-                else
-                {
-                    skip = pageIndex * pageSize;
-                }
+                var skip = pageIndex > int.MaxValue / pageSize ? int.MaxValue : pageIndex * pageSize;
                 return _items.Skip(skip);
             }
             return Task.FromResult(
                 SafeSkip()
-                .Take(pageSize)
-                .ToList()
-                .AsEnumerable());
+                    .Take(pageSize)
+                    .ToList()
+                    .AsEnumerable());
         }
     }
 }

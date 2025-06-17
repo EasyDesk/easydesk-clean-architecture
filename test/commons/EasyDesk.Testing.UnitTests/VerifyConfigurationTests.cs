@@ -60,14 +60,14 @@ public class VerifyConfigurationTests
     [Fact]
     public Task EmptyCollectionConversionTest()
     {
-        return Verify(new { Inner = new List<int>() });
+        return Verify(new { Inner = new List<int>(), });
     }
 
     [Fact]
-    public Task JsonTest()
+    public async Task JsonTest()
     {
         using var document = JsonDocument.Parse(@"{""a"": [1, 2, 3]}");
-        return Verify(document);
+        await Verify(document);
     }
 
     [Fact]

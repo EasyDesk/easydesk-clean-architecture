@@ -40,7 +40,7 @@ public class OptionFactoriesTests
     public void AsOptionForNullableValueTypes_ShouldReturnAnEmptyOption_WhenNullIsPassed_WithNullableEnabled()
     {
         int? x = null;
-        StaticImports.AsOption(x).ShouldBe(None);
+        x.AsOption().ShouldBe(None);
     }
 #nullable disable
 }

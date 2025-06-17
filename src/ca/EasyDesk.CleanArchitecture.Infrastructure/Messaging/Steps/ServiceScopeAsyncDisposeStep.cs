@@ -9,9 +9,11 @@ public sealed class ServiceScopeAsyncDisposeStep : IIncomingStep
     {
         await next();
         var scope = context.Load<IServiceScope>();
-        if (scope is IAsyncDisposable asyncScope)
+        if (scope is not IAsyncDisposable asyncScope)
         {
-            await asyncScope.DisposeAsync();
+            return;
         }
+
+        await asyncScope.DisposeAsync();
     }
 }

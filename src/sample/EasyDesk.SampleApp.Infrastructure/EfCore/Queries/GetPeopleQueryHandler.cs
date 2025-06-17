@@ -17,7 +17,7 @@ public class GetPeopleQueryHandler : SuccessHandler<GetPeople, IPageable<PersonD
         _context = context;
     }
 
-    protected override Task<IPageable<PersonDto>> Process(GetPeople query)
+    protected override Task<IPageable<PersonDto>> Process(GetPeople request)
     {
         return Task.FromResult(_context.People
             .OrderBy(p => p.LastName)

@@ -7,7 +7,7 @@ public class ErrorConverter : WriteOnlyJsonConverter<Error>
 {
     public override void Write(VerifyJsonWriter writer, Error value)
     {
-        if (value == null)
+        if (value is null)
         {
             writer.WriteNull();
             return;
@@ -45,7 +45,7 @@ public class ErrorConverter : WriteOnlyJsonConverter<Error>
             CheckAdditionalContent = serializer.CheckAdditionalContent,
             ConstructorHandling = serializer.ConstructorHandling,
             ContractResolver = serializer.ContractResolver,
-            Converters = new List<JsonConverter>(serializer.Converters),
+            Converters = new(serializer.Converters),
             DefaultValueHandling = serializer.DefaultValueHandling,
             EqualityComparer = serializer.EqualityComparer,
             Deserialized = serializer.Deserialized,

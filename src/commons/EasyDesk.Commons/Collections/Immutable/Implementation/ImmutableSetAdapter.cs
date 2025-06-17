@@ -17,11 +17,11 @@ internal class ImmutableSetAdapter<T> : IFixedSet<T>
 
     private ImmutableSetAdapter<T> Wrap(IImmutableSet<T> set) => new(set, _equalityComparer);
 
-    public IFixedSet<T> Add(T value) => Wrap(_set.Add(value));
+    public IFixedSet<T> Add(T item) => Wrap(_set.Add(item));
 
     public IFixedSet<T> Clear() => Wrap(_set.Clear());
 
-    public bool Contains(T value) => _set.Contains(value);
+    public bool Contains(T item) => _set.Contains(item);
 
     public IFixedSet<T> Except(IEnumerable<T> other) => Wrap(_set.Except(other));
 
@@ -37,7 +37,7 @@ internal class ImmutableSetAdapter<T> : IFixedSet<T>
 
     public bool Overlaps(IEnumerable<T> other) => _set.Overlaps(other);
 
-    public IFixedSet<T> Remove(T value) => Wrap(_set.Remove(value));
+    public IFixedSet<T> Remove(T item) => Wrap(_set.Remove(item));
 
     public bool SetEquals(IEnumerable<T> other) => _set.SetEquals(other);
 

@@ -39,7 +39,7 @@ public sealed class RebusMessagingOptions
 
     public IFixedSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
 
-    public bool DeferredMessagesEnabled { get; private set; } = false;
+    public bool DeferredMessagesEnabled { get; private set; }
 
     public RebusMessagingOptions AddKnownMessageTypes(IEnumerable<Type> types)
     {
@@ -100,7 +100,7 @@ public sealed class RebusMessagingOptions
             .Options(o =>
             {
                 o.UseTplToReceiveMessages();
-                o.RetryStrategy(errorQueueName: ErrorQueueName, secondLevelRetriesEnabled: true, maxDeliveryAttempts: FailuresOptions.MaxDeliveryAttempts);
+                o.RetryStrategy(errorQueueName: ErrorQueueName, maxDeliveryAttempts: FailuresOptions.MaxDeliveryAttempts, secondLevelRetriesEnabled: true);
                 o.Decorate<IFailFastChecker>(c => new FailFastCheckerWrapper(c.Get<IFailFastChecker>(), FailFastCheckers));
             });
 

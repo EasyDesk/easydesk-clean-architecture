@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values;
 
 public class QuantityWrapperTests
 {
-    private static readonly int _innerValue = 5;
+    private const int InnerValue = 5;
 
     private record TestQuantityWrapper : Quantity<int, TestQuantityWrapper>, IValue<int>
     {
@@ -19,7 +19,7 @@ public class QuantityWrapperTests
         public static IRuleBuilder<X, int> ValidationRules<X>(IRuleBuilder<X, int> rules) => rules.NotEqual(0);
     }
 
-    private readonly TestQuantityWrapper _sut = new(_innerValue);
+    private readonly TestQuantityWrapper _sut = new(InnerValue);
 
     [Fact]
     public void Validate_ShouldThrowException_WithWrongValue()
@@ -31,13 +31,13 @@ public class QuantityWrapperTests
     [Fact]
     public void WrappedValue_ShouldBeAccessible()
     {
-        _sut.Value.ShouldBe(_innerValue);
+        _sut.Value.ShouldBe(InnerValue);
     }
 
     [Fact]
     public void QuantityWrapper_ShouldBeComparable()
     {
-        var other = new TestQuantityWrapper(_innerValue);
+        var other = new TestQuantityWrapper(InnerValue);
         _sut.CompareTo(other).ShouldBe(0);
         (_sut <= other && _sut >= other).ShouldBeTrue();
         (_sut < other || _sut > other).ShouldBeFalse();

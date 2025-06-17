@@ -12,7 +12,7 @@ public static class ValidationUtils
     {
         var errors = GetValidationErrors(value, validators).ToList();
         return errors.HasAny()
-            ? Errors.Multiple(errors.First(), errors.Skip(1))
+            ? Errors.Multiple(errors[0], errors.Skip(1))
             : value;
     }
 

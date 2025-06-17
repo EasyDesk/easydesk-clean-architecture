@@ -36,7 +36,7 @@ public class PersonController : CleanArchitectureController
             DateOfBirth = body.DateOfBirth,
             Residence = body.Residence,
         })
-            .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id });
+            .ReturnCreatedAtAction(nameof(GetPerson), x => new { x.Id, });
     }
 
     [HttpPost(PersonRoutes.CreatePeople)]

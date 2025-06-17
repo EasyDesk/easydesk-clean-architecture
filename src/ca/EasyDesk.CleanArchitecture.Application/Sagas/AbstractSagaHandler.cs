@@ -9,7 +9,7 @@ internal abstract class AbstractSagaHandler<T, R, TId, TState>
     private readonly IComponentContext _componentContext;
     private readonly SagaStepConfiguration<T, R, TId, TState> _configuration;
 
-    public AbstractSagaHandler(
+    protected AbstractSagaHandler(
         ISagaCoordinator<TId, TState> coordinator,
         IComponentContext componentContext,
         SagaStepConfiguration<T, R, TId, TState> configuration)

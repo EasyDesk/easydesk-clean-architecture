@@ -22,7 +22,7 @@ internal class SagaModel : IMultitenantEntity
     {
         public void Configure(EntityTypeBuilder<SagaModel> builder)
         {
-            builder.HasKey(x => new { x.Id, x.Type, x.Tenant });
+            builder.HasKey(x => new { x.Id, x.Type, x.Tenant, });
 
             builder.Property(x => x.Type).HasMaxLength(SagaManagerModel.SagaTypeMaxLength);
         }

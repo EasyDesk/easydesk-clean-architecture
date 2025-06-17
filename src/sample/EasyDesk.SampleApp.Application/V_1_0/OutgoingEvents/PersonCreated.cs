@@ -10,7 +10,7 @@ public record PersonCreated(Guid PersonId) : IOutgoingEvent, IPropagatedEvent<Pe
 {
     public static readonly TenantId EmittedWithTenant = new("asdqwe-test");
 
-    public static PersonCreated ToMessage(PersonCreatedEvent ev) => new(ev.Person.Id);
+    public static PersonCreated ToMessage(PersonCreatedEvent domainEvent) => new(domainEvent.Person.Id);
 
-    public static Option<TenantInfo> ToTenant(PersonCreatedEvent ev) => Some(TenantInfo.Tenant(EmittedWithTenant));
+    public static Option<TenantInfo> ToTenant(PersonCreatedEvent domainEvent) => Some(TenantInfo.Tenant(EmittedWithTenant));
 }

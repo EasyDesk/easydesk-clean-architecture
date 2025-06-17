@@ -31,7 +31,7 @@ public class MigrationsService
         foreach (var context in _contexts)
         {
             await context.Database.MigrateAsync();
-            _logger.LogInformation("Successfully asynchronously migrated DbContext of type {contextType}", context.GetType().Name);
+            _logger.LogInformation("Successfully asynchronously migrated DbContext of type {ContextType}", context.GetType().Name);
         }
     }
 
@@ -40,7 +40,7 @@ public class MigrationsService
         foreach (var context in _contexts)
         {
             context.Database.Migrate();
-            _logger.LogInformation("Successfully synchronously migrated DbContext of type {contextType}", context.GetType().Name);
+            _logger.LogInformation("Successfully synchronously migrated DbContext of type {ContextType}", context.GetType().Name);
         }
     }
 }

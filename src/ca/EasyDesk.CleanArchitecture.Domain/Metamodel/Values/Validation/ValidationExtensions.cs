@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
 
-public static partial class ValidationExtensions
+public static class ValidationExtensions
 {
     public static ValidateStrategySelector<T, P> MustBeValid<T, P>(this IRuleBuilder<T, P> rules)
         where P : notnull, IEquatable<P> =>

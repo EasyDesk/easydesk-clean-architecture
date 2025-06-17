@@ -5,7 +5,7 @@ namespace EasyDesk.Testing.VerifyConfiguration;
 
 internal abstract class CachedJsonConverterFactory : JsonConverterFactory
 {
-    private readonly ConcurrentDictionary<Type, JsonConverter> _cache = new();
+    private readonly ConcurrentDictionary<Type, JsonConverter> _cache = [];
 
     protected override JsonConverter CreateConverter(Type objectType, JsonSerializer serializer)
     {

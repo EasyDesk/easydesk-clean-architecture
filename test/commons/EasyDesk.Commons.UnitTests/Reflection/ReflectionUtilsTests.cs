@@ -6,13 +6,9 @@ namespace EasyDesk.Commons.UnitTests.Reflection;
 
 public class ReflectionUtilsTests
 {
-    private interface IInterface
-    {
-    }
+    private interface IInterface;
 
-    private interface IGenericInterface<T>
-    {
-    }
+    private interface IGenericInterface<T>;
 
     private record NoInterface;
 

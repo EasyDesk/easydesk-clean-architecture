@@ -4,7 +4,7 @@ namespace EasyDesk.Testing.MatrixExpansion;
 
 public class MatrixBuilder
 {
-    private IEnumerable<IEnumerable<object?>> _matrix = new[] { Enumerable.Empty<object>() };
+    private IEnumerable<IEnumerable<object?>> _matrix = new[] { Enumerable.Empty<object>(), };
 
     private MatrixBuilder AddAxis(IEnumerable<object?> axis)
     {

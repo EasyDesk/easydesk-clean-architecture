@@ -31,7 +31,7 @@ public class ApiVersioningModule : AppModule
             .SubtypesOrImplementationsOf<AbstractController>()
             .FindTypes()
             .GetSupportedApiVersionsFromNamespaces();
-        ApiVersioningInfo = new ApiVersioningInfo(supportedVersions);
+        ApiVersioningInfo = new(supportedVersions);
     }
 
     protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
@@ -67,14 +67,14 @@ public class ApiVersioningModule : AppModule
 
     private class NamespaceConvention : IControllerConvention
     {
-        public bool Apply(IControllerConventionBuilder controller, ControllerModel controllerModel)
+        public bool Apply(IControllerConventionBuilder builder, ControllerModel controller)
         {
-            controllerModel.ControllerType
+            controller.ControllerType
                 .GetApiVersionFromNamespace()
                 .Map(v => v.ToAspNetApiVersion())
                 .Match(
-                    some: controller.HasApiVersion,
-                    none: controller.IsApiVersionNeutral);
+                    some: builder.HasApiVersion,
+                    none: builder.IsApiVersionNeutral);
             return true;
         }
     }

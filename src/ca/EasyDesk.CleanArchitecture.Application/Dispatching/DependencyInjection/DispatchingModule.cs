@@ -23,7 +23,7 @@ public class DispatchingModule : AppModule
         RegisterRequestHandlers(builder, app);
 
         var steps = Pipeline.GetOrderedSteps().ToList();
-        builder.Register(c => new StartupPipelineLogger(steps, c.Resolve<ILogger<StartupPipelineLogger>>()))
+        builder.Register(c => new StartupPipelineLogger(steps, c.Resolve<ILogger<StartupPipelineLogger>>(), c.Resolve<ILifetimeScope>()))
             .As<IHostedService>()
             .SingleInstance();
 

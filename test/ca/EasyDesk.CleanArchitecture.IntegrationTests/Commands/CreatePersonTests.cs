@@ -27,7 +27,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
     {
         FirstName = "Foo",
         LastName = "Bar",
-        DateOfBirth = new LocalDate(1996, 2, 2),
+        DateOfBirth = new(1996, 2, 2),
         Residence = AddressDto.Create("Calvin", "street", "15", "Brooklyn", "New York", null, null, "New York State", "USA"),
     };
 
@@ -50,22 +50,24 @@ public class CreatePersonTests : SampleAppIntegrationTest
         .CreatePerson(_body);
 
     private HttpSingleRequestExecutor<IEnumerable<PersonDto>> CreatePeople(params CreatePersonBodyDto[] extra) => Session.Http
-        .CreatePeople(List(
-            _body,
-            new()
-            {
-                FirstName = "Baz",
-                LastName = "Qux",
-                DateOfBirth = new LocalDate(1996, 2, 2),
-                Residence = _body.Residence,
-            },
-            new()
-            {
-                FirstName = "Asd",
-                LastName = "Qwerty",
-                DateOfBirth = new LocalDate(1997, 11, 11),
-                Residence = _body.Residence,
-            }).Concat(extra));
+        .CreatePeople(
+            List(
+                _body,
+                new()
+                {
+                    FirstName = "Baz",
+                    LastName = "Qux",
+                    DateOfBirth = new(1996, 2, 2),
+                    Residence = _body.Residence,
+                },
+                new()
+                {
+                    FirstName = "Asd",
+                    LastName = "Qwerty",
+                    DateOfBirth = new(1997, 11, 11),
+                    Residence = _body.Residence,
+                })
+                .Concat(extra));
 
     private HttpSingleRequestExecutor<PersonDto> GetPerson(Guid id) => Session.Http.GetPerson(id);
 
@@ -303,7 +305,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
     public static TheoryData<AddressDto, string, string, string> WrongAddresses()
     {
         var data = new TheoryData<AddressDto, string, string, string>();
-        var badPlaceNames = new[] { (string.Empty, "empty"), (new string('a', PlaceName.MaxLength + 1), "too long") };
+        var badPlaceNames = new[] { (string.Empty, "empty"), (new string('a', PlaceName.MaxLength + 1), "too long"), };
         foreach (var (streetName, streetNameProblem) in badPlaceNames)
         {
             foreach (var (streetType, streetTypeProblem) in badPlaceNames)
@@ -338,7 +340,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
     [Fact]
     public async Task ShouldFail_CreatePeople_WithInvalidEntry()
     {
-        await CreatePeople(new CreatePersonBodyDto()
+        await CreatePeople(new CreatePersonBodyDto
         {
             FirstName = "   ",
             LastName = "   ",
@@ -353,14 +355,14 @@ public class CreatePersonTests : SampleAppIntegrationTest
     public async Task ShouldFail_CreatePeople_WithInvalidEntry_CausingErrorInHandler()
     {
         await CreatePeople(
-            new CreatePersonBodyDto()
+            new CreatePersonBodyDto
             {
                 FirstName = "Mario",
                 LastName = "Facher",
                 DateOfBirth = Session.Clock.GetCurrentInstant().InUtc().Date.PlusYears(1),
                 Residence = _body.Residence,
             },
-            new CreatePersonBodyDto()
+            new CreatePersonBodyDto
             {
                 FirstName = "Mario",
                 LastName = "Facher",
@@ -379,25 +381,25 @@ public class CreatePersonTests : SampleAppIntegrationTest
     {
         await Session.Http.CreatePeople(
             [
-                new CreatePersonBodyDto()
+                new CreatePersonBodyDto
                 {
                     FirstName = "Mario",
                     LastName = "Facher",
-                    DateOfBirth = new LocalDate(1992, 3, 12),
+                    DateOfBirth = new(1992, 3, 12),
                     Residence = _body.Residence,
                 },
-                new CreatePersonBodyDto()
+                new CreatePersonBodyDto
                 {
                     FirstName = "skip",
                     LastName = "asd",
-                    DateOfBirth = new LocalDate(1992, 3, 12),
+                    DateOfBirth = new(1992, 3, 12),
                     Residence = _body.Residence,
                 },
-                new CreatePersonBodyDto()
+                new CreatePersonBodyDto
                 {
                     FirstName = "Mario",
                     LastName = "Facher",
-                    DateOfBirth = new LocalDate(1992, 3, 12),
+                    DateOfBirth = new(1992, 3, 12),
                     Residence = _body.Residence,
                 }
             ])

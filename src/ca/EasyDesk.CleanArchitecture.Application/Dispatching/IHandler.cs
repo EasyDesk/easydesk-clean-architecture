@@ -9,6 +9,4 @@ public interface IHandler<T, R>
 }
 
 public interface IHandler<T> : IHandler<T, Nothing>
-    where T : IDispatchable<Nothing>
-{
-}
+    where T : IDispatchable<Nothing>;

@@ -11,12 +11,12 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 public abstract class EfCoreRepository<TAggregate, TPersistence> :
     ISaveRepository<TAggregate>,
     IRemoveRepository<TAggregate>
-    where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
+    where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>
 {
     private readonly IDomainEventNotifier _eventNotifier;
 
-    public EfCoreRepository(DbSet<TPersistence> dbSet, IDomainEventNotifier eventNotifier)
+    protected EfCoreRepository(DbSet<TPersistence> dbSet, IDomainEventNotifier eventNotifier)
     {
         _eventNotifier = eventNotifier;
         DbSet = dbSet;

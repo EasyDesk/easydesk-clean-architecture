@@ -1,5 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Dispatching;
 
-public interface IDispatchable<T>
-{
-}
+public interface IDispatchable<T>;

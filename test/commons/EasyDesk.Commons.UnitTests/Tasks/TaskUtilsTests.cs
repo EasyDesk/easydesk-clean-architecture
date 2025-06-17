@@ -7,10 +7,11 @@ namespace EasyDesk.Commons.UnitTests.Tasks;
 
 public class TaskUtilsTests
 {
-    private readonly int _value = 0;
-    private readonly Exception _exception = new("FAILED");
+    private const int Value = 0;
 
-    private Task<int> SuccessfulTask => YieldedTask(() => _value);
+    private readonly Exception _exception = new IOException("FAILED");
+
+    private Task<int> SuccessfulTask => YieldedTask(() => Value);
 
     private Task<int> FailedTask => YieldedTask(() => throw _exception);
 
@@ -63,7 +64,7 @@ public class TaskUtilsTests
     {
         var action = Substitute.For<Action<int>>();
         await SuccessfulTask.Then(action);
-        action.Received(1)(_value);
+        action.Received(1)(Value);
     }
 
     [Fact]
@@ -71,7 +72,7 @@ public class TaskUtilsTests
     {
         var action = Substitute.For<AsyncAction<int>>();
         await SuccessfulTask.Then(action);
-        await action.Received(1)(_value);
+        await action.Received(1)(Value);
     }
 
     [Fact]
@@ -94,7 +95,7 @@ public class TaskUtilsTests
     public async Task Map_ShouldMapTheResultOfTheTask_IfTheTaskIsSuccessful()
     {
         var result = await SuccessfulTask.Map(x => x + 1);
-        result.ShouldBe(_value + 1);
+        result.ShouldBe(Value + 1);
     }
 
     [Fact]
@@ -125,7 +126,7 @@ public class TaskUtilsTests
     public async Task FlatMap_ShouldReturnTheGivenValueAsynchronously_IfBothTasksAreSuccessful()
     {
         var result = await SuccessfulTask.FlatMap(x => Task.FromResult(x + 1));
-        result.ShouldBe(_value + 1);
+        result.ShouldBe(Value + 1);
     }
 
     [Fact]

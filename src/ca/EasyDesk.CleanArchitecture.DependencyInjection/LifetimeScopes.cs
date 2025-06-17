@@ -57,7 +57,7 @@ internal class MatchingScopeOrFallbackLifetime : IComponentLifetime
         ArgumentNullException.ThrowIfNull(mostNestedVisibleScope);
 
         var next = mostNestedVisibleScope;
-        while (next != null)
+        while (next is not null)
         {
             if (_tagsToMatch.Contains(next.Tag))
             {

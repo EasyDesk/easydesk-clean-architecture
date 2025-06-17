@@ -12,9 +12,9 @@ public partial class AddApprovedField : Migration
     {
         migrationBuilder.AddColumn<bool>(
             name: "Approved",
-            schema: "domain",
             table: "People",
             type: "boolean",
+            schema: "domain",
             nullable: false,
             defaultValue: false);
     }
@@ -24,7 +24,7 @@ public partial class AddApprovedField : Migration
     {
         migrationBuilder.DropColumn(
             name: "Approved",
-            schema: "domain",
-            table: "People");
+            table: "People",
+            schema: "domain");
     }
 }

@@ -13,8 +13,7 @@ internal class FixedSetConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.IsSubtypeOrImplementationOf(typeof(IFixedSet<>));
+    public override bool CanConvert(Type type) => type.IsGenericType && type.IsSubtypeOrImplementationOf(typeof(IFixedSet<>));
 
     public class FixedSetConverterImpl<T> : JsonConverter<IFixedSet<T>>
     {
@@ -23,7 +22,7 @@ internal class FixedSetConverter : CachedJsonConverterFactory
             serializer.Serialize(writer, value?.AsImmutableSet());
         }
 
-        public override IFixedSet<T> ReadJson(JsonReader reader, Type objectType, IFixedSet<T>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override IFixedSet<T> ReadJson(JsonReader reader, Type type, IFixedSet<T>? existingValue, bool hasExisting, JsonSerializer serializer)
         {
             var set = serializer.Deserialize<ImmutableHashSet<T>>(reader);
             return FixedHashSet.Create(set);

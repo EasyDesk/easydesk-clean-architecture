@@ -38,14 +38,14 @@ public class CreatePetTests : SampleAppIntegrationTest
     [Fact]
     public async Task ShouldSucceed()
     {
-        var body = new CreatePersonBodyDto()
+        var body = new CreatePersonBodyDto
         {
             FirstName = "Foo",
             LastName = "Bar",
-            DateOfBirth = new LocalDate(1995, 10, 12),
+            DateOfBirth = new(1995, 10, 12),
             Residence = new(
-                StreetType: Some("street"),
                 StreetName: "Arthur IV",
+                StreetType: Some("street"),
                 StreetNumber: Some("12324"),
                 City: Some("New York"),
                 District: None,
@@ -84,11 +84,11 @@ public class CreatePetTests : SampleAppIntegrationTest
     public async Task BulkCreatePets_ShouldSucceed()
     {
         var timeout = Duration.FromSeconds(30);
-        var body = new CreatePersonBodyDto()
+        var body = new CreatePersonBodyDto
         {
             FirstName = "Foo",
             LastName = "Bar",
-            DateOfBirth = new LocalDate(1995, 10, 12),
+            DateOfBirth = new(1995, 10, 12),
             Residence = AddressDto.Create("unknown"),
         };
 
@@ -117,11 +117,11 @@ public class CreatePetTests : SampleAppIntegrationTest
 
     private CreatePersonBodyDto CreatePersonBody()
     {
-        return new CreatePersonBodyDto
+        return new()
         {
             FirstName = "Foo",
             LastName = "Bar",
-            DateOfBirth = new LocalDate(1995, 10, 12),
+            DateOfBirth = new(1995, 10, 12),
             Residence = AddressDto.Create("_"),
         };
     }
@@ -310,7 +310,7 @@ public class CreatePetTests : SampleAppIntegrationTest
 
         var failure = await StartBulkOperation();
 
-        await Verify(new { Success = success, Failure = failure });
+        await Verify(new { Success = success, Failure = failure, });
     }
 
     [Fact]
@@ -339,7 +339,7 @@ public class CreatePetTests : SampleAppIntegrationTest
             .Send(timeout)
             .AsVerifiable();
 
-        await Verify(new { Success = success, SuccessToo = successToo });
+        await Verify(new { Success = success, SuccessToo = successToo, });
     }
 
     [Fact]

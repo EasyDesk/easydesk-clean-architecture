@@ -19,9 +19,10 @@ using RebusHeaders = Rebus.Messages.Headers;
 
 namespace EasyDesk.CleanArchitecture.Web.AsyncApi;
 
-internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
+internal class KnownTypesDocumentGenerator : IDocumentGenerator
 {
     public const string Version = "1.0.0";
+
     private readonly string _address;
 
     public KnownTypesDocumentGenerator(RebusEndpoint endpoint)
@@ -81,7 +82,7 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
         AsyncApiSchemaOptions schemaOptions) => new()
         {
             OperationId = messageType.Name,
-            Traits = [new OperationTrait { Summary = messageClassifier }],
+            Traits = [new OperationTrait { Summary = messageClassifier, }],
             Message = ConfigureMessage(messageType, schemaOptions),
         };
 
@@ -111,7 +112,7 @@ internal partial class KnownTypesDocumentGenerator : IDocumentGenerator
 
     private Server ConfigureServer() => new(url: "https://github.com/rebus-org/Rebus", protocol: "https")
     {
-        Description = $"Use \"{_address}\" as the name of the routing destination " +
-            "for commands directed to this service, within Rebus router.",
+        Description = $"Use \"{_address}\" as the name of the routing destination "
+            + "for commands directed to this service, within Rebus router.",
     };
 }

@@ -4,12 +4,13 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 
 public abstract class PausableBackgroundService : BackgroundService, IPausableHostedService
 {
-    private bool _isPaused = false;
+    private bool _isPaused;
 #pragma warning disable CA2213 // Disposable fields should be disposed
     private CancellationTokenSource? _pause;
     private CancellationTokenSource? _resume;
 #pragma warning restore CA2213 // Disposable fields should be disposed
     private Task? _executingTask;
+    private readonly Lock _lockObject = new();
 
     protected sealed override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -17,7 +18,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
         {
             try
             {
-                lock (this)
+                lock (_lockObject)
                 {
                     _isPaused = false;
                     _pause = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
@@ -25,12 +26,8 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
                 }
                 await _executingTask;
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException) when (!stoppingToken.IsCancellationRequested)
             {
-                if (stoppingToken.IsCancellationRequested)
-                {
-                    throw;
-                }
             }
             finally
             {
@@ -39,7 +36,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
 
             try
             {
-                lock (this)
+                lock (_lockObject)
                 {
                     _isPaused = true;
                     _resume = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
@@ -69,7 +66,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
     public async Task Pause(CancellationToken cancellationToken)
     {
         Task executingTask;
-        lock (this)
+        lock (_lockObject)
         {
             if (_isPaused)
             {
@@ -81,8 +78,9 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
                 return;
             }
 
-            executingTask = _executingTask ?? throw new InvalidOperationException(
-                $"The background task is not running. {nameof(ExecuteAsync)} must be executed before {nameof(Pause)}.");
+            executingTask = _executingTask
+                ?? throw new InvalidOperationException(
+                    $"The background task is not running. {nameof(ExecuteAsync)} must be executed before {nameof(Pause)}.");
 
             _pause.Cancel();
         }
@@ -97,7 +95,7 @@ public abstract class PausableBackgroundService : BackgroundService, IPausableHo
 
     public Task Resume(CancellationToken cancellationToken)
     {
-        lock (this)
+        lock (_lockObject)
         {
             if (_isPaused)
             {

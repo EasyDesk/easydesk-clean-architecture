@@ -14,11 +14,9 @@ public static class DictionaryUtils
             dictionary[key] = combiner(existingValue, value);
             return false;
         }
-        else
-        {
-            dictionary.Add(key, value);
-            return true;
-        }
+
+        dictionary.Add(key, value);
+        return true;
     }
 
     public static V GetOrAdd<K, V>(this IDictionary<K, V> dictionary, K key, Func<V> supplier)
@@ -27,12 +25,10 @@ public static class DictionaryUtils
         {
             return value;
         }
-        else
-        {
-            var newValue = supplier();
-            dictionary.Add(key, newValue);
-            return newValue;
-        }
+        var newValue = supplier();
+        dictionary.Add(key, newValue);
+
+        return newValue;
     }
 
     public static void Update<K, V>(

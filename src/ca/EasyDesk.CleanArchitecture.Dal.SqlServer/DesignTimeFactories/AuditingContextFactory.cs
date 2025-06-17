@@ -8,6 +8,6 @@ internal class AuditingContextFactory : IDesignTimeDbContextFactory<AuditingCont
     public AuditingContext CreateDbContext(string[] args)
     {
         var options = DbContextOptionsUtils.CreateDesignTimeOptions<AuditingContext>();
-        return new AuditingContext(options);
+        return new(options);
     }
 }

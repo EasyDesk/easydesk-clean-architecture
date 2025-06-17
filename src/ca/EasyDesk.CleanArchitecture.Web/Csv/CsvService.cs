@@ -18,7 +18,7 @@ public class CsvService
                 var message = "does not exist.";
 
                 // Get by index.
-                if (args.HeaderNames == null || args.HeaderNames.Length == 0)
+                if (args.HeaderNames is null || args.HeaderNames.Length == 0)
                 {
                     throw new InvalidCsvLineException($"Field at index '{args.Index}'", message);
                 }
@@ -56,10 +56,12 @@ public class CsvService
             lineIndex++;
             result = Read(csv, lineIndex);
         }
-        if (result.IsFailure)
+        if (!result.IsFailure)
         {
-            yield return result.ReadError();
+            yield break;
         }
+
+        yield return result.ReadError();
     }
 
     private Result<bool> Read(CsvReader csv, long lineIndex) =>

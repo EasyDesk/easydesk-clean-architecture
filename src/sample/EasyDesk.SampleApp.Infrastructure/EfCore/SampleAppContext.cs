@@ -10,7 +10,7 @@ public abstract class SampleAppContext : DomainContext
 
     public DbSet<PetModel> Pets { get; set; }
 
-    public SampleAppContext(DbContextOptions options)
+    protected SampleAppContext(DbContextOptions options)
         : base(options)
     {
     }

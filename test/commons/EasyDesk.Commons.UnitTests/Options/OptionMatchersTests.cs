@@ -99,12 +99,12 @@ public class OptionMatchersTests
     [Fact]
     public void OrElseThrow_ShouldThrowTheGivenException_IfOptionIsEmpty()
     {
-        Should.Throw<Exception>(() => NoneT<int>().OrElseThrow(() => new Exception()));
+        Should.Throw<Exception>(() => NoneT<int>().OrElseThrow(() => new InvalidOperationException()));
     }
 
     [Fact]
     public void OrElseThrow_ShouldReturnTheValueInsideTheOption_IfOptionIsNotEmpty()
     {
-        Some(Value).OrElseThrow(() => new Exception()).ShouldBe(Value);
+        Some(Value).OrElseThrow(() => new InvalidOperationException()).ShouldBe(Value);
     }
 }

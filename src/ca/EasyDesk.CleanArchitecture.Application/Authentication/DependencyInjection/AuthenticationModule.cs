@@ -15,7 +15,7 @@ public class AuthenticationModule : AppModule
     {
         if (options.Schemes.Count == 0)
         {
-            throw new Exception("No authentication scheme was specified");
+            throw new ArgumentException("No authentication scheme was specified");
         }
         Options = options;
     }

@@ -12,13 +12,13 @@ public partial class AddApiKeys : Migration
     {
         migrationBuilder.CreateTable(
             name: "ApiKeys",
-            schema: "auth",
             columns: table => new
             {
                 Id = table.Column<long>(type: "bigint", nullable: false)
                     .Annotation("SqlServer:Identity", "1, 1"),
                 ApiKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
             },
+            schema: "auth",
             constraints: table =>
             {
                 table.PrimaryKey("PK_ApiKeys", x => x.Id);
@@ -26,7 +26,6 @@ public partial class AddApiKeys : Migration
 
         migrationBuilder.CreateTable(
             name: "ApiKeyIdentityModel",
-            schema: "auth",
             columns: table => new
             {
                 Id = table.Column<long>(type: "bigint", nullable: false)
@@ -35,21 +34,21 @@ public partial class AddApiKeys : Migration
                 IdentityRealm = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 ApiKeyId = table.Column<long>(type: "bigint", nullable: false),
             },
+            schema: "auth",
             constraints: table =>
             {
                 table.PrimaryKey("PK_ApiKeyIdentityModel", x => x.Id);
                 table.ForeignKey(
                     name: "FK_ApiKeyIdentityModel_ApiKeys_ApiKeyId",
                     column: x => x.ApiKeyId,
-                    principalSchema: "auth",
                     principalTable: "ApiKeys",
                     principalColumn: "Id",
+                    principalSchema: "auth",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateTable(
             name: "ApiKeyIdentityAttributeModel",
-            schema: "auth",
             columns: table => new
             {
                 Id = table.Column<long>(type: "bigint", nullable: false)
@@ -58,35 +57,36 @@ public partial class AddApiKeys : Migration
                 AttributeName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 AttributeValue = table.Column<string>(type: "nvarchar(max)", nullable: false),
             },
+            schema: "auth",
             constraints: table =>
             {
                 table.PrimaryKey("PK_ApiKeyIdentityAttributeModel", x => x.Id);
                 table.ForeignKey(
                     name: "FK_ApiKeyIdentityAttributeModel_ApiKeyIdentityModel_IdentityId",
                     column: x => x.IdentityId,
-                    principalSchema: "auth",
                     principalTable: "ApiKeyIdentityModel",
                     principalColumn: "Id",
+                    principalSchema: "auth",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateIndex(
             name: "IX_ApiKeyIdentityAttributeModel_IdentityId",
-            schema: "auth",
             table: "ApiKeyIdentityAttributeModel",
-            column: "IdentityId");
+            column: "IdentityId",
+            schema: "auth");
 
         migrationBuilder.CreateIndex(
             name: "IX_ApiKeyIdentityModel_ApiKeyId",
-            schema: "auth",
             table: "ApiKeyIdentityModel",
-            column: "ApiKeyId");
+            column: "ApiKeyId",
+            schema: "auth");
 
         migrationBuilder.CreateIndex(
             name: "IX_ApiKeys_ApiKey",
-            schema: "auth",
             table: "ApiKeys",
             column: "ApiKey",
+            schema: "auth",
             unique: true);
     }
 

@@ -49,8 +49,8 @@ public record AddressDto(
         Country: Country.Map(n => new PlaceName(n)));
 
     public static AddressDto MapFrom(Address address) => new(
-        StreetType: address.StreetType.Map(ToValue),
         StreetName: address.StreetName,
+        StreetType: address.StreetType.Map(ToValue),
         StreetNumber: address.StreetNumber.Map(ToValue),
         City: address.City.Map(ToValue),
         District: address.District.Map(ToValue),

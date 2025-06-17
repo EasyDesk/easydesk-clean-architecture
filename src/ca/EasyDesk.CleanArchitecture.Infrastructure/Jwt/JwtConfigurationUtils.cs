@@ -32,7 +32,7 @@ public static class JwtConfigurationUtils
         var issuers = GetSet(DefaultValidationIssuersKeyName);
         var audiences = GetSet(DefaultValidationAudiencesKeyName);
 
-        return new JwtValidationConfiguration(
+        return new(
             GetSecretKeyFromSection(section),
             issuers,
             audiences,
@@ -48,7 +48,7 @@ public static class JwtConfigurationUtils
         var issuer = authoritySection.GetValueAsOption<string>(DefaultIssuerKeyName);
         var audience = authoritySection.GetValueAsOption<string>(DefaultAudienceKeyName);
 
-        return new JwtGenerationConfiguration(
+        return new(
             new SigningCredentials(
                 GetSecretKeyFromSection(section),
                 DefaultAlgorithm),

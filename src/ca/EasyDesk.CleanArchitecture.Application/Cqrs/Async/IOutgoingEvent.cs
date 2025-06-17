@@ -1,5 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 
-public interface IOutgoingEvent : IEvent, IOutgoingMessage
-{
-}
+public interface IOutgoingEvent : IEvent, IOutgoingMessage;

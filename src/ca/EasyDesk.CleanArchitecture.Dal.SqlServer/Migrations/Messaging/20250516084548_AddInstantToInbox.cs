@@ -12,9 +12,9 @@ public partial class AddInstantToInbox : Migration
     {
         migrationBuilder.AddColumn<DateTime>(
             name: "Instant",
-            schema: "messaging",
             table: "Inbox",
             type: "datetime2",
+            schema: "messaging",
             nullable: false,
             defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
     }
@@ -24,7 +24,7 @@ public partial class AddInstantToInbox : Migration
     {
         migrationBuilder.DropColumn(
             name: "Instant",
-            schema: "messaging",
-            table: "Inbox");
+            table: "Inbox",
+            schema: "messaging");
     }
 }

@@ -107,10 +107,12 @@ public sealed class Polling<T>
     public async Task EnsureInvariant(AsyncFunc<T, bool> invariant)
     {
         var ok = await PropertyHolds(invariant);
-        if (!ok)
+        if (ok)
         {
-            throw new InvariantDidNotHoldException();
+            return;
         }
+
+        throw new InvariantDidNotHoldException();
     }
 
     public Task EnsureInvariant(Func<T, bool> invariant) =>
@@ -125,10 +127,12 @@ public sealed class Polling<T>
     public async Task EventuallyEnsureInvariant(AsyncFunc<T, bool> invariant)
     {
         var ok = await EventuallyPropertyHolds(invariant);
-        if (!ok)
+        if (ok)
         {
-            throw new InvariantDidNotHoldException();
+            return;
         }
+
+        throw new InvariantDidNotHoldException();
     }
 
     public Task EventuallyEnsureInvariant(Func<T, bool> invariant) =>

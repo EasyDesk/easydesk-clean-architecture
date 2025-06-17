@@ -29,7 +29,7 @@ public abstract class DomainContext : AbstractDbContext
         if (versionedEntities.HasAny())
         {
             var genericConfigurationMethod = typeof(DomainContext).GetMethod(nameof(ConfigureVersionedEntity), BindingFlags.NonPublic | BindingFlags.Instance)!;
-            var args = new object[] { modelBuilder };
+            var args = new object[] { modelBuilder, };
             versionedEntities
                 .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
                 .ForEach(m => m.Invoke(this, args));

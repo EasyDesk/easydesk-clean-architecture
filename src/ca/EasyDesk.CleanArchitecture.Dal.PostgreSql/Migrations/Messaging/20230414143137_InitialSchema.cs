@@ -16,11 +16,11 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.CreateTable(
             name: "Inbox",
-            schema: "messaging",
             columns: table => new
             {
                 Id = table.Column<string>(type: "text", nullable: false),
             },
+            schema: "messaging",
             constraints: table =>
             {
                 table.PrimaryKey("PK_Inbox", x => x.Id);
@@ -28,7 +28,6 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.CreateTable(
             name: "Outbox",
-            schema: "messaging",
             columns: table => new
             {
                 Id = table.Column<int>(type: "integer", nullable: false)
@@ -37,6 +36,7 @@ public partial class InitialSchema : Migration
                 Headers = table.Column<byte[]>(type: "bytea", nullable: false),
                 DestinationAddress = table.Column<string>(type: "text", nullable: false),
             },
+            schema: "messaging",
             constraints: table =>
             {
                 table.PrimaryKey("PK_Outbox", x => x.Id);

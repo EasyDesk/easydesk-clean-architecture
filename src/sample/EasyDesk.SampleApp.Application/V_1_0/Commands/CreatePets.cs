@@ -44,6 +44,7 @@ public class BulkCreatePets
         CreatePetsBatch>
 {
     private const int BatchSize = 3;
+
     private readonly IPetRepository _petRepository;
 
     public BulkCreatePets(ICommandSender commandSender, IPetRepository petRepository) : base(commandSender)

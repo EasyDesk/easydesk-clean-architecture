@@ -3,7 +3,7 @@
 public sealed class SimpleSubscription : ISubscription
 {
     private readonly Action _unsubscribeAction;
-    private bool _unsubscribed = false;
+    private bool _unsubscribed;
 
     public SimpleSubscription(Action unsubscribeAction)
     {

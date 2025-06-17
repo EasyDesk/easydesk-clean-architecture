@@ -2,9 +2,9 @@
 
 public class LoggingConfiguration
 {
-    public bool RequestLoggingEnabled { get; private set; } = false;
+    public bool RequestLoggingEnabled { get; private set; }
 
-    public bool ResultLoggingEnabled { get; private set; } = false;
+    public bool ResultLoggingEnabled { get; private set; }
 
     public LoggingConfiguration EnableRequestLogging(bool enabled = true)
     {

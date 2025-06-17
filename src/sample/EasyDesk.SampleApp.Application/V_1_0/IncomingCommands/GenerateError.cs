@@ -17,7 +17,7 @@ public class GenerateErrorHandler : IHandler<GenerateError>
 {
     public Task<Result<Nothing>> Handle(GenerateError request)
     {
-        return Task.FromException<Result<Nothing>>(new Exception("Deliberately throwing an exception"));
+        return Task.FromException<Result<Nothing>>(new InvalidDataException("Deliberately throwing an exception"));
     }
 }
 
@@ -30,7 +30,7 @@ public class GenerateError2Handler : IHandler<GenerateError2>
 {
     public Task<Result<Nothing>> Handle(GenerateError2 request)
     {
-        return Task.FromResult(Failure<Nothing>(Errors.Internal(new Exception())));
+        return Task.FromResult(Failure<Nothing>(Errors.Internal(new InvalidOperationException())));
     }
 }
 
@@ -63,10 +63,10 @@ public class GenerateError4Handler : IHandler<GenerateError4>, IFailedMessageHan
 
     public Task<Result<Nothing>> Handle(GenerateError4 request)
     {
-        return Task.FromException<Result<Nothing>>(new Exception("Deliberately throwing an exception"));
+        return Task.FromException<Result<Nothing>>(new ArgumentException("Deliberately throwing an exception"));
     }
 
-    public async Task<Result<Nothing>> HandleFailure(GenerateError4 request)
+    public async Task<Result<Nothing>> HandleFailure(GenerateError4 message)
     {
         await _eventPublisher.Publish(new Error4Handled());
         return Ok;

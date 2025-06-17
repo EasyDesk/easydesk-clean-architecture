@@ -23,13 +23,15 @@ public class ContextModule : AppModule
             .As<ICancellationTokenProvider>()
             .SingleInstance();
 
-        if (!app.IsMultitenant())
+        if (app.IsMultitenant())
         {
-            builder.RegisterType<PublicTenantProvider>()
-                .As<ITenantProvider>()
-                .IfNotRegistered(typeof(ITenantProvider))
-                .SingleInstance();
+            return;
         }
+
+        builder.RegisterType<PublicTenantProvider>()
+            .As<ITenantProvider>()
+            .IfNotRegistered(typeof(ITenantProvider))
+            .SingleInstance();
     }
 }
 

@@ -3,6 +3,4 @@
 namespace EasyDesk.CleanArchitecture.Web.Controllers;
 
 [ApiController]
-public abstract class AbstractController : ControllerBase
-{
-}
+public abstract class AbstractController : ControllerBase;

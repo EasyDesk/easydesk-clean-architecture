@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 
 internal class EfCoreQueryableAggregateView<TAggregate, TPersistence> : IAggregateView<TAggregate>
-    where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>
     where TAggregate : AggregateRoot
+    where TPersistence : class, IEntityPersistence<TAggregate, TPersistence>
 {
     private readonly IQueryable<TPersistence> _query;
     private readonly AggregatesTracker<TAggregate, TPersistence> _tracker;

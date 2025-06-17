@@ -47,8 +47,8 @@ public sealed class AuditingStep<T, R> : IPipelineStep<T, R>
                 Type: type,
                 Name: typeof(T).Name,
                 Description: _auditConfigurer.Description,
-                Properties: _auditConfigurer.Properties,
                 Agent: _agentProvider.Agent,
+                Properties: _auditConfigurer.Properties,
                 Success: result.IsSuccess,
                 Instant: _clock.GetCurrentInstant()));
     }

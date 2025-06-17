@@ -47,15 +47,15 @@ public record JwtValidationConfiguration(
 
 public sealed class JwtValidationBuilder
 {
-    private bool _wasBuilt = false;
-    private bool _hasSignatureValidation = false;
+    private bool _wasBuilt;
+    private bool _hasSignatureValidation;
     private readonly TokenValidationParameters _parameters;
     private readonly IClock _clock;
 
     public JwtValidationBuilder(IClock clock)
     {
         _clock = clock;
-        _parameters = new TokenValidationParameters
+        _parameters = new()
         {
             LifetimeValidator = ValidateLifetime,
             ValidateLifetime = true,
@@ -106,7 +106,7 @@ public sealed class JwtValidationBuilder
     {
         if (keys.IsEmpty())
         {
-            throw new ArgumentException($"Signature validation must have at least one key");
+            throw new ArgumentException("Signature validation must have at least one key");
         }
 
         _parameters.ValidateIssuerSigningKey = true;

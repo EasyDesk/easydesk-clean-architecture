@@ -24,6 +24,7 @@ using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.DependencyInjection;
+using Microsoft.IdentityModel.Protocols.Configuration;
 using Rebus.Config;
 using Rebus.Timeouts;
 
@@ -75,7 +76,7 @@ switch (provider)
         });
         break;
     default:
-        throw new Exception($"Invalid DB provider: {provider}");
+        throw new InvalidConfigurationException($"Invalid DB provider: {provider}");
 }
 
 builder.AddRebusMessaging(

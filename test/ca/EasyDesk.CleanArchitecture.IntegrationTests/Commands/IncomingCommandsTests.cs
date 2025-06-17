@@ -57,7 +57,7 @@ public class IncomingCommandsTests : SampleAppIntegrationTest
             {
                 FirstName = "Foo",
                 LastName = "Bar",
-                DateOfBirth = new LocalDate(1996, 2, 2),
+                DateOfBirth = new(1996, 2, 2),
                 Residence = AddressDto.Create("unknown"),
             })
             .Send()

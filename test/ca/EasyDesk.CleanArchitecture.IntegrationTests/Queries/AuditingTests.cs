@@ -15,7 +15,6 @@ using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
-using NodaTime;
 using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
@@ -42,11 +41,11 @@ public class AuditingTests : SampleAppIntegrationTest
         await Session.Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;
 
-        var createPersonBody = new CreatePersonBodyDto()
+        var createPersonBody = new CreatePersonBodyDto
         {
             FirstName = "John",
             LastName = "Doe",
-            DateOfBirth = new LocalDate(2012, 12, 21),
+            DateOfBirth = new(2012, 12, 21),
             Residence = AddressDto.Create(streetName: "Abbey Road"),
         };
         _personId = await Session.Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
@@ -57,10 +56,10 @@ public class AuditingTests : SampleAppIntegrationTest
         await WaitUntilAuditLogHasMoreRecords(0);
     }
 
-    private Task WaitUntilAuditLogHasMoreRecords(int newRecords)
+    private async Task WaitUntilAuditLogHasMoreRecords(int newRecords)
     {
         using var scope = Session.TenantManager.MoveToPublic();
-        return Session.PollServiceUntil<IAuditLog>(
+        await Session.PollServiceUntil<IAuditLog>(
             log => log
                 .Audit(new())
                 .GetAll()
@@ -159,7 +158,7 @@ public class AuditingTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetAudits()
-            .WithQuery("type", AuditRecordType.CommandRequest.ToString())
+            .WithQuery("type", nameof(AuditRecordType.CommandRequest))
             .Send()
             .Verify();
     }

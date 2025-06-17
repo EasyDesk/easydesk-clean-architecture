@@ -15,11 +15,11 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.CreateTable(
             name: "Inbox",
-            schema: "messaging",
             columns: table => new
             {
                 Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
             },
+            schema: "messaging",
             constraints: table =>
             {
                 table.PrimaryKey("PK_Inbox", x => x.Id);
@@ -27,7 +27,6 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.CreateTable(
             name: "Outbox",
-            schema: "messaging",
             columns: table => new
             {
                 Id = table.Column<int>(type: "int", nullable: false)
@@ -36,6 +35,7 @@ public partial class InitialSchema : Migration
                 Headers = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                 DestinationAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
             },
+            schema: "messaging",
             constraints: table =>
             {
                 table.PrimaryKey("PK_Outbox", x => x.Id);

@@ -8,6 +8,6 @@ internal class SagasContextFactory : IDesignTimeDbContextFactory<SagasContext>
     public SagasContext CreateDbContext(string[] args)
     {
         var options = DbContextOptionsUtils.CreateDesignTimeOptions<SagasContext>();
-        return new SagasContext(options);
+        return new(options);
     }
 }

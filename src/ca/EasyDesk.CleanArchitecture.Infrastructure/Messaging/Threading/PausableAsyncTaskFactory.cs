@@ -7,6 +7,7 @@ public class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPoo
 {
     private readonly ILoggerFactory _logger;
     private readonly IList<PausableAsyncTask> _tasks = [];
+    private readonly Lock _lockObject = new();
 
     public PausableAsyncTaskFactory(ILoggerFactory logger)
     {
@@ -19,7 +20,7 @@ public class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPoo
         {
             Interval = TimeSpan.FromSeconds(intervalSeconds),
         };
-        lock (this)
+        lock (_lockObject)
         {
             _tasks.Add(task);
         }
@@ -29,7 +30,7 @@ public class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPoo
     public async Task PauseAllTasks(CancellationToken cancellationToken)
     {
         IEnumerable<PausableAsyncTask> taskList;
-        lock (this)
+        lock (_lockObject)
         {
             taskList = _tasks.ToArray();
         }
@@ -42,7 +43,7 @@ public class PausableAsyncTaskFactory : IAsyncTaskFactory, IRebusPausableTaskPoo
     public async Task ResumeAllTasks(CancellationToken cancellationToken)
     {
         IEnumerable<PausableAsyncTask> taskList;
-        lock (this)
+        lock (_lockObject)
         {
             taskList = _tasks.ToArray();
         }

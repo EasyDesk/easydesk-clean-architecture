@@ -11,8 +11,8 @@ internal class AddApiVersionParameterFilter : IOperationFilter
     {
         context
             .MethodInfo
-            .DeclaringType?
-            .GetApiVersionFromNamespace()
+            .DeclaringType
+            ?.GetApiVersionFromNamespace()
             .IfPresent(v => AddApiVersionParameter(operation, v));
     }
 
@@ -23,7 +23,7 @@ internal class AddApiVersionParameterFilter : IOperationFilter
             Name = "version",
             In = ParameterLocation.Query,
             Description = "Optional parameter used to select the API version for this endpoint.",
-            Schema = new OpenApiSchema
+            Schema = new()
             {
                 ReadOnly = true,
                 Type = "string",

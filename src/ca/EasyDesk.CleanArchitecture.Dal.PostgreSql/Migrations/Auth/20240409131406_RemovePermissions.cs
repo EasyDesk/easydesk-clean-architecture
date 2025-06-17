@@ -20,29 +20,29 @@ public partial class RemovePermissions : Migration
     {
         migrationBuilder.CreateTable(
             name: "RolePermissions",
-            schema: "auth",
             columns: table => new
             {
                 RoleId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                 PermissionName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                 Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
             },
+            schema: "auth",
             constraints: table =>
             {
-                table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionName, x.Tenant });
+                table.PrimaryKey("PK_RolePermissions", x => new { x.RoleId, x.PermissionName, x.Tenant, });
                 table.ForeignKey(
                     name: "FK_RolePermissions_Tenants_Tenant",
                     column: x => x.Tenant,
-                    principalSchema: "auth",
                     principalTable: "Tenants",
                     principalColumn: "Id",
+                    principalSchema: "auth",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateIndex(
             name: "IX_RolePermissions_Tenant",
-            schema: "auth",
             table: "RolePermissions",
-            column: "Tenant");
+            column: "Tenant",
+            schema: "auth");
     }
 }

@@ -41,14 +41,14 @@ internal class AuditRecordModel : IMultitenantEntity
 
             builder.OwnsMany(x => x.Properties, child =>
             {
-                child.HasKey(x => new { x.AuditRecordId, x.Key, x.Value });
+                child.HasKey(x => new { x.AuditRecordId, x.Key, x.Value, });
 
                 child.WithOwner().HasForeignKey(x => x.AuditRecordId);
             });
 
             builder.OwnsMany(x => x.Identities, child =>
             {
-                child.HasKey(x => new { x.AuditRecordId, x.IdentityRealm });
+                child.HasKey(x => new { x.AuditRecordId, x.IdentityRealm, });
 
                 child.Property(x => x.Identity)
                     .HasMaxLength(IdentityId.MaxLength);
@@ -57,9 +57,9 @@ internal class AuditRecordModel : IMultitenantEntity
 
                 child.OwnsMany(x => x.IdentityAttributes, grandChild =>
                 {
-                    grandChild.HasKey(x => new { x.AuditRecordId, x.Realm, x.Key, x.Value });
+                    grandChild.HasKey(x => new { x.AuditRecordId, x.Realm, x.Key, x.Value, });
 
-                    grandChild.WithOwner().HasForeignKey(x => new { x.AuditRecordId, x.Realm });
+                    grandChild.WithOwner().HasForeignKey(x => new { x.AuditRecordId, x.Realm, });
                 });
             });
         }
@@ -67,7 +67,7 @@ internal class AuditRecordModel : IMultitenantEntity
 
     public static AuditRecordModel Create(AuditRecord record)
     {
-        var model = new AuditRecordModel()
+        var model = new AuditRecordModel
         {
             Type = record.Type,
             Name = record.Name,

@@ -14,8 +14,7 @@ internal class FixedMapConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.IsSubtypeOrImplementationOf(typeof(IFixedMap<,>));
+    public override bool CanConvert(Type typeToConvert) => typeToConvert.IsGenericType && typeToConvert.IsSubtypeOrImplementationOf(typeof(IFixedMap<,>));
 
     public class FixedMapConverterImpl<K, V> : JsonConverter<IFixedMap<K, V>>
         where K : notnull

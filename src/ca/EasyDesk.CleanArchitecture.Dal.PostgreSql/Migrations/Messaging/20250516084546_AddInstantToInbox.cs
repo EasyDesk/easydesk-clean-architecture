@@ -13,9 +13,9 @@ public partial class AddInstantToInbox : Migration
     {
         migrationBuilder.AddColumn<Instant>(
             name: "Instant",
-            schema: "messaging",
             table: "Inbox",
             type: "timestamp with time zone",
+            schema: "messaging",
             nullable: false,
             defaultValue: NodaTime.Instant.FromUnixTimeTicks(0L));
     }
@@ -25,7 +25,7 @@ public partial class AddInstantToInbox : Migration
     {
         migrationBuilder.DropColumn(
             name: "Instant",
-            schema: "messaging",
-            table: "Inbox");
+            table: "Inbox",
+            schema: "messaging");
     }
 }

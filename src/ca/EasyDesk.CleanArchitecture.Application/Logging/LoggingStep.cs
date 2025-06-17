@@ -21,18 +21,18 @@ public class LoggingStep<T, R> : IPipelineStep<T, R>
     {
         var id = Guid.NewGuid();
 
-        _logger.LogInformation("Request({id}) - Handling request of type {requestType}.", id, typeof(T).Name);
+        _logger.LogInformation("Request({Id}) - Handling request of type {RequestType}.", id, typeof(T).Name);
 
         if (_loggingConfiguration.RequestLoggingEnabled)
         {
-            _logger.LogInformation("Request({id}) - Request content: {requestContent}", id, request);
+            _logger.LogInformation("Request({Id}) - Request content: {RequestContent}", id, request);
         }
 
         var result = await next();
 
         if (_loggingConfiguration.ResultLoggingEnabled)
         {
-            _logger.LogInformation("Request({id}) - Result content: {resultContent}", id, result);
+            _logger.LogInformation("Request({Id}) - Result content: {ResultContent}", id, result);
         }
 
         return result;

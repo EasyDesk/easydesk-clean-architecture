@@ -10,6 +10,7 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Jwt;
 public static class AgentExtensions
 {
     private const string AgentClaimType = "agent";
+
     private static readonly JsonSerializerOptions _jsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -24,7 +25,7 @@ public static class AgentExtensions
             AgentClaimType,
             JsonSerializer.Serialize(model, _jsonOptions),
             JsonClaimValueTypes.Json);
-        return new ClaimsIdentity(new[] { agentClaim }, "Agent");
+        return new(new[] { agentClaim, }, "Agent");
     }
 
     private static AgentClaimDto ConvertAgentToClaim(Agent agent) =>

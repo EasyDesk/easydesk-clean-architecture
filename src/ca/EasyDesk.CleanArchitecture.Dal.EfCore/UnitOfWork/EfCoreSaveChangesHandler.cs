@@ -7,10 +7,6 @@ internal class EfCoreSaveChangesHandler : ISaveChangesHandler
 {
     private readonly ISet<DbContext> _contexts = new HashSet<DbContext>();
 
-    public EfCoreSaveChangesHandler()
-    {
-    }
-
     public void AddDbContext(DbContext context)
     {
         _contexts.Add(context);

@@ -7,7 +7,7 @@ public abstract class BackgroundConsumer<T> : PausableBackgroundService
 {
     private readonly ILifetimeScope _lifetimeScope;
 
-    public BackgroundConsumer(ILifetimeScope lifetimeScope)
+    protected BackgroundConsumer(ILifetimeScope lifetimeScope)
     {
         _lifetimeScope = lifetimeScope;
     }

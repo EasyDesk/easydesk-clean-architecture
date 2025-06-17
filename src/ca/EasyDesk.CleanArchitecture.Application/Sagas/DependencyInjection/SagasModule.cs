@@ -33,7 +33,7 @@ public class SagasModule : AppModule
 
     protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        var configureSagaArgs = new[] { builder };
+        var configureSagaArgs = new[] { builder, };
         new AssemblyScanner()
             .FromAssemblies(app.Assemblies)
             .SubtypesOrImplementationsOf(typeof(ISagaController<,>))

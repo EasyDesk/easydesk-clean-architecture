@@ -11,7 +11,7 @@ namespace EasyDesk.CleanArchitecture.Application.Dispatching;
 
 internal class Dispatcher : IDispatcher
 {
-    private static readonly ConcurrentDictionary<Type, MethodInfo> _dispatchMethodsByType = new();
+    private static readonly ConcurrentDictionary<Type, MethodInfo> _dispatchMethodsByType = [];
     private readonly ILifetimeScope _lifetimeScope;
     private readonly bool _nested;
 

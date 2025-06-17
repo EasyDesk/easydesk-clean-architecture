@@ -16,18 +16,20 @@ internal class BadRequestFilter : IResultFilter
 
     public void OnResultExecuting(ResultExecutingContext context)
     {
-        if (context.Result is BadRequestObjectResult badRequestObjectResult
-            && badRequestObjectResult.Value is ValidationProblemDetails errorsSource)
+        if (context.Result is not BadRequestObjectResult badRequestObjectResult
+            || badRequestObjectResult.Value is not ValidationProblemDetails errorsSource)
         {
-            context.Result = new BadRequestObjectResult(
-                ResponseDto<Nothing, Nothing>.FromErrors(
-                    errorsSource.Errors
-                        .Select(errorSource =>
-                            Errors.InvalidInput(
-                                errorSource.Key,
-                                ErrorCode,
-                                errorSource.Value.ConcatStrings("\n")))
-                        .Select(ErrorDto.FromError)));
+            return;
         }
+
+        context.Result = new BadRequestObjectResult(
+            ResponseDto<Nothing, Nothing>.FromErrors(
+                errorsSource.Errors
+                    .Select(errorSource =>
+                        Errors.InvalidInput(
+                            errorSource.Key,
+                            ErrorCode,
+                            errorSource.Value.ConcatStrings("\n")))
+                    .Select(ErrorDto.FromError)));
     }
 }

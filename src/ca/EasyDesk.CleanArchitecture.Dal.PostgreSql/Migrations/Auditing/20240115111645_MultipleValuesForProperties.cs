@@ -12,14 +12,14 @@ public partial class MultipleValuesForProperties : Migration
     {
         migrationBuilder.DropPrimaryKey(
             name: "PK_AuditProperties",
-            schema: "audit",
-            table: "AuditProperties");
+            table: "AuditProperties",
+            schema: "audit");
 
         migrationBuilder.AddPrimaryKey(
             name: "PK_AuditProperties",
-            schema: "audit",
             table: "AuditProperties",
-            columns: ["AuditRecordId", "Key", "Value"]);
+            columns: ["AuditRecordId", "Key", "Value"],
+            schema: "audit");
     }
 
     /// <inheritdoc />
@@ -27,13 +27,13 @@ public partial class MultipleValuesForProperties : Migration
     {
         migrationBuilder.DropPrimaryKey(
             name: "PK_AuditProperties",
-            schema: "audit",
-            table: "AuditProperties");
+            table: "AuditProperties",
+            schema: "audit");
 
         migrationBuilder.AddPrimaryKey(
             name: "PK_AuditProperties",
-            schema: "audit",
             table: "AuditProperties",
-            columns: ["AuditRecordId", "Key"]);
+            columns: ["AuditRecordId", "Key"],
+            schema: "audit");
     }
 }

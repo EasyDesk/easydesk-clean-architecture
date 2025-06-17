@@ -10,10 +10,6 @@ public class EntityTests
 
     private class TestEntity : Entity
     {
-        public TestEntity()
-        {
-        }
-
         public void Action(int value)
         {
             EmitEvent(new Event(value));
@@ -40,9 +36,9 @@ public class EntityTests
 
     public EntityTests()
     {
-        _sutTreeChild = new TestEntity();
+        _sutTreeChild = new();
         var e = new TestEntity();
-        _sutTree = new(new[] { _sutTreeChild, e, _sut });
+        _sutTree = new(new[] { _sutTreeChild, e, _sut, });
     }
 
     private static Event ToEvent(int value) => new(value);

@@ -16,6 +16,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Time;
 using EasyDesk.Commons.Utils;
 using EasyDesk.SampleApp.Web;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
+using Microsoft.IdentityModel.Protocols.Configuration;
 using NodaTime;
 using Npgsql;
 using Testcontainers.MsSql;
@@ -29,8 +30,8 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
     private static readonly Dictionary<DbProvider, Action<TestFixtureConfigurer>> _providerConfigs = new()
     {
-        { DbProvider.SqlServer, ConfigureSqlServer },
-        { DbProvider.PostgreSql, ConfigurePostgreSql },
+        [DbProvider.SqlServer] = ConfigureSqlServer,
+        [DbProvider.PostgreSql] = ConfigurePostgreSql,
     };
 
     protected override void ConfigureFixture(TestFixtureConfigurer configurer)
@@ -62,7 +63,7 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
     {
         var provider = Environment.GetEnvironmentVariable("DB_PROVIDER")
             .AsOption()
-            .Map(p => Enums.ParseOption<DbProvider>(p).OrElseThrow(() => new Exception("Invalid DB provider")))
+            .Map(p => Enums.ParseOption<DbProvider>(p).OrElseThrow(() => new InvalidConfigurationException("Invalid DB provider")))
             .OrElse(DefaultDbProvider);
 
         _providerConfigs[provider](configurer);
@@ -91,7 +92,7 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
             .Build();
 
         configurer.AddPostgresDatabase(container, x => x
-            .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true }.ConnectionString)
+            .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true, }.ConnectionString)
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql"));
     }
 }

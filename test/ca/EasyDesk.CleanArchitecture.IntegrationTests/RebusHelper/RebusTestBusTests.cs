@@ -63,7 +63,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
     private RebusTestBusEndpoint CreateBus(string endpoint)
     {
-        return new RebusTestBusEndpoint(
+        return new(
             rebus => rebus
                 .Transport(t => t.UseRabbitMq(_rabbitMqConnection, endpoint))
                 .Routing(r => r.TypeBased().MapFallback(_receiverAddress)),
@@ -148,7 +148,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     [Fact]
     public async Task MultipleCommandsShouldBeReceivedUntilQuiet()
     {
-        var commands = new Command[] { new(1), new(2), new(3) };
+        var commands = new Command[] { new(1), new(2), new(3), };
 
         await Task.WhenAll(commands.Select(e => _sender.Send(e)));
 
@@ -158,7 +158,7 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
     public static IEnumerable<object?[]> TenantActions()
     {
-        var axis = new TenantInfo[] { TenantInfo.Tenant(new TenantId("a")), TenantInfo.Tenant(new TenantId("b")), TenantInfo.Public };
+        var axis = new TenantInfo[] { TenantInfo.Tenant(new TenantId("a")), TenantInfo.Tenant(new TenantId("b")), TenantInfo.Public, };
         return Matrix.Builder()
             .OptionAxis<TenantInfo>(axis)
             .OptionAxis<TenantInfo>(axis)

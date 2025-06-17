@@ -8,6 +8,6 @@ internal class AuthorizationContextFactory : IDesignTimeDbContextFactory<AuthCon
     public AuthContext CreateDbContext(string[] args)
     {
         var options = DbContextOptionsUtils.CreateDesignTimeOptions<AuthContext>();
-        return new AuthContext(options);
+        return new(options);
     }
 }

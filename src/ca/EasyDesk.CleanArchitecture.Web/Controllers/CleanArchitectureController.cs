@@ -35,7 +35,7 @@ public abstract class CleanArchitectureController : AbstractController
             request: () => request(new(pageSize, pageIndex)),
             meta: result => result
                 .Value
-                .Map(v => new PaginationMetaDto()
+                .Map(v => new PaginationMetaDto
                 {
                     Count = count(v),
                     PageSize = pageSize,

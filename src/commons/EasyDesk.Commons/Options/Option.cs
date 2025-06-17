@@ -5,7 +5,7 @@ namespace EasyDesk.Commons.Options;
 
 public readonly record struct NoneOption
 {
-    public static NoneOption Value { get; } = default;
+    public static NoneOption Value { get; }
 }
 
 public readonly record struct Option<T> : IEnumerable<T>

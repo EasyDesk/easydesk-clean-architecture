@@ -9,7 +9,7 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 internal class EfCoreUnitOfWorkManager : UnitOfWorkManager<EfCoreUnitOfWork>
 {
     private readonly DbConnection _connection;
-    private int _savepointCounter = 0;
+    private int _savepointCounter;
 
     private readonly ISet<DbContext> _registeredDbContexts = new HashSet<DbContext>();
 
@@ -33,12 +33,10 @@ internal class EfCoreUnitOfWorkManager : UnitOfWorkManager<EfCoreUnitOfWork>
             transaction = await _connection.BeginTransactionAsync();
             return new EfCoreTransactionUnitOfWork(transaction);
         }
-        else
-        {
-            var savepoint = SavePointName();
-            await transaction.SaveAsync(savepoint);
-            return new EfCoreSavepointUnitOfWork(savepoint, transaction);
-        }
+        var savepoint = SavePointName();
+        await transaction.SaveAsync(savepoint);
+
+        return new EfCoreSavepointUnitOfWork(savepoint, transaction);
     }
 
     public async Task EnlistDbContextForCurrentTransaction(DbContext context, bool failIfNoTransaction = false)

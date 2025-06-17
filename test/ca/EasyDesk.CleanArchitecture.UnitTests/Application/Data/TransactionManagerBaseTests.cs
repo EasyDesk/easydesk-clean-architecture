@@ -47,7 +47,7 @@ public class UnitOfWorkBaseTests
         return
         [
             () => Failure<Nothing>(Errors.NotFound()),
-            () => throw new Exception(),
+            () => throw new InvalidOperationException(),
         ];
     }
 
@@ -63,7 +63,7 @@ public class UnitOfWorkBaseTests
     [Fact]
     public void ShouldPropagateExceptions()
     {
-        Should.Throw<Exception>(() => _sut.RunTransactionally(() => throw new Exception()));
+        Should.Throw<Exception>(() => _sut.RunTransactionally(() => throw new InvalidOperationException()));
     }
 
     [Theory]

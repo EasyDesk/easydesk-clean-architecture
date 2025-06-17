@@ -14,6 +14,6 @@ public class ExceptionLoggingFilter : IExceptionFilter
 
     public void OnException(ExceptionContext context)
     {
-        _logger.LogError(context.Exception, "An unhandled exception of type {exceptionType} was thrown", context.Exception.GetType().Name);
+        _logger.LogError(context.Exception, "An unhandled exception of type {ExceptionType} was thrown", context.Exception.GetType().Name);
     }
 }

@@ -15,21 +15,23 @@ internal class TenantIdOperationFilterForDefaultContextReader : IOperationFilter
             return;
         }
         operation.Parameters ??= [];
-        if (!operation.Parameters.Any(p => p.Name.Equals(CommonTenantReaders.TenantIdHttpQueryParam)))
+        if (operation.Parameters.Any(p => p.Name.Equals(CommonTenantReaders.TenantIdHttpQueryParam)))
         {
-            operation.Parameters.Add(new OpenApiParameter()
-            {
-                Name = CommonTenantReaders.TenantIdHttpQueryParam,
-                In = ParameterLocation.Query,
-                Description = $"Optional parameter alternative to setting the {CommonTenantReaders.TenantIdHttpHeader} header for specifying the tenant id of the request, with lower priority than the header.",
-                Required = false,
-                AllowEmptyValue = true,
-                Schema = new OpenApiSchema()
-                {
-                    Type = "string",
-                    MaxLength = TenantId.MaxLength,
-                },
-            });
+            return;
         }
+
+        operation.Parameters.Add(new OpenApiParameter
+        {
+            Name = CommonTenantReaders.TenantIdHttpQueryParam,
+            In = ParameterLocation.Query,
+            Description = $"Optional parameter alternative to setting the {CommonTenantReaders.TenantIdHttpHeader} header for specifying the tenant id of the request, with lower priority than the header.",
+            Required = false,
+            AllowEmptyValue = true,
+            Schema = new()
+            {
+                Type = "string",
+                MaxLength = TenantId.MaxLength,
+            },
+        });
     }
 }

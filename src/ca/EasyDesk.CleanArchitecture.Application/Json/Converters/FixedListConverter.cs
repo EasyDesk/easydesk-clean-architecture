@@ -14,8 +14,7 @@ internal class FixedListConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.IsSubtypeOrImplementationOf(typeof(IFixedList<>));
+    public override bool CanConvert(Type typeToConvert) => typeToConvert.IsGenericType && typeToConvert.IsSubtypeOrImplementationOf(typeof(IFixedList<>));
 
     public class FixedListConverterImpl<T> : JsonConverter<IFixedList<T>>
     {

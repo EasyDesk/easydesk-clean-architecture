@@ -16,5 +16,5 @@ public record PlaceName : PureValue<string, PlaceName>, IValue<string>
     {
     }
 
-    public static IRuleBuilder<T, string> ValidationRules<T>(IRuleBuilder<T, string> value) => value.NotEmpty().MaximumLength(MaxLength);
+    public static IRuleBuilder<T, string> ValidationRules<T>(IRuleBuilder<T, string> rules) => rules.NotEmpty().MaximumLength(MaxLength);
 }

@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.DomainServices;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
@@ -62,14 +61,16 @@ public class RebusMessagingModule : AppModule
                     .AddStep(typeof(InboxStep<>))
                     .After(typeof(UnitOfWorkStep<,>));
             }
-            if (Options.UseOutbox)
+            if (!Options.UseOutbox)
             {
-                pipeline.AddStepAfterAll(typeof(OutboxStoreMessagesStep<,>))
-                    .Before(typeof(SaveChangesStep<,>))
-                    .Before(typeof(DomainEventHandlingStep<,>));
-                pipeline.AddStep(typeof(OutboxFlushRequestStep<,>))
-                    .Before(typeof(UnitOfWorkStep<,>));
+                return;
             }
+
+            pipeline.AddStepAfterAll(typeof(OutboxStoreMessagesStep<,>))
+                .Before(typeof(SaveChangesStep<,>))
+                .Before(typeof(DomainEventHandlingStep<,>));
+            pipeline.AddStep(typeof(OutboxFlushRequestStep<,>))
+                .Before(typeof(UnitOfWorkStep<,>));
         });
         app.RequireModule<JsonModule>();
 
@@ -79,10 +80,12 @@ public class RebusMessagingModule : AppModule
 
     protected override void ConfigureRegistry(AppDescription app, ServiceRegistry registry)
     {
-        if (Options.UseOutbox || Options.UseInbox)
+        if (!Options.UseOutbox && !Options.UseInbox)
         {
-            app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(registry, app);
+            return;
         }
+
+        app.RequireModule<DataAccessModule>().Implementation.AddMessagingUtilities(registry, app);
     }
 
     protected override void ConfigureServices(AppDescription app, IServiceCollection services)
@@ -148,12 +151,14 @@ public class RebusMessagingModule : AppModule
             .As<ICommandSender>()
             .InstancePerLifetimeScope();
 
-        if (Options.AutoSubscribe)
+        if (!Options.AutoSubscribe)
         {
-            builder.RegisterType<AutoSubscriptionService>()
-                .As<IHostedService>()
-                .SingleInstance();
+            return;
         }
+
+        builder.RegisterType<AutoSubscriptionService>()
+            .As<IHostedService>()
+            .SingleInstance();
     }
 
     private void SetupMessageHandlers(ContainerBuilder builder, IEnumerable<Type> knownMessageTypes, AppDescription app)
@@ -183,17 +188,9 @@ public class RebusMessagingModule : AppModule
             .InstancePerDependency();
     }
 
-    private IEnumerable<Type> GetDispatchableReturnTypes(Type messageType)
-    {
-        return messageType
-            .GetInterfaces()
-            .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDispatchable<>))
-            .Select(i => i.GetGenericArguments()[0]);
-    }
-
     private void AddCommandPropagators(ContainerBuilder builder)
     {
-        var arguments = new object[] { builder };
+        var arguments = new object[] { builder, };
         foreach (var messageType in Options.KnownMessageTypes)
         {
             messageType
@@ -219,7 +216,7 @@ public class RebusMessagingModule : AppModule
 
     private void AddEventPropagators(ContainerBuilder builder)
     {
-        var arguments = new object[] { builder };
+        var arguments = new object[] { builder, };
         foreach (var messageType in Options.KnownMessageTypes)
         {
             messageType

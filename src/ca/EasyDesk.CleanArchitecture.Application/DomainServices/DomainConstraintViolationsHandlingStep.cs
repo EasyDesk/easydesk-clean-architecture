@@ -24,10 +24,8 @@ public sealed class DomainConstraintViolationsHandlingStep<T, R> : IPipelineStep
             {
                 return Errors.Multiple(e.DomainErrors.First(), e.DomainErrors.Skip(1));
             }
-            else
-            {
-                throw;
-            }
+
+            throw;
         }
     }
 }

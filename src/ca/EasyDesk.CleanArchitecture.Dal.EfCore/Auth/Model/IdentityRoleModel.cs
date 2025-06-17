@@ -32,7 +32,7 @@ internal class IdentityRoleModel : IMultitenantEntity
     {
         public void Configure(EntityTypeBuilder<IdentityRoleModel> builder)
         {
-            builder.HasKey(x => new { x.Identity, x.Role, x.Tenant });
+            builder.HasKey(x => new { x.Identity, x.Role, x.Tenant, });
 
             builder.Property(x => x.Identity).HasMaxLength(IdentityId.MaxLength);
 

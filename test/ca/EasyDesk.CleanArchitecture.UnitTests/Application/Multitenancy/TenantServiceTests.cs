@@ -11,8 +11,8 @@ public class TenantServiceTests
 
     public TenantServiceTests()
     {
-        _sut = new TenantService();
-        _tenantId = new TenantId("test-tenant-id");
+        _sut = new();
+        _tenantId = new("test-tenant-id");
         _tenantInfo = TenantInfo.Tenant(_tenantId);
     }
 

@@ -17,7 +17,7 @@ public class PipelineTests
         private readonly Action _before;
         private readonly Action _after;
 
-        public GenericStepBase(Action before, Action after)
+        protected GenericStepBase(Action before, Action after)
         {
             _before = before;
             _after = after;

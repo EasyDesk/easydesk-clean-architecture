@@ -14,8 +14,7 @@ internal class FixedSetConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.IsSubtypeOrImplementationOf(typeof(IFixedSet<>));
+    public override bool CanConvert(Type typeToConvert) => typeToConvert.IsGenericType && typeToConvert.IsSubtypeOrImplementationOf(typeof(IFixedSet<>));
 
     public class FixedSetConverterImpl<T> : JsonConverter<IFixedSet<T>>
     {

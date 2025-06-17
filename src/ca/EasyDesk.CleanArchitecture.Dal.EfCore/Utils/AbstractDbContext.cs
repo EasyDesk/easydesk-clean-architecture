@@ -41,7 +41,7 @@ public class AbstractDbContext : DbContext
         if (multitenantEntities.HasAny())
         {
             var genericConfigurationMethod = GetType().GetMethod(nameof(ConfigureMultitenantEntity))!;
-            var args = new object[] { modelBuilder, queryFilters };
+            var args = new object[] { modelBuilder, queryFilters, };
             multitenantEntities
                 .Select(t => genericConfigurationMethod.MakeGenericMethod(t))
                 .ForEach(m => m.Invoke(this, args));
@@ -60,10 +60,10 @@ public class AbstractDbContext : DbContext
             entityBuilder.HasIndex(x => x.Tenant);
         }
         entityBuilder.Property(x => x.Tenant)
-                 .IsRequired()
-                 .HasMaxLength(TenantId.MaxLength)
-                 .ValueGeneratedOnAdd()
-                 .HasValueGenerator<TenantIdGenerator>();
+            .IsRequired()
+            .HasMaxLength(TenantId.MaxLength)
+            .ValueGeneratedOnAdd()
+            .HasValueGenerator<TenantIdGenerator>();
 
         queryFilters.AddFilter<E>(x => x.Tenant == PublicTenantName
             || x.Tenant == GetCurrentTenantAsString()

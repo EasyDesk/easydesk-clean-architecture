@@ -20,10 +20,8 @@ public static class QueryableUtils
             {
                 return None;
             }
-            else
-            {
-                return Some(result);
-            }
+
+            return Some(result);
         }
         catch (InvalidOperationException)
         {
@@ -33,7 +31,7 @@ public static class QueryableUtils
 
     public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T>? op)
     {
-        return query.Conditionally(op != null, op);
+        return query.Conditionally(op is not null, op);
     }
 
     public static IQueryable<T> Conditionally<T>(this IQueryable<T> query, bool condition, QueryWrapper<T>? op)

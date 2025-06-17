@@ -172,9 +172,7 @@ public class EnumerableUtilsTests
         Should.Throw<InvalidOperationException>(() => sequence.SingleOption(predicate));
     }
 
-    private class CustomException : Exception
-    {
-    }
+    private class CustomException : Exception;
 
     [Theory]
     [MemberData(nameof(SingleOptionWithMoreThanOneMatchData))]

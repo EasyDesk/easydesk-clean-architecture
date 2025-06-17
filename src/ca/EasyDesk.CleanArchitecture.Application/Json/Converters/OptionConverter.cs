@@ -12,8 +12,7 @@ internal class OptionConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(Option<>);
+    public override bool CanConvert(Type typeToConvert) => typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(Option<>);
 
     private class OptionConverterImpl<T> : JsonConverter<Option<T>>
     {

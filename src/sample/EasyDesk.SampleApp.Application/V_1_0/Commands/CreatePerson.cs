@@ -54,18 +54,18 @@ public class CreatePersonHandler : MappingHandler<CreatePerson, Person, PersonDt
         _clock = clock;
     }
 
-    protected override Task<Result<Person>> Process(CreatePerson command)
+    protected override Task<Result<Person>> Process(CreatePerson request)
     {
-        if (DateTimeZoneProviders.Tzdb["UTC"].AtLeniently(command.DateOfBirth.AtMidnight()).ToInstant() > _clock.GetCurrentInstant())
+        if (DateTimeZoneProviders.Tzdb["UTC"].AtLeniently(request.DateOfBirth.AtMidnight()).ToInstant() > _clock.GetCurrentInstant())
         {
-            return Task.FromResult<Result<Person>>(new BirthDateUtcInTheFutureError(command.DateOfBirth));
+            return Task.FromResult<Result<Person>>(new BirthDateUtcInTheFutureError(request.DateOfBirth));
         }
         var person = Person.Create(
-            new Name(command.FirstName),
-            new Name(command.LastName),
-            command.DateOfBirth,
+            new Name(request.FirstName),
+            new Name(request.LastName),
+            request.DateOfBirth,
             AdminId.From(_agentProvider.RequireAgent().MainIdentity().Id),
-            command.Residence.ToDomainObject());
+            request.Residence.ToDomainObject());
         _personRepository.Save(person);
 
         return Task.FromResult<Result<Person>>(person);

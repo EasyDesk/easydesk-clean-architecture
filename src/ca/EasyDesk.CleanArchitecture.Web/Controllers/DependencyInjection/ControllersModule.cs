@@ -15,6 +15,7 @@ public sealed class ControllersModuleOptions
 {
     public const int DefaultDefaultPageSize = 100;
     public const int DefaultMaxPageSize = 100;
+
     private Action<MvcOptions>? _configureMvc;
 
     public int DefaultPageSize { get; set; } = DefaultDefaultPageSize;

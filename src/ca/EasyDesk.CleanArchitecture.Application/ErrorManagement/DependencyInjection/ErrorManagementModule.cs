@@ -65,8 +65,8 @@ public class ErrorManagementModule : AppModule
     private Func<Error, Error> GetMapperForErrorPair(Type application, Type domain)
     {
         return (Func<Error, Error>)GetType()
-            .GetMethod(nameof(GetMapperForGenericErrorPair), BindingFlags.NonPublic | BindingFlags.Instance)
-            !.MakeGenericMethod(application, domain)
+            .GetMethod(nameof(GetMapperForGenericErrorPair), BindingFlags.NonPublic | BindingFlags.Instance)!
+            .MakeGenericMethod(application, domain)
             .Invoke(this, null)!;
     }
 

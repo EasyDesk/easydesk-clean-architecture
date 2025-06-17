@@ -27,10 +27,12 @@ public sealed class DomainConstraints
 
     public void ThrowException()
     {
-        if (_errors.HasAny())
+        if (!_errors.HasAny())
         {
-            throw new DomainConstraintException(_errors);
+            return;
         }
+
+        throw new DomainConstraintException(_errors);
     }
 
     public static implicit operator bool(DomainConstraints builder) => builder._errors.IsEmpty();

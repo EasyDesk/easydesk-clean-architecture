@@ -12,15 +12,15 @@ public partial class UseJsonToSerializeState : Migration
     {
         migrationBuilder.RenameColumn(
             name: "State",
-            schema: "sagas",
             table: "Sagas",
-            newName: "State_Old");
+            newName: "State_Old",
+            schema: "sagas");
 
         migrationBuilder.AddColumn<string>(
             name: "State",
-            schema: "sagas",
             table: "Sagas",
             type: "text",
+            schema: "sagas",
             nullable: false,
             defaultValue: string.Empty);
     }
@@ -30,13 +30,13 @@ public partial class UseJsonToSerializeState : Migration
     {
         migrationBuilder.DropColumn(
             name: "State",
-            schema: "sagas",
-            table: "Sagas");
+            table: "Sagas",
+            schema: "sagas");
 
         migrationBuilder.RenameColumn(
             name: "State_Old",
-            schema: "sagas",
             table: "Sagas",
-            newName: "State");
+            newName: "State",
+            schema: "sagas");
     }
 }

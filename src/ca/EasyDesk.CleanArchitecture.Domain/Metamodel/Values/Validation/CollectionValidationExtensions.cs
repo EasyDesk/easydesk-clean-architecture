@@ -26,7 +26,7 @@ public static class CollectionValidationExtensions
             .IfPresent(p => ctx.MessageFormatter.AppendArgument("DuplicateValue", p))
             .IsAbsent)
         .WithErrorCode("NotContainingDuplicates")
-        .WithMessage($$"""'{PropertyName}' contains duplicate values.""");
+        .WithMessage("'{PropertyName}' contains duplicate values.");
 
     private static Option<T> FindDuplicate<T>(IEnumerable<T> items, IEqualityComparer<T>? comparer)
     {

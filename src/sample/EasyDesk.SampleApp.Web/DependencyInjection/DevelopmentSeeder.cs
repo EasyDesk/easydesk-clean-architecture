@@ -32,7 +32,7 @@ public class DevelopmentSeeder
         var dispatcher = _dispatcherFactory.CreateSeedingDispatcher(admin, tenantId);
         await dispatcher.Dispatch(new CreateTenant(tenantId));
         await dispatcher.Dispatch(new AddAdmin());
-        _logger.LogWarning("Created tenant {tenantId} and admin with id {adminId}", tenantId, admin.MainIdentity().Id);
+        _logger.LogWarning("Created tenant {TenantId} and admin with id {AdminId}", tenantId, admin.MainIdentity().Id);
         _jwtLogger.LogForgedJwt(admin);
     }
 }

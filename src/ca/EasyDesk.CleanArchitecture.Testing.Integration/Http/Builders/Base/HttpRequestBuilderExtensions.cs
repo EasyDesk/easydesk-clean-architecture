@@ -14,11 +14,11 @@ public static class HttpRequestBuilderExtensions
 
     public static B SetPageIndex<B>(this HttpRequestBuilder<B> builder, string pageIndex)
         where B : HttpRequestBuilder<B> =>
-        builder.WithQuery(nameof(PaginationDto.PageIndex), pageIndex.ToString());
+        builder.WithQuery(nameof(PaginationDto.PageIndex), pageIndex);
 
     public static B SetPageSize<B>(this HttpRequestBuilder<B> builder, string pageSize)
         where B : HttpRequestBuilder<B> =>
-        builder.WithQuery(nameof(PaginationDto.PageSize), pageSize.ToString());
+        builder.WithQuery(nameof(PaginationDto.PageSize), pageSize);
 
     public static B RemovePageIndex<B>(this HttpRequestBuilder<B> builder)
         where B : HttpRequestBuilder<B> =>

@@ -10,8 +10,8 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Repositories;
 public abstract class EfCoreRepositoryWithHydration<TAggregate, TPersistence, THydrationData> :
     EfCoreRepository<TAggregate, TPersistence>,
     ISaveAndHydrateRepository<TAggregate, THydrationData>
-    where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>, IWithHydration<THydrationData>
     where TAggregate : AggregateRoot, IAggregateRootWithHydration<THydrationData>
+    where TPersistence : class, IAggregateRootModel<TAggregate, TPersistence>, IWithHydration<THydrationData>
 {
     protected EfCoreRepositoryWithHydration(DbSet<TPersistence> dbSet, IDomainEventNotifier eventNotifier)
         : base(dbSet, eventNotifier)

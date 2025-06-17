@@ -9,7 +9,7 @@ public abstract class RequestHandlerTestsBase<THandler, TRequest, TResponse> : D
     where THandler : class, IHandler<TRequest, TResponse>
     where TRequest : IDispatchable<TResponse>
 {
-    public RequestHandlerTestsBase()
+    protected RequestHandlerTestsBase()
     {
     }
 

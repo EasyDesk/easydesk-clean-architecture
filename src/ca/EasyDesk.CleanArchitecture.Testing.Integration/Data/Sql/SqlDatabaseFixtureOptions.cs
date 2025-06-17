@@ -7,7 +7,7 @@ public class SqlDatabaseFixtureOptions
 {
     private Func<string, string> _connectionStringModifier = It;
     private readonly TestFixtureConfigurer _configurer;
-    private Lazy<string> _connectionString;
+    private readonly Lazy<string> _connectionString;
 
     public SqlDatabaseFixtureOptions(TestFixtureConfigurer configurer, Func<string> connectionString)
     {

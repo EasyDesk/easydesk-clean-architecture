@@ -19,19 +19,20 @@ internal class FailFastCheckerWrapper : IFailFastChecker
     }
 
     public bool ShouldFailFast(string messageId, Exception exception) =>
-        _predicates.SelectMany(p => p(exception)).FirstOption().Contains(true) || exception switch
-        {
-            // System
-            DllNotFoundException
-                or MemberAccessException
-                or NotImplementedException
-                or NotSupportedException => true,
+        _predicates.SelectMany(p => p(exception)).FirstOption().Contains(true)
+            || exception switch
+            {
+                // System
+                DllNotFoundException
+                    or MemberAccessException
+                    or NotImplementedException
+                    or NotSupportedException => true,
 
-            // Framework
-            HandlerNotFoundException
-                or MissingConfigurationException
-                or RequiredModuleMissingException => true,
+                // Framework
+                HandlerNotFoundException
+                    or MissingConfigurationException
+                    or RequiredModuleMissingException => true,
 
-            _ => _fallback.ShouldFailFast(messageId, exception),
-        };
+                _ => _fallback.ShouldFailFast(messageId, exception),
+            };
 }

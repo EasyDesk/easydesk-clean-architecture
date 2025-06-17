@@ -48,7 +48,7 @@ public class AsyncApiModule : AppModule
             {
                 services.ConfigureNamedAsyncApi(v.ToString(), doc =>
                 {
-                    doc.Info = new Info(app.Name, v.ToString());
+                    doc.Info = new(app.Name, v.ToString());
                 });
             });
     }

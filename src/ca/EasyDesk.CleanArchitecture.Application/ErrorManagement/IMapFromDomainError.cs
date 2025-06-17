@@ -5,6 +5,4 @@ namespace EasyDesk.CleanArchitecture.Application.ErrorManagement;
 
 public interface IMapFromDomainError<A, D> : IMappableFrom<D, A>
     where A : ApplicationError, IMapFromDomainError<A, D>
-    where D : DomainError
-{
-}
+    where D : DomainError;

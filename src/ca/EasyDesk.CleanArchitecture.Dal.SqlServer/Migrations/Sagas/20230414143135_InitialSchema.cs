@@ -15,7 +15,6 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.CreateTable(
             name: "Sagas",
-            schema: "sagas",
             columns: table => new
             {
                 Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -24,16 +23,17 @@ public partial class InitialSchema : Migration
                 State = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                 Version = table.Column<int>(type: "int", nullable: true),
             },
+            schema: "sagas",
             constraints: table =>
             {
-                table.PrimaryKey("PK_Sagas", x => new { x.Id, x.Type, x.Tenant });
+                table.PrimaryKey("PK_Sagas", x => new { x.Id, x.Type, x.Tenant, });
             });
 
         migrationBuilder.CreateIndex(
             name: "IX_Sagas_Tenant",
-            schema: "sagas",
             table: "Sagas",
-            column: "Tenant");
+            column: "Tenant",
+            schema: "sagas");
     }
 
     /// <inheritdoc />

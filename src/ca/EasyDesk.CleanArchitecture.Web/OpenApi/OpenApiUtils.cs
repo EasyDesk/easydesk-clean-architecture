@@ -14,7 +14,7 @@ public static class OpenApiUtils
             {
                 new OpenApiSecurityScheme
                 {
-                    Reference = new OpenApiReference
+                    Reference = new()
                     {
                         Id = name,
                         Type = ReferenceType.SecurityScheme,

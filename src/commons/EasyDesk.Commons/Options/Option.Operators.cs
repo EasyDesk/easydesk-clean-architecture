@@ -24,12 +24,13 @@ public static partial class StaticImports
     public static bool IsPresent<T>(this Option<T> option, out T value)
     {
         value = default!;
-        if (option.IsPresent)
+        if (!option.IsPresent)
         {
-            value = option.Value;
-            return true;
+            return false;
         }
-        return false;
+
+        value = option.Value;
+        return true;
     }
 
     public static Option<T> IfAbsent<T>(this Option<T> option, Action action)
@@ -66,7 +67,7 @@ public static partial class StaticImports
         none: () => None);
 
     public static Task<Option<T>> FilterAsync<T>(this Option<T> option, AsyncFunc<T, bool> predicate) => option.MatchAsync(
-        some: async t => (await predicate(t)) ? option : None,
+        some: async t => await predicate(t) ? option : None,
         none: () => Task.FromResult<Option<T>>(None));
 
     public static Option<R> FlatMap<T, R>(this Option<T> option, Func<T, Option<R>> mapper) => option.Match(

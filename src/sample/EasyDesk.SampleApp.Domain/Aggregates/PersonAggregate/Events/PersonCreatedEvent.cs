@@ -26,10 +26,6 @@ public class PersonCreatedHandler : IDomainEventHandler<PersonCreatedEvent>
 
 public class PersonCreatedSkipHandler : IDomainEventHandler<PersonCreatedEvent>
 {
-    public PersonCreatedSkipHandler()
-    {
-    }
-
     public Task<Result<Nothing>> Handle(PersonCreatedEvent ev)
     {
         if (ev.Person.FirstName == "skip")

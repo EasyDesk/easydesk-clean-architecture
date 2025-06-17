@@ -2,6 +2,4 @@
 
 [CollectionDefinition(nameof(SampleHostTestCollection))]
 public class SampleHostTestCollection :
-    ICollectionFixture<SampleHostTestsFixture>
-{
-}
+    ICollectionFixture<SampleHostTestsFixture>;

@@ -37,7 +37,7 @@ public class TestController : CleanArchitectureController
     [HttpGet(ThrowException)]
     public Task<ActionResult<ResponseDto<Nothing, Nothing>>> ThrowTestException([FromQuery] Option<string> value)
     {
-        throw new Exception("Throwing test exception");
+        throw new InvalidOperationException("Throwing test exception");
     }
 
     [HttpPost(TestPolymorphismRoute)]

@@ -1,5 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Cqrs;
 
-public interface IReadOnlyOperation
-{
-}
+public interface IReadOnlyOperation;

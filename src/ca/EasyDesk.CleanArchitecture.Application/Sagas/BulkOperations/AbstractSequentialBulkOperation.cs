@@ -23,13 +23,13 @@ public record BulkConcurrencyError(string OperationType) : ApplicationError
 
 public abstract class AbstractSequentialBulkOperation<TSelf, TStartCommand, TResult, TWork, TBatchCommand> :
     ISagaController<string, BulkOperationState<TResult, TWork>>
+    where TSelf : AbstractSequentialBulkOperation<TSelf, TStartCommand, TResult, TWork, TBatchCommand>
     where TStartCommand : IDispatchable<TResult>
     where TBatchCommand : AbstractBulkOperationCommand
-    where TSelf : AbstractSequentialBulkOperation<TSelf, TStartCommand, TResult, TWork, TBatchCommand>
 {
     private readonly ICommandSender _commandSender;
 
-    public AbstractSequentialBulkOperation(ICommandSender commandSender)
+    protected AbstractSequentialBulkOperation(ICommandSender commandSender)
     {
         _commandSender = commandSender;
     }

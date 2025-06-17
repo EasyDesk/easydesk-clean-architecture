@@ -13,8 +13,7 @@ internal class FixedMapConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.IsSubtypeOrImplementationOf(typeof(IFixedMap<,>));
+    public override bool CanConvert(Type type) => type.IsGenericType && type.IsSubtypeOrImplementationOf(typeof(IFixedMap<,>));
 
     public class FixedMapConverterImpl<K, V> : JsonConverter<IFixedMap<K, V>>
         where K : notnull
@@ -24,7 +23,7 @@ internal class FixedMapConverter : CachedJsonConverterFactory
             serializer.Serialize(writer, value?.AsImmutableDictionary());
         }
 
-        public override IFixedMap<K, V> ReadJson(JsonReader reader, Type objectType, IFixedMap<K, V>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override IFixedMap<K, V> ReadJson(JsonReader reader, Type type, IFixedMap<K, V>? existingValue, bool hasExisting, JsonSerializer serializer)
         {
             var dictionary = serializer.Deserialize<ImmutableDictionary<K, V>>(reader);
             return FixedHashMap.Create(dictionary);

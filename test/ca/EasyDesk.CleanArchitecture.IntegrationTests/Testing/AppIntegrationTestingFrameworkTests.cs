@@ -52,16 +52,18 @@ internal class AppIntegrationTestingFrameworkTests : SampleAppIntegrationTest
                 .Send()
                 .EnsureSuccess();
         }
-        if (!skipWaits)
+        if (skipWaits)
         {
-            await Session.Http
-                .GetPeople()
-                .SetPageSize(PageSize)
-                .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
-                .EnsureSuccess();
-            await Session.PollServiceUntil<SampleAppContext>(
-                async context => await context.Pets.CountAsync() == Count);
+            return;
         }
+
+        await Session.Http
+            .GetPeople()
+            .SetPageSize(PageSize)
+            .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
+            .EnsureSuccess();
+        await Session.PollServiceUntil<SampleAppContext>(
+            async context => await context.Pets.CountAsync() == Count);
     }
 }
 

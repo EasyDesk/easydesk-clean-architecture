@@ -39,13 +39,15 @@ public class FormFileCsvParser
         var contentType = new ContentType(formFile.ContentType);
         if (contentType.MediaType != "text/csv")
         {
-            return Errors.InvalidInput(propertyName, "Csv.InvalidContentType", $"File should be in CSV format and have text/csv as content type.");
+            return Errors.InvalidInput(propertyName, "Csv.InvalidContentType", "File should be in CSV format and have text/csv as content type.");
         }
-        return Success(Parse(formFile, converter, configureContext).Select(r => r.MapError(e => e switch
-        {
-            InvalidCsvLine x => Errors.InvalidInput(propertyName, "Csv.InvalidFormat", x.DisplayMessage),
-            _ => e,
-        })).EnumerateOnce());
+        return Success(Parse(formFile, converter, configureContext)
+            .Select(r => r.MapError(e => e switch
+                {
+                    InvalidCsvLine x => Errors.InvalidInput(propertyName, "Csv.InvalidFormat", x.DisplayMessage),
+                    _ => e,
+                }))
+            .EnumerateOnce());
     }
 
     public Result<IEnumerable<Result<T>>> LazyParseFormFileAsCsv<T>(

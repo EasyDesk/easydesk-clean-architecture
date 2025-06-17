@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values;
 
 public class ValueWrapperTests
 {
-    private static readonly int _innerValue = 5;
+    private const int _innerValue = 5;
 
     private class TestException : Exception
     {

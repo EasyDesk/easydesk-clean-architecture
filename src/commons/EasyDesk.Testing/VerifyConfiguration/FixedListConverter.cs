@@ -13,8 +13,7 @@ internal class FixedListConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.IsSubtypeOrImplementationOf(typeof(IFixedList<>));
+    public override bool CanConvert(Type type) => type.IsGenericType && type.IsSubtypeOrImplementationOf(typeof(IFixedList<>));
 
     public class FixedListConverterImpl<T> : JsonConverter<IFixedList<T>>
     {
@@ -23,7 +22,7 @@ internal class FixedListConverter : CachedJsonConverterFactory
             serializer.Serialize(writer, value?.AsImmutableList());
         }
 
-        public override IFixedList<T> ReadJson(JsonReader reader, Type objectType, IFixedList<T>? existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override IFixedList<T> ReadJson(JsonReader reader, Type type, IFixedList<T>? existingValue, bool hasExisting, JsonSerializer serializer)
         {
             var list = serializer.Deserialize<ImmutableList<T>>(reader);
             return FixedList.Create(list);

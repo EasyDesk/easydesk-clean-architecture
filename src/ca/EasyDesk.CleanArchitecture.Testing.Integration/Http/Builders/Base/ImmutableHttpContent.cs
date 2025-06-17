@@ -13,7 +13,7 @@ public record class ImmutableHttpContent(
     ImmutableArray<byte> Bytes,
     ImmutableHttpHeaders ContentHeaders)
 {
-    private static readonly JsonSerializerOptions _options = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions _options = new() { WriteIndented = true, };
 
     public ImmutableHttpContent()
         : this([])
@@ -31,9 +31,7 @@ public record class ImmutableHttpContent(
     }
 
     public ImmutableHttpContent(ImmutableArray<byte> bytes, Encoding encoding, string mediaType)
-        : this(bytes, new ImmutableHttpHeaders()
-              .Add(HeaderNames.ContentType, mediaType)
-              .Add(HeaderNames.ContentEncoding, encoding.WebName))
+        : this(bytes, new ImmutableHttpHeaders().Add(HeaderNames.ContentType, mediaType).Add(HeaderNames.ContentEncoding, encoding.WebName))
     {
     }
 

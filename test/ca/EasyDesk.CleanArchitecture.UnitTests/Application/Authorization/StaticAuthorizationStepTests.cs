@@ -52,7 +52,7 @@ public class StaticAuthorizationStepTests
         var request = new T();
         var authorizer = Substitute.For<IStaticAuthorizer<T>>();
         authorizer.IsAuthorized(request, ToAuthorizationInfo(_agent)).Returns(authorizerResult);
-        var step = new StaticAuthorizationStep<T, Nothing>(new[] { authorizer }, _authorizationProvider);
+        var step = new StaticAuthorizationStep<T, Nothing>(new[] { authorizer, }, _authorizationProvider);
         return await step.Run(request, _next);
     }
 

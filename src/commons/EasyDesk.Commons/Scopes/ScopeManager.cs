@@ -5,7 +5,7 @@ namespace EasyDesk.Commons.Scopes;
 public sealed class ScopeManager<T>
 {
     private readonly T _baseValue;
-    private readonly Stack<Scope> _scopeStack = new();
+    private readonly Stack<Scope> _scopeStack = [];
 
     public ScopeManager(T baseValue)
     {
@@ -37,10 +37,12 @@ public sealed class ScopeManager<T>
 
         public void Dispose()
         {
-            if (_manager._scopeStack.IsEmpty() || _manager._scopeStack.Pop() != this)
+            if (!_manager._scopeStack.IsEmpty() && _manager._scopeStack.Pop() == this)
             {
-                throw new InvalidOperationException("Detected incorrect scope disposal.");
+                return;
             }
+
+            throw new InvalidOperationException("Detected incorrect scope disposal.");
         }
     }
 }

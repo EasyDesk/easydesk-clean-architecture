@@ -45,7 +45,7 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
             .ObjectProperties;
         var codeDataProperty = errorDtoProperties
             .First(p => p.MemberInfo == typeof(ErrorDto).GetProperty(nameof(ErrorDto.Code)));
-        schema.Properties[codeDataProperty.Name] = new OpenApiSchema
+        schema.Properties[codeDataProperty.Name] = new()
         {
             Type = "string",
             Enum = _errorCodes.Select(code => new OpenApiString(code) as IOpenApiAny).ToList(),

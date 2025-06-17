@@ -31,7 +31,7 @@ public sealed class StaticRolesToPermissionsBuilder
         var permissionsByRole = _rolePermissionPairs
             .GroupBy(pair => pair.Item1, (role, pairs) => (role, pairs.Select(p => p.Item2).ToFixedSet()))
             .ToFixedMap();
-        return new StaticRolesToPermissionsMapper(permissionsByRole);
+        return new(permissionsByRole);
     }
 }
 

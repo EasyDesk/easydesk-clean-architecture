@@ -12,15 +12,15 @@ public partial class UseJsonToSerializeHeaders : Migration
     {
         migrationBuilder.RenameColumn(
             name: "Headers",
-            schema: "messaging",
             table: "Outbox",
-            newName: "Headers_Old");
+            newName: "Headers_Old",
+            schema: "messaging");
 
         migrationBuilder.AddColumn<string>(
             name: "Headers",
-            schema: "messaging",
             table: "Outbox",
             type: "text",
+            schema: "messaging",
             nullable: false,
             defaultValue: string.Empty);
     }
@@ -30,13 +30,13 @@ public partial class UseJsonToSerializeHeaders : Migration
     {
         migrationBuilder.DropColumn(
             name: "Headers",
-            schema: "messaging",
-            table: "Outbox");
+            table: "Outbox",
+            schema: "messaging");
 
         migrationBuilder.RenameColumn(
             name: "Headers_Old",
-            schema: "messaging",
             table: "Outbox",
-            newName: "Headers");
+            newName: "Headers",
+            schema: "messaging");
     }
 }

@@ -478,7 +478,7 @@ public class ResultOperatorsTests
     public void ThrowIfFailure_ShouldThrowTheGivenException_ForFailedResults()
     {
         var exceptionFactory = Substitute.For<Func<Error, Exception>>();
-        var expectedException = new Exception("Test");
+        var expectedException = new ArgumentOutOfRangeException("Test");
         exceptionFactory(_error).Returns(expectedException);
 
         var actualException = Should.Throw<Exception>(() => Failure.ThrowIfFailure(exceptionFactory));

@@ -35,7 +35,7 @@ internal class AuditingBackgroundTask : BackgroundConsumer<(AuditRecord, TenantI
         var (record, tenantInfo) = item;
         lifetimeScope.ResolveOption<IContextTenantInitializer>().IfPresent(i => i.Initialize(tenantInfo));
         await lifetimeScope.Resolve<IAuditStorageImplementation>().StoreAudit(record);
-        _logger.LogDebug("Stored audit with name {auditName}", record.Name);
+        _logger.LogDebug("Stored audit with name {AuditName}", record.Name);
     }
 
     protected override async Task OnException(
@@ -45,7 +45,7 @@ internal class AuditingBackgroundTask : BackgroundConsumer<(AuditRecord, TenantI
         CancellationToken pausingToken)
     {
         var (record, _) = item;
-        _logger.LogError(exception, "Unexpected error while registering audit with name {auditName}.", record.Name);
+        _logger.LogError(exception, "Unexpected error while registering audit with name {AuditName}.", record.Name);
         await lifetimeScope
             .ResolveOption<AuditingExceptionHandler>()
             .IfPresentAsync(h => h(record, exception));

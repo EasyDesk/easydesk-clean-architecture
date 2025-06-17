@@ -12,17 +12,17 @@ public partial class AddVersions : Migration
     {
         migrationBuilder.AddColumn<long>(
             name: "_Version",
-            schema: "domain",
             table: "Pets",
             type: "bigint",
+            schema: "domain",
             nullable: false,
             defaultValue: 0L);
 
         migrationBuilder.AddColumn<long>(
             name: "_Version",
-            schema: "domain",
             table: "People",
             type: "bigint",
+            schema: "domain",
             nullable: false,
             defaultValue: 0L);
     }
@@ -32,12 +32,12 @@ public partial class AddVersions : Migration
     {
         migrationBuilder.DropColumn(
             name: "_Version",
-            schema: "domain",
-            table: "Pets");
+            table: "Pets",
+            schema: "domain");
 
         migrationBuilder.DropColumn(
             name: "_Version",
-            schema: "domain",
-            table: "People");
+            table: "People",
+            schema: "domain");
     }
 }

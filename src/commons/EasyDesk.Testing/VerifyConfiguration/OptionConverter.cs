@@ -11,8 +11,7 @@ internal class OptionConverter : JsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterType)!;
     }
 
-    public override bool CanConvert(Type objectType) =>
-        objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(Option<>);
+    public override bool CanConvert(Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Option<>);
 
     private class OptionConverterImpl<T> : JsonConverter<Option<T>>
     {
@@ -23,7 +22,7 @@ internal class OptionConverter : JsonConverterFactory
                 none: writer.WriteNull);
         }
 
-        public override Option<T> ReadJson(JsonReader reader, Type objectType, Option<T> existingValue, bool hasExistingValue, JsonSerializer serializer)
+        public override Option<T> ReadJson(JsonReader reader, Type type, Option<T> existingValue, bool hasExisting, JsonSerializer serializer)
         {
             return reader.TokenType == JsonToken.Null ? None : Some(serializer.Deserialize<T>(reader));
         }

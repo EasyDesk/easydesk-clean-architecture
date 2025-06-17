@@ -70,11 +70,13 @@ public class CsvServiceTests
             ';"kek";;;;;;;;;;;;;;;;;;;;;;XD;;;;;;;;;;
             """;
         var counter = 0;
-        await Verify(Parse(csv, row => ++counter == 4 ? throw new Exception("The parser isn't lazy") : new
-        {
-            String = row.GetOptionalField<string>("String"),
-            Integer = row.GetOptionalField<int>("Integer"),
-        }).Take(3));
+        await Verify(
+            Parse(csv, row => ++counter == 4 ? throw new InvalidOperationException("The parser isn't lazy") : new
+            {
+                String = row.GetOptionalField<string>("String"),
+                Integer = row.GetOptionalField<int>("Integer"),
+            })
+                .Take(3));
     }
 
     [Fact]

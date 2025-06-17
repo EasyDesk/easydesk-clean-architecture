@@ -62,6 +62,6 @@ internal class EfCoreOutbox : IOutbox
     private TransportMessage ToTransportMessage(OutboxMessage outboxMessage)
     {
         var headers = JsonSerializer.Deserialize<Dictionary<string, string>>(outboxMessage.Headers, _jsonOptions);
-        return new TransportMessage(headers, outboxMessage.Content);
+        return new(headers, outboxMessage.Content);
     }
 }

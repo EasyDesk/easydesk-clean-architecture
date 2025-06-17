@@ -5,11 +5,11 @@ namespace EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 public abstract class AppBuilder : IAppBuilder
 {
-    private readonly ModulesCollection _modules = new();
+    private readonly ModulesCollection _modules = [];
     private IFixedSet<Assembly> _assemblies = [];
     private string _name;
 
-    public AppBuilder(string name)
+    protected AppBuilder(string name)
     {
         _name = name;
     }

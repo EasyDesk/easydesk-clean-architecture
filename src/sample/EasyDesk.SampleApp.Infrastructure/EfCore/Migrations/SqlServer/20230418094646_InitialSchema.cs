@@ -20,7 +20,6 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.CreateTable(
             name: "People",
-            schema: "domain",
             columns: table => new
             {
                 Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -39,6 +38,7 @@ public partial class InitialSchema : Migration
                 Residence_State = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                 Residence_Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
             },
+            schema: "domain",
             constraints: table =>
             {
                 table.PrimaryKey("PK_People", x => x.Id);
@@ -46,7 +46,6 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.CreateTable(
             name: "Pets",
-            schema: "domain",
             columns: table => new
             {
                 Id = table.Column<int>(type: "int", nullable: false),
@@ -54,35 +53,36 @@ public partial class InitialSchema : Migration
                 PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                 Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
             },
+            schema: "domain",
             constraints: table =>
             {
                 table.PrimaryKey("PK_Pets", x => x.Id);
                 table.ForeignKey(
                     name: "FK_Pets_People_PersonId",
                     column: x => x.PersonId,
-                    principalSchema: "domain",
                     principalTable: "People",
                     principalColumn: "Id",
+                    principalSchema: "domain",
                     onDelete: ReferentialAction.Cascade);
             });
 
         migrationBuilder.CreateIndex(
             name: "IX_People_Tenant",
-            schema: "domain",
             table: "People",
-            column: "Tenant");
+            column: "Tenant",
+            schema: "domain");
 
         migrationBuilder.CreateIndex(
             name: "IX_Pets_PersonId",
-            schema: "domain",
             table: "Pets",
-            column: "PersonId");
+            column: "PersonId",
+            schema: "domain");
 
         migrationBuilder.CreateIndex(
             name: "IX_Pets_Tenant",
-            schema: "domain",
             table: "Pets",
-            column: "Tenant");
+            column: "Tenant",
+            schema: "domain");
     }
 
     /// <inheritdoc />

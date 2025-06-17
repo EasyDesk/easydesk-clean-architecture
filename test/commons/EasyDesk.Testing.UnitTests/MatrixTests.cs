@@ -125,8 +125,8 @@ public class MatrixTests
     public void EnumerableAxis()
     {
         var result = Matrix.Builder()
-            .Axis(new int?[] { null })
-            .Axis(new int?[] { null, null })
+            .Axis(new int?[] { null, })
+            .Axis(new int?[] { null, null, })
             .Build()
             .ToList();
 
@@ -181,7 +181,7 @@ public class MatrixTests
     public void FailureResultAxis()
     {
         var result = Matrix.Builder()
-            .ResultAxis<object>(builder => builder.Failures(new Error[] { new AnError(), new AnotherError() }))
+            .ResultAxis<object>(builder => builder.Failures(new Error[] { new AnError(), new AnotherError(), }))
             .ResultAxis<object>(builder => builder.Failure(new AnError()))
             .Build()
             .ToList();
@@ -197,7 +197,7 @@ public class MatrixTests
     public void ResultAxis()
     {
         var result = Matrix.Builder()
-            .ResultAxis<Nothing>(builder => builder.Results(new Result<Nothing>[] { new AnError(), new AnotherError() }))
+            .ResultAxis<Nothing>(builder => builder.Results(new Result<Nothing>[] { new AnError(), new AnotherError(), }))
             .ResultAxis<int>(builder => builder.Result(Success(5)))
             .Build()
             .ToList();

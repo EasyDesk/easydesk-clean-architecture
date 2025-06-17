@@ -20,10 +20,10 @@ public class DefaultStaticAuthorizerTests
 
     private record RequestWithRequirements : IAuthorize
     {
-        public bool IsAuthorized(AuthorizationInfo authorizationInfo)
+        public bool IsAuthorized(AuthorizationInfo auth)
         {
-            return authorizationInfo.HasAnyPermissionAmong(TestPermissions.A, TestPermissions.B)
-                && authorizationInfo.HasPermission(TestPermissions.C);
+            return auth.HasAnyPermissionAmong(TestPermissions.A, TestPermissions.B)
+                && auth.HasPermission(TestPermissions.C);
         }
     }
 

@@ -9,7 +9,7 @@ namespace EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 
 internal class GenericPipelineProvider : IPipelineProvider
 {
-    private readonly ConcurrentDictionary<(Type, Type), IEnumerable<Type>> _pipelineCache = new();
+    private readonly ConcurrentDictionary<(Type, Type), IEnumerable<Type>> _pipelineCache = [];
     private readonly IImmutableList<Type> _stepTypes;
 
     public GenericPipelineProvider(IEnumerable<Type> stepTypes)
@@ -24,8 +24,7 @@ internal class GenericPipelineProvider : IPipelineProvider
             .Select(t => (IPipelineStep<T, R>)ActivatorUtilities.CreateInstance(context.Resolve<IServiceProvider>(), t));
     }
 
-    private IEnumerable<Type> ComputePipelineStepTypes<T, R>() =>
-        _stepTypes.SelectMany(t => GetActualStepType<T, R>(t)).ToList();
+    private IEnumerable<Type> ComputePipelineStepTypes<T, R>() => _stepTypes.SelectMany(t => GetActualStepType<T, R>(t)).ToList();
 
     private Option<Type> GetActualStepType<T, R>(Type stepType)
     {
@@ -59,7 +58,7 @@ internal class GenericPipelineProvider : IPipelineProvider
 
         var arguments = stepInterface
             .GetGenericArguments()
-            .Zip(new[] { typeof(T), typeof(R) })
+            .Zip(new[] { typeof(T), typeof(R), })
             .Where(a => a.First.IsGenericParameter)
             .Select(b => b.Second)
             .ToArray();

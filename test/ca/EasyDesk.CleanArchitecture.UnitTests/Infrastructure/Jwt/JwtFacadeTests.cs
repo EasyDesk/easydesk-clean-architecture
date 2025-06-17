@@ -110,22 +110,26 @@ public class JwtFacadeTests
     public void ShouldFailIfTheIssuerIsNotValid()
     {
         var jwt = _sut.Create(_claimsIdentity, _configureJwtGeneration);
-        _sut.Validate(jwt, b =>
-        {
-            _configureDefaultValidation(b);
-            b.WithIssuerValidation("another-issuer");
-        }).ShouldBeFailure();
+        _sut
+            .Validate(jwt, b =>
+            {
+                _configureDefaultValidation(b);
+                b.WithIssuerValidation("another-issuer");
+            })
+            .ShouldBeFailure();
     }
 
     [Fact]
     public void ShouldFailIfTheAudienceIsNotValid()
     {
         var jwt = _sut.Create(_claimsIdentity, _configureJwtGeneration);
-        _sut.Validate(jwt, b =>
-        {
-            _configureDefaultValidation(b);
-            b.WithAudienceValidation("another-audience");
-        }).ShouldBeFailure();
+        _sut
+            .Validate(jwt, b =>
+            {
+                _configureDefaultValidation(b);
+                b.WithAudienceValidation("another-audience");
+            })
+            .ShouldBeFailure();
     }
 
     [Fact]
@@ -135,11 +139,13 @@ public class JwtFacadeTests
 
         AdvanceToPostExpiration();
 
-        _sut.Validate(jwt, b =>
-        {
-            _configureDefaultValidation(b);
-            b.WithoutLifetimeValidation();
-        }).ShouldBeSuccess();
+        _sut
+            .Validate(jwt, b =>
+            {
+                _configureDefaultValidation(b);
+                b.WithoutLifetimeValidation();
+            })
+            .ShouldBeSuccess();
     }
 
     [Fact]

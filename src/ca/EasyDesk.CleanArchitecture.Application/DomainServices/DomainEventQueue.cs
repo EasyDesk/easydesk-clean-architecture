@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Application.DomainServices;
 
 public class DomainEventQueue : IDomainEventNotifier
 {
-    private readonly Queue<DomainEvent> _eventQueue = new();
+    private readonly Queue<DomainEvent> _eventQueue = [];
     private readonly DomainEventPublisher _publisher;
     private readonly ISaveChangesHandler _saveChangesHandler;
 

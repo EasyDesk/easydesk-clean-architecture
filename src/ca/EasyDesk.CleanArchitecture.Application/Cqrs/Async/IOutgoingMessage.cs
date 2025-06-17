@@ -1,5 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 
-public interface IOutgoingMessage : IMessage
-{
-}
+public interface IOutgoingMessage : IMessage;

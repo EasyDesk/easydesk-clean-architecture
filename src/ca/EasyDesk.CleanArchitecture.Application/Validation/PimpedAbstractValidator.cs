@@ -22,6 +22,4 @@ public abstract class PimpedAbstractValidator<T> : AbstractValidator<T>
         RuleForOption(property, rules => rules.SetValidator(validator));
 }
 
-public class PimpedInlineValidator<T> : PimpedAbstractValidator<T>
-{
-}
+public class PimpedInlineValidator<T> : PimpedAbstractValidator<T>;

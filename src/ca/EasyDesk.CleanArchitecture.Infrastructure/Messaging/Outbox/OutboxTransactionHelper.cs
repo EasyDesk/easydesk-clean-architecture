@@ -3,7 +3,7 @@
 public class OutboxTransactionHelper
 {
     private readonly OutboxFlushRequestsChannel _requestsChannel;
-    private bool _flushRequestWasRegistered = false;
+    private bool _flushRequestWasRegistered;
 
     public OutboxTransactionHelper(OutboxFlushRequestsChannel requestsChannel)
     {
@@ -17,9 +17,11 @@ public class OutboxTransactionHelper
 
     public void RequestNewFlushIfNecessary()
     {
-        if (_flushRequestWasRegistered)
+        if (!_flushRequestWasRegistered)
         {
-            _requestsChannel.RequestNewFlush();
+            return;
         }
+
+        _requestsChannel.RequestNewFlush();
     }
 }

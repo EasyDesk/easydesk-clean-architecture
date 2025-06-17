@@ -9,8 +9,8 @@ public class CultureInfoExtensionsTests
 {
     public static IEnumerable<object[]> UseCases()
     {
-        yield return new object[] { new CultureInfo("en-US") };
-        yield return new object[] { new CultureInfo("it-IT") };
+        yield return new object[] { new CultureInfo("en-US"), };
+        yield return new object[] { new CultureInfo("it-IT"), };
     }
 
     [Theory]

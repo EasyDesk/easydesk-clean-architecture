@@ -36,7 +36,7 @@ internal class EfCoreApiKeysStorage : IApiKeysStorage
     }
 
     private static ApiKeyModel CreateNewApiKey(string apiKey, Agent agent) =>
-        new ApiKeyModel { ApiKey = apiKey }.Also(x => x.UpdateIdentities(agent));
+        new ApiKeyModel { ApiKey = apiKey, }.Also(x => x.UpdateIdentities(agent));
 
     public async Task DeleteApiKey(string apiKey)
     {

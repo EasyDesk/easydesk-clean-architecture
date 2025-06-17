@@ -28,7 +28,7 @@ public static class ReflectionUtils
     }
 
     private static bool HasSameGenericTypeDefinitionAs(this Type type, Type otherType) =>
-        type.IsGenericType &&
-        otherType.IsGenericType &&
-        type.GetGenericTypeDefinition() == otherType.GetGenericTypeDefinition();
+        type.IsGenericType
+            && otherType.IsGenericType
+            && type.GetGenericTypeDefinition() == otherType.GetGenericTypeDefinition();
 }

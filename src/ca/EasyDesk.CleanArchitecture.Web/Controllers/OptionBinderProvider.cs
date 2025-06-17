@@ -10,20 +10,21 @@ internal class OptionBinderProvider : IModelBinderProvider
 {
     public IModelBinder? GetBinder(ModelBinderProviderContext context)
     {
-        if (context.Metadata.ModelType.IsGenericType
-            && context.Metadata.ModelType.GetGenericTypeDefinition() == typeof(Option<>))
+        if (!context.Metadata.ModelType.IsGenericType
+            || context.Metadata.ModelType.GetGenericTypeDefinition() != typeof(Option<>))
         {
-            var type = context.Metadata.ModelType.GetGenericArguments()[0];
-            var metadata = context.MetadataProvider.GetMetadataForType(type);
-            return new OptionBinder(metadata, context.CreateBinder(metadata));
+            return null;
         }
-        return null;
+
+        var type = context.Metadata.ModelType.GetGenericArguments()[0];
+        var metadata = context.MetadataProvider.GetMetadataForType(type);
+        return new OptionBinder(metadata, context.CreateBinder(metadata));
     }
 
     private class OptionBinder : IModelBinder
     {
-        private static readonly ConcurrentDictionary<Type, Func<object, object>> _someFactoryCache = new();
-        private static readonly ConcurrentDictionary<Type, Func<object>> _noneFactoryCache = new();
+        private static readonly ConcurrentDictionary<Type, Func<object, object>> _someFactoryCache = [];
+        private static readonly ConcurrentDictionary<Type, Func<object>> _noneFactoryCache = [];
 
         private readonly ModelMetadata _innerModelMetadata;
         private readonly IModelBinder _innerModelBinder;
@@ -102,7 +103,7 @@ internal class OptionBinderProvider : IModelBinderProvider
                 bindingContext.Result = ModelBindingResult.Success(option);
 
                 // Setting the ValidationState ensures properties on derived types are correctly validated
-                bindingContext.ValidationState[newBindingContext.Result.Model] = new ValidationStateEntry
+                bindingContext.ValidationState[newBindingContext.Result.Model] = new()
                 {
                     Metadata = _innerModelMetadata,
                 };

@@ -9,10 +9,6 @@ public class AggregateRootTests
 
     private class TestAggregateRoot : AggregateRoot
     {
-        public TestAggregateRoot()
-        {
-        }
-
         protected override void OnCreation() => EmitEvent(ToEvent(1));
 
         protected override void OnRemoval() => EmitEvent(ToEvent(2));

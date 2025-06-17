@@ -2,6 +2,4 @@
 
 namespace EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 
-public interface IQueryRequest<T> : IDispatchable<T>, IReadOnlyOperation, IRequest
-{
-}
+public interface IQueryRequest<T> : IDispatchable<T>, IReadOnlyOperation, IRequest;

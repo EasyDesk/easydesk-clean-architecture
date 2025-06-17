@@ -8,6 +8,6 @@ internal class MessagingContextFactory : IDesignTimeDbContextFactory<MessagingCo
     public MessagingContext CreateDbContext(string[] args)
     {
         var options = DbContextOptionsUtils.CreateDesignTimeOptions<MessagingContext>();
-        return new MessagingContext(options);
+        return new(options);
     }
 }

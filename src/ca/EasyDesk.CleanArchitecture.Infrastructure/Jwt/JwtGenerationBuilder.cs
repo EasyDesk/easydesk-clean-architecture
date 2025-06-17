@@ -27,15 +27,15 @@ public record JwtGenerationConfiguration(
 
 public sealed class JwtGenerationBuilder
 {
-    private bool _wasBuilt = false;
-    private bool _hasSigningCredentials = false;
-    private bool _hasLifetime = false;
+    private bool _wasBuilt;
+    private bool _hasSigningCredentials;
+    private bool _hasLifetime;
     private readonly SecurityTokenDescriptor _descriptor;
     private readonly ISet<Claim> _claims = new HashSet<Claim>();
 
     public JwtGenerationBuilder(Instant issuedAt)
     {
-        _descriptor = new SecurityTokenDescriptor
+        _descriptor = new()
         {
             IssuedAt = issuedAt.ToDateTimeUtc(),
         };
@@ -57,7 +57,7 @@ public sealed class JwtGenerationBuilder
         }
 
         _wasBuilt = true;
-        _descriptor.Subject = new ClaimsIdentity(_claims);
+        _descriptor.Subject = new(_claims);
         return _descriptor;
     }
 

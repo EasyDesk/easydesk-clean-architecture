@@ -10,7 +10,7 @@ public static class JsonOptionsConfiguratorExtensions
         this JsonOptionsConfigurator configurator,
         JsonSerializerOptions? settings = null)
     {
-        var actualSettings = settings ?? new JsonSerializerOptions();
+        var actualSettings = settings ?? new();
         configurator(actualSettings);
         return actualSettings;
     }

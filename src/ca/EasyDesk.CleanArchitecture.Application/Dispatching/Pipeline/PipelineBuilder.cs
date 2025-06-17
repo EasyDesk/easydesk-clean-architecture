@@ -27,7 +27,7 @@ public sealed class PipelineBuilder
         }
         _registeredSteps.Add(stepType);
         list.Add(stepType);
-        return new StepDependenciesBuilder(this, stepType);
+        return new(this, stepType);
     }
 
     public PipelineBuilder AddDependency(Type before, Type after)
@@ -71,7 +71,7 @@ public sealed class PipelineBuilder
             }
             if (temp.Contains(step))
             {
-                throw new Exception("Pipeline steps dependencies contain cycles");
+                throw new InvalidOperationException("Pipeline steps dependencies contain cycles");
             }
 
             temp.Add(step);

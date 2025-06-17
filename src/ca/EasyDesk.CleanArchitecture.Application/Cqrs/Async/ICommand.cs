@@ -1,5 +1,3 @@
 ﻿namespace EasyDesk.CleanArchitecture.Application.Cqrs.Async;
 
-public interface ICommand : IMessage, IReadWriteOperation
-{
-}
+public interface ICommand : IMessage, IReadWriteOperation;

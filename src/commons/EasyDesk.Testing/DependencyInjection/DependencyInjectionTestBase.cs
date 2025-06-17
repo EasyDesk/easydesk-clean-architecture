@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace EasyDesk.Testing.DependencyInjection;
 
@@ -7,7 +6,7 @@ public abstract class DependencyInjectionTestBase : IDisposable
 {
     private readonly IServiceScope _serviceScope;
 
-    public DependencyInjectionTestBase()
+    protected DependencyInjectionTestBase()
     {
         var container = new ServiceCollection();
         ConfigureServices(container);

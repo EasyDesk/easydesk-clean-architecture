@@ -9,7 +9,7 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
 {
     private static readonly Duration _defaultPollingInterval = Duration.FromMilliseconds(200);
 
-    public HttpRequestExecutor(
+    protected HttpRequestExecutor(
         string endpoint,
         HttpMethod method,
         ITestHttpAuthentication testHttpAuthentication)

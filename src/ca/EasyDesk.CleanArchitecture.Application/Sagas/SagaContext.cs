@@ -16,7 +16,7 @@ public class SagaContext<TId, TState>
 
     public TState State { get; private set; }
 
-    public bool IsComplete { get; private set; } = false;
+    public bool IsComplete { get; private set; }
 
     public bool IsNew { get; }
 

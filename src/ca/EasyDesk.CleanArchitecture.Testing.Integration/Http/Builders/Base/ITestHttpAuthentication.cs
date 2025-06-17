@@ -16,7 +16,7 @@ internal class NoAuthentication : ITestHttpAuthentication
 {
     public ImmutableHttpRequestMessage ConfigureAuthentication(
         ImmutableHttpRequestMessage message,
-        Agent identity) =>
+        Agent agent) =>
         message;
 
     public ImmutableHttpRequestMessage RemoveAuthentication(

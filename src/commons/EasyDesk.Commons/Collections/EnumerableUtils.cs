@@ -314,14 +314,14 @@ public static class EnumerableUtils
                 yield return _cache[index];
             }
 
-            for (; _enumerator != null && _enumerator.MoveNext(); index++)
+            for (; _enumerator?.MoveNext() is true; index++)
             {
                 var current = _enumerator.Current;
                 _cache.Add(current);
                 yield return current;
             }
 
-            if (_enumerator != null)
+            if (_enumerator is not null)
             {
                 _enumerator.Dispose();
                 _enumerator = null;
@@ -335,11 +335,13 @@ public static class EnumerableUtils
 
         public void Dispose()
         {
-            if (_enumerator != null)
+            if (_enumerator is null)
             {
-                _enumerator.Dispose();
-                _enumerator = null;
+                return;
             }
+
+            _enumerator.Dispose();
+            _enumerator = null;
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

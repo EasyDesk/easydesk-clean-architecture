@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.Application.Json.Converters;
 
 public abstract class CachedJsonConverterFactory : JsonConverterFactory
 {
-    private readonly ConcurrentDictionary<Type, JsonConverter> _cache = new();
+    private readonly ConcurrentDictionary<Type, JsonConverter> _cache = [];
 
     public override JsonConverter? CreateConverter(Type typeToConvert, JsonSerializerOptions options)
     {

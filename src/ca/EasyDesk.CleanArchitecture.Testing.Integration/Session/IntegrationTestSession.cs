@@ -25,7 +25,7 @@ public sealed class IntegrationTestSession<TFixture> : IAsyncDisposable
         Fixture = fixture;
         LifetimeScope = configureSession is null
             ? fixture.Container.BeginLifetimeScope()
-            : fixture.Container.BeginLifetimeScope(builder => configureSession(new SessionConfigurer { ContainerBuilder = builder }));
+            : fixture.Container.BeginLifetimeScope(builder => configureSession(new SessionConfigurer { ContainerBuilder = builder, }));
 
         _defaultBusEndpoint = new(() => NewBusEndpoint());
         _errorBusEndpoint = new(() => NewBusEndpoint(Host.LifetimeScope.Resolve<RebusMessagingOptions>().ErrorQueueName));

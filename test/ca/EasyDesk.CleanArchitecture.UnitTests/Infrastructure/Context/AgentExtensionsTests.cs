@@ -15,7 +15,7 @@ public class AgentExtensionsTests
 
     public AgentExtensionsTests()
     {
-        _jwtFacade = new JwtFacade(_clock);
+        _jwtFacade = new(_clock);
     }
 
     [Theory]

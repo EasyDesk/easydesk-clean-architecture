@@ -12,6 +12,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.ApiKeys;
 public class ApiKeysTests : SampleAppIntegrationTest
 {
     private const string TestApiKey = "some_long_api_key";
+
     private readonly AgentDto _testAgent = AgentDto.MapFrom(Agent.Construct(x =>
     {
         x.AddIdentity(new("realm-A"), new("id-A"))

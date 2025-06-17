@@ -21,18 +21,22 @@ public class HttpResponseWrapper<T, M>
 
     public async Task EnsureSuccess()
     {
-        if (!await IsSuccess())
+        if (await IsSuccess())
         {
-            throw new HttpRequestUnexpectedFailureException(await GetResponse());
+            return;
         }
+
+        throw new HttpRequestUnexpectedFailureException(await GetResponse());
     }
 
     public async Task EnsureFailure()
     {
-        if (await IsSuccess())
+        if (!await IsSuccess())
         {
-            throw new HttpRequestUnexpectedSuccessException(await GetResponse());
+            return;
         }
+
+        throw new HttpRequestUnexpectedSuccessException(await GetResponse());
     }
 
     private async Task<ResponseDto<T, M>?> ParseNullableContent()
@@ -44,7 +48,7 @@ public class HttpResponseWrapper<T, M>
         }
         catch (JsonException e)
         {
-            throw new Exception($"Failed to parse response as {typeof(T).Name}. Content was:\n\n{bodyAsJson}", e);
+            throw new InvalidDataException($"Failed to parse response as {typeof(T).Name}. Content was:\n\n{bodyAsJson}", e);
         }
     }
 

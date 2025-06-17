@@ -4,7 +4,7 @@ public class MissingCsvValueException : Exception
 {
     public string Field { get; }
 
-    public MissingCsvValueException(string field) : base($"value is missing.")
+    public MissingCsvValueException(string field) : base("value is missing.")
     {
         Field = field;
     }

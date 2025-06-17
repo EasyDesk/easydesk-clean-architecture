@@ -29,6 +29,7 @@ namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 public class OpenApiModule : AppModule
 {
     public const string SingleVersionedDocKey = "main";
+
     private readonly OpenApiModuleOptions _options;
 
     public OpenApiModule(Action<OpenApiModuleOptions>? configure)
@@ -64,18 +65,20 @@ public class OpenApiModule : AppModule
             .Filter(_ => _options.AddDefaultMultitenancyFilters)
             .IfPresent(multitenancyOptions =>
             {
-                if (multitenancyOptions.HttpRequestTenantReader == MultitenancyOptions.DefaultHttpRequestTenantReader)
+                if (multitenancyOptions.HttpRequestTenantReader != MultitenancyOptions.DefaultHttpRequestTenantReader)
                 {
-                    options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
-                    {
-                        In = ParameterLocation.Header,
-                        Name = CommonTenantReaders.TenantIdHttpHeader,
-                        Description = "The tenant ID to be used for the request",
-                        Type = SecuritySchemeType.ApiKey,
-                        Scheme = "multitenancy",
-                    });
-                    options.OperationFilter<TenantIdOperationFilterForDefaultContextReader>();
+                    return;
                 }
+
+                options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = CommonTenantReaders.TenantIdHttpHeader,
+                    Description = "The tenant ID to be used for the request",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "multitenancy",
+                });
+                options.OperationFilter<TenantIdOperationFilterForDefaultContextReader>();
             });
     }
 

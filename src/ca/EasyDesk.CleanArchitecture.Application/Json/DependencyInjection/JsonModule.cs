@@ -29,7 +29,7 @@ public class JsonModule : AppModule
 
     private void ConfigureSettings(IComponentContext context, JsonSerializerOptions options, IDateTimeZoneProvider dateTimeZoneProvider)
     {
-        JsonDefaults.ApplyDefaultConfiguration(options, dateTimeZoneProvider);
+        options.ApplyDefaultConfiguration(dateTimeZoneProvider);
         _configurator?.Invoke(options, context);
     }
 }
