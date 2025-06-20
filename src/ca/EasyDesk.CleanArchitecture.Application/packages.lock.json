@@ -154,8 +154,8 @@
       },
       "System.CommandLine": {
         "type": "Transitive",
-        "resolved": "2.0.0-beta4.22272.1",
-        "contentHash": "1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg=="
+        "resolved": "2.0.0-beta5.25306.1",
+        "contentHash": "ce0wuowuh13Cd7GXqLCq77/YWlxQMxrVCMIO/2/QUP6CdP/JWnlYSN/N3/55wwGsUwa9CvPuT8ddjgyypUr5ag=="
       },
       "System.Diagnostics.DiagnosticSource": {
         "type": "Transitive",
@@ -168,7 +168,7 @@
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
           "NodaTime": "[3.2.2, )",
-          "System.CommandLine": "[2.0.0-beta4.22272.1, )"
+          "System.CommandLine": "[2.0.0-beta5.25306.1, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {
