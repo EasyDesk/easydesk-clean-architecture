@@ -75,6 +75,8 @@ public class VerifyConfigurationTests
     {
         return Verify(new
         {
+            Instant = Instant.FromUtc(2024, 11, 2, 14, 20),
+            LocalDateTime = new LocalDateTime(2025, 11, 2, 10, 15),
             LocalDate = new LocalDate(1994, 3, 1),
             LocalTime = new LocalTime(14, 25),
             Duration = Duration.FromHours(13),
