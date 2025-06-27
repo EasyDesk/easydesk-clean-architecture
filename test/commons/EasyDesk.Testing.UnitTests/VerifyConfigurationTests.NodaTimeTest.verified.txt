@@ -1,7 +1,7 @@
 ﻿{
-  Instant: Instant_1,
-  LocalDateTime: LocalDateTime_1,
-  LocalDate: LocalDate_1,
+  Instant: 2024-11-02T14:20:00Z,
+  LocalDateTime: 2025-11-02T10:15:00,
+  LocalDate: 1994-03-01,
   LocalTime: 14:25:00,
   Duration: 0:13:00:00
 }

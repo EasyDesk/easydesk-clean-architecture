@@ -6,5 +6,5 @@ namespace EasyDesk.CleanArchitecture.Application.Messaging;
 public interface IFailedMessageHandler<T>
     where T : IIncomingMessage
 {
-    public Task<Result<Nothing>> HandleFailure(T message);
+    Task<Result<Nothing>> HandleFailure(T message);
 }

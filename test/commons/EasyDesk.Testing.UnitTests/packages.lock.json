@@ -83,11 +83,11 @@
       },
       "Argon.NodaTime": {
         "type": "Transitive",
-        "resolved": "0.21.0",
-        "contentHash": "VgV0DZsxJufussy/AD9iKOXE1cuCS4QkJ2/rMvZe/RbD/unV4jiuih666B3IrzRfm5QL5ETmloyYcI2h+25dyQ==",
+        "resolved": "0.30.1",
+        "contentHash": "Oq5SR9sXFCBTds96BHeAahw4A4xVoSNvvx66QxLLqHcaLuZP5qDKw0DD+Gr6WMtSU13j9W0VCOaM5MbS45ojJg==",
         "dependencies": {
-          "Argon": "0.21.0",
-          "NodaTime": "3.1.11"
+          "Argon": "0.30.1",
+          "NodaTime": "3.2.2"
         }
       },
       "Castle.Core": {
@@ -154,11 +154,8 @@
       },
       "NodaTime": {
         "type": "Transitive",
-        "resolved": "3.1.12",
-        "contentHash": "nDcUbG0jiEXmV8cOz7V8GnUKlmPJjqZm/R+E2JNnUSdlMoaQ19xSU8GXFLReGs/Nt8xdBfA8XfO77xVboWO1Vg==",
-        "dependencies": {
-          "System.Runtime.CompilerServices.Unsafe": "4.7.1"
-        }
+        "resolved": "3.2.2",
+        "contentHash": "dmju5W0UYC3QP/UJM0juKAZkH0HSDMp0gH91A0+mT9M0kgyM2Jm67hUZPl/WRQLq8Lijjqmdk8kyAViWFWM7dA=="
       },
       "NSubstitute": {
         "type": "Transitive",
@@ -213,11 +210,6 @@
           "System.Collections.Immutable": "8.0.0"
         }
       },
-      "System.Runtime.CompilerServices.Unsafe": {
-        "type": "Transitive",
-        "resolved": "4.7.1",
-        "contentHash": "zOHkQmzPCn5zm/BH+cxC1XbUS3P4Yoi3xzW7eRgVpDR2tPGSzyMZ17Ig1iRkfJuY0nhxkQQde8pgePNiA7z7TQ=="
-      },
       "Verify": {
         "type": "Transitive",
         "resolved": "30.4.0",
@@ -230,12 +222,12 @@
       },
       "Verify.NodaTime": {
         "type": "Transitive",
-        "resolved": "2.2.0",
-        "contentHash": "nNloO5x8EWIO+52UMsXv9SAdpf1ay9o+qDuojhwcugrQmN7cPuj5idyUbSEvTlPNFKcayL8mXTVVZ1dWxPQjcw==",
+        "resolved": "2.3.0",
+        "contentHash": "N3V33/billPl98Y7dl/76baI+ic/ztmmvpkun38TZLsxW/6bqlFyrFx61ZS/86WZah/3QTKnNSyl+ao4WrPhJw==",
         "dependencies": {
-          "Argon.NodaTime": "0.21.0",
-          "NodaTime": "3.1.12",
-          "Verify": "26.4.5"
+          "Argon.NodaTime": "0.30.1",
+          "NodaTime": "3.2.2",
+          "Verify": "30.4.0"
         }
       },
       "Verify.SystemJson": {
@@ -297,7 +289,7 @@
           "NSubstitute": "[5.3.0, )",
           "Shouldly": "[4.3.0, )",
           "Verify": "[30.4.0, )",
-          "Verify.NodaTime": "[2.2.0, )",
+          "Verify.NodaTime": "[2.3.0, )",
           "Verify.SystemJson": "[1.4.1, )"
         }
       }

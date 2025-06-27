@@ -6,7 +6,7 @@
         Id: Guid_1,
         FirstName: Foo0000,
         LastName: Bar0000,
-        DateOfBirth: LocalDate_1,
+        DateOfBirth: 2000-01-01,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -25,7 +25,7 @@
         Id: Guid_2,
         FirstName: Foo0001,
         LastName: Bar0001,
-        DateOfBirth: LocalDate_2,
+        DateOfBirth: 2000-01-02,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -44,7 +44,7 @@
         Id: Guid_3,
         FirstName: Foo0002,
         LastName: Bar0002,
-        DateOfBirth: LocalDate_3,
+        DateOfBirth: 2000-01-03,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -63,7 +63,7 @@
         Id: Guid_4,
         FirstName: Foo0003,
         LastName: Bar0003,
-        DateOfBirth: LocalDate_4,
+        DateOfBirth: 2000-01-04,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -82,7 +82,7 @@
         Id: Guid_5,
         FirstName: Foo0004,
         LastName: Bar0004,
-        DateOfBirth: LocalDate_5,
+        DateOfBirth: 2000-01-05,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -101,7 +101,7 @@
         Id: Guid_6,
         FirstName: Foo0005,
         LastName: Bar0005,
-        DateOfBirth: LocalDate_6,
+        DateOfBirth: 2000-01-06,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -120,7 +120,7 @@
         Id: Guid_7,
         FirstName: Foo0006,
         LastName: Bar0006,
-        DateOfBirth: LocalDate_7,
+        DateOfBirth: 2000-01-07,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -139,7 +139,7 @@
         Id: Guid_8,
         FirstName: Foo0007,
         LastName: Bar0007,
-        DateOfBirth: LocalDate_8,
+        DateOfBirth: 2000-01-08,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -158,7 +158,7 @@
         Id: Guid_9,
         FirstName: Foo0008,
         LastName: Bar0008,
-        DateOfBirth: LocalDate_9,
+        DateOfBirth: 2000-01-09,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,
@@ -177,7 +177,7 @@
         Id: Guid_10,
         FirstName: Foo0009,
         LastName: Bar0009,
-        DateOfBirth: LocalDate_10,
+        DateOfBirth: 2000-01-10,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,

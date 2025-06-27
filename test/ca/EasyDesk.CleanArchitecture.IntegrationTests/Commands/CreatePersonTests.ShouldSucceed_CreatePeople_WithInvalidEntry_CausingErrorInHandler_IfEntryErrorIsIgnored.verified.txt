@@ -3,7 +3,7 @@
     Id: Guid_1,
     FirstName: Mario,
     LastName: Facher,
-    DateOfBirth: LocalDate_1,
+    DateOfBirth: 1992-03-12,
     CreatedBy: test-admin,
     Residence: {
       StreetName: Calvin,
@@ -22,7 +22,7 @@
     Id: Guid_2,
     FirstName: Mario,
     LastName: Facher,
-    DateOfBirth: LocalDate_1,
+    DateOfBirth: 1992-03-12,
     CreatedBy: test-admin,
     Residence: {
       StreetName: Calvin,

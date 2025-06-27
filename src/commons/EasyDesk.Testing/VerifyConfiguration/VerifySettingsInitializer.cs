@@ -20,7 +20,8 @@ public static class VerifySettingsInitializer
         });
 
         VerifierSettings.DontIgnoreEmptyCollections();
-
+        VerifierSettings.DontScrubDateTimes();
         VerifyNodaTime.Initialize();
+        VerifyNodaTime.DontScrub();
     }
 }

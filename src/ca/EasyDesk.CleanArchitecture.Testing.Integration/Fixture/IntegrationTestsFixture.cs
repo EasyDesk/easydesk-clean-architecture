@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.Commons.Tasks;
+using EasyDesk.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
@@ -11,7 +12,7 @@ public abstract class IntegrationTestsFixture : IAsyncLifetime
         var configurer = new TestFixtureConfigurer();
 
         configurer.ContainerBuilder.RegisterInstance(this)
-            .As(GetType())
+            .AsParentsUpTo(leaf: GetType(), root: typeof(IntegrationTestsFixture))
             .SingleInstance();
 
         ConfigureFixture(configurer);

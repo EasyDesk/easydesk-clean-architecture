@@ -12,14 +12,7 @@ public abstract record AbstractValue<T, TSelf>
 
     protected AbstractValue(T value, bool validate)
     {
-        if (validate)
-        {
-            InnerValue = IValue<T>.Companion<TSelf>.Validate(value);
-        }
-        else
-        {
-            InnerValue = value;
-        }
+        InnerValue = validate ? IValue<T>.Companion<TSelf>.Validate(value) : value;
     }
 
     public sealed override string ToString() => StringRepresentation();

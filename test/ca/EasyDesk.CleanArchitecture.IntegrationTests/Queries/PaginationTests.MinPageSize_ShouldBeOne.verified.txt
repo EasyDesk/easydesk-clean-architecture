@@ -6,7 +6,7 @@
         Id: Guid_1,
         FirstName: Foo0000,
         LastName: Bar0000,
-        DateOfBirth: LocalDate_1,
+        DateOfBirth: 2000-01-01,
         CreatedBy: test-admin,
         Residence: {
           StreetName: some name idk,

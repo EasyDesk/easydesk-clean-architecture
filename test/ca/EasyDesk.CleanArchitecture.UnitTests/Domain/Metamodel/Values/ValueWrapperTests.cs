@@ -6,7 +6,7 @@ namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel.Values;
 
 public class ValueWrapperTests
 {
-    private const int _innerValue = 5;
+    private const int InnerValue = 5;
 
     private class TestException : Exception
     {
@@ -27,7 +27,7 @@ public class ValueWrapperTests
             .DependentRules(() => rules.Must(x => x != -1000 ? true : throw new TestException("This exception should almost never be thrown")));
     }
 
-    private readonly TestValueWrapper _sut = new(_innerValue);
+    private readonly TestValueWrapper _sut = new(InnerValue);
 
     [Fact]
     public void Validate_ShouldThrowException_WithWrongValue()
@@ -40,20 +40,20 @@ public class ValueWrapperTests
     [Fact]
     public void WrappedValue_ShouldBeAccessible()
     {
-        _sut.Value.ShouldBe(_innerValue);
+        _sut.Value.ShouldBe(InnerValue);
     }
 
     [Fact]
     public void Wrapper_ShouldBeUsedAsWrapped()
     {
-        (_sut * 2).ShouldBe(_innerValue * 2);
+        (_sut * 2).ShouldBe(InnerValue * 2);
     }
 
     [Fact]
     public void Wrapper_ShouldBeImplicitlyConvertibleToWrapped()
     {
         int value = _sut;
-        value.ShouldBe(_innerValue);
+        value.ShouldBe(InnerValue);
     }
 
     [Fact]

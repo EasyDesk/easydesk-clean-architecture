@@ -6,7 +6,7 @@
         Id: Guid_1,
         FirstName: Foo,
         LastName: Bar,
-        DateOfBirth: LocalDate_1,
+        DateOfBirth: 1996-02-02,
         CreatedBy: test-admin,
         Residence: {
           StreetName: Calvin,
@@ -25,7 +25,7 @@
         Id: Guid_2,
         FirstName: Baz,
         LastName: Qux,
-        DateOfBirth: LocalDate_1,
+        DateOfBirth: 1996-02-02,
         CreatedBy: test-admin,
         Residence: {
           StreetName: Calvin,
@@ -44,7 +44,7 @@
         Id: Guid_3,
         FirstName: Asd,
         LastName: Qwerty,
-        DateOfBirth: LocalDate_2,
+        DateOfBirth: 1997-11-11,
         CreatedBy: test-admin,
         Residence: {
           StreetName: Calvin,
