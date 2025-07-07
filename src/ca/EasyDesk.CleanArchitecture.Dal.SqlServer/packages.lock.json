@@ -68,9 +68,9 @@
       },
       "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": {
         "type": "Direct",
-        "requested": "[9.1.0, )",
-        "resolved": "9.1.0",
-        "contentHash": "wU+pEgMTtMkK0cbykn2Y/7cXgAqs7Ozu/RzgulRlsUBApEFe0fAN4HN89qecE+OabrygRA2Yd40MfX90QWa3lA==",
+        "requested": "[9.1.1, )",
+        "resolved": "9.1.1",
+        "contentHash": "AHYL0w/HWA1bW+k4QNNFbOOmVeL+nzKC5RdGUGFKy3tz9Y4/DZYfH2KHIommouE9qDgFt8Mmjk/MUf9hIp6eBA==",
         "dependencies": {
           "JetBrains.Annotations": "2024.3.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.0",
