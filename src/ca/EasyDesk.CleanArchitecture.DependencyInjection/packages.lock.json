@@ -48,9 +48,9 @@
       },
       "System.CommandLine": {
         "type": "Direct",
-        "requested": "[2.0.0-beta4.22272.1, )",
-        "resolved": "2.0.0-beta4.22272.1",
-        "contentHash": "1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg=="
+        "requested": "[2.0.0-beta5.25306.1, )",
+        "resolved": "2.0.0-beta5.25306.1",
+        "contentHash": "ce0wuowuh13Cd7GXqLCq77/YWlxQMxrVCMIO/2/QUP6CdP/JWnlYSN/N3/55wwGsUwa9CvPuT8ddjgyypUr5ag=="
       },
       "Autofac": {
         "type": "Transitive",
@@ -67,8 +67,8 @@
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",
-        "resolved": "9.0.6",
-        "contentHash": "0Zn6nR/6g+90MxskZyOOMPQvnPnrrGu6bytPwkV+azDcTtCSuQ1+GJUrg8Klmnrjk1i6zMpw2lXijl+tw7Q3kA=="
+        "resolved": "9.0.7",
+        "contentHash": "iPK1FxbGFr2Xb+4Y+dTYI8Gupu9pOi8I3JPuPsrogUmEhe2hzZ9LpCmolMEBhVDo2ikcSr7G5zYiwaapHSQTew=="
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
@@ -88,7 +88,7 @@
         "dependencies": {
           "Autofac": "[8.3.0, )",
           "EasyDesk.Commons": "[1.0.0, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.6, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[9.0.7, )"
         }
       }
     }

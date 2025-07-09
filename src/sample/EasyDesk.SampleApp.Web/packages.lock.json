@@ -194,8 +194,8 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "9.0.6",
-        "contentHash": "nH1mrzr77pk+n1E5+A/0KlzkNhqy3LS3gUGEjJf0PQE6PZAc3pr8rLwUATcaJMr/12qsxHT+kcvRZMxc4bxFpA==",
+        "resolved": "9.0.7",
+        "contentHash": "lloN3XvIgXmdocfghzfszOHJb45OYR3fgOg/h536o+zNB2SmP3JrqeOieCBZ7sipgGcgbxP0boA+loVhdsJxWg==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.0.1"
         }
@@ -1335,7 +1335,7 @@
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[9.0.6, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[9.0.7, )",
           "Rebus": "[8.8.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[5.1.0, )",
           "Rebus.ServiceProvider": "[10.3.0, )",
