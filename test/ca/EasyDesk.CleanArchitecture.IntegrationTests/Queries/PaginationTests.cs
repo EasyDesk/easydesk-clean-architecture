@@ -47,7 +47,7 @@ public class PaginationTests : SampleAppIntegrationTest
 
     private HttpSingleRequestExecutor<IEnumerable<PersonDto>> GetPeople(int pageSize) => Session.Http
         .Get<IEnumerable<PersonDto>>(PersonRoutes.GetPeople)
-        .SetPageSize(pageSize);
+        .With(x => x.PageSize(pageSize));
 
     [Fact]
     public async Task DefaultPageSize_ShouldBeConfigurable()
@@ -88,7 +88,7 @@ public class PaginationTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetPeople()
-            .SetPageSize(1)
+            .With(x => x.PageSize(1))
             .Send()
             .Verify();
     }
@@ -98,8 +98,9 @@ public class PaginationTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetPeople()
-            .SetPageIndex(3)
-            .SetPageSize(5)
+            .With(x => x
+                .PageIndex(3)
+                .PageSize(5))
             .Send()
             .Verify();
     }
@@ -109,8 +110,9 @@ public class PaginationTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetPeople()
-            .SetPageIndex(int.MaxValue)
-            .SetPageSize(int.MaxValue)
+            .With(x => x
+                .PageIndex(int.MaxValue)
+                .PageSize(int.MaxValue))
             .Send()
             .Verify();
     }
@@ -120,8 +122,9 @@ public class PaginationTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetPeople()
-            .SetPageIndex(int.MinValue)
-            .SetPageSize(int.MinValue)
+            .With(x => x
+                .PageIndex(int.MinValue)
+                .PageSize(int.MinValue))
             .Send()
             .Verify();
     }
@@ -131,8 +134,9 @@ public class PaginationTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetPeople()
-            .SetPageSize("foo")
-            .SetPageIndex("bar")
+            .With(x => x
+                .PageSize("foo")
+                .PageIndex("bar"))
             .SinglePage()
             .Verify();
     }

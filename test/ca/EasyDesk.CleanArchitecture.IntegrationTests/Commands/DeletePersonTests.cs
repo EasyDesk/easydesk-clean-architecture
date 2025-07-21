@@ -141,7 +141,7 @@ public class DeletePersonTests : SampleAppIntegrationTest
         var person = await CreateTestPerson();
 
         await DeletePerson(person.Id)
-            .AuthenticateAs(TestAgents.OtherUser)
+            .With(x => x.AuthenticateAs(TestAgents.OtherUser))
             .Send()
             .Verify();
     }

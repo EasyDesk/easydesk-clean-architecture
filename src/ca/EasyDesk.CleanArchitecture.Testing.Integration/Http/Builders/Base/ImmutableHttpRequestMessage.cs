@@ -1,6 +1,4 @@
-﻿using static EasyDesk.Commons.Collections.ImmutableCollections;
-
-namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
+﻿namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
 public record ImmutableHttpRequestMessage(
     HttpMethod Method,
@@ -14,14 +12,14 @@ public record ImmutableHttpRequestMessage(
     }
 
     public ImmutableHttpRequestMessage(HttpMethod method, Uri requestUri)
-        : this(method, requestUri, new(Map<string, IEnumerable<string>>()), new())
+        : this(method, requestUri, ImmutableHttpHeaders.Empty, new())
     {
     }
 
     public static async Task<ImmutableHttpRequestMessage> From(HttpRequestMessage request) => new(
         request.Method,
         request.RequestUri ?? throw new InvalidOperationException("Request URI is missing."),
-        new(request.Headers.ToFixedMap()),
+        ImmutableHttpHeaders.FromHttpHeaders(request.Headers),
         await ImmutableHttpContent.From(request.Content));
 
     public HttpRequestMessage ToHttpRequestMessage()
@@ -30,7 +28,7 @@ public record ImmutableHttpRequestMessage(
         {
             Content = Content?.ToHttpContent(),
         };
-        foreach (var (headerKey, headerValue) in Headers.Dictionary)
+        foreach (var (headerKey, headerValue) in Headers.Map)
         {
             request.Headers.Add(headerKey, headerValue);
         }

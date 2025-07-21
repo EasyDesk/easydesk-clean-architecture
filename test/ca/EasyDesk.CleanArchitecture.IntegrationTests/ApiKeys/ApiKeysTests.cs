@@ -74,7 +74,7 @@ public class ApiKeysTests : SampleAppIntegrationTest
 
         var result = await Session.Http
             .TestApiKey()
-            .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, TestApiKey)
+            .With(x => x.Query(ApiKeyOptions.ApiKeyDefaultQueryParameter, TestApiKey))
             .Send()
             .AsData();
 
@@ -91,7 +91,7 @@ public class ApiKeysTests : SampleAppIntegrationTest
 
         var result = await Session.Http
             .TestApiKey()
-            .Headers(h => h.Add(HeaderNames.Authorization, $"{ApiKeyOptions.ApiKeyDefaultScheme} {TestApiKey}"))
+            .With(x => x.Header(HeaderNames.Authorization, $"{ApiKeyOptions.ApiKeyDefaultScheme} {TestApiKey}"))
             .Send()
             .AsData();
 
@@ -108,7 +108,7 @@ public class ApiKeysTests : SampleAppIntegrationTest
 
         await Session.Http
             .TestApiKey()
-            .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, "some_invalid_api_key")
+            .With(x => x.Query(ApiKeyOptions.ApiKeyDefaultQueryParameter, "some_invalid_api_key"))
             .Send()
             .Verify();
     }
@@ -128,7 +128,7 @@ public class ApiKeysTests : SampleAppIntegrationTest
 
         await Session.Http
             .TestApiKey()
-            .WithQuery(ApiKeyOptions.ApiKeyDefaultQueryParameter, TestApiKey)
+            .With(x => x.Query(ApiKeyOptions.ApiKeyDefaultQueryParameter, TestApiKey))
             .Send()
             .Verify();
     }

@@ -24,8 +24,9 @@ public class CancellationTests : SampleAppIntegrationTest
         {
             await Session.Http
                 .Post<Nothing, Nothing>(CancellationRoutes.CancellableRequest, Nothing.Value)
-                .WithQuery("waitTime", waitTime.ToString())
-                .WithTimeout(timeout)
+                .With(x => x
+                    .Query("waitTime", waitTime.ToString())
+                    .Timeout(timeout))
                 .Send()
                 .EnsureSuccess();
         });
@@ -42,8 +43,9 @@ public class CancellationTests : SampleAppIntegrationTest
 
         await Session.Http
             .Post<Nothing, Nothing>(CancellationRoutes.CancellableRequest, Nothing.Value)
-            .WithQuery("waitTime", waitTime.ToString())
-            .WithTimeout(timeout)
+            .With(x => x
+                .Query("waitTime", waitTime.ToString())
+                .Timeout(timeout))
             .Send()
             .Verify();
 

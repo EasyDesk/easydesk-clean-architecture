@@ -101,7 +101,7 @@ public class AuditingTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetAudits()
-            .WithQuery("identity", TestAgents.Admin.MainIdentity().Id)
+            .With(x => x.Query("identity", TestAgents.Admin.MainIdentity().Id))
             .Send()
             .Verify();
     }
@@ -116,7 +116,7 @@ public class AuditingTests : SampleAppIntegrationTest
 
         Task<IEnumerable<AuditRecordDto>> RunQuery(bool success) => Session.Http
             .GetAudits()
-            .WithQuery("success", success.ToString())
+            .With(x => x.Query("success", success.ToString()))
             .Send()
             .AsVerifiableEnumerable();
 
@@ -132,7 +132,7 @@ public class AuditingTests : SampleAppIntegrationTest
     {
         Task<IEnumerable<AuditRecordDto>> RunQuery(bool anonymous) => Session.Http
             .GetAudits()
-            .WithQuery("anonymous", anonymous.ToString())
+            .With(x => x.Query("anonymous", anonymous.ToString()))
             .Send()
             .AsVerifiableEnumerable();
 
@@ -148,7 +148,7 @@ public class AuditingTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetAudits()
-            .WithQuery("name", nameof(CreatePerson))
+            .With(x => x.Query("name", nameof(CreatePerson)))
             .Send()
             .Verify();
     }
@@ -158,7 +158,7 @@ public class AuditingTests : SampleAppIntegrationTest
     {
         await Session.Http
             .GetAudits()
-            .WithQuery("type", nameof(AuditRecordType.CommandRequest))
+            .With(x => x.Query("type", nameof(AuditRecordType.CommandRequest)))
             .Send()
             .Verify();
     }
@@ -184,8 +184,8 @@ public class AuditingTests : SampleAppIntegrationTest
 
         await Session.Http
             .GetAudits()
-            .WithQuery("from", from.ToString())
-            .WithQuery("to", to.ToString())
+            .With(x => x.Query("from", from.ToString()))
+            .With(x => x.Query("to", to.ToString()))
             .Send()
             .Verify();
     }

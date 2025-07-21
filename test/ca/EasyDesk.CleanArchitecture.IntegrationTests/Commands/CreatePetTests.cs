@@ -160,7 +160,7 @@ public class CreatePetTests : SampleAppIntegrationTest
 
         await Session.Http
             .CreatePet(person.Id, new(Nickname))
-            .AuthenticateAs(TestAgents.OtherUser)
+            .With(x => x.AuthenticateAs(TestAgents.OtherUser))
             .Send()
             .Verify();
     }
@@ -280,7 +280,7 @@ public class CreatePetTests : SampleAppIntegrationTest
 
         await Session.Http
             .CreatePetsFromCsv(person.Id, GenerateCsv(20).Replace("Nickname", "Nick;Name"))
-            .WithQuery("greedy", true.ToString())
+            .With(x => x.Query("greedy", true.ToString()))
             .Send(timeout)
             .Verify();
     }

@@ -153,7 +153,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
             .AsData();
 
         await GetPerson(person.Id)
-            .Tenant(otherTenant)
+            .With(x => x.Tenant(otherTenant))
             .Send()
             .Verify();
     }
@@ -168,7 +168,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
             .AsData();
 
         await GetPerson(person.Id)
-            .Headers(h => h.Replace(CommonTenantReaders.TenantIdHttpHeader, otherTenant))
+            .With(h => h.Header(CommonTenantReaders.TenantIdHttpHeader, otherTenant))
             .Send()
             .Verify();
     }
@@ -183,7 +183,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
             .AsData();
 
         await GetPerson(person.Id)
-            .Tenant(otherTenant)
+            .With(x => x.Tenant(otherTenant))
             .Send()
             .Verify();
     }
@@ -192,7 +192,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
     public async Task ShouldFailIfNoTenantIsSpecified()
     {
         await CreatePerson()
-            .NoTenant()
+            .With(x => x.NoTenant())
             .Send()
             .Verify();
     }
@@ -201,7 +201,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
     public async Task ShouldFailIfAnonymous()
     {
         await CreatePerson()
-            .NoAuthentication()
+            .With(x => x.NoAuthentication())
             .Send()
             .Verify();
     }
@@ -297,7 +297,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
     public async Task ShouldFailIfUnauthorized()
     {
         await CreatePerson()
-            .AuthenticateAs(TestAgents.OtherUser)
+            .With(x => x.AuthenticateAs(TestAgents.OtherUser))
             .Send()
             .Verify();
     }

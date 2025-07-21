@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Versioning;
-using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
@@ -11,33 +10,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
-public abstract class HttpRequestBuilder
-{
-    public abstract HttpRequestBuilder Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders);
-
-    public abstract HttpRequestBuilder WithApiVersion(ApiVersion version);
-
-    public abstract HttpRequestBuilder Tenant(TenantId tenantId);
-
-    public abstract HttpRequestBuilder NoTenant();
-
-    public abstract HttpRequestBuilder AuthenticateAs(Agent agent);
-
-    public abstract HttpRequestBuilder NoAuthentication();
-
-    public abstract HttpRequestBuilder WithContent(ImmutableHttpContent content);
-
-    public abstract HttpRequestBuilder WithQuery(string key, string value);
-
-    public abstract HttpRequestBuilder WithQueryValues(string key, IEnumerable<string> values);
-
-    public abstract HttpRequestBuilder WithoutQuery(string key);
-
-    public abstract HttpRequestBuilder WithTimeout(Duration timeout);
-}
-
-public class HttpRequestBuilder<B> : HttpRequestBuilder
-    where B : HttpRequestBuilder<B>
+public class HttpRequestBuilder
 {
     private static readonly Duration _defaultTimeout = Duration.FromSeconds(30);
 
@@ -45,7 +18,6 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
     private readonly HttpMethod _method;
     private readonly ITestHttpAuthentication _testHttpAuthentication;
     private readonly List<Func<ImmutableHttpRequestMessage, ImmutableHttpRequestMessage>> _configureRequest = [];
-    private readonly Dictionary<string, StringValues> _queryParameters = [];
 
     public HttpRequestBuilder(
         string endpoint,
@@ -57,60 +29,59 @@ public class HttpRequestBuilder<B> : HttpRequestBuilder
         _testHttpAuthentication = testHttpAuthentication;
     }
 
-    protected IFixedMap<string, IFixedList<string>> Query =>
-        _queryParameters.ToFixedMap(pair => pair.Key, pair => pair.Value.Select(x => x!).ToFixedList());
+    public ImmutableHttpQueryParameters QueryParameters { get; private set; } = ImmutableHttpQueryParameters.Empty;
 
-    protected Duration Timeout { get; private set; } = _defaultTimeout;
+    public Duration RequestTimeout { get; private set; } = _defaultTimeout;
 
-    public override B WithApiVersion(ApiVersion version) =>
+    public HttpRequestBuilder WithApiVersion(ApiVersion version) =>
         Headers(h => h.Replace(RestApiVersioning.VersionHeader, version.ToString()));
 
-    public override B Tenant(TenantId tenantId) =>
+    public HttpRequestBuilder Tenant(TenantId tenantId) =>
         Headers(h => h.Replace(CommonTenantReaders.TenantIdHttpHeader, tenantId));
 
-    public override B NoTenant() =>
+    public HttpRequestBuilder NoTenant() =>
         Headers(h => h.Remove(CommonTenantReaders.TenantIdHttpHeader));
 
-    public override B Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders) =>
+    public HttpRequestBuilder Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders) =>
         ConfigureRequest(r => r with { Headers = configureHeaders(r.Headers) });
 
-    public override B AuthenticateAs(Agent agent) =>
+    public HttpRequestBuilder Header(string header, params IFixedList<string> value) =>
+        Headers(h => h.Replace(header, value));
+
+    public HttpRequestBuilder AuthenticateAs(Agent agent) =>
         ConfigureRequest(r => _testHttpAuthentication.ConfigureAuthentication(r, agent));
 
-    public override B NoAuthentication() => ConfigureRequest(_testHttpAuthentication.RemoveAuthentication);
+    public HttpRequestBuilder NoAuthentication() => ConfigureRequest(_testHttpAuthentication.RemoveAuthentication);
 
-    public override B WithContent(ImmutableHttpContent? content) => ConfigureRequest(r => r with { Content = content });
+    public HttpRequestBuilder Content(ImmutableHttpContent? content) => ConfigureRequest(r => r with { Content = content });
 
-    public override B WithQuery(string key, string value) =>
-        ConfigureQuery(q => q[key] = value);
+    public HttpRequestBuilder Query(Func<ImmutableHttpQueryParameters, ImmutableHttpQueryParameters> configure)
+    {
+        QueryParameters = configure(QueryParameters);
+        return this;
+    }
 
-    public override B WithQueryValues(string key, IEnumerable<string> values) =>
-        ConfigureQuery(q => q[key] = values.ToArray());
+    public HttpRequestBuilder Query(string key, params IFixedList<string> value) =>
+        Query(x => x.Replace(key, value));
 
-    public override B WithoutQuery(string key) =>
-        ConfigureQuery(q => q.Remove(key));
-
-    private B ConfigureRequest(Func<ImmutableHttpRequestMessage, ImmutableHttpRequestMessage> configure)
+    private HttpRequestBuilder ConfigureRequest(Func<ImmutableHttpRequestMessage, ImmutableHttpRequestMessage> configure)
     {
         _configureRequest.Add(configure);
-        return (B)this;
+        return this;
     }
 
-    private B ConfigureQuery(Action<Dictionary<string, StringValues>> configure)
+    public HttpRequestBuilder Timeout(Duration timeout)
     {
-        configure(_queryParameters);
-        return (B)this;
+        RequestTimeout = timeout;
+        return this;
     }
 
-    public override B WithTimeout(Duration timeout)
+    public ImmutableHttpRequestMessage CreateRequest()
     {
-        Timeout = timeout;
-        return (B)this;
-    }
+        var queryString = QueryParameters.Map
+            .Select(x => new KeyValuePair<string, StringValues>(x.Key, new([.. x.Value])));
 
-    protected ImmutableHttpRequestMessage CreateRequest()
-    {
-        var uri = QueryHelpers.AddQueryString(_endpoint, _queryParameters);
+        var uri = QueryHelpers.AddQueryString(_endpoint, queryString);
         var request = new ImmutableHttpRequestMessage(_method, uri);
         foreach (var f in _configureRequest)
         {

@@ -21,17 +21,17 @@ public record class ImmutableHttpContent(
     }
 
     public ImmutableHttpContent(ImmutableArray<byte> bytes)
-        : this(bytes, new ImmutableHttpHeaders())
+        : this(bytes, ImmutableHttpHeaders.Empty)
     {
     }
 
     public ImmutableHttpContent(ImmutableArray<byte> bytes, string mediaType)
-        : this(bytes, new ImmutableHttpHeaders().Add(HeaderNames.ContentType, mediaType))
+        : this(bytes, ImmutableHttpHeaders.Empty.Add(HeaderNames.ContentType, mediaType))
     {
     }
 
     public ImmutableHttpContent(ImmutableArray<byte> bytes, Encoding encoding, string mediaType)
-        : this(bytes, new ImmutableHttpHeaders().Add(HeaderNames.ContentType, mediaType).Add(HeaderNames.ContentEncoding, encoding.WebName))
+        : this(bytes, ImmutableHttpHeaders.Empty.Add(HeaderNames.ContentType, mediaType).Add(HeaderNames.ContentEncoding, encoding.WebName))
     {
     }
 
@@ -40,12 +40,12 @@ public record class ImmutableHttpContent(
     {
     }
 
-    public Option<MediaTypeHeaderValue> MediaType => ContentHeaders.Dictionary
+    public Option<MediaTypeHeaderValue> MediaType => ContentHeaders.Map
         .Get(HeaderNames.ContentType)
         .FlatMap(e => e.FirstOption())
         .Map(MediaTypeHeaderValue.Parse);
 
-    public Option<Encoding> TextEncoding => ContentHeaders.Dictionary
+    public Option<Encoding> TextEncoding => ContentHeaders.Map
         .Get(HeaderNames.ContentEncoding)
         .FlatMap(e => e.FirstOption())
         .Or(MediaType
@@ -96,7 +96,7 @@ public record class ImmutableHttpContent(
                 some: m => new StringContent(e.GetString([.. Bytes]), e, m),
                 none: () => new StringContent(e.GetString([.. Bytes]), e)),
             none: () => new ByteArrayContent([.. Bytes]));
-        foreach (var (key, value) in ContentHeaders.Dictionary)
+        foreach (var (key, value) in ContentHeaders.Map)
         {
             if (!content.Headers.Contains(key))
             {
@@ -115,7 +115,6 @@ public record class ImmutableHttpContent(
                 | ImmutableArray<byte>.Empty,
             ContentHeaders: content
                 .AsOption()
-                .Map(c => c.Headers.ToFixedMap())
-                .Map(d => new ImmutableHttpHeaders(d))
-                .OrElseGet(() => new()));
+                .Map(c => ImmutableHttpHeaders.FromHttpHeaders(c.Headers))
+                .OrElseGet(() => ImmutableHttpHeaders.Empty));
 }

@@ -27,12 +27,14 @@ public static class PersonEndpoints
 
     public static HttpSingleRequestExecutor<Option<string>> GetOptionInQuery(this HttpTestHelper http, Option<string> parameter)
     {
-        var result = http.Get<Option<string>>(TestController.TestOptionInQuery);
-        if (parameter.IsPresent)
-        {
-            return result.WithQuery("value", parameter.Value);
-        }
-        return result.WithoutQuery("value");
+        return http.Get<Option<string>>(TestController.TestOptionInQuery)
+            .With(x =>
+            {
+                if (parameter.IsPresent)
+                {
+                    x.Query("value", parameter.Value);
+                }
+            });
     }
 
     public static HttpSingleRequestExecutor<IEnumerable<PersonDto>> CreatePeople(this HttpTestHelper http, IEnumerable<CreatePersonBodyDto> people) =>

@@ -16,12 +16,10 @@ public sealed class HttpPaginatedRequestExecutor<T> :
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public HttpPaginatedRequestExecutor(
-        string endpoint,
-        HttpMethod method,
+        HttpRequestBuilder httpRequestBuilder,
         HttpClient httpClient,
-        JsonSerializerOptions jsonSerializerOptions,
-        ITestHttpAuthentication testHttpAuthentication)
-        : base(endpoint, method, testHttpAuthentication)
+        JsonSerializerOptions jsonSerializerOptions)
+        : base(httpRequestBuilder)
     {
         _httpClient = httpClient;
         _jsonSerializerOptions = jsonSerializerOptions;
@@ -48,36 +46,39 @@ public sealed class HttpPaginatedRequestExecutor<T> :
             var pageIndex = paginationMetadata.PageIndex;
             hasNextPage = count >= pageSize;
             yield return page;
-            this.SetPageIndex(pageIndex + 1);
+            HttpRequestBuilder.PageIndex(pageIndex + 1);
         }
         while (hasNextPage);
-        initialPageOption.Match(some: i => this.SetPageIndex(i), none: () => this.RemovePageIndex());
+        initialPageOption.Match(
+            some: HttpRequestBuilder.PageIndex,
+            none: HttpRequestBuilder.RemovePageIndex);
     }
 
     public HttpResponseWrapper<T, PaginationMetaDto> SinglePage(int? pageIndex = null, Duration? timeout = null)
     {
-        pageIndex.AsOption().IfPresent(i => this.SetPageIndex(i));
-        var actualTimeout = timeout ?? Timeout;
+        pageIndex.AsOption().IfPresent(i => HttpRequestBuilder.PageIndex(i));
+        var actualTimeout = timeout ?? HttpRequestBuilder.RequestTimeout;
         using var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
         return GetSinglePage(cts.Token);
     }
 
     private HttpResponseWrapper<T, PaginationMetaDto> GetSinglePage(CancellationToken timeoutToken)
     {
-        var request = CreateRequest();
-        var page = WrapSinglePage(async () =>
+        var request = HttpRequestBuilder.CreateRequest();
+        return WrapSinglePage(async () =>
         {
             using var req = request.ToHttpRequestMessage();
             using var res = await _httpClient.SendAsync(req, timeoutToken);
             return await ImmutableHttpResponseMessage.From(res);
         });
-        return page;
     }
 
     protected override HttpPageSequenceWrapper<T> Wrap(AsyncFunc<IEnumerable<HttpResponseWrapper<T, PaginationMetaDto>>> request) =>
         new(request);
 
-    private Option<int> PageIndex => Query.Get(nameof(PaginationDto.PageIndex)).FlatMap(p => TryOption<string, int>(int.TryParse, p[0]));
+    private Option<int> PageIndex => HttpRequestBuilder.QueryParameters.Map
+        .Get(nameof(PaginationDto.PageIndex))
+        .FlatMap(p => TryOption<string, int>(int.TryParse, p[0]));
 }
 
 public static class HttpPaginatedRequestExecutorExtensions

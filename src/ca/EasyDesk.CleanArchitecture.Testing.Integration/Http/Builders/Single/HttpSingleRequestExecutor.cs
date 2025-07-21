@@ -12,12 +12,10 @@ public class HttpSingleRequestExecutor<T>
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
     public HttpSingleRequestExecutor(
-        string endpoint,
-        HttpMethod method,
-        ITestHttpAuthentication testHttpAuthentication,
+        HttpRequestBuilder httpRequestBuilder,
         HttpClient httpClient,
         JsonSerializerOptions jsonSerializerOptions)
-        : base(endpoint, method, testHttpAuthentication)
+        : base(httpRequestBuilder)
     {
         _httpClient = httpClient;
         _jsonSerializerOptions = jsonSerializerOptions;
@@ -31,7 +29,7 @@ public class HttpSingleRequestExecutor<T>
 
     protected override async Task<ImmutableHttpResponseMessage> MakeRequest(CancellationToken timeoutToken)
     {
-        using var req = CreateRequest().ToHttpRequestMessage();
+        using var req = HttpRequestBuilder.CreateRequest().ToHttpRequestMessage();
         using var res = await _httpClient.SendAsync(req, timeoutToken);
         return await ImmutableHttpResponseMessage.From(res);
     }

@@ -51,18 +51,18 @@ public class HttpTestHelper
 
     public HttpSingleRequestExecutor<R> Request<R>(string requestUri, HttpMethod method, ImmutableHttpContent? content = null)
     {
-        var builder = new HttpSingleRequestExecutor<R>(requestUri, method, _httpAuthentication, _httpClient, _jsonOptions)
-            .WithContent(content);
-        ConfigureRequest(builder);
-        return builder;
+        var builder = new HttpRequestBuilder(requestUri, method, _httpAuthentication)
+            .Content(content)
+            .Also(ConfigureRequest);
+        return new(builder, _httpClient, _jsonOptions);
     }
 
     private HttpPaginatedRequestExecutor<R> RequestPaginated<R>(string requestUri, HttpMethod method, ImmutableHttpContent? content = null)
     {
-        var builder = new HttpPaginatedRequestExecutor<R>(requestUri, method, _httpClient, _jsonOptions, _httpAuthentication)
-            .WithContent(content);
-        ConfigureRequest(builder);
-        return builder;
+        var builder = new HttpRequestBuilder(requestUri, method, _httpAuthentication)
+            .Content(content)
+            .Also(ConfigureRequest);
+        return new(builder, _httpClient, _jsonOptions);
     }
 
     private void ConfigureRequest(HttpRequestBuilder request)

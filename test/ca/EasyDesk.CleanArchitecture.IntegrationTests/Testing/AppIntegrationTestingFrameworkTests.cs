@@ -59,7 +59,7 @@ internal class AppIntegrationTestingFrameworkTests : SampleAppIntegrationTest
 
         await Session.Http
             .GetPeople()
-            .SetPageSize(PageSize)
+            .With(x => x.PageSize(PageSize))
             .PollUntil(people => people.Count() == Count, Duration.FromMilliseconds(20), Duration.FromSeconds(15))
             .EnsureSuccess();
         await Session.PollServiceUntil<SampleAppContext>(

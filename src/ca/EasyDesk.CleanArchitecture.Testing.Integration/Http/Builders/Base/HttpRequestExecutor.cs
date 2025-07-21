@@ -4,26 +4,31 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
 
-public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
+public abstract class HttpRequestExecutor<W, I, E>
     where E : HttpRequestExecutor<W, I, E>
 {
     private static readonly Duration _defaultPollingInterval = Duration.FromMilliseconds(200);
 
-    protected HttpRequestExecutor(
-        string endpoint,
-        HttpMethod method,
-        ITestHttpAuthentication testHttpAuthentication)
-        : base(endpoint, method, testHttpAuthentication)
+    protected HttpRequestExecutor(HttpRequestBuilder httpRequestBuilder)
     {
+        HttpRequestBuilder = httpRequestBuilder;
     }
+
+    protected HttpRequestBuilder HttpRequestBuilder { get; }
 
     protected abstract Task<I> MakeRequest(CancellationToken timeoutToken);
 
     protected abstract W Wrap(AsyncFunc<I> request);
 
+    public E With(Action<HttpRequestBuilder> configure)
+    {
+        configure(HttpRequestBuilder);
+        return (E)this;
+    }
+
     public W Send(Duration? timeout = null) => Wrap(async () =>
     {
-        var actualTimeout = timeout ?? Timeout;
+        var actualTimeout = timeout ?? HttpRequestBuilder.RequestTimeout;
         using var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
         return await MakeRequest(cts.Token);
     });
@@ -41,7 +46,7 @@ public abstract class HttpRequestExecutor<W, I, E> : HttpRequestBuilder<E>
         Duration? timeout = null) =>
         Wrap(async () =>
         {
-            var actualTimeout = timeout ?? Timeout;
+            var actualTimeout = timeout ?? HttpRequestBuilder.RequestTimeout;
             var actualInterval = interval ?? _defaultPollingInterval;
             var polling = Poll
                 .Async(token => MakeRequest(token))
