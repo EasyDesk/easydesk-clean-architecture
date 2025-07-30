@@ -1,4 +1,5 @@
 ﻿using Argon;
+using System.Globalization;
 
 namespace EasyDesk.Testing.VerifyConfiguration;
 
@@ -6,6 +7,10 @@ public static class VerifySettingsInitializer
 {
     public static void Initialize()
     {
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+        CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+        Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
         VerifySystemJson.Initialize();
         VerifierSettings.AddExtraSettings(settings =>
         {
