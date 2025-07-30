@@ -3,9 +3,9 @@ using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
 using EasyDesk.Commons.Options;
 
-namespace EasyDesk.CleanArchitecture.Web.Csv;
+namespace EasyDesk.CleanArchitecture.Web.Csv.Converters;
 
-public class CsvOptionConverter<T> : DefaultTypeConverter
+internal class CsvOptionConverter<T> : DefaultTypeConverter
 {
     private readonly ITypeConverter _wrappedTypeConverter;
 

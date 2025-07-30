@@ -1,9 +1,9 @@
 ﻿using CsvHelper.TypeConversion;
 using EasyDesk.Commons.Options;
 
-namespace EasyDesk.CleanArchitecture.Web.Csv;
+namespace EasyDesk.CleanArchitecture.Web.Csv.Converters;
 
-public class CsvOptionConverterFactory : ITypeConverterFactory
+internal class CsvOptionConverterFactory : ITypeConverterFactory
 {
     public bool CanCreate(Type type) =>
         type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Option<>);

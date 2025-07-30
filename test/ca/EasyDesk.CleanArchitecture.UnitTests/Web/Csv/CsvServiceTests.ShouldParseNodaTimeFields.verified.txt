@@ -1,0 +1,17 @@
+﻿[
+  {
+    AnnualDate: 01-01,
+    Duration: 0:00:00:00,
+    Instant: 1970-01-01T00:00:00Z,
+    LocalDateTime: 0001-01-01T00:00:00,
+    LocalDate: 0001-01-01,
+    LocalTime: 00:00:00,
+    Offset: +01,
+    OffsetDateTime: 0001-01-01T00:00:00Z,
+    OffsetDate: 0001-01-01Z,
+    OffsetTime: 00:00:00Z,
+    Period: P1D,
+    YearMonth: 0001 January,
+    ZonedDateTime: 0001-01-01T00:00:00Z UTC
+  }
+]

@@ -1,15 +1,19 @@
 ﻿using CsvHelper;
 using CsvHelper.Configuration;
 using CsvHelper.TypeConversion;
+using EasyDesk.CleanArchitecture.Web.Csv.Converters;
+using EasyDesk.CleanArchitecture.Web.Formatting;
 using EasyDesk.Commons.Results;
+using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Web.Csv;
 
 public class CsvService
 {
     private readonly CsvConfiguration _configuration;
+    private readonly IDateTimeZoneProvider _dateTimeZoneProvider;
 
-    public CsvService(CsvConfiguration configuration)
+    public CsvService(CsvConfiguration configuration, IDateTimeZoneProvider dateTimeZoneProvider)
     {
         _configuration = configuration with
         {
@@ -34,6 +38,7 @@ public class CsvService
                 throw new InvalidCsvLineException($"Field containing names '{string.Join("' or '", args.HeaderNames)}'{indexText}", message);
             },
         };
+        _dateTimeZoneProvider = dateTimeZoneProvider;
     }
 
     public IEnumerable<Result<T>> ParseCsv<T>(Stream content, Func<IReaderRow, T> converter, Action<CsvContext>? configureContext = null)
@@ -41,10 +46,21 @@ public class CsvService
         using var reader = new StreamReader(content);
         using var csv = new CsvReader(reader, _configuration);
 
+        csv.Context.TypeConverterCache.AddConverterFactory(new CsvOptionConverterFactory());
+        csv.Context.TypeConverterCache.AddConverter<AnnualDate>(new NodaTimeConverter<AnnualDate>(FormatDefaults.AnnualDate));
+        csv.Context.TypeConverterCache.AddConverter<Duration>(new NodaTimeConverter<Duration>(FormatDefaults.Duration));
+        csv.Context.TypeConverterCache.AddConverter<Instant>(new NodaTimeConverter<Instant>(FormatDefaults.Instant));
+        csv.Context.TypeConverterCache.AddConverter<LocalDateTime>(new NodaTimeConverter<LocalDateTime>(FormatDefaults.LocalDateTime));
+        csv.Context.TypeConverterCache.AddConverter<LocalDate>(new NodaTimeConverter<LocalDate>(FormatDefaults.LocalDate));
+        csv.Context.TypeConverterCache.AddConverter<LocalTime>(new NodaTimeConverter<LocalTime>(FormatDefaults.LocalTime));
+        csv.Context.TypeConverterCache.AddConverter<Offset>(new NodaTimeConverter<Offset>(FormatDefaults.Offset));
+        csv.Context.TypeConverterCache.AddConverter<OffsetDateTime>(new NodaTimeConverter<OffsetDateTime>(FormatDefaults.OffsetDateTime));
+        csv.Context.TypeConverterCache.AddConverter<OffsetDate>(new NodaTimeConverter<OffsetDate>(FormatDefaults.OffsetDate));
+        csv.Context.TypeConverterCache.AddConverter<OffsetTime>(new NodaTimeConverter<OffsetTime>(FormatDefaults.OffsetTime));
+        csv.Context.TypeConverterCache.AddConverter<Period>(new NodaTimeConverter<Period>(FormatDefaults.Period));
+        csv.Context.TypeConverterCache.AddConverter<YearMonth>(new NodaTimeConverter<YearMonth>(FormatDefaults.YearMonth));
+        csv.Context.TypeConverterCache.AddConverter<ZonedDateTime>(new NodaTimeConverter<ZonedDateTime>(FormatDefaults.ZonedDateTime.WithZoneProvider(_dateTimeZoneProvider)));
         configureContext?.Invoke(csv.Context);
-
-        // Bug of CsvHelper: see https://github.com/JoshClose/CsvHelper/issues/2153.
-        ////csv.Context.TypeConverterCache.AddConverterFactory(new CsvOptionConverterFactory());
 
         long lineIndex = 0;
         var result = Read(csv, lineIndex).FlatMap(more => more ? ReadHeader(csv, lineIndex) : false);

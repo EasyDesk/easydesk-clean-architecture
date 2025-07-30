@@ -1,14 +1,17 @@
 ﻿[
   {
     String: A,
-    Integer: 1
+    Integer: 1,
+    LocalTime: 10:00:00
   },
   {
     String: null,
-    Integer: 2
+    Integer: 2,
+    LocalTime: null
   },
   {
     String: C,
-    Integer: null
+    Integer: null,
+    LocalTime: null
   }
 ]
