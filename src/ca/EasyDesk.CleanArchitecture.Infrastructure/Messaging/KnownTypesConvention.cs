@@ -12,20 +12,11 @@ internal class KnownTypesConvention : IMessageTypeNameConvention, ITopicNameConv
 
     public KnownTypesConvention(IEnumerable<Type> knownTypes)
     {
-        _knownTypesByName = knownTypes.ToDictionary(ComputeTypeName);
+        _knownTypesByName = knownTypes.ToDictionary(t => t.GetTypeNameWithVersion());
         _knownNamesByType = _knownTypesByName.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
     }
 
-    private string ComputeTypeName(Type type)
-    {
-        return type
-            .GetApiVersionFromNamespace()
-            .Match(
-                some: v => $"{v}/{type.Name}",
-                none: () => type.Name);
-    }
-
-    public string GetTypeName(Type type) => _knownNamesByType.GetOption(type).OrElseGet(() => ComputeTypeName(type));
+    public string GetTypeName(Type type) => _knownNamesByType.GetOption(type).OrElseGet(() => type.GetTypeNameWithVersion());
 
     public Type? GetType(string name) => _knownTypesByName.GetOption(name).OrElseNull();
 

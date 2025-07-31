@@ -8,6 +8,7 @@ using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.DependencyInjection;
 using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Builder;
@@ -28,7 +29,7 @@ namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 
 public class OpenApiModule : AppModule
 {
-    public const string SingleVersionedDocKey = "main";
+    public const string SingleVersionedDocumentName = "main";
 
     private readonly OpenApiModuleOptions _options;
 
@@ -99,7 +100,7 @@ public class OpenApiModule : AppModule
     {
         module.ApiVersioningInfo!
             .SupportedVersions
-            .Select(VersionToDocumentKey)
+            .Select(VersionToDocumentName)
             .ForEach(version => options.SwaggerDoc(version, new OpenApiInfo
             {
                 Title = $"{app.Name} {version}",
@@ -125,11 +126,15 @@ public class OpenApiModule : AppModule
         });
     }
 
-    private static string VersionToDocumentKey(ApiVersion v) => v.ToString();
+    public static string VersionToDocumentName(ApiVersion v) => v.ToString();
+
+    public static Option<ApiVersion> DocumentNameToVersion(string documentName) => Some(documentName)
+        .Filter(d => d != SingleVersionedDocumentName)
+        .Map(d => ApiVersion.Parse(d).OrElseThrow(() => throw new InvalidOperationException("Unable to retrieve the Api version from the document name.")));
 
     private void SetupSingleVersionDoc(AppDescription app, SwaggerGenOptions options)
     {
-        options.SwaggerDoc(SingleVersionedDocKey, new OpenApiInfo
+        options.SwaggerDoc(SingleVersionedDocumentName, new OpenApiInfo
         {
             Title = app.Name,
         });
@@ -153,8 +158,8 @@ public class OpenApiModule : AppModule
         var basePathOption = new CommandLine.Option<string?>("--base-path", () => null, "Sets the basePath value in the OpenApi document");
         var existingDocumentNames = context.Resolve<IOptions<SwaggerGenOptions>>().Value.SwaggerGeneratorOptions.SwaggerDocs.Keys;
         var defaultDocumentKey = context.ResolveOption<ApiVersioningInfo>().Match(
-            some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentKey),
-            none: () => Some(SingleVersionedDocKey));
+            some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentName),
+            none: () => Some(SingleVersionedDocumentName));
         var documentNameOption = new CommandLine.Option<string>(
             "--document",
             result =>

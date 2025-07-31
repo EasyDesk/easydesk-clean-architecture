@@ -20,6 +20,15 @@ public static class ApiVersioningUtils
                 .FirstOption());
     }
 
+    public static string GetTypeNameWithVersion(this Type type)
+    {
+        return type
+            .GetApiVersionFromNamespace()
+            .Match(
+                some: v => $"{v}/{type.Name}",
+                none: () => type.Name);
+    }
+
     public static IFixedSet<ApiVersion> GetSupportedApiVersionsFromNamespaces(this IEnumerable<Type> types) =>
         types.SelectMany(t => t.GetApiVersionFromNamespace()).ToFixedSet();
 

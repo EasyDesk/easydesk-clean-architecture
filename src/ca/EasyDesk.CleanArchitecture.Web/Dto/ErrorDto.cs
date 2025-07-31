@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
+using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Strings;
@@ -8,9 +9,14 @@ namespace EasyDesk.CleanArchitecture.Web.Dto;
 
 public record ErrorDto
 {
+    public const string DomainErrorSchema = nameof(DomainError);
+    public const string InternalErrorSchema = nameof(InternalError);
+
     public required string Code { get; init; }
 
     public required string Detail { get; init; }
+
+    public required string Schema { get; init; }
 
     public required object Meta { get; init; }
 
@@ -26,18 +32,21 @@ public record ErrorDto
         {
             Code = GetErrorCodeFromApplicationErrorType(e.GetType()),
             Detail = e.GetDetail(),
+            Schema = GetErrorSchemaFromApplicationErrorType(e.GetType()),
             Meta = e,
         },
         DomainError => new()
         {
             Code = GetErrorCodeFromDomainErrorType(error.GetType()),
             Detail = ConvertPascalCaseToHumanReadable(error.GetType().Name),
+            Schema = DomainErrorSchema,
             Meta = error,
         },
         _ => new()
         {
             Code = "Internal",
             Detail = "Unknown internal error occurred",
+            Schema = InternalErrorSchema,
             Meta = Nothing.Value,
         },
     };
@@ -66,6 +75,9 @@ public record ErrorDto
 
     public static string GetErrorCodeFromApplicationErrorType(Type errorType) =>
         errorType.Name.RemoveSuffix("Dto").RemoveSuffix("Error");
+
+    public static string GetErrorSchemaFromApplicationErrorType(Type errorType) =>
+        errorType.GetTypeNameWithVersion();
 
     public static string GetErrorCodeFromDomainErrorType(Type domainErrorType) =>
         $"DomainError.{domainErrorType.Name}";
