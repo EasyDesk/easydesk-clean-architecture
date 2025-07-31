@@ -6,6 +6,7 @@
       {
         Code: TenantNotFound,
         Detail: The provided tenant doesn't exist,
+        Schema: TenantNotFoundError,
         Meta: {
           tenantId: {
             value: other-tenant

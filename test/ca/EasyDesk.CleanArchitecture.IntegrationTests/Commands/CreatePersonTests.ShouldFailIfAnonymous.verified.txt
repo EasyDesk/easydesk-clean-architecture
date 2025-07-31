@@ -6,6 +6,7 @@
       {
         Code: UnknownAgent,
         Detail: Missing authentication information on the given request,
+        Schema: UnknownAgentError,
         Meta: {}
       }
     ],

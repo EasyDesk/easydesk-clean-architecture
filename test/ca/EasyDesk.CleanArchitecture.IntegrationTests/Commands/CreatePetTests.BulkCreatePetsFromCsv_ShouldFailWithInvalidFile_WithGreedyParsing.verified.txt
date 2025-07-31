@@ -6,6 +6,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'petListCsv' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: petListCsv,
           errorCode: Csv.InvalidFormat,

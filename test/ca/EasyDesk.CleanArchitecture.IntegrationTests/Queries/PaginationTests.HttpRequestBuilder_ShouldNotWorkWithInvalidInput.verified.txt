@@ -6,6 +6,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'PageSize' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: PageSize,
           errorCode: InvalidValue,
@@ -16,6 +17,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'PageIndex' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: PageIndex,
           errorCode: InvalidValue,

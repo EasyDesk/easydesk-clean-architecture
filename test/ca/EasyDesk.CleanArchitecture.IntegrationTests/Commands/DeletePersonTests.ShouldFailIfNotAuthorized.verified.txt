@@ -6,6 +6,7 @@
       {
         Code: Forbidden,
         Detail: Missing permissions to access requested resources,
+        Schema: ForbiddenError,
         Meta: {
           reason: Not authorized
         }

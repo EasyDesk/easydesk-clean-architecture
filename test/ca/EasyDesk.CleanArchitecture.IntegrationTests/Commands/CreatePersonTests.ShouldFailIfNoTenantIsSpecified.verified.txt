@@ -6,6 +6,7 @@
       {
         Code: MissingTenant,
         Detail: Missing tenant information on the given request,
+        Schema: MissingTenantError,
         Meta: {}
       }
     ],

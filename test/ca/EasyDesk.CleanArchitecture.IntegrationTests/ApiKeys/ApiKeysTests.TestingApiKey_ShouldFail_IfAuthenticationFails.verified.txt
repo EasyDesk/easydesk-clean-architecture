@@ -6,6 +6,7 @@
       {
         Code: AuthenticationFailed,
         Detail: Authentication with scheme 'ApiKey' failed.,
+        Schema: AuthenticationFailedError,
         Meta: {
           scheme: ApiKey,
           message: The given API key is invalid.

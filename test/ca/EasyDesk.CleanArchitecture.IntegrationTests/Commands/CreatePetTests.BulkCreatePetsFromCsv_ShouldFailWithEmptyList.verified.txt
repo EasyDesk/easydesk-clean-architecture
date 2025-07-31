@@ -6,6 +6,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'Pets' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: Pets,
           errorCode: NotEmpty,

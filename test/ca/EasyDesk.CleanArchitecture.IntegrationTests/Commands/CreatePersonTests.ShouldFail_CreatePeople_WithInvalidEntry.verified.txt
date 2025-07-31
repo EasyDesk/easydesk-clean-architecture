@@ -6,6 +6,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'People[3].LastName' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: People[3].LastName,
           errorCode: NotEmptyOrWhitespace,
@@ -21,6 +22,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'People[3].FirstName' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: People[3].FirstName,
           errorCode: NotEmptyOrWhitespace,

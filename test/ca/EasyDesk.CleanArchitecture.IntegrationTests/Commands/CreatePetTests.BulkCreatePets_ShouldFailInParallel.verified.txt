@@ -17,6 +17,7 @@
         {
           Code: BulkConcurrency,
           Detail: Another bulk operation of type BulkCreatePets is already in progress.,
+          Schema: BulkConcurrencyError,
           Meta: {
             operationType: BulkCreatePets
           }

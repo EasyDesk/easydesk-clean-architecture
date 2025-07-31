@@ -6,6 +6,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'Residence.StreetType' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: Residence.StreetType,
           errorCode: NotEmpty,
@@ -20,6 +21,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'Residence.StreetNumber' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: Residence.StreetNumber,
           errorCode: MaximumLength,
@@ -37,6 +39,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'Residence.StreetName' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: Residence.StreetName,
           errorCode: MaximumLength,

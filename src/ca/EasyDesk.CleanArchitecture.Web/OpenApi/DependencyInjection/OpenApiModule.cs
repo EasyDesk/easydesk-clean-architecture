@@ -1,10 +1,12 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
+using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
@@ -54,7 +56,8 @@ public class OpenApiModule : AppModule
             SetupSwaggerDocs(app, options);
             SetupNodaTimeSupport(app, options);
             SetupMultitenancySupport(app, options);
-
+            var defaultSchemaIdSelector = options.SchemaGeneratorOptions.SchemaIdSelector;
+            options.CustomSchemaIds(t => t.IsAssignableTo<ApplicationError>() ? $"{ErrorDto.GetErrorCodeFromApplicationErrorType(t)}Meta" : defaultSchemaIdSelector(t));
             _options.ConfigureSwagger?.Invoke(options);
         });
         services.Configure<SwaggerUIOptions>(c => c.DocumentTitle = $"{app.Name} - OpenAPI");

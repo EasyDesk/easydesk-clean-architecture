@@ -6,6 +6,7 @@
       {
         Code: InvalidInput,
         Detail: Validation for property 'Residence.StreetName' failed,
+        Schema: InvalidInputError,
         Meta: {
           propertyName: Residence.StreetName,
           errorCode: NotEmpty,

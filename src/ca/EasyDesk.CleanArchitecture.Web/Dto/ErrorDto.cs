@@ -1,5 +1,4 @@
 ﻿using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
 using EasyDesk.Commons.Results;
 using EasyDesk.Commons.Strings;
@@ -77,7 +76,7 @@ public record ErrorDto
         errorType.Name.RemoveSuffix("Dto").RemoveSuffix("Error");
 
     public static string GetErrorSchemaFromApplicationErrorType(Type errorType) =>
-        errorType.GetTypeNameWithVersion();
+        errorType.Name;
 
     public static string GetErrorCodeFromDomainErrorType(Type domainErrorType) =>
         $"DomainError.{domainErrorType.Name}";

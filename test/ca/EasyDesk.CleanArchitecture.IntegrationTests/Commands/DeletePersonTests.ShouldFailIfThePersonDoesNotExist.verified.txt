@@ -6,6 +6,7 @@
       {
         Code: NotFound,
         Detail: Unable to find the requested resource,
+        Schema: NotFoundError,
         Meta: {}
       }
     ],

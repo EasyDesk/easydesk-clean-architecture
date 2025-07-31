@@ -6,6 +6,7 @@
       {
         Code: TestApplication,
         Detail: Unversioned test application error,
+        Schema: TestApplicationError,
         Meta: {
           content: Test domain error content
         }

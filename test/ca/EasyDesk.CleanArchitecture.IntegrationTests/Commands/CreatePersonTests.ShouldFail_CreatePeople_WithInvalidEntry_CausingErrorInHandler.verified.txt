@@ -6,6 +6,7 @@
       {
         Code: BirthDateUtcInTheFuture,
         Detail: The provided date is in the future in UTC.,
+        Schema: BirthDateUtcInTheFutureError,
         Meta: {
           date: 2022-11-20
         }

@@ -77,7 +77,7 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
                     }
                     properties[schemaDataProperty.Name].Enum = [new OpenApiString(e.Item1)];
                     return context.SchemaRepository.AddDefinition(
-                        schemaId: $"{e.Item1}Meta",
+                        schemaId: e.Item1,
                         schema: new()
                         {
                             Type = "object",
@@ -85,6 +85,13 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
                             Required = properties.Keys.ToHashSet(),
                             AdditionalPropertiesAllowed = false,
                             ReadOnly = true,
+                            Description = $"{nameof(ErrorDto)} schema generated from {e.Item2.GetTypeNameWithVersion()}.",
+                            Annotations = e.Item2.GetApiVersionFromNamespace().IsPresent(out var v)
+                            ? new Dictionary<string, object>
+                            {
+                                ["version"] = v.ToStringWithoutV(),
+                            }
+                            : [],
                         });
                 });
         schema.Discriminator = new()
