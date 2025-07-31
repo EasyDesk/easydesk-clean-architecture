@@ -116,6 +116,22 @@ public class CsvServiceTests
     }
 
     [Fact]
+    public async Task ShouldReturnError_WhenFailingToParseNodaTime()
+    {
+        var csv = """
+            LocalDate
+            10:00
+            """;
+        var parseResults = SafeParse(
+            csv,
+            row => new
+            {
+                LocalDate = row.GetField<Option<LocalDate>>("LocalDate"),
+            });
+        await Verify(parseResults.Select(r => r.Error));
+    }
+
+    [Fact]
     public async Task ShouldBeLazy()
     {
         var csv = """

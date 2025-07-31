@@ -1,0 +1,11 @@
+﻿[
+  {
+    Error: InvalidCsvLine,
+    Meta: {
+      LineIndex: 1,
+      Message: The value string does not match the required number from the format string "uuuu". Value being parsed: '^10:00'. (^ indicates error position.),
+      Field: 10:00,
+      DisplayMessage: Line 1: 10:00 The value string does not match the required number from the format string "uuuu". Value being parsed: '^10:00'. (^ indicates error position.)
+    }
+  }
+]
