@@ -13,20 +13,8 @@ public static class QueryableUtils
 {
     public static async Task<Option<T>> FirstOptionAsync<T>(this IQueryable<T> query)
     {
-        try
-        {
-            var result = await query.FirstAsync();
-            if (result is null)
-            {
-                return None;
-            }
-
-            return Some(result);
-        }
-        catch (InvalidOperationException)
-        {
-            return None;
-        }
+        var result = await query.Take(1).ToListAsync();
+        return result.Count > 0 ? Some(result[0]) : None;
     }
 
     public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T>? op)
