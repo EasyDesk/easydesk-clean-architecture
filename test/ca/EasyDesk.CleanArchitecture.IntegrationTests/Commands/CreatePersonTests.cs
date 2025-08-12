@@ -400,7 +400,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
                     FirstName = "Mario",
                     LastName = "Facher",
                     DateOfBirth = new(1992, 3, 12),
-                    Residence = _body.Residence,
+                    Residence = _body.Residence
                 }
             ])
             .Send()

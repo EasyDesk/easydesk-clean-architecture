@@ -43,7 +43,7 @@ public class SagasModule : AppModule
                 .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ISagaController<,>))
                 .Select(i => GetType()
                     .GetMethod(nameof(ConfigureSaga), BindingFlags.NonPublic | BindingFlags.Instance)!
-                    .MakeGenericMethod([.. i.GetGenericArguments(), c])))
+                    .MakeGenericMethod([.. i.GetGenericArguments(), c,])))
             .ForEach(m => m.Invoke(this, configureSagaArgs));
 
         builder.RegisterGeneric(typeof(SagaCoordinator<,>))

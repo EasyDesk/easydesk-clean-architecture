@@ -91,7 +91,7 @@ public partial class InitialSchema : Migration
                     name: "FK_AuditIdentityAttributes_AuditIdentities_AuditRecordId_Realm",
                     columns: x => new { x.AuditRecordId, x.Realm, },
                     principalTable: "AuditIdentities",
-                    principalColumns: ["AuditRecordId", "IdentityRealm"],
+                    principalColumns: ["AuditRecordId", "IdentityRealm",],
                     principalSchema: "audit",
                     onDelete: ReferentialAction.Cascade);
             });

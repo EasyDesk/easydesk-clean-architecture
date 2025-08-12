@@ -13,7 +13,7 @@ public record ImmutableHttpQueryParameters(
         new(Map.SetItem(param, value));
 
     public ImmutableHttpQueryParameters Add(string header, string value) =>
-        new(Map.Update(header, x => x.Add(value), () => [value]));
+        new(Map.Update(header, x => x.Add(value), () => [value,]));
 
     public ImmutableHttpQueryParameters Remove(string header) =>
         new(Map.Remove(header));

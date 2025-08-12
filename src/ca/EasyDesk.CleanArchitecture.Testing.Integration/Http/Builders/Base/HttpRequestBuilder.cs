@@ -79,7 +79,7 @@ public class HttpRequestBuilder
     public ImmutableHttpRequestMessage CreateRequest()
     {
         var queryString = QueryParameters.Map
-            .Select(x => new KeyValuePair<string, StringValues>(x.Key, new([.. x.Value])));
+            .Select(x => new KeyValuePair<string, StringValues>(x.Key, new([.. x.Value,])));
 
         var uri = QueryHelpers.AddQueryString(_endpoint, queryString);
         var request = new ImmutableHttpRequestMessage(_method, uri);

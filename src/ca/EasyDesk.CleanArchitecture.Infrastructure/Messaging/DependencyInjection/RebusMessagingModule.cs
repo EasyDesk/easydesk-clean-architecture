@@ -182,7 +182,7 @@ public class RebusMessagingModule : AppModule
             });
 
         builder
-            .RegisterAssemblyTypes([.. app.Assemblies])
+            .RegisterAssemblyTypes([.. app.Assemblies,])
             .AssignableToOpenGenericType(typeof(IFailedMessageHandler<>))
             .AsClosedTypesOf(typeof(IFailedMessageHandler<>))
             .InstancePerDependency();

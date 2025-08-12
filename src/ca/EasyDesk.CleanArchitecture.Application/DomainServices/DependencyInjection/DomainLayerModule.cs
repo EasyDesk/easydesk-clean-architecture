@@ -28,7 +28,7 @@ public class DomainLayerModule : AppModule
         builder.RegisterType<DomainEventPublisher>()
             .InstancePerLifetimeScope();
 
-        builder.RegisterAssemblyTypes([.. app.Assemblies])
+        builder.RegisterAssemblyTypes([.. app.Assemblies,])
             .AssignableToOpenGenericType(typeof(IDomainEventHandler<>))
             .AsClosedTypesOf(typeof(IDomainEventHandler<>))
             .InstancePerDependency();

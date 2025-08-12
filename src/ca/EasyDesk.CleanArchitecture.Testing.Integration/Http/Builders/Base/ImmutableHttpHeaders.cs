@@ -17,7 +17,7 @@ public record ImmutableHttpHeaders(
         new(Map.SetItem(header, value));
 
     public ImmutableHttpHeaders Add(string header, string value) =>
-        new(Map.Update(header, x => x.Add(value), () => [value]));
+        new(Map.Update(header, x => x.Add(value), () => [value,]));
 
     public ImmutableHttpHeaders Remove(string header) =>
         new(Map.Remove(header));

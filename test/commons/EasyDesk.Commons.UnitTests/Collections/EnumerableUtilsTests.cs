@@ -385,10 +385,10 @@ public class EnumerableUtilsTests
         return new()
         {
             { [], false },
-            { ["hello"], false },
-            { ["aa", "bb"], true },
-            { ["aa", "bb", "ccc"], true },
-            { ["a", "bb", "ccc"], false },
+            { ["hello",], false },
+            { ["aa", "bb",], true },
+            { ["aa", "bb", "ccc",], true },
+            { ["a", "bb", "ccc",], false },
         };
     }
 

@@ -7,7 +7,7 @@ namespace EasyDesk.Commons.UnitTests.Collections;
 
 public class ListUtilsTests
 {
-    private static readonly ImmutableList<int> _list = [1, 1000, 5, 7, 2, 2, 13, 20, 234, -16, -20];
+    private static readonly ImmutableList<int> _list = [1, 1000, 5, 7, 2, 2, 13, 20, 234, -16, -20,];
 
     private readonly ImmutableList<int> _sortedList;
 

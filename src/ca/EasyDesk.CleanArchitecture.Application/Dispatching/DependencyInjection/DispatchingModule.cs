@@ -38,7 +38,7 @@ public class DispatchingModule : AppModule
     private void RegisterRequestHandlers(ContainerBuilder builder, AppDescription app)
     {
         builder
-            .RegisterAssemblyTypes([.. app.Assemblies])
+            .RegisterAssemblyTypes([.. app.Assemblies,])
             .AssignableToOpenGenericType(typeof(IHandler<,>))
             .AsClosedTypesOf(typeof(IHandler<,>))
             .InstancePerDependency();

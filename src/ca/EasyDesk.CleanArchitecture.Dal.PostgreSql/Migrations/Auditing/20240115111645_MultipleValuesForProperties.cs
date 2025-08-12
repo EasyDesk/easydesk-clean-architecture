@@ -18,7 +18,7 @@ public partial class MultipleValuesForProperties : Migration
         migrationBuilder.AddPrimaryKey(
             name: "PK_AuditProperties",
             table: "AuditProperties",
-            columns: ["AuditRecordId", "Key", "Value"],
+            columns: ["AuditRecordId", "Key", "Value",],
             schema: "audit");
     }
 
@@ -33,7 +33,7 @@ public partial class MultipleValuesForProperties : Migration
         migrationBuilder.AddPrimaryKey(
             name: "PK_AuditProperties",
             table: "AuditProperties",
-            columns: ["AuditRecordId", "Key"],
+            columns: ["AuditRecordId", "Key",],
             schema: "audit");
     }
 }

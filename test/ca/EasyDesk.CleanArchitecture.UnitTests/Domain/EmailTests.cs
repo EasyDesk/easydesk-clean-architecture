@@ -8,17 +8,17 @@ public static class EmailTests
 {
     public static IEnumerable<object[]> ValidEmails()
     {
-        yield return ["a@a.it"];
-        yield return ["A@a.it"];
-        yield return ["a@A.it"];
-        yield return [new string('x', Email.MaxLength - 5) + "@a.it"];
-        yield return ["a@aaaaaaaaaaaaaaaaaaaaaaaaaaaa.it"];
-        yield return ["a@a.com"];
-        yield return ["a@a.org"];
-        yield return ["a@a.b.c.d.org"];
-        yield return ["a.213@a.com"];
-        yield return ["a.213+xyz@a.com"];
-        yield return ["aAaaAAee_asdf-ee.213+xyz@a.com"];
+        yield return ["a@a.it",];
+        yield return ["A@a.it",];
+        yield return ["a@A.it",];
+        yield return [new string('x', Email.MaxLength - 5) + "@a.it",];
+        yield return ["a@aaaaaaaaaaaaaaaaaaaaaaaaaaaa.it",];
+        yield return ["a@a.com",];
+        yield return ["a@a.org",];
+        yield return ["a@a.b.c.d.org",];
+        yield return ["a.213@a.com",];
+        yield return ["a.213+xyz@a.com",];
+        yield return ["aAaaAAee_asdf-ee.213+xyz@a.com",];
     }
 
     [Theory]
@@ -32,17 +32,17 @@ public static class EmailTests
 
     public static IEnumerable<object[]> InvalidEmails()
     {
-        yield return [string.Empty];
-        yield return ["@"];
-        yield return ["@."];
-        yield return ["@.it"];
-        yield return ["@a.it"];
-        yield return ["a@"];
-        yield return ["a@."];
-        yield return ["a@.it"];
-        yield return ["a@a._"];
-        yield return ["a@a.b.c..org"];
-        yield return [new string('x', Email.MaxLength - 4) + "@a.it"];
+        yield return [string.Empty,];
+        yield return ["@",];
+        yield return ["@.",];
+        yield return ["@.it",];
+        yield return ["@a.it",];
+        yield return ["a@",];
+        yield return ["a@.",];
+        yield return ["a@.it",];
+        yield return ["a@a._",];
+        yield return ["a@a.b.c..org",];
+        yield return [new string('x', Email.MaxLength - 4) + "@a.it",];
     }
 
     [Theory]

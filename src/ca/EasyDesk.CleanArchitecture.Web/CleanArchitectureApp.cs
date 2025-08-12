@@ -44,7 +44,7 @@ public static partial class CleanArchitectureApp
     {
         var (commandArgs, configurationArgs) = SplitArgs(args);
         var builder = new CleanArchitectureHostBuilder(name, commandArgs, configurationArgs);
-        builder.WithAssemblies([assembly ?? Assembly.GetCallingAssembly()]);
+        builder.WithAssemblies([assembly ?? Assembly.GetCallingAssembly(),]);
         return builder;
     }
 

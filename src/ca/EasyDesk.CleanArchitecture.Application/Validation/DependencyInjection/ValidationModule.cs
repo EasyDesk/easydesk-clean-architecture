@@ -36,7 +36,7 @@ public class ValidationModule : AppModule
             .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IValidate<>))
             .ForEach(i => registrationMethod
                 .MakeGenericMethod(i.GetGenericArguments()[0])
-                .Invoke(null, [builder]));
+                .Invoke(null, [builder,]));
     }
 
     private static void RegisterValidatorForValidatableObject<T>(ContainerBuilder builder)

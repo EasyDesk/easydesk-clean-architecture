@@ -75,7 +75,7 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
                         properties[codeDataProperty.Name].Enum = GetErrorCode(e.Item2);
                         properties[metaDataProperty.Name] = schema;
                     }
-                    properties[schemaDataProperty.Name].Enum = [new OpenApiString(e.Item1)];
+                    properties[schemaDataProperty.Name].Enum = [new OpenApiString(e.Item1),];
                     return context.SchemaRepository.AddDefinition(
                         schemaId: e.Item1,
                         schema: new()
@@ -115,6 +115,6 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
 
     private IList<IOpenApiAny> GetErrorCode(Type t) =>
         t.IsAssignableTo(typeof(ApplicationError))
-        ? [new OpenApiString(ErrorDto.GetErrorCodeFromApplicationErrorType(t))]
+        ? [new OpenApiString(ErrorDto.GetErrorCodeFromApplicationErrorType(t)),]
         : [];
 }

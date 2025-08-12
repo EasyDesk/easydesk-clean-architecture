@@ -12,7 +12,7 @@ public static class LifetimeScopes
         this IRegistrationBuilder<TLimit, TActivatorData, TStyle> registration,
         params object[] lifetimeScopeTags)
     {
-        return registration.InstancePerMatchingOrMostNestedLifetimeScope([.. lifetimeScopeTags, UseCaseScopeTag]);
+        return registration.InstancePerMatchingOrMostNestedLifetimeScope([.. lifetimeScopeTags, UseCaseScopeTag,]);
     }
 
     public static ILifetimeScope BeginUseCaseLifetimeScope(this ILifetimeScope scope) =>

@@ -21,7 +21,7 @@ public class DomainEventPublisher
             .GetTypeInfo()
             .GetMethod(nameof(PublishEventOfType), BindingFlags.Instance | BindingFlags.NonPublic)!
             .MakeGenericMethod(eventType)
-            .Invoke(this, [domainEvent]);
+            .Invoke(this, [domainEvent,]);
         return await (Task<Result<Nothing>>)result!;
     }
 
