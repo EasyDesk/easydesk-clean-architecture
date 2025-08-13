@@ -18,7 +18,7 @@ public partial class InitialSchema : Migration
             columns: table => new
             {
                 Id = table.Column<string>(type: "TEXT", nullable: false),
-                Instant = table.Column<string>(type: "TEXT", nullable: false)
+                Instant = table.Column<string>(type: "TEXT", nullable: false),
             },
             schema: "messaging",
             constraints: table =>
@@ -35,7 +35,7 @@ public partial class InitialSchema : Migration
                 Content = table.Column<byte[]>(type: "BLOB", nullable: false),
                 Headers = table.Column<string>(type: "TEXT", nullable: false),
                 Headers_Old = table.Column<byte[]>(type: "BLOB", nullable: false),
-                DestinationAddress = table.Column<string>(type: "TEXT", nullable: false)
+                DestinationAddress = table.Column<string>(type: "TEXT", nullable: false),
             },
             schema: "messaging",
             constraints: table =>

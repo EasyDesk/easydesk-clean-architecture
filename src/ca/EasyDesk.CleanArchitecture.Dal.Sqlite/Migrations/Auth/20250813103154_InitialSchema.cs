@@ -19,7 +19,7 @@ public partial class InitialSchema : Migration
             {
                 Id = table.Column<long>(type: "INTEGER", nullable: false)
                     .Annotation("Sqlite:Autoincrement", true),
-                ApiKey = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false)
+                ApiKey = table.Column<string>(type: "TEXT", maxLength: 128, nullable: false),
             },
             schema: "auth",
             constraints: table =>
@@ -31,7 +31,7 @@ public partial class InitialSchema : Migration
             name: "Tenants",
             columns: table => new
             {
-                Id = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false)
+                Id = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
             },
             schema: "auth",
             constraints: table =>
@@ -47,7 +47,7 @@ public partial class InitialSchema : Migration
                     .Annotation("Sqlite:Autoincrement", true),
                 IdentityId = table.Column<string>(type: "TEXT", nullable: false),
                 IdentityRealm = table.Column<string>(type: "TEXT", nullable: false),
-                ApiKeyId = table.Column<long>(type: "INTEGER", nullable: false)
+                ApiKeyId = table.Column<long>(type: "INTEGER", nullable: false),
             },
             schema: "auth",
             constraints: table =>
@@ -70,12 +70,12 @@ public partial class InitialSchema : Migration
                 Identity = table.Column<string>(type: "TEXT", maxLength: 1024, nullable: false),
                 Tenant = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
                 Realm = table.Column<string>(type: "TEXT", nullable: false),
-                TenantFk = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true)
+                TenantFk = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
             },
             schema: "auth",
             constraints: table =>
             {
-                table.PrimaryKey("PK_IdentityRoles", x => new { x.Identity, x.Role, x.Tenant });
+                table.PrimaryKey("PK_IdentityRoles", x => new { x.Identity, x.Role, x.Tenant, });
                 table.ForeignKey(
                     name: "FK_IdentityRoles_Tenants_TenantFk",
                     column: x => x.TenantFk,
@@ -93,7 +93,7 @@ public partial class InitialSchema : Migration
                     .Annotation("Sqlite:Autoincrement", true),
                 IdentityId = table.Column<long>(type: "INTEGER", nullable: false),
                 AttributeName = table.Column<string>(type: "TEXT", nullable: false),
-                AttributeValue = table.Column<string>(type: "TEXT", nullable: false)
+                AttributeValue = table.Column<string>(type: "TEXT", nullable: false),
             },
             schema: "auth",
             constraints: table =>

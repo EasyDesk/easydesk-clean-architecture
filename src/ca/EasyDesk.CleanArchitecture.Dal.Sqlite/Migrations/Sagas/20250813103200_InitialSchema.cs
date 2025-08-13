@@ -22,12 +22,12 @@ public partial class InitialSchema : Migration
                 Tenant = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
                 State = table.Column<string>(type: "TEXT", nullable: false),
                 State_Old = table.Column<byte[]>(type: "BLOB", nullable: false),
-                Version = table.Column<int>(type: "INTEGER", nullable: true)
+                Version = table.Column<int>(type: "INTEGER", nullable: true),
             },
             schema: "sagas",
             constraints: table =>
             {
-                table.PrimaryKey("PK_Sagas", x => new { x.Id, x.Type, x.Tenant });
+                table.PrimaryKey("PK_Sagas", x => new { x.Id, x.Type, x.Tenant, });
             });
 
         migrationBuilder.CreateIndex(

@@ -33,7 +33,7 @@ public partial class InitialSchema : Migration
                 Residence_State = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                 Residence_Country = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                 Approved = table.Column<bool>(type: "INTEGER", nullable: false),
-                _Version = table.Column<long>(type: "INTEGER", nullable: false)
+                _Version = table.Column<long>(type: "INTEGER", nullable: false),
             },
             schema: "domain",
             constraints: table =>
@@ -50,7 +50,7 @@ public partial class InitialSchema : Migration
                 Nickname = table.Column<string>(type: "TEXT", nullable: false),
                 PersonId = table.Column<Guid>(type: "TEXT", nullable: false),
                 Tenant = table.Column<string>(type: "TEXT", maxLength: 256, nullable: false),
-                _Version = table.Column<long>(type: "INTEGER", nullable: false)
+                _Version = table.Column<long>(type: "INTEGER", nullable: false),
             },
             schema: "domain",
             constraints: table =>
