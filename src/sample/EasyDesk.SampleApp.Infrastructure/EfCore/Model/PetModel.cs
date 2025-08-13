@@ -49,8 +49,8 @@ public class PetModel : IAggregateRootModel<Pet, PetModel>, IWithHydration<int>,
         {
             builder.HasKey(x => x.Id);
 
-            SqlServerPropertyBuilderExtensions.UseHiLo(builder.Property(x => x.Id));
-            NpgsqlPropertyBuilderExtensions.UseHiLo(builder.Property(x => x.Id));
+            builder.Property(x => x.Id)
+                .ValueGeneratedOnAdd();
         }
     }
 }

@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\ca\EasyDesk.CleanArchitecture.Dal.PostgreSql\EasyDesk.CleanArchitecture.Dal.PostgreSql.csproj" />
     <ProjectReference Include="..\..\ca\EasyDesk.CleanArchitecture.Dal.SqlServer\EasyDesk.CleanArchitecture.Dal.SqlServer.csproj" />
+    <ProjectReference Include="..\..\ca\EasyDesk.CleanArchitecture.Dal.Sqlite\EasyDesk.CleanArchitecture.Dal.Sqlite.csproj" />
     <ProjectReference Include="..\..\ca\EasyDesk.CleanArchitecture.Infrastructure\EasyDesk.CleanArchitecture.Infrastructure.csproj" />
     <ProjectReference Include="..\EasyDesk.SampleApp.Application\EasyDesk.SampleApp.Application.csproj" />
   </ItemGroup>

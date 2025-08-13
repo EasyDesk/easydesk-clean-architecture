@@ -31,3 +31,11 @@ public class SqlServerSampleAppContext : SampleAppContext
     {
     }
 }
+
+public class SqliteSampleAppContext : SampleAppContext
+{
+    public SqliteSampleAppContext(DbContextOptions<SqliteSampleAppContext> options)
+        : base(options)
+    {
+    }
+}

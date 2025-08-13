@@ -58,6 +58,11 @@ jobs:
       with:
         path: src/ca/EasyDesk.CleanArchitecture.Dal.SqlServer/
 
+    - name: Build DAL - SQLite
+      uses: EasyDesk/action-dotnet-build@v1
+      with:
+        path: src/ca/EasyDesk.CleanArchitecture.Dal.Sqlite/
+
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:

@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
+using EasyDesk.SampleApp.Web;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 using System.Data;
@@ -63,6 +64,11 @@ public class TransactionsTests : SampleAppIntegrationTest
     [Fact]
     public async Task ShouldAbortSecondTransaction()
     {
+        if (Fixture.DbProvider is DbProvider.Sqlite)
+        {
+            // SQLite does not support concurrent transactions, so we skip this test
+            return;
+        }
         await UseContext(async (context1, scope1) =>
         {
             await UseContext(async (context2, scope2) =>

@@ -5,6 +5,7 @@ using EasyDesk.CleanArchitecture.Application.Logging.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
+using EasyDesk.CleanArchitecture.Dal.Sqlite;
 using EasyDesk.CleanArchitecture.Dal.SqlServer;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing.DependencyInjection;
@@ -71,6 +72,12 @@ switch (provider)
         break;
     case DbProvider.PostgreSql:
         builder.AddPostgreSqlDataAccess<PostgreSqlSampleAppContext>(() => builder.Configuration.RequireConnectionString("PostgreSql"), o =>
+        {
+            o.WithService<SampleAppContext>();
+        });
+        break;
+    case DbProvider.Sqlite:
+        builder.AddSqliteDataAccess<SqliteSampleAppContext>(() => builder.Configuration.RequireConnectionString("Sqlite"), o =>
         {
             o.WithService<SampleAppContext>();
         });

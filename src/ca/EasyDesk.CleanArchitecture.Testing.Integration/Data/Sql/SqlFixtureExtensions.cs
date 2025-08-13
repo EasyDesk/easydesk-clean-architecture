@@ -8,7 +8,7 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 
 public static class SqlFixtureExtensions
 {
-    internal static TestFixtureConfigurer AddSqlDatabase<T>(
+    public static TestFixtureConfigurer AddSqlDatabase<T>(
         this TestFixtureConfigurer configurer,
         T container,
         Func<T, string> getConnectionString,
