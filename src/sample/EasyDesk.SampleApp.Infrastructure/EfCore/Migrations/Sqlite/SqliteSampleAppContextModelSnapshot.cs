@@ -3,59 +3,56 @@ using System;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.SqlServer;
+namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.Sqlite;
 
-[DbContext(typeof(SqlServerSampleAppContext))]
-[Migration("20230418094646_InitialSchema")]
-partial class InitialSchema
+[DbContext(typeof(SqliteSampleAppContext))]
+partial class SqliteSampleAppContextModelSnapshot : ModelSnapshot
 {
-    /// <inheritdoc />
-    protected override void BuildTargetModel(ModelBuilder modelBuilder)
+    protected override void BuildModel(ModelBuilder modelBuilder)
     {
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "7.0.5")
-            .HasAnnotation("Relational:MaxIdentifierLength", 128);
-
-        SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-        modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
-            .IncrementsBy(10);
+            .HasAnnotation("ProductVersion", "9.0.8");
 
         modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
             {
                 b.Property<Guid>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
+                    .HasColumnType("TEXT");
+
+                b.Property<bool>("Approved")
+                    .HasColumnType("INTEGER");
 
                 b.Property<string>("CreatedBy")
                     .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    .HasColumnType("TEXT");
 
-                b.Property<DateTime>("DateOfBirth")
-                    .HasColumnType("date");
+                b.Property<string>("DateOfBirth")
+                    .IsRequired()
+                    .HasColumnType("TEXT");
 
                 b.Property<string>("FirstName")
                     .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    .HasColumnType("TEXT");
 
                 b.Property<string>("LastName")
                     .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    .HasColumnType("TEXT");
 
                 b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("TEXT");
+
+                b.Property<long>("_Version")
+                    .IsConcurrencyToken()
+                    .HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -68,24 +65,24 @@ partial class InitialSchema
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasAnnotation("Npgsql:HiLoSequenceName", "EntityFrameworkHiLoSequence")
-                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SequenceHiLo);
-
-                SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
+                    .HasColumnType("INTEGER");
 
                 b.Property<string>("Nickname")
                     .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    .HasColumnType("TEXT");
 
                 b.Property<Guid>("PersonId")
-                    .HasColumnType("uniqueidentifier");
+                    .HasColumnType("TEXT");
 
                 b.Property<string>("Tenant")
                     .IsRequired()
                     .ValueGeneratedOnAdd()
                     .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    .HasColumnType("TEXT");
+
+                b.Property<long>("_Version")
+                    .IsConcurrencyToken()
+                    .HasColumnType("INTEGER");
 
                 b.HasKey("Id");
 
@@ -101,44 +98,44 @@ partial class InitialSchema
                 b.OwnsOne("EasyDesk.SampleApp.Infrastructure.EfCore.Model.AddressModel", "Residence", b1 =>
                     {
                         b1.Property<Guid>("PersonModelId")
-                            .HasColumnType("uniqueidentifier");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("City")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("Country")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("District")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("Province")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("Region")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("State")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("StreetName")
                             .IsRequired()
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("StreetNumber")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.Property<string>("StreetType")
                             .HasMaxLength(100)
-                            .HasColumnType("nvarchar(100)");
+                            .HasColumnType("TEXT");
 
                         b1.HasKey("PersonModelId");
 

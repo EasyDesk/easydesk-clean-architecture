@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using NodaTime;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -13,11 +14,6 @@ public partial class InitialSchema : Migration
     {
         migrationBuilder.EnsureSchema(
             name: "domain");
-
-        migrationBuilder.CreateSequence(
-            name: "EntityFrameworkHiLoSequence",
-            schema: "domain",
-            incrementBy: 10);
 
         migrationBuilder.CreateTable(
             name: "People",
@@ -38,6 +34,8 @@ public partial class InitialSchema : Migration
                 Residence_Region = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                 Residence_State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                 Residence_Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                Approved = table.Column<bool>(type: "boolean", nullable: false),
+                _Version = table.Column<long>(type: "bigint", nullable: false),
             },
             schema: "domain",
             constraints: table =>
@@ -49,10 +47,12 @@ public partial class InitialSchema : Migration
             name: "Pets",
             columns: table => new
             {
-                Id = table.Column<int>(type: "integer", nullable: false),
+                Id = table.Column<int>(type: "integer", nullable: false)
+                    .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                 Nickname = table.Column<string>(type: "text", nullable: false),
                 PersonId = table.Column<Guid>(type: "uuid", nullable: false),
                 Tenant = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                _Version = table.Column<long>(type: "bigint", nullable: false),
             },
             schema: "domain",
             constraints: table =>
@@ -95,10 +95,6 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.DropTable(
             name: "People",
-            schema: "domain");
-
-        migrationBuilder.DropSequence(
-            name: "EntityFrameworkHiLoSequence",
             schema: "domain");
     }
 }

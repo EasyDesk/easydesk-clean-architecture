@@ -3,7 +3,6 @@ using System;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NodaTime;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -20,13 +19,10 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "8.0.6")
+            .HasAnnotation("ProductVersion", "9.0.8")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-        modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
-            .IncrementsBy(10);
 
         modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
             {
@@ -59,6 +55,7 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
                     .HasColumnType("character varying(256)");
 
                 b.Property<long>("_Version")
+                    .IsConcurrencyToken()
                     .HasColumnType("bigint");
 
                 b.HasKey("Id");
@@ -72,11 +69,9 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("integer")
-                    .HasAnnotation("SqlServer:HiLoSequenceName", "EntityFrameworkHiLoSequence")
-                    .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.SequenceHiLo);
+                    .HasColumnType("integer");
 
-                NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                 b.Property<string>("Nickname")
                     .IsRequired()
@@ -92,6 +87,7 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
                     .HasColumnType("character varying(256)");
 
                 b.Property<long>("_Version")
+                    .IsConcurrencyToken()
                     .HasColumnType("bigint");
 
                 b.HasKey("Id");

@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
+using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Sqlite;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Host;
@@ -32,7 +33,10 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
     {
         [DbProvider.SqlServer] = ConfigureSqlServer,
         [DbProvider.PostgreSql] = ConfigurePostgreSql,
+        [DbProvider.Sqlite] = ConfigureSqlite,
     };
+
+    public DbProvider DbProvider { get; private set; }
 
     protected override void ConfigureFixture(TestFixtureConfigurer configurer)
     {
@@ -61,14 +65,14 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
     private void ConfigureDatabase(TestFixtureConfigurer configurer)
     {
-        var provider = Environment.GetEnvironmentVariable("DB_PROVIDER")
+        DbProvider = Environment.GetEnvironmentVariable("DB_PROVIDER")
             .AsOption()
             .Map(p => Enums.ParseOption<DbProvider>(p).OrElseThrow(() => new InvalidConfigurationException("Invalid DB provider")))
             .OrElse(DefaultDbProvider);
 
-        _providerConfigs[provider](configurer);
+        _providerConfigs[DbProvider](configurer);
 
-        configurer.ConfigureHost(h => h.WithConfiguration("DbProvider", provider.ToString()));
+        configurer.ConfigureHost(h => h.WithConfiguration("DbProvider", DbProvider.ToString()));
     }
 
     private static void ConfigureSqlServer(TestFixtureConfigurer configurer)
@@ -80,6 +84,11 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
         configurer.AddSqlServerDatabase(container, "SampleDb", x => x
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer"));
+    }
+
+    private static void ConfigureSqlite(TestFixtureConfigurer configurer)
+    {
+        configurer.AddSqliteDatabase("ConnectionStrings:Sqlite", $"db-test-{Guid.NewGuid()}.sqlite");
     }
 
     private static void ConfigurePostgreSql(TestFixtureConfigurer configurer)

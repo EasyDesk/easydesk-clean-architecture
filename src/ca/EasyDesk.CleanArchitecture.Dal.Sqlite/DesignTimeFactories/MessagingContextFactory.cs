@@ -1,0 +1,13 @@
+﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Messaging;
+using Microsoft.EntityFrameworkCore.Design;
+
+namespace EasyDesk.CleanArchitecture.Dal.Sqlite.DesignTimeFactories;
+
+internal class MessagingContextFactory : IDesignTimeDbContextFactory<MessagingContext>
+{
+    public MessagingContext CreateDbContext(string[] args)
+    {
+        var options = DbContextOptionsUtils.CreateDesignTimeOptions<MessagingContext>();
+        return new(options);
+    }
+}

@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -19,13 +18,10 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "8.0.6")
+            .HasAnnotation("ProductVersion", "9.0.8")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-        modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
-            .IncrementsBy(10);
 
         modelBuilder.Entity("EasyDesk.SampleApp.Infrastructure.EfCore.Model.PersonModel", b =>
             {
@@ -58,6 +54,7 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
                     .HasColumnType("nvarchar(256)");
 
                 b.Property<long>("_Version")
+                    .IsConcurrencyToken()
                     .HasColumnType("bigint");
 
                 b.HasKey("Id");
@@ -71,11 +68,9 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
             {
                 b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
-                    .HasColumnType("int")
-                    .HasAnnotation("Npgsql:HiLoSequenceName", "EntityFrameworkHiLoSequence")
-                    .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SequenceHiLo);
+                    .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"), "EntityFrameworkHiLoSequence");
+                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                 b.Property<string>("Nickname")
                     .IsRequired()
@@ -91,6 +86,7 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
                     .HasColumnType("nvarchar(256)");
 
                 b.Property<long>("_Version")
+                    .IsConcurrencyToken()
                     .HasColumnType("bigint");
 
                 b.HasKey("Id");
