@@ -88,7 +88,7 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
     private static void ConfigureSqlite(TestFixtureConfigurer configurer)
     {
-        configurer.AddSqliteDatabase("ConnectionStrings:Sqlite", $"db-test-{Guid.NewGuid()}.sqlite");
+        configurer.AddSqliteDatabase("ConnectionStrings:Sqlite", "db-test.sqlite");
     }
 
     private static void ConfigurePostgreSql(TestFixtureConfigurer configurer)

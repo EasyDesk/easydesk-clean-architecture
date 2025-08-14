@@ -1,10 +1,6 @@
 ﻿[
   {
     Id: {Scrubbed},
-    Nickname: Foo's best buddy
-  },
-  {
-    Id: {Scrubbed},
     Nickname: buddy000
   },
   {
@@ -802,5 +798,9 @@
   {
     Id: {Scrubbed},
     Nickname: buddy199
+  },
+  {
+    Id: {Scrubbed},
+    Nickname: Foo's best buddy
   }
 ]
