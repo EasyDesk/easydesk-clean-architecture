@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -12,11 +13,6 @@ public partial class InitialSchema : Migration
     {
         migrationBuilder.EnsureSchema(
             name: "domain");
-
-        migrationBuilder.CreateSequence(
-            name: "EntityFrameworkHiLoSequence",
-            schema: "domain",
-            incrementBy: 10);
 
         migrationBuilder.CreateTable(
             name: "People",
@@ -37,6 +33,8 @@ public partial class InitialSchema : Migration
                 Residence_Region = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                 Residence_State = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                 Residence_Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                Approved = table.Column<bool>(type: "bit", nullable: false),
+                _Version = table.Column<long>(type: "bigint", nullable: false),
             },
             schema: "domain",
             constraints: table =>
@@ -48,10 +46,12 @@ public partial class InitialSchema : Migration
             name: "Pets",
             columns: table => new
             {
-                Id = table.Column<int>(type: "int", nullable: false),
+                Id = table.Column<int>(type: "int", nullable: false)
+                    .Annotation("SqlServer:Identity", "1, 1"),
                 Nickname = table.Column<string>(type: "nvarchar(max)", nullable: false),
                 PersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                 Tenant = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                _Version = table.Column<long>(type: "bigint", nullable: false),
             },
             schema: "domain",
             constraints: table =>
@@ -94,10 +94,6 @@ public partial class InitialSchema : Migration
 
         migrationBuilder.DropTable(
             name: "People",
-            schema: "domain");
-
-        migrationBuilder.DropSequence(
-            name: "EntityFrameworkHiLoSequence",
             schema: "domain");
     }
 }

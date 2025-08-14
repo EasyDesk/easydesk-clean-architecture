@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Migrations.PostgreSql;
 
 [DbContext(typeof(PostgreSqlSampleAppContext))]
-[Migration("20250813161130_RemoveSequences")]
-partial class RemoveSequences
+[Migration("20250814081103_InitialSchema")]
+partial class InitialSchema
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
