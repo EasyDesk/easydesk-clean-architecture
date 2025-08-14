@@ -27,7 +27,7 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
 public class SampleAppTestsFixture : IntegrationTestsFixture
 {
-    public const DbProvider DefaultDbProvider = DbProvider.Sqlite;
+    public const DbProvider DefaultDbProvider = DbProvider.PostgreSql;
 
     private static readonly Dictionary<DbProvider, Action<TestFixtureConfigurer>> _providerConfigs = new()
     {
