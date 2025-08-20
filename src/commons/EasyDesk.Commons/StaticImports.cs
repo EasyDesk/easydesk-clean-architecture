@@ -1,4 +1,5 @@
-﻿using EasyDesk.Commons.Tasks;
+﻿using EasyDesk.Commons.Options;
+using EasyDesk.Commons.Tasks;
 
 namespace EasyDesk.Commons;
 
@@ -35,5 +36,17 @@ public static partial class StaticImports
     {
         await action();
         return Nothing.Value;
+    }
+
+    public static T Conditionally<T, U, F>(this U self, Option<F> filter, Func<U, F, T> operation)
+        where U : T
+    {
+        return filter.Match(some: f => operation(self, f), none: () => self);
+    }
+
+    public static T Conditionally<T, U>(this U self, bool condition, Func<U, T> operation)
+        where U : T
+    {
+        return condition ? operation(self) : self;
     }
 }

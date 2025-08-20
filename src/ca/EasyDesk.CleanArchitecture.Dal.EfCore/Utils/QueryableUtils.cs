@@ -17,23 +17,6 @@ public static class QueryableUtils
         return result.Count > 0 ? Some(result[0]) : None;
     }
 
-    public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T>? op)
-    {
-        return query.Conditionally(op is not null, op);
-    }
-
-    public static IQueryable<T> Conditionally<T>(this IQueryable<T> query, bool condition, QueryWrapper<T>? op)
-    {
-        return condition ? op?.Invoke(query) ?? query : query;
-    }
-
-    public static IQueryable<T> Conditionally<T, F>(this IQueryable<T> query, Option<F> filter, Func<F, QueryWrapper<T>> op)
-    {
-        return filter.Match(
-            some: f => query.Wrap(op(f)),
-            none: () => query);
-    }
-
     public static Task<T?> MaxByAsync<T, TKey>(this IQueryable<T> query, Expression<Func<T, TKey>> keySelector)
     {
         return query.OrderByDescending(keySelector).FirstOrDefaultAsync();

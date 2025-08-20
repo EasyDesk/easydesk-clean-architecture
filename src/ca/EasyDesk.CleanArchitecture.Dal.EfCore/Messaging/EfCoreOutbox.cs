@@ -43,7 +43,7 @@ internal class EfCoreOutbox : IOutbox
     {
         var outboxMessages = await _context.Outbox
             .OrderBy(m => m.Id)
-            .Conditionally(count, c => q => q.Take(c))
+            .Conditionally(count, (q, c) => q.Take(c))
             .ToListAsync();
 
         var messages = outboxMessages

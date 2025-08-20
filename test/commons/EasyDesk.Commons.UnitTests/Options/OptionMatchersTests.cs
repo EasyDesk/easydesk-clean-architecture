@@ -107,4 +107,16 @@ public class OptionMatchersTests
     {
         Some(Value).OrElseThrow(() => new InvalidOperationException()).ShouldBe(Value);
     }
+
+    [Fact]
+    public void Conditionally_ShouldReturnTheOriginalValue_IfOptionIsEmpty()
+    {
+        7.Conditionally(NoneT<string>(), (_, _) => 1).ShouldBe(7);
+    }
+
+    [Fact]
+    public void Conditionally_ShouldMapTheValue_IfOptionIsNotEmpty()
+    {
+        7.Conditionally(Some(5), (a, b) => a + b).ShouldBe(12);
+    }
 }
