@@ -45,6 +45,23 @@ public static class QueryableUtils
         };
     }
 
+    public static IOrderedQueryable<T> OrderBy<T>(
+        this IQueryable<T> query,
+        (Expression<Func<T, object>> KeySelector, OrderingDirection Direction) first,
+        params IEnumerable<(Expression<Func<T, object>> KeySelector, OrderingDirection Direction)> ordering)
+    {
+        return ordering.Aggregate(query.OrderBy(first.KeySelector, first.Direction), (q, pair) => q.ThenBy(pair.KeySelector, pair.Direction));
+    }
+
+    public static IOrderedQueryable<T> OrderBy<T>(
+        this IQueryable<T> query,
+        Action<OrderingBuilder<T>> ordering)
+    {
+        var orderingBuilder = new OrderingBuilder<T>(query);
+        ordering(orderingBuilder);
+        return orderingBuilder.Build();
+    }
+
     public static IPageable<T> ToPageable<T>(this IQueryable<T> queryable) =>
         new QueryablePageable<T>(queryable);
 
@@ -88,4 +105,38 @@ public static class QueryableUtils
 
     private static async Task<R> ToListThenMap<T, R>(this IQueryable<T> query, Func<IEnumerable<T>, R> mapper) =>
         await query.ToListAsync().Map(mapper);
+}
+
+public class OrderingBuilder<T>
+{
+    private readonly IQueryable<T> _queryable;
+    private IOrderedQueryable<T>? _orderedQueryable;
+
+    internal OrderingBuilder(IQueryable<T> queryable)
+    {
+        _queryable = queryable;
+    }
+
+    public OrderingBuilder<T> By<K>(Expression<Func<T, K>> keySelector, OrderingDirection direction)
+    {
+        _orderedQueryable = _orderedQueryable is null
+            ? _queryable.OrderBy(keySelector, direction)
+            : _orderedQueryable.ThenBy(keySelector, direction);
+        return this;
+    }
+
+    public OrderingBuilder<T> Ascending<K>(Expression<Func<T, K>> keySelector) =>
+        By(keySelector, OrderingDirection.Ascending);
+
+    public OrderingBuilder<T> Descending<K>(Expression<Func<T, K>> keySelector) =>
+        By(keySelector, OrderingDirection.Descending);
+
+    internal IOrderedQueryable<T> Build()
+    {
+        if (_orderedQueryable is null)
+        {
+            throw new InvalidOperationException("Ordering cannot be empty");
+        }
+        return _orderedQueryable;
+    }
 }
