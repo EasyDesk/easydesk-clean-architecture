@@ -53,7 +53,7 @@ public static class QueryableUtils
         return ordering.Aggregate(query.OrderBy(first.KeySelector, first.Direction), (q, pair) => q.ThenBy(pair.KeySelector, pair.Direction));
     }
 
-    public static IOrderedQueryable<T> OrderBy<T>(
+    public static IOrderedQueryable<T> Order<T>(
         this IQueryable<T> query,
         Action<OrderingBuilder<T>> ordering)
     {
@@ -117,7 +117,7 @@ public class OrderingBuilder<T>
         _queryable = queryable;
     }
 
-    public OrderingBuilder<T> By<K>(Expression<Func<T, K>> keySelector, OrderingDirection direction)
+    public OrderingBuilder<T> By<K>(Expression<Func<T, K>> keySelector, OrderingDirection direction = OrderingDirection.Ascending)
     {
         _orderedQueryable = _orderedQueryable is null
             ? _queryable.OrderBy(keySelector, direction)
@@ -125,10 +125,7 @@ public class OrderingBuilder<T>
         return this;
     }
 
-    public OrderingBuilder<T> Ascending<K>(Expression<Func<T, K>> keySelector) =>
-        By(keySelector, OrderingDirection.Ascending);
-
-    public OrderingBuilder<T> Descending<K>(Expression<Func<T, K>> keySelector) =>
+    public OrderingBuilder<T> ByDescending<K>(Expression<Func<T, K>> keySelector) =>
         By(keySelector, OrderingDirection.Descending);
 
     internal IOrderedQueryable<T> Build()
