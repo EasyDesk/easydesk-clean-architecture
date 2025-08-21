@@ -105,6 +105,11 @@ public static class QueryableUtils
 
     private static async Task<R> ToListThenMap<T, R>(this IQueryable<T> query, Func<IEnumerable<T>, R> mapper) =>
         await query.ToListAsync().Map(mapper);
+
+    public static IQueryable<T> Wrap<T>(this IQueryable<T> query, QueryWrapper<T>? op)
+    {
+        return query.Conditionally(op is not null, x => op!(x));
+    }
 }
 
 public class OrderingBuilder<T>
