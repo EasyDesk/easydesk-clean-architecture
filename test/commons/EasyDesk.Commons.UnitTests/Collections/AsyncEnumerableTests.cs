@@ -84,7 +84,7 @@ public class AsyncEnumerableTests
         var left = Of(1, 2, 3);
         var right = Substitute.For<Func<IAsyncEnumerable<int>>>();
 
-        var enumerator = left.ThenConcat(right).GetAsyncEnumerator();
+        var enumerator = left.ThenConcat(right).GetAsyncEnumerator(TestContext.Current.CancellationToken);
         await enumerator.MoveNextAsync();
         await enumerator.MoveNextAsync();
         await enumerator.MoveNextAsync();
@@ -99,7 +99,7 @@ public class AsyncEnumerableTests
         var right = Substitute.For<Func<IAsyncEnumerable<int>>>();
         right().Returns(Of(4, 5));
 
-        var enumerator = left.ThenConcat(right).GetAsyncEnumerator();
+        var enumerator = left.ThenConcat(right).GetAsyncEnumerator(TestContext.Current.CancellationToken);
         await enumerator.MoveNextAsync();
         await enumerator.MoveNextAsync();
         await enumerator.MoveNextAsync();

@@ -13,7 +13,8 @@ public abstract class IntegrationTestsFixture : IAsyncLifetime
 
         configurer.ContainerBuilder.RegisterInstance(this)
             .AsParentsUpTo(leaf: GetType(), root: typeof(IntegrationTestsFixture))
-            .SingleInstance();
+            .SingleInstance()
+            .ExternallyOwned();
 
         ConfigureFixture(configurer);
 
@@ -24,7 +25,7 @@ public abstract class IntegrationTestsFixture : IAsyncLifetime
 
     protected abstract void ConfigureFixture(TestFixtureConfigurer configurer);
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await TriggerFixtureLifetimeHook(l => l.OnInitialization());
     }
@@ -43,8 +44,9 @@ public abstract class IntegrationTestsFixture : IAsyncLifetime
         await Resume();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
+        GC.SuppressFinalize(this);
         await TriggerFixtureLifetimeHook(l => l.OnDisposal(), reverseOrder: true);
         await Container.DisposeAsync();
     }

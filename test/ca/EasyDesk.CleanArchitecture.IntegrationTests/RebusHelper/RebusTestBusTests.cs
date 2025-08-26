@@ -23,13 +23,14 @@ public class RabbitMqContainerFixture : IAsyncLifetime
         .WithPassword("admin")
         .Build();
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await RabbitMq.StartAsync();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
+        GC.SuppressFinalize(this);
         await RabbitMq.DisposeAsync();
     }
 }
@@ -214,10 +215,11 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
         });
     }
 
-    public Task InitializeAsync() => Task.CompletedTask;
+    public ValueTask InitializeAsync() => ValueTask.CompletedTask;
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
+        GC.SuppressFinalize(this);
         await _sender.DisposeAsync();
         await _receiver.DisposeAsync();
     }

@@ -56,7 +56,8 @@ public sealed class Polling<T>
 
     public async Task<T> While(AsyncFunc<T, bool> predicate)
     {
-        using var cts = new CancellationTokenSource(_timeout.ToTimeSpan());
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+        cts.CancelAfter(_timeout.ToTimeSpan());
         var attempts = 1;
         var actualInterval = _interval.ToTimeSpan();
         try
@@ -71,7 +72,7 @@ public sealed class Polling<T>
             }
             return pollResult;
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (!TestContext.Current.CancellationToken.IsCancellationRequested)
         {
             return await _fallback(attempts);
         }

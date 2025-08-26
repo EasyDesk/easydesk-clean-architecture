@@ -50,7 +50,7 @@ public class CreateSiblingTests : SampleAppIntegrationTest
 
         Session.Clock.Advance(CreateSibling.CreationDelay.Minus(_epsilon));
 
-        await Task.Delay(_waitTime.ToTimeSpan());
+        await Task.Delay(_waitTime.ToTimeSpan(), TestContext.Current.CancellationToken);
 
         var data = await Session.Http
             .GetPeople()

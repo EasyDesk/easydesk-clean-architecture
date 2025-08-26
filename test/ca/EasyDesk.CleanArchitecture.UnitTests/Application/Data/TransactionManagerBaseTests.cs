@@ -44,11 +44,11 @@ public class UnitOfWorkBaseTests
 
     public static TheoryData<Func<Result<Nothing>>> FailureLambdas()
     {
-        return
+        return new(
         [
             () => Failure<Nothing>(Errors.NotFound()),
             () => throw new InvalidOperationException(),
-        ];
+        ]);
     }
 
     public static TheoryData<Result<Nothing>> Results()

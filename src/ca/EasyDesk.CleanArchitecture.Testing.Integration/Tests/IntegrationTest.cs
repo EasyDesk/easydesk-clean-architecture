@@ -22,7 +22,7 @@ public abstract class IntegrationTest<T> : IAsyncLifetime
     {
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         await Fixture.BeforeTest();
         await OnInitialization();
@@ -30,11 +30,12 @@ public abstract class IntegrationTest<T> : IAsyncLifetime
 
     protected virtual Task OnInitialization() => Task.CompletedTask;
 
-    async Task IAsyncLifetime.DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
+        GC.SuppressFinalize(this);
         await OnDisposal();
         await Fixture.AfterTest();
-        await Session.DisposeAsync();
+        await _session!.DisposeAsync();
     }
 
     protected virtual Task OnDisposal() => Task.CompletedTask;

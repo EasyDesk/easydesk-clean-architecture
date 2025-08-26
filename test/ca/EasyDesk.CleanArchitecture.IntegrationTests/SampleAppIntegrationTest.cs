@@ -4,7 +4,7 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Tests;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-[Collection(nameof(SampleAppTestCollection))]
+[Collection(typeof(SampleAppTestCollection))]
 public abstract class SampleAppIntegrationTest : IntegrationTest<SampleAppTestsFixture>
 {
     protected SampleAppIntegrationTest(SampleAppTestsFixture fixture) : base(fixture)

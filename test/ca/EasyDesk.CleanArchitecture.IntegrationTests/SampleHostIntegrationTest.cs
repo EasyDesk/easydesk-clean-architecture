@@ -2,7 +2,7 @@
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-[Collection(nameof(SampleHostTestCollection))]
+[Collection(typeof(SampleHostTestCollection))]
 public abstract class SampleHostIntegrationTest : IntegrationTest<SampleHostTestsFixture>
 {
     protected SampleHostIntegrationTest(SampleHostTestsFixture fixture) : base(fixture)

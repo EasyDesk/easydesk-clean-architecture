@@ -103,7 +103,8 @@ public sealed class RebusTestBusEndpoint : ITestBusEndpoint
         var actualTimeout = timeout ?? _timeout;
         try
         {
-            using var cts = new CancellationTokenSource(actualTimeout.ToTimeSpan());
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(TestContext.Current.CancellationToken);
+            cts.CancelAfter(actualTimeout.ToTimeSpan());
             while (true)
             {
                 if (cts.IsCancellationRequested)
