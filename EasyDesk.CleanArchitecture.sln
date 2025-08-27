@@ -90,8 +90,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.Extensions.Depende
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.SampleHostApp.Service", "src\sample\EasyDesk.SampleHostApp.Service\EasyDesk.SampleHostApp.Service.csproj", "{F6490371-3EA3-4E94-BA9C-9BB4FC7D57EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyDesk.CleanArchitecture.Dal.Sqlite", "src\ca\EasyDesk.CleanArchitecture.Dal.Sqlite\EasyDesk.CleanArchitecture.Dal.Sqlite.csproj", "{C22A2CAE-0CA1-4024-908B-4DB1A111F3F9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -194,10 +192,6 @@ Global
 		{F6490371-3EA3-4E94-BA9C-9BB4FC7D57EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6490371-3EA3-4E94-BA9C-9BB4FC7D57EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6490371-3EA3-4E94-BA9C-9BB4FC7D57EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C22A2CAE-0CA1-4024-908B-4DB1A111F3F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C22A2CAE-0CA1-4024-908B-4DB1A111F3F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C22A2CAE-0CA1-4024-908B-4DB1A111F3F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C22A2CAE-0CA1-4024-908B-4DB1A111F3F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -234,7 +228,6 @@ Global
 		{C302FCAE-729D-41AC-AB1B-588E9762305C} = {838D7C39-3F68-42F7-AD7C-AFD46A0819D9}
 		{69E83F25-FDCA-4467-A73A-94A281AE4DDB} = {97BF71BF-3D5F-4C80-BA10-5F5ED720394C}
 		{F6490371-3EA3-4E94-BA9C-9BB4FC7D57EA} = {33B73B08-BCF2-49AA-BAA0-57CD06202AD1}
-		{C22A2CAE-0CA1-4024-908B-4DB1A111F3F9} = {00DB6729-9D39-4965-83BA-4C8B6E47F7EE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D8D92860-D9D0-4987-985E-F151E0C54794}

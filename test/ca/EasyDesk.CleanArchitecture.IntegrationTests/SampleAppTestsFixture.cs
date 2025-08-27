@@ -6,7 +6,6 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
-using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Sqlite;
 using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Host;
@@ -33,7 +32,6 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
     {
         [DbProvider.SqlServer] = ConfigureSqlServer,
         [DbProvider.PostgreSql] = ConfigurePostgreSql,
-        [DbProvider.Sqlite] = ConfigureSqlite,
     };
 
     public DbProvider DbProvider { get; private set; }
@@ -84,11 +82,6 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
         configurer.AddSqlServerDatabase(container, "SampleDb", x => x
             .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer"));
-    }
-
-    private static void ConfigureSqlite(TestFixtureConfigurer configurer)
-    {
-        configurer.AddSqliteDatabase("ConnectionStrings:Sqlite", $"db-test-{Guid.NewGuid()}.sqlite");
     }
 
     private static void ConfigurePostgreSql(TestFixtureConfigurer configurer)

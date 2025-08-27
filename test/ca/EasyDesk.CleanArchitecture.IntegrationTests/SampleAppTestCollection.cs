@@ -1,4 +1,4 @@
 ﻿namespace EasyDesk.CleanArchitecture.IntegrationTests;
 
-[CollectionDefinition(nameof(SampleAppTestCollection))]
+[CollectionDefinition]
 public class SampleAppTestCollection : ICollectionFixture<SampleAppTestsFixture>;

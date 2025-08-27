@@ -31,7 +31,6 @@ jobs:
         src/ca/EasyDesk.CleanArchitecture.Dal.EfCore
         src/ca/EasyDesk.CleanArchitecture.Dal.PostgreSql
         src/ca/EasyDesk.CleanArchitecture.Dal.SqlServer
-        src/ca/EasyDesk.CleanArchitecture.Dal.Sqlite
         src/ca/EasyDesk.CleanArchitecture.Web
         src/ca/EasyDesk.CleanArchitecture.DependencyInjection
         src/ca/EasyDesk.CleanArchitecture.Testing.Unit
@@ -95,7 +94,6 @@ jobs:
         db-provider:
           - SqlServer
           - PostgreSql
-          - Sqlite
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET Core
@@ -128,14 +126,10 @@ jobs:
          - db-provider: PostgreSql
            postgres-connection: "Host=localhost;Port=5432;Database=sampledb;Username=sample;Password=samplepass-123;"
            usesdb: true
-         - db-provider: Sqlite
-           sqlite-connection: "Filename=db.sqlite"
-           usesdb: true
          - usesdb: false
     env:
       CONNECTIONSTRINGS__SQLSERVER: ${{ matrix.sqlserver-connection }}
       CONNECTIONSTRINGS__POSTGRESQL: ${{ matrix.postgres-connection }}
-      CONNECTIONSTRINGS__SQLITE: ${{ matrix.sqlite-connection }}
       CONNECTIONSTRINGS__RABBITMQ: "amqp://admin:admin@localhost:5672"
       DBPROVIDER: ${{ matrix.db-provider || 'SqlServer' }}
       OUTPUT_DIR: bin/Release
