@@ -84,7 +84,7 @@ public static class RebusFixtureExtensions
                 .Timeouts(t => t.Decorate(c => new InMemTimeoutManager(new InMemTimeoutStore(), c.Get<IRebusTime>())))
                 .Options(o =>
                 {
-                    o.SetDueTimeoutsPollInteval(_pollInterval.ToTimeSpan());
+                    o.SetDueTimeoutsPollInterval(_pollInterval.ToTimeSpan());
                 });
 
             _bus = rebus.Start();

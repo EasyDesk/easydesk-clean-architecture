@@ -6,8 +6,8 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 
 public static class TestContainerExtensions
 {
-    public static TSelf WithUniqueName<TSelf, TContainer>(this IContainerBuilder<TSelf, TContainer> builder, string name)
-        where TSelf : IContainerBuilder<TSelf, TContainer> =>
+    public static TSelf WithUniqueName<TSelf, TContainer, TConfiguration>(this IContainerBuilder<TSelf, TContainer, TConfiguration> builder, string name)
+        where TSelf : IContainerBuilder<TSelf, TContainer, TConfiguration> =>
         builder.WithName($"{name}-{Guid.NewGuid().ToString()[..8]}");
 
     public static TestFixtureConfigurer RegisterDockerContainer<T>(this TestFixtureConfigurer configurer, T container) where T : IContainer
