@@ -10,6 +10,7 @@ using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
@@ -22,7 +23,7 @@ public record UpdatePerson(
     public bool IsAuthorized(AuthorizationInfo auth) =>
         auth.HasPermission(Permissions.CanEditPeople);
 
-    public static void ValidationRules(PimpedInlineValidator<UpdatePerson> validator)
+    public static void ValidationRules(InlineValidator<UpdatePerson> validator)
     {
         validator.RuleFor(x => x.FirstName).MustBeValid().For<Name>();
         validator.RuleFor(x => x.LastName).MustBeValid().For<Name>();

@@ -1,0 +1,18 @@
+﻿[
+  {
+    PropertyName: Child.Text,
+    ErrorMessage: The length of 'Text' must be at least 5 characters. You entered 1 characters.,
+    AttemptedValue: a,
+    CustomState: null,
+    Severity: Error,
+    ErrorCode: MinimumLengthValidator,
+    FormattedMessagePlaceholderValues: {
+      MaxLength: -1,
+      MinLength: 5,
+      PropertyName: Text,
+      PropertyPath: Child.Text,
+      PropertyValue: a,
+      TotalLength: 1
+    }
+  }
+]

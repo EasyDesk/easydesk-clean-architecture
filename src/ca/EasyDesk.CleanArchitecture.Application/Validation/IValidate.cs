@@ -7,12 +7,12 @@ public interface IValidate<T>
 {
     private static IValidator<T> ConstructValidator()
     {
-        var validator = new PimpedInlineValidator<T>();
+        var validator = new InlineValidator<T>();
         T.ValidationRules(validator);
         return validator;
     }
 
     public static IValidator<T> Validator { get; } = ConstructValidator();
 
-    static abstract void ValidationRules(PimpedInlineValidator<T> validator);
+    static abstract void ValidationRules(InlineValidator<T> validator);
 }

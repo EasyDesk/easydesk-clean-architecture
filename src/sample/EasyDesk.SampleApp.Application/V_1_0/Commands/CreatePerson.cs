@@ -11,6 +11,7 @@ using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using FluentValidation;
 using NodaTime;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
@@ -33,7 +34,7 @@ public record CreatePerson : ICommandRequest<PersonDto>, IAuthorize, IValidate<C
     public bool IsAuthorized(AuthorizationInfo auth) =>
         auth.HasPermission(Permissions.CanEditPeople);
 
-    public static void ValidationRules(PimpedInlineValidator<CreatePerson> validator)
+    public static void ValidationRules(InlineValidator<CreatePerson> validator)
     {
         validator.RuleFor(x => x.FirstName).MustBeValid().For<Name>();
         validator.RuleFor(x => x.LastName).MustBeValid().For<Name>();

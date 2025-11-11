@@ -15,7 +15,7 @@
     <PackageReference Include="Testcontainers" Version="4.8.1" />
     <PackageReference Include="Testcontainers.MsSql" Version="4.8.1" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.8.1" />
-    <PackageReference Include="Verify.XunitV3" Version="31.4.3" />
+    <PackageReference Include="Verify.XunitV3" Version="31.5.3" />
   </ItemGroup>
 
   <ItemGroup>

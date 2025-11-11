@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Validation;
-using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
+﻿using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
 using FluentValidation;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Domain.Metamodel;
@@ -34,7 +33,7 @@ public class CollectionValidationExtensionsTests
 
     private static async Task Validate(Model model, Action<IRuleBuilder<Model, IEnumerable<string>>> configure)
     {
-        var validator = new PimpedInlineValidator<Model>()
+        var validator = new InlineValidator<Model>()
             .Also(x => configure(x.RuleFor(x => x.Values)));
 
         await Verify(validator.Validate(model));

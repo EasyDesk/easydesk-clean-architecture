@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.Commons.Options;
 using FluentValidation;
+using Shouldly;
 
 namespace EasyDesk.CleanArchitecture.UnitTests.Application.Validation;
 
@@ -8,9 +9,11 @@ public class PimpedAbstractValidatorTests
 {
     public record TestRecord(Option<int> Number, Option<string> Text);
 
-    private class TestValidator : PimpedAbstractValidator<TestRecord>
+    public record NestedOption(Option<TestRecord> Child);
+
+    private class TestValidator : AbstractValidator<TestRecord>
     {
-        public TestValidator(Action<PimpedAbstractValidator<TestRecord>> validationRules)
+        public TestValidator(Action<AbstractValidator<TestRecord>> validationRules)
         {
             validationRules(this);
         }
@@ -29,7 +32,7 @@ public class PimpedAbstractValidatorTests
         return data;
     }
 
-    private void SimpleRules(PimpedAbstractValidator<TestRecord> validator)
+    private void SimpleRules(AbstractValidator<TestRecord> validator)
     {
         validator.RuleForOption(x => x.Number, rules => rules
             .GreaterThan(0));
@@ -61,5 +64,19 @@ public class PimpedAbstractValidatorTests
         var result = new TestValidator(SimpleRules).Validate(record);
         await Verify(result.Errors)
             .UseParameters(record);
+    }
+
+    [Fact]
+    public async Task ShouldValidate_NestedOption()
+    {
+        var validator = new InlineValidator<NestedOption>();
+        validator.RuleForOption(x => x.Child, x => x.ChildRules(c => c.RuleForOption(x => x.Text, x => x.MinimumLength(5))));
+
+        validator.Validate(new NestedOption(None)).Errors.ShouldBeEmpty();
+        validator.Validate(new NestedOption(Some(new TestRecord(None, None)))).Errors.ShouldBeEmpty();
+        validator.Validate(new NestedOption(Some(new TestRecord(None, Some("aaaaa"))))).Errors.ShouldBeEmpty();
+
+        var result = validator.Validate(new NestedOption(Some(new TestRecord(None, Some("a")))));
+        await Verify(result.Errors);
     }
 }

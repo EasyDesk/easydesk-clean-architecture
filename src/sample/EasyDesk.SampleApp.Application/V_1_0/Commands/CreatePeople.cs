@@ -6,6 +6,7 @@ using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
+using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
@@ -13,7 +14,7 @@ public record CreatePeople : ICommandRequest<IEnumerable<PersonDto>>, IAuthorize
 {
     public required IEnumerable<CreatePerson> People { get; init; }
 
-    public static void ValidationRules(PimpedInlineValidator<CreatePeople> validator)
+    public static void ValidationRules(InlineValidator<CreatePeople> validator)
     {
         validator.RuleForEach(x => x.People).MustBeImplicitlyValid();
     }

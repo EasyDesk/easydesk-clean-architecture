@@ -3,6 +3,7 @@ using EasyDesk.CleanArchitecture.Application.Validation;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Values.Validation;
 using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
+using FluentValidation;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Dto;
 
@@ -59,7 +60,7 @@ public record AddressDto(
         State: address.State.Map(ToValue),
         Country: address.Country.Map(ToValue));
 
-    public static void ValidationRules(PimpedInlineValidator<AddressDto> validator)
+    public static void ValidationRules(InlineValidator<AddressDto> validator)
     {
         validator.RuleFor(x => x.StreetName).MustBeValid().For<PlaceName>();
         validator.RuleForOption(x => x.StreetType, r => r.MustBeValid().For<PlaceName>());
