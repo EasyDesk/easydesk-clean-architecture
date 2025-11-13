@@ -1,11 +1,11 @@
 ﻿namespace EasyDesk.Commons.Observables;
 
-public sealed class SimpleSubscription : ISubscription
+public sealed class Subscription : ISubscription
 {
     private readonly Action _unsubscribeAction;
     private bool _unsubscribed;
 
-    public SimpleSubscription(Action unsubscribeAction)
+    public Subscription(Action unsubscribeAction)
     {
         _unsubscribeAction = unsubscribeAction;
     }

@@ -23,8 +23,8 @@ public class EmitterTests
     {
         var handler1 = Substitute.For<Action<int>>();
         var handler2 = Substitute.For<Action<int>>();
-        _sut.Observable.Subscribe(handler1);
-        _sut.Observable.Subscribe(handler2);
+        _sut.Subscribe(handler1);
+        _sut.Subscribe(handler2);
 
         _sut.Emit(Value);
 
@@ -35,27 +35,21 @@ public class EmitterTests
     [Fact]
     public void Emit_ShouldNotifyAllHandlersInOrderOfSubscription()
     {
-        var index = 0;
+        var range = Enumerable.Range(0, 10);
+        var action = Substitute.For<Action<int>>();
 
-        void InOrderHandler(int expected)
-        {
-            index.ShouldBe(expected);
-            index++;
-        }
-
-        Enumerable.Range(0, 10).ForEach(i =>
-        {
-            _sut.Observable.Subscribe(_ => InOrderHandler(i));
-        });
+        range.ForEach(i => _sut.Subscribe(_ => action(i)));
 
         _sut.Emit(0);
+
+        Received.InOrder(() => range.ForEach(action));
     }
 
     [Fact]
     public void Emit_ShouldNotNotifyUnsubscribedHandlers()
     {
         var handler = Substitute.For<Action<int>>();
-        var subscription = _sut.Observable.Subscribe(handler);
+        var subscription = _sut.Subscribe(handler);
         subscription.Unsubscribe();
 
         _sut.Emit(Value);
@@ -66,7 +60,7 @@ public class EmitterTests
     [Fact]
     public void Unsubscribe_ShouldFail_IfCalledMultipleTimes()
     {
-        var subscription = _sut.Observable.Subscribe(_ => { });
+        var subscription = _sut.Subscribe(_ => { });
         subscription.Unsubscribe();
 
         Should.Throw<InvalidOperationException>(subscription.Unsubscribe);
