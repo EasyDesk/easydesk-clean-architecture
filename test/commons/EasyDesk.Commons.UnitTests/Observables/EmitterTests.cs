@@ -1,5 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Observables;
+using EasyDesk.Commons.Topics;
 using NSubstitute;
 using Shouldly;
 using Xunit;

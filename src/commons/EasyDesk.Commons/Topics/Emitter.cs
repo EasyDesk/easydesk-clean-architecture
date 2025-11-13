@@ -1,6 +1,6 @@
-﻿namespace EasyDesk.Commons.Observables;
+﻿namespace EasyDesk.Commons.Topics;
 
-public class Emitter<T> : IObservable<T>
+public class Emitter<T> : ITopic<T>
 {
     private readonly List<Subscriber> _subscribers = [];
 

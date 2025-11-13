@@ -1,4 +1,4 @@
-﻿namespace EasyDesk.Commons.Observables;
+﻿namespace EasyDesk.Commons.Topics;
 
 public sealed class Subscription : ISubscription
 {
