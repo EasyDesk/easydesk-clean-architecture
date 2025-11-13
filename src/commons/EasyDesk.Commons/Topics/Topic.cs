@@ -1,5 +1,4 @@
 ﻿using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Collections.Immutable;
 
 namespace EasyDesk.Commons.Topics;
 
@@ -20,11 +19,11 @@ public static class Topic
             }
         }));
 
-    public static ITopic<T> Compose<T>(params IFixedList<ITopic<T>> topics) =>
+    public static ITopic<T> Compose<T>(params IEnumerable<ITopic<T>> topics) =>
         Custom<T>(h =>
         {
             var subscriptions = topics.Select(o => o.Subscribe(h));
-            return new Subscription(() => subscriptions.ForEach(s => s.Unsubscribe()));
+            return Subscription.Compose(subscriptions);
         });
 
     private static ITopic<T> Custom<T>(Func<Action<T>, ISubscription> subscribe) =>

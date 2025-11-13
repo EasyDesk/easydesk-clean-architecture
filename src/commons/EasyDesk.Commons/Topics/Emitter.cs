@@ -12,7 +12,7 @@ public class Emitter<T> : ITopic<T>
         };
 
         _subscribers.Add(subscriber);
-        return new Subscription(() => _subscribers.Remove(subscriber));
+        return Subscription.FromUnsubscribeAction(() => _subscribers.Remove(subscriber));
     }
 
     private class Subscriber
