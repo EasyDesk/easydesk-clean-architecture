@@ -1,7 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Versioning;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
@@ -15,7 +15,7 @@ internal class TenantIdOperationFilterForDefaultContextReader : IOperationFilter
             return;
         }
         operation.Parameters ??= [];
-        if (operation.Parameters.Any(p => p.Name.Equals(CommonTenantReaders.TenantIdHttpQueryParam)))
+        if (operation.Parameters.Any(p => p.Name == CommonTenantReaders.TenantIdHttpQueryParam))
         {
             return;
         }
@@ -27,9 +27,9 @@ internal class TenantIdOperationFilterForDefaultContextReader : IOperationFilter
             Description = $"Optional parameter alternative to setting the {CommonTenantReaders.TenantIdHttpHeader} header for specifying the tenant id of the request, with lower priority than the header.",
             Required = false,
             AllowEmptyValue = true,
-            Schema = new()
+            Schema = new OpenApiSchema
             {
-                Type = "string",
+                Type = JsonSchemaType.String,
                 MaxLength = TenantId.MaxLength,
             },
         });

@@ -10,9 +10,9 @@ using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Text.Json.Nodes;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
@@ -43,11 +43,11 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
             .ToFixedList();
     }
 
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         var type = context.Type;
         var documentVersion = OpenApiModule.DocumentNameToVersion(context.DocumentName);
-        if (!type.IsAssignableTo(typeof(ErrorDto)))
+        if (!type.IsAssignableTo(typeof(ErrorDto)) || schema is not OpenApiSchema concreteSchema)
         {
             return;
         }
@@ -64,7 +64,10 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
                 keySelector: e => e.Item1,
                 elementSelector: e =>
                 {
-                    var properties = schema.Properties.ToSortedDictionary(schema => schema.Key, schema => new OpenApiSchema(schema.Value));
+                    var properties = schema.Properties
+                        ?.ToSortedDictionary(schema => schema.Key, schema => schema.Value)
+                        ?? new Dictionary<string, IOpenApiSchema>();
+
                     if (context.SchemaRepository.TryLookupByType(e.Item2, out var existing))
                     {
                         properties[metaDataProperty.Name] = existing;
@@ -72,21 +75,21 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
                     else
                     {
                         var schema = context.SchemaGenerator.GenerateSchema(e.Item2, context.SchemaRepository);
-                        properties[codeDataProperty.Name].Enum = GetErrorCode(e.Item2);
+                        (properties[codeDataProperty.Name] as OpenApiSchema)?.Enum = GetErrorCode(e.Item2);
                         properties[metaDataProperty.Name] = schema;
                     }
-                    properties[schemaDataProperty.Name].Enum = [new OpenApiString(e.Item1),];
+                    (properties[schemaDataProperty.Name] as OpenApiSchema)?.Enum = [e.Item1,];
                     return context.SchemaRepository.AddDefinition(
                         schemaId: e.Item1,
                         schema: new()
                         {
-                            Type = "object",
+                            Type = JsonSchemaType.Object,
                             Properties = properties,
                             Required = properties.Keys.ToHashSet(),
                             AdditionalPropertiesAllowed = false,
                             ReadOnly = true,
                             Description = $"{nameof(ErrorDto)} schema generated from {e.Item2.GetTypeNameWithVersion()}.",
-                            Annotations = e.Item2.GetApiVersionFromNamespace().IsPresent(out var v)
+                            Metadata = e.Item2.GetApiVersionFromNamespace().IsPresent(out var v)
                             ? new Dictionary<string, object>
                             {
                                 ["version"] = v.ToStringWithoutV(),
@@ -94,12 +97,12 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
                             : [],
                         });
                 });
-        schema.Discriminator = new()
+        concreteSchema.Discriminator = new()
         {
             PropertyName = _options.Value.JsonSerializerOptions.PropertyNamingPolicy?.ConvertName(nameof(ErrorDto.Schema)) ?? nameof(ErrorDto.Schema),
-            Mapping = errorMetaSchemaDictionary.ToSortedDictionary(entry => entry.Key, entry => entry.Value.Reference.Id),
+            Mapping = errorMetaSchemaDictionary.ToSortedDictionary(entry => entry.Key, entry => entry.Value),
         };
-        schema.OneOf = errorMetaSchemaDictionary.Values.ToList();
+        concreteSchema.OneOf = [.. errorMetaSchemaDictionary.Values.Select(reference => context.SchemaRepository.Schemas[reference.Id!]),];
     }
 
     private static bool MatchesVersion(
@@ -113,8 +116,8 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
         return version.IsAbsent(out var v) || v <= dv;
     }
 
-    private IList<IOpenApiAny> GetErrorCode(Type t) =>
+    private IList<JsonNode> GetErrorCode(Type t) =>
         t.IsAssignableTo(typeof(ApplicationError))
-        ? [new OpenApiString(ErrorDto.GetErrorCodeFromApplicationErrorType(t)),]
+        ? [ErrorDto.GetErrorCodeFromApplicationErrorType(t),]
         : [];
 }

@@ -1,5 +1,5 @@
 ﻿using EasyDesk.Commons.Collections;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
@@ -10,7 +10,7 @@ internal class BadRequestOperationFilter : IOperationFilter
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        if (operation.Responses.ContainsKey(ErrorCode))
+        if (operation.Responses?.ContainsKey(ErrorCode) ?? true)
         {
             return;
         }
@@ -22,10 +22,6 @@ internal class BadRequestOperationFilter : IOperationFilter
         {
             return;
         }
-        var badRequestResponse = new OpenApiResponse(successResponse.Value)
-        {
-            Description = "Client Error",
-        };
-        operation.Responses.Add(ErrorCode, badRequestResponse);
+        operation.Responses.Add(ErrorCode, successResponse.Value);
     }
 }

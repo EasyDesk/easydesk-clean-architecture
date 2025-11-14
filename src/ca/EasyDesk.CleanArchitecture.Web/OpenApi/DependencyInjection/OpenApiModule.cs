@@ -10,7 +10,6 @@ using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.DependencyInjection;
 using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Builder;
@@ -19,12 +18,9 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
-using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using static System.CommandLine.Handler;
 using CommandLine = System.CommandLine;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
@@ -131,7 +127,7 @@ public class OpenApiModule : AppModule
 
     public static string VersionToDocumentName(ApiVersion v) => v.ToString();
 
-    public static Option<ApiVersion> DocumentNameToVersion(string documentName) => Some(documentName)
+    public static Commons.Options.Option<ApiVersion> DocumentNameToVersion(string documentName) => Some(documentName)
         .Filter(d => d != SingleVersionedDocumentName)
         .Map(d => ApiVersion.Parse(d).OrElseThrow(() => throw new InvalidOperationException("Unable to retrieve the Api version from the document name.")));
 
@@ -157,15 +153,21 @@ public class OpenApiModule : AppModule
     private CommandLine.Command OpenApiCommand(IComponentContext context)
     {
         var command = new CommandLine.Command("openapi");
-        var hostOption = new CommandLine.Option<string?>("--host", () => null, "Sets the host value in the OpenApi document");
-        var basePathOption = new CommandLine.Option<string?>("--base-path", () => null, "Sets the basePath value in the OpenApi document");
+        var hostOption = new CommandLine.Option<string?>("--host", "Sets the host value in the OpenApi document")
+        {
+            Description = "Sets the host value in the OpenApi document",
+        };
+        var basePathOption = new CommandLine.Option<string?>("--base-path")
+        {
+            Description = "Sets the basePath value in the OpenApi document",
+        };
         var existingDocumentNames = context.Resolve<IOptions<SwaggerGenOptions>>().Value.SwaggerGeneratorOptions.SwaggerDocs.Keys;
         var defaultDocumentKey = context.ResolveOption<ApiVersioningInfo>().Match(
             some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentName),
             none: () => Some(SingleVersionedDocumentName));
-        var documentNameOption = new CommandLine.Option<string>(
-            "--document",
-            result =>
+        var documentNameOption = new CommandLine.Option<string>("--document")
+        {
+            CustomParser = result =>
             {
                 if (result.Tokens.Count == 0)
                 {
@@ -173,36 +175,36 @@ public class OpenApiModule : AppModule
                     {
                         return defaultDocumentKey.Value;
                     }
-                    result.ErrorMessage = "Default document not available";
+                    result.AddError("Default document not available");
                     return string.Empty;
                 }
                 var value = result.Tokens.Single().Value;
                 if (!existingDocumentNames.Contains(value))
                 {
-                    result.ErrorMessage = $"The document '{value}' does not exist";
+                    result.AddError($"The document '{value}' does not exist");
                     return string.Empty;
                 }
                 return value;
             },
-            isDefault: true,
-            description: "The name of the document to generate");
-        var formatOption = new CommandLine.Option<OpenApiFormat>("--format", () => OpenApiFormat.Json, "The format of the output (Json or Yaml)");
+            Required = true,
+            Description = "The name of the document to generate",
+        };
+        var formatJsonOption = new CommandLine.Option<bool>("--json")
+        {
+            Description = "True if the format of the output should be Json instead of Yaml",
+            DefaultValueFactory = _ => false,
+        };
 
-        command.AddOption(documentNameOption);
-        command.AddOption(hostOption);
-        command.AddOption(basePathOption);
-        command.AddOption(formatOption);
-        command.SetHandler(
-            (documentName, host, basePath, format) =>
-            {
-                var doc = context.Resolve<ISwaggerProvider>().GetSwagger(documentName, host, basePath);
-                var stream = Console.OpenStandardOutput();
-                doc.Serialize(stream, OpenApiSpecVersion.OpenApi3_0, format);
-            },
-            documentNameOption,
-            hostOption,
-            basePathOption,
-            formatOption);
+        command.Add(documentNameOption);
+        command.Add(hostOption);
+        command.Add(basePathOption);
+        command.Add(formatJsonOption);
+        command.SetAction(async (result, cancellationToken) =>
+        {
+            var doc = context.Resolve<ISwaggerProvider>().GetSwagger(result.GetValue(documentNameOption), result.GetValue(hostOption), result.GetValue(basePathOption));
+            var stream = Console.OpenStandardOutput();
+            await doc.SerializeAsync(stream, OpenApiSpecVersion.OpenApi3_0, result.GetValue(formatJsonOption) ? OpenApiConstants.Json : OpenApiConstants.Yaml, cancellationToken);
+        });
 
         return command;
     }

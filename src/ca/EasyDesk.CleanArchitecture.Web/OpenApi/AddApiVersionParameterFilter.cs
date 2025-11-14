@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Versioning;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
@@ -18,16 +17,17 @@ internal class AddApiVersionParameterFilter : IOperationFilter
 
     private static void AddApiVersionParameter(OpenApiOperation operation, ApiVersion version)
     {
+        operation.Parameters ??= [];
         operation.Parameters.Add(new OpenApiParameter
         {
             Name = "version",
             In = ParameterLocation.Query,
             Description = "Optional parameter used to select the API version for this endpoint.",
-            Schema = new()
+            Schema = new OpenApiSchema
             {
                 ReadOnly = true,
-                Type = "string",
-                Default = new OpenApiString(version.ToStringWithoutV()),
+                Type = JsonSchemaType.String,
+                Default = version.ToStringWithoutV(),
             },
         });
     }
