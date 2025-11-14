@@ -66,22 +66,6 @@ public static class AsyncEnumerable
         }
     }
 
-    public static IAsyncEnumerable<T> Concat<T>(this IAsyncEnumerable<T> left, IAsyncEnumerable<T> right) =>
-        left.ThenConcat(() => right);
-
-    public static async IAsyncEnumerable<T> ThenConcat<T>(this IAsyncEnumerable<T> left, Func<IAsyncEnumerable<T>> right)
-    {
-        await foreach (var item in left)
-        {
-            yield return item;
-        }
-
-        await foreach (var item in right())
-        {
-            yield return item;
-        }
-    }
-
     public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence)
     {
         await using (var enumerator = sequence.GetAsyncEnumerator())
@@ -96,36 +80,6 @@ public static class AsyncEnumerable
 
     public static async Task<Option<T>> FirstOption<T>(this IAsyncEnumerable<T> sequence, Func<T, bool> predicate) =>
         await sequence.Where(predicate).FirstOption();
-
-    public static async IAsyncEnumerable<R> Select<T, R>(this IAsyncEnumerable<T> sequence, Func<T, R> mapper)
-    {
-        await foreach (var item in sequence)
-        {
-            yield return mapper(item);
-        }
-    }
-
-    public static async IAsyncEnumerable<T> Where<T>(this IAsyncEnumerable<T> sequence, Func<T, bool> predicate)
-    {
-        await foreach (var item in sequence)
-        {
-            if (predicate(item))
-            {
-                yield return item;
-            }
-        }
-    }
-
-    public static async IAsyncEnumerable<R> SelectMany<T, R>(this IAsyncEnumerable<T> sequence, Func<T, IAsyncEnumerable<R>> mapper)
-    {
-        await foreach (var item in sequence)
-        {
-            await foreach (var mapped in mapper(item))
-            {
-                yield return mapped;
-            }
-        }
-    }
 
     public static async Task<TResult> AggregateAsync<T, TResult>(
         this IAsyncEnumerable<T> sequence,
@@ -170,25 +124,5 @@ public static class AsyncEnumerable
             _enumerator.Dispose();
             return ValueTask.CompletedTask;
         }
-    }
-
-    public static async Task<bool> SequenceEqualAsync<T>(
-        this IAsyncEnumerable<T> sequence,
-        IAsyncEnumerable<T> other,
-        IEqualityComparer<T>? comparer = null)
-    {
-        await using var first = sequence.GetAsyncEnumerator();
-        await using var second = other.GetAsyncEnumerator();
-
-        while (await first.MoveNextAsync())
-        {
-            comparer ??= EqualityComparer<T>.Default;
-            if (!(await second.MoveNextAsync() && comparer.Equals(first.Current, second.Current)))
-            {
-                return false;
-            }
-        }
-
-        return !await second.MoveNextAsync();
     }
 }
