@@ -1,5 +1,4 @@
 ﻿using EasyDesk.Commons.Tasks;
-using Xunit;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Lifetime;
 

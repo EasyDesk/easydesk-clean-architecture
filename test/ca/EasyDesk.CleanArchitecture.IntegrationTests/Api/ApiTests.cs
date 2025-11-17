@@ -34,11 +34,11 @@ public class ApiTests : SampleAppIntegrationTest
             var doc = swaggerProvider.GetSwagger(documentKey);
             await using (var stream = new MemoryStream())
             {
-                await doc.SerializeAsJsonAsync(stream, OpenApiSpecVersion.OpenApi3_1);
+                await doc.SerializeAsJsonAsync(stream, OpenApiSpecVersion.OpenApi3_1, TestContext.Current.CancellationToken);
             }
             await using (var stream = new MemoryStream())
             {
-                await doc.SerializeAsYamlAsync(stream, OpenApiSpecVersion.OpenApi3_1);
+                await doc.SerializeAsYamlAsync(stream, OpenApiSpecVersion.OpenApi3_1, TestContext.Current.CancellationToken);
             }
         }
     }

@@ -7,7 +7,6 @@ using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Context.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.AppBuilders;
 using EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
-using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
