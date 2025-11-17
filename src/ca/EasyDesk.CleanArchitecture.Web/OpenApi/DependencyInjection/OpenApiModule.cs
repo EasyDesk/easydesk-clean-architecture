@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
-using EasyDesk.CleanArchitecture.Application.Json;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
@@ -10,8 +9,8 @@ using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Extensions.DependencyInjection;
-using MicroElements.Swashbuckle.NodaTime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -145,15 +144,13 @@ public class OpenApiModule : AppModule
             .Map(m => m.DateTimeZoneProvider)
             .OrElseNull();
 
-        options.ConfigureForNodaTimeWithSystemTextJson(
-            jsonSerializerOptions: JsonDefaults.DefaultSerializerOptions(),
-            dateTimeZoneProvider: dateTimeZoneProvider);
+        // TODO: configure options to work with nodatime
     }
 
     private CommandLine.Command OpenApiCommand(IComponentContext context)
     {
         var command = new CommandLine.Command("openapi");
-        var hostOption = new CommandLine.Option<string?>("--host", "Sets the host value in the OpenApi document")
+        var hostOption = new CommandLine.Option<string?>("--host")
         {
             Description = "Sets the host value in the OpenApi document",
         };
@@ -203,7 +200,7 @@ public class OpenApiModule : AppModule
         {
             var doc = context.Resolve<ISwaggerProvider>().GetSwagger(result.GetValue(documentNameOption), result.GetValue(hostOption), result.GetValue(basePathOption));
             var stream = Console.OpenStandardOutput();
-            await doc.SerializeAsync(stream, OpenApiSpecVersion.OpenApi3_0, result.GetValue(formatJsonOption) ? OpenApiConstants.Json : OpenApiConstants.Yaml, cancellationToken);
+            await doc.SerializeAsync(stream, OpenApiSpecVersion.OpenApi3_1, result.GetValue(formatJsonOption) ? OpenApiConstants.Json : OpenApiConstants.Yaml, cancellationToken);
         });
 
         return command;
@@ -212,6 +209,9 @@ public class OpenApiModule : AppModule
 
 public static class SwaggerModuleExtensions
 {
+    public const string DefaultRoutePrefix = "openapi";
+    public const string DefaultEndpointTemplate = "swagger/{documentname}/swagger.json";
+
     public static IAppBuilder AddOpenApi(this IAppBuilder builder, Action<OpenApiModuleOptions>? configure = null)
     {
         return builder.AddModule(new OpenApiModule(configure));
@@ -225,17 +225,26 @@ public static class SwaggerModuleExtensions
 
         app.UseSwagger(c =>
         {
-            c.RouteTemplate = "openapi/swagger/{documentname}/swagger.json";
+            c.RouteTemplate = $"{DefaultRoutePrefix}/{DefaultEndpointTemplate}";
         });
         app.UseSwaggerUI(c =>
         {
-            swaggerOptions.SwaggerGeneratorOptions.SwaggerDocs.ForEach(doc =>
+            c.RoutePrefix = DefaultRoutePrefix;
+            swaggerOptions.GetSwaggerRelativeEndpoints().ForEach(endpoint =>
             {
-                c.SwaggerEndpoint($"./swagger/{doc.Key}/swagger.json", doc.Value.Title);
-                c.RoutePrefix = "openapi";
+                c.SwaggerEndpoint($"./{endpoint.Value}", endpoint.Key);
             });
         });
     }
+
+    public static IFixedMap<string, string> GetSwaggerRelativeEndpoints(this SwaggerGenOptions options) => options
+        .SwaggerGeneratorOptions
+        .SwaggerDocs
+        .ToFixedSortedMap(doc => doc.Key, doc => DefaultEndpointTemplate.Replace("{documentname}", doc.Key));
+
+    public static IFixedMap<string, string> GetSwaggerEndpoints(this SwaggerGenOptions options) => options
+        .GetSwaggerRelativeEndpoints()
+        .ToFixedSortedMap(endpoint => endpoint.Key, endpoint => $"{DefaultRoutePrefix}/{endpoint.Value}");
 }
 
 public sealed class OpenApiModuleOptions

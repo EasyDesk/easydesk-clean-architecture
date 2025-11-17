@@ -101,7 +101,7 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
     private Command MigrationCommand(IComponentContext context)
     {
         var command = new Command("migrate", "Apply migrations to the database");
-        var syncOption = new Option<bool>("--sync", aliases: ["--synchronous",])
+        var syncOption = new Option<bool>("--sync", "--synchronous")
         {
             DefaultValueFactory = _ => false,
             Description = "Apply migrations synchronously",

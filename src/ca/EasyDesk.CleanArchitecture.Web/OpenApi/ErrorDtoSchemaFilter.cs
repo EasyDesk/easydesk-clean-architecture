@@ -100,9 +100,9 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
         concreteSchema.Discriminator = new()
         {
             PropertyName = _options.Value.JsonSerializerOptions.PropertyNamingPolicy?.ConvertName(nameof(ErrorDto.Schema)) ?? nameof(ErrorDto.Schema),
-            Mapping = errorMetaSchemaDictionary.ToSortedDictionary(entry => entry.Key, entry => entry.Value),
+            Mapping = errorMetaSchemaDictionary,
         };
-        concreteSchema.OneOf = [.. errorMetaSchemaDictionary.Values.Select(reference => context.SchemaRepository.Schemas[reference.Id!]),];
+        concreteSchema.OneOf = [.. errorMetaSchemaDictionary.Values,];
     }
 
     private static bool MatchesVersion(

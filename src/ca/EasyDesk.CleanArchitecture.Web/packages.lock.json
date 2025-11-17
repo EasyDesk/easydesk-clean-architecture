@@ -17,18 +17,6 @@
         "resolved": "33.1.0",
         "contentHash": "kqfTOZGrn7NarNeXgjh86JcpTHUoeQDMB8t9NVa/ZtlSYiV1rxfRnQ49WaJsob4AiGrbK0XDzpyKkBwai4F8eg=="
       },
-      "MicroElements.Swashbuckle.NodaTime": {
-        "type": "Direct",
-        "requested": "[4.0.1, )",
-        "resolved": "4.0.1",
-        "contentHash": "y3IOcX/DGMn8YlfeJPdNAHz3kRsGPqwallH0AuSfU51TlP//8/V/OEqeNoVMM7xA5hRL9b8qgVCTJwL6oj1ALg==",
-        "dependencies": {
-          "NodaTime": "3.0.0",
-          "NodaTime.Serialization.JsonNet": "3.0.0",
-          "NodaTime.Serialization.SystemTextJson": "1.0.0",
-          "Swashbuckle.AspNetCore": "5.5.1"
-        }
-      },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
         "requested": "[8.0.0, )",
@@ -357,15 +345,6 @@
         "type": "Transitive",
         "resolved": "3.2.2",
         "contentHash": "dmju5W0UYC3QP/UJM0juKAZkH0HSDMp0gH91A0+mT9M0kgyM2Jm67hUZPl/WRQLq8Lijjqmdk8kyAViWFWM7dA=="
-      },
-      "NodaTime.Serialization.JsonNet": {
-        "type": "Transitive",
-        "resolved": "3.0.0",
-        "contentHash": "buSE64oL5eHDiImMgFRF74X/URygSpklFsblyqXafjSW6lMsB7iWfGO5lu7D7Zikj9bXggnMa90a5EqgpPJEYg==",
-        "dependencies": {
-          "Newtonsoft.Json": "12.0.1",
-          "NodaTime": "[3.0.0, 4.0.0)"
-        }
       },
       "NodaTime.Serialization.SystemTextJson": {
         "type": "Transitive",

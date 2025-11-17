@@ -18,15 +18,7 @@ public class TestController : CleanArchitectureController
 
     public const string TestPolymorphismRoute = Base + "/polymorphism";
 
-    /*
-    public record TestOptionBinding(Option<string> String);
-
-    [HttpGet(TestOptionInQueryObject)]
-    public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetPerson([FromQuery] TestOptionBinding value)
-    {
-        return Success(value.String);
-    }
-    */
+    public const string NodaTimeTestRoute = Base + "/nodatime";
 
     [HttpGet(TestOptionInQuery)]
     public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetValueFromQuery([FromQuery] Option<string> value)
@@ -44,5 +36,11 @@ public class TestController : CleanArchitectureController
     public Task<ActionResult<ResponseDto<IPolymorphicDto, Nothing>>> TestPolymorphism([FromBody] IPolymorphicDto dto)
     {
         return Success(dto);
+    }
+
+    [HttpPost(NodaTimeTestRoute)]
+    public Task<ActionResult<ResponseDto<NodaTimeTestDto, Nothing>>> TestNodaTime([FromBody] NodaTimeTestDto body)
+    {
+        return Success(body);
     }
 }
