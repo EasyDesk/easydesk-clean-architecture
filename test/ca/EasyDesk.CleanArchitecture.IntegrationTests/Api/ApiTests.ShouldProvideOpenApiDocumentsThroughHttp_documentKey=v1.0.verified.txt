@@ -530,14 +530,18 @@
             "name": "from",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/Instant"
+              "type": "string",
+              "format": "date-time",
+              "example": "1970-01-01T00:00:00Z"
             }
           },
           {
             "name": "to",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/Instant"
+              "type": "string",
+              "format": "date-time",
+              "example": "1970-01-01T00:00:00Z"
             }
           },
           {
@@ -615,7 +619,8 @@
             "name": "waitTime",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/Duration"
+              "type": "string",
+              "example": "25:01:01.001"
             }
           },
           {
@@ -2689,7 +2694,9 @@
             "type": "boolean"
           },
           "instant": {
-            "$ref": "#/components/schemas/Instant"
+            "type": "string",
+            "format": "date-time",
+            "example": "1970-01-01T00:00:00Z"
           }
         },
         "additionalProperties": false
@@ -2823,7 +2830,9 @@
         "type": "object",
         "properties": {
           "date": {
-            "$ref": "#/components/schemas/LocalDate"
+            "type": "string",
+            "format": "date",
+            "example": "1970-01-01"
           }
         },
         "additionalProperties": false
@@ -2869,37 +2878,6 @@
         },
         "additionalProperties": false
       },
-      "CalendarSystem": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "readOnly": true
-          },
-          "minYear": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "maxYear": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "eras": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Era"
-            },
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
       "CreatePersonBodyDto": {
         "required": [
           "dateOfBirth",
@@ -2916,7 +2894,9 @@
             "type": "string"
           },
           "dateOfBirth": {
-            "$ref": "#/components/schemas/LocalDate"
+            "type": "string",
+            "format": "date",
+            "example": "1970-01-01"
           },
           "residence": {
             "$ref": "#/components/schemas/AddressDto"
@@ -3013,22 +2993,6 @@
         },
         "additionalProperties": false
       },
-      "DateTimeZone": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "readOnly": true
-          },
-          "minOffset": {
-            "$ref": "#/components/schemas/Offset"
-          },
-          "maxOffset": {
-            "$ref": "#/components/schemas/Offset"
-          }
-        },
-        "additionalProperties": false
-      },
       "DomainError": {
         "required": [
           "code",
@@ -3060,102 +3024,6 @@
         "additionalProperties": false,
         "description": "ErrorDto schema generated from Nothing.",
         "readOnly": true
-      },
-      "Duration": {
-        "type": "object",
-        "properties": {
-          "days": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "nanosecondOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "hours": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "minutes": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "seconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "milliseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "subsecondTicks": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "subsecondNanoseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "bclCompatibleTicks": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "totalDays": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalHours": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMinutes": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalSeconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalMilliseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalTicks": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          },
-          "totalNanoseconds": {
-            "type": "number",
-            "format": "double",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Era": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
       },
       "ErrorDto": {
         "required": [
@@ -3378,10 +3246,6 @@
         },
         "additionalProperties": false
       },
-      "Instant": {
-        "type": "object",
-        "additionalProperties": false
-      },
       "InternalError": {
         "required": [
           "code",
@@ -3413,29 +3277,6 @@
         "additionalProperties": false,
         "description": "ErrorDto schema generated from Nothing.",
         "readOnly": true
-      },
-      "Interval": {
-        "type": "object",
-        "properties": {
-          "start": {
-            "$ref": "#/components/schemas/Instant"
-          },
-          "hasStart": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "end": {
-            "$ref": "#/components/schemas/Instant"
-          },
-          "hasEnd": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "duration": {
-            "$ref": "#/components/schemas/Duration"
-          }
-        },
-        "additionalProperties": false
       },
       "InvalidApiKey": {
         "required": [
@@ -3647,191 +3488,6 @@
         },
         "additionalProperties": false
       },
-      "IsoDayOfWeek": {
-        "enum": [
-          "None",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-          "Sunday"
-        ],
-        "type": "string"
-      },
-      "LocalDate": {
-        "type": "object",
-        "properties": {
-          "calendar": {
-            "$ref": "#/components/schemas/CalendarSystem"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "day": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "dayOfWeek": {
-            "$ref": "#/components/schemas/IsoDayOfWeek"
-          },
-          "yearOfEra": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "era": {
-            "$ref": "#/components/schemas/Era"
-          },
-          "dayOfYear": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "LocalDateTime": {
-        "type": "object",
-        "properties": {
-          "calendar": {
-            "$ref": "#/components/schemas/CalendarSystem"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "yearOfEra": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "era": {
-            "$ref": "#/components/schemas/Era"
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "dayOfYear": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "day": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "dayOfWeek": {
-            "$ref": "#/components/schemas/IsoDayOfWeek"
-          },
-          "hour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "clockHourOfHalfDay": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "millisecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "nanosecondOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "nanosecondOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "timeOfDay": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "date": {
-            "$ref": "#/components/schemas/LocalDate"
-          }
-        },
-        "additionalProperties": false
-      },
-      "LocalTime": {
-        "type": "object",
-        "properties": {
-          "hour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "clockHourOfHalfDay": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "millisecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "nanosecondOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "nanosecondOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
       "MissingTenantError": {
         "required": [
           "code",
@@ -3908,34 +3564,58 @@
         "type": "object",
         "properties": {
           "instant": {
-            "$ref": "#/components/schemas/Instant"
+            "type": "string",
+            "format": "date-time",
+            "example": "1970-01-01T00:00:00Z"
           },
           "offsetDateTime": {
-            "$ref": "#/components/schemas/OffsetDateTime"
+            "type": "string",
+            "format": "date-time",
+            "example": "1970-01-01T01:00:00+01:00"
           },
           "zonedDateTime": {
-            "$ref": "#/components/schemas/ZonedDateTime"
+            "type": "string",
+            "example": "1970-01-01T01:00:00+01 Europe/Berlin"
           },
           "localDateTime": {
-            "$ref": "#/components/schemas/LocalDateTime"
+            "type": "string",
+            "example": "1970-01-01T01:00:00"
           },
           "localDate": {
-            "$ref": "#/components/schemas/LocalDate"
+            "type": "string",
+            "format": "date",
+            "example": "1970-01-01"
           },
           "localTime": {
-            "$ref": "#/components/schemas/LocalTime"
+            "type": "string",
+            "example": "01:00:00"
           },
           "offset": {
-            "$ref": "#/components/schemas/Offset"
+            "type": "string",
+            "example": "+01"
           },
           "interval": {
-            "$ref": "#/components/schemas/Interval"
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string",
+                "format": "date-time",
+                "example": "1970-01-01T00:00:00Z"
+              },
+              "end": {
+                "type": "string",
+                "format": "date-time",
+                "example": "1970-01-02T01:01:01.001Z"
+              }
+            }
           },
           "duration": {
-            "$ref": "#/components/schemas/Duration"
+            "type": "string",
+            "example": "25:01:01.001"
           },
           "period": {
-            "$ref": "#/components/schemas/Period"
+            "type": "string",
+            "example": "P1DT1H1M1S1s"
           }
         },
         "additionalProperties": false
@@ -4038,129 +3718,6 @@
         },
         "additionalProperties": false
       },
-      "Offset": {
-        "type": "object",
-        "properties": {
-          "seconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "milliseconds": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "ticks": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "nanoseconds": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "OffsetDateTime": {
-        "type": "object",
-        "properties": {
-          "calendar": {
-            "$ref": "#/components/schemas/CalendarSystem"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "day": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "dayOfWeek": {
-            "$ref": "#/components/schemas/IsoDayOfWeek"
-          },
-          "yearOfEra": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "era": {
-            "$ref": "#/components/schemas/Era"
-          },
-          "dayOfYear": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "hour": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "clockHourOfHalfDay": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "millisecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "nanosecondOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "nanosecondOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "localDateTime": {
-            "$ref": "#/components/schemas/LocalDateTime"
-          },
-          "date": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "timeOfDay": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "offset": {
-            "$ref": "#/components/schemas/Offset"
-          }
-        },
-        "additionalProperties": false
-      },
       "PaginationMetaDto": {
         "required": [
           "count",
@@ -4184,70 +3741,6 @@
         },
         "additionalProperties": false
       },
-      "Period": {
-        "type": "object",
-        "properties": {
-          "nanoseconds": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "ticks": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "milliseconds": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "seconds": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "minutes": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "hours": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "days": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "weeks": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "months": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "years": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "hasTimeComponent": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "hasDateComponent": {
-            "type": "boolean",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
       "PersonDto": {
         "type": "object",
         "properties": {
@@ -4262,7 +3755,9 @@
             "type": "string"
           },
           "dateOfBirth": {
-            "$ref": "#/components/schemas/LocalDate"
+            "type": "string",
+            "format": "date",
+            "example": "1970-01-01"
           },
           "createdBy": {
             "type": "string"
@@ -4797,106 +4292,6 @@
           },
           "residence": {
             "$ref": "#/components/schemas/AddressDto"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ZonedDateTime": {
-        "type": "object",
-        "properties": {
-          "offset": {
-            "$ref": "#/components/schemas/Offset"
-          },
-          "zone": {
-            "$ref": "#/components/schemas/DateTimeZone"
-          },
-          "localDateTime": {
-            "$ref": "#/components/schemas/LocalDateTime"
-          },
-          "calendar": {
-            "$ref": "#/components/schemas/CalendarSystem"
-          },
-          "date": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "timeOfDay": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "era": {
-            "$ref": "#/components/schemas/Era"
-          },
-          "year": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "yearOfEra": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "month": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "dayOfYear": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "day": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "dayOfWeek": {
-            "$ref": "#/components/schemas/IsoDayOfWeek"
-          },
-          "hour": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "clockHourOfHalfDay": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "millisecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "tickOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
-          },
-          "nanosecondOfSecond": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "nanosecondOfDay": {
-            "type": "integer",
-            "format": "int64",
-            "readOnly": true
           }
         },
         "additionalProperties": false
