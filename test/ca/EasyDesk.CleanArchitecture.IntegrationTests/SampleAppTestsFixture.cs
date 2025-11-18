@@ -80,21 +80,29 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
             .WithPassword("sample.123")
             .Build();
 
-        configurer.AddSqlServerDatabase(container, "SampleDb", x => x
-            .OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer"));
+        configurer.RegisterDockerContainer(container);
+
+        configurer.AddSqlServerDatabase(
+            container,
+            "SampleDb",
+            x => x.OverrideConnectionStringFromConfiguration("ConnectionStrings:SqlServer"));
     }
 
     private static void ConfigurePostgreSql(TestFixtureConfigurer configurer)
     {
         var container = new PostgreSqlBuilder()
             .WithUniqueName("sample-app-tests-postgres")
-            .WithDatabase("TestSampleDb")
             .WithUsername("sample")
             .WithPassword("sample")
             .Build();
 
-        configurer.AddPostgresDatabase(container, x => x
-            .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true, }.ConnectionString)
-            .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql"));
+        configurer.RegisterDockerContainer(container);
+
+        configurer.AddPostgresDatabase(
+            container,
+            "TestSampleDb",
+            x => x
+                .ModifyConnectionString(c => new NpgsqlConnectionStringBuilder(c) { IncludeErrorDetail = true, }.ConnectionString)
+                .OverrideConnectionStringFromConfiguration("ConnectionStrings:PostgreSql"));
     }
 }

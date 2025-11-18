@@ -1,25 +1,19 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using System.Data.Common;
-using IDockerContainer = DotNet.Testcontainers.Containers.IContainer;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql;
 
 public static class SqlFixtureExtensions
 {
-    public static TestFixtureConfigurer AddSqlDatabase<T>(
+    public static TestFixtureConfigurer AddSqlDatabase(
         this TestFixtureConfigurer configurer,
-        T container,
-        Func<T, string> getConnectionString,
+        Func<string> getConnectionString,
         Func<string, DbConnection> createConnection,
         ITableCopiesProvider? tableCopiesProvider = null,
         Action<SqlDatabaseFixtureOptions>? configureOptions = null)
-        where T : IDockerContainer
     {
-        configurer.RegisterDockerContainer(container);
-
-        var options = new SqlDatabaseFixtureOptions(configurer, () => getConnectionString(container));
+        var options = new SqlDatabaseFixtureOptions(configurer, () => getConnectionString());
         configureOptions?.Invoke(options);
 
         if (tableCopiesProvider is not null)

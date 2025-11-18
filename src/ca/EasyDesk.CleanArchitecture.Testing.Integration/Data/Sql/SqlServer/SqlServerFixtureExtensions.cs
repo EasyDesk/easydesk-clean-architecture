@@ -12,7 +12,7 @@ public static class SqlServerFixtureExtensions
         string databaseName,
         Action<SqlDatabaseFixtureOptions>? configureOptions = null)
     {
-        string GetConnectionString(MsSqlContainer container)
+        string GetConnectionString()
         {
             var originalConnectionString = container.GetConnectionString();
             var builder = new SqlConnectionStringBuilder(originalConnectionString)
@@ -23,9 +23,16 @@ public static class SqlServerFixtureExtensions
             return builder.ConnectionString;
         }
 
+        return builder.AddSqlServerDatabase(GetConnectionString, configureOptions);
+    }
+
+    public static TestFixtureConfigurer AddSqlServerDatabase(
+        this TestFixtureConfigurer builder,
+        Func<string> getConnectionString,
+        Action<SqlDatabaseFixtureOptions>? configureOptions = null)
+    {
         return builder.AddSqlDatabase(
-            container,
-            GetConnectionString,
+            getConnectionString,
             s => new SqlConnection(s),
             new SqlServerTableCopiesProvider(),
             configureOptions);
