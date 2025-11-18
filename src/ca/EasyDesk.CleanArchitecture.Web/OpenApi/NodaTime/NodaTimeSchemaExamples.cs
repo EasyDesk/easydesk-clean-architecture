@@ -34,8 +34,8 @@ public record NodaTimeSchemaExamples
         }
 
         DateTimeZone = dateTimeZone is not null
-            ? dateTimeZoneProvider.GetZoneOrNull(dateTimeZone) ?? dateTimeZoneProvider.GetSystemDefault()
-            : dateTimeZoneProvider.GetSystemDefault();
+            ? dateTimeZoneProvider.GetZoneOrNull(dateTimeZone) ?? dateTimeZoneProvider["Europe/London"]
+            : dateTimeZoneProvider["Europe/London"];
 
         Instant = Instant.FromDateTimeUtc(dateTimeUtcValue);
 
