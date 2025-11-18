@@ -2,7 +2,6 @@
 using Autofac.Extensions.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.Commons.Collections;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.Metrics;
@@ -92,13 +91,13 @@ public abstract class CleanArchitectureAppBuilder<B, H> : CleanArchitectureAppBu
 
         commands.ForEach(rootCommand.Add);
 
-        return await rootCommand.InvokeAsync(_args);
+        return await rootCommand.Parse(_args).InvokeAsync();
     }
 
     private RootCommand CreateRootCommand(H app)
     {
         var command = new RootCommand("Start the service");
-        command.SetHandler(app.Run);
+        command.SetAction((_, cancellationToken) => app.RunAsync(cancellationToken));
         return command;
     }
 }

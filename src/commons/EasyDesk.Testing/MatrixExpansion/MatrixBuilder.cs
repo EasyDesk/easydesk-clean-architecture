@@ -1,6 +1,4 @@
-﻿using EasyDesk.Commons.Collections;
-
-namespace EasyDesk.Testing.MatrixExpansion;
+﻿namespace EasyDesk.Testing.MatrixExpansion;
 
 public class MatrixBuilder
 {

@@ -1,6 +1,4 @@
-﻿using EasyDesk.Commons.Collections;
-
-namespace EasyDesk.CleanArchitecture.Application.Pagination;
+﻿namespace EasyDesk.CleanArchitecture.Application.Pagination;
 
 public static class PageableExtensions
 {

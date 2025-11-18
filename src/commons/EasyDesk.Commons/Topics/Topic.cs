@@ -1,5 +1,4 @@
-﻿using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
+﻿using EasyDesk.Commons.Options;
 
 namespace EasyDesk.Commons.Topics;
 

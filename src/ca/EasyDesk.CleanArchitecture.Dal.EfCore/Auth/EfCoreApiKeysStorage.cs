@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
-using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auth;

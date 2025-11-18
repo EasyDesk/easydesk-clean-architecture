@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net9.0": {
+    "net10.0": {
       "Roslynator.Analyzers": {
         "type": "Direct",
         "requested": "[4.14.1, )",
@@ -23,10 +23,7 @@
       "Autofac": {
         "type": "Transitive",
         "resolved": "8.4.0",
-        "contentHash": "XMWHyO6fXTv8rwCfhm6+64mQS6CyL0rve/hWSODsUrVuEGtq1fjxSOlVTBqCRsW6L8K3OQDskJaPB1boVMI2eQ==",
-        "dependencies": {
-          "System.Diagnostics.DiagnosticSource": "8.0.1"
-        }
+        "contentHash": "XMWHyO6fXTv8rwCfhm6+64mQS6CyL0rve/hWSODsUrVuEGtq1fjxSOlVTBqCRsW6L8K3OQDskJaPB1boVMI2eQ=="
       },
       "Autofac.Extensions.DependencyInjection": {
         "type": "Transitive",
@@ -130,13 +127,8 @@
       },
       "System.CommandLine": {
         "type": "Transitive",
-        "resolved": "2.0.0-beta4.22272.1",
-        "contentHash": "1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg=="
-      },
-      "System.Diagnostics.DiagnosticSource": {
-        "type": "Transitive",
-        "resolved": "8.0.1",
-        "contentHash": "vaoWjvkG1aenR2XdjaVivlCV9fADfgyhW5bZtXT23qaEea0lWiUljdQuze4E31vKM7ZWJaSUsbYIKE3rnzfZUg=="
+        "resolved": "2.0.0",
+        "contentHash": "Bjklzc5NoxqAGFi7BcGlY2TWAdB06Bq3a5sfRr3ubMRU80Mf98eyq3Y2UgR6xRV0TLznZmfe5T7mUjOunRNcdA=="
       },
       "easydesk.cleanarchitecture.application": {
         "type": "Project",
@@ -156,7 +148,7 @@
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
           "NodaTime": "[3.2.2, )",
-          "System.CommandLine": "[2.0.0-beta4.22272.1, )"
+          "System.CommandLine": "[2.0.0, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {

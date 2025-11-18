@@ -72,48 +72,10 @@ public class AsyncEnumerableTests
 
     [Theory]
     [MemberData(nameof(ConcatData))]
-    public async Task ThenConcat_ShouldJoinItsArguments(
-        IAsyncEnumerable<int> left, IAsyncEnumerable<int> right, IAsyncEnumerable<int> expected)
-    {
-        (await left.ThenConcat(() => right).SequenceEqualAsync(expected)).ShouldBe(true);
-    }
-
-    [Fact]
-    public async Task ThenConcat_ShouldNotEvaluateTheSecondArgument_IfNotNecessary()
-    {
-        var left = Of(1, 2, 3);
-        var right = Substitute.For<Func<IAsyncEnumerable<int>>>();
-
-        var enumerator = left.ThenConcat(right).GetAsyncEnumerator(TestContext.Current.CancellationToken);
-        await enumerator.MoveNextAsync();
-        await enumerator.MoveNextAsync();
-        await enumerator.MoveNextAsync();
-
-        right.DidNotReceive()();
-    }
-
-    [Fact]
-    public async Task ThenConcat_ShouldEvaluateTheSecondArgument_OnlyWhenNecessary()
-    {
-        var left = Of(1, 2, 3);
-        var right = Substitute.For<Func<IAsyncEnumerable<int>>>();
-        right().Returns(Of(4, 5));
-
-        var enumerator = left.ThenConcat(right).GetAsyncEnumerator(TestContext.Current.CancellationToken);
-        await enumerator.MoveNextAsync();
-        await enumerator.MoveNextAsync();
-        await enumerator.MoveNextAsync();
-        await enumerator.MoveNextAsync();
-
-        right.Received(1)();
-    }
-
-    [Theory]
-    [MemberData(nameof(ConcatData))]
     public async Task Concat_ShouldJoinItsArguments(
         IAsyncEnumerable<int> left, IAsyncEnumerable<int> right, IAsyncEnumerable<int> expected)
     {
-        (await left.Concat(right).SequenceEqualAsync(expected)).ShouldBe(true);
+        (await left.Concat(right).SequenceEqualAsync(expected, cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(true);
     }
 
     public static TheoryData<IAsyncEnumerable<int>, IAsyncEnumerable<int>, IAsyncEnumerable<int>> ConcatData() => new()
@@ -127,32 +89,32 @@ public class AsyncEnumerableTests
     [Fact]
     public async Task SequenceEqualAsync_ShouldReturnTrue_IfTheSequencesAreEqualElementByElement()
     {
-        (await Of(1, 2, 3).SequenceEqualAsync(Of(1, 2, 3))).ShouldBe(true);
+        (await Of(1, 2, 3).SequenceEqualAsync(Of(1, 2, 3), cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(true);
     }
 
     [Fact]
     public async Task SequenceEqualAsync_ShouldReturnFalse_IfTheFirstSequenceIsShorterThanTheOther()
     {
-        (await Of(1, 2, 3).SequenceEqualAsync(Of(1, 2, 3, 4))).ShouldBe(false);
+        (await Of(1, 2, 3).SequenceEqualAsync(Of(1, 2, 3, 4), cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(false);
     }
 
     [Fact]
     public async Task SequenceEqualAsync_ShouldReturnFalse_IfTheFirstSequenceIsLongerThanTheOther()
     {
-        (await Of(1, 2, 3, 4).SequenceEqualAsync(Of(1, 2, 3))).ShouldBe(false);
+        (await Of(1, 2, 3, 4).SequenceEqualAsync(Of(1, 2, 3), cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(false);
     }
 
     [Fact]
     public async Task SequenceEqualAsync_ShouldReturnFalse_IfTheSequencesDifferByAtLeastOneElement()
     {
-        (await Of(1, 2, 4).SequenceEqualAsync(Of(1, 2, 3))).ShouldBe(false);
+        (await Of(1, 2, 4).SequenceEqualAsync(Of(1, 2, 3), cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(false);
     }
 
     [Fact]
     public async Task SequenceEqualAsync_ShouldUseTheGivenEqualityComparer()
     {
         var comparer = EqualityComparers.FromProperties<string>(x => x.ToLower());
-        (await Of("a", "b").SequenceEqualAsync(Of("A", "B"), comparer)).ShouldBe(true);
+        (await Of("a", "b").SequenceEqualAsync(Of("A", "B"), comparer, cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(true);
     }
 
     [Fact]
@@ -160,7 +122,7 @@ public class AsyncEnumerableTests
     {
         var asyncEnumerable = Of(1, 2, 3);
         var expected = Of("1", "2", "3");
-        (await asyncEnumerable.Select(x => x.ToString()).SequenceEqualAsync(expected)).ShouldBe(true);
+        (await asyncEnumerable.Select(x => x.ToString()).SequenceEqualAsync(expected, cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(true);
     }
 
     [Fact]
@@ -168,7 +130,7 @@ public class AsyncEnumerableTests
     {
         var asyncEnumerable = Of(1, 2, 3, 4, 5, 6);
         var expected = Of(2, 4, 6);
-        (await asyncEnumerable.Where(x => x % 2 == 0).SequenceEqualAsync(expected)).ShouldBe(true);
+        (await asyncEnumerable.Where(x => x % 2 == 0).SequenceEqualAsync(expected, cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(true);
     }
 
     [Fact]
@@ -176,7 +138,7 @@ public class AsyncEnumerableTests
     {
         var asyncEnumerable = Of(1, 2, 3);
         var expected = Of("1", "11", "2", "22", "3", "33");
-        (await asyncEnumerable.SelectMany(x => Of($"{x}", $"{x}{x}")).SequenceEqualAsync(expected)).ShouldBe(true);
+        (await asyncEnumerable.SelectMany(x => Of($"{x}", $"{x}{x}")).SequenceEqualAsync(expected, cancellationToken: TestContext.Current.CancellationToken)).ShouldBe(true);
     }
 
     [Fact]

@@ -1,31 +1,21 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
 public static class OpenApiUtils
 {
-    public static void ConfigureSecurityRequirement(this SwaggerGenOptions options, string name, OpenApiSecurityScheme securityScheme)
+    public static void ConfigureSecurityRequirement(this SwaggerGenOptions options, string name, OpenApiSecurityScheme securityScheme, params List<string> scopes)
     {
         options.AddSecurityDefinition(name, securityScheme);
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
         {
-            {
-                new OpenApiSecurityScheme
-                {
-                    Reference = new()
-                    {
-                        Id = name,
-                        Type = ReferenceType.SecurityScheme,
-                    },
-                },
-                Array.Empty<string>()
-            },
+            [new OpenApiSecuritySchemeReference(name, document)] = scopes,
         });
     }
 
-    public static OpenApiSchema LookupByType(this SchemaRepository schemaRepository, Type type)
+    public static OpenApiSchemaReference LookupByType(this SchemaRepository schemaRepository, Type type)
     {
         if (!schemaRepository.TryLookupByType(type, out var result))
         {

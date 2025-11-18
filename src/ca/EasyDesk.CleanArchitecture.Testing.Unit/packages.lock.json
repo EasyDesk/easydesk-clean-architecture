@@ -1,7 +1,7 @@
 {
   "version": 1,
   "dependencies": {
-    "net9.0": {
+    "net10.0": {
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
         "requested": "[8.0.0, )",
@@ -32,8 +32,8 @@
       },
       "Argon": {
         "type": "Transitive",
-        "resolved": "0.32.0",
-        "contentHash": "sW2tLL6cllHx5Q305AkXmGN4gWSGk8Ij2xH6kje1dy5k0Ef3V9g/qE6Y0GH5du515k3coiR9PY8EvZ5SIl9jOw=="
+        "resolved": "0.33.0",
+        "contentHash": "4MIj5MosLqRlKAz16Ir5rz1gyocC6npJGGXqkTIIVby0yPYKk56Lm9X5tEQv6MbStLUOv3aDfya6FKAqcRhxTA=="
       },
       "Argon.NodaTime": {
         "type": "Transitive",
@@ -47,10 +47,7 @@
       "Autofac": {
         "type": "Transitive",
         "resolved": "8.4.0",
-        "contentHash": "XMWHyO6fXTv8rwCfhm6+64mQS6CyL0rve/hWSODsUrVuEGtq1fjxSOlVTBqCRsW6L8K3OQDskJaPB1boVMI2eQ==",
-        "dependencies": {
-          "System.Diagnostics.DiagnosticSource": "8.0.1"
-        }
+        "contentHash": "XMWHyO6fXTv8rwCfhm6+64mQS6CyL0rve/hWSODsUrVuEGtq1fjxSOlVTBqCRsW6L8K3OQDskJaPB1boVMI2eQ=="
       },
       "Autofac.Extensions.DependencyInjection": {
         "type": "Transitive",
@@ -71,17 +68,17 @@
       },
       "DiffEngine": {
         "type": "Transitive",
-        "resolved": "16.8.0",
-        "contentHash": "sn5euijRNDr7+p7lwTISu4uK+U8Awsm9DBSVEhQ49rbm487cHZ8CDE+SYL9PYDgFJXk4nRXcMkXoBaVnPiD3wg==",
+        "resolved": "17.0.0",
+        "contentHash": "yrghQQEYs7NHzFOcQeg+MgY5rj+6mUcG60au8MDE8eKEtIGWOq2U3XjXmNcUXTlFdLvKdETrcKznInuyw/1I9w==",
         "dependencies": {
-          "EmptyFiles": "8.15.0",
+          "EmptyFiles": "8.17.0",
           "System.Management": "8.0.0"
         }
       },
       "EmptyFiles": {
         "type": "Transitive",
-        "resolved": "8.15.0",
-        "contentHash": "4VP7Bj09eO4nsfA68s9cGoHF9ZXBZjIPIJ7d/piU9iuFEEhzuWAUYkAxXOa0zFT5MiIoDfa0akbD5EjPlkKT2A=="
+        "resolved": "8.17.0",
+        "contentHash": "j+3/qRYpUQZIfFMU2ZU61kXYqMvGaZxj4SjWFYz4RMwUQ3fNrxBoqq+8nWQq9MNYHxjsdSq0mpZ+/PYANfESZQ=="
       },
       "FluentValidation": {
         "type": "Transitive",
@@ -103,9 +100,7 @@
         "contentHash": "zXeWP03dTo67AoDHUzR+/urck0KFssdCKOC+dq7Nv1V2YbFh/nIg09L0/3wSvyRONEdwxGB/ssEGmPNIIhAcAw==",
         "dependencies": {
           "Newtonsoft.Json": "13.0.1",
-          "Newtonsoft.Json.Bson": "1.0.2",
-          "System.Memory": "4.5.5",
-          "System.Threading.Tasks.Extensions": "4.5.4"
+          "Newtonsoft.Json.Bson": "1.0.2"
         }
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
@@ -336,13 +331,8 @@
       },
       "System.CommandLine": {
         "type": "Transitive",
-        "resolved": "2.0.0-beta4.22272.1",
-        "contentHash": "1uqED/q2H0kKoLJ4+hI2iPSBSEdTuhfCYADeJrAqERmiGQ2NNacYKRNEQ+gFbU4glgVyK8rxI+ZOe1onEtr/Pg=="
-      },
-      "System.Diagnostics.DiagnosticSource": {
-        "type": "Transitive",
-        "resolved": "8.0.1",
-        "contentHash": "vaoWjvkG1aenR2XdjaVivlCV9fADfgyhW5bZtXT23qaEea0lWiUljdQuze4E31vKM7ZWJaSUsbYIKE3rnzfZUg=="
+        "resolved": "2.0.0",
+        "contentHash": "Bjklzc5NoxqAGFi7BcGlY2TWAdB06Bq3a5sfRr3ubMRU80Mf98eyq3Y2UgR6xRV0TLznZmfe5T7mUjOunRNcdA=="
       },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
@@ -366,30 +356,14 @@
           "System.CodeDom": "8.0.0"
         }
       },
-      "System.Memory": {
-        "type": "Transitive",
-        "resolved": "4.5.5",
-        "contentHash": "XIWiDvKPXaTveaB7HVganDlOCRoj03l+jrwNvcge/t8vhGYKvqV+dMv6G4SAX2NoNmN0wZfVPTAlFwZcZvVOUw=="
-      },
-      "System.Threading.Tasks.Extensions": {
-        "type": "Transitive",
-        "resolved": "4.5.4",
-        "contentHash": "zteT+G8xuGu6mS+mzDzYXbzS7rd3K6Fjb9RiZlYlJPam2/hU7JCBZBVEcywNuR+oZ1ncTvc/cq0faRr3P01OVg=="
-      },
-      "System.ValueTuple": {
-        "type": "Transitive",
-        "resolved": "4.6.1",
-        "contentHash": "+RJT4qaekpZ7DDLhf+LTjq+E48jieKiY9ulJ+BoxKmZblIJfIJT8Ufcaa/clQqnYvWs8jugfGSMu8ylS0caG0w=="
-      },
       "Verify": {
         "type": "Transitive",
-        "resolved": "31.5.3",
-        "contentHash": "ZROajcOqGWrCSTwOXwhgBpnMG5OcrJBw+G6thGvniYVWmGJ/ZhPdf3wwRHlUGM3OwcfCbaaq3d2v7tpXlHuz/A==",
+        "resolved": "31.7.1",
+        "contentHash": "moBjVtg9g7PvIIyRwhdwDZ07WIA1ud2TDhMmhMZrWf41eLTvgEgHXywayVDGN+zcJ/aK0DX7trFFCYrj2DWe9g==",
         "dependencies": {
-          "Argon": "0.32.0",
-          "DiffEngine": "16.8.0",
-          "SimpleInfoName": "3.1.2",
-          "System.ValueTuple": "4.6.1"
+          "Argon": "0.33.0",
+          "DiffEngine": "17.0.0",
+          "SimpleInfoName": "3.1.2"
         }
       },
       "Verify.NodaTime": {
@@ -428,7 +402,7 @@
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
           "NodaTime": "[3.2.2, )",
-          "System.CommandLine": "[2.0.0-beta4.22272.1, )"
+          "System.CommandLine": "[2.0.0, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {
@@ -477,7 +451,7 @@
           "Microsoft.Extensions.DependencyInjection": "[9.0.10, )",
           "NSubstitute": "[5.3.0, )",
           "Shouldly": "[4.3.0, )",
-          "Verify": "[31.5.3, )",
+          "Verify": "[31.7.1, )",
           "Verify.NodaTime": "[2.3.0, )",
           "Verify.SystemJson": "[1.4.1, )"
         }

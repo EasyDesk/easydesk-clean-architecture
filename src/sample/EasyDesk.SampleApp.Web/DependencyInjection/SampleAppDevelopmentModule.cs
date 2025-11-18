@@ -18,7 +18,7 @@ public class SampleAppDevelopmentModule : AppModule
     private Command SeedCommand(IComponentContext context)
     {
         var developmentCommand = new Command("seed-dev", description: "Seed the database with development data.");
-        developmentCommand.SetHandler(() => context.Resolve<DevelopmentSeeder>().Seed());
+        developmentCommand.SetAction(_ => context.Resolve<DevelopmentSeeder>().Seed());
         return developmentCommand;
     }
 }
