@@ -183,7 +183,7 @@ public class OpenApiModule : AppModule
                 }
                 return value;
             },
-            Required = true,
+            Required = false,
             Description = "The name of the document to generate",
         };
         var formatJsonOption = new CommandLine.Option<bool>("--json")
