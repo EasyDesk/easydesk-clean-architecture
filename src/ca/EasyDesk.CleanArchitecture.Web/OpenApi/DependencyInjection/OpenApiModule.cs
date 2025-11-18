@@ -185,6 +185,11 @@ public class OpenApiModule : AppModule
             },
             Required = false,
             Description = "The name of the document to generate",
+            DefaultValueFactory = arg => defaultDocumentKey.OrElseGet(() =>
+            {
+                arg.AddError("Default document not available");
+                return string.Empty;
+            }),
         };
         var formatJsonOption = new CommandLine.Option<bool>("--json")
         {
