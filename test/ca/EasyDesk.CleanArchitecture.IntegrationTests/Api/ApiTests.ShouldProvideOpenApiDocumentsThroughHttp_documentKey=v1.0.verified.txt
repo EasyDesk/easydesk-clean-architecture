@@ -3575,7 +3575,7 @@
           },
           "zonedDateTime": {
             "type": "string",
-            "example": "1970-01-01T01:00:00+01 Europe/London"
+            "example": "1970-01-01T01:00:00+01 Europe/Rome"
           },
           "localDateTime": {
             "type": "string",
