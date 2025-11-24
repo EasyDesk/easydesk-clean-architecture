@@ -50,7 +50,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
-          cache-dependency-path: **/packages.lock.json
+          cache-dependency-path: '**/packages.lock.json'
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
@@ -86,7 +86,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
-          cache-dependency-path: **/packages.lock.json
+          cache-dependency-path: '**/packages.lock.json'
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
@@ -113,7 +113,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
-          cache-dependency-path: **/packages.lock.json
+          cache-dependency-path: '**/packages.lock.json'
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
@@ -186,7 +186,7 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
-          cache-dependency-path: **/packages.lock.json
+          cache-dependency-path: '**/packages.lock.json'
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
