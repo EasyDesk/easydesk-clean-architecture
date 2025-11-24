@@ -48,6 +48,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
@@ -82,6 +83,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
@@ -107,6 +109,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
@@ -178,6 +181,7 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+          cache: true
       - name: Build
         uses: EasyDesk/action-dotnet-build@v1
         with:
