@@ -10,11 +10,12 @@ internal class SqlServerTableCopiesProvider : ITableCopiesProvider
         FROM INFORMATION_SCHEMA.TABLES T
         INNER JOIN INFORMATION_SCHEMA.COLUMNS C
         ON T.TABLE_SCHEMA = C.TABLE_SCHEMA AND T.TABLE_NAME = C.TABLE_NAME
-        WHERE T.TABLE_TYPE = 'BASE TABLE';
+        WHERE T.TABLE_TYPE = 'BASE TABLE'
+        AND COLUMNPROPERTY(OBJECT_ID(T.TABLE_SCHEMA + '.' + T.TABLE_NAME), COLUMN_NAME, 'IsComputed') = 0;
         """;
 
     public string GenerateCopyTableCommand(TableDef table) => $"""
-        SELECT *
+        SELECT {GetColumnsList(table)}
         INTO {FormatCopyTable(table)}
         FROM {FormatTable(table)};
         """;
@@ -29,7 +30,7 @@ internal class SqlServerTableCopiesProvider : ITableCopiesProvider
 
     public string GenerateRestoreTableCommand(TableDef table)
     {
-        var columnsList = table.Columns.Select(x => $"[{x}]").ConcatStrings(", ");
+        var columnsList = GetColumnsList(table);
         return $"""
             DELETE FROM {FormatTable(table)};
 
@@ -48,6 +49,8 @@ internal class SqlServerTableCopiesProvider : ITableCopiesProvider
             END
             """;
     }
+
+    private static string GetColumnsList(TableDef table) => table.Columns.Select(x => $"[{x}]").ConcatStrings(", ");
 
     private string FormatCopyTable(TableDef table) => FormatTableRaw(table.Schema, $"__copy_{table.Name}__");
 

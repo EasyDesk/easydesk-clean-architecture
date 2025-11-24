@@ -4,6 +4,8 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.Postgres;
 
 internal class PostgresTableCopiesProvider : ITableCopiesProvider
 {
+    // TODO: add support for computed columns (which should be skipped when restoring table data).
+
     public string GenerateTablesQuery(string schemaOutput, string tableOutput, string columnOutput) => $"""
         SELECT T.table_schema AS "{schemaOutput}", T.table_name AS "{tableOutput}", C.column_name AS "{columnOutput}"
         FROM information_schema.tables T
