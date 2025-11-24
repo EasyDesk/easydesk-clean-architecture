@@ -87,9 +87,9 @@ jobs:
         with:
           warnings-as-errors: true
       - name: Unit tests (${{ matrix.project }})
-        uses: EasyDesk/action-dotnet-test@v3
+        uses: EasyDesk/action-dotnet-test@v4
         with:
-          test-args: --project "${{ matrix.project }}" --logger 'GitHubActions'
+          test-args: --project "${{ matrix.project }}"
 
   integration-test:
     name: Integration Test
@@ -112,11 +112,11 @@ jobs:
         with:
           warnings-as-errors: true
       - name: Integration tests (${{ matrix.db-provider }})
-        uses: EasyDesk/action-dotnet-test@v3
+        uses: EasyDesk/action-dotnet-test@v4
         env:
           DB_PROVIDER: ${{ matrix.db-provider }}
         with:
-          test-args: --project test/ca/EasyDesk.CleanArchitecture.IntegrationTests --logger 'GitHubActions'
+          test-args: --project test/ca/EasyDesk.CleanArchitecture.IntegrationTests
 
   command-test:
     name: Command Test
