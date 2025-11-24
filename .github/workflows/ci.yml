@@ -3,6 +3,7 @@ name: Continuous Integration
 env:
   DOTNET_VERSION: 10.x
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  COMMON_TEST_ARGS: --report-github --report-github-summary-include-passed=false --report-github-summary-include-skipped=false
 
 defaults:
   run:
@@ -94,7 +95,7 @@ jobs:
       - name: Unit tests (${{ matrix.project }})
         uses: EasyDesk/action-dotnet-test@v4
         with:
-          test-args: --project "test/${{ matrix.project }}" --report-github
+          test-args: --project "test/${{ matrix.project }}" ${COMMON_TEST_ARGS}
 
   integration-test:
     name: Integration Test
@@ -123,7 +124,7 @@ jobs:
         env:
           DB_PROVIDER: ${{ matrix.db-provider }}
         with:
-          test-args: --project test/ca/EasyDesk.CleanArchitecture.IntegrationTests --report-github
+          test-args: --project test/ca/EasyDesk.CleanArchitecture.IntegrationTests ${COMMON_TEST_ARGS}
 
   command-test:
     name: Command Test
