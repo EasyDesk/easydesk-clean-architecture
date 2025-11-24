@@ -52,26 +52,6 @@ jobs:
         uses: EasyDesk/action-dotnet-build@v1
         with:
           warnings-as-errors: true
-      - name: EasyDesk.Commons Unit Tests
-        uses: EasyDesk/action-dotnet-test@v1
-        with:
-          path: test/commons/EasyDesk.Commons.UnitTests
-          test-args: --logger 'GitHubActions'
-      - name: EasyDesk.Extensions.Configuration Unit Tests
-        uses: EasyDesk/action-dotnet-test@v1
-        with:
-          path: test/commons/EasyDesk.Extensions.Configuration.UnitTests
-          test-args: --logger 'GitHubActions'
-      - name: EasyDesk.Testing Unit tests
-        uses: EasyDesk/action-dotnet-test@v1
-        with:
-          path: test/commons/EasyDesk.Testing.UnitTests
-          test-args: --logger 'GitHubActions'
-      - name: EasyDesk.CleanArchitecture Unit tests
-        uses: EasyDesk/action-dotnet-test@v1
-        with:
-          path: test/ca/EasyDesk.CleanArchitecture.UnitTests
-          test-args: --logger 'GitHubActions'
       - name: Pack
         uses: EasyDesk/action-dotnet-pack@v1
         with:
@@ -84,7 +64,34 @@ jobs:
           name: nuget-package
           path: ${{ env.OUTPUT_DIR }}
 
-  test:
+  unit-test:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    needs: [build]
+    strategy:
+      fail-fast: false
+      matrix:
+        project:
+          - EasyDesk.Commons.UnitTests
+          - EasyDesk.Extensions.Configuration.UnitTests
+          - EasyDesk.Testing.UnitTests
+          - EasyDesk.CleanArchitecture.UnitTests
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Build
+        uses: EasyDesk/action-dotnet-build@v1
+        with:
+          warnings-as-errors: true
+      - name: Unit tests (${{ matrix.project }})
+        uses: EasyDesk/action-dotnet-test@v3
+        with:
+          test-args: --project "${{ matrix.project }}" --logger 'GitHubActions'
+
+  integration-test:
     name: Integration Test
     runs-on: ubuntu-latest
     needs: [build]
@@ -95,7 +102,7 @@ jobs:
           - SqlServer
           - PostgreSql
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v5
         with:
@@ -105,12 +112,11 @@ jobs:
         with:
           warnings-as-errors: true
       - name: Integration tests (${{ matrix.db-provider }})
-        uses: EasyDesk/action-dotnet-test@v1
+        uses: EasyDesk/action-dotnet-test@v3
         env:
           DB_PROVIDER: ${{ matrix.db-provider }}
         with:
-          path: test/ca/EasyDesk.CleanArchitecture.IntegrationTests
-          test-args: --logger 'GitHubActions'
+          test-args: --project test/ca/EasyDesk.CleanArchitecture.IntegrationTests --logger 'GitHubActions'
 
   command-test:
     name: Command Test
@@ -167,7 +173,7 @@ jobs:
           - 5672:5672
           - 15672:15672
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v5
         with:
@@ -209,7 +215,7 @@ jobs:
     name: GitHub Release
     if: needs.build.outputs.should-release == 'true'
     concurrency: release
-    needs: [build, test, command-test]
+    needs: [build, unit-test, integration-test, command-test]
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
