@@ -72,10 +72,10 @@ jobs:
       fail-fast: false
       matrix:
         project:
-          - EasyDesk.Commons.UnitTests
-          - EasyDesk.Extensions.Configuration.UnitTests
-          - EasyDesk.Testing.UnitTests
-          - EasyDesk.CleanArchitecture.UnitTests
+          - commons/EasyDesk.Commons.UnitTests
+          - commons/EasyDesk.Extensions.Configuration.UnitTests
+          - commons/EasyDesk.Testing.UnitTests
+          - ca/EasyDesk.CleanArchitecture.UnitTests
     steps:
       - uses: actions/checkout@v6
       - name: Setup .NET Core
@@ -89,7 +89,7 @@ jobs:
       - name: Unit tests (${{ matrix.project }})
         uses: EasyDesk/action-dotnet-test@v4
         with:
-          test-args: --project "${{ matrix.project }}"
+          test-args: --project "test/${{ matrix.project }}"
 
   integration-test:
     name: Integration Test
