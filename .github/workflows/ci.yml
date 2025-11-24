@@ -94,7 +94,7 @@ jobs:
       - name: Unit tests (${{ matrix.project }})
         uses: EasyDesk/action-dotnet-test@v4
         with:
-          test-args: --project "test/${{ matrix.project }}"
+          test-args: --project "test/${{ matrix.project }}" --report-github
 
   integration-test:
     name: Integration Test
@@ -123,7 +123,7 @@ jobs:
         env:
           DB_PROVIDER: ${{ matrix.db-provider }}
         with:
-          test-args: --project test/ca/EasyDesk.CleanArchitecture.IntegrationTests
+          test-args: --project test/ca/EasyDesk.CleanArchitecture.IntegrationTests --report-github
 
   command-test:
     name: Command Test

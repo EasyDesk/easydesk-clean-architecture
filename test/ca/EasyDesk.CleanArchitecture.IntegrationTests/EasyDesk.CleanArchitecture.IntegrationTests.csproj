@@ -28,6 +28,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.0" />
+    <PackageReference Include="GitHubActionsTestLogger" Version="3.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,13 +39,6 @@
 	
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
 </Project>

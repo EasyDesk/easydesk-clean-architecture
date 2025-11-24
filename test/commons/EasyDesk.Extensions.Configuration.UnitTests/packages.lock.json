@@ -10,12 +10,9 @@
       },
       "GitHubActionsTestLogger": {
         "type": "Direct",
-        "requested": "[2.4.1, )",
-        "resolved": "2.4.1",
-        "contentHash": "SH1ar/kg36CggzMqLUDRoUqR8SSjK/JiQ2JS8MYg8u0RCLDkkDEbPGIN91omOPx9f2GuDqsxxofSdgsQje3Xuw==",
-        "dependencies": {
-          "Microsoft.TestPlatform.ObjectModel": "17.10.0"
-        }
+        "requested": "[3.0.1, )",
+        "resolved": "3.0.1",
+        "contentHash": "HCfw7V1yuKxnm89vVKrb8b6aug96PUgxN9Z0YthEFCR8JOfTJF4XcU1i6RX2eEB08p3zriuFIG7BGXns4PyE8Q=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Direct",
