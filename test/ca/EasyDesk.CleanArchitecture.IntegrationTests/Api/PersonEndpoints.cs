@@ -27,7 +27,7 @@ public static class PersonEndpoints
 
     public static HttpSingleRequestExecutor<Option<string>> GetOptionInQuery(this HttpTestHelper http, Option<string> parameter)
     {
-        return http.Get<Option<string>>(TestController.TestOptionInQuery)
+        return http.Get<Option<string>>(TestController.TestOptionInQueryRoute)
             .With(x =>
             {
                 if (parameter.IsPresent)

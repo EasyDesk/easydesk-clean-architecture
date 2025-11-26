@@ -2631,7 +2631,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "ApiKeyTooLong"
             ],
             "type": "string"
           },
@@ -2643,7 +2643,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "ApiKeyTooLong"
             ],
             "type": "string"
           }
@@ -2682,12 +2682,9 @@
             ]
           },
           "properties": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StringStringIFixedListKeyValuePair"
             }
           },
           "success": {
@@ -2757,7 +2754,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "AuthenticationFailed"
             ],
             "type": "string"
           },
@@ -2769,7 +2766,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "AuthenticationFailedError"
             ],
             "type": "string"
           }
@@ -2805,7 +2802,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "BirthDateUtcInTheFuture"
             ],
             "type": "string"
           },
@@ -2817,7 +2814,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "BirthDateUtcInTheFutureError"
             ],
             "type": "string"
           }
@@ -2848,7 +2845,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "BulkConcurrency"
             ],
             "type": "string"
           },
@@ -2860,7 +2857,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "BulkConcurrencyError"
             ],
             "type": "string"
           }
@@ -3003,26 +3000,21 @@
         "type": "object",
         "properties": {
           "code": {
-            "enum": [
-              "InvalidJwt"
-            ],
             "type": "string"
           },
           "detail": {
             "type": "string"
           },
-          "meta": {
-            "$ref": "#/components/schemas/Nothing"
-          },
+          "meta": { },
           "schema": {
             "enum": [
-              "InternalError"
+              "DomainError"
             ],
             "type": "string"
           }
         },
         "additionalProperties": false,
-        "description": "ErrorDto schema generated from Nothing.",
+        "description": "ErrorDto schema for domain errors.",
         "readOnly": true
       },
       "ErrorDto": {
@@ -3094,18 +3086,12 @@
         ],
         "properties": {
           "code": {
-            "enum": [
-              "InvalidJwt"
-            ],
             "type": "string"
           },
           "detail": {
             "type": "string"
           },
           "schema": {
-            "enum": [
-              "InternalError"
-            ],
             "type": "string"
           },
           "meta": { }
@@ -3147,7 +3133,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "Forbidden"
             ],
             "type": "string"
           },
@@ -3159,7 +3145,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "ForbiddenError"
             ],
             "type": "string"
           }
@@ -3235,12 +3221,9 @@
             "type": "string"
           },
           "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StringStringIFixedSetKeyValuePair"
             }
           }
         },
@@ -3257,7 +3240,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "Internal"
             ],
             "type": "string"
           },
@@ -3275,7 +3258,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "ErrorDto schema generated from Nothing.",
+        "description": "ErrorDto schema for internal errors.",
         "readOnly": true
       },
       "InvalidApiKey": {
@@ -3289,7 +3272,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "InvalidApiKey"
             ],
             "type": "string"
           },
@@ -3301,7 +3284,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "InvalidApiKey"
             ],
             "type": "string"
           }
@@ -3325,7 +3308,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "InvalidInput"
             ],
             "type": "string"
           },
@@ -3337,7 +3320,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "InvalidInputError"
             ],
             "type": "string"
           }
@@ -3360,7 +3343,9 @@
           },
           "parameters": {
             "type": "object",
-            "additionalProperties": { }
+            "additionalProperties": {
+              "type": "object"
+            }
           }
         },
         "additionalProperties": false
@@ -3388,7 +3373,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "InvalidJwt"
             ],
             "type": "string"
           }
@@ -3417,7 +3402,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "InvalidSagaInitializerType"
             ],
             "type": "string"
           },
@@ -3429,7 +3414,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "InvalidSagaInitializerType"
             ],
             "type": "string"
           }
@@ -3458,7 +3443,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "InvalidTenantId"
             ],
             "type": "string"
           },
@@ -3470,7 +3455,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "InvalidTenantIdError"
             ],
             "type": "string"
           }
@@ -3499,7 +3484,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "MissingTenant"
             ],
             "type": "string"
           },
@@ -3511,7 +3496,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "MissingTenantError"
             ],
             "type": "string"
           }
@@ -3535,7 +3520,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "MultitenancyNotSupported"
             ],
             "type": "string"
           },
@@ -3547,7 +3532,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "MultitenancyNotSupportedError"
             ],
             "type": "string"
           }
@@ -3660,7 +3645,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "NotFound"
             ],
             "type": "string"
           },
@@ -3672,7 +3657,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "NotFoundError"
             ],
             "type": "string"
           }
@@ -3885,7 +3870,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "PetCreated"
             ],
             "type": "string"
           },
@@ -3897,7 +3882,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "PetCreatedError"
             ],
             "type": "string"
           }
@@ -4047,15 +4032,36 @@
         },
         "additionalProperties": false
       },
-      "StringObjectKeyValuePair": {
+      "StringObjectIFixedMapNothingResponseDto": {
+        "required": [
+          "errors"
+        ],
         "type": "object",
         "properties": {
-          "key": {
-            "type": "string",
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            ],
             "nullable": true
           },
-          "value": {
-            "nullable": true
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDto"
+            }
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ]
           }
         },
         "additionalProperties": false
@@ -4131,6 +4137,56 @@
         },
         "additionalProperties": false
       },
+      "StringTestRecordIFixedMapNothingResponseDto": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "allOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+            },
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDto"
+            }
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "StringTestRecordKeyValuePair": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "$ref": "#/components/schemas/TestRecord"
+          }
+        },
+        "additionalProperties": false
+      },
       "TenantId": {
         "type": "object",
         "properties": {
@@ -4174,7 +4230,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "TenantNotFound"
             ],
             "type": "string"
           },
@@ -4186,7 +4242,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "TenantNotFoundError"
             ],
             "type": "string"
           }
@@ -4215,7 +4271,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "TestApplication"
             ],
             "type": "string"
           },
@@ -4227,7 +4283,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "TestApplicationError"
             ],
             "type": "string"
           }
@@ -4245,6 +4301,68 @@
         },
         "additionalProperties": false
       },
+      "TestRecord": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "string"
+          },
+          "b": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestRecordTestRecordIFixedMapNothingResponseDto": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "allOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordKeyValuePair"
+                }
+              }
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TestRecordTestRecordKeyValuePair"
+            },
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDto"
+            }
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestRecordTestRecordKeyValuePair": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "$ref": "#/components/schemas/TestRecord"
+          },
+          "value": {
+            "$ref": "#/components/schemas/TestRecord"
+          }
+        },
+        "additionalProperties": false
+      },
       "UnknownAgentError": {
         "required": [
           "code",
@@ -4256,7 +4374,7 @@
         "properties": {
           "code": {
             "enum": [
-              "InvalidJwt"
+              "UnknownAgent"
             ],
             "type": "string"
           },
@@ -4268,7 +4386,7 @@
           },
           "schema": {
             "enum": [
-              "InternalError"
+              "UnknownAgentError"
             ],
             "type": "string"
           }

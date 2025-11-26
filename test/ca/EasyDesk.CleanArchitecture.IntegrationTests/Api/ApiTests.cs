@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.OpenApi;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Testing.VerifyConfiguration;
 using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.Swagger;
+using static EasyDesk.SampleApp.Web.Controllers.V_1_0.Test.TestController;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Api;
 
@@ -53,5 +55,50 @@ public class ApiTests : SampleAppIntegrationTest
             var document = await openApiHelper.GetOpenApiDocument(documentKey);
             await Verify(document).UseNamedParameter(documentKey);
         }
+    }
+
+    [Fact]
+    public async Task ShouldSerializeAndDeserializeFixedMapsStringObject()
+    {
+        var req = Session
+            .Http
+            .TestFixedMapStringObject(ImmutableCollections.Map<string, object>(("a", 5), ("b", "e")))
+            .Send();
+
+        await Verify((await req.GetResponse()).Content.AsString())
+            .UseTextForParameters("raw");
+
+        await Verify(await req.AsData())
+            .UseTextForParameters("deserialized");
+    }
+
+    [Fact]
+    public async Task ShouldSerializeAndDeserializeFixedMapsStringRecord()
+    {
+        var req = Session
+            .Http
+            .TestFixedMapStringRecord(ImmutableCollections.Map(("a", new TestRecord("aa", 2))))
+            .Send();
+
+        await Verify((await req.GetResponse()).Content.AsString())
+            .UseTextForParameters("raw");
+
+        await Verify(await req.AsData())
+            .UseTextForParameters("deserialized");
+    }
+
+    [Fact]
+    public async Task ShouldSerializeAndDeserializeFixedMapsRecordRecord()
+    {
+        var req = Session
+            .Http
+            .TestFixedMapRecordRecord(ImmutableCollections.Map((new TestRecord("ee", 5), new TestRecord("aa", 2))))
+            .Send();
+
+        await Verify((await req.GetResponse()).Content.AsString())
+            .UseTextForParameters("raw");
+
+        await Verify(await req.AsData())
+            .UseTextForParameters("deserialized");
     }
 }

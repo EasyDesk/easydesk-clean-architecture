@@ -17,6 +17,7 @@ public static class JsonDefaults
         options.Converters.Add(new FixedListConverter());
         options.Converters.Add(new FixedSetConverter());
         options.Converters.Add(new FixedMapConverter());
+        options.Converters.Add(new DictionaryOfAnyKeyConverter());
         options.ConfigureForNodaTime(dateTimeZoneProvider ?? DateTimeZoneProviders.Tzdb);
     }
 
