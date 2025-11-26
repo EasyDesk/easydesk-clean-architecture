@@ -14,7 +14,7 @@ internal class FixedMapSchemaFilter : ISchemaFilter
             return;
         }
         var equivalentType = context.SchemaGenerator
-            .GenerateSchema(typeof(IDictionary<,>).MakeGenericType(type.GetGenericArguments()), context.SchemaRepository);
+            .GenerateSchema(typeof(IDictionary<,>).MakeGenericType(type.GetGenericArguments()), context.SchemaRepository, context.MemberInfo, context.ParameterInfo);
         concreteSchema.Type = equivalentType.Type;
         concreteSchema.Format = equivalentType.Format;
         concreteSchema.Description = equivalentType.Description;
