@@ -64,10 +64,9 @@ public class OpenApiModule : AppModule
         var defaultDocumentKey = context.ResolveOption<ApiVersioningInfo>().Match(
             some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentName),
             none: () => Some(SingleVersionedDocumentName));
-        var openApiVersionOption = new CommandLine.Option<OpenApiSpecVersion>("--version")
+        var openApiVersionOption = new CommandLine.Option<OpenApiSpecVersion?>("--version")
         {
             Description = "The OpenApi version to use",
-            DefaultValueFactory = _ => OpenApiSpecVersion.OpenApi3_1,
         };
         var documentNameOption = new CommandLine.Option<string>("--document")
         {
@@ -113,7 +112,7 @@ public class OpenApiModule : AppModule
         {
             var doc = context.Resolve<ISwaggerProvider>().GetSwagger(result.GetValue(documentNameOption), result.GetValue(hostOption), result.GetValue(basePathOption));
             var stream = Console.OpenStandardOutput();
-            await doc.SerializeAsync(stream, result.GetValue(openApiVersionOption), result.GetValue(formatJsonOption) ? OpenApiConstants.Json : OpenApiConstants.Yaml, cancellationToken);
+            await doc.SerializeAsync(stream, result.GetValue(openApiVersionOption) ?? OpenApiSpecVersion.OpenApi3_1, result.GetValue(formatJsonOption) ? OpenApiConstants.Json : OpenApiConstants.Yaml, cancellationToken);
         });
 
         return command;

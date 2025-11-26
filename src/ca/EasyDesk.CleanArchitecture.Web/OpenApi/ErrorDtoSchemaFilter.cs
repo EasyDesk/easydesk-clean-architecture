@@ -57,46 +57,13 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
         var schemaDataProperty = errorDtoDataContract.ObjectProperties.First(p => p.MemberInfo.Name == nameof(ErrorDto.Schema));
         var errorMetaSchemaDictionary = _errors
             .SelectMany(list => list.FirstOption(t => MatchesVersion(t.Item1, documentVersion)).Map(t => t.Item2))
-            .Select(e => (e.Name, e))
-            .Append((ErrorDto.DomainErrorSchema, typeof(Nothing)))
-            .Append((ErrorDto.InternalErrorSchema, typeof(Nothing)))
+            .Select(e => (e.Name, Type: e))
             .ToSortedDictionary(
-                keySelector: e => e.Item1,
-                elementSelector: e =>
-                {
-                    var properties = schema.Properties
-                        ?.ToSortedDictionary(schema => schema.Key, schema => schema.Value)
-                        ?? new Dictionary<string, IOpenApiSchema>();
+                keySelector: e => e.Name,
+                elementSelector: e => GenerateSchemaForMetadataOfType(context, schema, e.Name, e.Type, codeDataProperty.Name, metaDataProperty.Name, schemaDataProperty.Name));
 
-                    if (context.SchemaRepository.TryLookupByType(e.Item2, out var existing))
-                    {
-                        properties[metaDataProperty.Name] = existing;
-                    }
-                    else
-                    {
-                        var schema = context.SchemaGenerator.GenerateSchema(e.Item2, context.SchemaRepository);
-                        (properties[codeDataProperty.Name] as OpenApiSchema)?.Enum = GetErrorCode(e.Item2);
-                        properties[metaDataProperty.Name] = schema;
-                    }
-                    (properties[schemaDataProperty.Name] as OpenApiSchema)?.Enum = [e.Item1,];
-                    return context.SchemaRepository.AddDefinition(
-                        schemaId: e.Item1,
-                        schema: new()
-                        {
-                            Type = JsonSchemaType.Object,
-                            Properties = properties,
-                            Required = properties.Keys.ToHashSet(),
-                            AdditionalPropertiesAllowed = false,
-                            ReadOnly = true,
-                            Description = $"{nameof(ErrorDto)} schema generated from {e.Item2.GetTypeNameWithVersion()}.",
-                            Metadata = e.Item2.GetApiVersionFromNamespace().IsPresent(out var v)
-                            ? new Dictionary<string, object>
-                            {
-                                ["version"] = v.ToStringWithoutV(),
-                            }
-                            : [],
-                        });
-                });
+        errorMetaSchemaDictionary[ErrorDto.DomainErrorSchema] = GenerateSchemaForMetadataOfDomainErrors(context, schema, metaDataProperty.Name, schemaDataProperty.Name);
+        errorMetaSchemaDictionary[ErrorDto.InternalErrorSchema] = GenerateSchemaForMetadataOfInternalErrors(context, schema, codeDataProperty.Name, metaDataProperty.Name, schemaDataProperty.Name);
         concreteSchema.Discriminator = new()
         {
             PropertyName = _options.Value.JsonSerializerOptions.PropertyNamingPolicy?.ConvertName(nameof(ErrorDto.Schema)) ?? nameof(ErrorDto.Schema),
@@ -116,8 +83,103 @@ internal class ErrorDtoSchemaFilter : ISchemaFilter
         return version.IsAbsent(out var v) || v <= dv;
     }
 
-    private IList<JsonNode> GetErrorCode(Type t) =>
+    private static IList<JsonNode> GetErrorCode(Type t) =>
         t.IsAssignableTo(typeof(ApplicationError))
         ? [ErrorDto.GetErrorCodeFromApplicationErrorType(t),]
         : [];
+
+    private static OpenApiSchemaReference GenerateSchemaForMetadataOfType(
+        SchemaFilterContext context,
+        IOpenApiSchema baseSchema,
+        string name,
+        Type type,
+        string codeDataProperty,
+        string metaDataProperty,
+        string schemaDataProperty)
+    {
+        var typeNameWithVersion = type.GetTypeNameWithVersion();
+        var properties = CopyProperties(baseSchema);
+
+        if (context.SchemaRepository.TryLookupByType(type, out var existing))
+        {
+            properties[metaDataProperty] = existing;
+        }
+        else
+        {
+            properties[metaDataProperty] = context.SchemaGenerator.GenerateSchema(type, context.SchemaRepository);
+            (properties[codeDataProperty] as OpenApiSchema)?.Enum = GetErrorCode(type);
+        }
+            (properties[schemaDataProperty] as OpenApiSchema)?.Enum = [name,];
+        return context.SchemaRepository.AddDefinition(
+            schemaId: name,
+            schema: new()
+            {
+                Type = JsonSchemaType.Object,
+                Properties = properties,
+                Required = properties.Keys.ToHashSet(),
+                AdditionalPropertiesAllowed = false,
+                ReadOnly = true,
+                Description = $"{nameof(ErrorDto)} schema generated from {typeNameWithVersion}.",
+                Metadata = type.GetApiVersionFromNamespace().IsPresent(out var v)
+                ? new Dictionary<string, object>
+                {
+                    ["version"] = v.ToStringWithoutV(),
+                }
+                : [],
+            });
+    }
+
+    private static OpenApiSchemaReference GenerateSchemaForMetadataOfDomainErrors(
+        SchemaFilterContext context,
+        IOpenApiSchema baseSchema,
+        string metaDataProperty,
+        string schemaDataProperty)
+    {
+        var properties = CopyProperties(baseSchema);
+        properties[metaDataProperty] = context.SchemaGenerator.GenerateSchema(typeof(object), context.SchemaRepository);
+        (properties[schemaDataProperty] as OpenApiSchema)?.Enum = [ErrorDto.DomainErrorSchema,];
+        return context.SchemaRepository.AddDefinition(
+            schemaId: ErrorDto.DomainErrorSchema,
+            schema: new()
+            {
+                Type = JsonSchemaType.Object,
+                Properties = properties,
+                Required = properties.Keys.ToHashSet(),
+                AdditionalPropertiesAllowed = true,
+                AdditionalProperties = new OpenApiSchema
+                {
+                    Type = JsonSchemaType.Object,
+                },
+                ReadOnly = true,
+                Description = $"{nameof(ErrorDto)} schema for domain errors.",
+            });
+    }
+
+    private static OpenApiSchemaReference GenerateSchemaForMetadataOfInternalErrors(
+        SchemaFilterContext context,
+        IOpenApiSchema baseSchema,
+        string codeDataProperty,
+        string metaDataProperty,
+        string schemaDataProperty)
+    {
+        var properties = CopyProperties(baseSchema);
+        properties[metaDataProperty] = context.SchemaGenerator.GenerateSchema(typeof(Nothing), context.SchemaRepository);
+        (properties[codeDataProperty] as OpenApiSchema)?.Enum = [ErrorDto.InternalErrorCode,];
+        (properties[schemaDataProperty] as OpenApiSchema)?.Enum = [ErrorDto.InternalErrorSchema,];
+        return context.SchemaRepository.AddDefinition(
+            schemaId: ErrorDto.InternalErrorSchema,
+            schema: new()
+            {
+                Type = JsonSchemaType.Object,
+                Properties = properties,
+                Required = properties.Keys.ToHashSet(),
+                AdditionalPropertiesAllowed = false,
+                ReadOnly = true,
+                Description = $"{nameof(ErrorDto)} schema for internal errors.",
+            });
+    }
+
+    private static IDictionary<string, IOpenApiSchema> CopyProperties(IOpenApiSchema schema) => schema.Properties
+        ?.ToSortedDictionary(schema => schema.Key, schema => schema.Value.CreateShallowCopy())
+        ?? new Dictionary<string, IOpenApiSchema>();
 }

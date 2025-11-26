@@ -10,6 +10,7 @@ public record ErrorDto
 {
     public const string DomainErrorSchema = nameof(DomainError);
     public const string InternalErrorSchema = nameof(InternalError);
+    public const string InternalErrorCode = "Internal";
 
     public required string Code { get; init; }
 
@@ -43,7 +44,7 @@ public record ErrorDto
         },
         _ => new()
         {
-            Code = "Internal",
+            Code = InternalErrorCode,
             Detail = "Unknown internal error occurred",
             Schema = InternalErrorSchema,
             Meta = Nothing.Value,
