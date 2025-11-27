@@ -60,45 +60,30 @@ public class ApiTests : SampleAppIntegrationTest
     [Fact]
     public async Task ShouldSerializeAndDeserializeFixedMapsStringObject()
     {
-        var req = Session
+        await Session
             .Http
             .TestFixedMapStringObject(ImmutableCollections.Map<string, object>(("a", 5), ("b", "e")))
-            .Send();
-
-        await Verify((await req.GetResponse()).Content.AsString())
-            .UseTextForParameters("raw");
-
-        await Verify(await req.AsData())
-            .UseTextForParameters("deserialized");
+            .Send()
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldSerializeAndDeserializeFixedMapsStringRecord()
     {
-        var req = Session
+        await Session
             .Http
             .TestFixedMapStringRecord(ImmutableCollections.Map(("a", new TestRecord("aa", 2))))
-            .Send();
-
-        await Verify((await req.GetResponse()).Content.AsString())
-            .UseTextForParameters("raw");
-
-        await Verify(await req.AsData())
-            .UseTextForParameters("deserialized");
+            .Send()
+            .Verify();
     }
 
     [Fact]
     public async Task ShouldSerializeAndDeserializeFixedMapsRecordRecord()
     {
-        var req = Session
+        await Session
             .Http
             .TestFixedMapRecordRecord(ImmutableCollections.Map((new TestRecord("ee", 5), new TestRecord("aa", 2))))
-            .Send();
-
-        await Verify((await req.GetResponse()).Content.AsString())
-            .UseTextForParameters("raw");
-
-        await Verify(await req.AsData())
-            .UseTextForParameters("deserialized");
+            .Send()
+            .Verify();
     }
 }

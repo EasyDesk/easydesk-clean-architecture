@@ -2140,6 +2140,303 @@
         }
       }
     },
+    "/test/fixedmap/stringobject": {
+      "post": {
+        "tags": [
+          "Test"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
+            "allowEmptyValue": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringObjectIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringObjectIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringObjectIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringObjectIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringObjectIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringObjectIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test/fixedmap/stringrecord": {
+      "post": {
+        "tags": [
+          "Test"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
+            "allowEmptyValue": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringTestRecordIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringTestRecordIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test/fixedmap/recordrecord": {
+      "post": {
+        "tags": [
+          "Test"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
+            "allowEmptyValue": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordKeyValuePair"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordKeyValuePair"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordKeyValuePair"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestRecordTestRecordIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/errors/v0.1": {
       "get": {
         "tags": [
@@ -3013,7 +3310,9 @@
             "type": "string"
           }
         },
-        "additionalProperties": false,
+        "additionalProperties": {
+          "type": "object"
+        },
         "description": "ErrorDto schema for domain errors.",
         "readOnly": true
       },

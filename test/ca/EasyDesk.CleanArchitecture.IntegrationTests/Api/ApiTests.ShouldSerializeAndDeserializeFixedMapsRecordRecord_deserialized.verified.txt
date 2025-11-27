@@ -1,6 +1,0 @@
-﻿{
-  TestRecord { A = ee, B = 5 }: {
-    A: aa,
-    B: 2
-  }
-}
