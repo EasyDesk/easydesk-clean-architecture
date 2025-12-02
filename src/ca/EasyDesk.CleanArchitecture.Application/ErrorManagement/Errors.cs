@@ -22,6 +22,6 @@ public static class Errors
 
     public static ForbiddenError Forbidden(string? message = null) => new(message ?? "Not authorized");
 
-    public static InvalidInputError InvalidInput(string propertyName, string errorCode, string errorMessage, IFixedMap<string, object>? parameters = null) =>
-        new(propertyName, errorCode, errorMessage, parameters ?? Map<string, object>());
+    public static InvalidInputError InvalidInput(string propertyName, string errorCode, string errorMessage, IFixedMap<string, object?>? parameters = null) =>
+        new(propertyName, errorCode, errorMessage, parameters ?? Map<string, object?>());
 }
