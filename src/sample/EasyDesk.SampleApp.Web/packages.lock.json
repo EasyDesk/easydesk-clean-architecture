@@ -4,9 +4,9 @@
     "net10.0": {
       "Microsoft.EntityFrameworkCore.Design": {
         "type": "Direct",
-        "requested": "[10.0.0, )",
-        "resolved": "10.0.0",
-        "contentHash": "R7BeFniEpBrHw8kKVtWiMG4PRAwJ4K1RZoQWB32Ak8ws3uvYH98DVp9Y2UBUgbwY5lR9wPlrxp7P3GGDQ7LUSQ==",
+        "requested": "[10.0.1, )",
+        "resolved": "10.0.1",
+        "contentHash": "0VcVx+hIo7j6bCjTlgPB1D4vHyLdkY3pVmlcsvRR8APEr0vRQ+Nj2Q3qYXTUeHgp8gdBxQFDVCfcAXknevD2KQ==",
         "dependencies": {
           "Humanizer.Core": "2.14.1",
           "Microsoft.Build.Framework": "17.14.28",
@@ -15,8 +15,8 @@
           "Microsoft.CodeAnalysis.CSharp": "4.14.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.14.0",
           "Microsoft.CodeAnalysis.Workspaces.MSBuild": "4.14.0",
-          "Microsoft.EntityFrameworkCore.Relational": "10.0.0",
-          "Microsoft.Extensions.DependencyModel": "10.0.0",
+          "Microsoft.EntityFrameworkCore.Relational": "10.0.1",
+          "Microsoft.Extensions.DependencyModel": "10.0.1",
           "Mono.TextTemplating": "3.0.0",
           "Newtonsoft.Json": "13.0.3"
         }
@@ -116,15 +116,15 @@
       },
       "FluentValidation": {
         "type": "Transitive",
-        "resolved": "12.1.0",
-        "contentHash": "FqWEn8BdbbFEHGanj9K8SVo+LyBeFWy2rolaE+e1TNUbifr8M7Iss+I1AqTSc8kjKtvjl/WN4XIHiRpslh42bA=="
+        "resolved": "12.1.1",
+        "contentHash": "EPpkIe1yh1a0OXyC100oOA8WMbZvqUu5plwhvYcb7oSELfyUZzfxV48BLhvs3kKo4NwG7MGLNgy1RJiYtT8Dpw=="
       },
       "FluentValidation.DependencyInjectionExtensions": {
         "type": "Transitive",
-        "resolved": "12.1.0",
-        "contentHash": "p9ZnpVCUvkelSfqFYZP9aMtnuRlDRkrAAPqjQGG+1mVVn8zxE0bc1/RAFRBZKsPglbMBQOx8wXOZhg2fGstacQ==",
+        "resolved": "12.1.1",
+        "contentHash": "D0VXh4dtjjX2aQizuaa0g6R8X3U1JaVqJPfGCvLwZX9t/O2h7tkpbitbadQMfwcgSPdDbI2vDxuwRMv/Uf9dHA==",
         "dependencies": {
-          "FluentValidation": "12.1.0"
+          "FluentValidation": "12.1.1"
         }
       },
       "Humanizer.Core": {
@@ -162,8 +162,8 @@
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "0BgDfT1GoZnzjJOBwx5vFMK5JtqsTEas9pCEwd1/KKxNUAqFmreN60WeUoF+CsmSd9tOQuqWedvdBo/QqHuNTQ==",
+        "resolved": "10.0.1",
+        "contentHash": "lvyUEBVv7V1/UvGxfOV3a0kyaQatPAU+ZHru7xha6WVOpa+7aJtKehbiu9VpAt/G50FR+hUwL4nTY33ijsCXwA==",
         "dependencies": {
           "Microsoft.IdentityModel.Protocols.OpenIdConnect": "8.0.1"
         }
@@ -314,38 +314,38 @@
       },
       "Microsoft.EntityFrameworkCore": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "hHa2amRjMyBLUH/KTML6FgIAhZ0VFYkhCKwWEax0rO6iNeM1P5MflyeQLE5dniSIOZHc3Oqyv5UIyTFO4e1Auw==",
+        "resolved": "10.0.1",
+        "contentHash": "QsXvZ8G7Dl7x09rlq0b2dye7QqfReMq8yGdl7Mffi3Ip+aTa+JUMixBZ4lhCs9Ygjz2e9tiUACstxI+ADkwaFg==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore.Abstractions": "10.0.0",
-          "Microsoft.EntityFrameworkCore.Analyzers": "10.0.0"
+          "Microsoft.EntityFrameworkCore.Abstractions": "10.0.1",
+          "Microsoft.EntityFrameworkCore.Analyzers": "10.0.1"
         }
       },
       "Microsoft.EntityFrameworkCore.Abstractions": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "C+TT9k7f1GQ8agOfV512K9iwrzi76RXVSDiLx+iWC9pz3QhEpSF1Dyk+FpVvd8ULQ+rqymfM8KQ7g48ttQVyMg=="
+        "resolved": "10.0.1",
+        "contentHash": "sp6Uq8Oc3RVGtmxLS3ZgzVeFHrpLNymsMudoeqRmB9pRTWgvq2S903sF5OnaaZmh4Bz6kpq7FwofE+DOhKJYvg=="
       },
       "Microsoft.EntityFrameworkCore.Analyzers": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "TxHQq0kn0tpYs2ljeRl8jtmWk720B0nteqI6mAZM77HWJpYT9Zj8SkkBBlj8K3Yeq18a6NBjz6YutE+shEk4Ag=="
+        "resolved": "10.0.1",
+        "contentHash": "Ug2lxkiz1bpnxQF/xdswLl5EBA6sAG2ig5nMjmtpQZO0C88ZnvUkbpH2vQq+8ultIRmvp5Ec2jndLGRMPjW0Ew=="
       },
       "Microsoft.EntityFrameworkCore.Relational": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "A3MX1ee7RDxWCUdx/KqP+74fbksz0UIhkVZh56YHvbPkEKsffCXgHU3LGkRDwqR/MrBNWLCWC/IVX79tzM30ZA==",
+        "resolved": "10.0.1",
+        "contentHash": "8/5kYGwKN6wtc89QqcPTOZDAJSMX8MzKCf5OmYjIfAHWTfsUEpGKYrdtfNk4X36rQ0BiU3n57Y4rbtnerzJN0Q==",
         "dependencies": {
-          "Microsoft.EntityFrameworkCore": "10.0.0"
+          "Microsoft.EntityFrameworkCore": "10.0.1"
         }
       },
       "Microsoft.EntityFrameworkCore.SqlServer": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "9ip+r8Wtu0qNtFLYnQC3bkhQAsINIyo8XWYJHCVY22BFLxIT4rPxZPkbto56SjCnkwxS6nnbFZTU6KuAO2Nu1g==",
+        "resolved": "10.0.1",
+        "contentHash": "Uz/M/Y2UPWJ+wJV8JGb7gp5H6Q8oE+/Fz/YZ5osBNDIxrlT+/I7AraVKxErSlz/nZq5JVy+jL1znnIcgI0G/Hw==",
         "dependencies": {
           "Microsoft.Data.SqlClient": "6.1.1",
-          "Microsoft.EntityFrameworkCore.Relational": "10.0.0"
+          "Microsoft.EntityFrameworkCore.Relational": "10.0.1"
         }
       },
       "Microsoft.Extensions.ApiDescription.Server": {
@@ -355,8 +355,8 @@
       },
       "Microsoft.Extensions.DependencyModel": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "RFYJR7APio/BiqdQunRq6DB+nDB6nc2qhHr77mlvZ0q0BT8PubMXN7XicmfzCbrDE/dzhBnUKBRXLTcqUiZDGg=="
+        "resolved": "10.0.1",
+        "contentHash": "IiWPd4j8JLNjSkyXl5hvJwX2ZENDVQVPDHYgZmYdw8+YkY2xp9iQt0vjdnAQZLpo/ipeW1xgOqfSBEnivKWPYQ=="
       },
       "Microsoft.Identity.Client": {
         "type": "Transitive",
@@ -627,8 +627,8 @@
       },
       "System.CommandLine": {
         "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "Bjklzc5NoxqAGFi7BcGlY2TWAdB06Bq3a5sfRr3ubMRU80Mf98eyq3Y2UgR6xRV0TLznZmfe5T7mUjOunRNcdA=="
+        "resolved": "2.0.1",
+        "contentHash": "GLc43eDFq8KbpxIb7UhTwV0vC5CzB0NspJvfFbfhoW4O057xCJXuO18KLpVn9x3JykQn2mRske6+I6JXHwqmDg=="
       },
       "System.Composition": {
         "type": "Transitive",
@@ -747,7 +747,7 @@
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
-          "FluentValidation.DependencyInjectionExtensions": "[12.1.0, )",
+          "FluentValidation.DependencyInjectionExtensions": "[12.1.1, )",
           "NodaTime.Serialization.SystemTextJson": "[1.3.0, )"
         }
       },
@@ -757,7 +757,7 @@
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Infrastructure": "[1.0.0, )",
           "LinqKit.Microsoft.EntityFrameworkCore": "[10.0.9, )",
-          "Microsoft.EntityFrameworkCore.Relational": "[10.0.0, )"
+          "Microsoft.EntityFrameworkCore.Relational": "[10.0.1, )"
         }
       },
       "easydesk.cleanarchitecture.dal.postgresql": {
@@ -772,7 +772,7 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Dal.EfCore": "[1.0.0, )",
-          "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.0, )",
+          "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.1, )",
           "SimplerSoftware.EntityFrameworkCore.SqlServer.NodaTime": "[10.0.0, )"
         }
       },
@@ -782,14 +782,14 @@
           "Autofac.Extensions.DependencyInjection": "[10.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
           "NodaTime": "[3.2.2, )",
-          "System.CommandLine": "[2.0.0, )"
+          "System.CommandLine": "[2.0.1, )"
         }
       },
       "easydesk.cleanarchitecture.domain": {
         "type": "Project",
         "dependencies": {
           "EasyDesk.Commons": "[1.0.0, )",
-          "FluentValidation": "[12.1.0, )",
+          "FluentValidation": "[12.1.1, )",
           "NodaTime": "[3.2.2, )"
         }
       },
@@ -799,7 +799,7 @@
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
           "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.0, )",
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.1, )",
           "Rebus": "[8.9.0, )",
           "Rebus.Microsoft.Extensions.Logging": "[5.2.0, )",
           "Rebus.ServiceProvider": "[10.7.0, )",

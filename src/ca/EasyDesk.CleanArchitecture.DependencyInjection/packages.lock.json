@@ -48,9 +48,9 @@
       },
       "System.CommandLine": {
         "type": "Direct",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "Bjklzc5NoxqAGFi7BcGlY2TWAdB06Bq3a5sfRr3ubMRU80Mf98eyq3Y2UgR6xRV0TLznZmfe5T7mUjOunRNcdA=="
+        "requested": "[2.0.1, )",
+        "resolved": "2.0.1",
+        "contentHash": "GLc43eDFq8KbpxIb7UhTwV0vC5CzB0NspJvfFbfhoW4O057xCJXuO18KLpVn9x3JykQn2mRske6+I6JXHwqmDg=="
       },
       "Autofac": {
         "type": "Transitive",
@@ -64,8 +64,8 @@
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions": {
         "type": "Transitive",
-        "resolved": "10.0.0",
-        "contentHash": "L3AdmZ1WOK4XXT5YFPEwyt0ep6l8lGIPs7F5OOBZc77Zqeo01Of7XXICy47628sdVl0v/owxYJTe86DTgFwKCA=="
+        "resolved": "10.0.1",
+        "contentHash": "oIy8fQxxbUsSrrOvgBqlVgOeCtDmrcynnTG+FQufcUWBrwyPfwlUkCDB2vaiBeYPyT+20u9/HeuHeBf+H4F/8g=="
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
@@ -80,7 +80,7 @@
         "dependencies": {
           "Autofac": "[9.0.0, )",
           "EasyDesk.Commons": "[1.0.0, )",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.0, )"
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.1, )"
         }
       }
     }
