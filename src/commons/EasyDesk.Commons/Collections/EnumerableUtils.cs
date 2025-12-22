@@ -195,7 +195,7 @@ public static class EnumerableUtils
     public static bool MatchesTwoByTwo<T>(this IEnumerable<T> sequence, Func<T, T, bool> predicate) =>
         sequence.ZipWithNext(predicate).All(It);
 
-    public static IEnumerable<(T Current, T Next)> ZipTwoByTwo<T>(this IEnumerable<T> sequence) =>
+    public static IEnumerable<(T Current, T Next)> ZipWithNext<T>(this IEnumerable<T> sequence) =>
         sequence.ZipWithNext((c, n) => (c, n));
 
     public static IEnumerable<R> ZipWithNext<T, R>(this IEnumerable<T> sequence, Func<T, T, R> mapper)
