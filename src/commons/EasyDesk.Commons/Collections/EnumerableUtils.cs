@@ -192,24 +192,26 @@ public static class EnumerableUtils
     public static bool AllSame<T>(this IEnumerable<T> sequence) =>
         sequence.MatchesTwoByTwo((a, b) => ReferenceEquals(a, b) || a is not null && a.Equals(b));
 
-    public static bool MatchesTwoByTwo<T>(this IEnumerable<T> sequence, Func<T, T, bool> predicate)
+    public static bool MatchesTwoByTwo<T>(this IEnumerable<T> sequence, Func<T, T, bool> predicate) =>
+        sequence.ZipWithNext(predicate).All(It);
+
+    public static IEnumerable<(T Current, T Next)> ZipTwoByTwo<T>(this IEnumerable<T> sequence) =>
+        sequence.ZipWithNext((c, n) => (c, n));
+
+    public static IEnumerable<R> ZipWithNext<T, R>(this IEnumerable<T> sequence, Func<T, T, R> mapper)
     {
         using (var enumerator = sequence.GetEnumerator())
         {
             if (!enumerator.MoveNext())
             {
-                return true;
+                yield break;
             }
             var previous = enumerator.Current;
             while (enumerator.MoveNext())
             {
-                if (!predicate(previous, enumerator.Current))
-                {
-                    return false;
-                }
+                yield return mapper(previous, enumerator.Current);
                 previous = enumerator.Current;
             }
-            return true;
         }
     }
 
@@ -321,11 +323,8 @@ public static class EnumerableUtils
                 yield return current;
             }
 
-            if (_enumerator is not null)
-            {
-                _enumerator.Dispose();
-                _enumerator = null;
-            }
+            _enumerator?.Dispose();
+            _enumerator = null;
 
             for (; index < _cache.Count; index++)
             {
