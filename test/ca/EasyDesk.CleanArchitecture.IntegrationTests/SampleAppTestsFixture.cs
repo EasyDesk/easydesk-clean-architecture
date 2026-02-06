@@ -77,7 +77,7 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
     private static void ConfigureSqlServer(TestFixtureConfigurer configurer)
     {
-        var container = new MsSqlBuilder()
+        var container = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2025-RC1-ubuntu-22.04")
             .WithUniqueName("sample-app-tests-sqlserver")
             .WithPassword("sample.123")
             .Build();
@@ -92,7 +92,7 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
 
     private static void ConfigurePostgreSql(TestFixtureConfigurer configurer)
     {
-        var container = new PostgreSqlBuilder()
+        var container = new PostgreSqlBuilder("postgres:18.1")
             .WithUniqueName("sample-app-tests-postgres")
             .WithUsername("sample")
             .WithPassword("sample")

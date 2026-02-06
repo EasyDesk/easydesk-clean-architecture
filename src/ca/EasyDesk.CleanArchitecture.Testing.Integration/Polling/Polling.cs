@@ -122,8 +122,14 @@ public sealed class Polling<T>
     public Task EnsureDoesNotThrow<E>(AsyncAction<T> action) where E : Exception =>
         EnsureInvariant(DoesNotThrow<E>(action));
 
+    public Task EnsureDoesNotThrow(AsyncAction<T> action) =>
+        EnsureDoesNotThrow<Exception>(action);
+
     public Task EnsureDoesNotThrow<E>(Action<T> action) where E : Exception =>
         EnsureInvariant(DoesNotThrow<E>(action));
+
+    public Task EnsureDoesNotThrow(Action<T> action) =>
+        EnsureDoesNotThrow<Exception>(action);
 
     public async Task EventuallyEnsureInvariant(AsyncFunc<T, bool> invariant)
     {
@@ -142,8 +148,14 @@ public sealed class Polling<T>
     public Task EventuallyEnsureDoesNotThrow<E>(AsyncAction<T> action) where E : Exception =>
         EventuallyEnsureInvariant(DoesNotThrow<E>(action));
 
+    public Task EventuallyEnsureDoesNotThrow(AsyncAction<T> action) =>
+        EventuallyEnsureDoesNotThrow<Exception>(action);
+
     public Task EventuallyEnsureDoesNotThrow<E>(Action<T> action) where E : Exception =>
         EventuallyEnsureInvariant(DoesNotThrow<E>(action));
+
+    public Task EventuallyEnsureDoesNotThrow(Action<T> action) =>
+        EventuallyEnsureDoesNotThrow<Exception>(action);
 
     private Func<T, bool> DoesNotThrow<E>(Action<T> action) where E : Exception => t =>
     {
@@ -181,5 +193,9 @@ public sealed class Polling<T>
 
     public Task<T> UntilThrows<E>(Action<T> action) where E : Exception => While(DoesNotThrow<E>(action));
 
+    public Task<T> UntilThrows(Action<T> action) => UntilThrows<Exception>(action);
+
     public Task<T> UntilThrows<E>(AsyncAction<T> action) where E : Exception => While(DoesNotThrow<E>(action));
+
+    public Task<T> UntilThrows(AsyncAction<T> action) => UntilThrows<Exception>(action);
 }
