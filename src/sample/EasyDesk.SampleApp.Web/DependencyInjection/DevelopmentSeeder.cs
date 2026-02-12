@@ -29,7 +29,7 @@ public class DevelopmentSeeder
     {
         var admin = Agent.FromSingleIdentity(Realms.MainRealm, IdentityId.FromRandomGuid());
         var tenantId = TenantId.FromRandomGuid();
-        var dispatcher = _dispatcherFactory.CreateSeedingDispatcher(admin, tenantId);
+        var dispatcher = _dispatcherFactory.CreateProgrammaticDispatcher(admin, tenantId);
         await dispatcher.Dispatch(new CreateTenant(tenantId));
         await dispatcher.Dispatch(new AddAdmin());
         _logger.LogWarning("Created tenant {TenantId} and admin with id {AdminId}", tenantId, admin.MainIdentity().Id);
