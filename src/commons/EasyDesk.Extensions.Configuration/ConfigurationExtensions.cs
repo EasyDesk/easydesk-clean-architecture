@@ -7,14 +7,12 @@ public static class ConfigurationExtensions
 {
     public static Option<IConfigurationSection> GetSectionAsOption(this IConfiguration configuration, string key)
     {
-        try
+        var section = configuration.GetSection(key);
+        if (section.Exists())
         {
-            return Some(configuration.GetRequiredSection(key));
+            return Some(section);
         }
-        catch (InvalidOperationException)
-        {
-            return None;
-        }
+        return None;
     }
 
     public static Option<string> GetConnectionStringAsOption(this IConfiguration configuration, string name) =>
