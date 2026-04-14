@@ -60,7 +60,7 @@ public class ApiKeyOptions
     public const string ApiKeyDefaultScheme = "ApiKey";
     public const string ApiKeyDefaultQueryParameter = "apiKey";
 
-    public TokenReader TokenReader { get; } = TokenReaders.Combine(
+    public TokenReader TokenReader { get; set; } = TokenReaders.Combine(
         TokenReaders.FromAuthorizationHeader(ApiKeyDefaultScheme),
         TokenReaders.FromQueryParameter(ApiKeyDefaultQueryParameter));
 }
