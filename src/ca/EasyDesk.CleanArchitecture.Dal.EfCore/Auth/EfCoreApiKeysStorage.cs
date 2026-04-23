@@ -1,13 +1,17 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
+using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.Commons.Options;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 
 internal class EfCoreApiKeysStorage : IApiKeysStorage
 {
+    private const int PageSize = 20;
+
     private readonly AuthContext _authContext;
 
     public EfCoreApiKeysStorage(AuthContext authContext)
@@ -57,5 +61,18 @@ internal class EfCoreApiKeysStorage : IApiKeysStorage
     {
         return await FindApiKey(apiKey)
             .ThenMap(x => x.GetAgent());
+    }
+
+    public IAsyncEnumerable<string> GetApiKeys()
+    {
+        return _authContext.ApiKeys
+            .Select(x => x.ApiKey)
+            .ToPageable()
+            .ToAsyncEnumerable(PageSize);
+    }
+
+    public async Task Clear()
+    {
+        await _authContext.ApiKeys.ExecuteDeleteAsync();
     }
 }

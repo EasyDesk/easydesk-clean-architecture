@@ -27,4 +27,20 @@ public static class PageableExtensions
     }
 
     public static IPageable<R> Map<T, R>(this IPageable<T> source, Func<T, R> mapper) => new MappedPageable<T, R>(source, mapper);
+
+    public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IPageable<T> source, int pageSize)
+    {
+        var currentPage = 0;
+        var containsElements = true;
+        while (containsElements)
+        {
+            containsElements = false;
+            foreach (var item in await source.GetPage(pageSize, currentPage))
+            {
+                containsElements = true;
+                yield return item;
+            }
+            currentPage++;
+        }
+    }
 }
