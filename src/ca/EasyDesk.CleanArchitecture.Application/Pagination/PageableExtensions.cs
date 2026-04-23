@@ -31,14 +31,14 @@ public static class PageableExtensions
     public static async IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IPageable<T> source, int pageSize)
     {
         var currentPage = 0;
-        var containsElements = true;
-        while (containsElements)
+        var elementsReturned = pageSize;
+        while (elementsReturned >= pageSize)
         {
-            containsElements = false;
+            elementsReturned = 0;
             foreach (var item in await source.GetPage(pageSize, currentPage))
             {
-                containsElements = true;
                 yield return item;
+                elementsReturned++;
             }
             currentPage++;
         }
