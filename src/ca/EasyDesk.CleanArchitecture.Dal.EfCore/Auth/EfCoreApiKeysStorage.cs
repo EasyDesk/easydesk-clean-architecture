@@ -10,8 +10,6 @@ namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
 
 internal class EfCoreApiKeysStorage : IApiKeysStorage
 {
-    private const int PageSize = 20;
-
     private readonly AuthContext _authContext;
 
     public EfCoreApiKeysStorage(AuthContext authContext)
@@ -63,12 +61,11 @@ internal class EfCoreApiKeysStorage : IApiKeysStorage
             .ThenMap(x => x.GetAgent());
     }
 
-    public IAsyncEnumerable<string> GetApiKeys()
+    public IPageable<string> GetApiKeys()
     {
         return _authContext.ApiKeys
             .Select(x => x.ApiKey)
-            .ToPageable()
-            .ToAsyncEnumerable(PageSize);
+            .ToPageable();
     }
 
     public async Task Clear()
