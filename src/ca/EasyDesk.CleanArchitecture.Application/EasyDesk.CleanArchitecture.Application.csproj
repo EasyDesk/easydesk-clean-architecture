@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\commons\EasyDesk.Extensions.DependencyInjection\EasyDesk.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\commons\EasyDesk.Extensions.Configuration\EasyDesk.Extensions.Configuration.csproj" />
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.DependencyInjection\EasyDesk.CleanArchitecture.DependencyInjection.csproj" />
     <ProjectReference Include="..\EasyDesk.CleanArchitecture.Domain\EasyDesk.CleanArchitecture.Domain.csproj" />
   </ItemGroup>

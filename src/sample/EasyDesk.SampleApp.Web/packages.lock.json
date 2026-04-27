@@ -665,6 +665,7 @@
         "dependencies": {
           "EasyDesk.CleanArchitecture.DependencyInjection": "[1.0.0, )",
           "EasyDesk.CleanArchitecture.Domain": "[1.0.0, )",
+          "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "EasyDesk.Extensions.DependencyInjection": "[1.0.0, )",
           "FluentValidation.DependencyInjectionExtensions": "[12.1.1, )",
           "NodaTime.Serialization.SystemTextJson": "[1.3.1, )"
@@ -716,7 +717,6 @@
         "type": "Project",
         "dependencies": {
           "EasyDesk.CleanArchitecture.Application": "[1.0.0, )",
-          "EasyDesk.Extensions.Configuration": "[1.0.0, )",
           "Microsoft.AspNet.WebApi.Client": "[6.0.0, )",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.6, )",
           "Rebus": "[8.9.0, )",
