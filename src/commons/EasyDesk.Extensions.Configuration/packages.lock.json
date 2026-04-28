@@ -4,23 +4,23 @@
     "net10.0": {
       "Microsoft.Extensions.Configuration.Binder": {
         "type": "Direct",
-        "requested": "[10.0.6, )",
-        "resolved": "10.0.6",
-        "contentHash": "h22Fm4VxRmr4ty9rxJaW0i51xD56Bl5QhQ2hsGY2vl+6FioWmBhkpg3B78XQaK25N+hE41gZLZuYKGQS+OGbdw==",
+        "requested": "[10.0.7, )",
+        "resolved": "10.0.7",
+        "contentHash": "8bS1qIaRivny+WX+49pmeJ6iAylbtX8C0DLEcCQWZjdxQvLqaMssXiGD9P/6pYElrHbK5/nAHmjbQ8STqdMYeg==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration": "10.0.6",
-          "Microsoft.Extensions.Configuration.Abstractions": "10.0.6"
+          "Microsoft.Extensions.Configuration": "10.0.7",
+          "Microsoft.Extensions.Configuration.Abstractions": "10.0.7"
         }
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
-        "requested": "[10.0.202, )",
-        "resolved": "10.0.202",
-        "contentHash": "vRm3w0AWndnqt8X73qoWTdD/qp7o+bYMCufl7hSiQUSqeI3WKdqA/ElE6MCUscy84FX8HCMcK2EJCtTm+4bdbw==",
+        "requested": "[10.0.203, )",
+        "resolved": "10.0.203",
+        "contentHash": "R4Tvr1oACImMS+Y5M7NM07ll9QyJSKnki3Dvz8QwG1W6FEmd+9fmZXAF6BE6UPswHF6n0v41wgMQGlaudOspqA==",
         "dependencies": {
-          "Microsoft.Build.Tasks.Git": "10.0.202",
-          "Microsoft.SourceLink.Common": "10.0.202",
-          "System.IO.Hashing": "10.0.6"
+          "Microsoft.Build.Tasks.Git": "10.0.203",
+          "Microsoft.SourceLink.Common": "10.0.203",
+          "System.IO.Hashing": "10.0.7"
         }
       },
       "Roslynator.Analyzers": {
@@ -43,43 +43,43 @@
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
-        "resolved": "10.0.202",
-        "contentHash": "HXAW7dToPLi6lHN4TJz1FfxLYfPS3EF20YrrZxQ9xbwbjLkFXJ+SwkuuILoAdCWTNHhHfa5oqOsrOEQX5s+eMg==",
+        "resolved": "10.0.203",
+        "contentHash": "m56WtzvIcL6t7JR3c7ogYitHizNM2QnRSo8yqxrQi+m5E/GGyDEmqymP+2p6YsFXn0j/Tzz67s4FQnrTLC7GKQ==",
         "dependencies": {
-          "System.IO.Hashing": "10.0.6"
+          "System.IO.Hashing": "10.0.7"
         }
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
-        "resolved": "10.0.6",
-        "contentHash": "lYQ9S1FGXIWIU7243RimdAXQYsFDeLhSSZvbSDwbeI/kCzZ4MIYXpp3kMQ+bDJXwl9pzMRIYkd4f9zGqcYxfAQ==",
+        "resolved": "10.0.7",
+        "contentHash": "wZbGh7J8R1vXN525O6d8dlcDTxhRTnd5MyW4LdfP5S0tSnTwTCseYSrq6g0Mxh7W9xn8P/2xPuf0D/m6k2dy2w==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "10.0.6",
-          "Microsoft.Extensions.Primitives": "10.0.6"
+          "Microsoft.Extensions.Configuration.Abstractions": "10.0.7",
+          "Microsoft.Extensions.Primitives": "10.0.7"
         }
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "Transitive",
-        "resolved": "10.0.6",
-        "contentHash": "a7bA7IT3ngIgcOMb/2MVH5CcfSxUCeQ6QXWS1Vt6oFpzLTH3U1+J2Xtc64Uw3whX9akYG8eR/UQeEzxo64zZLg==",
+        "resolved": "10.0.7",
+        "contentHash": "t56nEgvECcyLPojZIUFWJknQQDAbgfTf9J+QMYJE1YYvVgz69vN6B/AKL8Grvj3Lcnp8kTpNqwmwFhb3YLJmtQ==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "10.0.6"
+          "Microsoft.Extensions.Primitives": "10.0.7"
         }
       },
       "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
-        "resolved": "10.0.6",
-        "contentHash": "L8P21mqaG+CXvPheLndean/cHCOcItJqH8nx+0YQnK7wAiOR0G1IOC418ZSzTMD2D6Gmo0f2M5WR70XtpX2B8g=="
+        "resolved": "10.0.7",
+        "contentHash": "D5M0Jr551iTgwkZMN9rm0pSkgNLj5quUWQUmQPMZh7k/bnvZTnXRGfE2KuvXf1EEjt/ofD9yw9IumpgdP9QCnw=="
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
-        "resolved": "10.0.202",
-        "contentHash": "g8E67huS0Slt6iJiUG1uj2N4NBo/q68Q1y1H4nFu1Cn4AOp6S5D8AeGLhGMzBT+JmNCjiGTvKco2qkbe4F31tQ=="
+        "resolved": "10.0.203",
+        "contentHash": "QYAnhBCOkT3ZUT/fHag11+bamwlbZ3U9Vi/WfKrD9emdUf1t3aqjWv0V2KtEGHSRSC81aBc8Oy/mvyGpEYd9Pg=="
       },
       "System.IO.Hashing": {
         "type": "Transitive",
-        "resolved": "10.0.6",
-        "contentHash": "lbMLkqFekDR4DeFd26eEfrG2HlvixIfs22uk/e2+9/NJ7WxMycVVakcQpuJvvqgc9XxwEgSd/Td+dZA+TjDDwA=="
+        "resolved": "10.0.7",
+        "contentHash": "6hsjdSr4VOXSOnhALkYplHpAxnTG1J33YN42IB6nH2fEg4QnJqrZ4Ft+qn7mkrKAOYC8pCSFYwVWw6rQbmwgLQ=="
       },
       "easydesk.commons": {
         "type": "Project"

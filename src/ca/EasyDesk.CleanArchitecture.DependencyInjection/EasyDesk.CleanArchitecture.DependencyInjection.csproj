@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NodaTime" Version="3.3.1" />
-    <PackageReference Include="System.CommandLine" Version="2.0.6" />
+    <PackageReference Include="NodaTime" Version="3.3.2" />
+    <PackageReference Include="System.CommandLine" Version="2.0.7" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
   </ItemGroup>
 
@@ -24,7 +24,7 @@
   <Import Project="$(RootFolder)\Packaging.targets" />
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.202" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.203" />
   </ItemGroup>
 
 </Project>

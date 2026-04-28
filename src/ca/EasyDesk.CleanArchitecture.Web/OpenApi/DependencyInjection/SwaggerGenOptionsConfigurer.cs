@@ -126,7 +126,7 @@ internal class SwaggerGenOptionsConfigurer : IConfigureOptions<SwaggerGenOptions
         options.OperationFilter<AddApiVersionParameterFilter>();
         options.DocInclusionPredicate((version, api) =>
         {
-            if (api.ActionDescriptor.GetApiVersionMetadata().IsApiVersionNeutral)
+            if (api.ActionDescriptor.ApiVersionMetadata.IsApiVersionNeutral)
             {
                 return true;
             }

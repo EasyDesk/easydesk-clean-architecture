@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.6" />
-    <PackageReference Include="Rebus" Version="8.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+    <PackageReference Include="Rebus" Version="8.9.2" />
     <PackageReference Include="Rebus.Microsoft.Extensions.Logging" Version="5.2.0" />
     <PackageReference Include="Rebus.ServiceProvider" Version="10.7.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.17.0" />
@@ -27,7 +27,7 @@
   <Import Project="$(RootFolder)\Packaging.targets" />
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.202" />
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.203" />
   </ItemGroup>
 
 </Project>
