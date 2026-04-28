@@ -86,4 +86,24 @@ public class ApiTests : SampleAppIntegrationTest
             .Send()
             .Verify();
     }
+
+    [Fact]
+    public async Task ShouldSerializeAndDeserializedFixedMapEnumRecord()
+    {
+        await Session
+            .Http
+            .TestFixedMapEnumRecord(ImmutableCollections.Map((EnumType.C, new TestRecord("cc", 2)), (EnumType.B, new TestRecord("bb", 3))))
+            .Send()
+            .Verify();
+    }
+
+    [Fact]
+    public async Task ShouldSerializeAndDeserializeDictionaryEnumRecord()
+    {
+        await Session
+            .Http
+            .TestDictionaryEnumRecord(new Dictionary<EnumType, TestRecord> { [EnumType.C] = new("cc", 2), [EnumType.B] = new("bb", 3) })
+            .Send()
+            .Verify();
+    }
 }

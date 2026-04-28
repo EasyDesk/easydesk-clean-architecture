@@ -2172,25 +2172,19 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "object"
-                }
+                "additionalProperties": { }
               }
             },
             "text/json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "object"
-                }
+                "additionalProperties": { }
               }
             },
             "application/*+json": {
               "schema": {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "object"
-                }
+                "additionalProperties": { }
               }
             }
           }
@@ -2270,25 +2264,25 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TestRecord"
                 }
               }
             },
             "text/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TestRecord"
                 }
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TestRecord"
                 }
               }
             }
@@ -2430,6 +2424,258 @@
               "text/plain": {
                 "schema": {
                   "$ref": "#/components/schemas/TestRecordTestRecordIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test/fixedmap/enumrecord": {
+      "post": {
+        "tags": [
+          "Test"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
+            "allowEmptyValue": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIFixedMapNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIFixedMapNothingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test/dictionary/enumrecord": {
+      "post": {
+        "tags": [
+          "Test"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
+            "allowEmptyValue": true,
+            "schema": {
+              "maxLength": 256,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIDictionaryNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIDictionaryNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIDictionaryNothingResponseDto"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIDictionaryNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIDictionaryNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnumTypeTestRecordIDictionaryNothingResponseDto"
                 }
               }
             }
@@ -2979,9 +3225,12 @@
             ]
           },
           "properties": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StringStringIFixedListKeyValuePair"
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           },
           "success": {
@@ -3316,6 +3565,100 @@
         "description": "ErrorDto schema for domain errors.",
         "readOnly": true
       },
+      "EnumType": {
+        "enum": [
+          "A",
+          "B",
+          "C"
+        ],
+        "type": "string"
+      },
+      "EnumTypeTestRecordIDictionaryNothingResponseDto": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDto"
+            }
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "EnumTypeTestRecordIFixedMapNothingResponseDto": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDto"
+            }
+          },
+          "meta": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "ErrorDto": {
         "required": [
           "code",
@@ -3520,9 +3863,12 @@
             "type": "string"
           },
           "attributes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StringStringIFixedSetKeyValuePair"
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
           }
         },
@@ -3643,7 +3989,7 @@
           "parameters": {
             "type": "object",
             "additionalProperties": {
-              "type": "object"
+              "nullable": true
             }
           }
         },
@@ -4342,9 +4688,7 @@
             "allOf": [
               {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "object"
-                }
+                "additionalProperties": { }
               }
             ],
             "nullable": true
@@ -4402,40 +4746,6 @@
         },
         "additionalProperties": false
       },
-      "StringStringIFixedListKeyValuePair": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "StringStringIFixedSetKeyValuePair": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "StringTestRecordIFixedMapNothingResponseDto": {
         "required": [
           "errors"
@@ -4443,18 +4753,15 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "array",
+            "type": "object",
             "allOf": [
               {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TestRecord"
                 }
               }
             ],
-            "items": {
-              "$ref": "#/components/schemas/StringTestRecordKeyValuePair"
-            },
             "nullable": true
           },
           "errors": {
@@ -4469,19 +4776,6 @@
                 "$ref": "#/components/schemas/Nothing"
               }
             ]
-          }
-        },
-        "additionalProperties": false
-      },
-      "StringTestRecordKeyValuePair": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string",
-            "nullable": true
-          },
-          "value": {
-            "$ref": "#/components/schemas/TestRecord"
           }
         },
         "additionalProperties": false

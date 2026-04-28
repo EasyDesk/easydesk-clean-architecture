@@ -16,11 +16,20 @@ internal class DictionaryOfAnyKeyConverter : CachedJsonConverterFactory
         return (JsonConverter)Activator.CreateInstance(converterTypeWithGenericArguments)!;
     }
 
-    public override bool CanConvert(Type typeToConvert) =>
-        typeToConvert.IsGenericType
+    public override bool CanConvert(Type typeToConvert)
+    {
+        if (typeToConvert.IsGenericType
             && (typeToConvert.IsSubtypeOrImplementationOf(typeof(IImmutableDictionary<,>))
-                || typeToConvert.IsSubtypeOrImplementationOf(typeof(IDictionary<,>)))
-            && typeToConvert.GetGenericArguments()[0] != typeof(string);
+                || typeToConvert.IsSubtypeOrImplementationOf(typeof(IDictionary<,>))))
+        {
+            var genericArguments = typeToConvert.GetGenericArguments();
+            if (genericArguments[0] != typeof(string) && !genericArguments[0].IsEnum)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public class ImmutableDictionaryAsArrayConverterImpl<K, V> : JsonConverter<IImmutableDictionary<K, V>>
         where K : notnull

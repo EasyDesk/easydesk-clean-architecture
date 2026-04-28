@@ -52,6 +52,8 @@ internal class SwaggerGenOptionsConfigurer : IConfigureOptions<SwaggerGenOptions
     {
         options.SupportNonNullableReferenceTypes();
         options.SchemaFilter<OptionSchemaFilter>();
+        options.SchemaFilter<DictionaryOfAnyKeySchemaFilter>();
+        options.SchemaFilter<FixedMapSchemaFilter>();
         options.SchemaFilter<PolymorphismSchemaFilter>();
         options.DocumentFilter<UnusedSchemaCleaner>();
         options.MapType<IFixedMap<string, object>>(() => new OpenApiSchema

@@ -27,6 +27,10 @@ public class TestController : CleanArchitectureController
 
     public const string TestFixedMapRecordRecordRoute = Base + "/fixedmap/recordrecord";
 
+    public const string TestFixedMapEnumRecordRoute = Base + "/fixedmap/enumrecord";
+
+    public const string TestDictionaryEnumRecordRoute = Base + "/dictionary/enumrecord";
+
     [HttpGet(TestOptionInQueryRoute)]
     public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetValueFromQuery([FromQuery] Option<string> value)
     {
@@ -67,6 +71,25 @@ public class TestController : CleanArchitectureController
 
     [HttpPost(TestFixedMapRecordRecordRoute)]
     public Task<ActionResult<ResponseDto<IFixedMap<TestRecord, TestRecord>, Nothing>>> TestFixedMapRecordRecord([FromBody] IFixedMap<TestRecord, TestRecord> body)
+    {
+        return Success(body);
+    }
+
+    public enum EnumType
+    {
+        A,
+        B,
+        C,
+    }
+
+    [HttpPost(TestFixedMapEnumRecordRoute)]
+    public Task<ActionResult<ResponseDto<IFixedMap<EnumType, TestRecord>, Nothing>>> TestFixedMapEnumRecord([FromBody] IFixedMap<EnumType, TestRecord> body)
+    {
+        return Success(body);
+    }
+
+    [HttpPost(TestDictionaryEnumRecordRoute)]
+    public Task<ActionResult<ResponseDto<IDictionary<EnumType, TestRecord>, Nothing>>> TestDictionaryEnumRecord([FromBody] IDictionary<EnumType, TestRecord> body)
     {
         return Success(body);
     }
