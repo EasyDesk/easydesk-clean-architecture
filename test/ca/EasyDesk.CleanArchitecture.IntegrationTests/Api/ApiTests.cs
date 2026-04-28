@@ -102,7 +102,7 @@ public class ApiTests : SampleAppIntegrationTest
     {
         await Session
             .Http
-            .TestDictionaryEnumRecord(new Dictionary<EnumType, TestRecord> { [EnumType.C] = new("cc", 2), [EnumType.B] = new("bb", 3) })
+            .TestDictionaryEnumRecord(new Dictionary<EnumType, TestRecord> { [EnumType.C] = new("cc", 2), [EnumType.B] = new("bb", 3), })
             .Send()
             .Verify();
     }
