@@ -37,6 +37,8 @@ public sealed class RebusMessagingOptions
 
     public bool UseInbox { get; set; } = true;
 
+    public bool LogReceivedMessages { get; set; } = true;
+
     public IFixedSet<Type> KnownMessageTypes { get; private set; } = Set<Type>();
 
     public bool DeferredMessagesEnabled { get; private set; }

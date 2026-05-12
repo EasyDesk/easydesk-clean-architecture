@@ -1,6 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
+using Microsoft.Extensions.Logging;
 using Rebus.Config;
 using Rebus.Pipeline;
+using Rebus.Pipeline.Receive;
 using Rebus.Transport;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
@@ -27,6 +29,15 @@ internal static class RebusPipelineExtensions
         {
             return new PipelineStepConcatenator(c.Get<IPipeline>())
                 .OnReceive(new ServiceScopeAsyncDisposeStep(), PipelineAbsolutePosition.Front);
+        });
+    }
+
+    public static void LogReceivedMessages(this OptionsConfigurer configurer, ILogger<MessageLoggingStep> logger)
+    {
+        configurer.Decorate<IPipeline>(c =>
+        {
+            return new PipelineStepInjector(c.Get<IPipeline>())
+                .OnReceive(new MessageLoggingStep(logger), PipelineRelativePosition.After, typeof(DeserializeIncomingMessageStep));
         });
     }
 }

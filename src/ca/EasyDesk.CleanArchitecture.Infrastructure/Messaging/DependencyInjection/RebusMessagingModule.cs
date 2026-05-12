@@ -21,6 +21,7 @@ using EasyDesk.Commons.Reflection;
 using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Config;
 using Rebus.Handlers;
@@ -114,6 +115,10 @@ public class RebusMessagingModule : AppModule
                     _ = c.Get<ITransport>(); // Forces initialization of '_originalTransport'.
                     return new DeadletterQueueErrorHandler(c.Get<RetryStrategySettings>(), _originalTransport, c.Get<IRebusLoggerFactory>());
                 });
+                if (options.LogReceivedMessages)
+                {
+                    o.LogReceivedMessages(context.Resolve<ILogger<MessageLoggingStep>>());
+                }
             });
             return configurer;
         });
