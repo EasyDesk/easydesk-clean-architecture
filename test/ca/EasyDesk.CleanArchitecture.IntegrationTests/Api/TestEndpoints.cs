@@ -19,4 +19,10 @@ public static class TestEndpoints
 
     public static HttpSingleRequestExecutor<IFixedMap<TestRecord, TestRecord>> TestFixedMapRecordRecord(this HttpTestHelper http, IFixedMap<TestRecord, TestRecord> body) =>
         http.Post<IFixedMap<TestRecord, TestRecord>, IFixedMap<TestRecord, TestRecord>>(TestFixedMapRecordRecordRoute, body);
+
+    public static HttpSingleRequestExecutor<IFixedMap<EnumType, TestRecord>> TestFixedMapEnumRecord(this HttpTestHelper http, IFixedMap<EnumType, TestRecord> body) =>
+        http.Post<IFixedMap<EnumType, TestRecord>, IFixedMap<EnumType, TestRecord>>(TestFixedMapEnumRecordRoute, body);
+
+    public static HttpSingleRequestExecutor<IDictionary<EnumType, TestRecord>> TestDictionaryEnumRecord(this HttpTestHelper http, IDictionary<EnumType, TestRecord> body) =>
+        http.Post<IDictionary<EnumType, TestRecord>, IDictionary<EnumType, TestRecord>>(TestDictionaryEnumRecordRoute, body);
 }

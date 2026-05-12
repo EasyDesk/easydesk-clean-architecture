@@ -52,6 +52,8 @@ internal class SwaggerGenOptionsConfigurer : IConfigureOptions<SwaggerGenOptions
     {
         options.SupportNonNullableReferenceTypes();
         options.SchemaFilter<OptionSchemaFilter>();
+        options.SchemaFilter<DictionaryOfAnyKeySchemaFilter>();
+        options.SchemaFilter<FixedMapSchemaFilter>();
         options.SchemaFilter<PolymorphismSchemaFilter>();
         options.DocumentFilter<UnusedSchemaCleaner>();
         options.MapType<IFixedMap<string, object>>(() => new OpenApiSchema
@@ -124,7 +126,7 @@ internal class SwaggerGenOptionsConfigurer : IConfigureOptions<SwaggerGenOptions
         options.OperationFilter<AddApiVersionParameterFilter>();
         options.DocInclusionPredicate((version, api) =>
         {
-            if (api.ActionDescriptor.GetApiVersionMetadata().IsApiVersionNeutral)
+            if (api.ActionDescriptor.ApiVersionMetadata.IsApiVersionNeutral)
             {
                 return true;
             }
