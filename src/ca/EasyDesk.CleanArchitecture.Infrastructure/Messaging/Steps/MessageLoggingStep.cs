@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using EasyDesk.Commons.Results;
+using Microsoft.Extensions.Logging;
 using Rebus.Bus;
 using Rebus.Messages;
 using Rebus.Pipeline;
@@ -18,8 +19,23 @@ public class MessageLoggingStep : IIncomingStep
     {
         var message = context.Load<Message>();
         var messageType = message.GetMessageType();
-        _logger.LogInformation("Received asynchronous message with type {MessageType}.", messageType);
+        var messageId = message.GetMessageId();
 
-        await next();
+        try
+        {
+            _logger.LogInformation("Message [Type={MessageType}, ID={MessageId}]: Received", messageType, messageId);
+            await next();
+            _logger.LogInformation("Message [Type={MessageType}, ID={MessageId}]: Successful", messageType, messageId);
+        }
+        catch (ResultFailedException e)
+        {
+            _logger.LogError("Message [Type={MessageType}, ID={MessageId}]: Error - Type={ErrorType}", messageType, messageId, e.Error.GetType().Name);
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Message [Type={MessageType}, ID={MessageId}]: Exception - Type={ExceptionType}", messageType, messageId, e.GetType().Name);
+            throw;
+        }
     }
 }
