@@ -26,7 +26,7 @@ internal class EfCoreSagaManager : ISagaManager
     {
         return await QuerySaga<TId, TState>(id)
             .FirstOptionAsync()
-            .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), JsonSerializer.Deserialize<TState>(m.State, _serializerOptions)));
+            .ThenMap(m => (CreateReferenceFromSagaModel<TState>(m), JsonSerializer.Deserialize<TState>(m.State, _serializerOptions)!));
     }
 
     public async Task<bool> IsInProgress<TId, TState>(TId id) =>
