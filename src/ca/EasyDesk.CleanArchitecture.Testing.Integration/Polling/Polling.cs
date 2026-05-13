@@ -18,6 +18,7 @@ public sealed class Polling<T>
     private AsyncFunc<int, T> _fallback;
     private Duration _timeout;
     private Duration _interval;
+    private Exception? _lastException;
 
     internal Polling(
         AsyncFunc<CancellationToken, T> poller,
@@ -31,7 +32,7 @@ public sealed class Polling<T>
         _interval = interval ?? DefaultInterval;
     }
 
-    private Task<T> DefaultFallback(int attempts) => throw new PollingFailedException(attempts, _timeout);
+    private Task<T> DefaultFallback(int attempts) => throw new PollingFailedException(attempts, _timeout, _lastException);
 
     public Polling<T> WithTimeout(Duration timeout)
     {
@@ -113,7 +114,7 @@ public sealed class Polling<T>
             return;
         }
 
-        throw new InvariantDidNotHoldException();
+        throw new InvariantDidNotHoldException(_lastException);
     }
 
     public Task EnsureInvariant(Func<T, bool> invariant) =>
@@ -139,7 +140,7 @@ public sealed class Polling<T>
             return;
         }
 
-        throw new InvariantDidNotHoldException();
+        throw new InvariantDidNotHoldException(_lastException);
     }
 
     public Task EventuallyEnsureInvariant(Func<T, bool> invariant) =>
@@ -164,8 +165,9 @@ public sealed class Polling<T>
             action(t);
             return true;
         }
-        catch (E)
+        catch (E exception)
         {
+            _lastException = exception;
             return false;
         }
     };
@@ -177,8 +179,9 @@ public sealed class Polling<T>
             await action(t);
             return true;
         }
-        catch (E)
+        catch (E exception)
         {
+            _lastException = exception;
             return false;
         }
     };
