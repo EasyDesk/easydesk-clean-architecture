@@ -4,7 +4,6 @@ using EasyDesk.CleanArchitecture.Application.Authentication.ApiKey;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auditing;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Auth;
@@ -73,18 +72,6 @@ public sealed class EfCoreDataAccess<T, TBuilder, TExtension> : IDataAccessImple
     private void AddAuthorizationContext(ServiceRegistry registry)
     {
         _options.RegisterDbContext<AuthContext>(registry);
-    }
-
-    public void AddMultitenancy(ServiceRegistry registry, AppDescription app)
-    {
-        AddAuthorizationContext(registry);
-
-        registry.ConfigureContainer(builder =>
-        {
-            builder.RegisterType<EfCoreMultitenancyManager>()
-                .As<IMultitenancyManager>()
-                .InstancePerLifetimeScope();
-        });
     }
 
     public void AddSagas(ServiceRegistry registry, AppDescription app)

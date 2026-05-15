@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 
 namespace EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
@@ -27,8 +26,7 @@ public class AuthorizationModule : AppModule
             pipeline
                 .AddStep(typeof(StaticAuthorizationStep<,>))
                 .After(typeof(UnitOfWorkStep<,>))
-                .After(typeof(AuthenticationStep<,>))
-                .After(typeof(MultitenancyManagementStep<,>));
+                .After(typeof(AuthenticationStep<,>));
         });
     }
 

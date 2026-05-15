@@ -162,6 +162,4 @@ public static class SwaggerModuleExtensions
 public sealed class OpenApiModuleOptions
 {
     public Action<SwaggerGenOptions>? ConfigureSwagger { get; set; }
-
-    public bool AddDefaultMultitenancyFilters { get; set; } = true;
 }

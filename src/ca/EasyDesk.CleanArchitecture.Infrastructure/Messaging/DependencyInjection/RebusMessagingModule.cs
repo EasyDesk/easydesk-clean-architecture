@@ -15,7 +15,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Inbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Outbox;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Steps;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.Threading;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Reflection;
 using EasyDesk.Extensions.DependencyInjection;
@@ -106,10 +105,6 @@ public class RebusMessagingModule : AppModule
                     o.UseOutbox();
                 }
                 o.PatchAsyncDisposables();
-                if (app.IsMultitenant())
-                {
-                    o.SetupForMultitenancy();
-                }
                 o.Decorate<IErrorHandler>(c =>
                 {
                     _ = c.Get<ITransport>(); // Forces initialization of '_originalTransport'.

@@ -1,7 +1,79 @@
 ﻿[
   {
+    Type: CommandRequest,
+    Name: AddAdmin,
+    Description: null,
+    Agent: {
+      Identities: [
+        {
+          Id: test-admin,
+          Realm: main,
+          Attributes: {
+            email: [
+              johndoe@test.com
+            ],
+            firstName: [
+              John
+            ],
+            lastName: [
+              Doe
+            ]
+          }
+        }
+      ]
+    },
+    Properties: {},
+    Success: true,
+    Instant: 2021-11-20T11:45:00Z
+  },
+  {
+    Type: CommandRequest,
+    Name: CreatePerson,
+    Description: null,
+    Agent: {
+      Identities: [
+        {
+          Id: test-admin,
+          Realm: main,
+          Attributes: {
+            email: [
+              johndoe@test.com
+            ],
+            firstName: [
+              John
+            ],
+            lastName: [
+              Doe
+            ]
+          }
+        }
+      ]
+    },
+    Properties: {},
+    Success: true,
+    Instant: 2021-11-20T11:45:00Z
+  },
+  {
     Type: Command,
-    Name: CreateTenant,
+    Name: CreateBestFriend,
+    Description: null,
+    Agent: null,
+    Properties: {},
+    Success: true,
+    Instant: 2021-11-20T11:45:00Z
+  },
+  {
+    Type: Command,
+    Name: CreateSibling,
+    Description: null,
+    Agent: null,
+    Properties: {},
+    Success: true,
+    Instant: 2021-11-20T11:45:00Z
+  },
+  {
+    Type: Command,
+    Name: CreateBestFriend,
     Description: null,
     Agent: null,
     Properties: {},

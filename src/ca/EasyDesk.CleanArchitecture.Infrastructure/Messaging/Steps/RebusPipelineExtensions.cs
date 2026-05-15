@@ -14,15 +14,6 @@ internal static class RebusPipelineExtensions
         configurer.Decorate<ITransport>(c => new TransportWithOutbox(c.Get<ITransport>()));
     }
 
-    public static void SetupForMultitenancy(this OptionsConfigurer configurer)
-    {
-        configurer.Decorate<IPipeline>(c =>
-        {
-            return new PipelineStepConcatenator(c.Get<IPipeline>())
-                .OnSend(new TenantManagementStep(), PipelineAbsolutePosition.Front);
-        });
-    }
-
     public static void PatchAsyncDisposables(this OptionsConfigurer configurer)
     {
         configurer.Decorate<IPipeline>(c =>

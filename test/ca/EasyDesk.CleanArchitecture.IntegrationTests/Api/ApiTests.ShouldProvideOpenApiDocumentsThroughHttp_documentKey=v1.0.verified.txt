@@ -20,16 +20,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -88,16 +78,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -160,16 +140,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -230,16 +200,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -319,16 +279,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -397,16 +347,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -553,16 +493,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -632,16 +562,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -702,16 +622,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -807,16 +717,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -877,16 +777,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -986,16 +876,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "requestBody": {
@@ -1083,16 +963,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1160,16 +1030,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -1240,16 +1100,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -1354,16 +1204,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1433,16 +1273,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -1530,16 +1360,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1616,16 +1436,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -1716,16 +1526,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -1820,16 +1620,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1904,16 +1694,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1974,16 +1754,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -2065,16 +1835,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "requestBody": {
@@ -2154,16 +1914,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -2247,16 +1997,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -2347,16 +2087,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "requestBody": {
@@ -2445,16 +2175,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -2572,16 +2292,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "requestBody": {
@@ -2698,16 +2408,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2768,16 +2468,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -2840,16 +2530,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2911,16 +2591,6 @@
               "default": "1.0",
               "readOnly": true
             }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2981,16 +2651,6 @@
               "type": "string",
               "default": "1.0",
               "readOnly": true
-            }
-          },
-          {
-            "name": "tenantId",
-            "in": "query",
-            "description": "Optional parameter alternative to setting the x-tenant-id header for specifying the tenant id of the request, with lower priority than the header.",
-            "allowEmptyValue": true,
-            "schema": {
-              "maxLength": 256,
-              "type": "string"
             }
           }
         ],
@@ -3702,22 +3362,7 @@
             "$ref": "#/components/schemas/InvalidSagaInitializerType"
           },
           {
-            "$ref": "#/components/schemas/InvalidTenantIdError"
-          },
-          {
-            "$ref": "#/components/schemas/MissingTenantError"
-          },
-          {
-            "$ref": "#/components/schemas/MultitenancyNotSupportedError"
-          },
-          {
             "$ref": "#/components/schemas/NotFoundError"
-          },
-          {
-            "$ref": "#/components/schemas/PetCreatedError"
-          },
-          {
-            "$ref": "#/components/schemas/TenantNotFoundError"
           },
           {
             "$ref": "#/components/schemas/TestApplicationError"
@@ -3753,12 +3398,7 @@
             "InvalidInputError": "#/components/schemas/InvalidInputError",
             "InvalidJwt": "#/components/schemas/InvalidJwt",
             "InvalidSagaInitializerType": "#/components/schemas/InvalidSagaInitializerType",
-            "InvalidTenantIdError": "#/components/schemas/InvalidTenantIdError",
-            "MissingTenantError": "#/components/schemas/MissingTenantError",
-            "MultitenancyNotSupportedError": "#/components/schemas/MultitenancyNotSupportedError",
             "NotFoundError": "#/components/schemas/NotFoundError",
-            "PetCreatedError": "#/components/schemas/PetCreatedError",
-            "TenantNotFoundError": "#/components/schemas/TenantNotFoundError",
             "TestApplicationError": "#/components/schemas/TestApplicationError",
             "UnknownAgentError": "#/components/schemas/UnknownAgentError"
           }
@@ -4077,119 +3717,6 @@
         },
         "additionalProperties": false
       },
-      "InvalidTenantIdError": {
-        "required": [
-          "code",
-          "detail",
-          "meta",
-          "schema"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "enum": [
-              "InvalidTenantId"
-            ],
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/InvalidTenantIdMeta"
-          },
-          "schema": {
-            "enum": [
-              "InvalidTenantIdError"
-            ],
-            "type": "string"
-          }
-        },
-        "additionalProperties": false,
-        "description": "ErrorDto schema generated from InvalidTenantIdError.",
-        "readOnly": true
-      },
-      "InvalidTenantIdMeta": {
-        "type": "object",
-        "properties": {
-          "rawTenantId": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "MissingTenantError": {
-        "required": [
-          "code",
-          "detail",
-          "meta",
-          "schema"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "enum": [
-              "MissingTenant"
-            ],
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/MissingTenantMeta"
-          },
-          "schema": {
-            "enum": [
-              "MissingTenantError"
-            ],
-            "type": "string"
-          }
-        },
-        "additionalProperties": false,
-        "description": "ErrorDto schema generated from MissingTenantError.",
-        "readOnly": true
-      },
-      "MissingTenantMeta": {
-        "type": "object",
-        "additionalProperties": false
-      },
-      "MultitenancyNotSupportedError": {
-        "required": [
-          "code",
-          "detail",
-          "meta",
-          "schema"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "enum": [
-              "MultitenancyNotSupported"
-            ],
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/MultitenancyNotSupportedMeta"
-          },
-          "schema": {
-            "enum": [
-              "MultitenancyNotSupportedError"
-            ],
-            "type": "string"
-          }
-        },
-        "additionalProperties": false,
-        "description": "ErrorDto schema generated from MultitenancyNotSupportedError.",
-        "readOnly": true
-      },
-      "MultitenancyNotSupportedMeta": {
-        "type": "object",
-        "additionalProperties": false
-      },
       "NodaTimeTestDto": {
         "type": "object",
         "properties": {
@@ -4504,50 +4031,6 @@
         },
         "additionalProperties": false
       },
-      "PetCreatedError": {
-        "required": [
-          "code",
-          "detail",
-          "meta",
-          "schema"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "enum": [
-              "PetCreated"
-            ],
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/PetCreatedMeta"
-          },
-          "schema": {
-            "enum": [
-              "PetCreatedError"
-            ],
-            "type": "string"
-          }
-        },
-        "additionalProperties": false,
-        "description": "ErrorDto schema generated from PetCreatedError.",
-        "readOnly": true
-      },
-      "PetCreatedMeta": {
-        "type": "object",
-        "properties": {
-          "tenant": {
-            "$ref": "#/components/schemas/TenantInfo"
-          },
-          "contextTenant": {
-            "$ref": "#/components/schemas/TenantInfo"
-          }
-        },
-        "additionalProperties": false
-      },
       "PetDto": {
         "type": "object",
         "properties": {
@@ -4780,79 +4263,6 @@
         },
         "additionalProperties": false
       },
-      "TenantId": {
-        "type": "object",
-        "properties": {
-          "value": {
-            "type": "string",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TenantInfo": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/TenantId"
-              }
-            ],
-            "readOnly": true
-          },
-          "isPublic": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "isInTenant": {
-            "type": "boolean",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TenantNotFoundError": {
-        "required": [
-          "code",
-          "detail",
-          "meta",
-          "schema"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "enum": [
-              "TenantNotFound"
-            ],
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/TenantNotFoundMeta"
-          },
-          "schema": {
-            "enum": [
-              "TenantNotFoundError"
-            ],
-            "type": "string"
-          }
-        },
-        "additionalProperties": false,
-        "description": "ErrorDto schema generated from TenantNotFoundError.",
-        "readOnly": true
-      },
-      "TenantNotFoundMeta": {
-        "type": "object",
-        "properties": {
-          "tenantId": {
-            "$ref": "#/components/schemas/TenantId"
-          }
-        },
-        "additionalProperties": false
-      },
       "TestApplicationError": {
         "required": [
           "code",
@@ -5020,12 +4430,6 @@
         "description": "ApiKey Token Authenticationn (ApiKey)",
         "name": "Authorization",
         "in": "header"
-      },
-      "multitenancy": {
-        "type": "apiKey",
-        "description": "The tenant ID to be used for the request",
-        "name": "x-tenant-id",
-        "in": "header"
       }
     }
   },
@@ -5035,9 +4439,6 @@
     },
     {
       "ApiKey": [ ]
-    },
-    {
-      "multitenancy": [ ]
     }
   ],
   "tags": [

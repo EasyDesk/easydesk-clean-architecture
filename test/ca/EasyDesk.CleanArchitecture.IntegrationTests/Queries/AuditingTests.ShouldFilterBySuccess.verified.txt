@@ -34,15 +34,6 @@
   ],
   Succeeding: [
     {
-      Type: Command,
-      Name: CreateTenant,
-      Description: null,
-      Agent: null,
-      Properties: {},
-      Success: true,
-      Instant: 2021-11-20T11:45:00Z
-    },
-    {
       Type: CommandRequest,
       Name: AddAdmin,
       Description: null,

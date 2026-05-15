@@ -2,16 +2,12 @@
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 
-public record GenerateError : IIncomingCommand, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.AnyTenantOrPublic();
-}
+public record GenerateError : IIncomingCommand;
 
 public class GenerateErrorHandler : IHandler<GenerateError>
 {
@@ -21,10 +17,7 @@ public class GenerateErrorHandler : IHandler<GenerateError>
     }
 }
 
-public record GenerateError2 : IIncomingCommand, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.AnyTenantOrPublic();
-}
+public record GenerateError2 : IIncomingCommand;
 
 public class GenerateError2Handler : IHandler<GenerateError2>
 {
@@ -34,10 +27,7 @@ public class GenerateError2Handler : IHandler<GenerateError2>
     }
 }
 
-public record GenerateError3 : IIncomingCommand, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.AnyTenantOrPublic();
-}
+public record GenerateError3 : IIncomingCommand;
 
 public class GenerateError3Handler : IHandler<GenerateError3>
 {
@@ -47,10 +37,7 @@ public class GenerateError3Handler : IHandler<GenerateError3>
     }
 }
 
-public record GenerateError4 : IIncomingCommand, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.AnyTenantOrPublic();
-}
+public record GenerateError4 : IIncomingCommand;
 
 public class GenerateError4Handler : IHandler<GenerateError4>, IFailedMessageHandler<GenerateError4>
 {

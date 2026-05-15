@@ -1,32 +1,19 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Commons.Options;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Seeding;
 
 public static class DispatcherFactoryExtensions
 {
-    public static IDispatcher CreateProgrammaticDispatcher(this DispatcherFactory factory, Agent? agent = null, string? tenantId = null, Action<ContainerBuilder>? setupScope = null) =>
+    public static IDispatcher CreateProgrammaticDispatcher(this DispatcherFactory factory, Agent? agent = null, Action<ContainerBuilder>? setupScope = null) =>
         factory.CreateDispatcherWithCustomServices(builder =>
         {
-            builder.RegisterInstance(new SeedingContextTenantDetector(tenantId.AsOption())).As<IContextTenantDetector>().SingleInstance();
-
             builder.RegisterInstance(new SeedingAuthenticationService(agent.AsOption())).As<IAuthenticationService>().SingleInstance();
 
             setupScope?.Invoke(builder);
         });
-
-    private class SeedingContextTenantDetector : IContextTenantDetector
-    {
-        public SeedingContextTenantDetector(Option<string> tenantId)
-        {
-            TenantId = tenantId;
-        }
-
-        public Option<string> TenantId { get; }
-    }
 
     private class SeedingAuthenticationService : IAuthenticationService
     {

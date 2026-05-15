@@ -1,11 +1,9 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Seeding;
 using EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 
 namespace EasyDesk.SampleApp.Web.DependencyInjection;
 
@@ -28,11 +26,9 @@ public class DevelopmentSeeder
     public async Task Seed()
     {
         var admin = Agent.FromSingleIdentity(Realms.MainRealm, IdentityId.FromRandomGuid());
-        var tenantId = TenantId.FromRandomGuid();
-        var dispatcher = _dispatcherFactory.CreateProgrammaticDispatcher(admin, tenantId);
-        await dispatcher.Dispatch(new CreateTenant(tenantId));
+        var dispatcher = _dispatcherFactory.CreateProgrammaticDispatcher(admin);
         await dispatcher.Dispatch(new AddAdmin());
-        _logger.LogWarning("Created tenant {TenantId} and admin with id {AdminId}", tenantId, admin.MainIdentity().Id);
+        _logger.LogWarning("Created admin with id {AdminId}", admin.MainIdentity().Id);
         _jwtLogger.LogForgedJwt(admin);
     }
 }

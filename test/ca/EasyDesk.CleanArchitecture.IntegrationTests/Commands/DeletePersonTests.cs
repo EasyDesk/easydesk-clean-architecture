@@ -2,11 +2,9 @@
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
@@ -33,7 +31,6 @@ public class DeletePersonTests : SampleAppIntegrationTest
     protected override void ConfigureSession(SessionConfigurer configurer)
     {
         configurer.SetDefaultAgent(TestAgents.Admin);
-        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
     }
 
     protected override async Task OnInitialization()

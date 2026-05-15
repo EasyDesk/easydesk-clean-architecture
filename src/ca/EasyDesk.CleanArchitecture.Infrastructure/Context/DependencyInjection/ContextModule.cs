@@ -1,8 +1,6 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Cancellation;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace EasyDesk.CleanArchitecture.Infrastructure.Context.DependencyInjection;
@@ -21,16 +19,6 @@ public class ContextModule : AppModule
 
         builder.RegisterType<ContextCancellationTokenProvider>()
             .As<ICancellationTokenProvider>()
-            .SingleInstance();
-
-        if (app.IsMultitenant())
-        {
-            return;
-        }
-
-        builder.RegisterType<PublicTenantProvider>()
-            .As<ITenantProvider>()
-            .IfNotRegistered(typeof(ITenantProvider))
             .SingleInstance();
     }
 }

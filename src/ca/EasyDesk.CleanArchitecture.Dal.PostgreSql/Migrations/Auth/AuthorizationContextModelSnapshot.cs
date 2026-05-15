@@ -17,7 +17,7 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("auth")
-            .HasAnnotation("ProductVersion", "8.0.8")
+            .HasAnnotation("ProductVersion", "10.0.8")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -53,38 +53,13 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                     .HasMaxLength(100)
                     .HasColumnType("character varying(100)");
 
-                b.Property<string>("Tenant")
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
-
                 b.Property<string>("Realm")
                     .IsRequired()
                     .HasColumnType("text");
 
-                b.Property<string>("TenantFk")
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
-
-                b.HasKey("Identity", "Role", "Tenant");
-
-                b.HasIndex("Tenant");
-
-                b.HasIndex("TenantFk");
+                b.HasKey("Identity", "Role");
 
                 b.ToTable("IdentityRoles", "auth");
-            });
-
-        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model.TenantModel", b =>
-            {
-                b.Property<string>("Id")
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
-
-                b.HasKey("Id");
-
-                b.ToTable("Tenants", "auth");
             });
 
         modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model.ApiKeyModel", b =>
@@ -150,14 +125,6 @@ partial class AuthorizationContextModelSnapshot : ModelSnapshot
                     });
 
                 b.Navigation("Identities");
-            });
-
-        modelBuilder.Entity("EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model.IdentityRoleModel", b =>
-            {
-                b.HasOne("EasyDesk.CleanArchitecture.Dal.EfCore.Auth.Model.TenantModel", null)
-                    .WithMany()
-                    .HasForeignKey("TenantFk")
-                    .OnDelete(DeleteBehavior.Cascade);
             });
 #pragma warning restore 612, 618
     }

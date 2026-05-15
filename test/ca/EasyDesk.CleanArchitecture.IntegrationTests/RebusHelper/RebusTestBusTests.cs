@@ -1,12 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Containers;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Options;
-using EasyDesk.Testing.MatrixExpansion;
 using NodaTime;
 using Rebus.Config;
 using Rebus.Routing.TypeBased;
@@ -51,8 +47,6 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
     private readonly ITestBusEndpoint _sender;
     private readonly ITestBusEndpoint _receiver;
 
-    private readonly TestTenantManager _tenantManager = new(new(None));
-
     public RebusTestBusTests(RabbitMqContainerFixture rabbitMqContainerFixture)
     {
         _rabbitMqConnection = rabbitMqContainerFixture.RabbitMq.GetConnectionString();
@@ -64,11 +58,9 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
     private RebusTestBusEndpoint CreateBus(string endpoint)
     {
-        return new(
-            rebus => rebus
-                .Transport(t => t.UseRabbitMq(_rabbitMqConnection, endpoint))
-                .Routing(r => r.TypeBased().MapFallback(_receiverAddress)),
-            _tenantManager);
+        return new(rebus => rebus
+            .Transport(t => t.UseRabbitMq(_rabbitMqConnection, endpoint))
+            .Routing(r => r.TypeBased().MapFallback(_receiverAddress)));
     }
 
     [Fact]
@@ -155,55 +147,6 @@ public class RebusTestBusTests : IClassFixture<RabbitMqContainerFixture>, IAsync
 
         var received = await _receiver.WaitForMessagesUntilQuiet<Command>(_defaultTimeout).ToEnumerableAsync();
         received.ShouldBe(commands, ignoreOrder: true);
-    }
-
-    public static IEnumerable<object?[]> TenantActions()
-    {
-        var axis = new TenantInfo[] { TenantInfo.Tenant(new TenantId("a")), TenantInfo.Tenant(new TenantId("b")), TenantInfo.Public, };
-        return Matrix.Builder()
-            .OptionAxis<TenantInfo>(axis)
-            .OptionAxis<TenantInfo>(axis)
-            .Build();
-    }
-
-    [Theory]
-    [MemberData(nameof(TenantActions))]
-    public async Task ShouldFilterCommandInTenant(Option<TenantInfo> before, Option<TenantInfo> after)
-    {
-        var command = new Command(7);
-        using var scopeBefore = _tenantManager.MoveTo(before);
-        await _sender.Send(command);
-
-        using var scopeAfter = _tenantManager.MoveTo(after);
-        if (after.IsAbsent || before.OrElse(TenantInfo.Public) == after.OrElse(TenantInfo.Public))
-        {
-            await _receiver.WaitForMessageOrFail(command, _defaultTimeout);
-        }
-        else
-        {
-            await _receiver.FailIfMessageIsReceived(command, _defaultTimeout);
-        }
-    }
-
-    [Theory]
-    [MemberData(nameof(TenantActions))]
-    public async Task ShouldFilterEventInTenant(Option<TenantInfo> before, Option<TenantInfo> after)
-    {
-        await _receiver.Subscribe<Event>();
-
-        var ev = new Event(11);
-        using var scopeBefore = _tenantManager.MoveTo(before);
-        await _sender.Publish(ev);
-
-        using var scopeAfter = _tenantManager.MoveTo(after);
-        if (after.IsAbsent || before.OrElse(TenantInfo.Public) == after.OrElse(TenantInfo.Public))
-        {
-            await _receiver.WaitForMessageOrFail(ev, _defaultTimeout);
-        }
-        else
-        {
-            await _receiver.FailIfMessageIsReceived(ev, _defaultTimeout);
-        }
     }
 
     private async void Defer<T>(T command, Duration delay, Duration? tolerance = null) where T : ICommand

@@ -1,11 +1,8 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
@@ -25,7 +22,6 @@ public class AggregateVersioningTests : SampleAppIntegrationTest
     protected override void ConfigureSession(SessionConfigurer configurer)
     {
         configurer.SetDefaultAgent(TestAgents.Admin);
-        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
     }
 
     protected override async Task OnInitialization()
@@ -48,7 +44,6 @@ public class AggregateVersioningTests : SampleAppIntegrationTest
     {
         await using var scope = Session.Host.LifetimeScope.BeginUseCaseLifetimeScope();
         var context = scope.Resolve<SampleAppContext>();
-        scope.Resolve<IContextTenantInitializer>().Initialize(Session.TenantManager.CurrentTenantInfo.Value);
         return await context.People
             .Where(x => x.Id == _person.Id)
             .Select(x => EF.Property<long>(x, AggregateVersioningUtils.VersionPropertyName))

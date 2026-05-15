@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.Domain.Metamodel.Repositories;
 using EasyDesk.Commons.Tasks;
@@ -37,7 +36,6 @@ public class TransactionsTests : SampleAppIntegrationTest
     private async Task UseContext(AsyncAction<SampleAppContext, ILifetimeScope> action)
     {
         await using var scope = Session.Host.LifetimeScope.BeginUseCaseLifetimeScope();
-        scope.Resolve<IContextTenantInitializer>().Initialize(TenantInfo.Public);
         await action(scope.Resolve<SampleAppContext>(), scope);
     }
 

@@ -1,17 +1,13 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Static;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Domain.DomainErrors;
 
 namespace EasyDesk.SampleApp.Application.V_1_5.Queries;
 
 [AllowUnknownAgent]
-public record GetTestDomainError : IQueryRequest<Nothing>, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.AnyTenantOrPublic();
-}
+public record GetTestDomainError : IQueryRequest<Nothing>;
 
 public class GetTestDomainErrorHandler : IHandler<GetTestDomainError>
 {

@@ -1,10 +1,8 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authorization.Model;
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.SampleApp.Application.Authorization;
@@ -20,7 +18,6 @@ public abstract class AbstractRemoveAdminTests : SampleAppIntegrationTest
     protected override void ConfigureSession(SessionConfigurer configurer)
     {
         configurer.SetDefaultAgent(TestAgents.Admin);
-        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
     }
 
     protected abstract HttpSingleRequestExecutor<Nothing> RemoveAdmin();

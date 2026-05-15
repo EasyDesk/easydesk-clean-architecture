@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.BackgroundTasks;
 using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -10,44 +9,41 @@ namespace EasyDesk.CleanArchitecture.Infrastructure.Auditing;
 
 public delegate Task AuditingExceptionHandler(AuditRecord record, Exception exception);
 
-internal class AuditingBackgroundTask : BackgroundConsumer<(AuditRecord, TenantInfo)>
+internal class AuditingBackgroundTask : BackgroundConsumer<AuditRecord>
 {
-    private readonly ChannelReader<(AuditRecord, TenantInfo)> _auditsChannel;
+    private readonly ChannelReader<AuditRecord> _auditsChannel;
     private readonly ILogger<AuditingBackgroundTask> _logger;
 
     public AuditingBackgroundTask(
         ILifetimeScope lifetimeScope,
-        ChannelReader<(AuditRecord, TenantInfo)> auditsChannel,
+        ChannelReader<AuditRecord> auditsChannel,
         ILogger<AuditingBackgroundTask> logger) : base(lifetimeScope)
     {
         _auditsChannel = auditsChannel;
         _logger = logger;
     }
 
-    protected override IAsyncEnumerable<(AuditRecord, TenantInfo)> GetProducer(CancellationToken pausingToken) =>
+    protected override IAsyncEnumerable<AuditRecord> GetProducer(CancellationToken pausingToken) =>
         _auditsChannel.ReadAllAsync(pausingToken);
 
     protected override async Task Consume(
-        (AuditRecord, TenantInfo) item,
+        AuditRecord item,
         ILifetimeScope lifetimeScope,
         CancellationToken pausingToken)
     {
-        var (record, tenantInfo) = item;
-        lifetimeScope.ResolveOption<IContextTenantInitializer>().IfPresent(i => i.Initialize(tenantInfo));
-        await lifetimeScope.Resolve<IAuditStorageImplementation>().StoreAudit(record);
-        _logger.LogDebug("Stored audit with name {AuditName}", record.Name);
+        await lifetimeScope.Resolve<IAuditStorageImplementation>().StoreAudit(item);
+        _logger.LogDebug("Stored audit with name {AuditName}", item.Name);
     }
 
     protected override async Task OnException(
-        (AuditRecord, TenantInfo) item,
+        AuditRecord item,
         ILifetimeScope lifetimeScope,
         Exception exception,
         CancellationToken pausingToken)
     {
-        var (record, _) = item;
-        _logger.LogError(exception, "Unexpected error while registering audit with name {AuditName}.", record.Name);
+        _logger.LogError(exception, "Unexpected error while registering audit with name {AuditName}.", item.Name);
         await lifetimeScope
             .ResolveOption<AuditingExceptionHandler>()
-            .IfPresentAsync(h => h(record, exception));
+            .IfPresentAsync(h => h(item, exception));
     }
 }

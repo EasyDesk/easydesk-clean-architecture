@@ -11,8 +11,6 @@ internal class AuthContext : AbstractDbContext
     {
     }
 
-    public DbSet<TenantModel> Tenants { get; set; }
-
     public DbSet<IdentityRoleModel> IdentityRoles { get; set; }
 
     public DbSet<ApiKeyModel> ApiKeys { get; set; }
@@ -21,7 +19,6 @@ internal class AuthContext : AbstractDbContext
     {
         modelBuilder.HasDefaultSchema(AuthModel.SchemaName);
 
-        modelBuilder.ApplyConfiguration(new TenantModel.Configuration());
         modelBuilder.ApplyConfiguration(new IdentityRoleModel.Configuration());
         modelBuilder.ApplyConfiguration(new ApiKeyModel.Configuration());
 

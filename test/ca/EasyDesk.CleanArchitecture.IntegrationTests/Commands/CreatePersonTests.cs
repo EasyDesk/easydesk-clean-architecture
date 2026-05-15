@@ -1,17 +1,12 @@
-﻿using EasyDesk.CleanArchitecture.Application.Multitenancy;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
-using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
+﻿using EasyDesk.CleanArchitecture.IntegrationTests.Api;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.Commons.Collections;
 using EasyDesk.SampleApp.Application.DomainEvents;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
@@ -38,7 +33,6 @@ public class CreatePersonTests : SampleAppIntegrationTest
     protected override void ConfigureSession(SessionConfigurer configurer)
     {
         configurer.SetDefaultAgent(TestAgents.Admin);
-        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
     }
 
     protected override async Task OnInitialization()
@@ -122,79 +116,7 @@ public class CreatePersonTests : SampleAppIntegrationTest
             .Send()
             .AsData();
 
-        using var scope = Session.TenantManager.Ignore();
-
         await Session.DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
-    }
-
-    [Fact]
-    public async Task ShouldEmitAnEventUnderSpecificTenant()
-    {
-        await Session.DefaultBusEndpoint.Subscribe<PersonCreated>();
-
-        var person = await CreatePerson()
-            .Send()
-            .AsData();
-
-        using var scope = Session.TenantManager.MoveToTenant(PersonCreated.EmittedWithTenant);
-
-        await Session.DefaultBusEndpoint.WaitForMessageOrFail(new PersonCreated(person.Id));
-    }
-
-    [Fact]
-    public async Task ShouldBeMultitenant()
-    {
-        var otherTenant = new TenantId("other-tenant");
-        await Session.DefaultBusEndpoint.Send(new CreateTenant(otherTenant));
-        await Session.Host.WaitUntilTenantExists(otherTenant);
-
-        var person = await CreatePerson()
-            .Send()
-            .AsData();
-
-        await GetPerson(person.Id)
-            .With(x => x.Tenant(otherTenant))
-            .Send()
-            .Verify();
-    }
-
-    [Fact]
-    public async Task ShouldFail_WithInvalidTenant()
-    {
-        var otherTenant = new string('a', TenantId.MaxLength + 1);
-
-        var person = await CreatePerson()
-            .Send()
-            .AsData();
-
-        await GetPerson(person.Id)
-            .With(h => h.Header(CommonTenantReaders.TenantIdHttpHeader, otherTenant))
-            .Send()
-            .Verify();
-    }
-
-    [Fact]
-    public async Task ShouldFail_WithNonExistingTenant()
-    {
-        var otherTenant = new TenantId("other-tenant");
-
-        var person = await CreatePerson()
-            .Send()
-            .AsData();
-
-        await GetPerson(person.Id)
-            .With(x => x.Tenant(otherTenant))
-            .Send()
-            .Verify();
-    }
-
-    [Fact]
-    public async Task ShouldFailIfNoTenantIsSpecified()
-    {
-        await CreatePerson()
-            .With(x => x.NoTenant())
-            .Send()
-            .Verify();
     }
 
     [Fact]

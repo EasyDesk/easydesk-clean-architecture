@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus.Rebus.Scheduler;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Host;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using Microsoft.Extensions.Hosting;
 using NodaTime;
 using Rebus.Activation;
@@ -25,12 +24,6 @@ public static class RebusFixtureExtensions
 
         configurer.ContainerBuilder
             .RegisterType<TestBusEndpointsManager>()
-            .InstancePerLifetimeScope();
-
-        // TODO: use an abstraction or remove multitenancy entirely.
-        configurer.ContainerBuilder
-            .Register(_ => new TestTenantManager(new(None)))
-            .IfNotRegistered(typeof(TestTenantManager))
             .InstancePerLifetimeScope();
 
         return configurer

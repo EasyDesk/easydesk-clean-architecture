@@ -18,7 +18,7 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("audit")
-            .HasAnnotation("ProductVersion", "7.0.14")
+            .HasAnnotation("ProductVersion", "10.0.8")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -45,12 +45,6 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
                 b.Property<bool>("Success")
                     .HasColumnType("bit");
 
-                b.Property<string>("Tenant")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
-
                 b.Property<int>("Type")
                     .HasColumnType("int");
 
@@ -58,8 +52,6 @@ partial class AuditingContextModelSnapshot : ModelSnapshot
 
                 b.HasIndex("Instant")
                     .IsDescending();
-
-                b.HasIndex("Tenant");
 
                 b.ToTable("AuditRecords", "audit");
             });

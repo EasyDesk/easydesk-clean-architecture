@@ -1,7 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Async;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Metamodel;
-using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Tasks;
 using NodaTime;
 
@@ -16,8 +14,6 @@ public interface IPropagatedCommand<M, D>
     static virtual void ConfigureOptions(D domainEvent, PropagatedCommandOptions<M> options)
     {
     }
-
-    static virtual Option<TenantInfo> ToTenant(D domainEvent) => None;
 }
 
 public class PropagatedCommandOptions<M>

@@ -1,7 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Versioning;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
 using EasyDesk.CleanArchitecture.Web.Versioning;
 using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.AspNetCore.WebUtilities;
@@ -35,12 +33,6 @@ public class HttpRequestBuilder
 
     public HttpRequestBuilder WithApiVersion(ApiVersion version) =>
         Headers(h => h.Replace(RestApiVersioning.VersionHeader, version.ToString()));
-
-    public HttpRequestBuilder Tenant(TenantId tenantId) =>
-        Headers(h => h.Replace(CommonTenantReaders.TenantIdHttpHeader, tenantId));
-
-    public HttpRequestBuilder NoTenant() =>
-        Headers(h => h.Remove(CommonTenantReaders.TenantIdHttpHeader));
 
     public HttpRequestBuilder Headers(Func<ImmutableHttpHeaders, ImmutableHttpHeaders> configureHeaders) =>
         ConfigureRequest(r => r with { Headers = configureHeaders(r.Headers) });

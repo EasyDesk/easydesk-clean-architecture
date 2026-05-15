@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
 using EasyDesk.CleanArchitecture.Application.Authentication;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.Commons.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -8,7 +7,7 @@ using NodaTime;
 
 namespace EasyDesk.CleanArchitecture.Dal.EfCore.Auditing.Model;
 
-internal class AuditRecordModel : IMultitenantEntity
+internal class AuditRecordModel
 {
     public long Id { get; set; }
 
@@ -21,8 +20,6 @@ internal class AuditRecordModel : IMultitenantEntity
     public required bool Success { get; set; }
 
     public required Instant Instant { get; set; }
-
-    public string? Tenant { get; set; }
 
     public ICollection<AuditRecordPropertyModel> Properties { get; set; } = new HashSet<AuditRecordPropertyModel>();
 

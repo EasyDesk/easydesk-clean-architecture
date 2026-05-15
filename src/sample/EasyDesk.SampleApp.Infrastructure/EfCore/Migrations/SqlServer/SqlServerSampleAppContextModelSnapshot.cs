@@ -18,7 +18,7 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "9.0.8")
+            .HasAnnotation("ProductVersion", "10.0.8")
             .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
         SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -47,19 +47,11 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Tenant")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
-
                 b.Property<long>("_Version")
                     .IsConcurrencyToken()
                     .HasColumnType("bigint");
 
                 b.HasKey("Id");
-
-                b.HasIndex("Tenant");
 
                 b.ToTable("People", "domain");
             });
@@ -79,12 +71,6 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
                 b.Property<Guid>("PersonId")
                     .HasColumnType("uniqueidentifier");
 
-                b.Property<string>("Tenant")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
-
                 b.Property<long>("_Version")
                     .IsConcurrencyToken()
                     .HasColumnType("bigint");
@@ -92,8 +78,6 @@ partial class SqlServerSampleAppContextModelSnapshot : ModelSnapshot
                 b.HasKey("Id");
 
                 b.HasIndex("PersonId");
-
-                b.HasIndex("Tenant");
 
                 b.ToTable("Pets", "domain");
             });

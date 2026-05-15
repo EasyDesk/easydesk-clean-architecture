@@ -19,7 +19,7 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
 #pragma warning disable 612, 618
         modelBuilder
             .HasDefaultSchema("domain")
-            .HasAnnotation("ProductVersion", "9.0.8")
+            .HasAnnotation("ProductVersion", "10.0.8")
             .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
         NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -48,19 +48,11 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
                     .IsRequired()
                     .HasColumnType("text");
 
-                b.Property<string>("Tenant")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
-
                 b.Property<long>("_Version")
                     .IsConcurrencyToken()
                     .HasColumnType("bigint");
 
                 b.HasKey("Id");
-
-                b.HasIndex("Tenant");
 
                 b.ToTable("People", "domain");
             });
@@ -80,12 +72,6 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
                 b.Property<Guid>("PersonId")
                     .HasColumnType("uuid");
 
-                b.Property<string>("Tenant")
-                    .IsRequired()
-                    .ValueGeneratedOnAdd()
-                    .HasMaxLength(256)
-                    .HasColumnType("character varying(256)");
-
                 b.Property<long>("_Version")
                     .IsConcurrencyToken()
                     .HasColumnType("bigint");
@@ -93,8 +79,6 @@ partial class PostgreSqlSampleAppContextModelSnapshot : ModelSnapshot
                 b.HasKey("Id");
 
                 b.HasIndex("PersonId");
-
-                b.HasIndex("Tenant");
 
                 b.ToTable("Pets", "domain");
             });

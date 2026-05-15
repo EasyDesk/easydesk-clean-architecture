@@ -1,15 +1,11 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Queries;
 
-public record TestApiKey : IQueryRequest<AgentDto>, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.AnyTenantOrPublic();
-}
+public record TestApiKey : IQueryRequest<AgentDto>;
 
 public class TestApiKeyHandler : SuccessHandler<TestApiKey, AgentDto>
 {

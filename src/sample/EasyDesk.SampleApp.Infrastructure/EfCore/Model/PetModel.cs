@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PetAggregate;
@@ -10,15 +9,13 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
-public class PetModel : IAggregateRootModel<Pet, PetModel>, IWithHydration<int>, IMultitenantEntity, IProjectable<PetModel, PetDto>
+public class PetModel : IAggregateRootModel<Pet, PetModel>, IWithHydration<int>, IProjectable<PetModel, PetDto>
 {
     public int Id { get; set; }
 
     public required string Nickname { get; set; }
 
     public Guid PersonId { get; set; }
-
-    public string? Tenant { get; set; }
 
     public PersonModel Person { get; set; } = null!;
 

@@ -2,14 +2,12 @@ using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Logging.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Sagas.DependencyInjection;
 using EasyDesk.CleanArchitecture.Dal.PostgreSql;
 using EasyDesk.CleanArchitecture.Dal.SqlServer;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Infrastructure.Auditing.DependencyInjection;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging.DependencyInjection;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web;
 using EasyDesk.CleanArchitecture.Web.AsyncApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
@@ -33,8 +31,6 @@ var builder = CleanArchitectureApp.CreateWebAppBuilder(args).ConfigureDefaults()
 builder
     .WithName("EasyDesk.Sample.App")
     .AddApiVersioning()
-    .AddMultitenancy(options => options
-        .WithDefaultPolicy(MultitenantPolicies.RequireExistingTenant()))
     .AddAuditing()
     .AddAuthentication(options => options
         .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration))

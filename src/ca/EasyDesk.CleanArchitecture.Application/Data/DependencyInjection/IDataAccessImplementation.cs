@@ -13,8 +13,6 @@ public interface IDataAccessImplementation
 
     void AddRolesManagement(ServiceRegistry registry, AppDescription app);
 
-    void AddMultitenancy(ServiceRegistry registry, AppDescription app);
-
     void AddSagas(ServiceRegistry registry, AppDescription app);
 
     void AddAuditing(ServiceRegistry registry, AppDescription app);

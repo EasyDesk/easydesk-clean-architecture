@@ -3,7 +3,6 @@ using EasyDesk.CleanArchitecture.Application.Cancellation;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
 using EasyDesk.CleanArchitecture.Application.Messaging;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.V_1_0.OutgoingEvents;
 using NodaTime;
@@ -11,10 +10,7 @@ using NodaTime;
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
 [AllowUnknownAgent]
-public record CancellableRequest(Duration WaitTime) : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.IgnoreAndUsePublic();
-}
+public record CancellableRequest(Duration WaitTime) : ICommandRequest<Nothing>;
 
 public class CancellableRequestHandler : IHandler<CancellableRequest>
 {

@@ -4,7 +4,6 @@ using EasyDesk.CleanArchitecture.Application.Authentication;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Application.Data.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Dispatching.DependencyInjection;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,7 +18,6 @@ public class AuditingModule : AppModule
         app.ConfigureDispatchingPipeline(pipeline => pipeline
             .AddStep(typeof(AuditingStep<,>))
             .After(typeof(UnitOfWorkStep<,>))
-            .After(typeof(MultitenancyManagementStep<,>))
             .After(typeof(AuthenticationStep<,>)));
     }
 
@@ -29,7 +27,7 @@ public class AuditingModule : AppModule
 
         registry.ConfigureContainer(builder =>
         {
-            var channel = Channel.CreateUnbounded<(AuditRecord, TenantInfo)>(new UnboundedChannelOptions
+            var channel = Channel.CreateUnbounded<AuditRecord>(new UnboundedChannelOptions
             {
                 SingleReader = true,
                 SingleWriter = false,
@@ -44,9 +42,7 @@ public class AuditingModule : AppModule
                 .SingleInstance();
 
             builder
-                .Register(c => new OutOfProcessAuditStorage(
-                    c.Resolve<ITenantProvider>(),
-                    channel.Writer))
+                .Register(_ => new OutOfProcessAuditStorage(channel.Writer))
                 .As<IAuditStorage>()
                 .InstancePerLifetimeScope();
 

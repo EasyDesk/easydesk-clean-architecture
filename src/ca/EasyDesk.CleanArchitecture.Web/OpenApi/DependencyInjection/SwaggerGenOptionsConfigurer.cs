@@ -3,8 +3,6 @@ using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy;
-using EasyDesk.CleanArchitecture.Infrastructure.Multitenancy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.OpenApi.NodaTime;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
@@ -43,7 +41,6 @@ internal class SwaggerGenOptionsConfigurer : IConfigureOptions<SwaggerGenOptions
 
         _app.GetModule<OpenApiModule>().IfPresent(m =>
         {
-            SetupMultitenancySupport(m, options);
             m.Options.ConfigureSwagger?.Invoke(options);
         });
     }
@@ -87,29 +84,6 @@ internal class SwaggerGenOptionsConfigurer : IConfigureOptions<SwaggerGenOptions
         options.ConfigureForNodaTimeWithSystemTextJson(
             jsonSerializerOptions: _jsonOptions.Value.SerializerOptions,
             dateTimeZoneProvider: dateTimeZoneProvider);
-    }
-
-    private void SetupMultitenancySupport(OpenApiModule module, SwaggerGenOptions options)
-    {
-        _app.GetMultitenancyOptions()
-            .Filter(_ => module.Options.AddDefaultMultitenancyFilters)
-            .IfPresent(multitenancyOptions =>
-            {
-                if (multitenancyOptions.HttpRequestTenantReader != MultitenancyOptions.DefaultHttpRequestTenantReader)
-                {
-                    return;
-                }
-
-                options.ConfigureSecurityRequirement("multitenancy", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Name = CommonTenantReaders.TenantIdHttpHeader,
-                    Description = "The tenant ID to be used for the request",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "multitenancy",
-                });
-                options.OperationFilter<TenantIdOperationFilterForDefaultContextReader>();
-            });
     }
 
     private void SetupApiVersionedDocs(ApiVersioningModule module, AppDescription app, SwaggerGenOptions options)

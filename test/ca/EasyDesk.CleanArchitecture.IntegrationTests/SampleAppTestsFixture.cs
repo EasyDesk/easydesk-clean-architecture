@@ -10,7 +10,6 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Data.Sql.SqlServer;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.OpenApi;
 using EasyDesk.CleanArchitecture.Testing.Integration.Seeding;
 using EasyDesk.CleanArchitecture.Testing.Integration.Time;
@@ -42,7 +41,6 @@ public class SampleAppTestsFixture : IntegrationTestsFixture
         configurer.AddFakeClock(Instant.FromUtc(2021, 11, 20, 11, 45));
         configurer.AddHttpTestHelper();
         configurer.AddOpenApiTestHelper();
-        configurer.AddMultitenancy();
 
         ConfigureDatabase(configurer);
 

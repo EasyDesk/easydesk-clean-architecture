@@ -1,14 +1,11 @@
 ﻿using Autofac;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
 using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
 using EasyDesk.Commons.Tasks;
-using EasyDesk.Extensions.DependencyInjection;
 using NodaTime;
 using NodaTime.Testing;
 
@@ -45,8 +42,6 @@ public sealed class IntegrationTestSession<TFixture> : IAsyncDisposable
 
     public ITestBusEndpoint ErrorBusEndpoint => _errorBusEndpoint.Value;
 
-    public TestTenantManager TenantManager => LifetimeScope.Resolve<TestTenantManager>();
-
     public TestAuthenticationManager AuthenticationManager => LifetimeScope.Resolve<TestAuthenticationManager>();
 
     public ITestBusEndpoint NewBusEndpoint(string? inputQueueAddress = null, Duration? defaultTimeout = null) =>
@@ -57,9 +52,6 @@ public sealed class IntegrationTestSession<TFixture> : IAsyncDisposable
         await Host.LifetimeScope.ScopedPollUntil<ILifetimeScope>(
             async scope =>
             {
-                scope
-                    .ResolveOption<IContextTenantInitializer>()
-                    .IfPresent(x => x.Initialize(TenantManager.CurrentTenantInfo.OrElse(TenantInfo.Public)));
                 var service = scope.Resolve<TService>();
                 return await predicate(service);
             },

@@ -1,18 +1,15 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Auditing;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.CleanArchitecture.Application.Pagination;
 using EasyDesk.CleanArchitecture.IntegrationTests.Api;
-using EasyDesk.CleanArchitecture.IntegrationTests.Seeders;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Paginated;
-using EasyDesk.CleanArchitecture.Testing.Integration.Multitenancy;
 using EasyDesk.CleanArchitecture.Testing.Integration.Session;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Tasks;
 using EasyDesk.SampleApp.Application.Authorization;
+using EasyDesk.SampleApp.Application.V_1_0.AsyncCommands;
 using EasyDesk.SampleApp.Application.V_1_0.Commands;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
-using EasyDesk.SampleApp.Application.V_1_0.IncomingCommands;
 using EasyDesk.SampleApp.Application.V_1_0.Queries;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.People;
 using Shouldly;
@@ -21,6 +18,13 @@ namespace EasyDesk.CleanArchitecture.IntegrationTests.Queries;
 
 public class AuditingTests : SampleAppIntegrationTest
 {
+    private static readonly CreatePersonBodyDto _testPerson = new()
+    {
+        FirstName = "John",
+        LastName = "Doe",
+        DateOfBirth = new(2012, 12, 21),
+        Residence = AddressDto.Create(streetName: "Abbey Road"),
+    };
     private Guid _personId;
     private int _initialAudits;
 
@@ -31,7 +35,6 @@ public class AuditingTests : SampleAppIntegrationTest
     protected override void ConfigureSession(SessionConfigurer configurer)
     {
         configurer.SetDefaultAgent(TestAgents.Admin);
-        configurer.SetDefaultTenant(SampleSeeder.Data.TestTenant);
     }
 
     protected override async Task OnInitialization()
@@ -41,29 +44,19 @@ public class AuditingTests : SampleAppIntegrationTest
         await Session.Http.AddAdmin().Send().EnsureSuccess();
         _initialAudits++;
 
-        var createPersonBody = new CreatePersonBodyDto
-        {
-            FirstName = "John",
-            LastName = "Doe",
-            DateOfBirth = new(2012, 12, 21),
-            Residence = AddressDto.Create(streetName: "Abbey Road"),
-        };
-        _personId = await Session.Http.CreatePerson(createPersonBody).Send().AsData().Map(x => x.Id);
+        _personId = await Session.Http.CreatePerson(_testPerson).Send().AsData().Map(x => x.Id);
         _initialAudits += 2;
         await Session.Http.GetOwnedPets(_personId).PollUntil(pets => pets.Any()).EnsureSuccess();
 
-        using var scope = Session.TenantManager.MoveToPublic();
         await WaitUntilAuditLogHasMoreRecords(0);
     }
 
     private async Task WaitUntilAuditLogHasMoreRecords(int newRecords)
     {
-        using var scope = Session.TenantManager.MoveToPublic();
-        await Session.PollServiceUntil<IAuditLog>(
-            log => log
-                .Audit(new())
-                .GetAll()
-                .Map(e => e.Count() == _initialAudits + newRecords));
+        await Session.PollServiceUntil<IAuditLog>(log => log
+            .Audit(new())
+            .GetAll()
+            .Map(e => e.Count() == _initialAudits + newRecords));
     }
 
     [Fact]
@@ -75,11 +68,15 @@ public class AuditingTests : SampleAppIntegrationTest
     [Fact]
     public async Task ShouldAuditCommands()
     {
-        var tenantId = new TenantId("new-tenant");
-        await Session.DefaultBusEndpoint.Send(new CreateTenant(tenantId.Value));
-        await Session.Host.WaitUntilTenantExists(tenantId);
+        await Session.DefaultBusEndpoint.Send(new CreateSibling(
+            FirstName: _testPerson.FirstName,
+            LastName: _testPerson.LastName,
+            DateOfBirth: _testPerson.DateOfBirth,
+            CreatedBy: TestAgents.Admin.MainIdentity().Id,
+            Residence: _testPerson.Residence));
 
-        using var scope = Session.TenantManager.MoveToTenant(tenantId);
+        await WaitUntilAuditLogHasMoreRecords(2);
+
         await Session.PollServiceUntil<IAuditLog>(
             log => log.Audit(new AuditQuery()).GetAll().Map(audits => audits.Any()));
 

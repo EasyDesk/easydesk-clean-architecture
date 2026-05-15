@@ -2,16 +2,12 @@
 using EasyDesk.CleanArchitecture.Application.Authorization.RoleBased;
 using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
 using EasyDesk.CleanArchitecture.Application.Dispatching;
-using EasyDesk.CleanArchitecture.Application.Multitenancy;
 using EasyDesk.Commons.Results;
 using EasyDesk.SampleApp.Application.Authorization;
 
 namespace EasyDesk.SampleApp.Application.V_1_0.Commands;
 
-public class RemoveRoles : ICommandRequest<Nothing>, IOverrideMultitenantPolicy
-{
-    public MultitenantPolicy GetMultitenantPolicy() => MultitenantPolicies.ExistingTenantOrPublic();
-}
+public class RemoveRoles : ICommandRequest<Nothing>;
 
 public class RemoveRolesHandler : IHandler<RemoveRoles>
 {

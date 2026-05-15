@@ -92,10 +92,8 @@ internal class KnownTypesDocumentGenerator : IDocumentGenerator
             .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
             .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.FieldType == typeof(string))
             .SelectMany(fi => fi.GetRawConstantValue() is null ? None : (fi.GetRawConstantValue() as string).AsSome());
-        var rebusHeadersDictionary = headerNames.Select(name => KeyValuePair.Create(name, string.Empty)).ToImmutableDictionary();
-        var frameworkHeadersDictionary = rebusHeadersDictionary
-            .Add(MultitenantMessagingUtils.TenantIdHeader, string.Empty);
-        var headersSchema = JsonSchema.FromSampleJson(JsonSerializer.Serialize(frameworkHeadersDictionary));
+        var headersDictionary = headerNames.Select(name => KeyValuePair.Create(name, string.Empty)).ToImmutableDictionary();
+        var headersSchema = JsonSchema.FromSampleJson(JsonSerializer.Serialize(headersDictionary));
         headersSchema.Properties.ForEach(p => p.Value.IsRequired = false);
         foreach (var property in new[] { RebusHeaders.ContentType, RebusHeaders.MessageId, RebusHeaders.SentTime, })
         {

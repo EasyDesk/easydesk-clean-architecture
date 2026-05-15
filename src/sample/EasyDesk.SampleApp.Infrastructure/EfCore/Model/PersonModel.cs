@@ -1,6 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Dal.EfCore.Domain;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Interfaces;
-using EasyDesk.CleanArchitecture.Dal.EfCore.Multitenancy;
 using EasyDesk.CleanArchitecture.Domain.Model;
 using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using EasyDesk.SampleApp.Domain.Aggregates.PersonAggregate;
@@ -11,7 +10,7 @@ using System.Linq.Expressions;
 
 namespace EasyDesk.SampleApp.Infrastructure.EfCore.Model;
 
-public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonDto>, IAggregateRootModel<Person, PersonModel>
+public class PersonModel : IProjectable<PersonModel, PersonDto>, IAggregateRootModel<Person, PersonModel>
 {
     public Guid Id { get; set; }
 
@@ -20,8 +19,6 @@ public class PersonModel : IMultitenantEntity, IProjectable<PersonModel, PersonD
     public required string LastName { get; set; }
 
     public LocalDate DateOfBirth { get; set; }
-
-    public string? Tenant { get; set; }
 
     public required string CreatedBy { get; set; }
 
