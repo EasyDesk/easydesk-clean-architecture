@@ -1,0 +1,8 @@
+﻿{
+  StatusCode: OK,
+  Content: {
+    Data: null,
+    Errors: [],
+    Meta: {}
+  }
+}

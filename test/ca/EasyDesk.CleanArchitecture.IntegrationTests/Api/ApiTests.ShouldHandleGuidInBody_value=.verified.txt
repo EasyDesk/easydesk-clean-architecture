@@ -1,0 +1,31 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: Validation for property '$' failed,
+        Schema: InvalidInputError,
+        Meta: {
+          propertyName: $,
+          errorCode: InvalidValue,
+          errorMessage: The JSON value could not be converted to System.Guid. Path: $ | LineNumber: 0 | BytePositionInLine: 2.,
+          parameters: {}
+        }
+      },
+      {
+        Code: InvalidInput,
+        Detail: Validation for property 'value' failed,
+        Schema: InvalidInputError,
+        Meta: {
+          propertyName: value,
+          errorCode: InvalidValue,
+          errorMessage: The value field is required.,
+          parameters: {}
+        }
+      }
+    ],
+    Meta: null
+  }
+}

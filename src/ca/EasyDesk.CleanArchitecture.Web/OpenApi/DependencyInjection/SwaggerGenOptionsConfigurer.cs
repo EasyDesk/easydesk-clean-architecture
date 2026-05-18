@@ -7,7 +7,6 @@ using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.CleanArchitecture.Web.OpenApi.NodaTime;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Collections.Immutable;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -53,15 +52,6 @@ internal class SwaggerGenOptionsConfigurer : IConfigureOptions<SwaggerGenOptions
         options.SchemaFilter<FixedMapSchemaFilter>();
         options.SchemaFilter<PolymorphismSchemaFilter>();
         options.DocumentFilter<UnusedSchemaCleaner>();
-        options.MapType<IFixedMap<string, object>>(() => new OpenApiSchema
-        {
-            Type = JsonSchemaType.Object,
-            AdditionalPropertiesAllowed = true,
-            AdditionalProperties = new OpenApiSchema
-            {
-                Type = JsonSchemaType.Object,
-            },
-        });
     }
 
     private void SetupWebSupport(SwaggerGenOptions options)

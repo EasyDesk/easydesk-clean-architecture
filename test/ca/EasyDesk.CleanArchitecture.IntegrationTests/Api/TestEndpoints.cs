@@ -1,6 +1,7 @@
 ﻿using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Single;
 using EasyDesk.Commons.Collections.Immutable;
+using EasyDesk.Commons.Options;
 using EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
 using static EasyDesk.SampleApp.Web.Controllers.V_1_0.Test.TestController;
 
@@ -25,4 +26,15 @@ public static class TestEndpoints
 
     public static HttpSingleRequestExecutor<IDictionary<EnumType, TestRecord>> TestDictionaryEnumRecord(this HttpTestHelper http, IDictionary<EnumType, TestRecord> body) =>
         http.Post<IDictionary<EnumType, TestRecord>, IDictionary<EnumType, TestRecord>>(TestDictionaryEnumRecordRoute, body);
+
+    public static HttpSingleRequestExecutor<Option<Guid>> TestGuidInQuery(this HttpTestHelper http, string? value = null) =>
+        http.Get<Option<Guid>>(TestGuidInQueryRoute + (value is not null ? $"?{nameof(value)}={value}" : string.Empty));
+
+    public record GuidInBody(Option<string> Value);
+
+    public static HttpSingleRequestExecutor<Option<Guid>> TestGuidInBody(this HttpTestHelper http, string? value = null) =>
+        http.Post<GuidInBody, Option<Guid>>(TestGuidInBodyRoute, new(value.AsOption()));
+
+    public static HttpSingleRequestExecutor<Option<Guid>> TestGuidInRoute(this HttpTestHelper http, string? value = null) =>
+        http.Get<Option<Guid>>(TestGuidInRouteRoute.Replace("{value}", value ?? string.Empty));
 }

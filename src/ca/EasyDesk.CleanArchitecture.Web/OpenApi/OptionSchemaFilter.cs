@@ -15,12 +15,7 @@ internal class OptionSchemaFilter : ISchemaFilter
         }
         var wrappedType = type.GetGenericArguments()[0];
         var wrappedSchema = context.SchemaGenerator.GenerateSchema(wrappedType, context.SchemaRepository);
-        concreteSchema.Type = wrappedSchema.Type | JsonSchemaType.Null;
-        concreteSchema.Default = wrappedSchema.Default;
-        concreteSchema.AllOf = [wrappedSchema,];
-        concreteSchema.Deprecated = wrappedSchema.Deprecated;
-        concreteSchema.Description = wrappedSchema.Description;
-        concreteSchema.Example = concreteSchema.Example;
-        concreteSchema.Items = wrappedSchema.Items;
+        concreteSchema.CopyFunctionalFieldsFrom(wrappedSchema);
+        concreteSchema.Type |= JsonSchemaType.Null;
     }
 }

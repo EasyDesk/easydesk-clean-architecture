@@ -3,15 +3,9 @@ using System.Collections.Immutable;
 
 namespace EasyDesk.Commons.Collections.Immutable;
 
-public interface IFixedMap<K, V> : IReadOnlyCollection<KeyValuePair<K, V>>, IEquatable<IFixedMap<K, V>>
+public interface IFixedMap<K, V> : IReadOnlyDictionary<K, V>, IEquatable<IFixedMap<K, V>>
 {
     Option<V> Get(K key);
-
-    V this[K key] { get; }
-
-    IEnumerable<K> Keys { get; }
-
-    IEnumerable<V> Values { get; }
 
     IFixedMap<K, V> Add(K key, V value);
 
@@ -26,8 +20,6 @@ public interface IFixedMap<K, V> : IReadOnlyCollection<KeyValuePair<K, V>>, IEqu
     IFixedMap<K, V> SetItems(IEnumerable<KeyValuePair<K, V>> items);
 
     IFixedMap<K, V> Clear();
-
-    bool ContainsKey(K key);
 
     bool Contains(KeyValuePair<K, V> pair);
 
