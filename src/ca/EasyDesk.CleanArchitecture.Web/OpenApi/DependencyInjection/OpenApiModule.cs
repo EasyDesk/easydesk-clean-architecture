@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.CommandLine;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
@@ -31,9 +32,7 @@ public class OpenApiModule : AppModule
 
     protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
-        builder
-            .Register(c => OpenApiCommand(c.Resolve<IComponentContext>()))
-            .SingleInstance();
+        builder.RegisterCliCommand("openapi", OpenApiCommand);
     }
 
     protected override void ConfigureServices(AppDescription app, IServiceCollection services)
@@ -49,9 +48,8 @@ public class OpenApiModule : AppModule
         .Filter(d => d != SingleVersionedDocumentName)
         .Map(d => ApiVersion.Parse(d).OrElseThrow(() => throw new InvalidOperationException("Unable to retrieve the Api version from the document name.")));
 
-    private CommandLine.Command OpenApiCommand(IComponentContext context)
+    private void OpenApiCommand(CliCommandBuilder builder, IComponentContext componentContext)
     {
-        var command = new CommandLine.Command("openapi");
         var hostOption = new CommandLine.Option<string?>("--host")
         {
             Description = "Sets the host value in the OpenApi document",
@@ -60,8 +58,8 @@ public class OpenApiModule : AppModule
         {
             Description = "Sets the basePath value in the OpenApi document",
         };
-        var existingDocumentNames = context.Resolve<IOptions<SwaggerGenOptions>>().Value.SwaggerGeneratorOptions.SwaggerDocs.Keys;
-        var defaultDocumentKey = context.ResolveOption<ApiVersioningInfo>().Match(
+        var existingDocumentNames = componentContext.Resolve<IOptions<SwaggerGenOptions>>().Value.SwaggerGeneratorOptions.SwaggerDocs.Keys;
+        var defaultDocumentKey = componentContext.ResolveOption<ApiVersioningInfo>().Match(
             some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentName),
             none: () => Some(SingleVersionedDocumentName));
         var openApiVersionOption = new CommandLine.Option<OpenApiSpecVersion?>("--version")
@@ -102,20 +100,28 @@ public class OpenApiModule : AppModule
             Description = "True if the format of the output should be Json instead of Yaml",
             DefaultValueFactory = _ => false,
         };
+        builder
+            .AddOption(documentNameOption)
+            .AddOption(hostOption)
+            .AddOption(basePathOption)
+            .AddOption(formatJsonOption)
+            .AddOption(documentNameOption)
+            .HandleWith(async context =>
+            {
+                var swaggerProvider = componentContext.Resolve<ISwaggerProvider>();
 
-        command.Add(documentNameOption);
-        command.Add(hostOption);
-        command.Add(basePathOption);
-        command.Add(formatJsonOption);
-        command.Add(documentNameOption);
-        command.SetAction(async (result, cancellationToken) =>
-        {
-            var doc = context.Resolve<ISwaggerProvider>().GetSwagger(result.GetValue(documentNameOption), result.GetValue(hostOption), result.GetValue(basePathOption));
-            var stream = Console.OpenStandardOutput();
-            await doc.SerializeAsync(stream, result.GetValue(openApiVersionOption) ?? OpenApiSpecVersion.OpenApi3_1, result.GetValue(formatJsonOption) ? OpenApiConstants.Json : OpenApiConstants.Yaml, cancellationToken);
-        });
+                var doc = swaggerProvider.GetSwagger(
+                    documentName: context.ParseResult.GetValue(documentNameOption),
+                    host: context.ParseResult.GetValue(hostOption),
+                    basePath: context.ParseResult.GetValue(basePathOption));
 
-        return command;
+                var stream = Console.OpenStandardOutput();
+                await doc.SerializeAsync(
+                    stream: stream,
+                    specVersion: context.ParseResult.GetValue(openApiVersionOption) ?? OpenApiSpecVersion.OpenApi3_1,
+                    format: context.ParseResult.GetValue(formatJsonOption) ? OpenApiConstants.Json : OpenApiConstants.Yaml,
+                    cancellationToken: context.CancellationToken);
+            });
     }
 }
 

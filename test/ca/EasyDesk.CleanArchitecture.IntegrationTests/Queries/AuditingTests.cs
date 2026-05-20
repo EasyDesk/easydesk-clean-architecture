@@ -25,6 +25,7 @@ public class AuditingTests : SampleAppIntegrationTest
         DateOfBirth = new(2012, 12, 21),
         Residence = AddressDto.Create(streetName: "Abbey Road"),
     };
+
     private Guid _personId;
     private int _initialAudits;
 

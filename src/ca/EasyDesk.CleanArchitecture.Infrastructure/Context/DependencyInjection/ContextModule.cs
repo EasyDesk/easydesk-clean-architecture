@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Application.Cancellation;
+using EasyDesk.CleanArchitecture.Application.CommandLine;
+using EasyDesk.CleanArchitecture.DependencyInjection;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +16,9 @@ public class ContextModule : AppModule
 
     protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
     {
+        builder.RegisterType<CliContextAccessor>()
+            .InstancePerUseCase();
+
         builder.RegisterType<ContextDetector>()
             .SingleInstance();
 

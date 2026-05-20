@@ -15,5 +15,6 @@ internal class ContextCancellationTokenProvider : ICancellationTokenProvider
     public CancellationToken CancellationToken => _contextDetector.MatchContext(
         httpContext: c => c.RequestAborted,
         messageContext: c => c.GetCancellationToken(),
+        cliContext: c => c.CancellationToken,
         other: () => default);
 }

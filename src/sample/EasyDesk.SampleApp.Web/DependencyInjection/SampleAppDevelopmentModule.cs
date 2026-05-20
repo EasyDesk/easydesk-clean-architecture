@@ -1,6 +1,6 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.CommandLine;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
-using System.CommandLine;
 
 namespace EasyDesk.SampleApp.Web.DependencyInjection;
 
@@ -11,14 +11,13 @@ public class SampleAppDevelopmentModule : AppModule
         builder.RegisterType<DevelopmentSeeder>()
             .InstancePerLifetimeScope();
 
-        builder.Register(c => SeedCommand(c.Resolve<IComponentContext>()))
-            .InstancePerLifetimeScope();
+        builder.RegisterCliCommand("seed-dev", SeedCommand);
     }
 
-    private Command SeedCommand(IComponentContext context)
+    private void SeedCommand(CliCommandBuilder builder, IComponentContext componentContext)
     {
-        var developmentCommand = new Command("seed-dev", description: "Seed the database with development data.");
-        developmentCommand.SetAction(_ => context.Resolve<DevelopmentSeeder>().Seed());
-        return developmentCommand;
+        builder
+            .AddDescription("Seed the database with development data.")
+            .HandleWith(_ => componentContext.Resolve<DevelopmentSeeder>().Seed());
     }
 }

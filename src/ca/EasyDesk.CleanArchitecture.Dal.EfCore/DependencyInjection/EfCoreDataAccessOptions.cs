@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using EasyDesk.CleanArchitecture.Application.CommandLine;
 using EasyDesk.CleanArchitecture.Application.Data;
 using EasyDesk.CleanArchitecture.Dal.EfCore.UnitOfWork;
 using EasyDesk.CleanArchitecture.Dal.EfCore.Utils;
@@ -92,23 +93,23 @@ public sealed class EfCoreDataAccessOptions<T, TBuilder, TExtension>
                 .As<IUnitOfWorkManager>()
                 .InstancePerUseCase();
 
-            builder.Register(c => MigrationCommand(c.Resolve<IComponentContext>()));
+            builder.RegisterCliCommand("migrate", MigrationCommand);
         });
 
         _configureRegistry?.Invoke(registry);
     }
 
-    private Command MigrationCommand(IComponentContext context)
+    private void MigrationCommand(CliCommandBuilder builder, IComponentContext componentContext)
     {
-        var command = new Command("migrate", "Apply migrations to the database");
         var syncOption = new Option<bool>("--sync", "--synchronous")
         {
             DefaultValueFactory = _ => false,
             Description = "Apply migrations synchronously",
         };
-        command.Options.Add(syncOption);
-        command.SetAction(parseResult => context.Resolve<MigrationsService>().Migrate(parseResult.GetValue(syncOption)));
-        return command;
+        builder
+            .AddDescription("Apply migrations to the database")
+            .AddOption(syncOption)
+            .HandleWith(context => componentContext.Resolve<MigrationsService>().Migrate(context.ParseResult.GetValue(syncOption)));
     }
 
     internal void RegisterDbContext<C>(ServiceRegistry registry, bool isCleanArchitectureContext = true)
