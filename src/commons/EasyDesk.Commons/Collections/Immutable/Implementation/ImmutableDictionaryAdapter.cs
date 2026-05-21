@@ -3,6 +3,7 @@ using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Utils;
 using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyDesk.Commons.Collections.Immutable.Implementation;
 
@@ -66,4 +67,6 @@ internal class ImmutableDictionaryAdapter<K, V> : IFixedMap<K, V>
     public override string ToString() => _dictionary.ToSetString(kvp => $"{kvp.Key} -> {kvp.Value}");
 
     public IImmutableDictionary<K, V> AsImmutableDictionary() => _dictionary;
+
+    public bool TryGetValue(K key, [MaybeNullWhen(false)] out V value) => _dictionary.TryGetValue(key, out value);
 }

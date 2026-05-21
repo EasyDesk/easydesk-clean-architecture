@@ -1,5 +1,6 @@
 ﻿using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Tasks;
+using System.Net;
 using System.Text.Json;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Base;
@@ -41,21 +42,22 @@ public class HttpResponseWrapper<T, M>
 
     private async Task<ResponseDto<T, M>?> ParseNullableContent()
     {
-        var bodyAsJson = (await GetResponse()).Content.AsString();
+        var response = await GetResponse();
+        var bodyAsJson = response.Content.AsString();
         try
         {
             return JsonSerializer.Deserialize<ResponseDto<T, M>>(bodyAsJson, _jsonSerializerOptions);
         }
         catch (JsonException e)
         {
-            throw new InvalidDataException($"Failed to parse response as {typeof(T).Name}. Content was:\n\n{bodyAsJson}", e);
+            throw new InvalidDataException($"Failed to parse response as {typeof(T).Name}.\nStatus Code: {response.StatusCode}\nHeaders: {response.Headers}\nContent:\n\n{bodyAsJson}", e);
         }
     }
 
     private async Task<ResponseDto<T, M>> ParseContent() => await ParseNullableContent() ?? throw new InvalidOperationException($"Response was successful but the body was empty. Expected a {typeof(T).Name}.");
 
     public Task<VerifiableHttpResponse<T, M>> AsVerifiable() =>
-        GetResponse().FlatMap(async r => new VerifiableHttpResponse<T, M>(r.StatusCode, await ParseNullableContent()));
+        GetResponse().FlatMap(async r => new VerifiableHttpResponse<T, M>(r.StatusCode, r.StatusCode == HttpStatusCode.NotFound && r.Content.Bytes.IsEmpty ? null : await ParseNullableContent()));
 
     public async Task<T> AsData()
     {

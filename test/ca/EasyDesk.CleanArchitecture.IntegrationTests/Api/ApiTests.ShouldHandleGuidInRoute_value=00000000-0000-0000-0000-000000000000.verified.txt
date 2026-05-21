@@ -1,0 +1,8 @@
+﻿{
+  StatusCode: OK,
+  Content: {
+    Data: Guid_Empty,
+    Errors: [],
+    Meta: {}
+  }
+}

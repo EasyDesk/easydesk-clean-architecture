@@ -106,4 +106,57 @@ public class ApiTests : SampleAppIntegrationTest
             .Send()
             .Verify();
     }
+
+    [Fact]
+    public async Task ShouldSerializeFixedMapEnumKeys()
+    {
+        var response = await Session
+            .Http
+            .TestFixedMapEnumRecord(ImmutableCollections.Map((EnumType.C, new TestRecord("cc", 2)), (EnumType.B, new TestRecord("bb", 3))))
+            .Send()
+            .GetResponse();
+
+        await Verify(response.Content.AsString());
+    }
+
+    public static TheoryData<string?> Guids() =>
+    [
+        Guid.Empty.ToString(),
+        string.Empty,
+        "not-a-guid",
+        null!,
+    ];
+
+    [Theory]
+    [MemberData(nameof(Guids))]
+    public async Task ShouldHandleGuidInQuery(string? value)
+    {
+        await Session
+            .Http
+            .TestGuidInQuery(value)
+            .Send()
+            .Verify(c => c.UseParameters(value));
+    }
+
+    [Theory]
+    [MemberData(nameof(Guids))]
+    public async Task ShouldHandleGuidInBody(string? value)
+    {
+        await Session
+            .Http
+            .TestGuidInBody(value)
+            .Send()
+            .Verify(c => c.UseParameters(value));
+    }
+
+    [Theory]
+    [MemberData(nameof(Guids))]
+    public async Task ShouldHandleGuidInRoute(string? value)
+    {
+        await Session
+            .Http
+            .TestGuidInRoute(value)
+            .Send()
+            .Verify(c => c.UseParameters(value));
+    }
 }

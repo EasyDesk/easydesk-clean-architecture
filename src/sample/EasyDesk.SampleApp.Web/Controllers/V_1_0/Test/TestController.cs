@@ -15,6 +15,12 @@ public class TestController : CleanArchitectureController
 
     public const string TestOptionInQueryRoute = Base + "/query";
 
+    public const string TestGuidInQueryRoute = Base + "/query/guid";
+
+    public const string TestGuidInBodyRoute = Base + "/body/guid";
+
+    public const string TestGuidInRouteRoute = Base + "/route/{value}";
+
     public const string ThrowExceptionRoute = Base + "/exception";
 
     public const string TestPolymorphismRoute = Base + "/polymorphism";
@@ -30,6 +36,10 @@ public class TestController : CleanArchitectureController
     public const string TestFixedMapEnumRecordRoute = Base + "/fixedmap/enumrecord";
 
     public const string TestDictionaryEnumRecordRoute = Base + "/dictionary/enumrecord";
+
+    public const string TestDictionaryStringRecordRoute = Base + "/dictionary/stringrecord";
+
+    public const string TestDictionaryStringObjectRoute = Base + "/dictionary/stringobject";
 
     [HttpGet(TestOptionInQueryRoute)]
     public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetValueFromQuery([FromQuery] Option<string> value)
@@ -92,5 +102,37 @@ public class TestController : CleanArchitectureController
     public Task<ActionResult<ResponseDto<IDictionary<EnumType, TestRecord>, Nothing>>> TestDictionaryEnumRecord([FromBody] IDictionary<EnumType, TestRecord> body)
     {
         return Success(body);
+    }
+
+    [HttpPost(TestDictionaryStringRecordRoute)]
+    public Task<ActionResult<ResponseDto<IDictionary<string, TestRecord>, Nothing>>> TestDictionaryStringRecord([FromBody] IDictionary<string, TestRecord> body)
+    {
+        return Success(body);
+    }
+
+    [HttpPost(TestDictionaryStringObjectRoute)]
+    public Task<ActionResult<ResponseDto<IDictionary<string, object?>, Nothing>>> TestDictionaryStringObject([FromBody] IDictionary<string, object?> body)
+    {
+        return Success(body);
+    }
+
+    [HttpGet(TestGuidInQueryRoute)]
+    public Task<ActionResult<ResponseDto<Option<Guid>, Nothing>>> TestGuidInQuery([FromQuery] Option<Guid> value)
+    {
+        return Success(value);
+    }
+
+    public record GuidInBody(Option<Guid> Value);
+
+    [HttpPost(TestGuidInBodyRoute)]
+    public Task<ActionResult<ResponseDto<Option<Guid>, Nothing>>> TestGuidInBody([FromBody] GuidInBody value)
+    {
+        return Success(value.Value);
+    }
+
+    [HttpGet(TestGuidInRouteRoute)]
+    public Task<ActionResult<ResponseDto<Option<Guid>, Nothing>>> TestGuidInRoute([FromRoute] Option<Guid> value)
+    {
+        return Success(value);
     }
 }

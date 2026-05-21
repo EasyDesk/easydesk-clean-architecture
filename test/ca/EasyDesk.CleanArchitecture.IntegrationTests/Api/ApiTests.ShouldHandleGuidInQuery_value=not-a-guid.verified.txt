@@ -1,0 +1,20 @@
+﻿{
+  StatusCode: BadRequest,
+  Content: {
+    Data: null,
+    Errors: [
+      {
+        Code: InvalidInput,
+        Detail: Validation for property 'value' failed,
+        Schema: InvalidInputError,
+        Meta: {
+          propertyName: value,
+          errorCode: InvalidValue,
+          errorMessage: The value 'not-a-guid' is not valid.,
+          parameters: {}
+        }
+      }
+    ],
+    Meta: null
+  }
+}

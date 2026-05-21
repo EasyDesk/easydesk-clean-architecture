@@ -10,14 +10,12 @@ internal class DictionaryOfAnyKeySchemaFilter : ISchemaFilter
     {
         var type = context.Type;
         if (!type.IsGenericType
-            || !(
-                type.GetGenericTypeDefinition().IsAssignableTo(typeof(IDictionary<,>))
-                    || type.GetGenericTypeDefinition().IsAssignableTo(typeof(IImmutableDictionary<,>)))
+            || !(type.IsConstructedFrom(typeof(IDictionary<,>), out var constructedType) || type.IsConstructedFrom(typeof(IImmutableDictionary<,>), out constructedType))
             || schema is not OpenApiSchema concreteSchema)
         {
             return;
         }
-        var genericArguments = type.GetGenericArguments();
+        var genericArguments = constructedType.GetGenericArguments();
         if (genericArguments[0] == typeof(string) || genericArguments[0].IsEnum)
         {
             return;
