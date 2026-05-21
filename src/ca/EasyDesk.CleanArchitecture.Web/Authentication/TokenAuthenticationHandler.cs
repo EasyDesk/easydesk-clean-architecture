@@ -16,7 +16,11 @@ public abstract class TokenAuthenticationHandler : IAuthenticationHandler
 
     public async Task<Option<AuthenticationResult>> Authenticate()
     {
-        var token = ReadToken(_httpContextAccessor.HttpContext ?? throw new InvalidOperationException("HttpContext is not available"));
+        if (_httpContextAccessor.HttpContext is null)
+        {
+            return None;
+        }
+        var token = ReadToken(_httpContextAccessor.HttpContext);
         return await token.MapAsync(ValidateToken).ThenMap(x => x.Match<AuthenticationResult>(
             success: agent => new AuthenticationResult.Authenticated
             {

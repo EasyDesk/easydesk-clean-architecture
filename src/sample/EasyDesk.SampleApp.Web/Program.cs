@@ -1,3 +1,5 @@
+using EasyDesk.CleanArchitecture.Application.Authentication;
+using EasyDesk.CleanArchitecture.Application.Authentication.Cli;
 using EasyDesk.CleanArchitecture.Application.Authentication.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Authorization.DependencyInjection;
 using EasyDesk.CleanArchitecture.Application.Json.DependencyInjection;
@@ -17,6 +19,7 @@ using EasyDesk.CleanArchitecture.Web.Csv.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Proxy.DependencyInjection;
 using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
+using EasyDesk.Commons.Options;
 using EasyDesk.Extensions.Configuration;
 using EasyDesk.SampleApp.Application.Authorization;
 using EasyDesk.SampleApp.Infrastructure.EfCore;
@@ -34,7 +37,8 @@ builder
     .AddAuditing()
     .AddAuthentication(options => options
         .AddJwtBearer(jwt => jwt.LoadParametersFromConfiguration(builder.Configuration))
-        .AddApiKey())
+        .AddApiKey()
+        .AddCli(_ => _ => Task.FromResult<Option<AuthenticationResult>>(None)))
     .AddAuthorization(options => options.RoleBased(x => x
         .WithStaticPermissions(PermissionSettings.RolesToPermissions)))
     .AddLogging(options => options
