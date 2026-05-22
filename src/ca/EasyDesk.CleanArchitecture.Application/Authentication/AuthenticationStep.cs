@@ -1,5 +1,4 @@
-﻿using EasyDesk.CleanArchitecture.Application.Cqrs.Sync;
-using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
+﻿using EasyDesk.CleanArchitecture.Application.Dispatching.Pipeline;
 using EasyDesk.CleanArchitecture.Application.ErrorManagement;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
@@ -20,18 +19,13 @@ public class AuthenticationStep<T, R> : IPipelineStep<T, R>
 
     public async Task<Result<R>> Run(T request, NextPipelineStep<R> next)
     {
-        return await GetAgent(request)
+        return await GetAgent()
             .ThenIfSuccess(_agentProvider.InitializeAgent)
             .ThenFlatMapAsync(_ => next());
     }
 
-    private async Task<Result<Option<Agent>>> GetAgent(T request)
+    private async Task<Result<Option<Agent>>> GetAgent()
     {
-        if (request is not IRequest)
-        {
-            return Success<Option<Agent>>(None);
-        }
-
         var maybeResult = await _authenticationService.Authenticate();
 
         if (maybeResult.IsAbsent(out var result))
