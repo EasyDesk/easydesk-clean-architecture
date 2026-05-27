@@ -7,26 +7,26 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 
 public abstract class IntegrationTestsFixture : IAsyncLifetime
 {
-    protected IntegrationTestsFixture()
+    private IContainer? _container;
+
+    public IContainer Container => _container ?? throw new InvalidOperationException("Cannot access fixture's IContainer instance before initialization.");
+
+    protected abstract void ConfigureFixture(TestFixtureConfigurer configurer);
+
+    public async ValueTask InitializeAsync()
     {
         var configurer = new TestFixtureConfigurer();
 
-        configurer.ContainerBuilder.RegisterInstance(this)
+        configurer.ContainerBuilder
+            .RegisterInstance(this)
             .AsParentsUpTo(leaf: GetType(), root: typeof(IntegrationTestsFixture))
             .SingleInstance()
             .ExternallyOwned();
 
         ConfigureFixture(configurer);
 
-        Container = configurer.BuildContainer();
-    }
+        _container = configurer.BuildContainer();
 
-    public IContainer Container { get; }
-
-    protected abstract void ConfigureFixture(TestFixtureConfigurer configurer);
-
-    public async ValueTask InitializeAsync()
-    {
         await TriggerFixtureLifetimeHook(l => l.OnInitialization());
     }
 
@@ -48,7 +48,10 @@ public abstract class IntegrationTestsFixture : IAsyncLifetime
     {
         GC.SuppressFinalize(this);
         await TriggerFixtureLifetimeHook(l => l.OnDisposal(), reverseOrder: true);
-        await Container.DisposeAsync();
+        if (_container is not null)
+        {
+            await _container.DisposeAsync();
+        }
     }
 
     private async Task Pause()
