@@ -1602,12 +1602,7 @@
             "name": "value",
             "in": "query",
             "schema": {
-              "type": "object",
-              "allOf": [
-                {
-                  "type": "string"
-                }
-              ],
+              "type": "string",
               "nullable": true
             }
           },
@@ -1676,12 +1671,7 @@
             "name": "value",
             "in": "query",
             "schema": {
-              "type": "object",
-              "allOf": [
-                {
-                  "type": "string"
-                }
-              ],
+              "type": "string",
               "nullable": true
             }
           },
@@ -2575,13 +2565,7 @@
             "name": "value",
             "in": "query",
             "schema": {
-              "type": "object",
-              "allOf": [
-                {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              ],
+              "type": "string",
               "format": "uuid",
               "nullable": true
             }
@@ -2732,13 +2716,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "object",
-              "allOf": [
-                {
-                  "type": "string",
-                  "format": "uuid"
-                }
-              ],
+              "type": "string",
               "format": "uuid",
               "nullable": true
             }
@@ -3235,75 +3213,35 @@
             "type": "string"
           },
           "streetType": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "streetNumber": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "city": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "district": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "province": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "region": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "state": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "country": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           }
         },
@@ -3400,12 +3338,7 @@
             "type": "string"
           },
           "description": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string"
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "agent": {
@@ -3444,15 +3377,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/AuditRecordDto"
-                }
-              }
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/AuditRecordDto"
             },
@@ -3775,20 +3700,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "object",
-                "allOf": [
-                  {
-                    "type": "number",
-                    "format": "double"
-                  }
-                ],
-                "format": "double",
-                "nullable": true
-              }
-            ],
+            "type": "number",
             "format": "double",
             "nullable": true
           },
@@ -3835,18 +3747,6 @@
                 "additionalProperties": false
               }
             ],
-            "properties": {
-              "A": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "B": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "C": {
-                "$ref": "#/components/schemas/TestRecord"
-              }
-            },
-            "additionalProperties": false,
             "nullable": true
           },
           "errors": {
@@ -3892,18 +3792,6 @@
                 "additionalProperties": false
               }
             ],
-            "properties": {
-              "A": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "B": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "C": {
-                "$ref": "#/components/schemas/TestRecord"
-              }
-            },
-            "additionalProperties": false,
             "nullable": true
           },
           "errors": {
@@ -4054,13 +3942,7 @@
         "type": "object",
         "properties": {
           "value": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "string",
-                "format": "uuid"
-              }
-            ],
+            "type": "string",
             "format": "uuid",
             "nullable": true
           }
@@ -4074,20 +3956,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "object",
-                "allOf": [
-                  {
-                    "type": "string",
-                    "format": "uuid"
-                  }
-                ],
-                "format": "uuid",
-                "nullable": true
-              }
-            ],
+            "type": "string",
             "format": "uuid",
             "nullable": true
           },
@@ -4611,15 +4480,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/PersonDto"
-                }
-              }
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/PersonDto"
             },
@@ -4650,15 +4511,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/PersonDto"
-                }
-              }
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/PersonDto"
             },
@@ -4735,15 +4588,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/PetDto"
-                }
-              }
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/PetDto"
             },
@@ -4864,7 +4709,6 @@
                 "additionalProperties": { }
               }
             ],
-            "additionalProperties": { },
             "nullable": true
           },
           "errors": {
@@ -4899,7 +4743,6 @@
                 "additionalProperties": { }
               }
             ],
-            "additionalProperties": { },
             "nullable": true
           },
           "errors": {
@@ -4927,18 +4770,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "object",
-                "allOf": [
-                  {
-                    "type": "string"
-                  }
-                ],
-                "nullable": true
-              }
-            ],
+            "type": "string",
             "nullable": true
           },
           "errors": {
@@ -4975,9 +4807,6 @@
                 }
               }
             ],
-            "additionalProperties": {
-              "$ref": "#/components/schemas/TestRecord"
-            },
             "nullable": true
           },
           "errors": {
@@ -5014,9 +4843,6 @@
                 }
               }
             ],
-            "additionalProperties": {
-              "$ref": "#/components/schemas/TestRecord"
-            },
             "nullable": true
           },
           "errors": {
@@ -5098,15 +4924,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "allOf": [
-              {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/TestRecordTestRecordKeyValuePair"
-                }
-              }
-            ],
+            "type": "array",
             "items": {
               "$ref": "#/components/schemas/TestRecordTestRecordKeyValuePair"
             },

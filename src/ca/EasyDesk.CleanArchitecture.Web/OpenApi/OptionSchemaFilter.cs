@@ -16,8 +16,18 @@ internal class OptionSchemaFilter : ISchemaFilter
         }
         var wrappedType = type.GetGenericArguments()[0];
         var wrappedSchema = context.SchemaGenerator.GenerateSchema(wrappedType, context.SchemaRepository);
-        concreteSchema.CopyFunctionalFieldsFrom(wrappedSchema);
-        concreteSchema.Type = JsonSchemaType.Null | JsonSchemaType.Object;
-        concreteSchema.AllOf = [wrappedSchema,];
+        if (wrappedSchema.Type is null || (wrappedSchema.Type & JsonSchemaType.Object) == JsonSchemaType.Object)
+        {
+            concreteSchema.CopyFunctionalFieldsFrom(new OpenApiSchema
+            {
+                Type = JsonSchemaType.Null | JsonSchemaType.Object,
+                AllOf = [wrappedSchema,],
+            });
+        }
+        else
+        {
+            concreteSchema.CopyFunctionalFieldsFrom(wrappedSchema);
+            concreteSchema.Type |= JsonSchemaType.Null;
+        }
     }
 }
