@@ -6,16 +6,16 @@ namespace EasyDesk.CleanArchitecture.Testing.Integration.Tests;
 public abstract class IntegrationTest<T> : IAsyncLifetime
     where T : IntegrationTestsFixture
 {
-    private readonly IntegrationTestSession<T>? _session;
+    private readonly IntegrationTestSession? _session;
 
-    protected IntegrationTestSession<T> Session => _session ?? throw new InvalidOperationException("Accessing session inside of ConfigureSession().");
+    protected IntegrationTestSession Session => _session ?? throw new InvalidOperationException("Accessing session inside of ConfigureSession().");
 
     protected T Fixture { get; }
 
     protected IntegrationTest(T fixture)
     {
         Fixture = fixture;
-        _session = new(Fixture, ConfigureSession);
+        _session = new(Fixture.Container, ConfigureSession);
     }
 
     protected virtual void ConfigureSession(SessionConfigurer configurer)

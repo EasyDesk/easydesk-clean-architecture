@@ -7,11 +7,11 @@ public class SampleSeeder : ISeeder<SampleAppTestsFixture, SampleSeeder.Data>
 {
     public record Data(int OperationsRun);
 
-    public void ConfigureSession(SessionConfigurer configurer)
+    public void ConfigureSession(SessionConfigurer configurer, SampleAppTestsFixture fixture)
     {
     }
 
-    public async Task<Data> Seed(IntegrationTestSession<SampleAppTestsFixture> session)
+    public async Task<Data> Seed(IntegrationTestSession session, SampleAppTestsFixture fixture)
     {
         return new(0);
     }
