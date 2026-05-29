@@ -41,6 +41,10 @@ public class TestController : CleanArchitectureController
 
     public const string TestDictionaryStringObjectRoute = Base + "/dictionary/stringobject";
 
+    public const string TestOptionStringRoute = Base + "/option/string";
+
+    public const string TestOptionNumberRoute = Base + "/option/number";
+
     [HttpGet(TestOptionInQueryRoute)]
     public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> GetValueFromQuery([FromQuery] Option<string> value)
     {
@@ -134,5 +138,17 @@ public class TestController : CleanArchitectureController
     public Task<ActionResult<ResponseDto<Option<Guid>, Nothing>>> TestGuidInRoute([FromRoute] Option<Guid> value)
     {
         return Success(value);
+    }
+
+    [HttpGet(TestOptionStringRoute)]
+    public Task<ActionResult<ResponseDto<Option<string>, Nothing>>> TestOptionString()
+    {
+        return Success(Some("hello"));
+    }
+
+    [HttpGet(TestOptionNumberRoute)]
+    public Task<ActionResult<ResponseDto<Option<double>, Nothing>>> TestOptionNumber()
+    {
+        return Success(Some(42.0));
     }
 }

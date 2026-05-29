@@ -1,4 +1,4 @@
-﻿{
+{
   "openapi": "3.0.4",
   "info": {
     "title": "EasyDesk.Sample.App v1.0",
@@ -2776,6 +2776,128 @@
         }
       }
     },
+    "/test/option/string": {
+      "get": {
+        "tags": [
+          "Test"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringOptionNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringOptionNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringOptionNothingResponseDto"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringOptionNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringOptionNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/StringOptionNothingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test/option/number": {
+      "get": {
+        "tags": [
+          "Test"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoubleOptionNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoubleOptionNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoubleOptionNothingResponseDto"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoubleOptionNothingResponseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoubleOptionNothingResponseDto"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DoubleOptionNothingResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/errors/v0.1": {
       "get": {
         "tags": [
@@ -3143,14 +3265,30 @@
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AgentDto"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -3203,7 +3341,15 @@
             "type": "string",
             "nullable": true
           },
-          "agent": { },
+          "agent": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AgentDto"
+              }
+            ],
+            "nullable": true
+          },
           "properties": {
             "type": "object",
             "additionalProperties": {
@@ -3243,7 +3389,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetaDto"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -3425,20 +3579,55 @@
         },
         "additionalProperties": false
       },
+      "CreatePetsResultDto": {
+        "type": "object",
+        "properties": {
+          "pets": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "CreatePetsResultDtoNothingResponseDto": {
         "required": [
           "errors"
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatePetsResultDto"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePetsStatusDto": {
+        "type": "object",
+        "properties": {
+          "inProgress": {
+            "type": "boolean"
+          }
         },
         "additionalProperties": false
       },
@@ -3448,14 +3637,30 @@
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CreatePetsStatusDto"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -3488,26 +3693,15 @@
         "description": "ErrorDto schema for domain errors.",
         "readOnly": true
       },
-      "EnumTypeTestRecordIDictionaryNothingResponseDto": {
+      "DoubleOptionNothingResponseDto": {
         "required": [
           "errors"
         ],
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "properties": {
-              "A": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "B": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "C": {
-                "$ref": "#/components/schemas/TestRecord"
-              }
-            },
-            "additionalProperties": false,
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "errors": {
@@ -3516,7 +3710,60 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EnumTypeTestRecordIDictionaryNothingResponseDto": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
+              }
+            ],
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDto"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -3528,18 +3775,23 @@
         "properties": {
           "data": {
             "type": "object",
-            "properties": {
-              "A": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "B": {
-                "$ref": "#/components/schemas/TestRecord"
-              },
-              "C": {
-                "$ref": "#/components/schemas/TestRecord"
+            "allOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "A": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "B": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  },
+                  "C": {
+                    "$ref": "#/components/schemas/TestRecord"
+                  }
+                },
+                "additionalProperties": false
               }
-            },
-            "additionalProperties": false,
+            ],
             "nullable": true
           },
           "errors": {
@@ -3548,7 +3800,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -3706,7 +3966,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -3735,14 +4003,30 @@
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IPolymorphicDto"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4036,14 +4320,30 @@
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/NodaTimeTestDto"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4093,14 +4393,53 @@
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaginationMetaDto": {
+        "required": [
+          "count",
+          "pageIndex",
+          "pageSize"
+        ],
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageIndex": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
         },
         "additionalProperties": false
       },
@@ -4153,7 +4492,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4176,7 +4523,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetaDto"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4186,14 +4541,30 @@
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4229,7 +4600,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PaginationMetaDto"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4239,14 +4618,30 @@
         ],
         "type": "object",
         "properties": {
-          "data": { },
+          "data": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PetDto"
+              }
+            ],
+            "nullable": true
+          },
           "errors": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4308,7 +4703,12 @@
         "properties": {
           "data": {
             "type": "object",
-            "additionalProperties": { },
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": { }
+              }
+            ],
             "nullable": true
           },
           "errors": {
@@ -4317,7 +4717,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4329,7 +4737,12 @@
         "properties": {
           "data": {
             "type": "object",
-            "additionalProperties": { },
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": { }
+              }
+            ],
             "nullable": true
           },
           "errors": {
@@ -4338,7 +4751,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4358,7 +4779,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4370,9 +4799,14 @@
         "properties": {
           "data": {
             "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/TestRecord"
-            },
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TestRecord"
+                }
+              }
+            ],
             "nullable": true
           },
           "errors": {
@@ -4381,7 +4815,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4393,9 +4835,14 @@
         "properties": {
           "data": {
             "type": "object",
-            "additionalProperties": {
-              "$ref": "#/components/schemas/TestRecord"
-            },
+            "allOf": [
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TestRecord"
+                }
+              }
+            ],
             "nullable": true
           },
           "errors": {
@@ -4404,7 +4851,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4481,7 +4936,15 @@
               "$ref": "#/components/schemas/ErrorDto"
             }
           },
-          "meta": { }
+          "meta": {
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ],
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
