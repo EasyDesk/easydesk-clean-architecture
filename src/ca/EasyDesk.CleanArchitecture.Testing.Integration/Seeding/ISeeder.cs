@@ -8,5 +8,5 @@ public interface ISeeder<TFixture, TSeed>
 {
     void ConfigureSession(SessionConfigurer configurer, TFixture fixture);
 
-    Task<TSeed> Seed(IntegrationTestSession session, TFixture fixture);
+    Task<TSeed> Seed(IntegrationTestSession<TFixture> session, TFixture fixture);
 }

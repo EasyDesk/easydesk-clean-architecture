@@ -11,7 +11,7 @@ public class SampleSeeder : ISeeder<SampleAppTestsFixture, SampleSeeder.Data>
     {
     }
 
-    public async Task<Data> Seed(IntegrationTestSession session, SampleAppTestsFixture fixture)
+    public async Task<Data> Seed(IntegrationTestSession<SampleAppTestsFixture> session, SampleAppTestsFixture fixture)
     {
         return new(0);
     }

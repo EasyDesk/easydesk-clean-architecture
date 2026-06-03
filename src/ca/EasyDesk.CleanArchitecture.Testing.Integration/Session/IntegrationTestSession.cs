@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using EasyDesk.CleanArchitecture.Infrastructure.Messaging;
 using EasyDesk.CleanArchitecture.Testing.Integration.Bus;
+using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Testing.Integration.Services;
@@ -10,20 +11,24 @@ using NodaTime.Testing;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.Session;
 
-public sealed class IntegrationTestSession : IAsyncDisposable
+public sealed class IntegrationTestSession<TFixture> : IAsyncDisposable
+    where TFixture : IntegrationTestsFixture
 {
     private readonly Lazy<ITestBusEndpoint> _defaultBusEndpoint;
     private readonly Lazy<ITestBusEndpoint> _errorBusEndpoint;
 
-    public IntegrationTestSession(ILifetimeScope parentScope, Action<SessionConfigurer>? configureSession = null)
+    public IntegrationTestSession(TFixture fixture, Action<SessionConfigurer>? configureSession = null)
     {
+        Fixture = fixture;
         LifetimeScope = configureSession is null
-            ? parentScope.BeginLifetimeScope()
-            : parentScope.BeginLifetimeScope(builder => configureSession(new SessionConfigurer { ContainerBuilder = builder, }));
+            ? fixture.Container.BeginLifetimeScope()
+            : fixture.Container.BeginLifetimeScope(builder => configureSession(new SessionConfigurer { ContainerBuilder = builder, }));
 
         _defaultBusEndpoint = new(() => NewBusEndpoint());
         _errorBusEndpoint = new(() => NewBusEndpoint(Host.LifetimeScope.Resolve<RebusMessagingOptions>().ErrorQueueName));
     }
+
+    public TFixture Fixture { get; }
 
     public ILifetimeScope LifetimeScope { get; }
 

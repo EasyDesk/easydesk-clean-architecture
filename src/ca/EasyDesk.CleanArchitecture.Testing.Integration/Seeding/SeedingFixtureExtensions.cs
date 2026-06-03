@@ -35,7 +35,7 @@ public static class SeedingFixtureExtensions
 
         public override async Task OnInitialization()
         {
-            await using var session = new IntegrationTestSession(_fixture.Container, configurer => _seeder.ConfigureSession(configurer, _fixture));
+            await using var session = new IntegrationTestSession<TFixture>(_fixture, configurer => _seeder.ConfigureSession(configurer, _fixture));
             var seed = await _seeder.Seed(session, _fixture);
             _seedHolder.StoreSeed(seed);
         }
