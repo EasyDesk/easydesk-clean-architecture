@@ -8,9 +8,9 @@ public abstract class IntegrationTest<T> : IAsyncLifetime
 {
     private readonly IntegrationTestSession<T>? _session;
 
-    protected IntegrationTestSession<T> Session => _session ?? throw new InvalidOperationException("Accessing session inside of ConfigureSession().");
+    public IntegrationTestSession<T> Session => _session ?? throw new InvalidOperationException("Accessing session inside of ConfigureSession().");
 
-    protected T Fixture { get; }
+    public T Fixture { get; }
 
     protected IntegrationTest(T fixture)
     {
