@@ -32,16 +32,16 @@ public abstract class IntegrationTestsFixture : IAsyncLifetime
 
     public async Task BeforeTest()
     {
+        await Pause();
+        await TriggerFixtureLifetimeHook(l => l.BetweenTests());
+        await Resume();
+
         await TriggerFixtureLifetimeHook(l => l.BeforeTest());
     }
 
     public async Task AfterTest()
     {
         await TriggerFixtureLifetimeHook(l => l.AfterTest(), reverseOrder: true);
-
-        await Pause();
-        await TriggerFixtureLifetimeHook(l => l.BetweenTests());
-        await Resume();
     }
 
     public async ValueTask DisposeAsync()
