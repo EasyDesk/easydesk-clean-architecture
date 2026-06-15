@@ -43,7 +43,7 @@ public class TableCopiesManager
                 (k, xs) => new TableDef(k.Schema, k.TableName, xs.Select(c => c.ColumnName).ToFixedList()));
 
             var copyTablesCommand = tables.Select(_provider.GenerateCopyTableCommand).ConcatStrings("\n");
-            await connection.RunCommand(copyTablesCommand);
+            await connection.RunCommand(copyTablesCommand, ConfigureCommand);
 
             _restoreTablesCommand = tables
                 .Select(_provider.GenerateDisableConstraintsCommand)
@@ -57,14 +57,30 @@ public class TableCopiesManager
     {
         await UsingDbConnection(async connection =>
         {
-            await connection.RunCommand(_restoreTablesCommand);
+            await connection.RunCommand(_restoreTablesCommand, ConfigureCommand);
         });
+    }
+
+    private void ConfigureCommand(DbCommand command)
+    {
+        command.CommandTimeout = 0;
     }
 
     private async Task UsingDbConnection(AsyncAction<DbConnection> action)
     {
         await using var connection = _connectionFactory();
         await connection.OpenAsync();
-        await action(connection);
+
+        await using var transaction = await connection.BeginTransactionAsync();
+        try
+        {
+            await action(connection);
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 }
