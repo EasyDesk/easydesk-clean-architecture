@@ -25,17 +25,20 @@ public class TableCopiesManager
 
     public async Task PrepareTableCopies()
     {
-        await UsingDbConnection(async connection =>
+        await RunTransactionally(async (connection, transaction) =>
         {
             var tablesQuery = _provider.GenerateTablesQuery(SchemaOutput, TableOutput, ColumnOutput);
 
             var result = await connection
-                .RunQuery(tablesQuery, x => new
-                {
-                    Schema = x.GetString(SchemaOutput),
-                    TableName = x.GetString(TableOutput),
-                    ColumnName = x.GetString(ColumnOutput),
-                })
+                .RunQuery(
+                    tablesQuery,
+                    x => new
+                    {
+                        Schema = x.GetString(SchemaOutput),
+                        TableName = x.GetString(TableOutput),
+                        ColumnName = x.GetString(ColumnOutput),
+                    },
+                    ConfigureCommand(transaction))
                 .ToEnumerableAsync();
 
             var tables = result.GroupBy(
@@ -43,7 +46,7 @@ public class TableCopiesManager
                 (k, xs) => new TableDef(k.Schema, k.TableName, xs.Select(c => c.ColumnName).ToFixedList()));
 
             var copyTablesCommand = tables.Select(_provider.GenerateCopyTableCommand).ConcatStrings("\n");
-            await connection.RunCommand(copyTablesCommand, ConfigureCommand);
+            await connection.RunCommand(copyTablesCommand, ConfigureCommand(transaction));
 
             _restoreTablesCommand = tables
                 .Select(_provider.GenerateDisableConstraintsCommand)
@@ -55,18 +58,19 @@ public class TableCopiesManager
 
     public async Task RestoreDataFromTableCopies()
     {
-        await UsingDbConnection(async connection =>
+        await RunTransactionally(async (connection, transaction) =>
         {
-            await connection.RunCommand(_restoreTablesCommand, ConfigureCommand);
+            await connection.RunCommand(_restoreTablesCommand, ConfigureCommand(transaction));
         });
     }
 
-    private void ConfigureCommand(DbCommand command)
+    private Action<DbCommand> ConfigureCommand(DbTransaction transaction) => command =>
     {
         command.CommandTimeout = 0;
-    }
+        command.Transaction = transaction;
+    };
 
-    private async Task UsingDbConnection(AsyncAction<DbConnection> action)
+    private async Task RunTransactionally(AsyncAction<DbConnection, DbTransaction> action)
     {
         await using var connection = _connectionFactory();
         await connection.OpenAsync();
@@ -74,7 +78,7 @@ public class TableCopiesManager
         await using var transaction = await connection.BeginTransactionAsync();
         try
         {
-            await action(connection);
+            await action(connection, transaction);
             await transaction.CommitAsync();
         }
         catch
