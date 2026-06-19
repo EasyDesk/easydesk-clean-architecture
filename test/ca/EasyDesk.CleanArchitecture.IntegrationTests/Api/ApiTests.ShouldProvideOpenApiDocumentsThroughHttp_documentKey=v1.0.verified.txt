@@ -1692,11 +1692,7 @@
             "name": "PageIndex",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -1704,11 +1700,7 @@
             "name": "PageSize",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -2195,11 +2187,7 @@
             "name": "PageIndex",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -2207,11 +2195,7 @@
             "name": "PageSize",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -2664,11 +2648,7 @@
             "name": "PageIndex",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -2676,11 +2656,7 @@
             "name": "PageSize",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -3177,6 +3153,33 @@
           }
         }
       }
+    },
+    "/versions": {
+      "get": {
+        "tags": [
+          "ApiVersioning"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "1.0",
+              "readOnly": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3558,11 +3561,7 @@
         "type": "object",
         "properties": {
           "pets": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }
@@ -4466,27 +4465,15 @@
         "type": "object",
         "properties": {
           "count": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "pageIndex": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "pageSize": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }
@@ -4539,11 +4526,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "nickname": {
@@ -4596,11 +4579,7 @@
             "type": "object",
             "properties": {
               "property2": {
-                "pattern": "^-?(?:0|[1-9]\\d*)$",
-                "type": [
-                  "integer",
-                  "string"
-                ],
+                "type": "integer",
                 "format": "int32"
               },
               "abstractBaseProperty": {
@@ -5172,8 +5151,7 @@
           "data": {
             "type": [
               "null",
-              "number",
-              "string"
+              "number"
             ],
             "format": "double"
           },
@@ -5450,11 +5428,7 @@
             "type": "string"
           },
           "b": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }
@@ -5538,6 +5512,9 @@
     },
     {
       "name": "Admin"
+    },
+    {
+      "name": "ApiVersioning"
     }
   ]
 }

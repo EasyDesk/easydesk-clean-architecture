@@ -70,6 +70,33 @@
           }
         }
       }
+    },
+    "/versions": {
+      "get": {
+        "tags": [
+          "ApiVersioning"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "0.1",
+              "readOnly": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "4XX": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -977,6 +1004,9 @@
   "tags": [
     {
       "name": "OldApi"
+    },
+    {
+      "name": "ApiVersioning"
     }
   ]
 }

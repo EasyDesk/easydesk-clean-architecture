@@ -38,7 +38,12 @@ internal class InheritanceSchemaFilter : IOpenApiSchemaTransformer
                 }
             }
         }
-        schema.AnyOf = null;
+        if (parentProperties.Count > 0)
+        {
+            // Do not remove any of when the parent would become a free-form object
+            // TODO: remove if when https://github.com/OpenAPITools/openapi-generator/issues/7638 is fixed
+            schema.AnyOf = null;
+        }
         foreach (var derivedType in context.JsonTypeInfo.GetDerivedTypes())
         {
             if (derivedType.DerivedType == context.JsonTypeInfo.Type)

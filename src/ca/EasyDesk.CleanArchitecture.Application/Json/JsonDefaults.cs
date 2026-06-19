@@ -12,7 +12,7 @@ public static class JsonDefaults
     public static void ApplyDefaultConfiguration(this JsonSerializerOptions options, IDateTimeZoneProvider? dateTimeZoneProvider = null)
     {
         options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-
+        options.NumberHandling = JsonNumberHandling.Strict;
         options.Converters.Add(new JsonStringEnumConverter());
         options.Converters.Add(new OptionConverter());
         options.Converters.Add(new FixedListConverter());

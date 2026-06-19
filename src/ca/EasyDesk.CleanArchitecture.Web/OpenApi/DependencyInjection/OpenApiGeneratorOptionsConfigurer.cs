@@ -83,9 +83,12 @@ internal class OpenApiGeneratorOptionsConfigurer : IConfigureNamedOptions<OpenAp
         }
         else if (name is not null && OpenApiModule.DocumentNameToVersion(name).IsPresent(out var version))
         {
-            options.ShouldInclude = description =>
-                    description.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor
-                        && controllerActionDescriptor.ControllerTypeInfo.GetApiVersionFromNamespace().Contains(version);
+            options.ShouldInclude = description => description.ActionDescriptor switch
+            {
+                ControllerActionDescriptor controllerActionDescriptor =>
+                    controllerActionDescriptor.ControllerTypeInfo.GetApiVersionFromNamespace().All(v => v == version),
+                var _ => false,
+            };
             options
                 .AddDocumentTransformer((d, _, _) =>
                 {
