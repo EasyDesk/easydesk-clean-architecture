@@ -135,9 +135,11 @@ jobs:
         include:
          - db-provider: SqlServer
            sqlserver-connection: "Server=localhost,1433;Initial Catalog=SampleDB;User Id=SA;TrustServerCertificate=True;Password=samplepass.123;"
+           sqlserver-image: mcr.microsoft.com/mssql/server:2022-latest
            usesdb: true
          - db-provider: PostgreSql
            postgres-connection: "Host=localhost;Port=5432;Database=sampledb;Username=sample;Password=samplepass-123;"
+           postgres-image: postgres:alpine3.16
            usesdb: true
          - usesdb: false
     env:
@@ -149,7 +151,7 @@ jobs:
       COMMAND_BASE: dotnet "${OUTPUT_DIR}/EasyDesk.SampleApp.Web.dll"
     services:
       sqlserver:
-        image: mcr.microsoft.com/mssql/server:2022-latest
+        image: ${{ matrix.sqlserver-image }}
         options: --user root
         env:
           ACCEPT_EULA: "Y"
@@ -160,7 +162,7 @@ jobs:
         ports:
           - 1433:1433
       postgres:
-        image: postgres:alpine3.16
+        image: ${{ matrix.postgres-image }}
         env:
           POSTGRES_USER: sample
           POSTGRES_PASSWORD: samplepass-123
