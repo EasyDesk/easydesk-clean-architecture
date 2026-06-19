@@ -3,8 +3,8 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Http.Builders.Extensions;
 using EasyDesk.CleanArchitecture.Testing.Integration.OpenApi;
 using EasyDesk.Commons.Collections;
 using EasyDesk.Testing.VerifyConfiguration;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.Swagger;
 using static EasyDesk.SampleApp.Web.Controllers.V_1_0.Test.TestController;
 
 namespace EasyDesk.CleanArchitecture.IntegrationTests.Api;
@@ -29,11 +29,11 @@ public class ApiTests : SampleAppIntegrationTest
     public async Task ShouldGenerateOpenApiDocuments()
     {
         var openApiHelper = Session.LifetimeScope.Resolve<OpenApiTestHelper>();
-        var swaggerProvider = Session.Host.LifetimeScope.Resolve<ISwaggerProvider>();
 
         foreach (var documentKey in openApiHelper.DocumentKeys)
         {
-            var doc = swaggerProvider.GetSwagger(documentKey);
+            var openApiProvider = Session.Host.LifetimeScope.ResolveKeyed<IOpenApiDocumentProvider>(documentKey);
+            var doc = await openApiProvider.GetOpenApiDocumentAsync(TestContext.Current.CancellationToken);
             await using (var stream = new MemoryStream())
             {
                 await doc.SerializeAsJsonAsync(stream, OpenApiSpecVersion.OpenApi3_1, TestContext.Current.CancellationToken);
@@ -55,6 +55,15 @@ public class ApiTests : SampleAppIntegrationTest
             var document = await openApiHelper.GetOpenApiDocument(documentKey);
             await Verify(document).UseNamedParameter(documentKey);
         }
+    }
+
+    [Fact]
+    public async Task ShouldProvideSwagger()
+    {
+        var openApiHelper = Session.LifetimeScope.Resolve<OpenApiTestHelper>();
+
+        var swaggerPage = await openApiHelper.GetSwaggerPage();
+        await Verify(swaggerPage);
     }
 
     [Fact]

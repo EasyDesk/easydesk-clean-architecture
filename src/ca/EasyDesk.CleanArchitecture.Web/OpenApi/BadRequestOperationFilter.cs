@@ -1,18 +1,18 @@
 ﻿using EasyDesk.Commons.Collections;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class BadRequestOperationFilter : IOperationFilter
+internal class BadRequestOperationFilter : IOpenApiOperationTransformer
 {
     public const string ErrorCode = "4XX";
 
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
     {
         if (operation.Responses?.ContainsKey(ErrorCode) ?? true)
         {
-            return;
+            return Task.CompletedTask;
         }
         var successResponse = operation
             .Responses
@@ -20,8 +20,9 @@ internal class BadRequestOperationFilter : IOperationFilter
             .Map(kv => kv.Value);
         if (successResponse.IsAbsent)
         {
-            return;
+            return Task.CompletedTask;
         }
         operation.Responses.Add(ErrorCode, successResponse.Value);
+        return Task.CompletedTask;
     }
 }

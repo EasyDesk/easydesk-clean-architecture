@@ -1,20 +1,20 @@
 ﻿using EasyDesk.Commons.Collections;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class UnusedSchemaCleaner : IDocumentFilter
+internal class UnusedSchemaCleaner : IOpenApiDocumentTransformer
 {
-    public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+    public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
         var visitor = new OpenApiReferenceVisitor();
         var walker = new OpenApiWalker(visitor);
-        walker.Walk(swaggerDoc);
+        walker.Walk(document);
 
         var unusedSchemaNames = new HashSet<string>();
 
-        foreach (var schemaId in swaggerDoc
+        foreach (var schemaId in document
             .Components
             ?.Schemas
             ?.Select(schema => schema.Key)
@@ -26,8 +26,9 @@ internal class UnusedSchemaCleaner : IDocumentFilter
 
         foreach (var schemaId in unusedSchemaNames)
         {
-            swaggerDoc.Components?.Schemas?.Remove(schemaId);
+            document.Components?.Schemas?.Remove(schemaId);
         }
+        return Task.CompletedTask;
     }
 
     private sealed class OpenApiReferenceVisitor : OpenApiVisitorBase

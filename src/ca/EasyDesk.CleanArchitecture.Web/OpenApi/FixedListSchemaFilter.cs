@@ -5,17 +5,17 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class FixedMapSchemaFilter : IOpenApiSchemaTransformer
+internal class FixedListSchemaFilter : IOpenApiSchemaTransformer
 {
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         var type = context.JsonTypeInfo.Type;
-        if (!type.IsGenericType || !type.IsConstructedFrom(typeof(IFixedMap<,>), out var constructedType))
+        if (!type.IsGenericType || !type.IsConstructedFrom(typeof(IFixedList<>), out var constructedType))
         {
             return;
         }
         var typeArguments = constructedType.GetGenericArguments();
-        var equivalentType = typeof(IReadOnlyDictionary<,>).MakeGenericType(typeArguments);
+        var equivalentType = typeof(IReadOnlyList<>).MakeGenericType(typeArguments);
         var equivalentSchema = await context.GetOrCreateSchemaAsync(equivalentType, context.ParameterDescription, cancellationToken);
         schema.CopyFunctionalFieldsFrom(equivalentSchema);
         schema.Metadata = null;

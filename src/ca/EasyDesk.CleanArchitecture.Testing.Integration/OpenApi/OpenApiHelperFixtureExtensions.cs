@@ -3,9 +3,8 @@ using EasyDesk.CleanArchitecture.Testing.Integration.Fixture;
 using EasyDesk.CleanArchitecture.Testing.Integration.Host;
 using EasyDesk.CleanArchitecture.Testing.Integration.Http;
 using EasyDesk.CleanArchitecture.Web.OpenApi.DependencyInjection;
+using EasyDesk.Commons.Collections;
 using EasyDesk.Commons.Collections.Immutable;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Testing.Integration.OpenApi;
 
@@ -18,11 +17,10 @@ public static class OpenApiHelperFixtureExtensions
             {
                 var openApiEndpoints = c.Resolve<ITestHost>()
                     .LifetimeScope
-                    .Resolve<IOptions<SwaggerGenOptions>>()
-                    .Value
-                    .GetSwaggerEndpoints();
+                    .Resolve<IServiceProvider>()
+                    .GetOpenApiEndpoints();
 
-                return new OpenApiTestHelper(c.Resolve<HttpTestHelper>(), openApiEndpoints);
+                return new OpenApiTestHelper(c.Resolve<HttpTestHelper>(), openApiEndpoints.ToFixedMap());
             })
             .InstancePerLifetimeScope();
 
@@ -45,6 +43,15 @@ public class OpenApiTestHelper
     {
         var response = await _http
             .Get<object>(_endpoints[documentKey])
+            .Send()
+            .GetResponse();
+        return response.Content.AsString();
+    }
+
+    public async Task<string> GetSwaggerPage()
+    {
+        var response = await _http
+            .Get<object>(OpenApiModuleExtensions.DefaultRoutePrefix)
             .Send()
             .GetResponse();
         return response.Content.AsString();

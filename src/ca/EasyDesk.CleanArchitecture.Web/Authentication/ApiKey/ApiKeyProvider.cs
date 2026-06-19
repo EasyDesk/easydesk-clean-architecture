@@ -7,9 +7,9 @@ using EasyDesk.CleanArchitecture.Web.OpenApi;
 using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.ApiKey;
 
@@ -34,7 +34,7 @@ public class ApiKeyProvider : IAuthenticationProvider
             })
             .ConfigureServices(services =>
             {
-                services.Configure<SwaggerGenOptions>(options =>
+                services.Configure<OpenApiOptions>(options =>
                 {
                     var apiKeySecurityScheme = new OpenApiSecurityScheme
                     {

@@ -1,0 +1,982 @@
+﻿{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "EasyDesk.Sample.App API v0.1",
+    "version": "v0.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost/"
+    }
+  ],
+  "paths": {
+    "/old-api": {
+      "get": {
+        "tags": [
+          "OldApi"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "query",
+            "description": "Optional parameter used to select the API version for this endpoint.",
+            "schema": {
+              "type": "string",
+              "default": "0.1",
+              "readOnly": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDtoOfstringAndNothing"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDtoOfstringAndNothing"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDtoOfstringAndNothing"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDtoOfstringAndNothing"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDtoOfstringAndNothing"
+                }
+              },
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseDtoOfstringAndNothing"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiKeyTooLong": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "ApiKeyTooLong",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "ApiKeyTooLong",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiKeyTooLongMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ApiKeyTooLongMeta": {
+        "type": "object"
+      },
+      "AuthenticationFailedError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "AuthenticationFailed",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "AuthenticationFailedError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/AuthenticationFailedMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "AuthenticationFailedMeta": {
+        "required": [
+          "scheme",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "scheme": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "BulkConcurrencyError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "BulkConcurrency",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "BulkConcurrencyError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/BulkConcurrencyMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "BulkConcurrencyMeta": {
+        "required": [
+          "operationType"
+        ],
+        "type": "object",
+        "properties": {
+          "operationType": {
+            "type": "string"
+          }
+        }
+      },
+      "DomainError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "DomainError",
+            "type": "string"
+          },
+          "meta": { }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDto": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfTestApplicationError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfBulkConcurrencyError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfInvalidSagaInitializerType"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfAuthenticationFailedError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfForbiddenError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfInvalidInputError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfNotFoundError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfUnknownAgentError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfApiKeyTooLong"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfInvalidApiKey"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfInvalidJwt"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfDomainError"
+          },
+          {
+            "$ref": "#/components/schemas/ErrorDtoOfInternalError"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "schema",
+          "mapping": {
+            "TestApplicationError": "#/components/schemas/TestApplicationError",
+            "BulkConcurrencyError": "#/components/schemas/BulkConcurrencyError",
+            "InvalidSagaInitializerType": "#/components/schemas/InvalidSagaInitializerType",
+            "AuthenticationFailedError": "#/components/schemas/AuthenticationFailedError",
+            "ForbiddenError": "#/components/schemas/ForbiddenError",
+            "InvalidInputError": "#/components/schemas/InvalidInputError",
+            "NotFoundError": "#/components/schemas/NotFoundError",
+            "UnknownAgentError": "#/components/schemas/UnknownAgentError",
+            "ApiKeyTooLong": "#/components/schemas/ApiKeyTooLong",
+            "InvalidApiKey": "#/components/schemas/InvalidApiKey",
+            "InvalidJwt": "#/components/schemas/InvalidJwt",
+            "DomainError": "#/components/schemas/DomainError",
+            "InternalError": "#/components/schemas/InternalError"
+          }
+        }
+      },
+      "ErrorDtoOfApiKeyTooLong": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "ApiKeyTooLong",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "ApiKeyTooLong",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiKeyTooLongMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfAuthenticationFailedError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "AuthenticationFailed",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "AuthenticationFailedError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/AuthenticationFailedMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfBulkConcurrencyError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "BulkConcurrency",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "BulkConcurrencyError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/BulkConcurrencyMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfDomainError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "DomainError",
+            "type": "string"
+          },
+          "meta": { }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfForbiddenError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "Forbidden",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "ForbiddenError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ForbiddenMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfInternalError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "Internal",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InternalError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Nothing"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfInvalidApiKey": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidApiKey",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidApiKey",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidApiKeyMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfInvalidInputError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidInput",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidInputError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidInputMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfInvalidJwt": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidJwt",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidJwt",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidJwtMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfInvalidSagaInitializerType": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidSagaInitializerType",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidSagaInitializerType",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidSagaInitializerTypeMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfNotFoundError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "NotFound",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "NotFoundError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/NotFoundMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfTestApplicationError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "TestApplication",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "TestApplicationError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/TestApplicationMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ErrorDtoOfUnknownAgentError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "UnknownAgent",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "UnknownAgentError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/UnknownAgentMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ForbiddenError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "Forbidden",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "ForbiddenError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ForbiddenMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "ForbiddenMeta": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "InternalError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "Internal",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InternalError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Nothing"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "InvalidApiKey": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidApiKey",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidApiKey",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidApiKeyMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "InvalidApiKeyMeta": {
+        "type": "object"
+      },
+      "InvalidInputError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidInput",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidInputError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidInputMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "InvalidInputMeta": {
+        "required": [
+          "propertyName",
+          "errorCode",
+          "errorMessage",
+          "parameters"
+        ],
+        "type": "object",
+        "properties": {
+          "propertyName": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": { }
+          }
+        }
+      },
+      "InvalidJwt": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidJwt",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidJwt",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidJwtMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "InvalidJwtMeta": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "InvalidSagaInitializerType": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "InvalidSagaInitializerType",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "InvalidSagaInitializerType",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/InvalidSagaInitializerTypeMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "InvalidSagaInitializerTypeMeta": {
+        "required": [
+          "typeName"
+        ],
+        "type": "object",
+        "properties": {
+          "typeName": {
+            "type": "string"
+          }
+        }
+      },
+      "NotFoundError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "NotFound",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "NotFoundError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/NotFoundMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "NotFoundMeta": {
+        "type": "object"
+      },
+      "Nothing": {
+        "type": "object"
+      },
+      "ResponseDtoOfstringAndNothing": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ErrorDto"
+            }
+          },
+          "meta": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Nothing"
+              }
+            ]
+          }
+        }
+      },
+      "TestApplicationError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "TestApplication",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "TestApplicationError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/TestApplicationMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "TestApplicationMeta": {
+        "required": [
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        }
+      },
+      "UnknownAgentError": {
+        "required": [
+          "code",
+          "detail",
+          "schema",
+          "meta"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "const": "UnknownAgent",
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "schema": {
+            "const": "UnknownAgentError",
+            "type": "string"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/UnknownAgentMeta"
+          }
+        },
+        "additionalProperties": false,
+        "readOnly": true
+      },
+      "UnknownAgentMeta": {
+        "type": "object"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "OldApi"
+    }
+  ]
+}

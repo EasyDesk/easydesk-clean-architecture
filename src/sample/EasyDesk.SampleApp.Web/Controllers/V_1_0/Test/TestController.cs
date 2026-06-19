@@ -2,7 +2,6 @@
 using EasyDesk.CleanArchitecture.Web.Dto;
 using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Commons.Options;
-using EasyDesk.SampleApp.Application.V_1_0.Dto;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
@@ -58,7 +57,7 @@ public class TestController : CleanArchitectureController
     }
 
     [HttpPost(TestPolymorphismRoute)]
-    public Task<ActionResult<ResponseDto<IPolymorphicDto, Nothing>>> TestPolymorphism([FromBody] IPolymorphicDto dto)
+    public Task<ActionResult<ResponseDto<TestPolymorphicDtos, Nothing>>> TestPolymorphism([FromBody] TestPolymorphicDtos dto)
     {
         return Success(dto);
     }

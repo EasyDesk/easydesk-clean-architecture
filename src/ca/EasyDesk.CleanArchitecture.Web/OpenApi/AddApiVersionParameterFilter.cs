@@ -1,21 +1,19 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Versioning;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class AddApiVersionParameterFilter : IOperationFilter
+internal class AddApiVersionParameterFilter : IOpenApiOperationTransformer
 {
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    private readonly ApiVersion _version;
+
+    public AddApiVersionParameterFilter(ApiVersion version)
     {
-        context
-            .MethodInfo
-            .DeclaringType
-            ?.GetApiVersionFromNamespace()
-            .IfPresent(v => AddApiVersionParameter(operation, v));
+        _version = version;
     }
 
-    private static void AddApiVersionParameter(OpenApiOperation operation, ApiVersion version)
+    private void TransformAsync(OpenApiOperation operation)
     {
         operation.Parameters ??= [];
         operation.Parameters.Add(new OpenApiParameter
@@ -27,8 +25,14 @@ internal class AddApiVersionParameterFilter : IOperationFilter
             {
                 ReadOnly = true,
                 Type = JsonSchemaType.String,
-                Default = version.ToStringWithoutV(),
+                Default = _version.ToStringWithoutV(),
             },
         });
+    }
+
+    public Task TransformAsync(OpenApiOperation operation, OpenApiOperationTransformerContext context, CancellationToken cancellationToken)
+    {
+        TransformAsync(operation);
+        return Task.CompletedTask;
     }
 }

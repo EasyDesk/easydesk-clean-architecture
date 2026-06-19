@@ -103,9 +103,6 @@ public static class AsyncEnumerable
         });
     }
 
-    public static IAsyncEnumerable<T> ToAsyncEnumerable<T>(this IEnumerable<T> sequence) =>
-        Create(_ => new AsyncEnumeratorFromEnumerator<T>(sequence.GetEnumerator()));
-
     private readonly struct AsyncEnumeratorFromEnumerator<T> : IAsyncEnumerator<T>
     {
         private readonly IEnumerator<T> _enumerator;

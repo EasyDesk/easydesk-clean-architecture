@@ -1,35 +1,48 @@
-﻿using EasyDesk.Commons.Collections;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+﻿using EasyDesk.CleanArchitecture.Application.Json;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class PolymorphismSchemaFilter : ISchemaFilter
+internal class PolymorphismSchemaFilter : IOpenApiDocumentTransformer, IOpenApiSchemaTransformer
 {
-    private readonly IOptions<JsonOptions> _options;
+    public const string OneOfPolymorphicExtensionName = "x-polymorphic-oneof";
 
-    public PolymorphismSchemaFilter(IOptions<JsonOptions> options)
+    public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        _options = options;
+        if (schema.AnyOf is null || schema.OneOf is not null || schema.AnyOf.Count == 0 || context.JsonTypeInfo.PolymorphismOptions is null)
+        {
+            return Task.CompletedTask;
+        }
+        var derivedTypes = context.JsonTypeInfo.GetDerivedTypes()
+            .Select(t => t.DerivedType)
+            .ToHashSet();
+        var derivedConcreteIndependentTypes = derivedTypes
+            .Where(t => !t.IsInterface && !t.IsAbstract && !derivedTypes.Any(dt => dt != t && dt.IsAssignableTo(t)))
+            .ToHashSet();
+
+        if (derivedConcreteIndependentTypes.Count == derivedTypes.Count)
+        {
+            schema.Metadata ??= new Dictionary<string, object>();
+            schema.Metadata[OneOfPolymorphicExtensionName] = true;
+        }
+        return Task.CompletedTask;
     }
 
-    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+    public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
-        if (!_options.Value.JsonSerializerOptions.TryGetTypeInfo(context.Type, out var typeInfo) || typeInfo is null || schema is not OpenApiSchema concreteSchema || typeInfo.PolymorphismOptions is null)
+        foreach (var schema in document.Components?.Schemas?.Values ?? [])
         {
-            return;
+            if (schema is OpenApiSchema openApiSchema
+                && openApiSchema.Metadata?.TryGetValue(OneOfPolymorphicExtensionName, out var isOneOfPolymorphic) == true
+                && isOneOfPolymorphic is true
+                && openApiSchema.OneOf is null
+                && openApiSchema.AnyOf is not null)
+            {
+                openApiSchema.OneOf = openApiSchema.AnyOf;
+                openApiSchema.AnyOf = null;
+            }
         }
-        concreteSchema.OneOf = [.. typeInfo.PolymorphismOptions.DerivedTypes
-            .OrderBy(x => x.TypeDiscriminator)
-            .Select(x => context.SchemaGenerator.GenerateSchema(x.DerivedType, context.SchemaRepository)),];
-        concreteSchema.Discriminator = new()
-        {
-            PropertyName = typeInfo.PolymorphismOptions.TypeDiscriminatorPropertyName,
-            Mapping = typeInfo.PolymorphismOptions.DerivedTypes.ToSortedDictionary(
-                keySelector: x => (string)x.TypeDiscriminator!,
-                elementSelector: x => context.SchemaRepository.LookupByType(x.DerivedType)),
-        };
+        return Task.CompletedTask;
     }
 }

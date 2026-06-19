@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
+using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
 
 namespace EasyDesk.CleanArchitecture.Web.Controllers.DependencyInjection;
 
@@ -50,7 +52,8 @@ public class ControllersModule : AppModule
             .AddControllers(DefaultMvcConfiguration)
             .AddApplicationPart(typeof(CleanArchitectureController).Assembly);
 
-        services.AddSingleton<IConfigureOptions<JsonOptions>, ConfigureJsonOptions>();
+        services.AddSingleton<IConfigureOptions<MvcJsonOptions>, ConfigureMvcJsonOptions>();
+        services.AddSingleton<IConfigureOptions<HttpJsonOptions>, ConfigureHttpJsonOptions>();
 
         services.Configure<MvcOptions>(options =>
         {
@@ -73,20 +76,37 @@ public class ControllersModule : AppModule
         Options.ApplyMvcConfiguration(options);
     }
 
-    private class ConfigureJsonOptions : IConfigureOptions<JsonOptions>
+    private class ConfigureMvcJsonOptions : IConfigureOptions<MvcJsonOptions>
     {
         private readonly IComponentContext _context;
         private readonly AppDescription _app;
 
-        public ConfigureJsonOptions(IComponentContext context, AppDescription app)
+        public ConfigureMvcJsonOptions(IComponentContext context, AppDescription app)
         {
             _context = context;
             _app = app;
         }
 
-        public void Configure(JsonOptions options)
+        public void Configure(MvcJsonOptions options)
         {
             _app.RequireModule<JsonModule>().ApplyJsonConfiguration(_context, options.JsonSerializerOptions, _app);
+        }
+    }
+
+    private class ConfigureHttpJsonOptions : IConfigureOptions<HttpJsonOptions>
+    {
+        private readonly IComponentContext _context;
+        private readonly AppDescription _app;
+
+        public ConfigureHttpJsonOptions(IComponentContext context, AppDescription app)
+        {
+            _context = context;
+            _app = app;
+        }
+
+        public void Configure(HttpJsonOptions options)
+        {
+            _app.RequireModule<JsonModule>().ApplyJsonConfiguration(_context, options.SerializerOptions, _app);
         }
     }
 }

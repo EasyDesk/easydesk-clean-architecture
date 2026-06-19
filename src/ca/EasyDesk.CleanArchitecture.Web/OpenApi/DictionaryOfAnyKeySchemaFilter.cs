@@ -1,17 +1,15 @@
-﻿using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Immutable;
+﻿using EasyDesk.Commons.Reflection;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class DictionaryOfAnyKeySchemaFilter : ISchemaFilter
+internal class DictionaryOfAnyKeySchemaFilter : IOpenApiSchemaTransformer
 {
-    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+    public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        var type = context.Type;
-        if (!type.IsGenericType
-            || !(type.IsConstructedFrom(typeof(IDictionary<,>), out var constructedType) || type.IsConstructedFrom(typeof(IImmutableDictionary<,>), out constructedType))
-            || schema is not OpenApiSchema concreteSchema)
+        var type = context.JsonTypeInfo.Type;
+        if (!type.IsGenericType || !(type.IsConstructedFrom(typeof(IDictionary<,>), out var constructedType) || type.IsConstructedFrom(typeof(IReadOnlyDictionary<,>), out constructedType)))
         {
             return;
         }
@@ -20,8 +18,9 @@ internal class DictionaryOfAnyKeySchemaFilter : ISchemaFilter
         {
             return;
         }
-        var equivalentType = typeof(IEnumerable<>).MakeGenericType(typeof(KeyValuePair<,>).MakeGenericType(genericArguments));
-        var equivalentSchema = context.SchemaGenerator.GenerateSchema(equivalentType, context.SchemaRepository, context.MemberInfo, context.ParameterInfo);
-        concreteSchema.CopyFunctionalFieldsFrom(equivalentSchema);
+        var equivalentType = typeof(IList<>).MakeGenericType(typeof(KeyValuePair<,>).MakeGenericType(genericArguments));
+        var equivalentSchema = await context.GetOrCreateSchemaAsync(equivalentType, context.ParameterDescription, cancellationToken);
+        schema.CopyFunctionalFieldsFrom(equivalentSchema);
+        schema.Metadata = null;
     }
 }

@@ -3,15 +3,14 @@ using EasyDesk.CleanArchitecture.Application.CommandLine;
 using EasyDesk.CleanArchitecture.Application.Versioning;
 using EasyDesk.CleanArchitecture.DependencyInjection.Modules;
 using EasyDesk.CleanArchitecture.Web.Versioning;
+using EasyDesk.CleanArchitecture.Web.Versioning.DependencyInjection;
 using EasyDesk.Commons.Collections;
-using EasyDesk.Commons.Collections.Immutable;
 using EasyDesk.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using CommandLine = System.CommandLine;
 
@@ -30,16 +29,18 @@ public class OpenApiModule : AppModule
         Options = options;
     }
 
-    protected override void ConfigureContainer(AppDescription app, ContainerBuilder builder)
-    {
-        builder.RegisterCliCommand("openapi", OpenApiCommand);
-    }
-
     protected override void ConfigureServices(AppDescription app, IServiceCollection services)
     {
-        services.AddSwaggerGen();
-        services.AddSingleton<IConfigureOptions<SwaggerGenOptions>, SwaggerGenOptionsConfigurer>();
-        services.Configure<SwaggerUIOptions>(c => c.DocumentTitle = $"{app.Name} - OpenAPI");
+        var documentNames = app.GetModule<ApiVersioningModule>().Match(
+            some: module => module.ApiVersioningInfo!.SupportedVersions.Select(VersionToDocumentName),
+            none: () => [SingleVersionedDocumentName,]);
+        foreach (var documentName in documentNames)
+        {
+            services.AddOpenApi(documentName);
+        }
+        services.AddCliCommand("openapi", (b, c) => OpenApiCommand(b, c.GetRequiredService<IComponentContext>(), documentNames));
+        services.AddTransient<IConfigureOptions<OpenApiOptions>, OpenApiGeneratorOptionsConfigurer>();
+        services.Configure<SwaggerUIOptions>(c => c.DocumentTitle = $"{app.Name} - Swagger");
     }
 
     public static string VersionToDocumentName(ApiVersion v) => v.ToString();
@@ -48,7 +49,7 @@ public class OpenApiModule : AppModule
         .Filter(d => d != SingleVersionedDocumentName)
         .Map(d => ApiVersion.Parse(d).OrElseThrow(() => throw new InvalidOperationException("Unable to retrieve the Api version from the document name.")));
 
-    private void OpenApiCommand(CliCommandBuilder builder, IComponentContext componentContext)
+    private void OpenApiCommand(CliCommandBuilder builder, IComponentContext componentContext, IEnumerable<string> documentNames)
     {
         var hostOption = new CommandLine.Option<string?>("--host")
         {
@@ -58,7 +59,6 @@ public class OpenApiModule : AppModule
         {
             Description = "Sets the basePath value in the OpenApi document",
         };
-        var existingDocumentNames = componentContext.Resolve<IOptions<SwaggerGenOptions>>().Value.SwaggerGeneratorOptions.SwaggerDocs.Keys;
         var defaultDocumentKey = componentContext.ResolveOption<ApiVersioningInfo>().Match(
             some: info => info.SupportedVersions.MaxOption().Map(VersionToDocumentName),
             none: () => Some(SingleVersionedDocumentName));
@@ -80,7 +80,7 @@ public class OpenApiModule : AppModule
                     return string.Empty;
                 }
                 var value = result.Tokens.Single().Value;
-                if (!existingDocumentNames.Contains(value))
+                if (!documentNames.Contains(value))
                 {
                     result.AddError($"The document '{value}' does not exist");
                     return string.Empty;
@@ -108,12 +108,9 @@ public class OpenApiModule : AppModule
             .AddOption(documentNameOption)
             .HandleWith(async context =>
             {
-                var swaggerProvider = componentContext.Resolve<ISwaggerProvider>();
+                var openapiProvider = componentContext.ResolveKeyed<IOpenApiDocumentProvider>(context.ParseResult.GetValue(documentNameOption) ?? string.Empty);
 
-                var doc = swaggerProvider.GetSwagger(
-                    documentName: context.ParseResult.GetValue(documentNameOption),
-                    host: context.ParseResult.GetValue(hostOption),
-                    basePath: context.ParseResult.GetValue(basePathOption));
+                var doc = await openapiProvider.GetOpenApiDocumentAsync(context.CancellationToken);
 
                 var stream = Console.OpenStandardOutput();
                 await doc.SerializeAsync(
@@ -125,10 +122,10 @@ public class OpenApiModule : AppModule
     }
 }
 
-public static class SwaggerModuleExtensions
+public static class OpenApiModuleExtensions
 {
     public const string DefaultRoutePrefix = "openapi";
-    public const string DefaultEndpointTemplate = "swagger/{documentname}/swagger.json";
+    public const string DefaultEndpointTemplate = "swagger/{documentName}/swagger.json";
 
     public static IAppBuilder AddOpenApi(this IAppBuilder builder, Action<OpenApiModuleOptions>? configure = null)
     {
@@ -139,33 +136,27 @@ public static class SwaggerModuleExtensions
 
     public static void UseOpenApiModule(this WebApplication app)
     {
-        var swaggerOptions = app.Services.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
+        var openApiEndpoints = app.Services.GetOpenApiEndpoints();
 
-        app.UseSwagger(c =>
-        {
-            c.RouteTemplate = $"{DefaultRoutePrefix}/{DefaultEndpointTemplate}";
-        });
+        app.MapOpenApi($"{DefaultRoutePrefix}/{DefaultEndpointTemplate}");
         app.UseSwaggerUI(c =>
         {
             c.RoutePrefix = DefaultRoutePrefix;
-            swaggerOptions.GetSwaggerRelativeEndpoints().ForEach(endpoint =>
+            openApiEndpoints.ForEach(endpoint =>
             {
-                c.SwaggerEndpoint($"./{endpoint.Value}", endpoint.Key);
+                c.SwaggerEndpoint(endpoint.Path, endpoint.Key);
             });
         });
     }
 
-    public static IFixedMap<string, string> GetSwaggerRelativeEndpoints(this SwaggerGenOptions options) => options
-        .SwaggerGeneratorOptions
-        .SwaggerDocs
-        .ToFixedSortedMap(doc => doc.Key, doc => DefaultEndpointTemplate.Replace("{documentname}", doc.Key));
-
-    public static IFixedMap<string, string> GetSwaggerEndpoints(this SwaggerGenOptions options) => options
-        .GetSwaggerRelativeEndpoints()
-        .ToFixedSortedMap(endpoint => endpoint.Key, endpoint => $"{DefaultRoutePrefix}/{endpoint.Value}");
+    public static IEnumerable<(string Key, string Path)> GetOpenApiEndpoints(this IServiceProvider serviceProvider) => serviceProvider
+        .GetServiceAsOption<ApiVersioningInfo>()
+        .Map(info => info.SupportedVersions.OrderDescending().Select(OpenApiModule.VersionToDocumentName))
+        .OrElse([OpenApiModule.SingleVersionedDocumentName,])
+        .Select(documentName => (documentName, $"/{DefaultRoutePrefix}/{DefaultEndpointTemplate}".Replace("{documentName}", documentName)));
 }
 
 public sealed class OpenApiModuleOptions
 {
-    public Action<SwaggerGenOptions>? ConfigureSwagger { get; set; }
+    public Action<OpenApiOptions>? ConfigureOpenApi { get; set; }
 }

@@ -1,26 +1,20 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-public static class OpenApiUtils
+public static partial class OpenApiUtils
 {
-    public static void ConfigureSecurityRequirement(this SwaggerGenOptions options, string name, OpenApiSecurityScheme securityScheme, params List<string> scopes)
+    public static void ConfigureSecurityRequirement(this OpenApiOptions options, string name, OpenApiSecurityScheme securityScheme, params List<string> scopes)
     {
-        options.AddSecurityDefinition(name, securityScheme);
-        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+        options.AddDocumentTransformer((document, context, _) =>
         {
-            [new OpenApiSecuritySchemeReference(name, document)] = scopes,
+            document.AddComponent(name, securityScheme);
+            (document.Security ??= []).Add(new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference(name, document)] = scopes,
+            });
+            return Task.CompletedTask;
         });
-    }
-
-    public static OpenApiSchemaReference LookupByType(this SchemaRepository schemaRepository, Type type)
-    {
-        if (!schemaRepository.TryLookupByType(type, out var result))
-        {
-            throw new InvalidOperationException($"Schema for type {type} not found in the repository.");
-        }
-        return result;
     }
 }

@@ -1,33 +1,35 @@
 ﻿using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Reflection;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class OptionSchemaFilter : ISchemaFilter
+internal class OptionSchemaFilter : IOpenApiSchemaTransformer
 {
-    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+    public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
-        var type = context.Type;
-        if (!type.IsGenericType || !type.GetGenericTypeDefinition().IsSubtypeOrImplementationOf(typeof(Option<>)) || schema is not OpenApiSchema concreteSchema)
+        var type = context.JsonTypeInfo.Type;
+        if (!type.IsGenericType || !type.GetGenericTypeDefinition().IsSubtypeOrImplementationOf(typeof(Option<>)))
         {
             return;
         }
         var wrappedType = type.GetGenericArguments()[0];
-        var wrappedSchema = context.SchemaGenerator.GenerateSchema(wrappedType, context.SchemaRepository);
-        if (wrappedSchema.Type is null || (wrappedSchema.Type & JsonSchemaType.Object) == JsonSchemaType.Object)
+        var wrappedSchema = await context.GetOrCreateSchemaAsync(wrappedType, context.ParameterDescription, cancellationToken);
+        if (wrappedSchema.Type is null || wrappedSchema.GetSchemaId() is not null)
         {
-            concreteSchema.CopyFunctionalFieldsFrom(new OpenApiSchema
+            schema.CopyFunctionalFieldsFrom(new OpenApiSchema
             {
-                Type = JsonSchemaType.Null | JsonSchemaType.Object,
+                Type = JsonSchemaType.Null | (wrappedSchema.Type ?? JsonSchemaType.Object),
                 AllOf = [wrappedSchema,],
             });
         }
         else
         {
-            concreteSchema.CopyFunctionalFieldsFrom(wrappedSchema);
-            concreteSchema.Type |= JsonSchemaType.Null;
+            schema.CopyFunctionalFieldsFrom(wrappedSchema);
+            schema.Type |= JsonSchemaType.Null;
         }
+        schema.Metadata = null;
+        return;
     }
 }

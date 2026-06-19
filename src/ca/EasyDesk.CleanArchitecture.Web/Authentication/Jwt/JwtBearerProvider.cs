@@ -7,10 +7,10 @@ using EasyDesk.Commons.Options;
 using EasyDesk.Commons.Results;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OpenApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace EasyDesk.CleanArchitecture.Web.Authentication.Jwt;
 
@@ -40,7 +40,7 @@ public class JwtBearerProvider : IAuthenticationProvider
             })
             .ConfigureServices(services =>
             {
-                services.Configure<SwaggerGenOptions>(options =>
+                services.Configure<OpenApiOptions>(options =>
                 {
                     var jwtSecurityScheme = new OpenApiSecurityScheme
                     {

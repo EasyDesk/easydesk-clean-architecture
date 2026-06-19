@@ -1,4 +1,4 @@
-﻿using EasyDesk.SampleApp.Application.V_1_0.Dto;
+﻿using EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -13,7 +13,7 @@ public class TypeInfoResolver : DefaultJsonTypeInfoResolver
     {
         var defaultInfo = base.GetTypeInfo(type, options);
 
-        if (type == typeof(IPolymorphicDto))
+        if (type == typeof(BasePolymorphicDto))
         {
             defaultInfo.PolymorphismOptions = new()
             {
@@ -23,6 +23,17 @@ public class TypeInfoResolver : DefaultJsonTypeInfoResolver
             };
             defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(PolymorphicExample1), nameof(PolymorphicExample1)));
             defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(PolymorphicExample2), nameof(PolymorphicExample2)));
+        }
+        else if (type == typeof(AncestorPolymorphicDto))
+        {
+            defaultInfo.PolymorphismOptions = new()
+            {
+                IgnoreUnrecognizedTypeDiscriminators = false,
+                TypeDiscriminatorPropertyName = options.PropertyNamingPolicy?.ConvertName(PolymorphicTypeDiscriminator) ?? PolymorphicTypeDiscriminator,
+                UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
+            };
+            defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(BasePolymorphicDto), nameof(BasePolymorphicDto)));
+            defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(OtherBasePolymorphicDto), nameof(OtherBasePolymorphicDto)));
         }
 
         return defaultInfo;
