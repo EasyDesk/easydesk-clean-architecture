@@ -4129,7 +4129,7 @@
           "discriminator"
         ],
         "type": "object",
-        "anyOf": [
+        "oneOf": [
           {
             "$ref": "#/components/schemas/PolymorphicExample1"
           },
