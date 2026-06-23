@@ -10,10 +10,11 @@ namespace EasyDesk.SampleApp.Web;
 public class TypeInfoResolver : DefaultJsonTypeInfoResolver
 {
     public const string PolymorphicTypeDiscriminator = "Discriminator";
+
     private static readonly IFixedMap<Type, IEnumerable<Type>> _polymorphicTypes = ImmutableCollections.Map<Type, IEnumerable<Type>>(
-        (typeof(BasePolymorphicDto), [typeof(PolymorphicExample1), typeof(PolymorphicExample2)]),
-        (typeof(AncestorPolymorphicDto), [typeof(BasePolymorphicDto), typeof(OtherBasePolymorphicDto)]),
-        (typeof(IEmptyPolymorphicInterface), [typeof(PolymorphicExample1), typeof(PolymorphicExample2)])
+        (typeof(BasePolymorphicDto), [typeof(PolymorphicExample1), typeof(PolymorphicExample2),]),
+        (typeof(AncestorPolymorphicDto), [typeof(BasePolymorphicDto), typeof(OtherBasePolymorphicDto),]),
+        (typeof(IEmptyPolymorphicInterface), [typeof(PolymorphicExample1), typeof(PolymorphicExample2),])
     );
 
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
