@@ -159,4 +159,6 @@ public static class OpenApiModuleExtensions
 public sealed class OpenApiModuleOptions
 {
     public Action<OpenApiOptions>? ConfigureOpenApi { get; set; }
+
+    public bool UseAnyOfForFreeFormObjectPolymorphism { get; set; } = true;
 }

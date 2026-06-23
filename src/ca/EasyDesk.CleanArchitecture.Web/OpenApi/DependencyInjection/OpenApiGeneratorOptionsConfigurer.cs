@@ -31,6 +31,10 @@ internal class OpenApiGeneratorOptionsConfigurer : IConfigureNamedOptions<OpenAp
         _app.GetModule<OpenApiModule>().IfPresent(m =>
         {
             m.Options.ConfigureOpenApi?.Invoke(options);
+            if (m.Options.UseAnyOfForFreeFormObjectPolymorphism)
+            {
+                options.AddDocumentTransformer<FreeFormInheritancePatchSchemaTransformer>();
+            }
         });
     }
 
@@ -46,7 +50,6 @@ internal class OpenApiGeneratorOptionsConfigurer : IConfigureNamedOptions<OpenAp
         options.AddSchemaTransformer<PolymorphismSchemaAndDocumentTransformer>();
         options.AddDocumentTransformer<PolymorphismSchemaAndDocumentTransformer>();
         options.AddDocumentTransformer<UnusedSchemaCleanerDocumentTransformer>();
-        options.AddDocumentTransformer<FreeFormInheritancePatchSchemaTransformer>();
     }
 
     private void SetupWebSupport(OpenApiOptions options)
