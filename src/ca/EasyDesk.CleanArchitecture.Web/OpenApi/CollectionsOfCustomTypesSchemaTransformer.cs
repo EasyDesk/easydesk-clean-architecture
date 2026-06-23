@@ -4,7 +4,7 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class CollectionsOfCustomTypesSchemaFilter : IOpenApiSchemaTransformer
+internal class CollectionsOfCustomTypesSchemaTransformer : IOpenApiSchemaTransformer
 {
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {

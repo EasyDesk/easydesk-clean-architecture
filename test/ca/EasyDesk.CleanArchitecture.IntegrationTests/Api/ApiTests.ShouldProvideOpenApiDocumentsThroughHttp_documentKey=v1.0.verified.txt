@@ -4124,6 +4124,27 @@
           }
         }
       },
+      "IEmptyPolymorphicInterface": {
+        "required": [
+          "discriminator"
+        ],
+        "type": "object",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/PolymorphicExample1"
+          },
+          {
+            "$ref": "#/components/schemas/PolymorphicExample2"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "discriminator",
+          "mapping": {
+            "PolymorphicExample1": "#/components/schemas/PolymorphicExample1",
+            "PolymorphicExample2": "#/components/schemas/PolymorphicExample2"
+          }
+        }
+      },
       "IFormFile": {
         "type": "string",
         "format": "binary"
@@ -5402,7 +5423,8 @@
         "required": [
           "polymorphicDto",
           "abstractPolymorphicDto",
-          "polymorphicExample1"
+          "polymorphicExample1",
+          "emptyPolymorphicInterface"
         ],
         "type": "object",
         "properties": {
@@ -5414,6 +5436,9 @@
           },
           "polymorphicExample1": {
             "$ref": "#/components/schemas/PolymorphicExample1"
+          },
+          "emptyPolymorphicInterface": {
+            "$ref": "#/components/schemas/IEmptyPolymorphicInterface"
           }
         }
       },

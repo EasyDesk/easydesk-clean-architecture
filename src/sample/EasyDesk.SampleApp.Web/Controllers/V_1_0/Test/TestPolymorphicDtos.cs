@@ -7,7 +7,11 @@ public record TestPolymorphicDtos
     public required BasePolymorphicDto AbstractPolymorphicDto { get; init; }
 
     public required PolymorphicExample1 PolymorphicExample1 { get; init; }
+
+    public required IEmptyPolymorphicInterface EmptyPolymorphicInterface { get; init; }
 }
+
+public interface IEmptyPolymorphicInterface;
 
 public abstract record AncestorPolymorphicDto
 {
@@ -29,12 +33,12 @@ public abstract record AbstractPolymorphicDto : BasePolymorphicDto
     public required string AbstractBaseProperty { get; init; }
 }
 
-public record PolymorphicExample1 : AbstractPolymorphicDto
+public record PolymorphicExample1 : AbstractPolymorphicDto, IEmptyPolymorphicInterface
 {
     public required string Property1 { get; init; }
 }
 
-public record PolymorphicExample2 : AbstractPolymorphicDto
+public record PolymorphicExample2 : AbstractPolymorphicDto, IEmptyPolymorphicInterface
 {
     public required int Property2 { get; init; }
 }

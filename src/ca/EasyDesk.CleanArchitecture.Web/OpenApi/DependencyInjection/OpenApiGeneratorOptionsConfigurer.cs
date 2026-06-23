@@ -36,22 +36,23 @@ internal class OpenApiGeneratorOptionsConfigurer : IConfigureNamedOptions<OpenAp
 
     private void SetupCommonTypes(OpenApiOptions options)
     {
-        options.AddSchemaTransformer<OptionSchemaFilter>();
-        options.AddSchemaTransformer<DictionaryOfAnyKeySchemaFilter>();
-        options.AddSchemaTransformer<FixedListSchemaFilter>();
-        options.AddSchemaTransformer<FixedSetSchemaFilter>();
-        options.AddSchemaTransformer<FixedMapSchemaFilter>();
-        options.AddSchemaTransformer<CollectionsOfCustomTypesSchemaFilter>();
-        options.AddSchemaTransformer<InheritanceSchemaFilter>();
-        options.AddSchemaTransformer<PolymorphismSchemaFilter>();
-        options.AddDocumentTransformer<PolymorphismSchemaFilter>();
-        options.AddDocumentTransformer<UnusedSchemaCleaner>();
+        options.AddSchemaTransformer<OptionSchemaTransformer>();
+        options.AddSchemaTransformer<DictionaryOfAnyKeySchemaTransformer>();
+        options.AddSchemaTransformer<FixedListSchemaTransformer>();
+        options.AddSchemaTransformer<FixedSetSchemaTransformer>();
+        options.AddSchemaTransformer<FixedMapSchemaTransformer>();
+        options.AddSchemaTransformer<CollectionsOfCustomTypesSchemaTransformer>();
+        options.AddSchemaTransformer<InheritanceSchemaTransformer>();
+        options.AddSchemaTransformer<PolymorphismSchemaAndDocumentTransformer>();
+        options.AddDocumentTransformer<PolymorphismSchemaAndDocumentTransformer>();
+        options.AddDocumentTransformer<UnusedSchemaCleanerDocumentTransformer>();
+        options.AddDocumentTransformer<FreeFormInheritancePatchSchemaTransformer>();
     }
 
     private void SetupWebSupport(OpenApiOptions options)
     {
-        options.AddSchemaTransformer<ErrorDtoSchemaFilter>();
-        options.AddOperationTransformer<BadRequestOperationFilter>();
+        options.AddSchemaTransformer<ErrorDtoSchemaTransformer>();
+        options.AddOperationTransformer<BadRequestOperationTransformer>();
         var defaultSchemaIdSelector = options.CreateSchemaReferenceId;
         options.CreateSchemaReferenceId = t =>
             t.Type.IsAssignableTo<ApplicationError>()
@@ -96,7 +97,7 @@ internal class OpenApiGeneratorOptionsConfigurer : IConfigureNamedOptions<OpenAp
                     d.Info.Version = name;
                     return Task.CompletedTask;
                 })
-                .AddOperationTransformer(new AddApiVersionParameterFilter(version));
+                .AddOperationTransformer(new AddApiVersionParameterOperationTransformer(version));
         }
         Configure(options);
     }

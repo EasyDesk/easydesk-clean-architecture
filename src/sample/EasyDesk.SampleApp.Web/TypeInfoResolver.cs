@@ -1,4 +1,6 @@
-﻿using EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
+﻿using EasyDesk.Commons.Collections;
+using EasyDesk.Commons.Collections.Immutable;
+using EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
@@ -8,32 +10,31 @@ namespace EasyDesk.SampleApp.Web;
 public class TypeInfoResolver : DefaultJsonTypeInfoResolver
 {
     public const string PolymorphicTypeDiscriminator = "Discriminator";
+    private static readonly IFixedMap<Type, IEnumerable<Type>> _polymorphicTypes = ImmutableCollections.Map<Type, IEnumerable<Type>>(
+        (typeof(BasePolymorphicDto), [typeof(PolymorphicExample1), typeof(PolymorphicExample2)]),
+        (typeof(AncestorPolymorphicDto), [typeof(BasePolymorphicDto), typeof(OtherBasePolymorphicDto)]),
+        (typeof(IEmptyPolymorphicInterface), [typeof(PolymorphicExample1), typeof(PolymorphicExample2)])
+    );
 
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)
     {
         var defaultInfo = base.GetTypeInfo(type, options);
 
-        if (type == typeof(BasePolymorphicDto))
+        foreach (var (baseType, derivedTypes) in _polymorphicTypes)
         {
-            defaultInfo.PolymorphismOptions = new()
+            if (baseType == type)
             {
-                IgnoreUnrecognizedTypeDiscriminators = false,
-                TypeDiscriminatorPropertyName = options.PropertyNamingPolicy?.ConvertName(PolymorphicTypeDiscriminator) ?? PolymorphicTypeDiscriminator,
-                UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
-            };
-            defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(PolymorphicExample1), nameof(PolymorphicExample1)));
-            defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(PolymorphicExample2), nameof(PolymorphicExample2)));
-        }
-        else if (type == typeof(AncestorPolymorphicDto))
-        {
-            defaultInfo.PolymorphismOptions = new()
-            {
-                IgnoreUnrecognizedTypeDiscriminators = false,
-                TypeDiscriminatorPropertyName = options.PropertyNamingPolicy?.ConvertName(PolymorphicTypeDiscriminator) ?? PolymorphicTypeDiscriminator,
-                UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
-            };
-            defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(BasePolymorphicDto), nameof(BasePolymorphicDto)));
-            defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(typeof(OtherBasePolymorphicDto), nameof(OtherBasePolymorphicDto)));
+                defaultInfo.PolymorphismOptions = new()
+                {
+                    IgnoreUnrecognizedTypeDiscriminators = false,
+                    TypeDiscriminatorPropertyName = options.PropertyNamingPolicy?.ConvertName(PolymorphicTypeDiscriminator) ?? PolymorphicTypeDiscriminator,
+                    UnknownDerivedTypeHandling = JsonUnknownDerivedTypeHandling.FailSerialization,
+                };
+                foreach (var derivedType in derivedTypes)
+                {
+                    defaultInfo.PolymorphismOptions.DerivedTypes.Add(new JsonDerivedType(derivedType, derivedType.Name));
+                }
+            }
         }
 
         return defaultInfo;

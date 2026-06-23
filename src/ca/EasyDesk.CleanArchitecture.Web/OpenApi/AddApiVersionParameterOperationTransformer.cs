@@ -4,11 +4,11 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class AddApiVersionParameterFilter : IOpenApiOperationTransformer
+internal class AddApiVersionParameterOperationTransformer : IOpenApiOperationTransformer
 {
     private readonly ApiVersion _version;
 
-    public AddApiVersionParameterFilter(ApiVersion version)
+    public AddApiVersionParameterOperationTransformer(ApiVersion version)
     {
         _version = version;
     }

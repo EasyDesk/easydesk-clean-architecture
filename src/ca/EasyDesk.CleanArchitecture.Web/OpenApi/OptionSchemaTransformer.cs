@@ -5,7 +5,7 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class OptionSchemaFilter : IOpenApiSchemaTransformer
+internal class OptionSchemaTransformer : IOpenApiSchemaTransformer
 {
     public async Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {

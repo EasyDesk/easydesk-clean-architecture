@@ -5,7 +5,7 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class InheritanceSchemaFilter : IOpenApiSchemaTransformer
+internal class InheritanceSchemaTransformer : IOpenApiSchemaTransformer
 {
     public const string DerivedSchemaExtensionName = "x-inheritance-allof";
 
@@ -20,30 +20,24 @@ internal class InheritanceSchemaFilter : IOpenApiSchemaTransformer
         var parentProperties = context.JsonTypeInfo.Properties
             .Select(p => context.JsonTypeInfo.Options.PropertyNamingPolicy?.ConvertName(p.Name) ?? p.Name)
             .ToFixedList();
-        if (parentProperties.Count > 0)
+        // Copy properties from children to parent if they are not already present in the parent, and mark them as required if they are required
+        var firstChild = schema.AnyOf[0];
+        foreach (var parentProperty in parentProperties)
         {
-            // Copy properties from children to parent if they are not already present in the parent, and mark them as required if they are required
-            var firstChild = schema.AnyOf[0];
-            foreach (var parentProperty in parentProperties)
+            if (schema.Properties?.ContainsKey(parentProperty) != true && firstChild.Properties?.ContainsKey(parentProperty) == true)
             {
-                if (schema.Properties?.ContainsKey(parentProperty) != true && firstChild.Properties?.ContainsKey(parentProperty) == true)
-                {
-                    schema.Properties ??= new Dictionary<string, IOpenApiSchema>();
-                    schema.Properties[parentProperty] = firstChild.Properties[parentProperty];
-                }
-                if (firstChild.Required?.Contains(parentProperty) == true)
-                {
-                    schema.Required ??= new HashSet<string>();
-                    schema.Required.Add(parentProperty);
-                }
+                schema.Properties ??= new Dictionary<string, IOpenApiSchema>();
+                schema.Properties[parentProperty] = firstChild.Properties[parentProperty];
+            }
+            if (firstChild.Required?.Contains(parentProperty) == true)
+            {
+                schema.Required ??= new HashSet<string>();
+                schema.Required.Add(parentProperty);
             }
         }
-        if (parentProperties.Count > 0)
-        {
-            // Do not remove any of when the parent would become a free-form object
-            // TODO: remove if when https://github.com/OpenAPITools/openapi-generator/issues/7638 is fixed
-            schema.AnyOf = null;
-        }
+        schema.AnyOf = null;
+        schema.OneOf = null;
+        schema.Discriminator.Mapping = null;
         foreach (var derivedType in context.JsonTypeInfo.GetDerivedTypes())
         {
             if (derivedType.DerivedType == context.JsonTypeInfo.Type)
@@ -54,16 +48,23 @@ internal class InheritanceSchemaFilter : IOpenApiSchemaTransformer
             {
                 var derivedTypeInfo = context.JsonTypeInfo.Options.GetTypeInfo(derivedType.DerivedType);
                 var derivedSchema = await context.GetOrCreateSchemaAsync(derivedType.DerivedType, null, cancellationToken);
-                ConfigureInheritance(schema, derivedSchema, context.Document);
                 var derivedId = derivedSchema.GetSchemaId() ?? derivedTypeInfo.Type.Name;
-                context.Document.AddComponent(derivedId, derivedSchema);
+                if (context.Document.Components?.Schemas?.TryGetValue(derivedId, out var registeredDerivedSchema) == true && registeredDerivedSchema is OpenApiSchema registeredDerivedConcreteSchema)
+                {
+                    derivedSchema = registeredDerivedConcreteSchema;
+                }
+                else
+                {
+                    context.Document.AddComponent(derivedId, derivedSchema);
+                }
+                ConfigureInheritanceWithAllOf(schema, derivedSchema, context.Document);
                 schema.Discriminator.Mapping ??= new Dictionary<string, OpenApiSchemaReference>();
                 schema.Discriminator.Mapping[$"{derivedType.TypeDiscriminator}"] = new(derivedId, context.Document);
             }
         }
     }
 
-    private void ConfigureInheritance(OpenApiSchema parentSchema, OpenApiSchema derivedSchema, OpenApiDocument document)
+    private void ConfigureInheritanceWithAllOf(OpenApiSchema parentSchema, OpenApiSchema derivedSchema, OpenApiDocument document)
     {
         RemoveRedundantProperties(parentSchema, derivedSchema);
         derivedSchema.AllOf ??= [];
@@ -77,13 +78,16 @@ internal class InheritanceSchemaFilter : IOpenApiSchemaTransformer
                 },
             };
             newSchema.CopyFunctionalFieldsFrom(derivedSchema);
+            newSchema.Discriminator = null;
             derivedSchema.AllOf.Add(newSchema);
             return newSchema;
         });
-        derivedSchema.AllOf.Add(new OpenApiSchemaReference(parentSchema.GetSchemaId() ?? throw new InvalidOperationException("Parent schema does not have an ID."), document));
-        derivedSchema.Discriminator = proxySchema.Discriminator;
-        proxySchema.Discriminator = null;
         RemoveRedundantProperties(proxySchema, derivedSchema);
+        var parentSchemaId = parentSchema.GetSchemaId() ?? throw new InvalidOperationException("Parent schema must have an ID");
+        if (!derivedSchema.AllOf.Any(s => s.GetSchemaId() == parentSchemaId))
+        {
+            derivedSchema.AllOf.Add(new OpenApiSchemaReference(parentSchemaId, document));
+        }
     }
 
     private void RemoveRedundantProperties(IOpenApiSchema parentSchema, IOpenApiSchema derivedSchema)

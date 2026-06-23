@@ -4,7 +4,7 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class PolymorphismSchemaFilter : IOpenApiDocumentTransformer, IOpenApiSchemaTransformer
+internal class PolymorphismSchemaAndDocumentTransformer : IOpenApiDocumentTransformer, IOpenApiSchemaTransformer
 {
     public const string OneOfPolymorphicExtensionName = "x-polymorphic-oneof";
 

@@ -4,7 +4,7 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class BadRequestOperationFilter : IOpenApiOperationTransformer
+internal class BadRequestOperationTransformer : IOpenApiOperationTransformer
 {
     public const string ErrorCode = "4XX";
 

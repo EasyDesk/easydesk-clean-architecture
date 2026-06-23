@@ -40,9 +40,14 @@ public static class OpenApiSchemaExtensions
         to.Const = from.Const;
     }
 
-    public static string? GetSchemaId(this OpenApiSchema schema)
+    public static string? GetSchemaId(this IOpenApiSchema schema)
     {
-        if (schema.Metadata?.TryGetValue("x-schema-id", out var id) == true)
+        var concreteSchema = schema as OpenApiSchema;
+        if (concreteSchema is null && schema is OpenApiSchemaReference r)
+        {
+            concreteSchema = r.Target as OpenApiSchema;
+        }
+        if (concreteSchema?.Metadata?.TryGetValue("x-schema-id", out var id) == true)
         {
             var idString = id?.ToString();
             return idString?.Length == 0 ? null : idString;

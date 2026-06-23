@@ -28,11 +28,11 @@ internal record ErrorDto<T> where T : Error
     public required T Meta { get; init; }
 }
 
-internal class ErrorDtoSchemaFilter : IOpenApiSchemaTransformer
+internal class ErrorDtoSchemaTransformer : IOpenApiSchemaTransformer
 {
     private readonly IEnumerable<IFixedList<(Option<ApiVersion>, Type)>> _errors;
 
-    public ErrorDtoSchemaFilter(
+    public ErrorDtoSchemaTransformer(
         AppDescription app)
     {
         _errors = new AssemblyScanner()
