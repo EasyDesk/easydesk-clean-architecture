@@ -1,4 +1,7 @@
-﻿namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
+﻿using EasyDesk.Commons.Options;
+using NodaTime;
+
+namespace EasyDesk.SampleApp.Web.Controllers.V_1_0.Test;
 
 public record TestPolymorphicDtos
 {
@@ -36,9 +39,15 @@ public abstract record AbstractPolymorphicDto : BasePolymorphicDto
 public record PolymorphicExample1 : AbstractPolymorphicDto, IEmptyPolymorphicInterface
 {
     public required string Property1 { get; init; }
+
+    public required SubRecord SubRecord { get; init; }
 }
 
 public record PolymorphicExample2 : AbstractPolymorphicDto, IEmptyPolymorphicInterface
 {
     public required int Property2 { get; init; }
 }
+
+public record SubRecord(Option<string> SubProperty, string Property, Instant Instant);
+
+public record Record(SubRecord SubRecord, string Property);

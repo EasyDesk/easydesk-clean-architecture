@@ -5,7 +5,7 @@ using Microsoft.OpenApi;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
-internal class InheritanceSchemaTransformer : IOpenApiSchemaTransformer
+internal class InheritanceSchemaAndDocumentTransformer : IOpenApiSchemaTransformer, IOpenApiDocumentTransformer
 {
     public const string DerivedSchemaExtensionName = "x-inheritance-allof";
 
@@ -64,38 +64,88 @@ internal class InheritanceSchemaTransformer : IOpenApiSchemaTransformer
         }
     }
 
-    private void ConfigureInheritanceWithAllOf(OpenApiSchema parentSchema, OpenApiSchema derivedSchema, OpenApiDocument document)
+    public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
-        RemoveRedundantProperties(parentSchema, derivedSchema);
-        derivedSchema.AllOf ??= [];
-        var proxySchema = derivedSchema.AllOf.SelectMany(s => (s as OpenApiSchema).AsOption()).FirstOption(s => s.Metadata?.TryGetValue(DerivedSchemaExtensionName, out var v) == true && v is true).OrElseGet(() =>
+        foreach (var (parentSchemaId, parentSchema) in document.Components?.Schemas?.AsEnumerable() ?? [])
         {
-            var newSchema = new OpenApiSchema
+            var compatibleChildren = parentSchema.OneOf
+                ?.Select(s => (s is OpenApiSchemaReference r ? r.Target : s) as OpenApiSchema)
+                .ZipWithIndex()
+                .Where(s => s.Item is not null && s.Item.Metadata?.TryGetValue(DerivedSchemaExtensionName, out var v) == true && v is true)
+                .ToList()
+                ?? [];
+            compatibleChildren.Reverse();
+            foreach (var (derivedSchema, index) in compatibleChildren)
             {
-                Metadata = new Dictionary<string, object>
+                derivedSchema!.AllOf ??= [];
+                if (!derivedSchema.AllOf.Any(s => s.GetSchemaId() == parentSchemaId))
                 {
-                    [DerivedSchemaExtensionName] = true,
-                },
-            };
-            newSchema.CopyFunctionalFieldsFrom(derivedSchema);
-            newSchema.Discriminator = null;
-            derivedSchema.AllOf.Add(newSchema);
-            return newSchema;
-        });
-        RemoveRedundantProperties(proxySchema, derivedSchema);
-        var parentSchemaId = parentSchema.GetSchemaId() ?? throw new InvalidOperationException("Parent schema must have an ID");
-        if (!derivedSchema.AllOf.Any(s => s.GetSchemaId() == parentSchemaId))
-        {
-            derivedSchema.AllOf.Add(new OpenApiSchemaReference(parentSchemaId, document));
+                    derivedSchema.AllOf.Add(new OpenApiSchemaReference(parentSchemaId, document));
+                }
+                parentSchema.OneOf!.RemoveAt(index);
+            }
         }
+        return Task.CompletedTask;
     }
 
-    private void RemoveRedundantProperties(IOpenApiSchema parentSchema, IOpenApiSchema derivedSchema)
+    private void ConfigureInheritanceWithAllOf(OpenApiSchema parentSchema, OpenApiSchema derivedSchema, OpenApiDocument document)
+    {
+        derivedSchema.AllOf ??= [];
+        var allOfBackup = derivedSchema.AllOf;
+        var oneOfBackup = derivedSchema.OneOf;
+        var anyofBackup = derivedSchema.AnyOf;
+        var metadataBackup = derivedSchema.Metadata;
+        var discriminatorBackup = derivedSchema.Discriminator;
+        OpenApiSchema proxySchema;
+        if (allOfBackup.Count > 0 && allOfBackup[0] is OpenApiSchema cs && cs.Metadata?.TryGetValue(DerivedSchemaExtensionName, out var v) == true && v is true)
+        {
+            proxySchema = cs;
+        }
+        else
+        {
+            proxySchema = new();
+            proxySchema.CopyFunctionalFieldsFrom(derivedSchema);
+            proxySchema.AllOf = null;
+            proxySchema.OneOf = null;
+            proxySchema.AnyOf = null;
+            proxySchema.Discriminator = null;
+            proxySchema.Metadata = new Dictionary<string, object>
+            {
+                [DerivedSchemaExtensionName] = true,
+            };
+            allOfBackup.Insert(0, proxySchema);
+            derivedSchema.ResetFunctionalFields();
+            derivedSchema.AllOf = allOfBackup;
+            derivedSchema.OneOf = oneOfBackup;
+            derivedSchema.AnyOf = anyofBackup;
+            derivedSchema.Metadata = metadataBackup;
+            derivedSchema.Discriminator = discriminatorBackup;
+        }
+        RemoveRedundantProperties(parentSchema, proxySchema);
+        // We need to append the derivedSchema to the parentSchema in order to resolve its references.
+        // Later, we will re-invert the dependency and remove the derivedSchema from the parentSchema,
+        // adding the parentSchema as allOf to the derivedSchema, so that the derivedSchema will have all the properties of the parentSchema.
+        parentSchema.OneOf ??= [];
+        parentSchema.OneOf.Add(derivedSchema);
+        // We are also marking the derived schema to avoid clashing with other one ofs
+        derivedSchema.Metadata ??= new Dictionary<string, object>();
+        derivedSchema.Metadata[DerivedSchemaExtensionName] = true;
+    }
+
+    private void RemoveRedundantProperties(IOpenApiSchema parentSchema, OpenApiSchema derivedSchema)
     {
         foreach (var parentProperty in parentSchema.Properties?.Keys ?? [])
         {
             derivedSchema.Properties?.Remove(parentProperty);
             derivedSchema.Required?.Remove(parentProperty);
+        }
+        if (derivedSchema.Properties is { Count: 0, })
+        {
+            derivedSchema.Properties = null;
+        }
+        if (derivedSchema.Required is { Count: 0, })
+        {
+            derivedSchema.Required = null;
         }
     }
 }

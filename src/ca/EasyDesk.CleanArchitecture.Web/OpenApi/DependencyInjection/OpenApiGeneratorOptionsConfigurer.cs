@@ -46,7 +46,8 @@ internal class OpenApiGeneratorOptionsConfigurer : IConfigureNamedOptions<OpenAp
         options.AddSchemaTransformer<FixedSetSchemaTransformer>();
         options.AddSchemaTransformer<FixedMapSchemaTransformer>();
         options.AddSchemaTransformer<CollectionsOfCustomTypesSchemaTransformer>();
-        options.AddSchemaTransformer<InheritanceSchemaTransformer>();
+        options.AddSchemaTransformer<InheritanceSchemaAndDocumentTransformer>();
+        options.AddDocumentTransformer<InheritanceSchemaAndDocumentTransformer>();
         options.AddSchemaTransformer<PolymorphismSchemaAndDocumentTransformer>();
         options.AddDocumentTransformer<PolymorphismSchemaAndDocumentTransformer>();
         options.AddDocumentTransformer<UnusedSchemaCleanerDocumentTransformer>();

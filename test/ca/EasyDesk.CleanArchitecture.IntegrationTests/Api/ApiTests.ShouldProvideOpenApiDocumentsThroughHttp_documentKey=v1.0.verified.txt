@@ -3416,7 +3416,6 @@
         }
       },
       "BasePolymorphicDto": {
-        "type": "object",
         "allOf": [
           {
             "required": [
@@ -4459,7 +4458,6 @@
         "example": "1970-01-01T01:00:00+01:00"
       },
       "OtherBasePolymorphicDto": {
-        "type": "object",
         "allOf": [
           {
             "required": [
@@ -4567,17 +4565,41 @@
         }
       },
       "PolymorphicExample1": {
-        "type": "object",
         "allOf": [
           {
             "required": [
               "property1",
+              "subRecord",
               "abstractBaseProperty"
             ],
             "type": "object",
             "properties": {
               "property1": {
                 "type": "string"
+              },
+              "subRecord": {
+                "required": [
+                  "subProperty",
+                  "property",
+                  "instant"
+                ],
+                "type": "object",
+                "properties": {
+                  "subProperty": {
+                    "type": [
+                      "null",
+                      "string"
+                    ]
+                  },
+                  "property": {
+                    "type": "string"
+                  },
+                  "instant": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "1970-01-01T00:00:00Z"
+                  }
+                }
               },
               "abstractBaseProperty": {
                 "type": "string"
@@ -4590,7 +4612,6 @@
         ]
       },
       "PolymorphicExample2": {
-        "type": "object",
         "allOf": [
           {
             "required": [

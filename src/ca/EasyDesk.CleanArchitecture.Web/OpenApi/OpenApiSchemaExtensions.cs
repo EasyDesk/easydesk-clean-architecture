@@ -40,6 +40,11 @@ public static class OpenApiSchemaExtensions
         to.Const = from.Const;
     }
 
+    public static void ResetFunctionalFields(this OpenApiSchema schema)
+    {
+        schema.CopyFunctionalFieldsFrom(new OpenApiSchema());
+    }
+
     public static string? GetSchemaId(this IOpenApiSchema schema)
     {
         var concreteSchema = schema as OpenApiSchema;
