@@ -5,7 +5,6 @@ namespace EasyDesk.Commons.Reflection;
 
 public static class ReflectionUtils
 {
-
     extension(Type type)
     {
         public bool IsSubtypeOrImplementationOf(Type otherType)
