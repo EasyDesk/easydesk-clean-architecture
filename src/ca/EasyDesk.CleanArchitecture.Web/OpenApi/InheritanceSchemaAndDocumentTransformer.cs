@@ -1,7 +1,7 @@
-﻿using EasyDesk.CleanArchitecture.Application.Json;
-using EasyDesk.Commons.Collections;
+﻿using EasyDesk.Commons.Collections;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
+using System.Collections.Concurrent;
 
 namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
@@ -15,8 +15,31 @@ internal class InheritanceSchemaAndDocumentTransformer : IOpenApiSchemaTransform
         {
             return;
         }
+        var schemaId = schema.GetSchemaId();
+        if (schemaId is null)
+        {
+            return;
+        }
+        schema.Metadata?[DerivedSchemaExtensionName] = schemaId;
         schema.Discriminator ??= new();
         schema.Discriminator.PropertyName ??= context.JsonTypeInfo.PolymorphismOptions.TypeDiscriminatorPropertyName;
+        if (schema.Discriminator.Mapping is null)
+        {
+            schema.Discriminator.Mapping = new Dictionary<string, OpenApiSchemaReference>();
+            foreach (var derivedType in context.JsonTypeInfo.PolymorphismOptions.DerivedTypes)
+            {
+                if (derivedType.TypeDiscriminator is null)
+                {
+                    throw new InvalidOperationException($"Type discriminator is null for derived type {derivedType.DerivedType.FullName} of base type {context.JsonTypeInfo.Type.FullName}.");
+                }
+                var derivedSchema = await context.GetOrCreateSchemaAsync(derivedType.DerivedType, null, cancellationToken);
+                var derivedSchemaId = derivedSchema.GetDerivedSchemaId(schemaId);
+                if (derivedSchemaId is not null)
+                {
+                    schema.Discriminator.Mapping[$"{derivedType.TypeDiscriminator}"] = new(derivedSchemaId, context.Document);
+                }
+            }
+        }
         var parentProperties = context.JsonTypeInfo.Properties
             .Select(p => context.JsonTypeInfo.Options.PropertyNamingPolicy?.ConvertName(p.Name) ?? p.Name)
             .ToFixedList();
@@ -35,54 +58,85 @@ internal class InheritanceSchemaAndDocumentTransformer : IOpenApiSchemaTransform
                 schema.Required.Add(parentProperty);
             }
         }
-        schema.AnyOf = null;
-        schema.OneOf = null;
-        schema.Discriminator.Mapping = null;
-        foreach (var derivedType in context.JsonTypeInfo.GetDerivedTypes())
+        foreach (var (derivedSchema, index) in schema.AnyOf.ZipWithIndex())
         {
-            if (derivedType.DerivedType == context.JsonTypeInfo.Type)
+            var derivedId = derivedSchema.GetSchemaId();
+            if (derivedId is null)
+            {
+                continue;
+            }
+            var concreteDerivedSchema = derivedSchema.ResolveReference();
+            concreteDerivedSchema.Type ??= schema.Type;
+            if (derivedId == "Base" || derivedId == schemaId)
             {
                 schema.Required?.Remove(schema.Discriminator.PropertyName);
+                derivedId = schemaId;
+                concreteDerivedSchema = schema;
             }
-            else
-            {
-                var derivedTypeInfo = context.JsonTypeInfo.Options.GetTypeInfo(derivedType.DerivedType);
-                var derivedSchema = await context.GetOrCreateSchemaAsync(derivedType.DerivedType, null, cancellationToken);
-                var derivedId = derivedSchema.GetSchemaId() ?? derivedTypeInfo.Type.Name;
-                if (context.Document.Components?.Schemas?.TryGetValue(derivedId, out var registeredDerivedSchema) == true && registeredDerivedSchema is OpenApiSchema registeredDerivedConcreteSchema)
-                {
-                    derivedSchema = registeredDerivedConcreteSchema;
-                }
-                else
-                {
-                    context.Document.AddComponent(derivedId, derivedSchema);
-                }
-                ConfigureInheritanceWithAllOf(schema, derivedSchema, context.Document);
-                schema.Discriminator.Mapping ??= new Dictionary<string, OpenApiSchemaReference>();
-                schema.Discriminator.Mapping[$"{derivedType.TypeDiscriminator}"] = new(derivedId, context.Document);
-            }
+            concreteDerivedSchema.Metadata ??= new Dictionary<string, object>();
+            concreteDerivedSchema.Metadata[DerivedSchemaExtensionName] = derivedId;
+            concreteDerivedSchema.Properties?.Remove(schema.Discriminator.PropertyName);
+            concreteDerivedSchema.Required?.Remove(schema.Discriminator.PropertyName);
         }
     }
 
     public Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
     {
-        foreach (var (parentSchemaId, parentSchema) in document.Components?.Schemas?.AsEnumerable() ?? [])
+        if (document.Components?.Schemas is null)
         {
-            var compatibleChildren = parentSchema.OneOf
-                ?.Select(s => (s is OpenApiSchemaReference r ? r.Target : s) as OpenApiSchema)
-                .ZipWithIndex()
-                .Where(s => s.Item is not null && s.Item.Metadata?.TryGetValue(DerivedSchemaExtensionName, out var v) == true && v is true)
-                .ToList()
-                ?? [];
-            compatibleChildren.Reverse();
-            foreach (var (derivedSchema, index) in compatibleChildren)
+            return Task.CompletedTask;
+        }
+        document.Components.Schemas = new ConcurrentDictionary<string, IOpenApiSchema>(document.Components.Schemas);
+        foreach (var (parentSchemaId, parentSchema) in document.Components.Schemas)
+        {
+            var concreteParentSchema = parentSchema.ResolveReference();
+            if (parentSchema.Discriminator?.Mapping is null || concreteParentSchema.Metadata?.GetOption(DerivedSchemaExtensionName).OrElseNull() is not string)
             {
-                derivedSchema!.AllOf ??= [];
+                continue;
+            }
+            var oldMappings = parentSchema.Discriminator.Mapping.Select(kvp => (kvp.Key, kvp.Value.Reference.HostDocument is null ? new(kvp.Value.Reference.Id!, document) : kvp.Value)).ToList();
+            parentSchema.Discriminator.Mapping.Clear();
+            foreach (var (key, reference) in oldMappings)
+            {
+                var referenced = reference.ResolveReference();
+                var derivedId = referenced.Metadata?.GetOption(DerivedSchemaExtensionName).OrElseNull() as string ?? referenced.GetSchemaId();
+                if (derivedId is null || derivedId == parentSchemaId)
+                {
+                    continue;
+                }
+                if (reference.Reference.Id is not null && reference.Reference.Id != derivedId)
+                {
+                    document.Components.Schemas.Remove(reference.Reference.Id);
+                }
+                parentSchema.Discriminator.Mapping.Add(derivedId, new(derivedId, document));
+                OpenApiSchema derivedSchema;
+                if (document.Components.Schemas.TryGetValue(derivedId, out var derivedSchemaRef))
+                {
+                    derivedSchema = derivedSchemaRef.ResolveReference();
+                }
+                else
+                {
+                    derivedSchema = referenced.CreateShallowCopy().ResolveReference();
+                    derivedSchema.SetSchemaId(derivedId);
+                    document.AddComponent(derivedId, derivedSchema);
+                }
+                derivedSchema.AllOf ??= [];
                 if (!derivedSchema.AllOf.Any(s => s.GetSchemaId() == parentSchemaId))
                 {
                     derivedSchema.AllOf.Add(new OpenApiSchemaReference(parentSchemaId, document));
                 }
-                parentSchema.OneOf!.RemoveAt(index);
+            }
+            concreteParentSchema.AnyOf = null;
+        }
+        foreach (var mixedSchema in document.Components?.Schemas?.Values?.Select(s => s.ResolveReference()) ?? [])
+        {
+            if (mixedSchema.AllOf is { Count: > 0, } && mixedSchema.Properties?.Values is { Count: > 0, })
+            {
+                var parentSchemas = mixedSchema.AllOf.Select(s => s.ResolveReference()).ToList();
+                foreach (var parentSchema in parentSchemas)
+                {
+                    ConfigureInheritanceWithAllOf(parentSchema, mixedSchema, document);
+                }
             }
         }
         return Task.CompletedTask;
@@ -122,19 +176,11 @@ internal class InheritanceSchemaAndDocumentTransformer : IOpenApiSchemaTransform
             derivedSchema.Discriminator = discriminatorBackup;
         }
         RemoveRedundantProperties(parentSchema, proxySchema);
-        // We need to append the derivedSchema to the parentSchema in order to resolve its references.
-        // Later, we will re-invert the dependency and remove the derivedSchema from the parentSchema,
-        // adding the parentSchema as allOf to the derivedSchema, so that the derivedSchema will have all the properties of the parentSchema.
-        parentSchema.OneOf ??= [];
-        parentSchema.OneOf.Add(derivedSchema);
-        // We are also marking the derived schema to avoid clashing with other one ofs
-        derivedSchema.Metadata ??= new Dictionary<string, object>();
-        derivedSchema.Metadata[DerivedSchemaExtensionName] = true;
     }
 
     private void RemoveRedundantProperties(IOpenApiSchema parentSchema, OpenApiSchema derivedSchema)
     {
-        foreach (var parentProperty in parentSchema.Properties?.Keys ?? [])
+        foreach (var parentProperty in InheritedProperties(parentSchema).ToFixedSortedSet())
         {
             derivedSchema.Properties?.Remove(parentProperty);
             derivedSchema.Required?.Remove(parentProperty);
@@ -146,6 +192,21 @@ internal class InheritanceSchemaAndDocumentTransformer : IOpenApiSchemaTransform
         if (derivedSchema.Required is { Count: 0, })
         {
             derivedSchema.Required = null;
+        }
+    }
+
+    private static IEnumerable<string> InheritedProperties(IOpenApiSchema schema)
+    {
+        foreach (var parentSchema in schema.AllOf?.Select(s => s.ResolveReference()) ?? [])
+        {
+            foreach (var parentProperty in InheritedProperties(parentSchema))
+            {
+                yield return parentProperty;
+            }
+        }
+        foreach (var property in schema.Properties?.Keys ?? [])
+        {
+            yield return property;
         }
     }
 }

@@ -14,7 +14,8 @@ public class TypeInfoResolver : DefaultJsonTypeInfoResolver
     private static readonly IFixedMap<Type, IEnumerable<Type>> _polymorphicTypes = ImmutableCollections.Map<Type, IEnumerable<Type>>(
         (typeof(BasePolymorphicDto), [typeof(PolymorphicExample1), typeof(PolymorphicExample2),]),
         (typeof(AncestorPolymorphicDto), [typeof(BasePolymorphicDto), typeof(OtherBasePolymorphicDto),]),
-        (typeof(IEmptyPolymorphicInterface), [typeof(PolymorphicExample1), typeof(PolymorphicExample2),])
+        (typeof(IEmptyPolymorphicInterface), [typeof(PolymorphicExample1), typeof(PolymorphicExample2),]),
+        (typeof(INotEmptyPolymorphicInterface), [typeof(PolymorphicExample1), typeof(PolymorphicExample2),])
     );
 
     public override JsonTypeInfo GetTypeInfo(Type type, JsonSerializerOptions options)

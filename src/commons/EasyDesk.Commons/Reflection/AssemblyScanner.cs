@@ -23,7 +23,7 @@ public class AssemblyScanner
         FromAssembliesContaining(markers.AsEnumerable());
 
     public AssemblyScanner NonAbstract() =>
-        Where(t => !(t.IsAbstract || t.IsInterface));
+        Where(t => t.IsConcrete);
 
     public AssemblyScanner NonGeneric() =>
         Where(t => !t.IsGenericType);

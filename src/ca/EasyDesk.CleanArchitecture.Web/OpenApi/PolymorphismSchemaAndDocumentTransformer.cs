@@ -1,4 +1,5 @@
 ﻿using EasyDesk.CleanArchitecture.Application.Json;
+using EasyDesk.Commons.Reflection;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 
@@ -18,7 +19,7 @@ internal class PolymorphismSchemaAndDocumentTransformer : IOpenApiDocumentTransf
             .Select(t => t.DerivedType)
             .ToHashSet();
         var derivedConcreteIndependentTypes = derivedTypes
-            .Where(t => !t.IsInterface && !t.IsAbstract && !derivedTypes.Any(dt => dt != t && dt.IsAssignableTo(t)))
+            .Where(t => t.IsConcrete && !derivedTypes.Any(dt => dt != t && dt.IsAssignableTo(t)))
             .ToHashSet();
 
         if (derivedConcreteIndependentTypes.Count == derivedTypes.Count)

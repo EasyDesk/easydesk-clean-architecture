@@ -12,9 +12,16 @@ public record TestPolymorphicDtos
     public required PolymorphicExample1 PolymorphicExample1 { get; init; }
 
     public required IEmptyPolymorphicInterface EmptyPolymorphicInterface { get; init; }
+
+    public required INotEmptyPolymorphicInterface NotEmptyPolymorphicInterface { get; init; }
 }
 
 public interface IEmptyPolymorphicInterface;
+
+public interface INotEmptyPolymorphicInterface
+{
+    string Name { get; }
+}
 
 public abstract record AncestorPolymorphicDto
 {
@@ -36,16 +43,20 @@ public abstract record AbstractPolymorphicDto : BasePolymorphicDto
     public required string AbstractBaseProperty { get; init; }
 }
 
-public record PolymorphicExample1 : AbstractPolymorphicDto, IEmptyPolymorphicInterface
+public record PolymorphicExample1 : AbstractPolymorphicDto, IEmptyPolymorphicInterface, INotEmptyPolymorphicInterface
 {
     public required string Property1 { get; init; }
 
     public required SubRecord SubRecord { get; init; }
+
+    public required string Name { get; init; }
 }
 
-public record PolymorphicExample2 : AbstractPolymorphicDto, IEmptyPolymorphicInterface
+public record PolymorphicExample2 : AbstractPolymorphicDto, IEmptyPolymorphicInterface, INotEmptyPolymorphicInterface
 {
     public required int Property2 { get; init; }
+
+    public required string Name { get; init; }
 }
 
 public record SubRecord(Option<string> SubProperty, string Property, Instant Instant);

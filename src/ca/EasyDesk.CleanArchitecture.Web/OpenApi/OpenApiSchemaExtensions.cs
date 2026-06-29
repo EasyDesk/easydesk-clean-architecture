@@ -4,6 +4,8 @@ namespace EasyDesk.CleanArchitecture.Web.OpenApi;
 
 public static class OpenApiSchemaExtensions
 {
+    private const string SchemaIdMetadataKey = "x-schema-id";
+
     public static void CopyFunctionalFieldsFrom(this OpenApiSchema to, IOpenApiSchema from)
     {
         to.Type = from.Type;
@@ -45,18 +47,56 @@ public static class OpenApiSchemaExtensions
         schema.CopyFunctionalFieldsFrom(new OpenApiSchema());
     }
 
+    public static OpenApiSchema ResolveReference(this IOpenApiSchema schema)
+    {
+        if (schema is OpenApiSchema concreteSchema)
+        {
+            return concreteSchema;
+        }
+        else if (schema is OpenApiSchemaReference reference && reference.Target is not null)
+        {
+            return reference.Target.ResolveReference();
+        }
+        else
+        {
+            throw new InvalidOperationException($"Cannot resolve reference for schema of type {schema.GetType().Name}");
+        }
+    }
+
+    public static string? GetDerivedSchemaId(this IOpenApiSchema schema, string baseSchemaId)
+    {
+        var schemaId = schema.GetSchemaId();
+        if (schemaId is null)
+        {
+            return null;
+        }
+        return $"{baseSchemaId}{schemaId}";
+    }
+
     public static string? GetSchemaId(this IOpenApiSchema schema)
     {
-        var concreteSchema = schema as OpenApiSchema;
-        if (concreteSchema is null && schema is OpenApiSchemaReference r)
-        {
-            concreteSchema = r.Target as OpenApiSchema;
-        }
-        if (concreteSchema?.Metadata?.TryGetValue("x-schema-id", out var id) == true)
+        if (schema.ResolveReference().Metadata?.TryGetValue(SchemaIdMetadataKey, out var id) == true)
         {
             var idString = id?.ToString();
             return idString?.Length == 0 ? null : idString;
         }
         return null;
+    }
+
+    public static void SetSchemaId(this IOpenApiSchema schema, string? id)
+    {
+        var resolvedSchema = schema.ResolveReference();
+        if (resolvedSchema.Metadata is null)
+        {
+            resolvedSchema.Metadata = new Dictionary<string, object>();
+        }
+        if (id is null)
+        {
+            resolvedSchema.Metadata.Remove(SchemaIdMetadataKey);
+        }
+        else
+        {
+            resolvedSchema.Metadata[SchemaIdMetadataKey] = id;
+        }
     }
 }

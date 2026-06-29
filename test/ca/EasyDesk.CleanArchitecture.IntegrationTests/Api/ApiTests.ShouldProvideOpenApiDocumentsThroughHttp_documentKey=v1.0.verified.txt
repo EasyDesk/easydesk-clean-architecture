@@ -4148,6 +4148,25 @@
         "type": "string",
         "format": "binary"
       },
+      "INotEmptyPolymorphicInterface": {
+        "required": [
+          "discriminator",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "discriminator": {
+          "propertyName": "discriminator",
+          "mapping": {
+            "PolymorphicExample1": "#/components/schemas/PolymorphicExample1",
+            "PolymorphicExample2": "#/components/schemas/PolymorphicExample2"
+          }
+        }
+      },
       "Instant": {
         "type": "string",
         "format": "date-time",
@@ -4578,28 +4597,7 @@
                 "type": "string"
               },
               "subRecord": {
-                "required": [
-                  "subProperty",
-                  "property",
-                  "instant"
-                ],
-                "type": "object",
-                "properties": {
-                  "subProperty": {
-                    "type": [
-                      "null",
-                      "string"
-                    ]
-                  },
-                  "property": {
-                    "type": "string"
-                  },
-                  "instant": {
-                    "type": "string",
-                    "format": "date-time",
-                    "example": "1970-01-01T00:00:00Z"
-                  }
-                }
+                "$ref": "#/components/schemas/SubRecord"
               },
               "abstractBaseProperty": {
                 "type": "string"
@@ -4608,6 +4606,9 @@
           },
           {
             "$ref": "#/components/schemas/BasePolymorphicDto"
+          },
+          {
+            "$ref": "#/components/schemas/INotEmptyPolymorphicInterface"
           }
         ]
       },
@@ -4631,6 +4632,9 @@
           },
           {
             "$ref": "#/components/schemas/BasePolymorphicDto"
+          },
+          {
+            "$ref": "#/components/schemas/INotEmptyPolymorphicInterface"
           }
         ]
       },
@@ -5402,6 +5406,28 @@
           }
         }
       },
+      "SubRecord": {
+        "required": [
+          "subProperty",
+          "property",
+          "instant"
+        ],
+        "type": "object",
+        "properties": {
+          "subProperty": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "property": {
+            "type": "string"
+          },
+          "instant": {
+            "$ref": "#/components/schemas/Instant"
+          }
+        }
+      },
       "TestApplicationError": {
         "required": [
           "code",
@@ -5445,7 +5471,8 @@
           "polymorphicDto",
           "abstractPolymorphicDto",
           "polymorphicExample1",
-          "emptyPolymorphicInterface"
+          "emptyPolymorphicInterface",
+          "notEmptyPolymorphicInterface"
         ],
         "type": "object",
         "properties": {
@@ -5460,6 +5487,9 @@
           },
           "emptyPolymorphicInterface": {
             "$ref": "#/components/schemas/IEmptyPolymorphicInterface"
+          },
+          "notEmptyPolymorphicInterface": {
+            "$ref": "#/components/schemas/INotEmptyPolymorphicInterface"
           }
         }
       },

@@ -215,15 +215,8 @@ public static class EnumerableUtils
         }
     }
 
-    public static IEnumerable<(T Item, int Index)> ZipWithIndex<T>(this IEnumerable<T> sequence)
-    {
-        var index = 0;
-        foreach (var item in sequence)
-        {
-            yield return (item, index);
-            index++;
-        }
-    }
+    public static IEnumerable<(T Item, int Index)> ZipWithIndex<T>(this IEnumerable<T> sequence) =>
+        sequence.Select((item, index) => (item, index));
 
     public static IEnumerable<(T Item, TTemp Scan)> ZipScan<T, TTemp>(this IEnumerable<T> input, TTemp seed, Func<TTemp, T, TTemp> next)
     {
