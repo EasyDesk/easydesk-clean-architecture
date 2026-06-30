@@ -108,7 +108,7 @@ internal class InheritanceSchemaAndDocumentTransformer : IOpenApiSchemaTransform
                 {
                     document.Components.Schemas.Remove(reference.Reference.Id);
                 }
-                parentSchema.Discriminator.Mapping.Add(derivedId, new(derivedId, document));
+                parentSchema.Discriminator.Mapping.Add(key, new(derivedId, document));
                 OpenApiSchema derivedSchema;
                 if (document.Components.Schemas.TryGetValue(derivedId, out var derivedSchemaRef))
                 {

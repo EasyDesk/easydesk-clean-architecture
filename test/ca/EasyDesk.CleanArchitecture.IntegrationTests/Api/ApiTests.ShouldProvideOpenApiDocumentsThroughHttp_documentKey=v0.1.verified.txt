@@ -102,63 +102,9 @@
   "components": {
     "schemas": {
       "ApiKeyTooLong": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "ApiKeyTooLong",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "ApiKeyTooLong",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/ApiKeyTooLongMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "ApiKeyTooLongMeta": {
         "type": "object"
       },
       "AuthenticationFailedError": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "AuthenticationFailed",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "AuthenticationFailedError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/AuthenticationFailedMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "AuthenticationFailedMeta": {
         "required": [
           "scheme",
           "message"
@@ -175,33 +121,6 @@
       },
       "BulkConcurrencyError": {
         "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "BulkConcurrency",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "BulkConcurrencyError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/BulkConcurrencyMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "BulkConcurrencyMeta": {
-        "required": [
           "operationType"
         ],
         "type": "object",
@@ -210,30 +129,6 @@
             "type": "string"
           }
         }
-      },
-      "DomainError": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "DomainError",
-            "type": "string"
-          },
-          "meta": { }
-        },
-        "additionalProperties": false,
-        "readOnly": true
       },
       "ErrorDto": {
         "type": "object",
@@ -281,19 +176,19 @@
         "discriminator": {
           "propertyName": "schema",
           "mapping": {
-            "TestApplicationError": "#/components/schemas/TestApplicationError",
-            "BulkConcurrencyError": "#/components/schemas/BulkConcurrencyError",
-            "InvalidSagaInitializerType": "#/components/schemas/InvalidSagaInitializerType",
-            "AuthenticationFailedError": "#/components/schemas/AuthenticationFailedError",
-            "ForbiddenError": "#/components/schemas/ForbiddenError",
-            "InvalidInputError": "#/components/schemas/InvalidInputError",
-            "NotFoundError": "#/components/schemas/NotFoundError",
-            "UnknownAgentError": "#/components/schemas/UnknownAgentError",
-            "ApiKeyTooLong": "#/components/schemas/ApiKeyTooLong",
-            "InvalidApiKey": "#/components/schemas/InvalidApiKey",
-            "InvalidJwt": "#/components/schemas/InvalidJwt",
-            "DomainError": "#/components/schemas/DomainError",
-            "InternalError": "#/components/schemas/InternalError"
+            "TestApplicationError": "#/components/schemas/ErrorDtoOfTestApplicationError",
+            "BulkConcurrencyError": "#/components/schemas/ErrorDtoOfBulkConcurrencyError",
+            "InvalidSagaInitializerType": "#/components/schemas/ErrorDtoOfInvalidSagaInitializerType",
+            "AuthenticationFailedError": "#/components/schemas/ErrorDtoOfAuthenticationFailedError",
+            "ForbiddenError": "#/components/schemas/ErrorDtoOfForbiddenError",
+            "InvalidInputError": "#/components/schemas/ErrorDtoOfInvalidInputError",
+            "NotFoundError": "#/components/schemas/ErrorDtoOfNotFoundError",
+            "UnknownAgentError": "#/components/schemas/ErrorDtoOfUnknownAgentError",
+            "ApiKeyTooLong": "#/components/schemas/ErrorDtoOfApiKeyTooLong",
+            "InvalidApiKey": "#/components/schemas/ErrorDtoOfInvalidApiKey",
+            "InvalidJwt": "#/components/schemas/ErrorDtoOfInvalidJwt",
+            "DomainError": "#/components/schemas/ErrorDtoOfDomainError",
+            "InternalError": "#/components/schemas/ErrorDtoOfInternalError"
           }
         }
       },
@@ -318,7 +213,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/ApiKeyTooLongMeta"
+            "$ref": "#/components/schemas/ApiKeyTooLong"
           }
         },
         "additionalProperties": false,
@@ -345,7 +240,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/AuthenticationFailedMeta"
+            "$ref": "#/components/schemas/AuthenticationFailedError"
           }
         },
         "additionalProperties": false,
@@ -372,7 +267,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/BulkConcurrencyMeta"
+            "$ref": "#/components/schemas/BulkConcurrencyError"
           }
         },
         "additionalProperties": false,
@@ -423,7 +318,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/ForbiddenMeta"
+            "$ref": "#/components/schemas/ForbiddenError"
           }
         },
         "additionalProperties": false,
@@ -477,7 +372,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/InvalidApiKeyMeta"
+            "$ref": "#/components/schemas/InvalidApiKey"
           }
         },
         "additionalProperties": false,
@@ -504,7 +399,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/InvalidInputMeta"
+            "$ref": "#/components/schemas/InvalidInputError"
           }
         },
         "additionalProperties": false,
@@ -531,7 +426,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/InvalidJwtMeta"
+            "$ref": "#/components/schemas/InvalidJwt"
           }
         },
         "additionalProperties": false,
@@ -558,7 +453,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/InvalidSagaInitializerTypeMeta"
+            "$ref": "#/components/schemas/InvalidSagaInitializerType"
           }
         },
         "additionalProperties": false,
@@ -585,7 +480,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/NotFoundMeta"
+            "$ref": "#/components/schemas/NotFoundError"
           }
         },
         "additionalProperties": false,
@@ -612,7 +507,7 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/TestApplicationMeta"
+            "$ref": "#/components/schemas/TestApplicationError"
           }
         },
         "additionalProperties": false,
@@ -639,40 +534,13 @@
             "type": "string"
           },
           "meta": {
-            "$ref": "#/components/schemas/UnknownAgentMeta"
+            "$ref": "#/components/schemas/UnknownAgentError"
           }
         },
         "additionalProperties": false,
         "readOnly": true
       },
       "ForbiddenError": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "Forbidden",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "ForbiddenError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/ForbiddenMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "ForbiddenMeta": {
         "required": [
           "reason"
         ],
@@ -683,91 +551,10 @@
           }
         }
       },
-      "InternalError": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "Internal",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "InternalError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/Nothing"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
       "InvalidApiKey": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "InvalidApiKey",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "InvalidApiKey",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/InvalidApiKeyMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "InvalidApiKeyMeta": {
         "type": "object"
       },
       "InvalidInputError": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "InvalidInput",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "InvalidInputError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/InvalidInputMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "InvalidInputMeta": {
         "required": [
           "propertyName",
           "errorCode",
@@ -793,33 +580,6 @@
       },
       "InvalidJwt": {
         "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "InvalidJwt",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "InvalidJwt",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/InvalidJwtMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "InvalidJwtMeta": {
-        "required": [
           "message"
         ],
         "type": "object",
@@ -831,33 +591,6 @@
       },
       "InvalidSagaInitializerType": {
         "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "InvalidSagaInitializerType",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "InvalidSagaInitializerType",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/InvalidSagaInitializerTypeMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "InvalidSagaInitializerTypeMeta": {
-        "required": [
           "typeName"
         ],
         "type": "object",
@@ -868,33 +601,6 @@
         }
       },
       "NotFoundError": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "NotFound",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "NotFoundError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/NotFoundMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "NotFoundMeta": {
         "type": "object"
       },
       "Nothing": {
@@ -933,33 +639,6 @@
       },
       "TestApplicationError": {
         "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "TestApplication",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "TestApplicationError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/TestApplicationMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "TestApplicationMeta": {
-        "required": [
           "content"
         ],
         "type": "object",
@@ -970,33 +649,6 @@
         }
       },
       "UnknownAgentError": {
-        "required": [
-          "code",
-          "detail",
-          "schema",
-          "meta"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "const": "UnknownAgent",
-            "type": "string"
-          },
-          "detail": {
-            "type": "string"
-          },
-          "schema": {
-            "const": "UnknownAgentError",
-            "type": "string"
-          },
-          "meta": {
-            "$ref": "#/components/schemas/UnknownAgentMeta"
-          }
-        },
-        "additionalProperties": false,
-        "readOnly": true
-      },
-      "UnknownAgentMeta": {
         "type": "object"
       }
     }

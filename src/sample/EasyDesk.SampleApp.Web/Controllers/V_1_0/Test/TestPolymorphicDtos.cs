@@ -14,6 +14,8 @@ public record TestPolymorphicDtos
     public required IEmptyPolymorphicInterface EmptyPolymorphicInterface { get; init; }
 
     public required INotEmptyPolymorphicInterface NotEmptyPolymorphicInterface { get; init; }
+
+    public required ITestHomonymousPolymorphicInterface TestHomonymousPolymorphicInterface { get; init; }
 }
 
 public interface IEmptyPolymorphicInterface;

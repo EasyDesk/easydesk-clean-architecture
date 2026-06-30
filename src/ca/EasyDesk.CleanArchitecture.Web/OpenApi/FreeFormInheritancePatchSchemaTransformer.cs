@@ -35,7 +35,7 @@ internal class FreeFormInheritancePatchSchemaTransformer : IOpenApiDocumentTrans
                 }
                 var parentConcrete = parentSchema.ResolveReference();
                 parentConcrete.OneOf ??= [];
-                parentConcrete.OneOf.Insert(0, new OpenApiSchemaReference(schemaId, document));
+                parentConcrete.OneOf.Add(new OpenApiSchemaReference(schemaId, document));
                 concreteSchema.AllOf.RemoveAt(i);
             }
             if (concreteSchema.AllOf.Count == 0)

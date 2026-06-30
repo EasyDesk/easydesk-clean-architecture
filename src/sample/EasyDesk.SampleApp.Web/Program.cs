@@ -45,7 +45,7 @@ builder
         .EnableRequestLogging()
         .EnableResultLogging())
     .AddReverseProxy()
-    .AddOpenApi()
+    .AddOpenApi(options => options.ConfigureOpenApi = o => o.CreateSchemaReferenceId = TypeInfoResolver.SchemaReferenceId)
     .AddAsyncApi()
     .AddSagas()
     .AddCsvParsing()

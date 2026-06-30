@@ -98,7 +98,7 @@ internal class ErrorDtoSchemaTransformer : IOpenApiSchemaTransformer
         schema.Discriminator = new()
         {
             PropertyName = schemaDataProperty,
-            Mapping = errorMetaSchemaDictionary.ToDictionary(x => x.Key, x => new OpenApiSchemaReference(x.Key, context.Document)),
+            Mapping = errorMetaSchemaDictionary.ToDictionary(x => x.Key, x => new OpenApiSchemaReference(x.Value.GetSchemaId() ?? x.Key, context.Document)),
         };
         schema.OneOf = errorMetaSchemaDictionary.Values.ToList();
         schema.Properties = null;
@@ -134,7 +134,7 @@ internal class ErrorDtoSchemaTransformer : IOpenApiSchemaTransformer
         schema.AdditionalPropertiesAllowed = false;
         schema.ReadOnly = true;
         await modifySchema(schema);
-        context.Document!.AddComponent(name, schema);
+        //context.Document!.AddComponent(schema.GetSchemaId() ?? name, schema);
         errorMetaSchemaDictionary.Add(name, schema);
     }
 }
