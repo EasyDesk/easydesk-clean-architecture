@@ -46,7 +46,7 @@ jobs:
         name: Checkout
         uses: EasyDesk/action-semver-checkout@v1
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
@@ -82,7 +82,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
@@ -109,7 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
@@ -184,7 +184,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
           cache: true
